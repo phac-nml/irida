@@ -1,7 +1,8 @@
 import axios from "axios";
 import { authenticateOauthClient } from "../oauth/oauth";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
-const GALAXY_AJAX_URL = `${window.TL.BASE_URL}ajax/galaxy-export`;
+const GALAXY_AJAX_URL = setBaseUrl(`ajax/galaxy-export`);
 
 /**
  * This will open an new window providing the user with the ability to authenticate
@@ -9,7 +10,7 @@ const GALAXY_AJAX_URL = `${window.TL.BASE_URL}ajax/galaxy-export`;
  * @returns {Promise<any>}
  */
 export function validateOauthClient() {
-  const redirect = `${window.TL.BASE_URL}galaxy/auth_code`;
+  const redirect = `${window.PAGE.galaxyRedirect}`;
   return authenticateOauthClient(window.GALAXY.CLIENT_ID, redirect)
     .then(code => code)
     .catch(response => response);

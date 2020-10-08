@@ -19,6 +19,10 @@ public class CreateRemoteAPIPage extends AbstractPage {
 		get(driver, CREATE_PAGE);
 	}
 
+	public void goTo() {
+		get(driver, CREATE_PAGE);
+	}
+
 	public void createRemoteAPIWithDetails(String name, String serviceURI, String clientID, String clientSecret) {
 		logger.trace("Creating client with name " + name);
 
@@ -32,12 +36,8 @@ public class CreateRemoteAPIPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		try {
-			// if there's a remove button, we succeeded!
-			driver.findElement(By.id("remove-btn")); 
-			return true;
-		} catch (final Exception e) {
-			return false;
-		}
+		// Should be redirected to the specific details page.
+		return driver.getCurrentUrl()
+				.matches(this.getBaseUrl() + "admin/remote_api/(\\d+)");
 	}
 }

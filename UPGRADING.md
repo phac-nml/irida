@@ -4,9 +4,31 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+20.09 to 21.01
+--------------
+
+20.05 to 20.09
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* The [SNVPhyl](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/phylogenomics/) pipeline has been upgraded. Please make sure to install the necessary tools in Galaxy.
+* The [AssemblyAnnotation](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/) and [AssemblyAnnotationCollection](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation-collection/) pipelines have been upgraded. Please make sure to install the necessary tools in Galaxy.
+* We have upgraded our Galaxy Docker image to Galaxy 20.05: `docker pull phacnml/galaxy-irida-20.05`. The default account credentials for this Galaxy instance have changed. The username remains as `admin@galaxy.org` but the password is `password`. The admin key has also changed to `fakekey`. Please keep these changes in mind (and make adjustments to the Galaxy credentials in `/etc/irida/irida.conf`) if you use the Docker image.
+    * We were also unable to automatically install the MentaLiST tool when building the Docker image. It does seem to be working when installing via the Galaxy web UI (though you may have to attempt to reinstall it multiple times), so if you wish to use MentaLiST in the Galaxy Docker instance you will have to install the tool once the Docker container is started. Please see the [MentaLiST install instructions](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/mentalist/) for more details. Once installed you will have to run `docker exec -it [CONTAINER ID] supervisorctl restart galaxy:` to restart Galaxy before you can use the tool.
+* While testing out tool installation we were encountering some issues installing tools via the web UI for older versions of Galaxy (<20.01). If installation of the Galaxy tools is not working via the Galaxy UI for older Galaxy instances we recommend using the tool [Ephemeris](https://ephemeris.readthedocs.io) to install tools in Galaxy via the command-line. More information about using Ephemeris to install IRIDA tools can be found at <https://irida.corefacility.ca/documentation/administrator/galaxy/setup/#automated-installation-of-tools>.
+
+20.01 to 20.05
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
+* This version changes the endpoint for creating sequencing runs to allow any type of sequencer.  The legacy `sequencingRun/miseq` endpoint is maintained, but deprecated.  See <https://irida.corefacility.ca/documentation/developer/rest/#creating-sequencing-runs> for more info.
+* Assemblies can now be uploaded to IRIDA rather than just created through an analysis pipeline.  This requires a new filesystem directory configured for files to be stored.  You must add `assembly.file.base.directory` to your `/etc/irida/irida.conf` file and create a new diretory for these files to be stored.
+
 19.09 to 20.01
 --------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 * This upgrade changes the Java version to Java 11.  To upgrade, follow the install instructions for your system in <https://irida.corefacility.ca/documentation/administrator/web/#prerequisite-install-instructions>.
+* Tomcat 8 (or another Servlet 3.1 compatible servlet container) is required for this IRIDA version.  Systems using Tomcat 7 must be upgraded before deploying this update.
+* This upgrade adds a required field to OAuth2 clients using the `authorization_code` grant (that is external applications connecting to IRIDA via the web application).  This includes other IRIDA installations synchronizing data via the Remote API system, and Galaxy importer clients.  In order for these systems to continue working properly, administrators must register a redirect URI for all `authorization_code` clients.  For more on this process, see <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
+* The configuration key `hibernate.dialect=org.hibernate.dialect.MySQL55Dialect` should be set in your `/etc/irida/irida.conf` file for this release.  Note the change from `MySQL5Dialect` to `MySQL55Dialect`.
 
 19.05 to 19.09
 --------------
@@ -35,7 +57,7 @@ upgrading IRIDA that cannot be automated.
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 * This upgrade changes the way the file processors handle uploaded files.  File processing now takes place as a scheduled task rather than immediately after files are uploaded.  For deployments with multiple IRIDA servers running against the same database, prossing may not be performed by the IRIDA server the files were uploaded to and will instead be balanced among all the available servers.  If you want to disable file processing on an IRIDA server, set the following property in `/etc/irida/irida.conf` : `file.processing.process=false`.
 * A new pipeline, [bio_hansel](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/bio_hansel/), has been included. You will have to make sure to install the necessary Galaxy tools listed in the documentation.
-* The [MentaLiST](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/mentalist/) pipeline has been ugpraded. Please make sure to install the necessary tools in Galaxy.
+* The [MentaLiST](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/mentalist/) pipeline has been upgraded. Please make sure to install the necessary tools in Galaxy.
 * The [SISTR](https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/) pipeline has been upgraded to make use of [shovill](https://github.com/tseemann/shovill) for assembly. Please make sure to install the `shovill` Galaxy tool. Also, please make sure to follow the additional instructions in <https://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/#address-shovill-related-issues>, which involves some modifications of the conda environment for `shovill`. In particular, you must:
 
     1. Install the proper `ncurses` and `bzip2` packages from the **conda-forge** channel.

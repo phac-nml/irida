@@ -1,9 +1,15 @@
+/**
+ * @file Component for the overall layout of the line list table, and has the
+ * responsibility of delegating function to the different areas of the table.
+ */
+
 import React from "react";
 import { Layout } from "antd";
 import { Table } from "../Table";
 import { Toolbar } from "../Toolbar";
 import { InfoBar } from "../InfoBar";
 import TableControlPanel from "../TableControlPanel/TableControlPanel";
+import { AgGridLayout } from "../../../../../components/Tables/AgGridLayout";
 
 const { Sider, Content } = Layout;
 
@@ -99,12 +105,11 @@ export class LineListLayoutComponent extends React.Component {
           selectedCount={this.props.selectedCount}
           scrollTableToTop={this.scrollTableToTop}
         />
-        <Layout className="ag-theme-balham">
+        <AgGridLayout height={this.state.height}>
           <Content>
             <Table
               ref={tableReference => (this.tableRef = tableReference)}
               onFilter={this.updateFilterCount}
-              height={this.state.height}
             />
           </Content>
           <Sider
@@ -126,7 +131,7 @@ export class LineListLayoutComponent extends React.Component {
               templateModified={this.props.templateModified}
             />
           </Sider>
-        </Layout>
+        </AgGridLayout>
         <InfoBar
           selectedCount={this.props.selectedCount}
           filterCount={

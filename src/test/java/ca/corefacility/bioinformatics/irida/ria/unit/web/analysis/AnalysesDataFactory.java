@@ -2,7 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,6 +27,11 @@ public class AnalysesDataFactory {
 			@Override
 			public long getTotalElements() {
 				return 150;
+			}
+
+			@Override
+			public <U> Page<U> map(Function<? super AnalysisSubmission, ? extends U> function) {
+				return null;
 			}
 
 			@Override

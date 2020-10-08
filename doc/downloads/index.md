@@ -42,20 +42,22 @@ The documentation for installing and configuring the IRIDA web interface (and Ga
 
 <http://irida.corefacility.ca/documentation/administrator/>
 
-IRIDA MiSeq Uploader Tool
+IRIDA Uploader
 -------------------------
 
-The IRIDA MiSeq Uploader Tool is used to submit complete Illumina MiSeq instrument runs to an instance of IRIDA. You can access the latest stable release of the IRIDA MiSeq Uploader Tool at:
+The IRIDA Uploader is an application used to submit sequencing data from a variety of sequencers to an instance of IRIDA. You can access the latest stable release of the IRIDA Uploader at:
 
-<https://github.com/phac-nml/irida-miseq-uploader/releases/latest>
+<https://github.com/phac-nml/irida-uploader/releases/latest>
 
-You may also see all releases of the IRIDA MiSeq Uploader Tool at:
+The Uploader is available as a stand alone application with user interface, and as a command line utility.
 
-<https://github.com/phac-nml/irida-miseq-uploader/releases>
+A tutorial for the stand alone application can be found here: <https://github.com/phac-nml/irida-uploader-tutorial>
 
-The documentation for using the IRIDA MiSeq Uploader Tool is included in the package, but can also be found at:
+The command line utility is available via source code on [Github](https://github.com/phac-nml/irida-uploader) as well as a package on [bioconda](https://anaconda.org/bioconda/irida-uploader)
 
-<https://irida.corefacility.ca/documentation/user/tutorials/uploader-tool/>
+The documentation for using the IRIDA Uploader is included in the package, but can also be found at:
+
+<https://irida-uploader.readthedocs.io/en/stable/>
 
 Sample Data
 -----------

@@ -37,14 +37,14 @@ import java.util.Date;
 public class AnnouncementUserJoin implements Join<Announcement, User> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @CreatedDate
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
+    @Column(name = "created_date", updatable = false)
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

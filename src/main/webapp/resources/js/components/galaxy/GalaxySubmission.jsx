@@ -1,7 +1,7 @@
 import React from "react";
+
 import { useStateValue } from "./GalaxyState";
 import { Button } from "antd";
-import { getI18N } from "../../utilities/i18n-utilties";
 import { actions } from "./reducer";
 import {
   getGalaxySamples,
@@ -16,7 +16,7 @@ import { exportToGalaxy } from "../../apis/galaxy/submission";
  */
 export function GalaxySubmission() {
   const [
-    { submittable, submitted, email, validEmail, makepairedcollection },
+    { submittable, submitted, email, validEmail, makepairedcollection, includeAssemblies, includeFast5 },
     dispatch
   ] = useStateValue();
 
@@ -40,8 +40,10 @@ export function GalaxySubmission() {
               exportToGalaxy({
                 email,
                 makepairedcollection,
+                includeAssemblies,
+                includeFast5,
                 oauthCode: result,
-                oauthRedirect: `${window.TL.BASE_URL}galaxy/auth_code`,
+                oauthRedirect: `${window.PAGE.galaxyRedirect}`,
                 samples
               });
             });
@@ -57,7 +59,7 @@ export function GalaxySubmission() {
       loading={submitted}
       onClick={submitToGalaxy}
     >
-      {getI18N("GalaxyFinalSubmission.submit")}
+      {i18n("GalaxyFinalSubmission.submit")}
     </Button>
   );
 }

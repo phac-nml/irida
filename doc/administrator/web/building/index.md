@@ -17,11 +17,11 @@ Prerequisites
 
 The following software is required to build IRIDA from source:
 
-* Java 8 JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* Java 11 JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * Apache Maven 3.0+ (http://maven.apache.org/index.html)
 * Git (http://git-scm.com/)
 * Node (http://nodejs.org/)
-* Bower (http://bower.io/)
+* Yarn (https://yarnpkg.com/lang/en/)
 
 Installing these dependencies varies greatly, depending on the host operating system that you are using, so no install instructions are provided. The following commands must be available on your `$PATH`:
 
@@ -29,7 +29,6 @@ Installing these dependencies varies greatly, depending on the host operating sy
 * `javac`
 * `mvn`
 * `git`
-* `bower`
 
 Building IRIDA
 --------------
@@ -44,7 +43,7 @@ git clone https://github.com/phac-nml/irida.git
 
 ### Installing dependencies
 
-IRIDA uses Maven and Bower for managing external dependencies. Some of the libraries that we're using to build IRIDA are either not available in the Maven central repository, or we've had to seperately modify/update the code to accomplish the task we want, and the changes have not yet been accepted upstream.
+IRIDA uses Maven and Yarn for managing external dependencies. Some of the libraries that we're using to build IRIDA are either not available in the Maven central repository, or we've had to seperately modify/update the code to accomplish the task we want, and the changes have not yet been accepted upstream.
 
 We've written a small script that can be used to install these external dependencies. From the directory where you've checked out the source code for IRIDA, you can run:
 

@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,10 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatu
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -51,6 +45,9 @@ import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.net.HttpHeaders;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Controller for managing relationships between {@link Sample} and
@@ -82,6 +79,7 @@ public class RESTSampleSequenceFilesController {
 	 * rel for the unpaired sequence files for a given sample
 	 */
 	public static final String REL_SAMPLE_SEQUENCE_FILE_UNPAIRED = "sample/sequenceFiles/unpaired";
+	public static final String REL_SAMPLE_SEQUENCE_FILE_FAST5 = "sample/sequenceFiles/fast5";
 
 	public static final String REL_SEQUENCEFILE_SAMPLE = "sequenceFile/sample";
 	public static final String REL_PAIR_SAMPLE = "sequenceFilePair/sample";
@@ -120,7 +118,7 @@ public class RESTSampleSequenceFilesController {
 	 * will be used in the hrefs for reading {@link SequencingObject}s
 	 */
 	public static BiMap<Class<? extends SequencingObject>, String> objectLabels = ImmutableBiMap.of(
-			SequenceFilePair.class, "pairs", SingleEndSequenceFile.class, "unpaired");
+			SequenceFilePair.class, "pairs", SingleEndSequenceFile.class, "unpaired", Fast5Object.class, "fast5");
 
 	/**
 	 * Reference to the {@link SampleService}.
@@ -128,9 +126,9 @@ public class RESTSampleSequenceFilesController {
 	private SampleService sampleService;
 
 	/**
-	 * Reference to the {@link MiseqRunService}
+	 * Reference to the {@link SequencingRunService}
 	 */
-	private SequencingRunService miseqRunService;
+	private SequencingRunService sequencingRunService;
 
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisService analysisService;
@@ -142,7 +140,7 @@ public class RESTSampleSequenceFilesController {
 	public RESTSampleSequenceFilesController(SampleService sampleService, SequencingRunService miseqRunService,
 			SequencingObjectService sequencingObjectService, AnalysisService analysisService) {
 		this.sampleService = sampleService;
-		this.miseqRunService = miseqRunService;
+		this.sequencingRunService = miseqRunService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.analysisService = analysisService;
 	}
@@ -410,7 +408,7 @@ public class RESTSampleSequenceFilesController {
 
 				Long miseqRunId = fileResource.getMiseqRunId();
 				if (miseqRunId != null) {
-					miseqRun = miseqRunService.read(miseqRunId);
+					miseqRun = sequencingRunService.read(miseqRunId);
 					logger.trace("Read miseq run " + miseqRunId);
 				}
 			} else {
@@ -461,6 +459,117 @@ public class RESTSampleSequenceFilesController {
 			sequenceFile.add(
 					linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
 							singleEndSequenceFile.getId())).withRel(REL_SEQ_OBJECT));
+
+			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
+			// add a location header.
+			response.addHeader(HttpHeaders.LOCATION, selfRel.getHref());
+			// set the response status.
+			response.setStatus(HttpStatus.CREATED.value());
+
+		} catch (IllegalArgumentException e) {
+			logger.debug("Error 400 - Bad Request: " + e.getMessage());
+			throw e;
+		} finally {
+			// clean up the temporary files.
+			logger.trace("Deleted temp files");
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
+		}
+
+		// respond to the client
+		return modelMap;
+	}
+
+	/**
+	 * REST function to add new Fast5 object to a sample
+	 *
+	 * @param sampleId     the ID of the sample to add
+	 * @param file         The multipart file uploa to create
+	 * @param fileResource the parameters for the file
+	 * @param response     the servlet response.
+	 * @return a response indicating the success of the submission.
+	 * @throws IOException if we can't write the file to disk.
+	 */
+	@RequestMapping(value = "/api/samples/{sampleId}/fast5", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ModelMap addNewFast5FileToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
+			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource,
+			HttpServletResponse response) throws IOException {
+		ModelMap modelMap = new ModelMap();
+
+		logger.debug("Adding sequence file to sample " + sampleId);
+		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
+		// load the sample from the database
+		Sample sample = sampleService.read(sampleId);
+		logger.trace("Read sample " + sampleId);
+		// prepare a new sequence file using the multipart file supplied by the caller
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+
+		try {
+			// Changed to MultipartFile.transerTo(File) because it was truncating
+			// large files to 1039956336 bytes
+			// target = Files.write(target, file.getBytes());
+			file.transferTo(target.toFile());
+			logger.trace("Wrote temp file to " + target);
+
+			SequenceFile sf;
+			SequencingRun sequencingRun = null;
+			if (fileResource != null) {
+				sf = fileResource.getResource();
+
+				Long sequencingRunId = fileResource.getMiseqRunId();
+				if (sequencingRunId != null) {
+					sequencingRun = sequencingRunService.read(sequencingRunId);
+					logger.trace("Read miseq run " + sequencingRunId);
+				}
+			} else {
+				sf = new SequenceFile();
+			}
+
+			sf.setFile(target);
+
+			Fast5Object fast5Object = new Fast5Object(sf);
+			if (sequencingRun != null) {
+				if (sequencingRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {
+					throw new IllegalArgumentException("The sequencing run must be in the UPLOADING state to upload data.");
+				}
+				fast5Object.setSequencingRun(sequencingRun);
+				logger.trace("Added seqfile to miseqrun");
+			}
+
+			// save the seqobject and sample
+			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
+					fast5Object, sample);
+
+			fast5Object = (Fast5Object) createSequencingObjectInSample.getObject();
+			logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject()
+					.getId());
+
+			// prepare a link to the sequence file itself (on the sequence file
+			// controller)
+			String objectType = objectLabels.get(Fast5Object.class);
+			Long sequenceFileId = fast5Object.getFile()
+					.getId();
+			Link selfRel = linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
+							objectType, fast5Object.getId(), sequenceFileId)).withSelfRel();
+
+			// Changed, because sfr.setResource(sf)
+			// and sfr.setResource(sampleSequenceFileRelationship.getObject())
+			// both will not pass a GET-POST comparison integration test.
+			fast5Object = (Fast5Object) sequencingObjectService.read(fast5Object.getId());
+			SequenceFile sequenceFile = fast5Object.getFileWithId(sequenceFileId);
+
+			// add links to the resource
+			sequenceFile.add(
+					linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(sampleId)).withRel(
+							REL_SAMPLE_SEQUENCE_FILES));
+			sequenceFile.add(selfRel);
+			sequenceFile.add(
+					linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
+			sequenceFile.add(
+					linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequencingObject(sampleId, objectType,
+							fast5Object.getId())).withRel(REL_SEQ_OBJECT));
 
 			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
 			// add a location header.
@@ -544,7 +653,7 @@ public class RESTSampleSequenceFilesController {
 			SequenceFilePair sequenceFilePair = new SequenceFilePair(sf1, sf2);
 
 			if (runId != null) {
-				sequencingRun = miseqRunService.read(runId);
+				sequencingRun = sequencingRunService.read(runId);
 				if (sequencingRun.getUploadStatus() != SequencingRunUploadStatus.UPLOADING) {
 					throw new IllegalArgumentException("The sequencing run must be in the UPLOADING state to upload data.");
 				}

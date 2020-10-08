@@ -93,24 +93,24 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		int analysisSubmissionsChanged = analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 
 		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(1L)
+		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(1L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(2L)
+		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(2L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(3L)
+		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(3L).orElse(null)
 				.getAnalysisState());
 
 		// make sure no other submissions have changed
 		assertEquals("Analysis submission state has changed", AnalysisState.NEW,
-				analysisSubmissionRepository.findOne(4L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findOne(5L).getAnalysisState());
+				analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING,
-				analysisSubmissionRepository.findOne(6L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findOne(7L)
+				analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findById(7L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findOne(8L)
+		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
+		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null)
 				.getAnalysisState());
 
 		try {
@@ -129,24 +129,24 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		int analysisSubmissionsChanged = analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
 
 		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(1L)
+		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(1L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(2L)
+		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(2L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(3L)
+		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(3L).orElse(null)
 				.getAnalysisState());
 
 		// make sure no other submissions have changed
 		assertEquals("Analysis submission state has changed", AnalysisState.NEW,
-				analysisSubmissionRepository.findOne(4L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findOne(5L).getAnalysisState());
+				analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING,
-				analysisSubmissionRepository.findOne(6L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findOne(7L)
+				analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findById(7L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findOne(8L)
+		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
+		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null)
 				.getAnalysisState());
 	}
 	

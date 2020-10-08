@@ -26,7 +26,7 @@ public interface RelatedProjectRepository extends CrudRepository<RelatedProjectJ
 	 *            The Project to search from
 	 * @return A List of {@link RelatedProjectJoin}s
 	 */
-	@Query("FROM RelatedProjectJoin r WHERE r.subject=?")
+	@Query("FROM RelatedProjectJoin r WHERE r.subject=?1")
 	public List<RelatedProjectJoin> getRelatedProjectsForProject(Project project);
 
 	/**
@@ -40,7 +40,7 @@ public interface RelatedProjectRepository extends CrudRepository<RelatedProjectJ
 	 *            The project that is related to other projects
 	 * @return A List of {@link RelatedProjectJoin}s
 	 */
-	@Query("FROM RelatedProjectJoin r WHERE r.relatedProject=?")
+	@Query("FROM RelatedProjectJoin r WHERE r.relatedProject=?1")
 	public List<RelatedProjectJoin> getReverseRelatedProjects(Project project);
 
 	/**
@@ -53,6 +53,6 @@ public interface RelatedProjectRepository extends CrudRepository<RelatedProjectJ
 	 *            the related project
 	 * @return The {@link RelatedProjectJoin} if found
 	 */
-	@Query("FROM RelatedProjectJoin r WHERE r.subject=? AND r.relatedProject=?")
+	@Query("FROM RelatedProjectJoin r WHERE r.subject=?1 AND r.relatedProject=?2")
 	public RelatedProjectJoin getRelatedProjectJoin(Project subject, Project relatedProject);
 }

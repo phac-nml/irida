@@ -95,28 +95,27 @@ Samples can also contain assembled genomes.
 
 ![sample-automated-assembly](images/sample-automated-assembly.png)
 
-Genome assemblies can be linked to samples in two ways:
+Genome assemblies can be linked to samples in the following ways:
 
-1. By enabling the assembly pipeline as an [automated pipeline](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
-2. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
+1. By uploading assemblies to the sample through the [file upload interface](#sequence-files--assemblies)
+2. By enabling the assembly pipeline as an [automated pipeline](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
+3. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
 
 The assembled genome file can be downloaded by clicking the <span class="fa fa-fw fa-download"></span> icon.
 
-#### Deleting genome assemblies
-
-Assembled genomes may be deleted from a sample by selecting the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon.
-
-![delete-sample-assembly](images/delete-sample-assembly.png)
-
-#### Viewing automated assemblies
-
-If the project manager has enabled automated assemblies for uploaded data an assembly will be shown associated with the particular sequence files used to generate the assembled genome.
+If the project manager has enabled automated assemblies for uploaded data an assembly will also be shown associated with the particular sequence files used to generate the assembled genome.
 
 ![Automated assembly](images/automated-assembly.png)
 
 The assembly status will be displayed along with a link to view the assembly results page.  On completion, the assembled genome will be saved back to the Sample.  For more information on viewing pipeline results see the [pipeline documentation](../pipelines/#viewing-pipeline-results)  
 
 See the [project documentation](../project#automated-pipelines) for information on enabling automated assembly.
+
+#### Deleting genome assemblies
+
+Assembled genomes may be deleted from a sample by selecting the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon.
+
+![delete-sample-assembly](images/delete-sample-assembly.png)
 
 Adding a new sample
 -------------------

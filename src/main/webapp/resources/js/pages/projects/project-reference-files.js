@@ -1,4 +1,5 @@
 import angular from "angular";
+import "angular-ui-bootstrap";
 import "./../../modules/utilities/file.utils";
 import { showNotification } from "../../modules/notifications";
 
@@ -14,17 +15,17 @@ function ProjectFileService($rootScope, $http) {
   svc.files = [];
 
   svc.getFiles = function getFiles() {
-    return $http.get(window.PAGE.urls.get).then(function(response) {
+    return $http.get(window.PAGE.urls.get).then(function (response) {
       angular.copy(response.data.files, svc.files);
     });
   };
 
-  $rootScope.$on("FILE_DELETED", function(e, args) {
-    const filtered = svc.files.filter(file => args.id !== file.id);
+  $rootScope.$on("FILE_DELETED", function (e, args) {
+    const filtered = svc.files.filter((file) => args.id !== file.id);
     angular.copy(filtered, svc.files);
   });
 
-  $rootScope.$on("NEW_FILE", function(e, args) {
+  $rootScope.$on("NEW_FILE", function (e, args) {
     args.file.newFile = true;
     svc.files.push(args.file);
   });
@@ -41,30 +42,30 @@ function ReferenceFileService($rootScope, $uibModal, $http) {
   "use strict";
   const svc = this;
 
-  svc.deleteFile = function(file) {
+  svc.deleteFile = function (file) {
     const modalInstance = $uibModal.open({
       templateUrl: "/delete-modal.html",
       controller: "DeleteCtrl as dCtrl",
       resolve: {
-        file: function() {
+        file: function () {
           return file;
-        }
-      }
+        },
+      },
     });
 
-    modalInstance.result.then(function() {
+    modalInstance.result.then(function () {
       $http({
         method: "POST",
         url: window.PAGE.urls.remove,
         data: $.param({
           fileId: file.id,
-          projectId: window.project.id
+          projectId: window.project.id,
         }),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      }).then(function(response) {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }).then(function (response) {
         showNotification({
           text: response.data.msg,
-          type: response.data.result
+          type: response.data.result,
         });
         $rootScope.$broadcast("FILE_DELETED", { id: file.id });
       });
@@ -82,11 +83,11 @@ function DeleteCtrl($uibModalInstance, file) {
   "use strict";
   this.file = file;
 
-  this.delete = function() {
+  this.delete = function () {
     $uibModalInstance.close();
   };
 
-  this.close = function() {
+  this.close = function () {
     $uibModalInstance.dismiss();
   };
 }
@@ -100,7 +101,7 @@ function DeleteCtrl($uibModalInstance, file) {
 function FilesCtrl(ProjectFileService, projectFilesService) {
   "use strict";
 
-  this.getRowClass = function(file) {
+  this.getRowClass = function (file) {
     let rowClass = "";
     if (!angular.isNumber(file.size)) {
       rowClass = "danger";
@@ -110,7 +111,7 @@ function FilesCtrl(ProjectFileService, projectFilesService) {
     return rowClass;
   };
 
-  this.deleteFile = function(file) {
+  this.deleteFile = function (file) {
     projectFilesService.deleteFile(file);
   };
 
@@ -128,10 +129,10 @@ function FilesCtrl(ProjectFileService, projectFilesService) {
 function FileUploadCtrl($timeout, fileService) {
   var vm = this;
 
-  vm.onFileSelect = function($files) {
+  vm.onFileSelect = function ($files) {
     if ($files && $files.length) {
-      fileService.upload(window.PAGE.urls.upload, $files).then(function() {
-        $timeout(function() {
+      fileService.upload(window.PAGE.urls.upload, $files).then(function () {
+        $timeout(function () {
           window.location.href = window.location.href;
         }, 500);
       });
@@ -139,22 +140,19 @@ function FileUploadCtrl($timeout, fileService) {
   };
 }
 
-const refModule = angular
-  .module("References", ["file.utils"])
+angular
+  .module("irida.project.reference", ["file.utils", "ui.bootstrap"])
   .service("ProjectFileService", ["$rootScope", "$http", ProjectFileService])
   .service("ReferenceFileService", [
     "$rootScope",
     "$uibModal",
     "$http",
-    ReferenceFileService
+    ReferenceFileService,
   ])
   .controller("FilesCtrl", [
     "ProjectFileService",
     "ReferenceFileService",
-    FilesCtrl
+    FilesCtrl,
   ])
   .controller("DeleteCtrl", ["$uibModalInstance", "file", DeleteCtrl])
-  .controller("FileUploadCtrl", ["$timeout", "FileService", FileUploadCtrl])
-  .name;
-
-angular.module("irida").requires.push(refModule);
+  .controller("FileUploadCtrl", ["$timeout", "FileService", FileUploadCtrl]);

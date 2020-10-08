@@ -1,43 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
-<head>
-    <title th:text="#{projects.title}">_USER LIST TITLE_</title>
-    <script th:inline="javascript">
-        var PAGE = {
-            urls: {
-                table: /*[[@{/users/ajax/list}]]*/ '/users/ajax/list',
-                link: /*[[@{/users/}]]*/ ''
-            }
-        };
-    </script>
-</head>
-<body>
-<div layout:fragment="page">
-    <main class="col-md-12">
-        <h1 th:text="#{users.title}">_Users_</h1>
-        <a href="/users/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/users/create}"
-           class="btn btn-default mrgn-bttm-md">Add User</a>
-        <table id="usersTable" class="table table-striped table-hover">
-            <thead>
-            <tr th:inline="text">
-                <th id="username-header" data:data="username" th:text="#{users.username}"></th>
-                <th id="lastName-header" data:data="lastName" th:text="#{users.lastName}"></th>
-                <th id="firstName-header" data:data="firstName" th:text="#{users.firstName}"></th>
-                <th id="email-header" data:data="email" th:text="#{users.email}"></th>
-                <th id="role-header" data:data="systemRole" th:text="#{users.role}"></th>
-                <th class="dt-date" id="created-header" data:data="createdDate" th:text="#{users.created}"></th>
-                <th class="dt-date" data:data="lastLogin" id="last-login-header" th:text="#{users.last-login}"></th>
-            </tr>
-            </thead>
-            <tbody id="user-table-body"></tbody>
-        </table>
-    </main>
-</div>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{UsersPage.title}">_USER LIST TITLE_</title>
+    <link rel="stylesheet" th:href="@{/dist/css/users-list.bundle.css}" />
+  </head>
+  <body>
+    <div id="react-root" layout:fragment="page" style="height: 100%"></div>
 
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/users-list.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/users-list.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

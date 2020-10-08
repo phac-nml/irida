@@ -20,7 +20,7 @@ Tool Development
 * [IRIDA pipeline development](tools/pipelines)
 * [IRIDA workflow description](tools/pipelines/workflow-description)
 * [IRIDA REST API docs](rest/)
-* [REST API OAuth2 notes](authorization/oauth2)
+* [REST API OAuth2 notes](authorization)
 
 
 User Interface development
@@ -28,6 +28,7 @@ User Interface development
 * [User interface testing](interface/testing)
 * [Packaging JS and CSS with Webpack](interface/webpack)
 * [Adding internationalizations](interface/i18n)
+* [Creating a custom login page](interface/custom-login)
 
 
 Other IRIDA developer resources

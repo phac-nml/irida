@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -50,8 +50,8 @@ public class SampleSequencingObjectJoin implements Join<Sample, SequencingObject
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
-	private final Date createdDate;
+	@Column(name = "created_date", updatable = false)
+	private Date createdDate;
 
 	/**
 	 * Default constructor for hibernate

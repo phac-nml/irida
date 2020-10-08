@@ -1,0 +1,1 @@
+export { TabPaneContent } from "./TabPaneContent";

@@ -117,8 +117,6 @@ export const reducer = (state = initialState, action = {}) => {
           const { template } = action;
           template.modified = [];
 
-          console.log(template);
-
           let index = t.findIndex(temp => temp.id === template.id);
 
           if (index > 0) {

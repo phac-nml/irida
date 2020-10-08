@@ -290,7 +290,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 			analysisExecutedFuture.get();
 		} catch (ExecutionException e) {
 			// check to make sure the submission is in the error state
-			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisSubmitted.getId());
+			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
 			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
 			throw e.getCause();
@@ -324,7 +324,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 			analysisExecutedFuture.get();
 		} catch (ExecutionException e) {
 			// check to make sure the submission is in the error state
-			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisSubmitted.getId());
+			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
 			logger.debug("Submission on exception=" + savedSubmission.getId());
 			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
@@ -357,7 +357,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 			analysisExecutionFuture.get();
 		} catch (ExecutionException e) {
 			// check to make sure the submission is in the error state
-			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisSubmitted.getId());
+			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
 			logger.debug("Submission on exception=" + savedSubmission.getId());
 			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
@@ -384,7 +384,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		analysisExecutionService.prepareSubmission(analysisSubmission).get();
 		
-		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
 		analysisExecutionService.executeAnalysis(analysisSubmitted);
@@ -412,7 +412,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmitted = analysisSubmissionFuture.get();
 		assertEquals(AnalysisState.PREPARED, analysisSubmitted.getAnalysisState());
 
-		AnalysisSubmission analysisSaved = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		AnalysisSubmission analysisSaved = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
 		assertEquals(analysisSaved.getId(), analysisSubmitted.getId());
 		assertNotNull("analysisSubmitted is null", analysisSaved);
 		assertNotNull("remoteWorkflowId is null", analysisSaved.getRemoteWorkflowId());
@@ -545,7 +545,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
 		assertEquals(expectedSnpTable.getFileName(), snpTable.getFile().getFileName());
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 
@@ -660,7 +660,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		final ToolExecution snpTableCoreUpload = snpTableCoreInputs.getPreviousSteps().iterator().next();
 		assertTrue("Second step should be input tool.", snpTableCoreUpload.isInputTool());
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull("analysis should not be null in submission", analysis);
 
@@ -1283,7 +1283,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				com.google.common.io.Files.equal(expectedOutputFile2.toFile(), output2.getFile().toFile()));
 		assertEquals(expectedOutputFile2.getFileName(), output2.getFile().getFileName());
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -61,9 +61,7 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		page.goToPage();
 		page.submitForm("test project name", "", "", "");
 		page.clickSubmit();
-
-		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
-		assertTrue("Should be on metadata page which has edit button", metadataPage.hasEditButton());
+		assertEquals("Should be redirected to the project details page", "IRIDA Platform - test project nametest project name - Settings", driver().getTitle());
 	}
 
 	@Test
@@ -89,9 +87,8 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		page.setName("newProjectWithSamples");
 		page.clickSubmit();
 
-		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
-		assertTrue("Should be on metadata page which has edit buttong", metadataPage.hasEditButton());
-		Long projectId = metadataPage.getProjectId();
+		ProjectDetailsPage page = ProjectDetailsPage.initElements(driver());
+		Long projectId = page.getProjectId();
 
 		// check if samples match
 		ProjectSamplesPage newProjSamplesPage = ProjectSamplesPage.gotToPage(driver(), projectId.intValue());
@@ -120,9 +117,8 @@ public class ProjectsNewPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectLockSamples();
 		page.clickSubmit();
 
-		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver());
-		assertTrue("Should be on metadata page which has edit buttong", metadataPage.hasEditButton());
-		Long projectId = metadataPage.getProjectId();
+		ProjectDetailsPage page = ProjectDetailsPage.initElements(driver());
+		Long projectId = page.getProjectId();
 
 		// check if samples match
 		ProjectSamplesPage newProjSamplesPage = ProjectSamplesPage.gotToPage(driver(), projectId.intValue());

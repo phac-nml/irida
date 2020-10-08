@@ -59,14 +59,12 @@
           value="true"
         />
         <input name="user_oauth_approval" value="true" type="hidden" />
-        <input
+        <button
           class="ant-btn ant-btn-primary"
           name="authorize"
           id="authorize-btn"
-          th:value="#{auth.authorize}"
-          value="_Authorize_"
           type="submit"
-        />
+        ><span th:text="#{auth.authorize}">Authorize</span></button>
       </form>
       <form
         id="denialForm"
@@ -83,13 +81,12 @@
           value="false"
         />
         <input name="user_oauth_approval" value="false" type="hidden" />
-        <input
+        <button
           class="ant-btn"
           name="deny"
-          th:value="#{auth.deny}"
-          value="_Deny_"
           type="submit"
-        />
+        ><span th:text="#{auth.deny}">deny</span>
+        </button>
       </form>
     </div>
     <script>

@@ -19,6 +19,9 @@ services:
   - docker
   - mysql
 
+addons:
+  chrome: stable
+
 dist: xenial
 
 jdk:

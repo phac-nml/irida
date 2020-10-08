@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private SequencingRunDetailsPage page;
 
+	@Override
 	@Before
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
@@ -36,11 +37,14 @@ public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGetSequencerType() {
 		String sequencerType = page.getSequencerType();
-		assertEquals("MiSeq", sequencerType);
+		assertEquals("miseq", sequencerType);
 	}
-	
+
+	/**
+	 * TODO: This should be deleted after merging analysis branch.
+	 */
 	@Test
-	public void testDeleteRun(){
+	public void testDeleteRun() {
 		page.deleteRun();
 		SequencingRunsListPage listPage = SequencingRunsListPage.goToPage(driver());
 		assertFalse("run should have been deleted", listPage.idDisplayIdInList("1"));

@@ -36,6 +36,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -126,13 +127,13 @@ public class AutomatedAnalysisFileProcessorTest {
 
 		when(templateRepository.getEnabledAnalysisSubmissionTemplatesForProject(project)).thenReturn(
 				Lists.newArrayList(assemblyTemplate));
-		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
+		when(objectRepository.findById(sequenceFileId)).thenReturn(Optional.of(pair));
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 		when(submissionRepository.save(any(AnalysisSubmission.class))).thenReturn(built);
 
-		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
+		assertTrue("should want to assemble file", processor.shouldProcessFile(pair));
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
@@ -167,13 +168,13 @@ public class AutomatedAnalysisFileProcessorTest {
 
 		when(templateRepository.getEnabledAnalysisSubmissionTemplatesForProject(project)).thenReturn(
 				Lists.newArrayList(assemblyTemplate));
-		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
+		when(objectRepository.findById(sequenceFileId)).thenReturn(Optional.of(pair));
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 		when(submissionRepository.save(any(AnalysisSubmission.class))).thenReturn(built);
 
-		assertTrue("should want to assemble file", processor.shouldProcessFile(sequenceFileId));
+		assertTrue("should want to assemble file", processor.shouldProcessFile(pair));
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
@@ -192,7 +193,7 @@ public class AutomatedAnalysisFileProcessorTest {
 
 		when(templateRepository.getEnabledAnalysisSubmissionTemplatesForProject(project)).thenReturn(
 				Lists.newArrayList());
-		when(objectRepository.findOne(sequenceFileId)).thenReturn(pair);
+		when(objectRepository.findById(sequenceFileId)).thenReturn(Optional.of(pair));
 		when(ssoRepository.getSampleForSequencingObject(pair)).thenReturn(new SampleSequencingObjectJoin(sample, pair));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));

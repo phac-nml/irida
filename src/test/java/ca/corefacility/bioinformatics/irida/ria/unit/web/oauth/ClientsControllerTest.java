@@ -1,10 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,22 +10,17 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.ClientsController;
+import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+
+import com.google.common.collect.ImmutableSet;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class ClientsControllerTest {
 	private IridaClientDetailsService clientDetailsService;
@@ -65,26 +58,6 @@ public class ClientsControllerTest {
 		assertTrue(model.containsAttribute("grants"));
 
 		verify(clientDetailsService).read(clientId);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAjaxClientList() {
-		IridaClientDetails client1 = new IridaClientDetails();
-		client1.setId(1L);
-		IridaClientDetails client2 = new IridaClientDetails();
-		client2.setId(2L);
-		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
-
-		when(clientDetailsService.search(any(Specification.class), any(PageRequest.class))).thenReturn(clientPage);
-
-		DataTablesParams params = new DataTablesParams(1, 10, 1, "", new Sort(Sort.Direction.ASC, "createdDate"), new HashMap<>());
-		DataTablesResponse response = controller.getAjaxClientsList(params);
-
-		List<DataTablesResponseModel> models = response.getData();
-		assertEquals(2, models.size());
-
-		verify(clientDetailsService).search(any(Specification.class), any(PageRequest.class));
 	}
 
 	@Test
@@ -168,7 +141,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", 0, "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", "", "", "", 0, "", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);
@@ -194,7 +167,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.update(any(IridaClientDetails.class))).thenThrow(ex);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", 0, "", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", "", 0, "", model, locale);
 		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
 	}
 
@@ -209,7 +182,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(id)).thenReturn(client);
 
-		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", 0, "true", model, locale);
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", "", "", "", 0, "true", model, locale);
 
 		assertEquals("redirect:/clients/1", postCreateClient);
 		ArgumentCaptor<IridaClientDetails> captor = ArgumentCaptor.forClass(IridaClientDetails.class);
@@ -225,7 +198,7 @@ public class ClientsControllerTest {
 
 		String removeClient = controller.removeClient(id);
 
-		assertEquals("redirect:/clients", removeClient);
+		assertEquals("redirect:/admin/clients", removeClient);
 
 		verify(clientDetailsService).delete(id);
 	}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+    <script th:inline="javascript">
+      window.PAGE = {
+        BASE_URL: /*[[@{"/"}]]*/ "/"
+      };
+    </script>
+  </head>
+
+  <body>
+    <div style="max-width: 800px; margin: auto">This is an example of a basic custom IRIDA login page.  You can add images, custom CSS and JavaScript, or anything else in these spaces to customize the login page for your institution.  You just need to be sure to keep the content from the <code>head</code> section above, the <code>login-root</code> div, and the <code>script</code> import for <code>login.bundle.js</code> below.</div>
+    <div id="login-root"></div>
+    <script th:src="@{/dist/js/login.bundle.js}"></script>
+  </body>
+</html>

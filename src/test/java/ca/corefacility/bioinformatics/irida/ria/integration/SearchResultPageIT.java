@@ -1,13 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.SearchResultPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for global search
@@ -23,6 +24,7 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.globalSearch("samp", false);
 		page = SearchResultPage.initPage(driver());
+		checkTranslations(page, ImmutableList.of("search"), null);
 
 		page.waitForSearchResults();
 		int sampleCount = page.getSampleCount();

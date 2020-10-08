@@ -1,15 +1,11 @@
 import React from "react";
 import { render } from "react-dom";
-import { PagedTableProvider } from "../../../contexts/PagedTableContext";
 import { AnalysesTable } from "../../../components/AnalysesTable/AnalysesTable";
-
-function ProjectAnalysesPage() {
-  return <AnalysesTable />;
-}
+import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
 
 render(
-  <PagedTableProvider url={`${window.TL.BASE_URL}ajax/analyses/list`}>
-    <ProjectAnalysesPage />
+  <PagedTableProvider url={`${window.PAGE.url}`}>
+    <AnalysesTable />
   </PagedTableProvider>,
   document.querySelector("#root")
 );

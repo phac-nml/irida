@@ -1,15 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
+
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
-// Excel export support
-import XLSX from "xlsx";
-
+import "ag-grid-community/dist/styles/ag-theme-material.css";
 import { LoadingOverlay } from "./LoadingOverlay";
 import {
   DateCellRenderer,
@@ -19,8 +17,6 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
-
-const { i18n } = window.PAGE;
 
 /**
  * React component to render the ag-grid to the page.
@@ -62,13 +58,6 @@ export class TableComponent extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.globalFilter !== this.props.globalFilter) return true;
-    /**
-     * Check to see if the height of the table needs to be updated.
-     * This will only happen  on initial load or if the window height has changed
-     */
-    if (nextProps.height !== this.props.height) {
-      return true;
-    }
 
     if (!isEqual(nextProps.fields, this.props.fields)) {
       /*
@@ -225,90 +214,41 @@ export class TableComponent extends React.Component {
   };
 
   createFile = ext => {
-    const colOrder = this.columnApi.getColumnState().filter(c => !c.hide);
-
     /*
-    Set up the excel file
+     * Lazy load xlsx utilities since exporting is not a function used on every page.
      */
-    const fileName = this.generateFileName(ext);
-    const workbook = {};
-    workbook.Sheets = {};
-    workbook.Props = {};
-    workbook.SSF = {};
-    workbook.SheetNames = [];
-    /* create worksheet: */
-    const ws = {};
+    import(
+      /* webpackChunkName: "exportUtilities" */ "../../../../../utilities/export-utilities"
+    ).then(module => {
+      const createXLSX = module.default;
 
-    /* the range object is used to keep track of the range of the sheet */
-    const range = { s: { c: 0, r: 0 }, e: { c: 0, r: 0 } };
+      const availableNames = {};
+      this.props.fields.forEach(f => (availableNames[f.field] = f.headerName));
 
-    /*
-    Add the headers
-     */
-    const cell = { v: "Sample Id", t: "s" };
-    const cell_ref = XLSX.utils.encode_cell({ c: 0, r: 0 });
-    ws[cell_ref] = cell;
-    colOrder.forEach((col, i) => {
-      const index = i + 1;
-      const column = this.columnApi.getColumn(col.colId);
-      const name = this.columnApi.getDisplayNameForColumn(column);
-      if (range.e.c < index) range.e.c = index;
-      const cell = { v: name, t: "s" };
-      const cell_ref = XLSX.utils.encode_cell({ c: index, r: 0 });
-      ws[cell_ref] = cell;
-    });
-
-    /*
-    Add all the entries
-     */
-    this.api.forEachNodeAfterFilterAndSort((node, r) => {
-      const entry = node.data;
       /*
-      Offset to allow for the header row.
+       * Get the visible columns.  Need to ignore the icon columns since
+       * it does not contain any data that we want.
        */
-      const row = r + 1;
-      if (range.e.r < row) range.e.r = row;
+      const colOrder = this.columnApi
+        .getColumnState()
+        .filter(c => !c.hide && c.colId !== "icons");
 
-      // Need to add the sample identifier
-      const idCell = { v: entry[FIELDS.sampleId], t: "n", z: "0" };
-      const idRef = XLSX.utils.encode_cell({ c: 0, r: row });
-      ws[idRef] = idCell;
+      const data = [];
+      this.api.forEachNodeAfterFilter(node => {
+        // We only need the value of the cell.
+        const item = colOrder.map(col => node.data[col.colId] || "");
+        data.push(item);
+      });
 
-      for (let c = 0; c < colOrder.length; c++) {
-        const column = colOrder[c];
-        /*
-        Offset to allow for the sample id column
-         */
-        const col = c + 1;
-        /* create cell object: .v is the actual data */
-        const cell = { v: entry[column.colId] };
-        if (cell.v !== null) {
-          /* create the correct cell reference */
-          const cell_ref = XLSX.utils.encode_cell({ c: col, r: row });
+      /*
+       * Headers need to be the first item in the array.
+       */
+      const cols = colOrder.map(c => availableNames[c.colId]);
+      data.unshift(cols);
 
-          /* determine the cell type */
-          if (typeof cell.v === "number") cell.t = "n";
-          else if (typeof cell.v === "boolean") cell.t = "b";
-          else cell.t = "s";
-
-          /* add to structure */
-          ws[cell_ref] = cell;
-        }
-      }
+      const filename = this.generateFileName(ext);
+      createXLSX({ filename, data });
     });
-
-    ws["!ref"] = XLSX.utils.encode_range(range);
-
-    /* add worksheet to workbook using the template name */
-    const template = this.props.templates[this.props.current].name.replace(
-      this.nameRegex,
-      "_"
-    );
-    workbook.SheetNames.push(template);
-    workbook.Sheets[template] = ws;
-
-    /* write file */
-    XLSX.writeFile(workbook, fileName);
   };
 
   addSamplesToCart = () => {
@@ -366,14 +306,20 @@ export class TableComponent extends React.Component {
       Show a notification that allows the user to reverse the change to the value.
        */
       const text = Boolean(data[field])
-        ? i18n.linelist.editing.undo.full
-        : i18n.linelist.editing.undo.empty;
+        ? i18n(
+            "linelist.editing.undo.full",
+            `${data[FIELDS.sampleName]}`,
+            `${headerName}`,
+            `${data[field]}`
+          )
+        : i18n(
+            "linelist.editing.undo.empty",
+            `${headerName}`,
+            `${data[FIELDS.sampleName]}`
+          );
       showUndoNotification(
         {
-          text: text
-            .replace("[SAMPLE_NAME]", data[FIELDS.sampleName])
-            .replace("[FIELD]", headerName)
-            .replace("[NEW_VALUE]", data[field])
+          text
         },
         () => {
           /**
@@ -410,40 +356,37 @@ export class TableComponent extends React.Component {
 
   render() {
     return (
-      <div
-        className="ag-grid-table-wrapper"
-        style={{ height: this.props.height }}
-      >
-        <AgGridReact
-          id="linelist-grid"
-          rowSelection="multiple"
-          onFilterChanged={this.setFilterCount}
-          localeText={i18n.linelist.agGrid}
-          columnDefs={this.props.fields}
-          rowData={this.props.entries}
-          frameworkComponents={this.frameworkComponents}
-          loadingOverlayComponent="LoadingOverlay"
-          onGridReady={this.onGridReady}
-          onDragStopped={this.onColumnDropped}
-          rowDeselection={true}
-          suppressRowClickSelection={true}
-          onSelectionChanged={this.onSelectionChange}
-          defaultColDef={{
-            headerCheckboxSelectionFilteredOnly: true,
-            sortable: true,
-            filter: true
-          }}
-          enableCellChangeFlash={true}
-          onCellEditingStarted={this.onCellEditingStarted}
-          onCellEditingStopped={this.onCellEditingStopped}
-        />
-      </div>
+      <AgGridReact
+        id="linelist-grid"
+        rowSelection="multiple"
+        onFilterChanged={this.setFilterCount}
+        localeText={{
+          loading: i18n("linelist.agGrid.loading"),
+          sampleName: i18n("linelist.agGrid.sampleName")
+        }}
+        columnDefs={this.props.fields}
+        rowData={this.props.entries}
+        frameworkComponents={this.frameworkComponents}
+        loadingOverlayComponent="LoadingOverlay"
+        onGridReady={this.onGridReady}
+        onDragStopped={this.onColumnDropped}
+        rowDeselection={true}
+        suppressRowClickSelection={true}
+        onSelectionChanged={this.onSelectionChange}
+        defaultColDef={{
+          headerCheckboxSelectionFilteredOnly: true,
+          sortable: true,
+          filter: true
+        }}
+        enableCellChangeFlash={true}
+        onCellEditingStarted={this.onCellEditingStarted}
+        onCellEditingStopped={this.onCellEditingStopped}
+      />
     );
   }
 }
 
 TableComponent.propTypes = {
-  height: PropTypes.number.isRequired,
   tableModified: PropTypes.func.isRequired,
   fields: PropTypes.array.isRequired,
   entries: PropTypes.array,
@@ -469,9 +412,6 @@ const mapDispatchToProps = dispatch => ({
   selection: selected => dispatch(entryActions.selection(selected))
 });
 
-export const Table = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  null,
-  { forwardRef: true }
-)(TableComponent);
+export const Table = connect(mapStateToProps, mapDispatchToProps, null, {
+  forwardRef: true
+})(TableComponent);

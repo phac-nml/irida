@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.user;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -50,8 +52,8 @@ public class UpdateUserGroupPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1L)).thenReturn(u);
-		when(userGroupRepository.findOne(1L)).thenReturn(ug);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(u));
+		when(userGroupRepository.findById(1L)).thenReturn(Optional.of(ug));
 		when(userGroupJoinRepository.findUsersInGroup(ug))
 				.thenReturn(ImmutableList.of(new UserGroupJoin(u, ug, UserGroupRole.GROUP_OWNER)));
 
@@ -68,8 +70,8 @@ public class UpdateUserGroupPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1L)).thenReturn(u);
-		when(userGroupRepository.findOne(1L)).thenReturn(ug);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(u));
+		when(userGroupRepository.findById(1L)).thenReturn(Optional.of(ug));
 		when(userGroupJoinRepository.findUsersInGroup(ug))
 				.thenReturn(ImmutableList.of(new UserGroupJoin(u, ug, UserGroupRole.GROUP_MEMBER)));
 
@@ -87,8 +89,8 @@ public class UpdateUserGroupPermissionTest {
 		u.setUsername(username);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(userRepository.findOne(1L)).thenReturn(u);
-		when(userGroupRepository.findOne(1L)).thenReturn(ug);
+		when(userRepository.findById(1L)).thenReturn(Optional.of(u));
+		when(userGroupRepository.findById(1L)).thenReturn(Optional.of(ug));
 		when(userGroupJoinRepository.findUsersInGroup(ug))
 				.thenReturn(ImmutableList.of(new UserGroupJoin(u2, ug, UserGroupRole.GROUP_OWNER)));
 

@@ -40,6 +40,7 @@ public class AnalysisFastQC extends Analysis {
 	private final Short gcContent;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(joinColumns = @JoinColumn(name = "analysis_fastqc_id"))
 	private final Set<OverrepresentedSequence> overrepresentedSequences;
 
 	/**

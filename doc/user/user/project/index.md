@@ -250,11 +250,13 @@ To confirm, click the "Ok" button.
 
 ### Associated Projects
 
-Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.
+Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.  
 
 To view associated projects click the **Associated Projects** tab in the project settings page.
 
 ![Associated projects tab](images/associated-tab.png)
+*This is how the table will look for a Collaborator on the project*
+
 
 #### Viewing associated projects
 
@@ -264,11 +266,11 @@ The "Associated Projects" list will display the projects associated with this pr
 
 #### Adding or removing associated projects
 
-Project Managers can add or remove associated projects for a project.  From the "Associated Projects" page, click the "Edit" button.
+Project Managers can add or remove associated projects for a project.  When going to the associated projects tab, managers will see the currently associated projects selected, as well as all projects they have access to.  Using the toggle 
 
 **Note:** To add or remove a project to the list of associated projects, the manager must *at least* be able to read the data in the project to be added in the associated projects list.
 
-You will be presented with a list of all projects you have access to in the local installation.  To add or remove an associated project, click the "On/Off" switch.
+Adding or removing an associated project can be accomplished by clicking on the toggle box in the first column of the table.  If the toggle is "On" (blue) then the project is associated.
 
 ![Edit local associated projects](images/associated-local.png)
 
@@ -302,7 +304,22 @@ Settings for remote synchronized projects can also be managed from the project s
 Synchronizing a remote project
 ------------------------------
 
-IRIDA allows you to synchronize projects between different IRIDA installations.  A remote project appears similar to a local project, but users are not allowed to add samples or sequencing data to a remote project.  Instead all data associated with a remote project will be pulled from a remote IRIDA instance on a regular schedule.  The only data that can be managed for a remote project is the members that are allowed to view the project and associated sample data.
+IRIDA allows you to synchronize projects between different IRIDA installations.  A remote project appears similar to a local project, but users are not allowed to add samples or sequencing data to a remote project.  Instead data associated with a remote project will be updated from a remote IRIDA instance on a regular schedule.  The only data that can be managed for a remote project is the members that are allowed to view the project and associated sample data.
+
+The following data will be synchronized:
+* Basic project metadata
+* FASTQ sequencing data associated with samples
+* Assemblies associated with samples (including both assemblies created by pipelines within IRIDA, and uploaded assemblies)
+* Sample metadata
+
+The following data **will not** be synchronized:
+* Analysis pipeline results
+* Users & groups on a project
+* Analysis automation settings
+* Reference files
+* FAST5 data associated with samples
+
+Some of the above items that are not currently synchronized are expected to be available in future IRIDA versions.
 
 #### Connecting to a remote instance of IRIDA
 
@@ -330,7 +347,7 @@ After you have selected your project, you can select a synchronization frequency
 
 ![Synchronize details](images/synchronize-details.png)
 
-The advanced section allows you to manually paste in an IRIDA project's REST URL rather than selecting it from the projects dropdown.  This option should only be used by advanced IRIDA users.
+If you know the URL of the project you want to synchronize, you can directly add the url by checking the `Set URL Manually` and entering it into the input field.
 
 Once your project and an appropriate synchronization frequency have been selected, click the **Synchronize Project** button to create your project.
 
@@ -345,7 +362,20 @@ The status section will be one of the following messages:
 * `Synchronized` - This project is up to date since the last project synchronization job has been run.
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
 * `Error` - An error occurred during the last project synchronization job.
-* `Unsynchronized` - This project will no longer be synchronized.   
+* `Unsynchronized` - This project will no longer be synchronized. 
+
+#### Reconnecting after token expiry
+
+Occasionally the token used for synchronizing a remote project may expire at which point the project will need to be reconnected.  When this token expires, the synchronization user for the project (usually the person who created the project) will receive an email notifying them that the connection has expired and they must reconnect.
+
+To re-connect after an expired token:
+* Go to the project/settings/remote page. [Docs about this page are above](#remote-project-settings).
+* Check the "Synchronization User" field.  If you are not this user, you should stop and inform them that they must perform this task.
+* Check the "Remote Connection" section.  If the token is invalid, it should say "Expired/invalid token" and have a "Connect" button.
+* Click the "Connect" button and follow the prompts to re-connect to the remote IRIDA installation.
+* After the token is refreshed, click the "Sync Now" button at the top of the page.  This will re-initialize the sync job and it will be added to the queue to refresh.
+
+![Delete project](images/sync-expired.png)
 
 Deleting a project
 ------------------

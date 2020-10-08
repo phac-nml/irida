@@ -1,106 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  data-layout-decorate="~{template/base}">
-<head>
-	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
-	<style>
-		.login__links a {
-			margin-top: 10px;
-			display: block;
-		}
-		.carousel-control {
-            opacity: 0;
-        }
-        .carousel-control:hover, .carousel-control:focus {
-            opacity: 0;
-        }
-        .carousel-indicators li {
-            visibility: hidden;
-        }
-	</style>
-</head>
-<body>
-<th:block layout:fragment="content">
-	<main class="login container" role="main" property="mainContentOfPage">
-		<h1 class="page-header" th:text="#{login.title}"></h1>
-		<section>
-			<div class="row" style="margin-bottom: 30px">
-				<div class="col-md-6">
-					<form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
-						<div th:if="${error}" class="error alert alert-danger">
-							<strong th:text="#{login.error}"></strong>
-						</div>
-						<div class="form-group">
-							<label for="emailTF" th:text="#{login.username}">Username</label>
-							<!-- TODO: this needs to be an email field once set up in api project -->
-							<input type="text" class="form-control input-full" id="emailTF" name="username"
-							       th:placeholder="#{login.username}" autofocus="true" placeholder="Enter email"/>
-						</div>
-						<div class="form-group">
-							<label for="passwordTF" th:text="#{global.password.label}">Password</label> <input
-							type="password" class="form-control input-full" id="passwordTF"
-							name="password"
-							th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
-						</div>
-						<div class="row">
-							<div class="col-md-12"><button id="submitBtn" type="submit" class="btn btn-primary" th:text="#{login.btn}">Submit
-							</button>
-							<a class="btn btn-link" href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}" th:if="${emailConfigured}">
-								Reset Password
-							</a>
-							<a class="btn btn-link" href="#" th:href="@{/password_reset/activate}" th:if="${emailConfigured}">Activate Account</a></div>
-						</div>
-					</form>
-				</div>
-				<div class="col-md-6">
-					<h2 th:utext="#{dashboard.heading}"></h2>
-					<p th:utext="#{dashboard.body}"></p>
-				</div>
-			</div>
-		</section>
-		<section class="row">
-			<div class="col-md-12" ng-controller="ImageController as imgController">
-				<uib-carousel interval="5000">
-					<uib-slide ng-repeat="slide in imgController.slides" active="slide.active">
-						<img ng-src="{{slide.image}}" style="margin:auto;"/>
-					</uib-slide>
-				</uib-carousel>
-			</div>
-		</section>
-	</main>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale}">
+  <head>
+    <title th:text="#{LoginPage.title}">THIS IS SOMETHING WRONG</title>
+    <script th:inline="javascript">
+      window.TL = {
+        _BASE_URL: /*[[@{/}]]*/ "/",
+        emailConfigured: /*[[${emailConfigured}]]*/ false
+      };
+    </script>
+    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+    <style>
+      body {
+        display: flex;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      #login-root {
+        max-width: 400px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-root">
+      <!-- Contents rendered from LoginPage.jsx -->
+    </div>
 
-	<script th:src="@{/dist/js/angular-st.bundle.js}"></script>
-	<script src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"
-	        th:src="@{/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js}"></script>
-
-	<script th:inline="javascript">
-    /*<![CDATA[*/
-		var slideUrls = [
-			{'image': /*[[@{/resources/img/irida-logos-1.png}]]*/ "slide1"
-			},
-			{'image': /*[[@{/resources/img/irida-logos-2.png}]]*/ "slide1"
-			},
-			{'image': /*[[@{/resources/img/irida-logos-3.png}]]*/ "slide1"
-			},
-			{'image': /*[[@{/resources/img/irida-logos-4.png}]]*/ "slide1"
-			}
-		];
-
-		function ImageController($scope) {
-			"use strict";
-			var vm = this;
-			vm.slides = window.slideUrls;
-		}
-
-		angular.module('irida', ['ui.bootstrap'])
-			.controller('ImageController', ['$scope', ImageController])
-		;
-
-		// Clear any old session data
-		sessionStorage.clear();
-		/*]]>*/
-	</script>
-</th:block>
-</body>
+    <script th:src="@{/dist/js/login.bundle.js}"></script>
+  </body>
 </html>

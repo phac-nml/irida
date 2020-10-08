@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PagedTableContext } from "../../contexts/PagedTableContext";
-import { Button, Icon, Popconfirm, Table } from "antd";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import { Button, Popconfirm } from "antd";
 import {
   dateColumnFormat,
   nameColumnFormat
@@ -11,11 +11,17 @@ import {
   fetchAllPipelinesTypes
 } from "../../apis/analysis/analysis";
 import { AnalysisState } from "./AnalysisState";
-import { getI18N } from "../../utilities/i18n-utilties";
-import { getHumanizedDuration } from "../../utilities/date-utilities.js";
+import { AnalysisDuration } from "./AnalysisDuration";
 import { getTextSearchProps } from "../ant.design/table-search-props";
-import { blue6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { AnalysesQueue } from "./../AnalysesQueue";
+import { AnalysisDownloadButton} from "./AnalysisDownloadButton";
+import { IconTableFilter} from "../icons/Icons";
+
+// Used to poll for changes in state and duration
+// Set to 1 minute
+const UPDATE_PROGRESS_DELAY = 60000;
 
 /**
  * Displays the Analyses Table for both user and admin pages.
@@ -24,14 +30,7 @@ import { SPACE_MD } from "../../styles/spacing";
  */
 export function AnalysesTable() {
   const CAN_MANAGE = window.PAGE.canManage;
-  const {
-    loading,
-    total,
-    pageSize,
-    dataSource,
-    handleTableChange,
-    updateTable
-  } = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   /**
    * Handler for deleting an analysis.
@@ -59,55 +58,37 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: `${window.TL.BASE_URL}analysis/`,
-        width: 300
+        url: setBaseUrl(`analysis`)
       }),
-      title: getI18N("analyses.analysis-name"),
+      title: i18n("analyses.analysis-name"),
       key: "name",
       ...getTextSearchProps("name")
     },
     {
-      title: getI18N("analyses.state"),
+      title: i18n("analyses.state"),
       key: "state",
       dataIndex: "state",
       filterMultiple: true,
       filters: pipelineStates,
-      width: 150,
       filterIcon(filtered) {
-        return (
-          <Icon
-            type="filter"
-            theme="filled"
-            style={{ color: filtered ? blue6 : undefined }}
-            className="t-state"
-          />
-        );
+        return <IconTableFilter className="t-state" filtered={filtered} />;
       },
-      render(state) {
-        return <AnalysisState state={state} />;
+      render(state, data) {
+        return <AnalysisState state={state} analysisId={data.id} updateDelay={UPDATE_PROGRESS_DELAY} />;
       }
     },
     {
-      title: getI18N("analyses.type"),
+      title: i18n("analyses.type"),
       key: "type",
-      width: 250,
       dataIndex: "type",
       filterMultiple: true,
       filterIcon(filtered) {
-        return (
-          <Icon
-            type="filter"
-            theme="filled"
-            style={{ color: filtered ? blue6 : undefined }}
-            className="t-type"
-          />
-        );
+        return <IconTableFilter className="t-type" filtered={filtered} />;
       },
       filters: pipelineTypes
     },
     {
-      title: getI18N("analyses.submitter"),
-      width: 200,
+      title: i18n("analyses.submitter"),
       key: "submitter",
       sorter: true,
       dataIndex: "submitter"
@@ -119,12 +100,11 @@ export function AnalysesTable() {
       key: "createdDate"
     },
     {
-      title: getI18N("analysis.duration"),
+      title: i18n("analysis.duration"),
       key: "duration",
-      width: 150,
       dataIndex: "duration",
-      render(timestamp) {
-        return getHumanizedDuration({ date: timestamp });
+      render(duration, data) {
+        return <AnalysisDuration state={data.state} duration={duration} analysisId={data.id} updateDelay={UPDATE_PROGRESS_DELAY} />
       }
     },
     {
@@ -132,15 +112,7 @@ export function AnalysesTable() {
       key: "download",
       fixed: "right",
       render(text, record) {
-        return (
-          <Button
-            shape="circle-outline"
-            disabled={record.state.value !== "COMPLETED"  }
-            href={`${window.TL.BASE_URL}ajax/analyses/download/${record.id}`}
-            download
-            icon="download"
-          />
-        );
+        return <AnalysisDownloadButton state={record.state.value} analysisId={record.id} updateDelay={UPDATE_PROGRESS_DELAY} />
       }
     }
   ];
@@ -157,37 +129,42 @@ export function AnalysesTable() {
     };
   }
 
+  const buttons = (
+    <Popconfirm
+      placement="bottomRight"
+      title={i18n("analyses.delete-confirm").replace(
+        "[COUNT]",
+        selected.length
+      )}
+      onVisibleChange={visible => setDeleting(visible)}
+      onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
+    >
+      <Button
+        className="t-delete-selected"
+        loading={deleting}
+        disabled={!selected.length}
+        onClick={() => setDeleting(true)}
+      >
+        {i18n("analyses.delete")}
+      </Button>
+    </Popconfirm>
+  );
+
   return (
     <div>
-      <div style={{ marginBottom: SPACE_MD }}>
-        <Popconfirm
-          placement="bottomRight"
-          title={getI18N("analyses.delete-confirm").replace(
-            "[COUNT]",
-            selected.length
-          )}
-          onVisibleChange={visible => setDeleting(visible)}
-          onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
-        >
-          <Button
-            className="t-delete-selected"
-            loading={deleting}
-            disabled={!selected.length}
-            onClick={() => setDeleting(true)}
-          >
-            {getI18N("analyses.delete")}
-          </Button>
-        </Popconfirm>
+      <div
+        style={{
+          marginBottom: SPACE_MD,
+          display: "flex",
+          flexDirection: "row-reverse"
+        }}
+      >
+        <AnalysesQueue />
       </div>
-      <Table
-        rowSelection={rowSelection}
-        scroll={{ x: "max-content" }}
-        rowKey={record => record.id}
-        loading={loading}
-        pagination={{ total, pageSize }}
+      <PagedTable
+        buttons={buttons}
         columns={columns}
-        dataSource={dataSource}
-        onChange={handleTableChange}
+        rowSelection={rowSelection}
       />
     </div>
   );

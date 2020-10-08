@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -103,12 +104,12 @@ public class ReadAnalysisSubmissionPermissionTest {
 		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
 		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1L);
+		verify(analysisSubmissionRepository).findById(1L);
 	}
 
 	/**
@@ -127,7 +128,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
 		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, analysisSubmission));
 
@@ -151,12 +152,12 @@ public class ReadAnalysisSubmissionPermissionTest {
 		analysisSubmission.setSubmitter(new User());
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
 		assertFalse("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1L);
+		verify(analysisSubmissionRepository).findById(1L);
 	}
 
 	/**
@@ -169,8 +170,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1", roles);
 
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(AnalysisSubmission.builder(workflowId).name("test")
-				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build());
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(AnalysisSubmission.builder(workflowId).name("test")
+				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build()));
 		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
@@ -202,7 +203,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(false);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
 		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
 				.thenReturn(ImmutableSet.of(pair));
@@ -210,7 +211,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1L);
+		verify(analysisSubmissionRepository).findById(1L);
 		verify(seqObjectPermission).customPermissionAllowed(auth, pair);
 	}
 	
@@ -239,7 +240,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(false);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 		when(seqObjectPermission.customPermissionAllowed(auth, pair)).thenReturn(true);
 		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
 				.thenReturn(ImmutableSet.of(pair));
@@ -247,7 +248,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1L);
+		verify(analysisSubmissionRepository).findById(1L);
 		verify(seqObjectPermission).customPermissionAllowed(auth, pair);
 	}
 
@@ -268,14 +269,14 @@ public class ReadAnalysisSubmissionPermissionTest {
 				.thenReturn(ImmutableList.of(new ProjectAnalysisSubmissionJoin(p, analysisSubmission)));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
 		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(true);
 
 		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(analysisSubmissionRepository).findOne(1L);
+		verify(analysisSubmissionRepository).findById(1L);
 	}
 
 }

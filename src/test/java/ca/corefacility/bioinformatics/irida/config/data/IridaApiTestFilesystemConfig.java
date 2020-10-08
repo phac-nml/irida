@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 @Configuration
 @Profile({ "test", "it" })
 public class IridaApiTestFilesystemConfig {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiTestFilesystemConfig.class);
 
 	private Set<Path> baseDirectory = new HashSet<>();
@@ -40,22 +40,22 @@ public class IridaApiTestFilesystemConfig {
 	}
 
 	/**
-	 	Path to root of temporary directory where tests will copy files for use in Galaxy
+	 * Path to root of temporary directory where tests will copy files for use in Galaxy
 	 */
 	@Bean(name = "rootTempDirectory")
 	public Path rootTempDirectory() {
-		
+
 		String rootTempDirectory = "/tmp/irida";
-		
+
 		/*
 		 * Set irida.it.rootdirectory property to change root test file
 		 * directory
 		 */
 		String configuredRoot = System.getProperty("irida.it.rootdirectory");
-		if(configuredRoot != null){
+		if (configuredRoot != null) {
 			rootTempDirectory = configuredRoot;
 		}
-		
+
 		return Paths.get(rootTempDirectory);
 	}
 
@@ -76,12 +76,21 @@ public class IridaApiTestFilesystemConfig {
 		baseDirectory.add(b);
 		return b;
 	}
-	
+
 	@Bean(name = "outputFileBaseDirectory")
 	public Path outputFileBaseDirectory() throws IOException {
 		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-output-file-dir",
 				PosixFilePermissions.asFileAttribute(permissions));
 		logger.info("Created directory for output files at [" + b.toString() + "] for integration test");
+		baseDirectory.add(b);
+		return b;
+	}
+
+	@Bean(name = "assemblyFileBaseDirectory")
+	public Path assemblyFileBaseDirectory() throws IOException {
+		Path b = Files.createTempDirectory(rootTempDirectory(), "irida-assembly-file-dir",
+				PosixFilePermissions.asFileAttribute(permissions));
+		logger.info("Created directory for assembly files at [" + b.toString() + "] for integration test");
 		baseDirectory.add(b);
 		return b;
 	}

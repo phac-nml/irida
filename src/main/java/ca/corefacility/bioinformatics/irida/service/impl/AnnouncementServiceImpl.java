@@ -10,7 +10,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -100,11 +100,11 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
 
     /**
      * {@inheritDoc}
-     */
+	 */
     @Override
     @Transactional
     @PreAuthorize("hasAnyRole('ROLE_USER')")
-    public Page<Announcement> search(Specification<Announcement> specification, PageRequest request) {
+    public Page<Announcement> search(Specification<Announcement> specification, Pageable request) {
         return super.search(specification, request);
     }
 
@@ -136,7 +136,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
         try {
             final AnnouncementUserJoin join = announcementUserJoinRepository.getAnnouncementUserJoin(announcement, user);
             Long id = join.getId();
-            announcementUserJoinRepository.delete(id);
+            announcementUserJoinRepository.deleteById(id);
         } catch (NullPointerException e) {
             throw new EntityNotFoundException("The user [" + user.getId() + "] has not yet read announcement ["
                     + announcement.getId() + "]: cannot mark as unread.");

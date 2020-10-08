@@ -27,12 +27,12 @@ Important links
 Languages and Libraries
 -----------------------
 
-IRIDA is a Java application developed using Java 8.
+IRIDA is a Java application developed using Java 11.
 
 #### Spring framework
 {:.no_toc}
 
-Documentation: [http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/](http://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/)
+Documentation: <https://docs.spring.io/spring-framework/docs/5.2.2.RELEASE/spring-framework-reference/>
 
 IRIDA uses the Spring Framework as the main backbone of the application.  Spring is used to assist with many of the main functions of the application including configuration, dependency injection, MVC, REST API, Java persistance API management, and more.
 
@@ -97,13 +97,13 @@ An (incomplete) set of instructions for getting the IRIDA service layer and web 
 * Clone IRIDA from the IRIDA [GitHub][].
 * Install the following dependencies from your chosen package manager:
   * MariaDB
-  * Java 8 JDK
+  * Java 11 JDK
   * Apache Maven
 * Run the library installation script in the `lib/` directory:
 
 ```
 cd irida/lib/
-bash install-libs.sh
+./install-libs.sh
 ```
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 * Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
@@ -141,7 +141,7 @@ Running and building IRIDA
 
 #### Running a development server
 
-An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the databse using test data.
+An IRIDA development server can be run with the `run.sh` script available in the project root directory.  The script has one option `--create-db`.  Using this option will automatically drop and recreate the database using test data. A newly created development database will contain the profile `admin`, with password `password1`, that can be used to log in to IRIDA.
 
 Running the `run.sh` without arguments script is equivalent to running:
 
@@ -224,7 +224,7 @@ As the integration tests simulate a running IRIDA installation, in order to run 
 ./run-tests.sh <TEST PROFILE>
 ```
 
-This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destory this Docker image afterwards (you can skip destorying the Docker image by passing `--no-kill-docker` to this script).  In order to not overwrite the database **irida_integration_test** you may pass the name of a new database as:
+This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destroy this Docker image afterwards (you can skip destroying the Docker image by passing `--no-kill-docker` to this script).  If you wish to use a different database than the default **irida_integration_test**, you may pass the name of the database with the `-d` flag:
 
 ```bash
 ./run-tests.sh -d <DATABASE> <TEST PROFILE>
@@ -422,7 +422,7 @@ While in development we use Hibernate to manage our database changes, in product
 
 Liquibase allows you to create changesets for an application's database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
 
-When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database.This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a pull request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  If you've modified any tables in the database it's also worth testing whether those changes can be properly migrated from an existing production database.  To do this you should take a dump of a production IRIDA database, load the dump up on your development machine, and run a server in `prod` profile to ensure the database upgrades correctly.
+When we're doing development, Liquibase is generally not used.  Instead we generally rely on Hibernate's HBM2DDL module which allows us to directly make changes to the model classes and those changes will be reflected into the database. This can be enabled by running IRIDA in the `dev` Spring profile.  Additionally when running in the `dev` profile example data from `src/main/resounrces/ca/corefacility/bioinformatics/irida/sql` will be loaded into the database for test purpose.  Since HBM2DDL is not to be used in production environments, before creating a pull request you should add any changes that are made to the database to a new changeset XML file and test that the database is correctly built in the `prod` Spring profile.  If you've modified any tables in the database it's also worth testing whether those changes can be properly migrated from an existing production database.  To do this you should take a dump of a production IRIDA database, load the dump up on your development machine, and run a server in `prod` profile to ensure the database upgrades correctly.
 
 You can find the existing Liquibase changeset files in `/src/manin/resounces/ca/corefacility/bioinformatics/irida/database/changesets`.
 

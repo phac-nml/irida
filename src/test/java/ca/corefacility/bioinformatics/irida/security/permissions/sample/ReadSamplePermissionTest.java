@@ -12,6 +12,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,14 +67,14 @@ public class ReadSamplePermissionTest {
 		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.findOne(1L)).thenReturn(s);
+		when(sampleRepository.findById(1L)).thenReturn(Optional.of(s));
 		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(true);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1L));
 
-		verify(sampleRepository).findOne(1L);
+		verify(sampleRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
 		verify(readProjectPermission).isAllowed(any(), eq(p));
 	}
@@ -89,7 +92,7 @@ public class ReadSamplePermissionTest {
 		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.findOne(1L)).thenReturn(s);
+		when(sampleRepository.findById(1L)).thenReturn(Optional.of(s));
 		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(true);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -114,14 +117,14 @@ public class ReadSamplePermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
-		when(sampleRepository.findOne(1L)).thenReturn(s);
+		when(sampleRepository.findById(1L)).thenReturn(Optional.of(s));
 		when(readProjectPermission.isAllowed(any(), eq(p))).thenReturn(false);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
 		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1L));
 
-		verify(sampleRepository).findOne(1L);
+		verify(sampleRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
 	}
 
@@ -131,7 +134,7 @@ public class ReadSamplePermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
-		when(sampleRepository.findOne(1L)).thenReturn(new Sample());
+		when(sampleRepository.findById(1L)).thenReturn(Optional.of(new Sample()));
 
 		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1L));
 

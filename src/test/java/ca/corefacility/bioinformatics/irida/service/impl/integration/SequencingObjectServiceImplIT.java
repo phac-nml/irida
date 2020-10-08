@@ -251,7 +251,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(1, sequencesForSampleOfType.size());
 		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
 
-		assertEquals(new Long(4), join.getObject().getId());
+		assertEquals(Long.valueOf(4), join.getObject().getId());
 	}
 
 	@Test
@@ -264,7 +264,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(1, sequencesForSampleOfType.size());
 		SampleSequencingObjectJoin join = sequencesForSampleOfType.iterator().next();
 
-		assertEquals(new Long(2), join.getObject().getId());
+		assertEquals(Long.valueOf(2), join.getObject().getId());
 	}
 
 	@Test
@@ -362,6 +362,10 @@ public class SequencingObjectServiceImplIT {
 				Thread.sleep(1000);
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
+		
+		//one more sleep to make sure everything's settled
+		Thread.sleep(1000);
+
 		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
@@ -495,7 +499,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s2 = objectService.read(2L);
 
-		sampleRepository.delete(1L);
+		sampleRepository.deleteById(1L);
 
 		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
 	}

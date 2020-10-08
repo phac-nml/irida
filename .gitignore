@@ -6,7 +6,6 @@ target/
 .checkstyle
 build/
 .DS_Store/
-/src/main/webapp/resources/bower_components/
 irida.iml
 phantomjsdriver.log
 node_modules
@@ -15,6 +14,7 @@ node_modules
 doc/_site
 *.swp
 /.idea/
-src/main/webapp/resources/css
 src/main/webapp/node
 /src/main/webapp/dist
+/src/main/webapp/pages/templates/i18n/*.html
+/doc/.jekyll-cache/Jekyll/Cache/

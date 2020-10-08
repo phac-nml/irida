@@ -4,7 +4,6 @@
       data-layout-decorate="~{sequenceFiles/_base}">
 <head>
     <title th:text="${file.getLabel()}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/dist/css/overrepresented.bundle.css}">
 </head>
 <body>
 <div layout:fragment="main">
@@ -31,9 +30,5 @@
     </table>
 </div>
 <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
-
-<th:block layout:fragment="pageScripts" th:inline="javascript">
-    <script th:src="@{/dist/js/overrepresented.bundle.js}"></script>
-</th:block>
 </body>
 </html>

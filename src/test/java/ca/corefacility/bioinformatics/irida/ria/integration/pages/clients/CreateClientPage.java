@@ -1,12 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.clients;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class CreateClientPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(CreateClientPage.class);
@@ -15,10 +14,14 @@ public class CreateClientPage extends AbstractPage {
 
 	public CreateClientPage(WebDriver driver) {
 		super(driver);
+	}
+
+	public void goTo() {
 		get(driver, CREATE_PAGE);
 	}
 
-	public void createClientWithDetails(String id, String grant, boolean scope_read, boolean scope_write) {
+	public void createClientWithDetails(String id, String grant, String redirectUri, boolean scope_read,
+			boolean scope_write) {
 		logger.trace("Creating client with id: " + id + " and grant: " + grant);
 
 		WebElement idField = driver.findElement(By.id("clientId"));
@@ -27,12 +30,20 @@ public class CreateClientPage extends AbstractPage {
 		WebElement grantField = driver.findElement(By.id("authorizedGrantTypes"));
 		grantField.sendKeys(grant);
 
+		//if we have a redirect uri, enter it
+		if (redirectUri != null && !redirectUri.isEmpty()) {
+			WebElement redirectField = driver.findElement(By.id("registeredRedirectUri"));
+			redirectField.sendKeys(redirectUri);
+		}
+
 		WebElement submit = driver.findElement(By.id("create-client-submit"));
 
 		//The read scope has been selected by default:
 		if (scope_write) {
-			driver.findElement(By.id("scope_read")).click();
-			driver.findElement(By.id("scope_write")).click();
+			driver.findElement(By.id("scope_read"))
+					.click();
+			driver.findElement(By.id("scope_write"))
+					.click();
 		}
 
 		submit.click();
@@ -41,7 +52,8 @@ public class CreateClientPage extends AbstractPage {
 	public boolean checkSuccess() {
 		try {
 			WebElement el = waitForElementVisible(By.className("client-details-heading"));
-			return el.getText().equals("Client Details");
+			return el.getText()
+					.equals("Client Details");
 		} catch (Exception e) {
 			return false;
 		}

@@ -92,7 +92,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	@PreAuthorize("hasAnyRole('ROLE_SEQUENCER','ROLE_ADMIN')")
 	public void addSequencingObjectToSequencingRun(SequencingRun run, SequencingObject seqobject) {
 		// attach a copy of the file to the current transaction.
-		seqobject = objectRepository.findOne(seqobject.getId());
+		seqobject = objectRepository.findById(seqobject.getId()).orElse(null);
 		seqobject.setSequencingRun(run);
 		objectRepository.save(seqobject);
 	}
@@ -165,7 +165,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 			List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
 			if (sequencesForSample.isEmpty()) {
 				logger.trace("Sample " + sample.getId() + " is empty.  Deleting sample");
-				sampleRepository.delete(sample.getId());
+				sampleRepository.deleteById(sample.getId());
 			}
 		}
 	}

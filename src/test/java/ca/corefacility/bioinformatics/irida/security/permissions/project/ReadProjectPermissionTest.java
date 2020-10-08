@@ -10,6 +10,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +72,7 @@ public class ReadProjectPermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(projectRepository.findOne(1L)).thenReturn(p);
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
@@ -77,7 +80,7 @@ public class ReadProjectPermissionTest {
 		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(projectRepository).findOne(1L);
+		verify(projectRepository).findById(1L);
 		verify(pujRepository).getUsersForProject(p);
 	}
 
@@ -91,7 +94,7 @@ public class ReadProjectPermissionTest {
 		projectUsers.add(new ProjectUserJoin(p, new User(), ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(projectRepository.findOne(1L)).thenReturn(p);
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));
 		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
 		when(ugpjRepository.findGroupsByProject(p)).thenReturn(ImmutableList.of());
 
@@ -100,7 +103,7 @@ public class ReadProjectPermissionTest {
 		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(projectRepository).findOne(1L);
+		verify(projectRepository).findById(1L);
 		verify(pujRepository).getUsersForProject(p);
 		verifyZeroInteractions(ugRepository);
 	}
@@ -111,7 +114,7 @@ public class ReadProjectPermissionTest {
 		roles.add(Role.ROLE_ADMIN);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
-		when(projectRepository.findOne(1L)).thenReturn(new Project());
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(new Project()));
 
 		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
 
@@ -130,7 +133,7 @@ public class ReadProjectPermissionTest {
 		projectGroups.add(new UserGroupProjectJoin(p, g, ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
-		when(projectRepository.findOne(1L)).thenReturn(p);
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));
 		when(pujRepository.getUsersForProject(p)).thenReturn(ImmutableList.of());
 		when(ugpjRepository.findGroupsByProject(p)).thenReturn(projectGroups);
 		when(ugRepository.findUsersInGroup(g))
@@ -141,7 +144,7 @@ public class ReadProjectPermissionTest {
 		assertTrue("permission should be granted by user group.", readProjectPermission.isAllowed(auth, 1L));
 
 		verify(userRepository).loadUserByUsername(username);
-		verify(projectRepository).findOne(1L);
+		verify(projectRepository).findById(1L);
 		verify(pujRepository).getUsersForProject(p);
 	}
 }

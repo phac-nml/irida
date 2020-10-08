@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -39,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@Column(name = "file_path", unique = true)
@@ -147,7 +149,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	}
 
 	@com.fasterxml.jackson.annotation.JsonIgnore
-	public final ToolExecution getCreatedByTool() {
+	public ToolExecution getCreatedByTool() {
 		return createdByTool;
 	}
 
@@ -174,5 +176,16 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 		}
 
 		return false;
+	}
+
+	/**
+	 * Read the bytes for an image output file
+	 *
+	 * @return the bytes for the file
+	 * @throws IOException if the file couldn't be read
+	 */
+	public byte[] getBytesForFile() throws IOException  {
+		byte[] bytes = Files.readAllBytes(getFile());
+		return bytes;
 	}
 }

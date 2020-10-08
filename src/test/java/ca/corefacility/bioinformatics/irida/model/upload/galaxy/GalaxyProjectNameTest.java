@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectN
  *
  */
 public class GalaxyProjectNameTest {
-	
+
 	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 	private ResourceBundle b;
@@ -40,57 +40,57 @@ public class GalaxyProjectNameTest {
 		ValidatorFactory factory = configuration.buildValidatorFactory();
 		validator = factory.getValidator();
 	}
-	
+
 	@Test
 	public void testNullName() {
 		GalaxyProjectName name = new GalaxyProjectName(null);
-		
+
 		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
 		assertEquals(b.getString("galaxy.object.notnull"), constraintViolations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void testEmptyName() {
 		GalaxyProjectName name = new GalaxyProjectName("");
-		
+
 		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
 		assertEquals(b.getString("galaxy.object.size"), constraintViolations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void testShortName() {
 		GalaxyProjectName name = new GalaxyProjectName("a");
-		
+
 		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(1, constraintViolations.size());
 		assertEquals(b.getString("galaxy.object.size"), constraintViolations.iterator().next().getMessage());
 	}
-	
+
 	@Test
 	public void testValidName() {
 		GalaxyProjectName name = new GalaxyProjectName("Abc123 _-.'");
-		
+
 		Set<ConstraintViolation<GalaxyProjectName>> constraintViolations
 			= validator.validate(name);
 
 		assertEquals(0, constraintViolations.size());
 	}
-	
+
 	@Test
-	public void testBlacklistedCharactersInGalaxyProjectName() {
-		testBlacklists(ValidProjectName.ValidProjectNameBlacklist.BLACKLIST);
+	public void testBlocklistedCharactersInGalaxyProjectName() {
+		testBlocklists(ValidProjectName.ValidProjectNameBlocklist.BLOCKLIST);
 	}
 
-	private void testBlacklists(char[] blacklist) {
-		for (char c : blacklist) {
+	private void testBlocklists(char[] blocklist) {
+		for (char c : blocklist) {
 			GalaxyProjectName p = new GalaxyProjectName("Abc123 _-.'" + c);
 			Set<ConstraintViolation<GalaxyProjectName>> violations = validator.validate(p);
 			assertEquals("Wrong number of violations.", 1, violations.size());

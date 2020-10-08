@@ -1,14 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import ca.corefacility.bioinformatics.irida.utils.NullReplacementDatasetLoader;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.github.springtestdbunit.annotation.DbUnitConfiguration;
-import com.google.common.base.Strings;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,11 +26,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.utils.NullReplacementDatasetLoader;
+import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.google.common.base.Strings;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Common functionality to all UI integration tests.
@@ -102,22 +108,39 @@ public class AbstractIridaUIITChromeDriver {
 					"Starting ChromeDriver for a single test class. Using `chromedriver` at '" + System.getProperty(
 							CHROMEDRIVER_PROP_KEY) + "'");
 			isSingleTest = true;
-            IntegrationUITestListener.startWebDriver();
-        }
+			IntegrationUITestListener.startWebDriver();
+		}
 
-        return IntegrationUITestListener.driver();
+		return IntegrationUITestListener.driver();
 
-    }
+	}
 
-    /**
-     * Simple test watcher for taking screenshots of the browser on failure.
-     *
-     */
-    private static class ScreenshotOnFailureWatcher extends TestWatcher {
+	/**
+	 * Method to use on any page to check to ensure that internationalization messages are being
+	 * automatically loaded onto the page.
+	 *
+	 * @param page    - the instance of {@link AbstractPage} to check for internationalization.
+	 * @param entries - a {@link List} of bundle names.  This will correspond to the loaded webpack bundles.
+	 * @param header  - Expected text for the main heading on the page.  Needs to have class name `t-main-heading`
+	 */
+	public void checkTranslations(AbstractPage page, List<String> entries, String header) {
+		// Always check for app :)
+		assertTrue("Translations should be loaded for the  app bundle", page.ensureTranslationsLoaded("app"));
+		entries.forEach(entry -> assertTrue("Translations should be loaded for " + entry + " bundle",
+				page.ensureTranslationsLoaded(entry)));
+		if (!Strings.isNullOrEmpty(header)) {
+			assertTrue("Page title has been properly translated", page.ensurePageHeadingIsTranslated(header));
+		}
+	}
 
-    	private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
+	/**
+	 * Simple test watcher for taking screenshots of the browser on failure.
+	 */
+	private static class ScreenshotOnFailureWatcher extends TestWatcher {
 
-    	/**
+		private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
+
+		/**
     	 * {@inheritDoc}
     	 */
     	@Override

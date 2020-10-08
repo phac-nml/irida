@@ -52,7 +52,7 @@ Once you've logged in, you can proceed to the [dashboard overview](../dashboard)
 Resetting your password
 -----------------------
 
-If you have forgotten your IRIDA password, you can have IRIDA reset your password. From the login page, click on the "Reset Password" link:
+If you have forgotten your IRIDA password, you can have IRIDA reset your password. From the login page, click on the "Forgot Password" link:
 
 ![IRIDA login screen, password reset highlighted.](images/irida-login-password-reset.png)
 

@@ -28,7 +28,7 @@ import org.hibernate.envers.Audited;
 public class IdentifiableTestEntity extends IridaResourceSupport implements IridaThing, Comparable<IdentifiableTestEntity> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

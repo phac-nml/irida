@@ -19,7 +19,7 @@ Phylogenetic trees created by the SNVPhyl Analysis Pipeline can be combined with
 
 Sample metadata can be added to the sample using the sample metadata uploader (see [Sample Metadata](../sample-metadata) for how to import).
 
-To get to the advanced visualization page, there is a button in the left sidebar on the analysis results:
+To get to the advanced visualization page, on the analysis page, click the `View Advanced Visualization` button on the `Phylogenetic Tree` tab:
 
 ![Link to advanced analysis on analysis results page](images/viz_link.png)
 
@@ -31,7 +31,7 @@ To get to the advanced visualization page, there is a button in the left sidebar
 
 #### Toggling Sample Metadata Fields
 
-Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying the toggles for all the fields.  
+Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying a list of metadata fields with checkboxes to make them visible or hidden.  
 
 ![Open metadata selection btn](images/toggle_metadata_button.png)
 
@@ -39,7 +39,7 @@ Individual metadata field by clicking on the field label in the side panel.
 
 ![Toggle metadata field](images/toggle_metadatafield.png)
 
-After selecting 'PFGE-BlnI-pattern' the toggle is set to off and the metadata column is removed from the image.
+After unchecking the checkbox next to 'Province' the metadata column is removed from the image.
 
 ![Result of removing 'PFGE-BlnI-pattern'](images/toggle_metadatafield_after.png)
 

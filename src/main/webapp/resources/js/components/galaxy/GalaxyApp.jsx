@@ -1,12 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { GalaxyStateProvider } from "./GalaxyState";
 import { initialState, reducer } from "./reducer";
-import {
-  Card,
-  Col,
-  Row
-} from "antd";
+import { Card, Col, Row } from "antd";
 import { GalaxyDetailsForm } from "./GalaxyDetailsForm";
 import { GalaxySamples } from "./GalaxySamples";
 import { GalaxySubmitError } from "./GalaxySubmitError";

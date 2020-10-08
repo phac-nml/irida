@@ -26,27 +26,21 @@ The SISTR pipeline can bet set up to run using two separate methods.
 
 ### 1. Automated Execution
 
-The SISTR pipeline can be set to run automatically on upload of new sequencing data to particular projects. This can be set either on the creation of a new project, or from the project settings page.
+The SISTR pipeline can be set to run automatically on upload of new sequencing data to particular projects.
 
-a. **Creation of New Project**
-
-   On creation of a new project, the below option can be selected to enable the automated execution of SISTR on upload of new data to this project.
-
-   ![new-project-sistr.png][]
-
-b. **Project Settings**
+**Project Settings**
 
    Automated SISTR analysis can also be enabled (or disabled) after a project is created from the project **Settings** page.
 
-   ![project-settings-sistr.png][]
+   ![project-settings-sistr.png](images/project-settings-sistr.png)
 
-If automated execution of SISTR has been enabled for a project, then a SISTR analysis will be scheduled for execution on the upload of new sequencing data.  The results are accessible from the particular sample page.
+If automated execution of SISTR has been enabled for a project, then a SISTR analysis will be scheduled for execution on the upload of new sequencing data.  The results are accessible from the particular `Project` > `Analyses` page.
 
-![sistr-typing-sample.png][]
+![sistr-typing-analysis-page.png](images/sistr-typing-analysis-page.png)
 
 Clicking the **Automated SISTR Typing** link brings you to the appropriate analysis page for SISTR.
 
-![sistr-typing-status.png][]
+![sistr-typing-status.png](images/sistr-typing-status.png)
 
 ### 2. Manual Execution
 
@@ -54,23 +48,15 @@ To execute SISTR manually, please refer to the [IRIDA/SISTR Tutorial][].
 
 ## SISTR Results
 
-### Status of `PASS`
+A successful SISTR run should produce the following page as output. There are three possible Quality Control Statuses (Pass, Warning, and Fail)
 
-A successfull SISTR run (with status of `PASS`) should produce the following page as output.
+![sistr-results.png](images/sistr-results.png)
 
-![sistr-results.png][]
+The results are broken up into three different sections (SISTR Information, cgMLST330, and Mash).
 
-### Status of `WARNING`
+To view the output files and/or download the outputs, click the Output Files tab.
 
-A SISTR run with a status of `WARNING` should produce the below output.
-
-![sistr-results-warning.png][]
-
-### Status of `FAIL`
-
-An unsuccessfull SISTR run (with status of `FAIL`) should produce the following as output.
-
-![sistr-results-fail.png][]
+![sistr-results-outputs.png](images/sistr-results-outputs.png)
 
 ### Report
 
@@ -81,10 +67,10 @@ Interpretation of the produced output is as follows:
 Basic information on the sample and quality of the SISTR results.
 
 * **Sample Name**: The name of the sample used within this analysis.
-* **Quality Control Status**: A value of `PASS` or `FAIL` depending on the quality of the input genome as determined by SISTR.
+* **Quality Control Status**: A value of `PASS`, `FAIL`, or `WARNING` depending on the quality of the input genome as determined by SISTR.
 * **Quality Control Details**: In the case of a status of `WARNING` or `FAIL`, the particular reason why these results did not pass.
 
-#### 2. Serovar Predictions
+Serovar Predictions:
 
 The *in silico* serovar predictions generated from SISTR.
 
@@ -96,7 +82,7 @@ The *in silico* serovar predictions generated from SISTR.
 * **H2**: The H2 antigen based of off the detected *fljB* allele. If absent, a `-` is reported.
 * **O-antigen**: The O-antigen prediction (inferred from the overall serovar prediction).
 
-#### 3. cgMLST330
+#### 2. cgMLST330
 
 The results of additional predictions made using the SISTR cgMLST330 schema.
 
@@ -106,7 +92,7 @@ The results of additional predictions made using the SISTR cgMLST330 schema.
 * **Percent matching**: The percent of alleles perfectly matching the closest genome (e.g., _100% * Alleles matching genome/330_).
 * **cgMLST Sequence Type**: A SISTR Sequence Type number associated with the particular cgMLST profile. A sequence type will only be assigned when the full complement of 330 cgMLST genes are found (whether a perfect match or an imperfect but non-truncated match).
 
-#### 4. Mash
+#### 3. Mash
 
 The results of predictions made through comparisons using the software [Mash][]. Generally, cgMLST results are preferred over Mash.
 
@@ -120,9 +106,8 @@ The results of predictions made through comparisons using the software [Mash][].
 In addition to the report, the SISTR pipeline produces the following files available for download.
 
 * `sistr-cgmlst-profiles.csv`: A comma-separated values file listing the cgMLST allelic profile for the genome.
-* `assembly-status-with-repeats.txt`: Some basic statistics on the *de novo* assembly used by SISTR.
 * `sistr-alleles-out.json`: A JSON file containing details on each of the allele calls.
-* `contigs-with-repeats.fasta`: The set of contigs generated from the *de novo* assembly and used by SISTR.  This file could be uploaded to the [SISTR web application][sistr-web] for additional details and visualization of the results.
+* `shovill-contigs.fasta`: The set of contigs generated from the *de novo* assembly and used by SISTR.  This file could be uploaded to the [SISTR web application][sistr-web] for additional details and visualization of the results.
 * `sistr-predictions.json`: The SISTR prediction results used to generate the SISTR report.
 * `sistr-novel-alleles.fasta`: A list of any novel alleles that were detected by SISTR.
 

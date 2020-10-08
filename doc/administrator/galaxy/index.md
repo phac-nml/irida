@@ -15,7 +15,7 @@ Requirements
 
 Before proceeding with the integration of Galaxy and IRIDA, the following requirements need to be met.
 
-1. [Galaxy version >= **v16.01**][galaxy-versions] is required as IRIDA makes use of [conda with Galaxy][].  Earlier versions were supported previously, but are being phased out as more required tools are released under conda.  A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda], however this option will not be supported and is not recommended.
+1. [Galaxy version >= **v16.01**][galaxy-versions] is required as IRIDA makes use of [conda with Galaxy][].  Earlier versions were supported previously, but are now deprecated. A method to get newer conda-based tools to work with older Galaxy versions is described in our [FAQ][faq-conda], however this option will not be supported and is not recommended.
 2. The filesystem is shared between the machines serving IRIDA and Galaxy under the same paths (e.g., `/path/to/irida-data` on the IRIDA server is available as `/path/to/irida-data` on the Galaxy server).
 
 Quick Start
@@ -28,7 +28,7 @@ The easiest way to get Galaxy up and running for use with IRIDA is to use a cust
 # curl -sSL https://get.docker.com/ | sh
 
 # Run IRIDA/Galaxy docker
-docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-18.09
+docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-20.05
 ```
 
 Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (i.e., the parent directory of `{sequence,reference,output}.file.base.directory` in [/etc/irida/irida.conf][irida-conf]).
@@ -37,7 +37,7 @@ Now proceed to installing the [IRIDA web interface][irida-web], making sure to s
 
 ```
 galaxy.execution.url=http://localhost:48888
-galaxy.execution.apiKey=admin
+galaxy.execution.apiKey=fakekey
 galaxy.execution.email=admin@galaxy.org
 ```
 
@@ -73,7 +73,7 @@ The overall architecture of IRIDA and Galaxy is as follows:
 [IRIDA/Galaxy FAQ]: ../faq
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
 [galaxy-versions]: https://docs.galaxyproject.org/en/master/releases/index.html
-[faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
+[faq-conda]: ../faq/#4-installing-conda-dependencies-in-galaxy-versions--v1601
 [irida-conf]: ../web/#core-configuration
 [irida-web]: ../web/
 [galaxy-cleanup]: cleanup/

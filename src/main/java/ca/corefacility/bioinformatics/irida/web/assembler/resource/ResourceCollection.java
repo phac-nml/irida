@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 
 /**
@@ -14,13 +11,11 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
  *
  * @param <Type> The type of object in this collection
  */
-@XmlRootElement(name = "resource")
 public class ResourceCollection<Type> extends IridaResourceSupport implements Iterable<Type> {
 
     /**
      * A collection of resources to be serialized.
      */
-    @XmlElement
     private List<Type> resources;
 
     /**

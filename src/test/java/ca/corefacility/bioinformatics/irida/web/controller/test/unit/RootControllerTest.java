@@ -43,11 +43,12 @@ public class RootControllerTest {
         assertTrue(o instanceof RootResource);
         RootResource r = (RootResource) o;
         for (Link l : r.getLinks()) {
-            if (!l.getRel().equals("self")) {
+            if (!l.getRel().equals("self") && !l.getRel().equals("version")) {
                 assertTrue(controllers.containsKey(l.getRel()));
             }
         }
 
         assertNotNull(r.getLink("self"));
+        assertNotNull(r.getLink("version"));
     }
 }

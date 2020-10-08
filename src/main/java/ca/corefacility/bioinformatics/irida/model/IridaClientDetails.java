@@ -1,35 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -37,7 +9,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
-import com.google.common.collect.Maps;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.*;
 
 /**
  * Object representing a client that has been registered to communicate with
@@ -61,7 +37,7 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 2592000;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull
@@ -76,6 +52,9 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 
 	@NotNull
 	private String clientSecret;
+
+	@Column(name="redirect_uri")
+	private String registeredRedirectUri;
 
 	@Size(min = 1, message = "{client.details.scope.notempty}")
 	@NotNull
@@ -120,7 +99,8 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	/**
 	 * Default constructor with empty scopes, grant types, resource ids,
@@ -222,12 +202,17 @@ public class IridaClientDetails implements ClientDetails, MutableIridaThing {
 		return authorizedGrantTypes;
 	}
 
-	/**
-	 * No allowed predefined redirect URIs
-	 */
 	@Override
 	public Set<String> getRegisteredRedirectUri() {
-		return Collections.emptySet();
+		return Sets.newHashSet(registeredRedirectUri);
+	}
+
+	public void setRegisteredRedirectUri(String registeredRedirectUri) {
+		this.registeredRedirectUri = registeredRedirectUri;
+	}
+
+	public String getRedirectUri(){
+		return registeredRedirectUri;
 	}
 
 	/**

@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/analyses/_base}">
-
-<body>
-
-<th:block layout:fragment="analyses-content">
-    <th:block th:replace="analyses/analyses-table :: batch-download"/>
-</th:block>
-<th:block layout:fragment="scripts">
-    <th:block th:replace="analyses/analyses-table :: batch-download-scripts"/>
-</th:block>
-</body>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/analyses/_base}"
+>
+  <head>
+    <link
+      rel="stylesheet"
+      th:href="@{/dist/css/analysis-outputs-table.bundle.css}"
+    />
+  </head>
+  <body>
+    <th:block layout:fragment="analyses-content">
+      <th:block th:replace="analyses/analyses-table :: batch-download" />
+    </th:block>
+    <th:block layout:fragment="scripts">
+      <th:block
+        th:replace="analyses/analyses-table :: batch-download-scripts"
+      />
+    </th:block>
+  </body>
 </html>

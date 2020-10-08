@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectAnalysesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,6 +20,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		projectAnalysesPage = ProjectAnalysesPage.initializeProjectAnalysesPage(driver(), 1);
 
+		checkTranslations(projectAnalysesPage, ImmutableList.of("project-analyses"), null);
 		assertEquals("Should have 2 analyses displayed", 2, projectAnalysesPage.getNumberOfAnalysesDisplayed());
 
 		// Test the name filter

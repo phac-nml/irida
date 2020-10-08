@@ -1,26 +1,21 @@
 # Galaxy - IRIDA Base Image
 
-FROM bgruening/galaxy-stable:18.09
+FROM bgruening/galaxy-stable:20.05
 
-MAINTAINER Aaron Petkau, aaron.petkau@canada.ca
+LABEL maintainer="Aaron Petkau <aaron.petkau@canada.ca>"
 
-ENV GALAXY_CONFIG_BRAND IRIDA Galaxy (18.09)
+ENV GALAXY_CONFIG_BRAND IRIDA (Galaxy 20.05)
 
 WORKDIR /galaxy-central
 
-ENV GALAXY_CONFIG_TOOL_SHEDS_CONFIG_FILE /etc/galaxy/tool_sheds_conf.xml
-
-ADD ./galaxy/tool_sheds_conf.xml /etc/galaxy/tool_sheds_conf.xml
-
-# Add my custom toolshed to /home/galaxy so that install-tools will work with IRIDA toolshed
-ADD ./galaxy/tool_sheds_conf.xml /home/galaxy/tool_sheds_conf.xml
+RUN sed -i -e 's/#\( *allow_path_paste:\).*/\1 True/' /etc/galaxy/galaxy.yml
 
 # Install IRIDA tools
+# Some cleanup commands from Galaxy Dockerfile
 ADD ./galaxy/irida-tools.yml $GALAXY_ROOT/irida-tools.yml
-RUN install-tools $GALAXY_ROOT/irida-tools.yml
-RUN chown -R galaxy:galaxy /tool_deps
-
-RUN sed -i -e 's/#\( *allow_path_paste:\).*/\1 True/' /etc/galaxy/galaxy.yml
+RUN install-tools $GALAXY_ROOT/irida-tools.yml \
+      && /tool_deps/_conda/bin/conda clean --packages -t -i \
+      && rm -rf /tmp/* /root/.cache/ /var/cache/* $GALAXY_ROOT/client/node_modules/ $GALAXY_VIRTUAL_ENV/src/ /home/galaxy/.cache/ /home/galaxy/.npm
 
 # Mark folders as imported from the host.
 VOLUME ["/export/", "/data/", "/var/lib/docker"]

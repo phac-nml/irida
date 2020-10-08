@@ -102,12 +102,12 @@ public interface UserGroupService extends CRUDService<Long, UserGroup> {
 	/**
 	 * Get the set of {@link User} that are not currently in the
 	 * {@link UserGroup}.
-	 * 
-	 * @param userGroup
-	 *            the group to get the set of non-members
-	 * @return the set of users not in the group.
+	 *
+	 * @param userGroup the group to get the set of non-members
+	 * @param filter    the search string to filter users by
+	 * @return the list of users not in the group.
 	 */
-	Collection<User> getUsersNotInGroup(final UserGroup userGroup);
+	List<User> getUsersNotInGroup(final UserGroup userGroup, final String filter);
 
 	/**
 	 * Get a page of {@link UserGroupProjectJoin} for a specific {@link Project}

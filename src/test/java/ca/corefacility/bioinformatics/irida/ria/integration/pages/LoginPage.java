@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -24,8 +27,11 @@ public class LoginPage extends AbstractPage {
 	@FindBy(name = "password")
 	private WebElement password;
 
-	@FindBy(id = "submitBtn")
+	@FindBy(id = "t-submit-btn")
 	private WebElement submitBtn;
+
+	@FindBy(className = "t-login-error")
+	private List<WebElement> loginErrors;
 
 	public LoginPage(WebDriver driver) {
 		super(driver);
@@ -102,5 +108,9 @@ public class LoginPage extends AbstractPage {
 		this.username.sendKeys(username);
 		this.password.sendKeys(password);
 		submitAndWait(this.submitBtn);
+	}
+
+	public boolean isLoginErrorDisplayed() {
+		return !loginErrors.isEmpty();
 	}
 }

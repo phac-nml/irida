@@ -5,13 +5,12 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 public class ClientDetailsPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(ClientsPage.class);
@@ -19,14 +18,13 @@ public class ClientDetailsPage extends AbstractPage {
 
 	private Long clientId;
 
-	public ClientDetailsPage(WebDriver driver, Long clientId) {
+	public ClientDetailsPage(WebDriver driver) {
 		super(driver);
-		get(driver, RELATIVE_URL + "/" + clientId);
-		this.clientId = clientId;
 	}
-	
-	public ClientDetailsPage(WebDriver driver){
-		super(driver);
+
+	public void goToPage(Long id){
+		this.clientId = id;
+		get(driver, RELATIVE_URL + "/" + clientId);
 	}
 
 	public boolean verifyClient(Long id, String clientId) {
@@ -71,7 +69,8 @@ public class ClientDetailsPage extends AbstractPage {
 		logger.debug("Checking for client existence");
 		if (driver.getCurrentUrl().contains(RELATIVE_URL)) {
 			logger.debug("Succesfully loaded client list page");
-			waitForAjax();
+			WebDriverWait wait = new WebDriverWait(driver, 2);
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-admin-clients-table")));
 			logger.debug("Table loaded");
 			List<WebElement> findElements = driver.findElements(By.className("clientIdCol"));
 			deleted = true;
@@ -84,10 +83,5 @@ public class ClientDetailsPage extends AbstractPage {
 		}
 
 		return deleted;
-	}
-
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
 	}
 }

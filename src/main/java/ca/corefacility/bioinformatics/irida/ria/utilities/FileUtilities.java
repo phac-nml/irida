@@ -1,15 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -19,6 +13,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.*;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +21,13 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelCol;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelHeader;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelRow;
+
+import com.monitorjbl.xlsx.StreamingReader;
+import com.monitorjbl.xlsx.impl.StreamingCell;
 
 /**
  * Download a zip archive of all output files within an
@@ -310,5 +312,120 @@ public class FileUtilities {
 			lines.add(line);
 		}
 		return lines;
+	}
+
+	/**
+	 * Parse the data from an {@link AnalysisOutputFile} excel file.
+	 *
+	 * @param outputFile {@link AnalysisOutputFile} The excel file to parse
+	 * @param sheetIndex The index of the sheet to parse
+	 * @return parsed excel file data
+	 */
+	public static ExcelData parseExcelFile(AnalysisOutputFile outputFile, int sheetIndex) {
+		try {
+			InputStream is = new FileInputStream(new File(outputFile.getFile()
+					.toAbsolutePath()
+					.toString()));
+			Workbook workbook = StreamingReader.builder()
+					.open(is);
+
+			Sheet sheet = workbook.getSheetAt(sheetIndex);
+			Iterator<Row> rowIterator = sheet.iterator();
+			List<String> excelSheetNames = getExcelSheetNames(workbook);
+			List<ExcelHeader> headers = getWorkbookHeaders(rowIterator.next());
+			List<ExcelRow> excelRows = new ArrayList<>();
+
+			for (Row row : sheet) {
+				List<ExcelCol> excelCols = new ArrayList<>();
+				boolean hasRowData = false;
+
+				for (int i = 0; i < headers.size(); i++) {
+					Cell cell = row.getCell(i);
+					// Since the iterators skip over blank columns
+					// we add a a null column in place if the column
+					// is blank
+					if (cell == null) {
+						cell = new StreamingCell(i, row.getRowNum(), false);
+					}
+					CellType cellType = cell.getCellTypeEnum();
+					int columnIndex = cell.getColumnIndex();
+					if (columnIndex < headers.size()) {
+						// Convert a boolean or numeric column value to a string if
+						// the cell type is not a string otherwise just get the string
+						// from the column
+						String cellStringValue = !cellType.equals(CellType.BLANK) ?
+								!cellType.equals(CellType.STRING) ?
+										(cellType.equals(CellType.NUMERIC) ?
+												String.valueOf(cell.getNumericCellValue())
+														.trim() :
+												String.valueOf(cell.getBooleanCellValue())).trim() :
+										cell.getStringCellValue()
+												.trim() :
+								"";
+
+						if(!cellStringValue.equals("") && !hasRowData) {
+							hasRowData = true;
+						}
+						ExcelCol excelColumn = new ExcelCol(columnIndex, cellStringValue);
+						excelCols.add(excelColumn);
+					}
+				}
+				// If atleast one column in a row has data we add the row to excelRows
+				if (hasRowData) {
+					ExcelRow excelRow = new ExcelRow(excelCols, row.getRowNum(), row.getRowNum());
+					excelRows.add(excelRow);
+				}
+			}
+			return new ExcelData(headers, excelRows, excelSheetNames, false);
+		} catch (IOException e) {
+			logger.error("Error opening file" + outputFile.getLabel());
+		}
+		// Should only reach here if the file could not be opened
+		// at which point the ExcelData dto will just return null
+		// values and set the parseError to true which the ui handles
+		return new ExcelData(null, null, null, true);
+	}
+
+	/**
+	 * Extract the headers from an excel file.
+	 *
+	 * @param row {@link Row} First row from the excel file.
+	 * @return {@link List} of {@link ExcelHeader} header values.
+	 */
+	public static List<ExcelHeader> getWorkbookHeaders(Row row) {
+		List<ExcelHeader> headers = new ArrayList<>();
+		// Get the column headers
+		Iterator<Cell> headerIterator = row.cellIterator();
+		while (headerIterator.hasNext()) {
+			Cell headerCell = headerIterator.next();
+			CellType cellType = headerCell.getCellTypeEnum();
+			int columnIndex = headerCell.getColumnIndex();
+
+			String headerValue;
+			if (cellType.equals(CellType.STRING)) {
+				headerValue = headerCell.getStringCellValue()
+						.trim();
+			} else {
+				headerValue = String.valueOf(headerCell.getNumericCellValue())
+						.trim();
+			}
+			ExcelHeader excelHeader = new ExcelHeader(headerValue, columnIndex, Integer.toString(columnIndex));
+			headers.add(excelHeader);
+		}
+		return headers;
+	}
+
+	/**
+	 * Extract the sheet names from the excel workbook
+	 *
+	 * @param workbook {@link Workbook} The excel workbook to get sheet names from
+	 * @return {@link List} of {@link String} sheet names.
+	 */
+	public static List<String> getExcelSheetNames(Workbook workbook) {
+		List<String> sheetNames = new ArrayList<>();
+		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+			sheetNames.add(workbook.getSheetName(i));
+		}
+		return sheetNames;
 	}
 }

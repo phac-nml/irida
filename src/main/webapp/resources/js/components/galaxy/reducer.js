@@ -3,6 +3,8 @@ import { validateEmail } from "../../utilities/validation-utilities";
 export const types = {
   EMAIL_UPDATED: "GALAXY/SET_GALAXY_EMAIL",
   MAKE_PAIRED_COLLECTION_UPDATED: "GALAXY/MAKE_PAIRED_COLLECTION_UPDATED",
+  ASSEMBLIES_UPDATED: "GALAXY/ASSEMBLIES_UPDATED",
+  FAST5_UPDATED: "GALAXY/FAST5_UPDATED",
   OAUTH_WINDOW_CLOSED: "GALAXY_OAUTH_WINDOW_CLOSED",
   SUBMITTABLE: "GALAXY/SUBMITTABLE",
   SUBMIT: "GALAXY/SUBMIT",
@@ -15,6 +17,8 @@ export const initialState = {
   makepairedcollection: true,
   fetchingSamples: false,
   submitted: false,
+  includeAssemblies: false,
+  includeFast5: false,
   submittable: true,
   errored: false
 };
@@ -32,6 +36,16 @@ export const reducer = (state, action) => {
         ...state,
         makepairedcollection: action.payload.makepairedcollection
       };
+    case types.ASSEMBLIES_UPDATED:
+      return {
+        ...state,
+        includeAssemblies: action.payload.includeAssemblies
+      };
+      case types.FAST5_UPDATED:
+        return {
+          ...state,
+          includeFast5: action.payload.includeFast5
+        };  
     case types.OAUTH_WINDOW_CLOSED:
       return { ...state, submittable: true, submitted: false };
     case types.SUBMIT:
@@ -54,6 +68,14 @@ export const actions = {
   setMakePairedCollection: makepairedcollection => ({
     type: types.MAKE_PAIRED_COLLECTION_UPDATED,
     payload: { makepairedcollection }
+  }),
+  setIncludeAssemblies: includeAssemblies => ({
+    type: types.ASSEMBLIES_UPDATED,
+    payload: { includeAssemblies }
+  }),
+  setIncludeFast5: includeFast5 => ({
+    type: types.FAST5_UPDATED,
+    payload: { includeFast5 }
   }),
   submit: () => ({
     type: types.SUBMIT

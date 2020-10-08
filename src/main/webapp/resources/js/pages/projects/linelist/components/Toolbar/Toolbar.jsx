@@ -1,16 +1,21 @@
 import React, { Component, Suspense } from "react";
 import { connect } from "react-redux";
+
 import PropTypes from "prop-types";
 import { actions as entryActions } from "../../reducers/entries";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
 import { Button, Form, Input, Popover } from "antd";
+import {
+  IconCloudUpload,
+  IconQuestion,
+} from "../../../../../components/icons/Icons";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
-const { i18n, urls } = window.PAGE;
+const { urls } = window.PAGE;
 
 export class ToolbarComponent extends Component {
   state = { tourOpen: false, showTourPopover: false };
@@ -67,23 +72,26 @@ export class ToolbarComponent extends Component {
         </div>
         <div className="toolbar-group">
           <Form layout="inline">
-            <Form.Item>
-              <Button href={urls.import} tour="tour-import">
-                <i
-                  className="fas fa-cloud-upload-alt spaced-right__sm"
-                  aria-hidden="true"
-                />
-                {i18n.linelist.importBtn.text}
-              </Button>
-            </Form.Item>
+            {window.project.canManage ? (
+              <Form.Item>
+                <Button
+                  className="t-import-metadata-btn"
+                  href={urls.import}
+                  tour="tour-import"
+                >
+                  <IconCloudUpload />
+                  {i18n("linelist.importBtn.text")}
+                </Button>
+              </Form.Item>
+            ) : null}
             <Form.Item>
               <Search
                 tour="tour-search"
-                onKeyUp={e => this.props.updateFilter(e.target.value)}
+                onKeyUp={(e) => this.props.updateFilter(e.target.value)}
                 id="js-table-filter"
                 className="table-filter t-table-filter"
                 style={{
-                  width: 200
+                  width: 200,
                 }}
               />
             </Form.Item>
@@ -101,11 +109,11 @@ export class ToolbarComponent extends Component {
                   <strong
                     style={{
                       borderBottom: "2px solid orange",
-                      cursor: "pointer"
+                      cursor: "pointer",
                     }}
                     onClick={this.closePopover}
                   >
-                    {i18n.linelist.tour.popover}
+                    {i18n("linelist.tour.popover")}
                   </strong>
                 }
                 visible={this.state.showTourPopover}
@@ -113,12 +121,13 @@ export class ToolbarComponent extends Component {
                 arrowPointAtCenter
               >
                 <Button
-                  title={i18n.linelist.tour.title}
+                  title={i18n("linelist.tour.title")}
                   className="js-tour-button t-tour-button tour-button"
                   shape="circle"
-                  icon="question"
                   onClick={this.openTour}
-                />
+                >
+                  <IconQuestion />
+                </Button>
               </Popover>
             </Form.Item>
           </Form>
@@ -133,13 +142,13 @@ ToolbarComponent.propTypes = {
   exportCSV: PropTypes.func.isRequired,
   exportXLSX: PropTypes.func.isRequired,
   scrollTableToTop: PropTypes.func.isRequired,
-  updateFilter: PropTypes.func.isRequired
+  updateFilter: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({});
+const mapStateToProps = (state) => ({});
 
-const mapDispatchToProps = dispatch => ({
-  updateFilter: value => dispatch(entryActions.setGlobalFilter(value))
+const mapDispatchToProps = (dispatch) => ({
+  updateFilter: (value) => dispatch(entryActions.setGlobalFilter(value)),
 });
 
 export const Toolbar = connect(

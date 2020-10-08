@@ -10,13 +10,12 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * Page object to represent the Announcements Control Admin page
@@ -29,7 +28,7 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void goTo() {
-        get(driver, "announcements/admin");
+        get(driver, "admin/announcements");
 		waitForTime(1000);
 	}
 
@@ -38,8 +37,7 @@ public class AnnouncementControlPage extends AbstractPage {
      * @return size of the table
      */
     public int announcementTableSize() {
-        WebElement element = driver.findElement(By.id("announcementTable"));
-        return element.findElements(By.tagName("tr")).size();
+        return driver.findElements(By.cssSelector("td.t-announcement")).size();
     }
 
     /**
@@ -48,9 +46,8 @@ public class AnnouncementControlPage extends AbstractPage {
      */
     public List<Date> getCreatedDates() {
         //May 20, 2016 11:42 AM
-        DateFormat df = new SimpleDateFormat("MMM d, yyyy HH:mm aaa");
-        WebElement table = driver.findElement(By.id("announcementTable"));
-        List<WebElement> dateElements = table.findElements(By.cssSelector("tbody td:last-of-type"));
+        DateFormat df = new SimpleDateFormat("MMM d, yyyy, hh:mm a");
+        List<WebElement> dateElements = driver.findElements(By.cssSelector("td.t-created-date"));
         List<Date> dates = new ArrayList<>();
         for (WebElement element : dateElements) {
             String dateText = element.getText();
@@ -64,34 +61,31 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public String getAnnouncement(int position) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("tbody .preview-column a"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a span"));
         return messages.get(position).getText();
     }
 
     public void clickDateCreatedHeader() {
-        WebElement header = driver.findElement(By.cssSelector("[data-data='createdDate']"));
+        WebElement header = driver.findElement(By.cssSelector("th.t-created-date"));
         header.click();
-        waitForAjax();
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.urlContains("/admin/announcements"));
     }
 
     public void clickCreateNewAnnouncementButton() {
         waitForTime(2000);
-        WebElement createButton = driver.findElement(By.cssSelector("a#create-announcement"));
+        WebElement createButton = driver.findElement(By.className("t-create-announcement"));
         createButton.click();
     }
 
     public void gotoMessageDetails(int index) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("tbody .preview-column a"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement p"));
         if (index < messages.size()) {
             messages.get(index).click();
-            waitForTime(DEFAULT_WAIT);
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.urlContains("/details"));
         } else {
             throw new IndexOutOfBoundsException();
         }
-    }
-
-    private void waitForAjax() {
-        Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-        wait.until(Ajax.waitForAjax(60000));
     }
 }

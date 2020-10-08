@@ -328,4 +328,36 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId);
+
+	/**
+	 * Get the status of the analysis service.  This will be the number of running and queued analyses
+	 * @return An {@link AnalysisServiceStatus} object showing the number of running and queued analyses
+	 */
+	public AnalysisServiceStatus getAnalysisServiceStatus();
+
+	/**
+	 * Class to store the number of running and queued analyses
+	 */
+	class AnalysisServiceStatus {
+		private Long running;
+		private Long queued;
+
+		public AnalysisServiceStatus(Long running, Long queued) {
+			this.running = running;
+			this.queued = queued;
+		}
+
+		public Long getRunning() {
+			return running;
+		}
+
+		public Long getQueued() {
+			return queued;
+		}
+
+		@Override
+		public String toString() {
+			return "Running: " + running + ", Queued: " + queued;
+		}
+	}
 }

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.analysis.submission;
 
+import java.util.Optional;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
@@ -86,7 +88,7 @@ public class AnalysisSubmissionServiceImplTest {
 				galaxyHistoriesService, pasRepository, jobErrorRepository, iridaWorkflowsService, validator);
 		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
-		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
+		when(analysisSubmissionRepository.findById(ID)).thenReturn(Optional.of(analysisSubmission));
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(HISTORY_ID);
 	}
 
@@ -270,8 +272,8 @@ public class AnalysisSubmissionServiceImplTest {
 	 */
 	@Test
 	public void testDeleteSubmission() throws ExecutionManagerException {
-		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
-		when(analysisSubmissionRepository.exists(ID)).thenReturn(true);
+		when(analysisSubmissionRepository.findById(ID)).thenReturn(Optional.of(analysisSubmission));
+		when(analysisSubmissionRepository.existsById(ID)).thenReturn(true);
 		when(analysisSubmission.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
 		analysisSubmissionServiceImpl.delete(ID);
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
@@ -285,12 +287,12 @@ public class AnalysisSubmissionServiceImplTest {
 	 */
 	@Test
 	public void testDeleteSubmissionWorkflowError() throws ExecutionManagerException {
-		when(analysisSubmissionRepository.findOne(ID)).thenReturn(analysisSubmission);
-		when(analysisSubmissionRepository.exists(ID)).thenReturn(true);
+		when(analysisSubmissionRepository.findById(ID)).thenReturn(Optional.of(analysisSubmission));
+		when(analysisSubmissionRepository.existsById(ID)).thenReturn(true);
 		when(analysisExecutionService.cleanupSubmission(analysisSubmission)).thenThrow(new ExecutionManagerException());
 		when(analysisSubmission.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
 		analysisSubmissionServiceImpl.delete(ID);
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
-		verify(analysisSubmissionRepository).delete(ID);
+		verify(analysisSubmissionRepository).deleteById(ID);
 	}
 }

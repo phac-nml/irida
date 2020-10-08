@@ -1,40 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+
 import PropTypes from "prop-types";
 import { Button } from "antd";
-
-const { i18n } = window.PAGE;
+import { SaveTemplateModal } from "../SaveTemplateModal";
 
 /**
  * This components is part of the TemplateSelect.  Displays a save button
  * if the "All Field" or no template is selected and columns modified.
  */
-export class SaveTemplateButton extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+export function SaveTemplateButton({ current, templates, saveTemplate }) {
+  const [visible, setVisible] = useState(false);
+  const template = templates[current];
 
-  showSaveModal = e => {
-    e.stopPropagation();
-    this.props.showSaveModal();
-  };
+  const toggleModal = () => setVisible(!visible);
 
-  render() {
-    return (
+  return (
+    <>
       <Button
         className="t-template-save-btn"
-        size="small"
-        type="primary"
-        ghost
-        onClick={this.showSaveModal}
-        disabled={typeof this.props.template === "undefined"}
+        onClick={toggleModal}
+        disabled={!template?.modified.length}
       >
-        {i18n.linelist.templates.saveModified}
+        {i18n("linelist.templates.saveModified")}
       </Button>
-    );
-  }
+      <SaveTemplateModal
+        template={template}
+        templates={templates}
+        visible={visible}
+        onClose={toggleModal}
+        saveTemplate={saveTemplate}
+      />
+    </>
+  );
 }
 
 SaveTemplateButton.propTypes = {
-  template: PropTypes.object,
-  showSaveModal: PropTypes.func.isRequired
+  current: PropTypes.number.isRequired,
+  templates: PropTypes.array.isRequired,
+  saveTemplate: PropTypes.func.isRequired
 };

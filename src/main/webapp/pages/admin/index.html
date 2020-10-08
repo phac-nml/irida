@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" th:href="@{/resources/img/favicon.ico}" />
+    <title th:text="#{AdminPanel.title}">ADMIN PANEL</title>
+    <link rel="stylesheet" th:href="@{/dist/css/admin.bundle.css}" />
+
+    <script th:inline="javascript">
+      window.TL = {
+        _BASE_URL: /*[[@{/}]]*/ "/",
+        _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+        LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" style="height: 100%;">
+      <!--
+         This is a DOM element for React to render the admin details into.
+         See src/main/webapp/resources/js/pages/analysis/components/Admin.jsx
+      -->
+    </div>
+
+    <script th:src="@{/dist/js/admin.bundle.js}"></script>
+  </body>
+</html>

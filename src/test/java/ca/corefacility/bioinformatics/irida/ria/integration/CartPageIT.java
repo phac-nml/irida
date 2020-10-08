@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +27,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Make sure 3 samples are in the cart
 		CartPage page = CartPage.goToCart(driver());
-
+		checkTranslations(page, ImmutableList.of("cart"), null);
 		int count = page.getNavBarSamplesCount();
 		assertEquals("Should be 3 samples displayed in navbar", 3, count);
 		assertEquals("Should be 3 samples in the cart", 3, page.getNumberOfSamplesInCart());

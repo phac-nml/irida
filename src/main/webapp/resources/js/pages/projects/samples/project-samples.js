@@ -1,11 +1,12 @@
 import $ from "jquery";
+
 import chroma from "chroma-js";
 import {
   createItemLink,
   generateColumnOrderInfo,
-  tableConfig
+  tableConfig,
 } from "../../../utilities/datatables-utilities";
-import { formatDate } from "../../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
@@ -13,20 +14,23 @@ import {
   SampleCartButton,
   SampleDropdownButton,
   SampleExportButton,
-  SampleProjectDropdownButton
+  SampleProjectDropdownButton,
 } from "./SampleButtons";
 import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file.utilities";
-import moment from "moment";
-import "../../../../sass/pages/project-samples.scss";
+import { download } from "../../../utilities/file-utilities";
+import "../../../../css/pages/project-samples.css";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { cartNotification } from "../../../utilities/events-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+
+import "./linker/Linker";
+import "./add-sample/AddSampleButton";
 
 /*
 This is required to use select2 inside a modal.
 This is required to use select2 inside a modal.
  */
-$.fn.modal.Constructor.prototype.enforceFocus = function() {};
+$.fn.modal.Constructor.prototype.enforceFocus = function () {};
 
 /*
 Defaults for table popovers
@@ -37,7 +41,7 @@ const POPOVER_OPTIONS = {
   placement: "right",
   sanitize: false,
   html: true,
-  template: $("#popover-template").clone()
+  template: $("#popover-template").clone(),
 };
 
 const IS_REMOTE_PROJECT = window.PAGE.isRemoteProject;
@@ -47,7 +51,7 @@ const IS_REMOTE_PROJECT = window.PAGE.isRemoteProject;
  */
 const sampleToolsNodes = document.querySelectorAll(".js-sample-tool-btn");
 const SAMPLE_TOOL_BUTTONS = [...sampleToolsNodes].map(
-  elm => new SampleDropdownButton(elm)
+  (elm) => new SampleDropdownButton(elm)
 );
 
 /**
@@ -64,6 +68,23 @@ const getSelectedIds = () => {
   }
   return ids;
 };
+
+/*
+Hack to get the sample ids from the Linker react component.
+ */
+document.addEventListener(
+  "sample-ids",
+  function (e) {
+    const event = new CustomEvent("sample-ids-return", {
+      detail: {
+        sampleIds: getSelectedIds(),
+        projectId: window.project.id,
+      },
+    });
+    document.dispatchEvent(event);
+  },
+  false
+);
 
 /*
 Initialize the sample export menu.
@@ -90,9 +111,9 @@ const EXPORT_HANDLERS = {
     if (ids.length > 0) {
       window.location.href = `${this.data("url")}?${$.param({ ids })}`;
     }
-  }
+  },
 };
-[...document.querySelectorAll(".js-sample-export-btn")].forEach(elm => {
+[...document.querySelectorAll(".js-sample-export-btn")].forEach((elm) => {
   if (EXPORT_HANDLERS[elm.dataset.type]) {
     SAMPLE_TOOL_BUTTONS.push(
       new SampleExportButton(elm, EXPORT_HANDLERS[elm.dataset.type])
@@ -103,7 +124,7 @@ const EXPORT_HANDLERS = {
     );
   }
 });
-[...document.querySelectorAll(".js-sample-project-tool-btn")].forEach(elm => {
+[...document.querySelectorAll(".js-sample-project-tool-btn")].forEach((elm) => {
   SAMPLE_TOOL_BUTTONS.push(
     new SampleProjectDropdownButton(elm, IS_REMOTE_PROJECT)
   );
@@ -112,7 +133,7 @@ const EXPORT_HANDLERS = {
 /*
 Initialize the add to cart button
  */
-const cartBtn = new SampleCartButton($(".js-cart-btn"), function() {
+const cartBtn = new SampleCartButton($(".js-cart-btn"), function () {
   const projects = {};
   const selected = $dt.select.selected()[0].keys();
   let next = selected.next();
@@ -126,10 +147,10 @@ const cartBtn = new SampleCartButton($(".js-cart-btn"), function() {
   }
 
   // Updated post method
-  Object.keys(projects).forEach(id => {
-    putSampleInCart(+id, projects[id]).then(response => {
-      cartNotification(response.data);
-    });
+  Object.keys(projects).forEach((id) => {
+    putSampleInCart(+id, projects[id]).then((count) =>
+      cartNotification({ count })
+    );
   });
 });
 SAMPLE_TOOL_BUTTONS.push(cartBtn);
@@ -150,7 +171,7 @@ const TABLE_FILTERS = new Map();
  * Reference to the colour for a specific project.
  * @type {Map}
  */
-const PROJECT_COLOURS = (function() {
+const PROJECT_COLOURS = (function () {
   const colours = new Map();
   $(".associated-cb input").each((i, elm) => {
     const input = $(elm);
@@ -208,7 +229,7 @@ const config = Object.assign({}, tableConfig, {
       }
 
       displayFilters(TABLE_FILTERS);
-    }
+    },
   },
   stateSave: true,
   deferRender: true,
@@ -216,7 +237,7 @@ const config = Object.assign({}, tableConfig, {
     allUrl: window.PAGE.urls.samples.sampleIds,
     allPostDataFn() {
       return {
-        associated: [...ASSOCIATED_PROJECTS.keys()]
+        associated: [...ASSOCIATED_PROJECTS.keys()],
       };
     },
     formatSelectAllResponseFn(response) {
@@ -225,19 +246,23 @@ const config = Object.assign({}, tableConfig, {
       // It puts the response into the format of the `data-info` attribute
       // set on the row itself ({row_id: {projectId, sampleId}}
       const complete = new Map();
-      response.forEach(sample => complete.set(`row_${sample.id}`, sample));
+      response.forEach((sample) => complete.set(`row_${sample.id}`, sample));
       return complete;
-    }
+    },
   },
   order: [[COLUMNS.MODIFIED_DATE, "desc"]],
   rowId: "DT_RowId",
   buttons: ["selectAll", "selectNone"],
   language: {
-    select: window.PAGE.i18n.select,
+    select: {
+      none: i18n("project.samples.counts.none"),
+      one: i18n("project.samples.counts.one"),
+      other: i18n("project.samples.counts.more"),
+    },
     buttons: {
-      selectAll: window.PAGE.i18n.buttons.selectAll,
-      selectNone: window.PAGE.i18n.buttons.selectNone
-    }
+      selectAll: i18n("project.samples.select.selectAll"),
+      selectNone: i18n("project.samples.select.selectNone"),
+    },
   },
   columnDefs: [
     // Add an empty checkbox to the first column in each row
@@ -262,15 +287,15 @@ const config = Object.assign({}, tableConfig, {
         }
         return checkbox;
       },
-      targets: 0
+      targets: 0,
     },
     {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         const link = createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}/samples/${full.id}`,
+          url: setBaseUrl(`projects/${full.projectId}/samples/${full.id}`),
           label: full.sampleName,
-          classes: ["t-sample-label"]
+          classes: ["t-sample-label"],
         });
 
         /*
@@ -285,33 +310,35 @@ const config = Object.assign({}, tableConfig, {
            */
           const content = `<ul class="popover-list">
               ${full.qcEntries
-                .map(qc => `<li class="error">${qc}</li>`)
+                .map((qc) => `<li class="error">${qc}</li>`)
                 .join("")}
           </ul>`;
           icon.setAttribute("data-content", content);
           return `<div class="icon-wrapper">${icon.outerHTML}${link}</div>`;
         }
         return link;
-      }
+      },
     },
     {
       targets: [COLUMNS.PROJECT_NAME],
       render(data, type, full) {
         return createItemLink({
-          url: `${window.TL.BASE_URL}projects/${full.projectId}`,
+          url: setBaseUrl(`projects/${full.projectId}`),
           label: `<div class="label-bar-color" style="background-color: ${PROJECT_COLOURS.get(
             full.projectId
           )}">&nbsp;</div>${data}`,
-          classes: ["project-link"]
+          classes: ["project-link"],
         });
-      }
+      },
     },
     {
       targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
       render(data) {
-        return `<time>${formatDate({ date: data })}</time>`;
-      }
-    }
+        return `<time>${formatInternationalizedDateTime({
+          date: data,
+        })}</time>`;
+      },
+    },
   ],
   drawCallback() {
     $table.find('[data-toggle="popover"]').popover(POPOVER_OPTIONS);
@@ -324,7 +351,7 @@ const config = Object.assign({}, tableConfig, {
     row.dataset.info = JSON.stringify({
       projectId: data.projectId,
       id: data.id,
-      sampleName: data.sampleName
+      sampleName: data.sampleName,
     });
     /*
     If there are QC errors, highlight the row
@@ -332,10 +359,10 @@ const config = Object.assign({}, tableConfig, {
     if (data.qcEntries.length) {
       $row.addClass("row-warning");
     }
-  }
+  },
 });
 
-const $dt = $table.DataTable(config);
+const $dt = (window.$dt = $table.DataTable(config));
 
 function checkToolButtonState(count = $dt.select.selected()[0].size) {
   /*
@@ -349,7 +376,7 @@ function checkToolButtonState(count = $dt.select.selected()[0].size) {
 // This allows for the use of checkboxes in the dropdown without
 // it closing on every click.
 const ASSOCIATED_INPUTS = $(".associated-cb input");
-$(".associated-dd .dropdown-menu a").on("click", function(event) {
+$(".associated-dd .dropdown-menu a").on("click", function (event) {
   /*
   Find the input element.
    */
@@ -386,7 +413,7 @@ $(".associated-dd .dropdown-menu a").on("click", function(event) {
     }
   }
 
-  setTimeout(function() {
+  setTimeout(function () {
     // Update the current checkbox
     $inp.prop("checked", checked);
     // Update the select all checkbox
@@ -408,14 +435,14 @@ TABLE EVENT HANDLERS
  */
 
 // Row selection events.
-$dt.on("selection-count.dt", function(e, count) {
+$dt.on("selection-count.dt", function (e, count) {
   checkToolButtonState(count);
 });
 
 /*
 Handle opening the Sample Tools modals.
  */
-$("#js-modal-wrapper").on("show.bs.modal", function(event) {
+$("#js-modal-wrapper").on("show.bs.modal", function (event) {
   const wrapper = this;
   const modal = $(wrapper);
   /*
@@ -431,7 +458,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   params["sampleIds"] = getSelectedIds();
 
   let script;
-  modal.load(`${url}?${$.param(params)}`, function() {
+  modal.load(`${url}?${$.param(params)}`, function () {
     if (typeof script_src !== "undefined") {
       script = document.createElement("script");
       script.type = "text/javascript";
@@ -443,7 +470,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   /*
   Handle the closing the modal
    */
-  modal.on(SAMPLE_EVENTS.SAMPLE_TOOLS_CLOSED, function(e) {
+  modal.on(SAMPLE_EVENTS.SAMPLE_TOOLS_CLOSED, function (e) {
     modal.modal("hide");
     $dt.select.selectNone();
     $dt.ajax.reload();
@@ -457,7 +484,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function(event) {
   /*
   Clear the content of the modal when it is closed.
    */
-  modal.on("hidden.bs.modal", function() {
+  modal.on("hidden.bs.modal", function () {
     modal.empty();
   });
 });
@@ -473,7 +500,7 @@ function handleFileSelect(e) {
   const file = e.target.files[0];
   if (typeof file === "undefined") return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     // From the file contents, get a list of names (1 per line expected);
     const contents = e.target.result.match(/[^\r\n]+/g);
     // Store the unique values in the ajax variable
@@ -492,7 +519,7 @@ filterByFileInput.addEventListener("change", handleFileSelect, false);
 /*
 Set up specific filters modal
  */
-$("#js-filter-modal-wrapper").on("show.bs.modal", function() {
+$("#js-filter-modal-wrapper").on("show.bs.modal", function () {
   const $wrapper = $(this);
   const template = $wrapper.data("template");
   const scriptUrl = $wrapper.data("script");
@@ -520,7 +547,7 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function() {
   }
 
   let script;
-  $wrapper.load(`${template}?${$.param(params)}`, function() {
+  $wrapper.load(`${template}?${$.param(params)}`, function () {
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = scriptUrl;
@@ -530,7 +557,7 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function() {
   /*
   Handle applying the filters
    */
-  $wrapper.on(SAMPLE_EVENTS.SAMPLE_FILTER_CLOSED, function(e, filters) {
+  $wrapper.on(SAMPLE_EVENTS.SAMPLE_FILTER_CLOSED, function (e, filters) {
     /*
     Add the filters to the table parameters
      */
@@ -594,7 +621,7 @@ function displayFilters(filters) {
 
   if (filters.has(FILTERS.FILTER_BY_NAME)) {
     createChip(
-      window.PAGE.i18n.chips.name,
+      i18n("project.sample.filter-name"),
       filters.get(FILTERS.FILTER_BY_NAME),
       () => {
         filters.delete(FILTERS.FILTER_BY_NAME);
@@ -605,7 +632,7 @@ function displayFilters(filters) {
 
   if (filters.has(FILTERS.FILTER_BY_ORGANISM)) {
     createChip(
-      window.PAGE.i18n.chips.organism,
+      i18n("project.sample.filter-organism"),
       filters.get(FILTERS.FILTER_BY_ORGANISM),
       () => {
         filters.delete(FILTERS.FILTER_BY_ORGANISM);
@@ -618,15 +645,20 @@ function displayFilters(filters) {
     filters.has(FILTERS.FILTER_BY_EARLY_DATE) &&
     filters.has(FILTERS.FILTER_BY_LATEST_DATE)
   ) {
-    const start = moment(filters.get(FILTERS.FILTER_BY_EARLY_DATE)).format(
-      "ll"
+    const dateFormat = { year: "numeric", month: "long", day: "numeric" };
+    const start = formatInternationalizedDateTime(
+      filters.get(FILTERS.FILTER_BY_EARLY_DATE),
+      dateFormat
     );
-    const end = moment(filters.get(FILTERS.FILTER_BY_LATEST_DATE)).format("ll");
+    const end = formatInternationalizedDateTime(
+      filters.get(FILTERS.FILTER_BY_LATEST_DATE),
+      dateFormat
+    );
     const range = `${start} - ${end}`;
-    createChip(window.PAGE.i18n.chips.range, range, () => {
+    createChip(i18n("project.sample.filter-date.label"), range, () => {
       filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
       filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
-      table.ajax.reload();
+      $dt.ajax.reload();
     });
   }
 

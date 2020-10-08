@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Audited
 public class RemoteAPIToken {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

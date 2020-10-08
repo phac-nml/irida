@@ -9,6 +9,7 @@
     "@babel/plugin-transform-react-jsx-source",
     "@babel/plugin-transform-react-jsx-self",
     "@babel/plugin-syntax-dynamic-import",
-    "@babel/plugin-proposal-optional-chaining"
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-proposal-export-default-from"
   ]
 }

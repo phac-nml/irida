@@ -29,7 +29,7 @@ public class ProjectEventServiceImplTest {
 	@Test
 	public void testGetEventsForProject() {
 		Project project = new Project("a project");
-		PageRequest pageable = new PageRequest(0, 1);
+		PageRequest pageable = PageRequest.of(0, 1);
 
 		service.getEventsForProject(project, pageable);
 		verify(repository).getEventsForProject(project, pageable);
@@ -38,7 +38,7 @@ public class ProjectEventServiceImplTest {
 	@Test
 	public void testGetEventsForUser() {
 		User user = new User();
-		PageRequest pageable = new PageRequest(0, 1);
+		PageRequest pageable = PageRequest.of(0, 1);
 
 		service.getEventsForUser(user, pageable);
 		verify(repository).getEventsForUser(user, pageable);

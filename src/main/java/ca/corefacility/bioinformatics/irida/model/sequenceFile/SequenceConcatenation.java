@@ -3,18 +3,8 @@ package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -31,15 +21,16 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 public class SequenceConcatenation implements IridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
 	@ManyToMany
+	@JoinTable(joinColumns = @JoinColumn(name="sequence_concatenation_id"))
 	@NotNull
 	private final List<SequencingObject> sources;
 

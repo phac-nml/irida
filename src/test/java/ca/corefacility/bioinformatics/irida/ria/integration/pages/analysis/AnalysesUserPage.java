@@ -34,6 +34,8 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "t-name-filter-clear")
 	private WebElement nameFilterClear;
 
+	@FindBy(id = "root")
+	private WebElement rootDiv;
 
 	public AnalysesUserPage(WebDriver driver) {
 		super(driver);
@@ -58,6 +60,7 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForElementToBeClickable(nameFilterSubmit);
 		nameFilterInput.sendKeys(name);
 		nameFilterSubmit.click();
+		waitForElementInvisible(By.className("t-name-filter"));
 	}
 
 	public void clearNameFilter() {
@@ -65,6 +68,7 @@ public class AnalysesUserPage extends AbstractPage {
 		nameFilterButton.click();
 		waitForElementToBeClickable(nameFilterClear);
 		nameFilterClear.click();
+		waitForElementInvisible(By.className("t-name-filter-clear"));
 	}
 
 	public void deleteAnalysis(int row) {
@@ -72,6 +76,11 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForElementToBeClickable(deleteSelectedBtn).click();
 		WebElement popover = waitForElementVisible(By.className("ant-popover-inner-content"));
 		popover.findElement(By.cssSelector(".ant-btn.ant-btn-primary.ant-btn-sm")).click();
+		waitForTime(500);
+	}
+
+	public void clickPagination(int pageNum) {
+		rootDiv.findElements(By.className("ant-pagination-item-" + pageNum)).get(0).click();
 		waitForTime(500);
 	}
 }

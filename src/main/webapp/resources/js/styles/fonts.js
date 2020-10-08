@@ -22,3 +22,9 @@ export const FONT_COLOR_PRIMARY = blue6;
 export const FONT_COLOR_INFO = blue6;
 export const FONT_COLOR_ERROR = red6;
 export const FONT_COLOR_WARNING = gold6;
+
+/*
+FONT FAMILIES
+ */
+export const ANT_DESIGN_FONT_FAMILY = `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif`;

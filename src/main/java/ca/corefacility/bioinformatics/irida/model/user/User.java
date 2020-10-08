@@ -47,7 +47,7 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	public static final String USER_USERNAME_CONSTRAINT_NAME = "user_username_constraint";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull(message = "{user.username.notnull}")
@@ -93,7 +93,8 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)

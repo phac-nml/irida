@@ -1,24 +1,15 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableSet;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableSet;
-
-import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFile;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * {@link SequencingObject} from a single ended sequence run. This class will
@@ -28,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSingleEndSequenceFi
 @Table(name = "sequence_file_single_end")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class SingleEndSequenceFile extends SequencingObject implements IridaSingleEndSequenceFile {
+public class SingleEndSequenceFile extends SequencingObject {
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@NotNull

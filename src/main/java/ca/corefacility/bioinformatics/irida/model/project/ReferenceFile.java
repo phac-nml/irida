@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "filePath", unique = true)
@@ -49,8 +49,8 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
-	private final Date createdDate;
+	@Column(nullable = false, updatable = false)
+	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)

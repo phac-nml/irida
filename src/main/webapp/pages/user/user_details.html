@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  data-layout-decorate="~{template/page}">
+	  data-layout-decorate="~{template/page}"  ng-app="details">
 <head>
 	<title th:text="${user.label}">_USER PAGE_</title>
 	<script th:inline="javascript">
-		var PAGE = {
-			urls: {
-				reset: /*[[@{/password_reset/ajax/create/{id}(id=${user.getId()})}]]*/ 'password_reset/ajax/create/'
-			},
+		window.PAGE = {
 			userId: /*[[${user.getId()}]]*/ 1
 		};
 	</script>
+	<link th:href="@{/dist/css/users-list.bundle.css}" />
 	<style>
 		#projectsTable {
 			table-layout: fixed;
@@ -195,6 +193,7 @@
 
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/dist/js/user-details.bundle.js}"></script>
 	<script type="text/ng-template" id="reset-modal.html">
 		<div class="modal-header">
 			<h3 class="modal-title" id="lbx-title" th:text="#{user.passwordReset}">_Reset Password_</h3>
@@ -213,99 +212,6 @@
 		</div>
 	</script>
 
-	<script th:inline="javascript">
-
-		var pwd = angular.module('PasswordRest', []);
-
-		pwd.service('ResetService', ['$http', function ($http) {
-			var svc = this;
-
-			svc.resetPassword = function () {
-				return $http.get(PAGE.urls.reset)
-                  .then(function(response) {
-                    var data = response.data;
-						if(data.success){
-							window.notifications.show({type: 'success', text: data.message, title: data.title});
-						}else{
-							window.notifications.show({type: 'error', text: data.message, title: data.title});
-						}
-						return data;
-					});
-			}
-		}]);
-
-				pwd.service('SubscriptionService', ['$http', function ($http) {
-					var svc = this;
-
-					svc.updateSubscription = function (userId, projectId, subscribe) {
-						var urlBase = /*[[@{/events/projects/}]]*/ '/events/projects/';
-						urlBase += projectId + '/subscribe/' + userId;
-						var params = $.param({ subscribe: subscribe });
-
-						return $http({
-							method: "POST",
-							url: urlBase,
-							data: $.param({ subscribe: subscribe }),
-							headers: { "Content-Type": "application/x-www-form-urlencoded" }
-						});
-					};
-				}]);
-
-        pwd.controller('SubscriptionController', ['SubscriptionService', function (SubscriptionService) {
-          var sub = this;
-          var title = /*[[#{user.projects.subscriptions}]]*/ 'Subscriptions';
-          var errorMessage = /*[[#{user.projects.subscriptions.error}]]*/ 'Error';
-
-          angular.element(".subcription-checkbox").on("change", function(){
-            var box = $(this);
-            var projectId = box.val();
-            var subscribe = false;
-            if(box.is(":checked")){
-              subscribe = true;
-            }
-
-            SubscriptionService.updateSubscription(PAGE.userId, projectId, subscribe).then(function(response) {
-              var data = response.data;
-              window.notifications.show({type: 'success', text: data.message, title: title});
-            }, function(response) {
-              var data = response.data;
-              window.notifications.show({type: 'error', text: errorMessage, title: title});
-              box.attr('checked', false);
-            });
-          });
-        }]);
-
-		pwd.controller('DetailsCtrl', ['$uibModal', function ($uibModal) {
-			"use strict";
-
-			var vm = this;
-
-			vm.resetPrompt = function () {
-				$uibModal.open({
-					templateUrl: 'reset-modal.html',
-					controller: 'ResetCtrl as reset',
-					size: 'sm'
-				});
-			};
-		}]);
-
-		pwd.controller('ResetCtrl', ['$rootScope', '$uibModalInstance', 'ResetService', function ($rootScope, $uibModalInstance, ResetService) {
-			"use strict";
-			var vm = this;
-
-			vm.close = function () {
-				$uibModalInstance.close();
-			};
-
-			vm.reset = function () {
-				ResetService.resetPassword().then(function () {
-					vm.close();
-				});
-			};
-		}]);
-
-		angular.module("irida").requires.push(pwd.name);
-	</script>
 </th:block>
 </body>
 </html>

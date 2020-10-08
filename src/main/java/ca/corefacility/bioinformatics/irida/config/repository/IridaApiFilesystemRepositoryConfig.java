@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.repository;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -35,6 +36,9 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${output.file.base.directory}")
 	String outputFileBaseDirectory;
 
+	private @Value("${assembly.file.base.directory}")
+	String assemblyFileBaseDirectory;
+
 	@Autowired
 	private ApplicationContext applicationContext;
 
@@ -42,10 +46,12 @@ public class IridaApiFilesystemRepositoryConfig {
 	public RelativePathTranslatorListener relativePathTranslatorListener(
 			final @Qualifier("referenceFileBaseDirectory") Path referenceFileBaseDirectory,
 			final @Qualifier("sequenceFileBaseDirectory") Path sequenceFileBaseDirectory,
-			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
+			final @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory,
+			final @Qualifier("assemblyFileBaseDirectory") Path assemblyFileBaseDirectory) {
 		RelativePathTranslatorListener.addBaseDirectory(SequenceFile.class, sequenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(ReferenceFile.class, referenceFileBaseDirectory);
 		RelativePathTranslatorListener.addBaseDirectory(AnalysisOutputFile.class, outputFileBaseDirectory);
+		RelativePathTranslatorListener.addBaseDirectory(UploadedAssembly.class, assemblyFileBaseDirectory);
 		return new RelativePathTranslatorListener();
 	}
 
@@ -72,6 +78,14 @@ public class IridaApiFilesystemRepositoryConfig {
 			return configureDirectory(outputFileBaseDirectory, "output-file-dev");
 		}
 		return getExistingPathOrThrow(outputFileBaseDirectory);
+	}
+
+	@Bean(name = "assemblyFileBaseDirectory")
+	public Path assemblyFileBaseDirectory() throws IOException {
+		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
+			return configureDirectory(assemblyFileBaseDirectory, "assembly-file-dev");
+		}
+		return getExistingPathOrThrow(assemblyFileBaseDirectory);
 	}
 
 	private Path getExistingPathOrThrow(String directory) {

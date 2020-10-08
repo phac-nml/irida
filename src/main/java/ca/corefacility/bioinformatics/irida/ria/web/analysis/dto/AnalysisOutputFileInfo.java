@@ -105,6 +105,18 @@ public class AnalysisOutputFileInfo {
 		this.error = null;
 	}
 
+	public AnalysisOutputFileInfo(Long id, Long analysisSubmissionId, Long analysisId, String filename, String fileExt, Long fileSizeBytes, String toolName, String toolVersion, String outputName) {
+		this.id=id;
+		this.analysisSubmissionId=analysisSubmissionId;
+		this.analysisId=analysisId;
+		this.filename=filename;
+		this.fileExt=fileExt;
+		this.fileSizeBytes=fileSizeBytes;
+		this.toolName=toolName;
+		this.toolVersion=toolVersion;
+		this.outputName=outputName;
+	}
+
 	@Override
 	public String toString() {
 		return "AnalysisOutputFileInfo{" + "id=" + id + ", analysisSubmissionId=" + analysisSubmissionId

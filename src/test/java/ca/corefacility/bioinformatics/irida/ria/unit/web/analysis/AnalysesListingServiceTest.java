@@ -42,14 +42,17 @@ public class AnalysesListingServiceTest {
 		IridaWorkflowsService iridaWorkflowsService = mock(IridaWorkflowsService.class);
 		UpdateAnalysisSubmissionPermission updateAnalysisPermission = mock(UpdateAnalysisSubmissionPermission.class);
 		MessageSource messageSource = mock(MessageSource.class);
+
+		AnalysisTypesServiceImpl analysisTypesService = new AnalysisTypesServiceImpl();
+		analysisTypesService.registerDefaultTypes();
 		analysesListingService = new AnalysesListingService(analysisSubmissionService, iridaWorkflowsService,
-				updateAnalysisPermission, messageSource, new AnalysisTypesServiceImpl());
+				updateAnalysisPermission, messageSource, analysisTypesService);
 	}
 
 	@Test
 	public void testGetPagedSubmissionsForAdmin() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		String searchValue = "";
-		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, new Sort(Sort.Direction.ASC, "id"),
+		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, Sort.by(Sort.Direction.ASC, "id"),
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
@@ -73,7 +76,7 @@ public class AnalysesListingServiceTest {
 	public void testGetPagedSubmissionsForUser() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		String searchValue = "";
 		User user = new User();
-		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, new Sort(Sort.Direction.ASC, "id"),
+		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, Sort.by(Sort.Direction.ASC, "id"),
 				ImmutableMap.of());
 
 		when(analysisSubmissionService.listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
@@ -96,7 +99,7 @@ public class AnalysesListingServiceTest {
 	public void testGetPagedSubmissionsForProject() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		String searchValue = "";
 		Project project = new Project();
-		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, new Sort(Sort.Direction.ASC, "id"),
+		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, Sort.by(Sort.Direction.ASC, "id"),
 				ImmutableMap.of());
 
 		when(analysisSubmissionService

@@ -34,7 +34,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	
 	/**
 	 * Get a page of {@link User}s associated with a project.
-	 * 
+	 *
 	 * @param project
 	 *            the {@link Project} to get {@link User}s for.
 	 * @param search
@@ -43,7 +43,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 *            the page request
 	 * @return a page of users.
 	 */
-	@Query("from ProjectUserJoin j where j.project = ?1 and j.user.username like %?2%")
+	@Query("from ProjectUserJoin j where j.project = ?1 and (CONCAT(j.user.firstName, ' ', j.user.lastName) like %?2% or j.user.username like %?2% or j.user.email like %?2%)")
 	public Page<Join<Project, User>> getUsersForProject(final Project project, final String search,
 			final Pageable page);
 	

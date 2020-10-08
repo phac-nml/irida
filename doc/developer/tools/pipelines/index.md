@@ -11,7 +11,7 @@ This document describes the necessary steps for integrating new pipelines into I
 
 # 1. Introduction
 
-Pipelines in IRIDA take as input data managed by IRIDA and run through a collection of tools to produce some meaningful result.  Pipelines are implemented as a [Galaxy Workflow][] and executed using an instance of [Galaxy][] that has been setup for IRIDA.  Pipelines are versioned and are stored and distributed either along with the IRIDA software, or as a separate plugin compiled into a Java JAR file.  Tools used by a pipeline are versioned and are stored and distributed using [Galaxy Toolsheds][].  In particular, the [Galaxy Main Toolshed][] and the [IRIDA Toolshed][] are used to store and distribute tools for a pipeline.
+Pipelines in IRIDA take as input data managed by IRIDA and run through a collection of tools to produce some meaningful result.  Pipelines are implemented as a [Galaxy Workflow][] and executed using an instance of [Galaxy][] that has been setup for IRIDA.  Pipelines are versioned and are stored and distributed either along with the IRIDA software, or as a separate plugin compiled into a Java JAR file.  Tools used by a pipeline are versioned and are stored and distributed using [Galaxy Toolsheds][].  In particular, the [Galaxy Main Toolshed][] is used to store and distribute tools for a pipeline.
 
 ![irida-pipelines][]
 
@@ -320,6 +320,11 @@ public class ExamplePlugin extends Plugin {
 				SampleService sampleService, IridaWorkflowsService iridaWorkflowsService) throws IridaPluginException {
 			return Optional.of(new ExamplePluginUpdater(metadataTemplateService, sampleService, iridaWorkflowsService));
 		}
+
+		@Override
+		public Optional<String> getAnalysisViewer() {
+			return Optional.of("tree");
+		}
 	}
 }
 ```
@@ -349,6 +354,17 @@ workflow.label.share-analysis-samples.READ_INFO=Save sequence read information t
 This contains the message to display asking the user if they wish to **Save Results to Samples** for their pipeline before launching the pipeline.
 
 ![example-plugin-save-results.png][]
+
+### 3.2.6. (Optional) Set a viewer for analysis results
+
+Your plugin can use one of IRIDA's built in analysis results viewers by implementing the `getAnalysisViewer()` method in `IridaPlugin`.  
+
+The viewers available to plugins in IRIDA are the following:
+
+* `tree` - A phylogentic tree viewer.  By setting this analysis viewer type, IRIDA will look for an output file with a `.newick` extension and display it in the analysis output pages.  Note that only one tree file is currently able to be visualized.
+* `sistr` - A viewer for SISTR results.  Generally this should only be used for the SISTR pipeline.
+* `biohansel` - A viwer for BioHansel results.  Generally this should only be used for the BioHansel pipeline.
+
 
 ## 3.3. Update the [pom.xml][] file
 
@@ -419,7 +435,6 @@ DEBUG ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig:45 
 [Galaxy]: http://galaxyproject.org/
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
 [Galaxy Main Toolshed]: https://toolshed.g2.bx.psu.edu/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [galaxy-workflow-editor]: images/galaxy-workflow-editor.png
 [irida-pipelines]: images/irida-pipelines.png
 [Galaxy Workflow]: https://wiki.galaxyproject.org/Learn/AdvancedWorkflow

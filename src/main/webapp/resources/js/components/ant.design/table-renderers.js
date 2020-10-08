@@ -1,60 +1,39 @@
 import React from "react";
-import { Button, Icon } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { blue6 } from "../../styles/colors";
+import { IconTableFilter } from "../icons/Icons";
 
 export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
   sorter: true,
-  width: 50
+  width: 120
 });
 
-export const nameColumnFormat = ({ url, width = 300 }) => {
+export const nameColumnFormat = ({ url }) => {
   return {
     dataIndex: "name",
     key: "name",
+    width: 200,
     sorter: true,
-    width,
+    ellipsis: true,
+    className: "t-name-col",
     filterIcon(filtered) {
-      return (
-        <Icon
-          type="filter"
-          theme="filled"
-          style={{ color: filtered ? blue6 : undefined }}
-          className="t-name"
-        />
-      );
+      return <IconTableFilter className="t-name" filtered={filtered} />;
     },
     render(name, data) {
       return (
-        <Button
-          type="link"
-          className="t-name"
-          href={`${url}/${data.id}`}
-          title={name}
-          style={{
-            textAlign: "left"
-          }}
-        >
-          <span
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              width: width - 50
-            }}
-          >
-            {name}
-          </span>
-        </Button>
+        <a className="t-name" href={`${url}/${data.id}`} title={name}>
+          {name}
+        </a>
       );
     }
   };
 };
 
-export const dateColumnFormat = () => ({
+export const dateColumnFormat = ({ className = "" } = {}) => ({
   sorter: true,
   width: 230,
-  render: date => formatInternationalizedDateTime(date)
+  render: date => (
+    <span className={className}>{formatInternationalizedDateTime(date)}</span>
+  )
 });

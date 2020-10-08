@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis;
 import java.nio.file.Path;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +31,7 @@ public class AnalysisOutputFileRepositoryImpl extends FilesystemSupplementedRepo
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public AnalysisOutputFile save(AnalysisOutputFile entity) {
 		return super.saveInternal(entity);
 	}

@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -190,7 +189,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Revisions<Integer, UserGroup> findRevisions(Long id) throws EntityRevisionDeletedException {
+	public Revisions<Integer, UserGroup> findRevisions(Long id) {
 		return super.findRevisions(id);
 	}
 
@@ -199,8 +198,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<Revision<Integer, UserGroup>> findRevisions(Long id, Pageable pageable)
-			throws EntityRevisionDeletedException {
+	public Page<Revision<Integer, UserGroup>> findRevisions(Long id, Pageable pageable) {
 		return super.findRevisions(id, pageable);
 	}
 
@@ -240,7 +238,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
 			throws UserGroupWithoutOwnerException {
-		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
+		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup)).orElse(null);
 
 		if (!allowRoleChange(userGroup, join.getRole())) {
 			throw new UserGroupWithoutOwnerException(
@@ -257,7 +255,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException {
-		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup));
+		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup)).orElse(null);
 
 		if (!allowRoleChange(userGroup, join.getRole())) {
 			throw new UserGroupWithoutOwnerException(
@@ -286,13 +284,13 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			return true;
 		}
 
-		// get the set of group owners
-		final List<UserGroupJoin> users = userGroupJoinRepository
-				.findAll(filterUserGroupJoinByRole(UserGroupRole.GROUP_OWNER));
+		long count = getUsersForGroup(userGroup).stream()
+				.filter(g -> g.getRole()
+						.equals(UserGroupRole.GROUP_OWNER))
+				.count();
 
-		// if there are at least 2 group owners, then it doesn't matter what
-		// we're changing the role to.
-		return users.size() >= 2;
+		// There must always be an owner on the project
+		return count > 1;
 	}
 
 	/**
@@ -303,7 +301,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public Page<UserGroupJoin> filterUsersByUsername(final String username, final UserGroup userGroup, int page,
 			int size, Sort sort) {
 		return userGroupJoinRepository.findAll(filterUserGroupJoinByUsername(username, userGroup),
-				new PageRequest(page, size, sort));
+				PageRequest.of(page, size, sort));
 	}
 
 	/**
@@ -311,8 +309,8 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Collection<User> getUsersNotInGroup(final UserGroup userGroup) {
-		return userGroupJoinRepository.findUsersNotInGroup(userGroup);
+	public List<User> getUsersNotInGroup(final UserGroup userGroup, final String filter) {
+		return userGroupJoinRepository.findUsersNotInGroup(userGroup, filter);
 	}
 
 	/**
@@ -323,7 +321,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	public Page<UserGroupProjectJoin> getUserGroupsForProject(final String searchName, final Project project,
 			final int page, final int size, final Sort sort) {
 		return userGroupProjectJoinRepository.findAll(filterUserGroupProjectJoinByProject(searchName, project),
-				new PageRequest(page, size, sort));
+				PageRequest.of(page, size, sort));
 	}
 
 	/**
@@ -340,7 +338,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<UserGroup> search(Specification<UserGroup> specification, PageRequest pageRequest) {
+	public Page<UserGroup> search(Specification<UserGroup> specification, Pageable pageRequest) {
 		return super.search(specification, pageRequest);
 	}
 

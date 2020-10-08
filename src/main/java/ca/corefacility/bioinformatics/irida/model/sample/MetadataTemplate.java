@@ -3,19 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.sample;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -35,17 +23,21 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 @EntityListeners(AuditingEntityListener.class)
 public class MetadataTemplate implements MutableIridaThing {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinTable(joinColumns = @JoinColumn(name = "metadata_template_id"))
 	private List<MetadataTemplateField> fields;
 
 	@NotNull
 	private String name;
 
+	@Lob
+	private String description;
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
+	@Column(name = "created_date", updatable = false)
 	@CreatedDate
 	private Date createdDate;
 
@@ -109,5 +101,13 @@ public class MetadataTemplate implements MutableIridaThing {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

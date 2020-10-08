@@ -38,15 +38,15 @@ import java.util.List;
 public class Announcement implements IridaThing, Comparable<Announcement> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @CreatedDate
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date")
-    private final Date createdDate;
+    @Column(name = "created_date", updatable = false)
+    private Date createdDate;
 
     @Column(name = "message")
     @Lob

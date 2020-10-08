@@ -35,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 public class ProjectMetadataTemplateJoin implements Join<Project, MetadataTemplate> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

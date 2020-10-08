@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
 public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull

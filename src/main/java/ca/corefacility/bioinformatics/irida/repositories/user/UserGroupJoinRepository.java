@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.user;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 
@@ -26,11 +27,11 @@ public interface UserGroupJoinRepository extends IridaJpaRepository<UserGroupJoi
 
 	/**
 	 * Get a collection of users not in a group.
-	 * 
-	 * @param group
-	 *            the group to exclude
+	 *
+	 * @param group the group to exclude
+	 * @param term  term to search the user groups by
 	 * @return the users not in the group
 	 */
-	@Query("from User u where u not in (select user from UserGroupJoin where group = ?1)")
-	public Collection<User> findUsersNotInGroup(final UserGroup group);
+	@Query("from User u where u not in (select user from UserGroupJoin where group = ?1) and (CONCAT(u.firstName, ' ', u.lastName) like %?2% or u.username like %?2% or u.email like %?2%)")
+	public List<User> findUsersNotInGroup(final UserGroup group, final String term);
 }

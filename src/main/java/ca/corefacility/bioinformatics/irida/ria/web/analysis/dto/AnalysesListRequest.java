@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
-import ca.corefacility.bioinformatics.irida.ria.web.models.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 
 /**
  * Used to handle a UI Request for the Analyses Page.

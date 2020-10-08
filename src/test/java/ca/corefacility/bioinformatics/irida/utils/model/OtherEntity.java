@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @Audited
 public class OtherEntity implements IridaThing, Comparable<OtherEntity> {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String label;

@@ -146,7 +146,7 @@ public class DatabaseSetupGalaxyITService {
 
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class DatabaseSetupGalaxyITService {
 				.build();
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**
@@ -255,7 +255,7 @@ public class DatabaseSetupGalaxyITService {
 
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**
@@ -287,7 +287,7 @@ public class DatabaseSetupGalaxyITService {
 				.build(); 
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**
@@ -315,7 +315,7 @@ public class DatabaseSetupGalaxyITService {
 				.build(); 
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**
@@ -342,7 +342,7 @@ public class DatabaseSetupGalaxyITService {
 				.inputFiles(sequenceFilePairs).referenceFile(referenceFile).inputParameters(parameters).build();
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**
@@ -421,7 +421,7 @@ public class DatabaseSetupGalaxyITService {
 				.build(); 
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**
@@ -448,7 +448,7 @@ public class DatabaseSetupGalaxyITService {
 				.inputFiles(sequenceFileSet).referenceFile(referenceFile).build();
 		analysisSubmissionService.create(submission);
 
-		return analysisSubmissionRepository.findOne(submission.getId());
+		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
 	
 	/**

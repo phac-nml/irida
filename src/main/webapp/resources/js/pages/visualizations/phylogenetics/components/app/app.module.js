@@ -1,4 +1,5 @@
 import angular from "angular";
+import uiBootstrap from "angular-ui-bootstrap";
 import { MetadataModule } from "./../metadata/metadata.module";
 import { PhylocanvasModule } from "./../phylocanvas/phylocanvas.module";
 import { TemplateModule } from "./../templates/template.module";
@@ -10,6 +11,7 @@ export const AppModule = angular
     MetadataModule,
     PhylocanvasModule,
     TemplateModule,
-    ExportSVG
+    ExportSVG,
+    uiBootstrap
   ])
   .component("appComponent", AppComponent).name;

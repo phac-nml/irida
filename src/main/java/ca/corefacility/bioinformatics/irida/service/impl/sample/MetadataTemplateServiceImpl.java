@@ -96,7 +96,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("permitAll()")
 	@Override
 	public MetadataTemplateField readMetadataField(Long id) {
-		return fieldRepository.findOne(id);
+		return fieldRepository.findById(id).orElse(null);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			return fieldRepository.findMetadataFieldByStaticId(stripped);
 		} else {
 			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
-			return fieldRepository.findOne(Long.parseLong(stripped));
+			return fieldRepository.findById(Long.parseLong(stripped)).orElse(null);
 		}
 	}
 

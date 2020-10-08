@@ -9,8 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -24,12 +23,13 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	private final String COLUMN_ID = "irida-4"; // This is is based on the id of the MetadataField.
 
 	@Test
-	public void testTableEditAsCollaborator() {
+	public void testPageAsCollaborator() {
 		LoginPage.loginAsUser(driver());
 		driver().manage()
 				.window()
-				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
+				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+		assertFalse("Should not display import metadata button to collaborators", page.isImportMetadataBtnVisible());
 
 		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
@@ -37,13 +37,19 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testTableSetup() {
+	public void testPageAsManager() {
 		LoginPage.loginAsManager(driver());
 		driver().manage()
 				.window()
-				.setSize(new Dimension(1800, 900)); // Make sure we can see everything.
+				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
+		assertTrue("Should display import metadata button", page.isImportMetadataBtnVisible());
+
+		// Ensure translations are loaded onto the page.
+		assertTrue("Applications translations should be loaded", page.ensureTranslationsLoaded("app"));
+		assertTrue("Translations should be properly loaded on the linelist page.",
+				page.ensureTranslationsLoaded("project-linelist"));
 
 
 		// Test the tour to make sure everything is functional.
@@ -55,7 +61,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		// If we reached this far the tour is good to go
 
 		// OPen the column panel
-		page.openColumnsPaenl();
+		page.openColumnsPanel();
 		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
 		assertEquals("Should be 6 fields to toggle", 6, page.getNumberOfMetadataFields());
@@ -108,7 +114,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		driver().navigate()
 				.refresh();
-		page.openColumnsPaenl();
+		page.openColumnsPanel();
 		page.selectTemplate(TEMPLATE_NAME);
 		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, COLUMN_ID));
 

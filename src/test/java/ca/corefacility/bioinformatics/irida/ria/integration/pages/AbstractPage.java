@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 import static org.junit.Assert.*;
@@ -200,15 +199,21 @@ public class AbstractPage {
 	 *            expected href - text: expected text displayed
 	 */
 	public void checkBreadCrumbs(List<Map<String, String>> expected) {
-		List<WebElement> crumbs = driver.findElement(By.className("breadcrumbs")).findElements(By.tagName("a"));
+		List<WebElement> crumbs = driver.findElement(By.className("ant-breadcrumb"))
+				.findElements(By.tagName("a"));
+		crumbs.remove(0); // Remove the home link.
+
 		assertEquals("Should have the correct number of breadcrumbs", expected.size(), crumbs.size());
 		for (int i = 0; i < crumbs.size(); i++) {
 			WebElement crumb = crumbs.get(i);
 			String href = crumb.getAttribute("href");
 			String text = crumb.getText();
-			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
-			assertTrue("Should have the epected url in the breadcrumb", href.contains(expected.get(i).get("href")));
-			assertEquals("Should have the epected text in the breadcrumb", expected.get(i).get("text"), text);
+			assertTrue("Should have the expected url in the breadcrumb", href.contains(expected.get(i)
+					.get("href")));
+			assertTrue("Should have the expected url in the breadcrumb", href.contains(expected.get(i)
+					.get("href")));
+			assertEquals("Should have the expected text in the breadcrumb", expected.get(i)
+					.get("text"), text);
 		}
 	}
 
@@ -271,5 +276,15 @@ public class AbstractPage {
 	 */
 	public boolean hasErrors() {
 		return !driver.findElements(By.className("t-form-error")).isEmpty();
+	}
+
+	public boolean ensureTranslationsLoaded(String entry) {
+		return driver.findElements(By.id(entry.replace("/", "-") + "-translations")).size() > 0;
+	}
+
+	public boolean ensurePageHeadingIsTranslated(String expected) {
+		return driver.findElement(By.className("t-main-heading"))
+				.getText()
+				.equals(expected);
 	}
 }

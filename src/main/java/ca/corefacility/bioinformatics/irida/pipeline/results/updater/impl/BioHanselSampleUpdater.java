@@ -96,7 +96,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				final String baseNamespace = getBaseNamespace(scheme, version);
 				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
-					if (result.containsKey(key)) {
+					if ((result.containsKey(key)) && (result.get(key) != null)) {
 						String value = result.get(key)
 								.toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",

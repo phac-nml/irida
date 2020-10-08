@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -48,6 +51,12 @@ public class ProjectSynchronizationServiceTest {
 	private SequenceFilePairRemoteService pairRemoteService;
 	@Mock
 	private RemoteAPITokenService tokenService;
+	@Mock
+	private EmailController emailController;
+	@Mock
+	private GenomeAssemblyService assemblyService;
+	@Mock
+	private GenomeAssemblyRemoteService assemblyRemoteService;
 
 	ProjectSynchronizationService syncService;
 
@@ -61,8 +70,8 @@ public class ProjectSynchronizationServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
-				metadataTemplateService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
-				pairRemoteService, tokenService);
+				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
+				pairRemoteService, assemblyRemoteService, tokenService, emailController);
 
 		api = new RemoteAPI();
 		expired = new Project();
@@ -124,9 +133,32 @@ public class ProjectSynchronizationServiceTest {
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
-	
+
 	@Test
-	public void testSyncNewSample(){
+	public void testSyncProjectsUnauthorized() {
+		expired.getRemoteStatus()
+				.setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
+		Project remoteProject = new Project();
+		remoteProject.setRemoteStatus(expired.getRemoteStatus());
+		User readBy = new User();
+		expired.getRemoteStatus()
+				.setReadBy(readBy);
+		when(projectService.getProjectsWithRemoteSyncStatus(RemoteStatus.SyncStatus.MARKED)).thenReturn(
+				Lists.newArrayList(expired));
+		when(projectRemoteService.read(expired.getRemoteStatus()
+				.getURL())).thenThrow(new IridaOAuthException("unauthorized", api));
+
+		syncService.findMarkedProjectsToSync();
+
+		assertEquals(SyncStatus.UNAUTHORIZED, remoteProject.getRemoteStatus()
+				.getSyncStatus());
+
+		verify(emailController).sendProjectSyncUnauthorizedEmail(expired);
+	}
+
+	@Test
+	public void testSyncNewSample() {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
 		sample.setRemoteStatus(sampleStatus);
@@ -172,6 +204,23 @@ public class ProjectSynchronizationServiceTest {
 		
 		verify(pairRemoteService).mirrorSequencingObject(pair);
 		verify(objectService).createSequencingObjectInSample(pair, sample);
+	}
+
+	@Test
+	public void testSyncAssemblies() {
+		Sample sample = new Sample();
+
+		UploadedAssembly assembly = new UploadedAssembly(null);
+		RemoteStatus pairStatus = new RemoteStatus("http://assembly", api);
+		assembly.setRemoteStatus(pairStatus);
+		assembly.setId(1L);
+
+		when(assemblyRemoteService.mirrorAssembly(assembly)).thenReturn(assembly);
+
+		syncService.syncAssembly(assembly, sample);
+
+		verify(assemblyRemoteService).mirrorAssembly(assembly);
+		verify(assemblyService).createAssemblyInSample(sample, assembly);
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)

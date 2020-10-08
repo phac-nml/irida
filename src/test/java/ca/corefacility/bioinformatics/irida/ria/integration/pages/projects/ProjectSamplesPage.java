@@ -11,6 +11,10 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
+
+import com.google.common.base.Strings;
+
 /**
  * <p>
  * Page Object to represent the project samples page.
@@ -89,7 +93,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "confirm-copy-samples")
 	private WebElement copyOkBtn;
 
-	@FindBy(className = "select2-selection")
+	@FindBy(css = "a.select2-choice")
 	private WebElement select2Opener;
 
 	@FindBy(className = "select2-search__field")
@@ -165,7 +169,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(id = "linkerCloseBtn")
 	private WebElement linkerCloseBtn;
-	
+
 	@FindBy(className = "locked-sample")
 	private List<WebElement> lockedSamples;
 
@@ -174,6 +178,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(css = ".paginate_button.next a")
 	private WebElement nextTablePageBtn;
+
+	@FindBy(className = "t-create-sample")
+	private WebElement createSampleButton;
+
+	@FindBy(className = "t-sample-name")
+	private WebElement sampleNameInput;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -423,13 +433,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void enterSelect2Value(String value) {
-		select2Opener.click();
-		// Wait for select2 to be open properly.
-		waitForTime(500);
-		sendInputTextSlowly(value, select2Input);
-		// Wait needed to allow select2 to populate.
-		waitForTime(500);
-		select2Input.sendKeys(Keys.RETURN);
+		Select2Utility select2Utility = new Select2Utility(driver);
+		select2Utility.openSelect2Input();
+		select2Utility.searchByText(value);
+		select2Utility.selectDefaultMatch();
 	}
 
 	private void shareMoveSamples(String project, boolean owner) {
@@ -451,11 +458,26 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getLinkerText() {
+		String cmd = linkerCmd.getAttribute("aria-label");
+		if (Strings.isNullOrEmpty(cmd)) {
+			cmd = linkerCmd.getText();
+		}
+		return cmd;
+	}
+
+	public void openLinkerModal(){
 		openExportDropdown();
 		linkerBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
-		return linkerCmd.getAttribute("value");
+	}
+
+	public void clickLinkerFileType(String type){
+		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
+		boolean isChecked = fileTypeCheckbox.isSelected();
+		fileTypeCheckbox.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 	}
 	
 	public List<String> getLockedSampleNames(){
@@ -486,7 +508,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 					.perform();
 		}
 	}
-	
+
+	public void openCreateNewSampleModal() {
+		WebDriverWait wait = openToolsDropdownAndWait();
+		wait.until(ExpectedConditions.elementToBeClickable(createSampleButton));
+		createSampleButton.click();
+	}
+
+	public void enterSampleName(String sampleName) {
+		sampleNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		sampleNameInput.sendKeys(sampleName);
+		waitForTime(300);
+	}
+
+	public boolean isSampleNameErrorDisplayed() {
+		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain")).size() > 0;
+	}
+
 	/**
 	 * Exception which is thrown when attempting to give owner to a sample
 	 * during copy/move and button is not displayed. Used for verifying no give

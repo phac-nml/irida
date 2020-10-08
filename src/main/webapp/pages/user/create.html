@@ -104,6 +104,7 @@
                                     required="required">
                                 <option th:each="role : ${allowedRoles}"
                                         th:value="${role.key}"
+                                        th:selected="${role.key == given_role}"
                                         th:text="${role.value}">
                                     _Role name_
                                 </option>

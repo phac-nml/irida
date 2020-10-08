@@ -1,0 +1,14 @@
+  Chromosome  Genomes
+  gi|873258195|gb|CP012021.1| ALL Sample2 Sample3
+  Total number of N's and -'s 0   0   0
+  Total percent of N's and -'s    0.00    0.00    0.00
+  Total number of unfiltered variants in chromosome: 64
+
+  ================= Filter Summary Statistics =====================
+  Number of sites used to generate phylogeny: 55
+  Total number of sites identified: 64
+  Number of sites filtered: 9
+  Percentage of sites filtered: 14.06
+  Coverage filtered: 0
+  mpileup filtered: 0
+  Invalid filtered: 9

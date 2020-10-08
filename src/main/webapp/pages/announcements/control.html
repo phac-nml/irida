@@ -1,42 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
-<head>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
     <title th:text="#{announcement.admin-menu}">_Announcement_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/announcement-admin.bundle.css}">
+    <link
+      rel="stylesheet"
+      th:href="@{/dist/css/announcement-admin.bundle.css}"
+    />
     <script th:inline="javascript">
       var PAGE = {
         urls: {
           link: /*[[@{/announcements/}]]*/ "/announcements",
           user: /*[[@{/users/}]]*/ "/users/"
-        },
-        i18n: {
-          edit: /*[[#{announcement.control.editDetails}]]*/ "_View_Edit_Announcement"
         }
       };
     </script>
-</head>
-<body>
-<div layout:fragment="page">
-    <main class="col-md-12">
-        <h1 th:text="#{announcement.admin-menu}"></h1>
-      <div id="create-btn-wrapper" class="hidden"><a class="btn btn-sm btn-default" id="create-announcement"
-                                                     th:text="#{announcement.create.title}"
-                                                     th:href="@{create}">_Create NEW_</a></div>
-        <table id="announcementTable" class="table table-striped" cellspacing="0" width="100%" data:url="@{/announcements/control/ajax/list}">
-            <thead>
-                <tr role="row">
-                    <th id="message-header" data-data="message"  data-orderable="false" th:text="#{announcement.control.message}"></th>
-                    <th width="150px" data-data="user.username" th:text="#{announcement.control.createdBy}"></th>
-                    <th width="150px" data-data="createdDate" th:text="#{announcement.control.createdDate}"></th>
-                </tr>
-            </thead>
-        </table>
-    </main>
-</div>
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/announcement-admin.bundle.js}"></script>
-</th:block>
-</body>
+  </head>
+  <body>
+    <div id="announcement-root" style="height: 100%" layout:fragment="page">
+      <!-- React component root found: src/main/webapp/resources/js/pages/announcement/AnnouncementAdminPage.jsx -->
+    </div>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/announcement-admin.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

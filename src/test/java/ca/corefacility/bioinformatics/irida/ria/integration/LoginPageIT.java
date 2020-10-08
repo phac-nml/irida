@@ -25,17 +25,19 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testBadUsername() throws Exception {
 		LoginPage page = LoginPage.to(driver());
+		assertFalse("No login errors should be originally displayed", page.isLoginErrorDisplayed());
 		page.login(LoginPage.BAD_USERNAME, LoginPage.GOOD_PASSWORD);
 		assertTrue("Should update the url with '?error=true'", driver().getCurrentUrl().contains("login?error=true"));
-		assertEquals("Should display error on bad login", page.getErrors(), "Incorrect Username or Password");
+		assertTrue("Should display error on bad login", page.isLoginErrorDisplayed());
 	}
 
 	@Test
 	public void testBadPassword() throws Exception {
 		LoginPage page = LoginPage.to(driver());
+		assertFalse("No login errors should be originally displayed", page.isLoginErrorDisplayed());
 		page.login(LoginPage.USER_USERNAME, LoginPage.BAD_PASSWORD);
 		assertTrue("Should update the url with '?error=true'", driver().getCurrentUrl().contains("login?error=true"));
-		assertEquals("Should display error on bad login", page.getErrors(), "Incorrect Username or Password");
+		assertTrue("Should display error on bad login", page.isLoginErrorDisplayed());
 	}
 
 	@Test

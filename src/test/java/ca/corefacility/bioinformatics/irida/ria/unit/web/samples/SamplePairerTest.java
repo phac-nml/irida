@@ -33,7 +33,8 @@ public class SamplePairerTest {
     @Test
     public void testGetSingleFiles() throws IOException{
         List<MultipartFile> allFiles = createMultipartFileList(MULTIPARTFILE_PATHS);
-        assertEquals("Single files not correctly organized/separated from paired files", 2, SamplePairer.getSingleFiles(allFiles).size());
+        SamplePairer samplePairer = new SamplePairer(allFiles);
+        assertEquals("Single files not correctly organized/separated from paired files", 2, samplePairer.getSingleFiles(allFiles).size());
     }
 
     /**
@@ -42,12 +43,14 @@ public class SamplePairerTest {
     @Test
     public void testGetPairedFiles() throws IOException {
         List<MultipartFile> allFiles = createMultipartFileList(MULTIPARTFILE_PATHS);
-        Set<String> keys = SamplePairer.getPairedFiles(allFiles).keySet();
+        SamplePairer samplePairer = new SamplePairer(allFiles);
+
+        Set<String> keys = samplePairer.getPairedFiles(allFiles).keySet();
 
         assertEquals("Paired files not correctly organized into pairs by prefix", 3, keys.size());
 
         for (String s: keys) {
-            assertEquals("Pairs don't contain the right number of sequence files", 2, SamplePairer.getPairedFiles(allFiles).get(s).size());
+            assertEquals("Pairs don't contain the right number of sequence files", 2, samplePairer.getPairedFiles(allFiles).get(s).size());
         }
     }
 
@@ -75,12 +78,14 @@ public class SamplePairerTest {
         String[] reverse_files = {"src/test/resources/files/pairs/pair_test_R2_001.fastq", "src/test/resources/files/pairs/pair_test_R1_001.fastq"};
 
         List<MultipartFile> allFiles = createMultipartFileList(reverse_files);
-        Set<String> keys = SamplePairer.getPairedFiles(allFiles).keySet();
+        SamplePairer samplePairer = new SamplePairer(allFiles);
+
+        Set<String> keys = samplePairer.getPairedFiles(allFiles).keySet();
 
         assertEquals("Paired files not correctly organized into pairs by prefix", 1, keys.size());
 
         for (String s: keys) {
-            assertEquals("Pairs don't contain the right number of sequence files", 2, SamplePairer.getPairedFiles(allFiles).get(s).size());
+            assertEquals("Pairs don't contain the right number of sequence files", 2, samplePairer.getPairedFiles(allFiles).get(s).size());
         }
     }
 }

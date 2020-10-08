@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html>
-<body>
-
-    <script>
+  <body>
+    <script th:inline="javascript">
       /*
-      This is loaded into an iFrame.
-      Close the bootstrap modal on the parent page.
-       */
-      var modal = window.parent.document.querySelector("#remote-connect-wrapper");
-      modal.dataset.result = "success";
-      modal.querySelector(".close").click();
+  This is loaded into an iFrame.
+  Close the bootstrap modal on the parent page.
+   */
+      const modal = window.parent.document.querySelector(
+        "#remote-connect-wrapper"
+      );
+      if (modal) {
+        modal.dataset.result = "success";
+        modal.querySelector(".close").click();
+      } else {
+        /*
+        Modal was the previous way of handling this.  Now we are opening a new window.
+        To communicate with the parent window (opener), we are posting a message to tell
+        them that the API has been connected.
+         */
+        const opener = window.opener;
+        if (opener) {
+          opener.postMessage("remote_api_connect", /*[[@{/}]]*/ "/");
+          window.close();
+        }
+      }
     </script>
-</body>
+  </body>
 </html>

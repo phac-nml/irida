@@ -1,0 +1,31 @@
+.templates-option {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ant-select-selection-selected-value {
+  width: 100%;
+}
+
+.ant-select-dropdown-menu-item button,
+.ant-select-selection-selected-value .templates-option--field-count {
+  display: none;
+}
+
+.toolbar {
+  margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toolbar-group {
+  display: inline-block;
+}
+
+.toolbar-group .ant-form-item {
+  margin-right: 4px !important;
+}
+
+.toolbar-group .ant-form-item:last-of-type {
+  margin-right: 6px !important;
+}

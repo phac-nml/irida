@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { Button, Icon, Modal } from "antd";
+import { Button, Modal } from "antd";
 import { red6 } from "../../styles/colors";
 import { useInterval } from "../../hooks/useInterval";
 import { SPACE_SM } from "../../styles/spacing";
-
-const { i18n } = window.TL;
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { IconClock } from "../icons/Icons";
 
 /**
  * Modal displayed when the user has had not server interaction within
@@ -37,7 +37,7 @@ export default function SessionModal({
     setRemainingTime(remainingTime - 1);
   }, 1000);
 
-  const logout = () => (window.location = `${window.TL.BASE_URL}logout`);
+  const logout = () => (window.location = setBaseUrl(`logout`));
 
   const keepSession = () =>
     axios.head(window.location.href).then(() => resetTimeout());
@@ -55,9 +55,9 @@ export default function SessionModal({
       visible={visibility}
       onOk={keepSession}
       onCancel={logout}
-      title={i18n.session_modal_title}
-      okText={i18n.session_modal_okText}
-      cancelText={i18n.session_modal_cancelText}
+      title={i18n("session_modal_title")}
+      okText={i18n("session_modal_okText")}
+      cancelText={i18n("session_modal_cancelText")}
       width={350}
       maskClosable={false}
       closable={false}
@@ -76,14 +76,9 @@ export default function SessionModal({
             alignItems: "center"
           }}
         >
-          <Icon
-            type="clock-circle"
-            theme="twoTone"
-            style={{ fontSize: 30 }}
-            twoToneColor={red6}
-          />
+          <IconClock style={{ fontSize: 30, color: red6 }} />
           <span style={{ paddingLeft: SPACE_SM }}>
-            {i18n.session_modal_intro}
+            {i18n("session_modal_intro")}
           </span>
         </span>
       </div>
@@ -98,13 +93,13 @@ export default function SessionModal({
         {format(remainingTime)}
       </section>
       <section style={{ textAlign: "center" }}>
-        {i18n.session_modal_description}
+        {i18n("session_modal_description")}
       </section>
     </Modal>
   ) : (
     <Modal
       visible={visibility}
-      title={i18n.session_modal_title}
+      title={i18n("session_modal_title")}
       width={350}
       closable={false}
       maskClosable={false}
@@ -121,14 +116,9 @@ export default function SessionModal({
           padding: `0 ${SPACE_SM}`
         }}
       >
-        <Icon
-          type="clock-circle"
-          theme="twoTone"
-          style={{ fontSize: 55 }}
-          twoToneColor={red6}
-        />
+        <IconClock style={{ fontSize: 55, color: red6 }} />
         <span style={{ paddingLeft: SPACE_SM }}>
-          {i18n.session_timeout_modal_desc}
+          {i18n("session_timeout_modal_desc")}
         </span>
       </div>
     </Modal>

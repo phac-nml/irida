@@ -1,103 +1,50 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UsersPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.UsersPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.WebElement;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * <p> Integration test to ensure that the Projects Page. </p>
- *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UsersPageIT.xml")
 public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 	private UsersPage usersPage;
 
-	@Before
-	public void setUpTest() {
-		LoginPage.loginAsManager(driver());
-		usersPage = new UsersPage(driver());
-	}
-
 	@Test
-	public void confirmTablePopulatedByProjects() {
-		usersPage.goTo();
-		assertEquals("Projects table should be populated by 3 projects", 3, usersPage.usersTableSize());
-	}
-
-	@Test
-	public void sortByUserName() {
-		usersPage.goTo();
-		usersPage.clickUsernameHeader();
-		List<WebElement> ascElements = usersPage.getUsernameColumn();
-		assertTrue("Projects page is sorted Ascending", checkSortedAscending(ascElements));
-
-		usersPage.clickUsernameHeader();
-		List<WebElement> desElements = usersPage.getUsernameColumn();
-		assertTrue("Projects page is sorted Descending", checkSortedDescending(desElements));
-	}
-
-	@Test
-	public void testLastLogin() {
-		usersPage.goTo();
-
-		List<String> lastLogins = usersPage.getLastLogins();
-		List<String> definedDates = lastLogins.stream().filter(d -> !d.isEmpty()).collect(Collectors.toList());
-		assertEquals("Should be 1 last login", 1, definedDates.size());
-
+	public void testUsersTableAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
-		usersPage.goTo();
+		usersPage = UsersPage.goToAdminPanel(driver());
 
-		lastLogins = usersPage.getLastLogins();
-		definedDates = lastLogins.stream().filter(d -> !d.isEmpty()).collect(Collectors.toList());
-		assertEquals("Should be 2 last logins", 2, definedDates.size());
+		assertEquals("Projects table should be populated by 3 projects", 3, usersPage.usersTableSize());
+
+		assertTrue("Admin should be able to modify user state", usersPage.canUserModifyUserState());
+		assertTrue("Admin should be able to directly go to edit user page", usersPage.canUserAccessUserEditPage());
+
+		// Test sorting
+		assertTrue("Table should be sorted by the modified date initially", usersPage.isTableSortedByModifiedDate());
+		assertFalse("Table should not be sorted by username", usersPage.isTableSortedByUsername());
+		usersPage.sortTableByUsername();
+		assertTrue("Table should be sorted by username", usersPage.isTableSortedByUsername());
+		usersPage.sortTableByModifiedDate();
+		assertFalse("Table should not be sorted by username", usersPage.isTableSortedByUsername());
+
 	}
 
-	/**
-	 * Checks if a List of {@link WebElement} is sorted in ascending order.
-	 *
-	 * @param elements
-	 * 		List of {@link WebElement}
-	 *
-	 * @return if the list is sorted ascending
-	 */
+	@Test
+	public void testUsersTableAsManager() {
+		LoginPage.loginAsManager(driver());
+		usersPage = UsersPage.goTo(driver());
 
-	private boolean checkSortedAscending(List<WebElement> elements) {
-		boolean isSorted = true;
-		for (int i = 1; i < elements.size(); i++) {
-			if (elements.get(i).getText().compareTo(elements.get(i - 1).getText()) < 0) {
-				isSorted = false;
-				break;
-			}
-		}
-		return isSorted;
-	}
+		assertEquals("Projects table should be populated by 3 projects", 3, usersPage.usersTableSize());
 
-	/**
-	 * Checks if a list of {@link WebElement} is sorted in descending order.
-	 *
-	 * @param elements
-	 * 		List of {@link WebElement}
-	 *
-	 * @return if the list is sorted ascending
-	 */
-	private boolean checkSortedDescending(List<WebElement> elements) {
-		boolean isSorted = true;
-		for (int i = 1; i < elements.size(); i++) {
-			if (elements.get(i).getText().compareTo(elements.get(i - 1).getText()) > 0) {
-				isSorted = false;
-				break;
-			}
-		}
-		return isSorted;
+		assertFalse("Manager should not be able to modify user state", usersPage.canUserModifyUserState());
+		assertFalse("Manager should not be able to access the edit user page", usersPage.canUserAccessUserEditPage());
 	}
 }

@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -51,7 +51,8 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	@Column(updatable = false)
+	private Date createdDate;
 
 	@Column(name = "owner")
 	@NotNull

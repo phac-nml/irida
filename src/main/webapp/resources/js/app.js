@@ -1,8 +1,6 @@
-import angular from "angular";
-import "./modules/cart/irida.cart";
 import "./pages/search/irida.search";
 // Import css
-import "../sass/app.scss";
+import "../css/app.css";
 // Font Awesome
 import "@fortawesome/fontawesome-free/js/all";
 /*
@@ -15,16 +13,13 @@ import { showNotification } from "./modules/notifications";
 import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
-
-const deps = ["ui.bootstrap", "irida.cart"];
-
-const app = angular.module("irida", deps);
+import { setBaseUrl } from "./utilities/url-utilities";
 
 /*
 This is here since this has been updated to use a standard Event,
 and not handled through angularjs.
  */
-document.addEventListener(CART.UPDATED, e => {
+document.addEventListener(CART.UPDATED, (e) => {
   const { count, added, duplicate, existing } = e.detail;
 
   const counter = document.querySelector(".js-cart-count");
@@ -38,21 +33,21 @@ document.addEventListener(CART.UPDATED, e => {
   // Display notifications
   if (added) {
     showNotification({
-      text: added
+      text: added,
     });
   }
 
   if (duplicate) {
     showNotification({
       text: duplicate,
-      type: "warning"
+      type: "warning",
     });
   }
 
   if (existing) {
     showNotification({
       text: existing,
-      type: "info"
+      type: "info",
     });
   }
 });
@@ -60,9 +55,23 @@ document.addEventListener(CART.UPDATED, e => {
 /**
  * Initialize the cart
  */
-getCartCount().then(count => {
+getCartCount().then((count) => {
   const event = new CustomEvent(CART.UPDATED, { detail: count });
   document.dispatchEvent(event);
 });
 
-export default app;
+/*
+Since IRIDA can be run on a servlet path, we need to make sure that all requests
+get the correct base url.
+ */
+const xmlHttpRequestOpen = window.XMLHttpRequest.prototype.open;
+
+function openBaseUrlModifier(method, url, async) {
+  const newUrl = setBaseUrl(url);
+  /*
+  Call the original open method with the new url.
+   */
+  return xmlHttpRequestOpen.apply(this, [method, newUrl, async]);
+}
+
+window.XMLHttpRequest.prototype.open = openBaseUrlModifier;

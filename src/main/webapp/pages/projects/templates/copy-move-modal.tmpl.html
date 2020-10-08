@@ -48,8 +48,8 @@
                     <div class="form-group">
                         <label for="js-projectsSelect"
                                th:text="${total>1} ? #{${prefix} + '.select-label-plural'} : #{${prefix} + '.select-label-singular'}"></label>
-                        <select name="newProjectId" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}"
-                                id="js-projectsSelect" class="form-control" style="width: 100%;"></select>
+                        <input name="newProjectId" data:url="@{/projects/{id}/ajax/samples/available_projects(id=${projectId})}"
+                                id="js-projectsSelect" class="form-control" style="width: 100%;"/>
                     </div>
                     <div class="alert alert-warning" th:if="${#lists.size(lockedSamples) > 0 and #strings.equals(type, 'copy')}">
                         <span th:text="#{${prefix} + '.locked'}">_The following samples will be read only as this project does not have modification access_</span>

@@ -9,7 +9,7 @@ Sharing data in IRIDA
 =====================
 {:.no_toc}
 
-Once you've got data into IRIDA, either by [web upload][web-upload] or from a sequencing facility with the [uploader tool][uploader-tool], you're probably going to want to share that data with collaborators.
+Once you've got data into IRIDA, either by [web upload][web-upload] or from a sequencing facility with the [IRIDA Uploader](https://github.com/phac-nml/irida-uploader), you're probably going to want to share that data with collaborators.
 
 In order to share data from a project, you **must** have the **Manager** role on the project. The **Manager** role implies ownership of the data contained in the project. You can find out if you have the **Manager** role by looking at the [project members section][project-members].
 
@@ -24,6 +24,12 @@ Creating a User Account
 -----------------------
 
 If the person you would like to share data with within IRIDA does not have a user account, you'll need to make an account for them.
+
+You may create a new user account in IRIDA if you have the **Manager** or [Administrator](../../administrator/#creating-a-new-user-account) system role.
+
+After logging in to IRIDA, click the gear icon on the top right-hand side of the navbar and click **Create User**:
+
+![Create user menu.]({{ site.baseurl }}/images/tutorials/common/users/create-user-menu.png)
 
 {% include tutorials/common/creating-a-user-account.md %}
 
@@ -68,7 +74,6 @@ All project members are allowed to export the samples in a project to the comman
 {% include tutorials/common/samples/download-sequence-file.md %}
 
 [web-upload]: ../web-upload/
-[uploader-tool]: ../uploader-tutorial/
 [project]: {{ site.baseurl }}/user/user/project/
 [samples]: {{ site.baseurl }}/user/user/samples/
 [project-members]: {{ site.baseurl }}/user/user/project/index.html#project-members

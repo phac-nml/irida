@@ -28,7 +28,7 @@ import org.hibernate.envers.Audited;
 public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity>{
     
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     
     @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)

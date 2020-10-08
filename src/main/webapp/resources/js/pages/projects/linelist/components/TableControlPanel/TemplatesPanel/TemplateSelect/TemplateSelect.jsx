@@ -6,9 +6,10 @@ import {
   HelpPopover,
   PopoverContents
 } from "../../../../../../../components/popovers/index";
+import { SaveTemplateButton } from "./SaveTemplateButton";
+import { SPACE_XS } from "../../../../../../../styles/spacing";
 
 const { Option } = Select;
-const { i18n } = window.PAGE;
 
 /*
 The internationalized content of the help popover describing
@@ -16,8 +17,8 @@ what a template is and how to use it.
  */
 const content = (
   <React.Fragment>
-    <p>{i18n.linelist.templates.Popover.content}</p>
-    <p>{i18n.linelist.templates.Popover.description}</p>
+    <p>{i18n("linelist.templates.Popover.content")}</p>
+    <p>{i18n("linelist.templates.Popover.description")}</p>
   </React.Fragment>
 );
 
@@ -29,31 +30,39 @@ export function TemplateSelect(props) {
   const { current, templates, useTemplate } = props;
 
   return (
-    <React.Fragment>
-      <label style={{ color: "#707171" }}>
-        {i18n.linelist.templates.title}
+    <>
+      <label style={{ color: "#707171", marginBottom: SPACE_XS }}>
+        {i18n("linelist.templates.title")}
         <HelpPopover
           content={<PopoverContents contents={content} />}
-          title={i18n.linelist.templates.Popover.title}
+          title={i18n("linelist.templates.Popover.title")}
         />
       </label>
-      <Select
-        disabled={templates.length === 1}
-        value={current}
-        style={{ width: "100%" }}
-        onSelect={useTemplate}
-      >
-        {templates.map((template, index) => (
-          <Option key={template.id} value={index} title={template.name}>
-            <TemplateSelectOption
-              {...props}
-              index={index}
-              template={template}
-            />
-          </Option>
-        ))}
-      </Select>
-    </React.Fragment>
+      <div style={{ width: 240 }}>
+        <Select
+          style={{ width: 165, marginRight: SPACE_XS }}
+          disabled={templates.length === 1}
+          value={current}
+          onSelect={useTemplate}
+        >
+          {templates.map((template, index) => (
+            <Option key={template.id} value={index} title={template.name}>
+              <TemplateSelectOption
+                {...props}
+                index={index}
+                template={template}
+              />
+            </Option>
+          ))}
+        </Select>
+        <SaveTemplateButton
+          showSaveModal={props.showSaveModal}
+          current={current}
+          templates={templates}
+          saveTemplate={props.saveTemplate}
+        />
+      </div>
+    </>
   );
 }
 

@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
@@ -24,9 +17,6 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -35,6 +25,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectSettingsAssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class ProjectSettingsAssociatedProjectsControllerTest {
 	private static final String USER_NAME = "testme";
@@ -114,9 +111,9 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
 
 		List<RelatedProjectJoin> relatedJoins = Lists.newArrayList(new RelatedProjectJoin(p1, p2));
 		when(projectService.getRelatedProjects(p1)).thenReturn(relatedJoins);
-
 		Page<Project> projectPage = new PageImpl<>(Lists.newArrayList(p2, p3));
 		when(projectService.getUnassociatedProjects(p1, projectName, page, count, Direction.ASC, sortedBy)).thenReturn(projectPage);
+
 
 		Map<String, Object> potentialAssociatedProjects = controller.getPotentialAssociatedProjects(projectId,
 				principal, page, count, sortedBy, sortDir, projectName);

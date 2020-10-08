@@ -20,16 +20,13 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import com.google.common.collect.Lists;
 
 /**
- * Message converter for converting application/fastq HTTP responses to a Java
+ * Message markdownConverter for converting application/fastq HTTP responses to a Java
  * Path temporary file
- * 
- *
  */
 public class SequenceFileMessageConverter implements HttpMessageConverter<Path> {
+	public static final List<MediaType> SUPPORTED_TYPES = Lists.newArrayList(new MediaType("application", "fastq"),
+			new MediaType("application", "fasta"));
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileMessageConverter.class);
-
-	public static final MediaType MEDIA_TYPE = new MediaType("application","fastq");
-
 	private final String fileName;
 
 	public SequenceFileMessageConverter(String fileName) {
@@ -41,9 +38,9 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	 */
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
-		logger.trace("Testing converter for class " + clazz.getName() + " and mediatype " + mediaType);
-		if (mediaType != null && MEDIA_TYPE.includes(mediaType)
-				&& clazz.equals(Path.class)) {
+		logger.trace("Testing markdownConverter for class " + clazz.getName() + " and mediatype " + mediaType);
+		if (mediaType != null && clazz.equals(Path.class) && SUPPORTED_TYPES.stream()
+				.anyMatch(t -> t.includes(mediaType))) {
 			logger.trace("SequenceFileMessageConverter can read this message");
 			return true;
 		}
@@ -59,7 +56,7 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return Lists.newArrayList(MEDIA_TYPE);
+		return SUPPORTED_TYPES;
 	}
 
 	@Override

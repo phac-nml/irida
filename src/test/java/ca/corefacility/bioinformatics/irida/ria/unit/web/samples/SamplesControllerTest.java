@@ -1,21 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,23 +9,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -54,18 +33,23 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
  */
 public class SamplesControllerTest {
-	public static final String[] MULTIPARTFILE_PATHS = { "src/test/resources/files/test_file_A.fastq",
-			"src/test/resources/files/test_file_B.fastq" };
-	public static final String[] MULTIPARTFILE_PAIR_PATHS = { "src/test/resources/files/pairs/pair_test_R1_001.fastq",
-			"src/test/resources/files/pairs/pair_test_R2_001.fastq" };
 
 	// Services
 	private SamplesController controller;
@@ -75,6 +59,7 @@ public class SamplesControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private ReadSamplePermission readSamplePermission;
 	private MetadataTemplateService metadataTemplateService;
+	private GenomeAssemblyService genomeAssemblyService;
 	private MessageSource messageSource;
 
 	@Before
@@ -83,11 +68,12 @@ public class SamplesControllerTest {
 		sequencingObjectService = mock(SequencingObjectService.class);
 		projectService = mock(ProjectService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
+		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		messageSource = mock(MessageSource.class);
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
-				updateSamplePermission, metadataTemplateService, messageSource);
+				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -265,13 +251,13 @@ public class SamplesControllerTest {
 		GenomeAssembly genomeAssembly = TestDataFactory.constructGenomeAssembly();
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sampleService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
+		when(genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
 		when(readSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
 
 		controller.downloadAssembly(sampleId, assemblyId, response);
 
 		verify(sampleService).read(sampleId);
-		verify(sampleService).getGenomeAssemblyForSample(sample, assemblyId);
+		verify(genomeAssemblyService).getGenomeAssemblyForSample(sample, assemblyId);
 	}
 	
 	@Test
@@ -282,7 +268,7 @@ public class SamplesControllerTest {
 		Sample sample = new Sample();
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
-		when(sampleService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
+		when(genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId)).thenReturn(genomeAssembly);
 		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
 		
 		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
@@ -290,97 +276,6 @@ public class SamplesControllerTest {
 		
 		controller.removeGenomeAssemblyFromSample(attributes, sampleId, assemblyId, request, Locale.US);
 
-		verify(sampleService).removeGenomeAssemblyFromSample(sample, assemblyId);
-	}
-
-	// ************************************************************************************************
-	// AJAX REQUESTS
-	// ************************************************************************************************
-
-	@Test
-	public void testUploadSequenceFiles() throws IOException {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(sample.getId())).thenReturn(sample);
-
-		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PATHS);
-
-		ArgumentCaptor<SingleEndSequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor
-				.forClass(SingleEndSequenceFile.class);
-
-		HttpServletResponse response = new MockHttpServletResponse();
-		controller.uploadSequenceFiles(sample.getId(), fileList, response);
-
-		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
-				eq(sample));
-		assertEquals("Should have the correct file name", "test_file_B.fastq", sequenceFileArgumentCaptor.getValue()
-				.getLabel());
-	}
-
-	@Test
-	public void testUploadSequenceFilePairs() throws IOException {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(sample.getId())).thenReturn(sample);
-
-		List<MultipartFile> fileList = createMultipartFileList(MULTIPARTFILE_PAIR_PATHS);
-
-		ArgumentCaptor<SequenceFilePair> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
-
-		HttpServletResponse response = new MockHttpServletResponse();
-		controller.uploadSequenceFiles(sample.getId(), fileList, response);
-
-		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-
-		verify(sequencingObjectService)
-				.createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(), eq(sample));
-
-		assertEquals("Should have the correct file name", "pair_test_R1_001.fastq", sequenceFileArgumentCaptor
-				.getValue().getForwardSequenceFile().getLabel());
-		assertEquals("Should have the correct file name", "pair_test_R2_001.fastq", sequenceFileArgumentCaptor
-				.getValue().getReverseSequenceFile().getLabel());
-	}
-
-	@Test
-	public void testUploadSequenceFilePairsAndSingle() throws IOException {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(sample.getId())).thenReturn(sample);
-
-		List<MultipartFile> fileList = createMultipartFileList(ArrayUtils.addAll(MULTIPARTFILE_PATHS,
-				MULTIPARTFILE_PAIR_PATHS));
-
-		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
-
-		HttpServletResponse response = new MockHttpServletResponse();
-		controller.uploadSequenceFiles(sample.getId(), fileList, response);
-
-		assertEquals("Response is ok", HttpServletResponse.SC_OK, response.getStatus());
-		verify(sequencingObjectService, times(3)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
-				eq(sample));
-
-		List<SequencingObject> allValues = sequenceFileArgumentCaptor.getAllValues();
-
-		assertEquals("Should have created 2 single end sequence files", 2,
-				allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count());
-		assertEquals("Should have created 1 file pair", 1, allValues.stream()
-				.filter(o -> o instanceof SequenceFilePair).count());
-	}
-
-	/**
-	 * Create a list of {@link MultipartFile}
-	 * 
-	 * @param list
-	 *            A list of paths to files.
-	 * @return
-	 * @throws IOException
-	 */
-	private List<MultipartFile> createMultipartFileList(String[] list) throws IOException {
-		List<MultipartFile> fileList = new ArrayList<>();
-		for (String pathName : list) {
-			Path path = Paths.get(pathName);
-			byte[] bytes = Files.readAllBytes(path);
-			fileList.add(new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(),
-					"octet-stream", bytes));
-		}
-		return fileList;
+		verify(genomeAssemblyService).removeGenomeAssemblyFromSample(sample, assemblyId);
 	}
 }

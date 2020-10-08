@@ -1,39 +1,28 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Describes fields that must be made available for a Sequence File in IRIDA
- * 
- *
  */
 public interface IridaSequenceFile {
 
 	/**
-	 * Get the local numerical identifier
-	 * 
-	 * @return the numerical identifier for the sequence file.
-	 */
-	public Long getId();
-
-	/**
 	 * Get the location on the file system where the sequence file is stored
-	 * 
+	 *
 	 * @return the physical location of the file.
 	 */
 	public Path getFile();
 
 	/**
-	 * Get a map of optional key/value pair properties
-	 * 
-	 * @return any additional properties provided by the sequencer.
+	 * The base name of the file
+	 *
+	 * @return a string base name of the file
 	 */
-	public Map<String, String> getOptionalProperties();
-	
-	
+	public String getFileName();
+
 	/**
 	 * Get the size of the file.
 	 *
@@ -41,17 +30,12 @@ public interface IridaSequenceFile {
 	 */
 	@JsonIgnore
 	public String getFileSize();
-	
+
 	/**
-	 * From
-	 * (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
-	 * into-human-readable-format-in-java)
+	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size- into-human-readable-format-in-java)
 	 *
-	 * @param bytes
-	 *            The {@link Long} size of the file in bytes.
-	 * @param si
-	 *            {@link Boolean} true to use si units
-	 *
+	 * @param bytes The {@link Long} size of the file in bytes.
+	 * @param si    {@link Boolean} true to use si units
 	 * @return A human readable {@link String} representation of the file size.
 	 */
 	public static String humanReadableByteCount(long bytes, boolean si) {

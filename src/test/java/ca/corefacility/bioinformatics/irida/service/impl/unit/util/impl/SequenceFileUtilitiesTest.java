@@ -29,7 +29,7 @@ public class SequenceFileUtilitiesTest {
 		Path file = Paths.get(getClass().getResource(
 				"/ca/corefacility/bioinformatics/irida/service/testReference.fasta").toURI());
 		Long sequenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(file);
-		assertEquals("Should have 4 bases.", new Long(4), sequenceFileLength);
+		assertEquals("Should have 4 bases.", Long.valueOf(4), sequenceFileLength);
 	}
 
 	@Test

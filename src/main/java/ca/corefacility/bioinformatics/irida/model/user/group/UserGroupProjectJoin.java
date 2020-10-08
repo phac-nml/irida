@@ -43,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -64,8 +64,8 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_date")
-	private final Date createdDate;
+	@Column(name = "created_date", updatable = false)
+	private Date createdDate;
 	
 	/**
 	 * for hibernate

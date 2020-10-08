@@ -9,21 +9,21 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
  * Configuration class for loading properties files. This configuration source
  * looks in three places for properties:
- * 
+ *
  * <ol>
  * <li>within the package at jdbc.dev.properties,</li>
  * <li>within the package at filesystem.properties, and</li>
  * <li>on the filesystem at /etc/irida/irida.conf</li>
  * </ol>
- * 
- * 
+ *
+ *
  */
 @Configuration
 @Import({ IridaApiPropertyPlaceholderConfig.class })
@@ -79,12 +79,12 @@ public class WebEmailConfig {
 	/**
 	 * An extension of {@link JavaMailSender} that allows checking to see if
 	 * it's configured.
-	 * 
+	 *
 	 */
 	public interface ConfigurableJavaMailSender extends JavaMailSender {
 		/**
 		 * Check to see if the mail server has been configured correctly.
-		 * 
+		 *
 		 * @return {@link Boolean#TRUE} if configured, {@link Boolean#FALSE}
 		 *         if unconfigured.
 		 */
@@ -96,13 +96,13 @@ public class WebEmailConfig {
 	 *
 	 */
 	public static class ConfigurableJavaMailSenderImpl extends JavaMailSenderImpl implements ConfigurableJavaMailSender {
-		
+
 		private static final Logger logger = LoggerFactory.getLogger(ConfigurableJavaMailSenderImpl.class);
-				
+
 		private static final String UNCONFIGURED_HOST_VALUE = "YOUR_MAIL_HOST";
 		private static final String UNCONFIGURED_PROTOCOL_VALUE = "YOUR_MAIL_PROTOCOL (usually SMTP)";
 		private static final String UNCONFIGURED_USERNAME_VALUE = "YOUR_MAIL_NAME (the name that the e-mail is coming from)";
-				
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -118,7 +118,7 @@ public class WebEmailConfig {
 				logger.warn("E-mail username is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			}
-		
+
 			return Boolean.TRUE;
 		}
 

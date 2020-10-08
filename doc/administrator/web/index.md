@@ -23,7 +23,7 @@ Prerequisites
 The following prerequisites are required for running the IRIDA web interfaces:
 
 * [Java](http://www.oracle.com/technetwork/java/index.html) 11 or higher.
-* A working servlet container supporting Servlet 3.0 ([Tomcat](https://tomcat.apache.org/), version 7 or higher, for example)
+* A working servlet container supporting Servlet 3.1 ([Tomcat](https://tomcat.apache.org/), version 8 or higher, for example)
 * A working database server (the application is tested on [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/)).
 * A working install of Galaxy (we recommend that you run Galaxy and the IRIDA web interface on separate machines).
 The install guide assumes that you are using [Bash](https://www.gnu.org/software/bash/manual/bashref.html)
@@ -73,6 +73,7 @@ The main configuration parameters you will need to change are:
   * `sequence.file.base.directory=/opt/irida/data/sequence` - Sequence files managed by IRIDA.
   * `reference.file.base.directory=/opt/irida/data/reference` - Reference files assigned to projects in IRIDA.
   * `output.file.base.directory=/opt/irida/data/output` - Results of analysis pipelines.
+  * `assembly.file.base.directory=/opt/irida/data/assembly` - Assemblies uploaded into IRIDA.
 2. **Threads used for file processing (FastQC, GZip, etc):**
   * `file.processing.core.size=4` - The initial number of threads available for file processing.
   * `file.processing.max.size=8` - The maximum number of available threads for file processing.  This number should not exceed the configured maximum number of JDBC threads.
@@ -88,7 +89,7 @@ The main configuration parameters you will need to change are:
   * `galaxy.execution.email=user@localhost`
   * `irida.workflow.max-running=4` - The maximum number of running workflows.  For larger installations this number can be increased.
   * `irida.workflow.analysis.threads` - The number of threads to use for handling analysis/workflow tasks. For larger installations this number can be increased. Increasing beyond `irida.workflow.max-running` is unlikely to give any additional performance boost.
-4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  See [NCBI SRA Handbook](http://www.ncbi.nlm.nih.gov/books/NBK47529/#_SRA_Quick_Sub_BK_Establishing_a_Center_A_) for details.
+4. **NCBI SRA export configuration** - An SRA bulk upload user account must be created with NCBI to allow automated SRA uploads.  Contact NCBI's SRA staff at <sra@ncbi.nlm.nih.gov> and ask for information about setting up a "Center account for simplified format using FTP" for more information.
   * `ncbi.upload.host` - FTP host to upload ncbi exports
   * `ncbi.upload.user` - FTP Username
   * `ncbi.upload.password` - FTP password
