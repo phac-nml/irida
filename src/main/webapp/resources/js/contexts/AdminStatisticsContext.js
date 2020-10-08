@@ -66,7 +66,7 @@ function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
 
   useEffect(() => {
-    // On load get the basic for the default time period
+    // On load get the basic usage stats for the default time period
     getAdminStatistics(defaultTimePeriod).then(basicStats => {
       setAdminStatisticsContext(adminStatisticsContext => {
         return {...adminStatisticsContext, basicStats: basicStats};
@@ -149,7 +149,7 @@ function AdminStatisticsProvider(props) {
   }
 
   /*
-   * Gets the config required for the chart
+   * Gets the config and data required for the chart
    * @param chartType - The type of chart (bar, column, line, or pie)
    * @param data - The data for the chart
    * @param statsType - The type of statistics (projects, analyses, samples, users)
@@ -181,6 +181,7 @@ function AdminStatisticsProvider(props) {
     } else if (statsType === statisticTypes.USERS) {
       chartTitle =`Number of users logged on in past ${timePeriodText}`;
       chartAxisAlias = '# of Users';
+      data = adminStatisticsContext.statistics.userStats;
     }
 
     // The configuration required to display a chart

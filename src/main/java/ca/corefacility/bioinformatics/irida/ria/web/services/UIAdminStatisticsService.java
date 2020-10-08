@@ -116,7 +116,24 @@ public class UIAdminStatisticsService {
 	}
 
 	public UserStatsResponse getAdminUserStatistics(Integer timePeriod) {
-		return new UserStatsResponse(null);
+		List<GenericStatModel> usersList = new ArrayList<>();
+		Date currDate = new Date();
+		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
+				.toDate();
+
+		if(IntStream.of(DAILY).anyMatch((x -> x == timePeriod))) {
+			usersList = userService.getUsersLoggedInDaily(minimumCreatedDate);
+		} else if(IntStream.of(MONTHLY).anyMatch((x -> x == timePeriod))) {
+			usersList = userService.getUsersLoggedInMonthly(minimumCreatedDate);
+		} else if(IntStream.of(YEARLY).anyMatch((x -> x == timePeriod))) {
+			usersList = userService.getUsersLoggedInYearly(minimumCreatedDate);
+		} else {
+			minimumCreatedDate = new DateTime(currDate).minusHours(24)
+					.toDate();
+			usersList = userService.getUsersLoggedInHourly(minimumCreatedDate);
+		}
+
+		return new UserStatsResponse(usersList);
 	}
 
 }

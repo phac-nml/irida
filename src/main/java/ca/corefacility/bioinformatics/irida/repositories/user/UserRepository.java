@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * Specialized repository for {@link User}.
@@ -47,4 +48,44 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 */
 	@Query("select count(u.id) from User u where u.lastLogin >= ?1")
 	public Long countUsersLoggedInTimePeriod(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for users logged on in the last day and grouped by hour
+	 *
+	 * @param createdDate The minimum created date for users logged on
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.lastLogin, '%H:00'), count(u.id))"
+			+ "from User u where u.lastLogin >= ?1 group by function('date_format', u.lastLogin, '%H')")
+	public List<GenericStatModel> countUsersLoggedOnHourly(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for users logged on in the past 30 days and grouped by month and day
+	 *
+	 * @param createdDate The minimum created date for users logged on
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.lastLogin, '%m/%d'), count(u.id))"
+			+ "from User u where u.lastLogin >= ?1 group by function('date_format', u.lastLogin, '%m/%d')")
+	public List<GenericStatModel> countUsersLoggedOnDaily(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for users logged on in the past 365 days and grouped by month and year
+	 *
+	 * @param createdDate The minimum created date for users logged on
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.lastLogin, '%m/%y'), count(u.id))"
+			+ "from User u where u.lastLogin >= ?1 group by function('date_format', u.lastLogin, '%m/%y')")
+	public List<GenericStatModel> countUsersLoggedOnMonthly(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for users logged on in the past 2,5 and 10 years and grouped by year
+	 *
+	 * @param createdDate The minimum created date for users logged on
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.lastLogin, '%Y'), count(u.id))"
+			+ "from User u where u.lastLogin >= ?1 group by function('date_format', u.lastLogin, '%Y')")
+	public List<GenericStatModel> countUsersLoggedOnYearly(Date createdDate);
 }

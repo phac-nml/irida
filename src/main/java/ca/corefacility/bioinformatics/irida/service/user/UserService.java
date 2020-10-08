@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -152,4 +153,28 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return An {@link Long} count of users logged in
 	 */
 	public Long getUsersLoggedIn(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users logged on in the past 24 hours
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersLoggedInHourly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users logged on in the past n days
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersLoggedInDaily(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users logged on in the past n months
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersLoggedInMonthly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users logged on in the past n years
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersLoggedInYearly(Date createdDate);
 }
