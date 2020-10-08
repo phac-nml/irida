@@ -8,6 +8,7 @@ Changes
 * [UI]: Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
 * [UI]: Fixed bug where users could not see or connect to Remote APIs (20.09.2)
 * [UI]: Fixed bug on project page where incorrect link to Remote API was displayed. (20.09.2)
+* [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality addded in 20.09. (20.09.2)
 
 20.05 to 20.09
 --------------
