@@ -20,7 +20,6 @@ import { ChartTypeButtons } from "./ChartTypeButtons";
 export default function AdvancedStatistics({statType}) {
 
   const {
-    adminStatisticsContext,
     updateAnalysesStatsTimePeriod,
     updateProjectStatsTimePeriod,
     updateSampleStatsTimePeriod,

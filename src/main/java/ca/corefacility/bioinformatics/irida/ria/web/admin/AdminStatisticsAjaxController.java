@@ -22,20 +22,8 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @RequestMapping("/ajax/admin")
 public class AdminStatisticsAjaxController {
 
-	private ProjectService projectService;
-	private UserService userService;
-	private AnalysisTypesService analysisTypesService;
-	private SampleService sampleService;
-	private MessageSource messageSource;
-
 	@Autowired
-	public AdminStatisticsAjaxController(ProjectService projectService, UserService userService,
-			AnalysisTypesService analysisTypesService, SampleService sampleService, MessageSource messageSource) {
-		this.projectService = projectService;
-		this.userService = userService;
-		this.analysisTypesService = analysisTypesService;
-		this.sampleService = sampleService;
-		this.messageSource = messageSource;
+	public AdminStatisticsAjaxController() {
 	}
 
 	/**

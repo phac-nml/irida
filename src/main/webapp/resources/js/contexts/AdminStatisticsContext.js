@@ -47,25 +47,16 @@ export const defaultChartType = chartTypes.BAR;
 
 const initialContext = {
   statistics: {
-    analysesStats: [
-      { key: '2019', value: 1607 },
-      { key: '2018', value: 801 },
-      { key: '2017', value: 421 },
-      { key: '2016', value: 221 },
-      { key: '2015', value: 145 },
-      { key: '2014', value: 61 },
-      { key: '2013', value: 52 },
-      { key: '2012', value: 38 }
-    ],
+    analysesStats: [{}],
     projectStats: [{}],
     sampleStats: [{}],
     userStats: [{}]
   },
   basicStats : {
-    analysesRun: 25,
-    projectsCreated: 64,
-    samplesCreated: 128,
-    usersLoggedIn: 12
+    analysesRun: 0,
+    projectsCreated: 0,
+    samplesCreated: 0,
+    usersLoggedIn: 0
   }
 };
 
@@ -73,16 +64,6 @@ const AdminStatisticsContext = React.createContext(initialContext);
 
 function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
-
-  // On load get the usage statistics for the default time period
-  // useEffect(() => {
-  //   getAdminStatistics(defaultTimePeriod).then(res => {
-  //     console.log(res);
-  //     setAdminStatisticsContext(res);
-  //   }).catch((message) => {
-  //     notification.error({ message });
-  //   });
-  // }, []);
 
   // Get updated project usage stats for the selected time period
   function updateProjectStatsTimePeriod(timePeriod) {
@@ -140,7 +121,6 @@ function AdminStatisticsProvider(props) {
     if(statsType === statisticTypes.ANALYSES) {
       chartTitle = `Number of analyses run in past ${timePeriodText}`;
       chartAxisAlias = '# of Analyses';
-      data = adminStatisticsContext.statistics.analysesStats;
     } else if (statsType === statisticTypes.PROJECTS) {
       chartTitle = `Number of projects created in past ${timePeriodText}`;
       chartAxisAlias ='# of Projects';
@@ -153,33 +133,30 @@ function AdminStatisticsProvider(props) {
       chartAxisAlias = '# of Users';
     }
 
-    // Some charts for examples Column need the data reversed so that it is
-    // displayed in the correct order
-    const revData = data !== null ? [...data].reverse() : null;
 
     // The configuration required to display a chart
     const chartConfig = {
       title: { visible: true, text: chartTitle },
       forceFit: true,
-      data: data !== null || revData !== null ? (isBarChartType ? data : revData) : [{key:"", value:""}],
+      data: data !== null  ? data : [{key:"", value:""}],
       padding: 'auto',
       xField: isBarChartType ? 'value' : 'key',
       yField: isBarChartType ? 'key' : 'value',
       meta: { key: { alias: 'Time Period' }, value: { alias: chartAxisAlias } },
       angleField:"value",
       label: {
-        visible: data !== null || revData !== null ? (isPieDonutChartType ? false : true) : false,
+        visible: data !== null ? (isPieDonutChartType ? false : true) : false,
         position: isBarChartType ? 'right' : 'middle',
         adjustColor: true,
         style: { fill: '#0D0E68', fontSize: 12, fontWeight: 600, opacity: 0.3 },
       },
       colorField: "key",
       legend: {
-        visible: data !== null || revData !== null ? true : false,
+        visible: data !== null ? true : false,
         position: 'bottom-center',
       },
       statistic: {
-        visible: data !== null || revData !== null ? true : false,
+        visible: data !== null ? true : false,
         content: {
           value: "",
           name: '',
