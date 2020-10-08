@@ -3,7 +3,7 @@
  * for the admin statistics page
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notification } from "antd";
 import {
   getAdminStatistics,
@@ -65,6 +65,15 @@ const AdminStatisticsContext = React.createContext(initialContext);
 
 function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
+
+  // Get basic usage stats for the time period
+  useEffect(() => {
+    getAdminStatistics(defaultTimePeriod).then(res => {
+      console.log(res);
+    }).catch((message) => {
+      notification.error({ message });
+    });
+  }, []);
 
   // Get updated project usage stats for the selected time period
   function updateProjectStatsTimePeriod(timePeriod) {
