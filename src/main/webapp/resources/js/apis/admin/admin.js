@@ -1,7 +1,7 @@
 import { setBaseUrl } from "../../utilities/url-utilities";
 import axios from "axios";
 
-const ADMIN_URL = setBaseUrl(`/ajax/admin`);
+const ADMIN_URL = setBaseUrl(`/ajax/statistics`);
 
 /*
  * Get all the statistics for the admin panel
@@ -9,12 +9,10 @@ const ADMIN_URL = setBaseUrl(`/ajax/admin`);
  *                      `error` contains error information if an error occurred.
  */
 export async function getAdminStatistics() {
-  try {
-    const { data } = await axios.get(`${ADMIN_URL}/statistics`);
-    return data;
-  }  catch (error) {
-    return { error };
-  }
+  return await axios.get(`${ADMIN_URL}/basic`).then(({data}) => data).catch(error => {
+    console.log(error.response.data);
+    throw new Error(error.response.data.error);
+  });
 }
 
 /*
@@ -23,12 +21,9 @@ export async function getAdminStatistics() {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminProjectStatistics(timePeriod) {
-  try {
-    const { data } = await axios.get(`${ADMIN_URL}/project-statistics/`);
-    return data;
-  }  catch (error) {
-    return { error };
-  }
+  return await axios.get(`${ADMIN_URL}/projects`).then(({data}) => data).catch(error => {
+    throw new Error(error.response.data.error);
+  });
 }
 
 /*
@@ -37,12 +32,9 @@ export async function getUpdatedAdminProjectStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
-  try {
-    const { data } = await axios.get(`${ADMIN_URL}/analyses-statistics/`);
-    return data;
-  }  catch (error) {
-    return { error };
-  }
+  return await axios.get(`${ADMIN_URL}/analyses`).then(({data}) => data).catch(error => {
+    throw new Error(error.response.data.error);
+  });
 }
 
 /*
@@ -51,12 +43,9 @@ export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminSampleStatistics(timePeriod) {
-  try {
-    const { data } = await axios.get(`${ADMIN_URL}/sample-statistics/`);
-    return data;
-  }  catch (error) {
-    return { error };
-  }
+  return await axios.get(`${ADMIN_URL}/samples`).then(({data}) => data).catch(error => {
+    throw new Error(error.response.data.error);
+  });
 }
 
 /*
@@ -65,10 +54,7 @@ export async function getUpdatedAdminSampleStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminUserStatistics(timePeriod) {
-  try {
-    const { data } = await axios.get(`${ADMIN_URL}/user-statistics/`);
-    return data;
-  }  catch (error) {
-    return { error };
-  }
+  return await axios.get(`${ADMIN_URL}/users`).then(({data}) => data).catch(error => {
+    throw new Error(error.response.data.error);
+  });
 }

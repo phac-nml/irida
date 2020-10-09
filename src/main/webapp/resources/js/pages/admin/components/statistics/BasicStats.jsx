@@ -27,7 +27,7 @@ export default function BasicStats() {
       <div style={{marginBottom: SPACE_LG}} className="t-stats-basic">
         <div style={{display: "flex",
           justifyContent: "flex-start", flexWrap: "wrap"}}>
-            <Card style={{width: 240, marginRight: SPACE_XS}}>
+            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
               <Statistic
                 title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.analysesRun}
@@ -40,7 +40,7 @@ export default function BasicStats() {
               </Button>
             </Card>
 
-            <Card style={{width: 240, marginRight: SPACE_XS}}>
+            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
               <Statistic
                 title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.projectsCreated}
@@ -53,7 +53,7 @@ export default function BasicStats() {
               </Button>
             </Card>
 
-            <Card style={{width: 240, marginRight: SPACE_XS}}>
+            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
               <Statistic
                 title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.samplesCreated}
@@ -66,7 +66,7 @@ export default function BasicStats() {
               </Button>
             </Card>
 
-            <Card style={{width: 240, marginRight: SPACE_XS}}>
+            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
               <Statistic
                 title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.usersCreated}
@@ -79,7 +79,7 @@ export default function BasicStats() {
               </Button>
             </Card>
 
-            <Card style={{width: 240, marginRight: SPACE_XS}}>
+            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
               <Statistic
                 title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
                 value={adminStatisticsContext.basicStats.usersLoggedIn}
