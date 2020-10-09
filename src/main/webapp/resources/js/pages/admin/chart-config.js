@@ -22,24 +22,24 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
   let chartAxisAlias = "";
 
   if(statsType === statisticTypes.ANALYSES) {
-    chartTitle = `Number of analyses run in past ${timePeriodText}`;
-    chartAxisAlias = '# of Analyses';
+    chartTitle = i18n("AdminPanelStatistics.titleAnalyses", timePeriodText);
+    chartAxisAlias = i18n("AdminPanelStatistics.chartAxisAliasAnalyses");
     data = statistics.analysesStats;
   } else if (statsType === statisticTypes.PROJECTS) {
-    chartTitle = `Number of projects created in past ${timePeriodText}`;
-    chartAxisAlias ='# of Projects';
+    chartTitle = i18n("AdminPanelStatistics.titleProjects", timePeriodText);
+    chartAxisAlias = i18n("AdminPanelStatistics.chartAxisAliasProjects");
     data = statistics.projectStats;
-  } else if (statsType === statisticTypes.SAMPLES)
-  {
-    chartTitle = `Number of samples created in past ${timePeriodText}`;
-    chartAxisAlias = '# of Samples';
+  } else if (statsType === statisticTypes.SAMPLES) {
+    chartTitle = i18n("AdminPanelStatistics.titleSamples", timePeriodText);
+    chartAxisAlias = i18n("AdminPanelStatistics.chartAxisAliasSamples");
     data = statistics.sampleStats;
   } else if (statsType === statisticTypes.USERS) {
-    chartTitle =`Number of users created in past ${timePeriodText}`;
-    chartAxisAlias = '# of Users';
+    chartTitle = i18n("AdminPanelStatistics.titleUsersCreated", timePeriodText);
+    chartAxisAlias = i18n("AdminPanelStatistics.chartAxisAliasUsers");
     data = statistics.userStats;
   }
 
+  // Creates a const of non common values for the chart type
   const customChartTypeConfig = {
     [chartTypes.BAR]: {
       xField: 'value',
@@ -51,12 +51,21 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
     [chartTypes.DONUT]: {
       label: {
         visible: false,
-      }
+      },
+      statistic: {
+        visible: Boolean(data),
+        content: {
+          value: '',
+          name: '',
+        },
+      },
+      angleField:'value',
     },
     [chartTypes.PIE]: {
       label: {
         visible: false,
-      }
+      },
+      angleField:'value',
     }
   };
 
@@ -69,8 +78,7 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
     padding: 'auto',
     xField: 'key',
     yField: 'value',
-    meta: { key: { alias: 'Time Period' }, value: { alias: chartAxisAlias } },
-    angleField:"value",
+    meta: { key: { alias: i18n("AdminPanelStatistics.chartAxisAliasTimePeriod") }, value: { alias: chartAxisAlias } },
     label: {
       visible: Boolean(data),
       position: 'middle',
@@ -81,14 +89,7 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
     legend: {
       visible: Boolean(data),
       position: 'bottom-center',
-    },
-    statistic: {
-      visible: Boolean(data),
-      content: {
-        value: '',
-        name: '',
-      },
-    },
+    }
   };
 
   return merge(config, customChartTypeConfig[chartType]);

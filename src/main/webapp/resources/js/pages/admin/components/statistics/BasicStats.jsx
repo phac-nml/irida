@@ -17,16 +17,16 @@ import {
 import styled from "styled-components";
 
 const StatisticsCard = styled(Card)`
-    border: none;
-    width: 240px;
-    margin-right: ${SPACE_XS};
-    margin-bottom: ${SPACE_XS};
-  `;
+  border: none;
+  width: 240px;
+  margin-right: ${SPACE_XS};
+  margin-bottom: ${SPACE_XS};
+`;
 
 const StatisticsButton = styled(Button)`
-    width: 170px;
-    margin-top: ${SPACE_XS};
-  `;
+  width: 170px;
+  margin-top: ${SPACE_XS};
+`;
 
 export default function BasicStats() {
   const [statsChartView, setStatsChartView] = useState(null);
@@ -48,7 +48,7 @@ export default function BasicStats() {
           justifyContent: "space-between", flexWrap: "wrap"}}>
             <StatisticsCard>
               <Statistic
-                title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={i18n("AdminPanelStatistics.titleAnalyses", timePeriodMap[defaultTimePeriod])}
                 value={adminStatisticsContext.basicStats.analysesRan}
               />
               <StatisticsButton
@@ -58,13 +58,13 @@ export default function BasicStats() {
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)
                 }}
               >
-                Analyses Statistics
+                {i18n("AdminPanelStatistics.buttonAnalyses")}
               </StatisticsButton>
             </StatisticsCard>
 
             <StatisticsCard>
               <Statistic
-                title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={i18n("AdminPanelStatistics.titleProjects", timePeriodMap[defaultTimePeriod])}
                 value={adminStatisticsContext.basicStats.projectsCreated}
               />
               <StatisticsButton
@@ -73,13 +73,13 @@ export default function BasicStats() {
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS}/>)
                 }}
               >
-                Project Statistics
+                {i18n("AdminPanelStatistics.buttonProjects")}
               </StatisticsButton>
             </StatisticsCard>
 
             <StatisticsCard>
               <Statistic
-                title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={i18n("AdminPanelStatistics.titleSamples", timePeriodMap[defaultTimePeriod])}
                 value={adminStatisticsContext.basicStats.samplesCreated}
               />
               <StatisticsButton
@@ -88,13 +88,13 @@ export default function BasicStats() {
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)
                 }}
               >
-                Sample Statistics
+                {i18n("AdminPanelStatistics.buttonSamples")}
               </StatisticsButton>
             </StatisticsCard>
 
             <StatisticsCard>
               <Statistic
-                title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={i18n("AdminPanelStatistics.titleUsersCreated", timePeriodMap[defaultTimePeriod])}
                 value={adminStatisticsContext.basicStats.usersCreated}
               />
               <StatisticsButton
@@ -103,19 +103,19 @@ export default function BasicStats() {
                   setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)
                 }}
               >
-                User Statistics
+                {i18n("AdminPanelStatistics.buttonUsers")}
               </StatisticsButton>
             </StatisticsCard>
 
             <StatisticsCard>
               <Statistic
-                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
+                title={i18n("AdminPanelStatistics.titleUsersLoggedOn", timePeriodMap[defaultTimePeriod])}
                 value={adminStatisticsContext.basicStats.usersLoggedIn}
               />
               <StatisticsButton
                 disabled={true}
               >
-                User Usage Statistics
+                {i18n("AdminPanelStatistics.buttonUserUsage")}
               </StatisticsButton>
             </StatisticsCard>
         </div>

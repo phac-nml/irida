@@ -14,15 +14,15 @@ import {
 } from "../apis/admin/admin";
 
 export const timePeriodMap = {
-  1: "day",
-  7: "week",
-  14: "2 weeks",
-  30: "month",
-  90: "quarter",
-  365: "year",
-  730: "2 years",
-  1825: "5 years",
-  3650: "10 years"
+  1: i18n("AdminPanelStatistics.day"),
+  7: i18n("AdminPanelStatistics.week"),
+  14: i18n("AdminPanelStatistics.twoWeeks"),
+  30: i18n("AdminPanelStatistics.month"),
+  90: i18n("AdminPanelStatistics.quarter"),
+  365: i18n("AdminPanelStatistics.year"),
+  730: i18n("AdminPanelStatistics.twoYears"),
+  1825: i18n("AdminPanelStatistics.fiveYears"),
+  3650: i18n("AdminPanelStatistics.tenYears")
 };
 
 export const chartTypes = {

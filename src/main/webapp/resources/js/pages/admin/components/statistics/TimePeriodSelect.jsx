@@ -20,31 +20,31 @@ export function TimePeriodSelect({ onChange = () => {} }) {
     >
       <Select onChange={onChange} className={"t-time-period"} style={{width: 120}}>
         <Select.Option value={1}>
-          Day
+          {i18n("TimePeriodSelect.day")}
         </Select.Option>
         <Select.Option value={7}>
-          Week
+          {i18n("TimePeriodSelect.week")}
         </Select.Option>
         <Select.Option value={14}>
-          2 Weeks
+          {i18n("TimePeriodSelect.twoWeeks")}
         </Select.Option>
         <Select.Option value={30}>
-          Month
+          {i18n("TimePeriodSelect.month")}
         </Select.Option>
         <Select.Option value={90}>
-          Quarter
+          {i18n("TimePeriodSelect.quarter")}
         </Select.Option>
         <Select.Option value={365}>
-          1 Year
+          {i18n("TimePeriodSelect.year")}
         </Select.Option>
         <Select.Option value={730}>
-          2 Years
+          {i18n("TimePeriodSelect.twoYears")}
         </Select.Option>
         <Select.Option value={1825}>
-          5 Years
+          {i18n("TimePeriodSelect.fiveYears")}
         </Select.Option>
         <Select.Option value={3650}>
-          10 Years
+          {i18n("TimePeriodSelect.tenYears")}
         </Select.Option>
       </Select>
     </Form.Item>
