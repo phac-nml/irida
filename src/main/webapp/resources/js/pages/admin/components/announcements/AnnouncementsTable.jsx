@@ -26,10 +26,16 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       title: i18n("iridaThing.id"),
       width: 80,
       dataIndex: "id",
+      fixed: "left",
       sorter: true
     },
     {
-      title: i18n("AnnouncementTable.title"),
+      title: "Title",
+      fixed: "left",
+      dataIndex: "title",
+    },
+    {
+      title: "Content",
       dataIndex: "name",
       className: "t-announcement",
       render(text, full) {
@@ -38,6 +44,13 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
             <MarkdownViewer markdown={text} />
           </a>
         );
+      }
+    },
+    {
+      title: "Priority",
+      dataIndex: "priority",
+      render(text, item) {
+        return String(item.priority);
       }
     },
     {
