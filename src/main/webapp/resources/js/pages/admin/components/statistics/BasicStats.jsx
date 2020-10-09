@@ -16,6 +16,18 @@ import {
 } from "../../../../contexts/AdminStatisticsContext";
 import styled from "styled-components";
 
+const StatisticsCard = styled(Card)`
+    border: none;
+    width: 240px;
+    margin-right: ${SPACE_XS};
+    margin-bottom: ${SPACE_XS};
+  `;
+
+const StatisticsButton = styled(Button)`
+    width: 170px;
+    margin-top: ${SPACE_XS};
+  `;
+
 export default function BasicStats() {
   const [statsChartView, setStatsChartView] = useState(null);
 
@@ -27,16 +39,6 @@ export default function BasicStats() {
     updateUserStatsTimePeriod,
   } = useContext(AdminStatisticsContext);
 
-  const StatisticsCard = styled(Card)`
-    border: none;
-    width: 240px;
-    margin-right: ${SPACE_XS}
-  `;
-
-  const StatisticsButton = styled(Button)`
-    width: 170px;
-    margin-top: ${SPACE_XS}
-  `;
 
   return (
     <div className="t-statistics">

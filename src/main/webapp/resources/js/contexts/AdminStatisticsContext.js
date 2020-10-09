@@ -61,8 +61,6 @@ const initialContext = {
   }
 };
 
-const chartHeight = 800;
-
 const AdminStatisticsContext = React.createContext(initialContext);
 
 function AdminStatisticsProvider(props) {
@@ -92,7 +90,7 @@ function AdminStatisticsProvider(props) {
           };
         });
       }
-    }).catch((message) => {
+    }).catch(({message}) => {
       notification.error({ message });
     });
   }
@@ -110,7 +108,7 @@ function AdminStatisticsProvider(props) {
           };
         });
       }
-    }).catch((message) => {
+    }).catch(({message}) => {
       notification.error({ message });
     });
   }
@@ -128,7 +126,7 @@ function AdminStatisticsProvider(props) {
           };
         });
       }
-    }).catch((message) => {
+    }).catch(({message}) => {
       notification.error({ message });
     });
   }
@@ -146,80 +144,9 @@ function AdminStatisticsProvider(props) {
           };
         });
       }
-    }).catch((message) => {
+    }).catch(({message})  => {
       notification.error({ message });
     });
-  }
-
-  /*
-   * Gets the config and data required for the chart
-   * @param chartType - The type of chart (bar, column, line, or pie)
-   * @param data - The data for the chart
-   * @param statsType - The type of statistics (projects, analyses, samples, users)
-   * @param timePeriod - The time period for the statistics
-   */
-  function getChartConfig(chartType, statsType, timePeriod)
-  {
-    let data = null;
-    const timePeriodText = timePeriodMap[timePeriod];
-    const isBarChartType = chartType === chartTypes.BAR;
-    const isPieDonutChartType = chartType === chartTypes.DONUT || chartType === chartTypes.PIE;
-
-    let chartTitle = "";
-    let chartAxisAlias = "";
-
-    if(statsType === statisticTypes.ANALYSES) {
-      chartTitle = `Number of analyses run in past ${timePeriodText}`;
-      chartAxisAlias = '# of Analyses';
-      data = adminStatisticsContext.statistics.analysesStats;
-    } else if (statsType === statisticTypes.PROJECTS) {
-      chartTitle = `Number of projects created in past ${timePeriodText}`;
-      chartAxisAlias ='# of Projects';
-      data = adminStatisticsContext.statistics.projectStats;
-    } else if (statsType === statisticTypes.SAMPLES)
-    {
-      chartTitle = `Number of samples created in past ${timePeriodText}`;
-      chartAxisAlias = '# of Samples';
-      data = adminStatisticsContext.statistics.sampleStats;
-    } else if (statsType === statisticTypes.USERS) {
-      chartTitle =`Number of users created in past ${timePeriodText}`;
-      chartAxisAlias = '# of Users';
-      data = adminStatisticsContext.statistics.userStats;
-    }
-
-
-    // The configuration required to display a chart
-    const chartConfig = {
-      title: { visible: true, text: chartTitle },
-      forceFit: true,
-      height: chartHeight,
-      data: data !== null ? data : [{key:"", value:""}],
-      padding: 'auto',
-      xField: isBarChartType ? 'value' : 'key',
-      yField: isBarChartType ? 'key' : 'value',
-      meta: { key: { alias: 'Time Period' }, value: { alias: chartAxisAlias } },
-      angleField:"value",
-      label: {
-        visible: data !== null ? (isPieDonutChartType ? false : true) : false,
-        position: isBarChartType ? 'right' : 'middle',
-        adjustColor: true,
-        style: { fill: '#0D0E68', fontSize: 12, fontWeight: 600, opacity: 0.3 },
-      },
-      colorField: "key",
-      legend: {
-        visible: data !== null ? true : false,
-        position: 'bottom-center',
-      },
-      statistic: {
-        visible: data !== null ? true : false,
-        content: {
-          value: "",
-          name: '',
-        },
-      },
-    };
-
-    return chartConfig;
   }
 
   return (
@@ -229,8 +156,7 @@ function AdminStatisticsProvider(props) {
         updateProjectStatsTimePeriod,
         updateUserStatsTimePeriod,
         updateAnalysesStatsTimePeriod,
-        updateSampleStatsTimePeriod,
-        getChartConfig
+        updateSampleStatsTimePeriod
       }}
     >
       {props.children}

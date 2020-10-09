@@ -17,19 +17,29 @@ import {
 import { SPACE_LG } from "../../../../styles/spacing";
 import { ChartTypeButtons } from "./ChartTypeButtons";
 
+import { getChartConfiguration } from "../../chart-config"
+
 export default function AdvancedStatistics({statType}) {
 
   const {
+    adminStatisticsContext,
     updateAnalysesStatsTimePeriod,
     updateProjectStatsTimePeriod,
     updateSampleStatsTimePeriod,
-    updateUserStatsTimePeriod,
-    getChartConfig
+    updateUserStatsTimePeriod
   } = useContext(AdminStatisticsContext);
 
   const [timePeriod, setTimePeriod] = useState(defaultTimePeriod);
   const [chartType, setChartType] = useState(defaultChartType);
   const [form] = Form.useForm();
+
+  const components = {
+    [chartTypes.BAR]: Bar,
+    [chartTypes.COLUMN]: Column,
+    [chartTypes.LINE]: Line,
+    [chartTypes.PIE]: Pie,
+    [chartTypes.DONUT]: Donut,
+  };
 
   useEffect(() => {
     setChartType(defaultChartType);
@@ -58,19 +68,10 @@ export default function AdvancedStatistics({statType}) {
 
   // Displays the data in a chart of type selected
   function displayChart() {
-    if(chartType === chartTypes.BAR) {
-      return <Bar {...getChartConfig(chartType, statType, timePeriod)} ></Bar>;
-    } else if (chartType === chartTypes.COLUMN) {
-      return <Column {...getChartConfig(chartType, statType, timePeriod)} ></Column>;
-    } else if (chartType === chartTypes.LINE) {
-      return <Line {...getChartConfig(chartType, statType, timePeriod)} ></Line>;
-    } else if (chartType === chartTypes.PIE) {
-      return <Pie {...getChartConfig(chartType, statType, timePeriod)} ></Pie>;
-    } else if (chartType === chartTypes.DONUT) {
-      return <Donut {...getChartConfig(chartType, statType, timePeriod)}  />
-    } else {
-      return null;
-    }
+    const Component = components[chartType];
+    return Component ? (
+      <Component {...getChartConfiguration(chartType, statType, timePeriod, adminStatisticsContext.statistics)} />
+    ) : null;
   }
 
   return (
