@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,8 +21,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  */
 
 @RestController
-@Scope("session")
-@RequestMapping("/ajax/admin")
+@RequestMapping("/ajax/statistics")
 public class AdminStatisticsAjaxController {
 
 	private ProjectService projectService;
@@ -68,7 +66,7 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated project usage stats for
 	 * @return dto with updated project usage stats
 	 */
-	@RequestMapping(value = "/project-statistics", method = RequestMethod.GET)
+	@RequestMapping(value = "/projects", method = RequestMethod.GET)
 	public ResponseEntity getAdminProjectStatistics(Long timePeriod) {
 		return ResponseEntity.ok("Retrieved stats for projects created in the last " + timePeriod);
 	}
@@ -79,7 +77,7 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated user usage stats for
 	 * @return dto with updated user usage stats
 	 */
-	@RequestMapping(value = "/user-statistics", method = RequestMethod.GET)
+	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	public ResponseEntity getAdminUserStatistics(Long timePeriod) {
 		return ResponseEntity.ok("Retrieved stats for users logged in the last " + timePeriod);
 	}
@@ -90,7 +88,7 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated analyses usage stats for
 	 * @return dto with updated analyses usage stats
 	 */
-	@RequestMapping(value = "/analyses-statistics", method = RequestMethod.GET)
+	@RequestMapping(value = "/analyses", method = RequestMethod.GET)
 	public ResponseEntity getAdminAnalysesStatistics(Long timePeriod) {
 		return ResponseEntity.ok("Retrieved stats for analyses run in the last " + timePeriod);
 	}
@@ -101,7 +99,7 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated sample usage stats for
 	 * @return dto with updated sample usage stats
 	 */
-	@RequestMapping(value = "/sample-statistics", method = RequestMethod.GET)
+	@RequestMapping(value = "/sample", method = RequestMethod.GET)
 	public ResponseEntity getAdminSampleStatistics(Long timePeriod) {
 		return ResponseEntity.ok("Retrieved stats for samples created in the last " + timePeriod);
 	}
