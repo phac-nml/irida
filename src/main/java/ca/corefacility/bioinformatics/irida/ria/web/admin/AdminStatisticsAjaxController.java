@@ -45,7 +45,7 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve usage stats for
 	 * @return dto with basic usage stats
 	 */
-	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	@RequestMapping(value = "/basic", method = RequestMethod.GET)
 	public ResponseEntity<BasicStats> getAdminStatistics(Integer timePeriod) {
 		Date currDate = new Date();
 		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
