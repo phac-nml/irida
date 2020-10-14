@@ -5,7 +5,7 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import { Bar, Column, Line, Pie } from "@ant-design/charts";
-import { Form } from "antd";
+import { Form, Typography } from "antd";
 import { TimePeriodSelect } from "./TimePeriodSelect";
 import {
   AdminStatisticsContext,
@@ -14,13 +14,13 @@ import {
   chartTypes,
   statisticTypes
 } from "../../../../contexts/AdminStatisticsContext";
-import { SPACE_LG } from "../../../../styles/spacing";
+import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import { ChartTypeButtons } from "./ChartTypeButtons";
-
 import { getChartConfiguration } from "../../chart-config"
 
-export default function AdvancedStatistics({statType}) {
+const { Title } = Typography;
 
+export default function AdvancedStatistics({statType}) {
   const {
     adminStatisticsContext,
     updateAnalysesStatsTimePeriod,
@@ -28,6 +28,7 @@ export default function AdvancedStatistics({statType}) {
     updateSampleStatsTimePeriod,
     updateUserStatsTimePeriod
   } = useContext(AdminStatisticsContext);
+
 
   const [timePeriod, setTimePeriod] = useState(defaultTimePeriod);
   const [chartType, setChartType] = useState(defaultChartType);
@@ -61,10 +62,24 @@ export default function AdvancedStatistics({statType}) {
     setTimePeriod(currTimePeriod);
   }
 
+  const chartTitle = statType === statisticTypes.ANALYSES ?
+      ("Number of Analyses Ran")
+    : statType === statisticTypes.PROJECTS ?
+      ("Number of Projects Created")
+    : statType === statisticTypes.SAMPLES ?
+      ("Number of Samples Created")
+    : statType === statisticTypes.USERS ?
+        ("Number of Users Created")
+    : null
+  ;
+
+
+  console.log(chartTitle);
+
   function displayChart() {
     const Component = components[chartType];
     return Component ? (
-      <Component {...getChartConfiguration(chartType, statType, timePeriod, adminStatisticsContext.statistics)} />
+      <Component {...getChartConfiguration(chartType, statType, adminStatisticsContext.statistics)} />
     ) : null;
   }
 
@@ -80,7 +95,10 @@ export default function AdvancedStatistics({statType}) {
           <TimePeriodSelect onChange={(e) => updateTimePeriod(e)} />
           <ChartTypeButtons onChange={(e) => setChartType(e.target.value)} value={chartType}/>
         </Form>
-      {displayChart()}
+        <div style={{marginBottom: SPACE_LG}}>
+          <Title level={4}>{chartTitle}</Title>
+        </div>
+        {displayChart()}
     </div>
   );
 }

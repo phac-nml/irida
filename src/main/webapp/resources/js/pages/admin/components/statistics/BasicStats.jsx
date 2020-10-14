@@ -16,6 +16,14 @@ import {
   timePeriodMap
 } from "../../../../contexts/AdminStatisticsContext";
 import { getChartConfiguration } from "../../chart-config";
+import styled from "styled-components";
+import { blue6 } from "../../../../styles/colors";
+
+const LinkCard = styled(Card)`
+  &:hover {
+    border: ${blue6} solid 1px;
+  }
+`;
 
 export default function BasicStats() {
   const [statsChartView, setStatsChartView] = useState(null);
@@ -72,10 +80,10 @@ export default function BasicStats() {
         <Row gutter={[16, 16]}>
           {cards.map((card) => (
             <Col sm={24} md={12} xl={8} xxl={6} key={card.key}>
-              <Card onClick={card.onClick}>
+              <LinkCard onClick={card.onClick}>
                 <Statistic title={card.title} value={card.value} />
-                <TinyColumn {...getChartConfiguration(chartTypes.TINYCOLUMN, card.key, defaultTimePeriod, adminStatisticsContext.statistics)} />
-              </Card>
+                <TinyColumn {...getChartConfiguration(chartTypes.TINYCOLUMN, card.key, adminStatisticsContext.statistics)} />
+              </LinkCard>
             </Col>
           ))}
         </Row>

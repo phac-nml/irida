@@ -1,8 +1,7 @@
 import merge from "lodash/merge";
 import {
   chartTypes,
-  statisticTypes,
-  timePeriodMap
+  statisticTypes
 } from "../../contexts/AdminStatisticsContext";
 
 /*
@@ -10,31 +9,18 @@ import {
    * @param chartType - The type of chart (bar, column, line, or pie)
    * @param data - The data for the chart
    * @param statsType - The type of statistics (projects, analyses, samples, users)
-   * @param timePeriod - The time period for the statistics
    */
-export function getChartConfiguration(chartType, statsType, timePeriod, statistics) {
+export function getChartConfiguration(chartType, statsType, statistics) {
   let data = [{"key":"", "value":""}];
-  const timePeriodText = timePeriodMap[timePeriod];
-
-  let chartTitle = "";
-  let chartAxisAlias = "";
 
   if(statsType === statisticTypes.ANALYSES) {
-    chartTitle = `Number of analyses run in past ${timePeriodText}`;
-    chartAxisAlias = '# of Analyses';
     data = statistics.analysesStats;
   } else if (statsType === statisticTypes.PROJECTS) {
-    chartTitle = `Number of projects created in past ${timePeriodText}`;
-    chartAxisAlias ='# of Projects';
     data = statistics.projectStats;
   } else if (statsType === statisticTypes.SAMPLES)
   {
-    chartTitle = `Number of samples created in past ${timePeriodText}`;
-    chartAxisAlias = '# of Samples';
     data = statistics.sampleStats;
   } else if (statsType === statisticTypes.USERS) {
-    chartTitle =`Number of users created in past ${timePeriodText}`;
-    chartAxisAlias = '# of Users';
     data = statistics.userStats;
   }
 
@@ -50,9 +36,6 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
     [chartTypes.BAR]: {
       xField: "value",
       yField: "key",
-      label: {
-        position: "right",
-      },
     },
     [chartTypes.PIE]: {
       appendPadding: 10,
@@ -64,29 +47,30 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
       },
     },
     [chartTypes.COLUMN]: {},
-    [chartTypes.LINE]: {},
+    [chartTypes.LINE]: {
+      colorField: '',
+    },
     [chartTypes.TINYCOLUMN]: {
       title: { visible: false},
       legend: {
         visible: false,
       },
-      autoFit: true,
+      autoFit: false,
       height: 80,
-      columnWidthRatio: 0.7,
-    }
+      width: 300,
+      columnWidthRatio: 0.5,
+    },
   };
 
   // The configuration required to display a chart
   const config = {
-    title: { visible: Boolean(data), text: chartTitle },
-    forceFit: true,
     data: data,
     padding: 'auto',
     xField: 'key',
     yField: 'value',
     width: "100%",
     height: 800,
-    meta: { key: { alias: "Time Period" }, value: { alias: chartAxisAlias } },
+    meta: { key: { alias: '' }, value: { alias: '' } },
     label: {
       visible: Boolean(data),
       position: 'middle',
@@ -97,13 +81,6 @@ export function getChartConfiguration(chartType, statsType, timePeriod, statisti
     legend: {
       visible: Boolean(data),
       position: 'bottom',
-    },
-    statistic: {
-      visible: Boolean(data),
-      content: {
-        value: '',
-        name: '',
-      },
     },
   };
 
