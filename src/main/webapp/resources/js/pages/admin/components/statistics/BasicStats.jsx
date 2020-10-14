@@ -5,99 +5,82 @@
  */
 
 import React, { useContext, useState } from "react";
-import { Button, Card, Statistic } from "antd";
-import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
+import { Col, Card, Row, Statistic } from "antd";
+import { SPACE_LG } from "../../../../styles/spacing";
+import { TinyColumn } from "@ant-design/charts";
 import AdvancedStatistics from "./AdvancedStatistics";
 import {
-  AdminStatisticsContext,
+  AdminStatisticsContext, chartTypes,
   defaultTimePeriod,
   statisticTypes,
   timePeriodMap
 } from "../../../../contexts/AdminStatisticsContext";
+import { getChartConfiguration } from "../../chart-config";
 
 export default function BasicStats() {
   const [statsChartView, setStatsChartView] = useState(null);
-
   const { adminStatisticsContext } = useContext(
     AdminStatisticsContext
   );
 
+  const cards = [
+    {
+      key: `analyses`,
+      title: `Analyses run in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.analysesRun,
+      onClick: () =>
+        setStatsChartView(
+          <AdvancedStatistics statType={statisticTypes.ANALYSES} />
+        ),
+    },
+    {
+      key: `projects`,
+      title: `Projects created in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.projectsCreated,
+      onClick: () =>
+        setStatsChartView(
+          <AdvancedStatistics statType={statisticTypes.PROJECTS} />
+        ),
+    },
+    {
+      key: `samples`,
+      title: `Samples created in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.samplesCreated,
+      onClick: () =>
+        setStatsChartView(
+          <AdvancedStatistics statType={statisticTypes.SAMPLES} />
+        ),
+    },
+    {
+      key: `users`,
+      title: `Users created in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.usersCreated,
+      onClick: () =>
+        setStatsChartView(
+          <AdvancedStatistics statType={statisticTypes.USERS} />
+        ),
+    },
+    {
+      key: `usersLoggedIn`,
+      title: `Users logged on in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.usersLoggedIn,
+    },
+  ];
   return (
     <div className="t-statistics">
-      <div style={{marginBottom: SPACE_LG}} className="t-stats-basic">
-        <div style={{display: "flex",
-          justifyContent: "flex-start", flexWrap: "wrap"}}>
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.analysesRun}
-              />
-              <Button
-                style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)}
-              >
-                Analyses Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.projectsCreated}
-              />
-              <Button
-                style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS} />)}
-              >
-                Project Creation Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.samplesCreated}
-              />
-              <Button
-                style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)}
-              >
-                Sample Creation Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.usersCreated}
-              />
-              <Button
-                style={{ marginTop: 16 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)}
-              >
-                User Creation Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.usersLoggedIn}
-              />
-              <Button
-                style={{ marginTop: 16 }}
-                disabled={true}
-              >
-                User Usage Statistics
-              </Button>
-            </Card>
-
-        </div>
+      <div style={{ marginBottom: SPACE_LG }} className="t-stats-basic">
+        <Row gutter={[16, 16]}>
+          {cards.map((card) => (
+            <Col sm={24} md={12} xl={8} xxl={6} key={card.key}>
+              <Card onClick={card.onClick}>
+                <Statistic title={card.title} value={card.value} />
+                <TinyColumn {...getChartConfiguration(chartTypes.TINYCOLUMN, card.key, defaultTimePeriod, adminStatisticsContext.statistics)} />
+              </Card>
+            </Col>
+          ))}
+        </Row>
       </div>
-
-      <div className="t-stats-chart">
-        {statsChartView}
-      </div>
+      <div className="t-stats-chart">{statsChartView}</div>
     </div>
   );
 }

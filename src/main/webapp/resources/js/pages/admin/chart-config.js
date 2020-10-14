@@ -12,8 +12,8 @@ import {
    * @param statsType - The type of statistics (projects, analyses, samples, users)
    * @param timePeriod - The time period for the statistics
    */
-export function getChartConfiguration(chartType, statsType, timePeriod) {
-  let data = null;
+export function getChartConfiguration(chartType, statsType, timePeriod, statistics) {
+  let data = [{"key":"", "value":""}];
   const timePeriodText = timePeriodMap[timePeriod];
 
   let chartTitle = "";
@@ -22,16 +22,28 @@ export function getChartConfiguration(chartType, statsType, timePeriod) {
   if(statsType === statisticTypes.ANALYSES) {
     chartTitle = `Number of analyses run in past ${timePeriodText}`;
     chartAxisAlias = '# of Analyses';
+    data = statistics.analysesStats;
   } else if (statsType === statisticTypes.PROJECTS) {
     chartTitle = `Number of projects created in past ${timePeriodText}`;
     chartAxisAlias ='# of Projects';
+    data = statistics.projectStats;
   } else if (statsType === statisticTypes.SAMPLES)
   {
     chartTitle = `Number of samples created in past ${timePeriodText}`;
     chartAxisAlias = '# of Samples';
+    data = statistics.sampleStats;
   } else if (statsType === statisticTypes.USERS) {
     chartTitle =`Number of users created in past ${timePeriodText}`;
     chartAxisAlias = '# of Users';
+    data = statistics.userStats;
+  }
+
+  /*
+   * Tiny charts only require an array of values rather than
+   * an array of objects.
+   */
+  if(chartType === chartTypes.TINYCOLUMN) {
+    data = data.map(obj => obj.value);
   }
 
   const customChartTypeConfig = {
@@ -42,26 +54,39 @@ export function getChartConfiguration(chartType, statsType, timePeriod) {
         position: "right",
       },
     },
-    [chartTypes.DONUT]: {
-      visible: false,
-    },
     [chartTypes.PIE]: {
-      visible: false,
+      appendPadding: 10,
+      colorField: 'key',
+      radius: 0.8,
+      angleField: 'value',
+      label: {
+        content: ''
+      },
     },
     [chartTypes.COLUMN]: {},
     [chartTypes.LINE]: {},
+    [chartTypes.TINYCOLUMN]: {
+      title: { visible: false},
+      legend: {
+        visible: false,
+      },
+      autoFit: true,
+      height: 80,
+      columnWidthRatio: 0.7,
+    }
   };
 
   // The configuration required to display a chart
   const config = {
-    title: { visible: true, text: chartTitle },
+    title: { visible: Boolean(data), text: chartTitle },
     forceFit: true,
-    data: data || [{key:"", value:""}],
+    data: data,
     padding: 'auto',
     xField: 'key',
     yField: 'value',
-    meta: { key: { alias: 'Time Period' }, value: { alias: chartAxisAlias } },
-    angleField:"value",
+    width: "100%",
+    height: 800,
+    meta: { key: { alias: "Time Period" }, value: { alias: chartAxisAlias } },
     label: {
       visible: Boolean(data),
       position: 'middle',
@@ -71,7 +96,7 @@ export function getChartConfiguration(chartType, statsType, timePeriod) {
     colorField: 'key',
     legend: {
       visible: Boolean(data),
-      position: 'bottom-center',
+      position: 'bottom',
     },
     statistic: {
       visible: Boolean(data),
@@ -82,6 +107,6 @@ export function getChartConfiguration(chartType, statsType, timePeriod) {
     },
   };
 
-  return merge(config, [customChartTypeConfig[chartType]]);
+  return merge(config, customChartTypeConfig[chartType]);
 
 }

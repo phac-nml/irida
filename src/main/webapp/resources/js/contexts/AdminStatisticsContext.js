@@ -30,7 +30,8 @@ export const chartTypes = {
   COLUMN: "column",
   DONUT: "donut",
   LINE: "line",
-  PIE: "pie"
+  PIE: "pie",
+  TINYCOLUMN: "tinyColumn"
 }
 
 export const statisticTypes = {
@@ -43,14 +44,46 @@ export const statisticTypes = {
 // Default is to display statistics for the last week
 export const defaultTimePeriod = 7;
 
-export const defaultChartType = chartTypes.BAR;
+export const defaultChartType = chartTypes.COLUMN;
 
 const initialContext = {
   statistics: {
-    analysesStats: [{}],
-    projectStats: [{}],
-    sampleStats: [{}],
-    userStats: [{}]
+    analysesStats: [
+      {key: "10/04", value: 10},
+      {key: "10/05", value: 12},
+      {key: "10/06", value: 16},
+      {key: "10/07", value: 30},
+      {key: "10/08", value: 100},
+      {key: "10/09", value: 350},
+      {key: "10/10", value: 999},
+    ],
+    projectStats: [
+      {key: "10/04", value: 20},
+      {key: "10/05", value: 12},
+      {key: "10/06", value: 16},
+      {key: "10/07", value: 30},
+      {key: "10/08", value: 100},
+      {key: "10/09", value: 350},
+      {key: "10/10", value: 999},
+    ],
+    sampleStats: [
+      {key: "10/04", value: 30},
+      {key: "10/05", value: 12},
+      {key: "10/06", value: 16},
+      {key: "10/07", value: 30},
+      {key: "10/08", value: 100},
+      {key: "10/09", value: 350},
+      {key: "10/10", value: 999},
+    ],
+    userStats: [
+      {key: "10/04", value: 40},
+      {key: "10/05", value: 12},
+      {key: "10/06", value: 16},
+      {key: "10/07", value: 30},
+      {key: "10/08", value: 100},
+      {key: "10/09", value: 350},
+      {key: "10/10", value: 999},
+    ]
   },
   basicStats : {
     analysesRun: 0,

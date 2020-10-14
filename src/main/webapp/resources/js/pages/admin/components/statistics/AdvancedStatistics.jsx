@@ -4,7 +4,7 @@
  */
 
 import React, { useContext, useEffect, useState } from "react";
-import { Bar, Column, Donut, Line, Pie } from "@ant-design/charts";
+import { Bar, Column, Line, Pie } from "@ant-design/charts";
 import { Form } from "antd";
 import { TimePeriodSelect } from "./TimePeriodSelect";
 import {
@@ -37,8 +37,7 @@ export default function AdvancedStatistics({statType}) {
     [chartTypes.BAR]: Bar,
     [chartTypes.COLUMN]: Column,
     [chartTypes.LINE]: Line,
-    [chartTypes.PIE]: Pie,
-    [chartTypes.DONUT]: Donut,
+    [chartTypes.PIE]: Pie
   };
 
   useEffect(() => {
@@ -70,16 +69,17 @@ export default function AdvancedStatistics({statType}) {
   }
 
   return (
-    <div style={{marginBottom: SPACE_LG}}>
-      <Form
-        form={form}
-        initialValues={{
-          "time-period": defaultTimePeriod,
-        }}
-      >
-        <TimePeriodSelect onChange={(e) => updateTimePeriod(e)} />
-        <ChartTypeButtons onChange={(e) => setChartType(e.target.value)} value={chartType}/>
-      </Form>
+    <div>
+        <Form
+          form={form}
+          initialValues={{
+            "time-period": defaultTimePeriod,
+          }}
+          style={{marginBottom: SPACE_LG}}
+        >
+          <TimePeriodSelect onChange={(e) => updateTimePeriod(e)} />
+          <ChartTypeButtons onChange={(e) => setChartType(e.target.value)} value={chartType}/>
+        </Form>
       {displayChart()}
     </div>
   );
