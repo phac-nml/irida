@@ -3,7 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.dto;
 import java.nio.file.Path;
 
 /**
- * Used as a response for encapsulating a temporary file and it's directory
+ * Used as a response for encapsulating a temporary file and it's directory. This is
+ * used to download a file from a cloud object store to a temporary file location
+ * on the local file system. If this is dto is used then we must remember to cleanup
+ * the temporary file and/or directory using the cleanupDownloadedLocalTemporaryFiles
+ * in the iridaFileStorageUtility.
  */
 
 public class IridaTemporaryFile {

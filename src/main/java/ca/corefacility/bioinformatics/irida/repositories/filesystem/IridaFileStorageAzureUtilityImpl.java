@@ -55,7 +55,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 		try {
 			logger.trace("Getting file from azure [" + file.toString() + "]");
-			Path tempDirectory = Files.createTempDirectory(null);
+			Path tempDirectory = Files.createTempDirectory("azure-tmp-");
 			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 			InputStream initialStream = blobClient.openInputStream();
 			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());

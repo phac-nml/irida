@@ -96,14 +96,17 @@ public class FastqcFileProcessor implements FileProcessor {
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
 				.fastqcVersion(FastQCApplication.VERSION)
 				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", new Object[] {FastQCApplication.VERSION},
-						LocaleContextHolder.getLocale()));
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description",
+						new Object[] { FastQCApplication.VERSION }, LocaleContextHolder.getLocale()));
 
+		// Get the local copy if using local storage otherwise it temporarily downloads the file from the object store
 		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
-		File fastQCSequenceFileToProcess = iridaTemporaryFile.getFile().toFile();
+		File fastQCSequenceFileToProcess = iridaTemporaryFile.getFile()
+				.toFile();
 		Path outputDirectory = null;
 
 		try {
+			// Create temporary directory to hold the analysis output files created by fastqc
 			outputDirectory = Files.createTempDirectory("analysis-output");
 
 			try {
@@ -115,6 +118,7 @@ public class FastqcFileProcessor implements FileProcessor {
 				OverRepresentedSeqs overRep = new OverRepresentedSeqs();
 				QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
 
+				// If there is a sequence file to process then we run the fastqc modules
 				logger.debug("Launching FastQC analysis modules on all sequences.");
 				while (fastQCSequenceFile.hasNext()) {
 					Sequence sequence = fastQCSequenceFile.next();
@@ -125,6 +129,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 				logger.debug("Finished FastQC analysis modules.");
 
+				// Create the fastqc images and save to the temporary directory
 				handleBasicStats(basicStats, analysis);
 				handlePerBaseQualityScores(pbqs, analysis, outputDirectory);
 				handlePerSequenceQualityScores(psqs, analysis, outputDirectory);
@@ -147,13 +152,16 @@ public class FastqcFileProcessor implements FileProcessor {
 			logger.error("Unable to create temporary directory ", e);
 			throw new StorageException("Unable to create temporary directory", e);
 		} finally {
-				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
-				try {
-					// Delete the analysis-output* temp directory
-					Files.deleteIfExists(outputDirectory);
-				} catch (IOException e) {
-					logger.error("Unable to remove directory", e);
-				}
+			/* If a temporary file was downloaded from an object store then the file and/or temp directory will be deleted,
+			 * otherwise no action is taken.
+			 */
+			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+			try {
+				// Delete the analysis-output* temp directory
+				Files.deleteIfExists(outputDirectory);
+			} catch (IOException e) {
+				throw new StorageException("Unable to delete analysis outputs temp directory [" + e + "]");
+			}
 		}
 	}
 
@@ -177,7 +185,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Handle writing the {@link PerBaseQualityScores} to the database.
+	 * Handle writing the {@link PerBaseQualityScores} to the database and
+	 * the generated fastqc image to the tempDirectory
 	 *
 	 * @param scores   the {@link PerBaseQualityScores} computed by fastqc.
 	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
@@ -194,7 +203,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Handle writing the {@link PerSequenceQualityScores} to the database.
+	 * Handle writing the {@link PerSequenceQualityScores} to the database and
+	 * the generated fastqc image to the tempDirectory
 	 *
 	 * @param scores   the {@link PerSequenceQualityScores} computed by fastqc.
 	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
@@ -211,7 +221,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Handle writing the {@link DuplicationLevel} to the database.
+	 * Handle writing the {@link DuplicationLevel} to the database and
+	 * the generated fastqc image to the tempDirectory
 	 *
 	 * @param duplicationLevel the {@link DuplicationLevel} calculated by fastqc.
 	 * @param analysis         the {@link AnalysisFastQCBuilder} to update.

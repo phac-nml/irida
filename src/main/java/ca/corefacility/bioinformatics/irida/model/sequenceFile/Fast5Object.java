@@ -106,9 +106,7 @@ public class Fast5Object extends SequencingObject {
 			String extension = FilenameUtils.getExtension(getFile().getFileName());
 
 			// Checks if file is where it should be before it checks if it is gzipped
-			if (IridaFiles.fileExists(file.getFile()) && file.isGzipped()) {
-				type = Fast5Object.Fast5Type.ZIPPED;
-			} else if (extension.equals("gz")) {
+			if ((IridaFiles.fileExists(file.getFile()) && file.isGzipped()) || extension.equals("gz")) {
 				type = Fast5Object.Fast5Type.ZIPPED;
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;
