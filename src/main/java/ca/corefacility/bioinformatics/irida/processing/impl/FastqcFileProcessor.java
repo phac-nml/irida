@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.IridaTemporaryFile;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +159,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 			try {
 				// Delete the analysis-output* temp directory
-				Files.deleteIfExists(outputDirectory);
+				FileUtils.deleteDirectory(outputDirectory.toFile());
 			} catch (IOException e) {
 				throw new StorageException("Unable to delete analysis outputs temp directory [" + e + "]");
 			}
