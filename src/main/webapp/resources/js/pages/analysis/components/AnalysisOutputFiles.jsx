@@ -16,9 +16,9 @@ const OutputFilePreview = React.lazy(() =>
 const { Content } = Layout;
 
 export default function AnalysisOutputFiles() {
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
   const BASE_URL =
-    setBaseUrl(`/analysis/${analysisContext.analysis.identifier}/` + ANALYSIS.OUTPUT);
+    setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.OUTPUT);
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <Content>

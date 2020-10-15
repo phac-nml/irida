@@ -1,69 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/settings/_base}">
-<head>
-    <title th:text="#{project.settings.page.title.remote}">Title</title>
-        <script th:inline="javascript">
-        var PAGE = {
-            urls: {
-            'sync': /*[[@{/projects/{id}/settings/sync(id=${project.getId()})}]]*/ '/projects/1/settings/sync',
-            }
-        };
-        </script>
-</head>
-<body>
-<div layout:fragment="settings-content" th:with="status = ${project.getRemoteStatus()}">
-    <h2 class="h2-muted" th:text="#{project.settings.sync.heading}"></h2>
-    <div class="form-group">
-        <label class="control-label" th:text="#{project.settings.sync.lastSync}">_Last Sync_</label>
-        <div>
-            <span th:text="${#calendars.format(project.getRemoteStatus().getLastUpdate(), 'dd MMM yyyy hh:mma')}"></span>
-            <button id="forceSync" role="button" class="btn btn-default btn-sm"
-                    th:text="#{project.settings.sync.forceSync}">_Force Sync_
-            </button>
-        </div>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/settings/_base}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/dist/css/project-remote.bundle.css">
+    <title th:text="#{ProjectRemoteSettings.title}">Title</title>
+  </head>
+  <body>
+    <div id="project-remote-root" layout:fragment="settings-content" >
+      <div th:text="#{ProjectRemote.loading}">LOADING ...</div>
     </div>
-    <div class="form-group connection-wrapper">
-        <label class="control-label" th:text="#{project.settings.api}">_API_</label>
-        <div>
-            <a href="#" th:href="@{/remote_api/{id}(id=${status.getApi().getId()})}"
-               th:text="${status.getApi().getLabel()}">_api_</a>
-            <span id="api-status" class="api-status js-status-wrapper">
-                <i class="fa fa-spinner fa-spin"></i>
-            </span>
-
-            <button type="button" class="oauth-connect-link btn btn-default hidden js-connect-btn" id="connect-button"
-                    data-toggle="modal" data-target="#remote-connect-wrapper"
-                    th:text="#{remoteapi.status.connect.button}" data:api-id="${status.getApi().getId()}">
-                _Connect_
-            </button>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label" for="frequency" th:text="#{project.settings.sync.frequency}">_Sync
-            Frequency_</label>
-        <select id="frequency" class="form-control input-full sync-setting">
-            <option th:each="freq : ${frequencies}" th:value="${freq}"
-                    th:text="#{'project.settings.frequency.' + ${freq}}"
-                    th:selected="${project.getSyncFrequency() == freq}"></option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="control-label" for="frequency" th:text="#{project.settings.sync.user}">_Sync User_</label>
-        <div>
-            <a href="#" th:text="${status.getReadBy().getLabel()}"
-               th:href="@{/users/{id}(id=${status.getReadBy().getId()})}">_User</a>
-            <span class="api-connected-action" hidden="hidden">
-              <button id="becomeSyncUser" role="button" class="btn btn-default btn-sm"
-                      th:text="#{project.settings.sync.becomeSyncUser}">_Become owner_</button>
-            </span>
-        </div>
-    </div>
-</div>
-
-
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-settings-remote.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/project-remote.bundle.js}"></script>
+    </th:block>
+  </body>
 </html>

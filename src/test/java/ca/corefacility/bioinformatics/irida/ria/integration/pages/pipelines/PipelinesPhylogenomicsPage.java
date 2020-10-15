@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -92,6 +93,12 @@ public class PipelinesPhylogenomicsPage extends BasicPipelinePage {
 		driver.findElements(By.xpath("//div[input[@id='snv-abundance-ratio']]/span/button")).get(0).click();
 	}
 
+	public void selectAndSetDensityFiltering(String label) {
+		Select densitySelect = new Select(driver.findElement(By.id("enable-density-filter")));
+		densitySelect.selectByVisibleText(label);
+		waitForTime(250);
+	}
+
 	public void clickSeePipeline() {
 		driver.findElement(By.id("btn-see-pipeline")).click();
 		waitForTime(250);
@@ -106,6 +113,10 @@ public class PipelinesPhylogenomicsPage extends BasicPipelinePage {
 		List<WebElement> findElements = driver.findElements(By.className("remove-sample-button"));
 		findElements.iterator().next().click();
 		waitForTime(250);
+	}
+
+	public boolean isPipelineLaunchButtonEnabled() {
+		return driver.findElement(By.id("btn-launch")).isEnabled();
 	}
 
 	public boolean isCreatePipelineAreaVisible() {

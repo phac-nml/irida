@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -46,6 +47,10 @@ public class UserGroupsDetailsPage extends AbstractPage {
 
 	public void gotoPage(int groupId) {
 		get(driver, "groups/" + groupId);
+	}
+
+	public void gotoAdminPage(int groupId) {
+		get(driver, "admin/groups/" + groupId);
 	}
 
 	public String getUserGroupName() {

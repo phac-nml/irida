@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * setInterval does not work with React hooks.
@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
  */
 export function useInterval(callback, delay) {
   const savedCallback = useRef();
+  const [intervalId, setIntervalId] = useState(-1);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -22,7 +23,13 @@ export function useInterval(callback, delay) {
 
     if (delay !== null) {
       let id = setInterval(tick, delay);
+      setIntervalId(id);
       return () => clearInterval(id);
     }
   }, [delay]);
+
+  /* The interval id returned which can be used to clear an interval
+   * in cases where we don't want to wait till the component unmounts
+   */
+  return intervalId;
 }

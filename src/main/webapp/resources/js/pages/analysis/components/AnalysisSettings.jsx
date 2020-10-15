@@ -32,10 +32,10 @@ const { Content, Sider } = Layout;
 
 export default function AnalysisSettings() {
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
 
   const DEFAULT_URL =
-    setBaseUrl(`/analysis/${analysisContext.analysis.identifier}/` + ANALYSIS.SETTINGS);
+    setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.SETTINGS);
 
   const pathRegx = new RegExp(/([a-zA-Z]+)$/);
   const analysisRunning =

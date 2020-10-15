@@ -49,10 +49,29 @@ export async function authenticateOauthClient(clientId, redirectUrl) {
     // Create a global handler to accept the oath code.  This code is in
     // this is called from the galaxy_auth_code.tmpl.html page after authorization
     // is granted.
-    window.handleGalaxyCode = code => resolve(code);
+    window.handleGalaxyCode = (code) => resolve(code);
     window.handleGalaxyError = () => reject("ERROR");
     window.handleClosing = () => reject("CLOSED");
 
     window.open(href, clientId, options);
   });
+}
+
+/**
+ * Open a new window for connecting to a remote api
+ * @param api - details about the remote api
+ * @returns {Promise<boolean>}
+ */
+export async function authenticateRemoteClient(api) {
+  const href = setBaseUrl(`remote_api/connect/${api.id}`);
+  const options = getWindowFeatures();
+
+  return new Promise((resolve) => {
+    // Handlers for updating the UI.
+    window.handleClosing = () => {
+      resolve("");
+    };
+
+    window.open(href, "", options);
+  }).then(() => delete window.handleClosing);
 }

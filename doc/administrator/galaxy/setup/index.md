@@ -229,27 +229,11 @@ Please log in as the **workflow** user and go to **User > Preferences > Manage A
 Galaxy Tools Installation
 -------------------------
 
-### Step 1: Configure External Toolsheds and Dependency Resolvers
-
-The workflows used by IRIDA make use of external tools that can be installed using a [Galaxy Toolshed][].  The two toolsheds used by IRIDA are the [Main Galaxy Toolshed][] and the [IRIDA Toolshed][].  These are configured in the file `config/tool_sheds_conf.xml`.  Please open up this file and replace with the following:
-
-```xml
-<?xml version="1.0"?>
-<tool_sheds>
-	<tool_shed name="Galaxy main tool shed" url="http://toolshed.g2.bx.psu.edu/"/>
-	<tool_shed name="IRIDA Galaxy Toolshed" url="https://irida.corefacility.ca/galaxy-shed"/>
-</tool_sheds>
-```
-
-Now, re-start Galaxy with `service galaxy restart`.  If you log into Galaxy as the admin user and click on **Admin** in the top menu, then **Search Tool Shed**. In the menu at the left you should see the two configured toolsheds listed.
-
-### Step 2: Install Pipeline Tools
-
-#### Automated installation of tools
+### Automated installation of tools
 
 {%include administrator/galaxy/setup/automated-tool-install.md %}
 
-#### Manual installation of tools
+### Manual installation of tools
 
 Alternatively, the necessary tools can be installed manually through the following instructions specific to each pipeline in IRIDA:
 
@@ -291,7 +275,6 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [Galaxy Database Setup]: https://wiki.galaxyproject.org/Admin/Config/Performance/ProductionServer#switching-to-a-database-server
 [MySQL]: http://www.mysql.com/
 [PostgreSQL]: http://www.postgresql.org/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Main Galaxy Toolshed]: https://toolshed.g2.bx.psu.edu/
 [Galaxy Toolshed]: https://wiki.galaxyproject.org/ToolShed
 [Galaxy Toolsheds]: https://wiki.galaxyproject.org/ToolShed
@@ -310,6 +293,5 @@ Each workflow in IRIDA is run using Galaxy, and it's possible to monitor the sta
 [miniconda]: https://conda.io/miniconda.html
 [galaxy-production]: https://galaxyproject.org/admin/config/performance/production-server/#groundwork-for-scalability
 [SQLite]: https://www.sqlite.org/
-[updating tbl2asn]: ../pipelines/assembly-annotation/#updating-tbl2asn
 [faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
 [web]: ../../web

@@ -147,7 +147,11 @@ The analysis overview list will show the current progress of all running and com
 
 ![Analysis listing.](images/analysis-listing.png)
 
-The "State" column will change over time if you leave your browser window open so you can monitor the progress of your pipeline executions.
+If you leave your browser window open you can monitor the progress of your pipeline executions. The "State" and "Duration" columns will auto update every **60** seconds.
+
+You can also monitor the progress of the analysis by clicking on the analysis name which will open up the analysis details page. If you leave the browser window open on this page the "state" and "duration" of the analysis will auto update every **60** seconds.
+
+![Analysis Details.](images/updated-progress.png)
 
 Viewing pipeline results
 ------------------------

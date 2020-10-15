@@ -11,11 +11,13 @@ import { Monospace } from "../../../../components/typography";
 
 import { formatDate } from "../../../../utilities/date-utilities";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { isAdmin } from "../../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 
 const { Text } = Typography;
 
 export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
+  const { analysisContext } = useContext(AnalysisContext);
+
   // Returns the galaxy job details for the given index
   function galaxyJobDetails(index) {
     let jobError = galaxyJobErrors[index];
@@ -67,7 +69,7 @@ export function GalaxyJobInfo({ galaxyJobErrors, galaxyUrl, currIndex }) {
       {
         title: i18n("AnalysisError.historyId"),
         desc: (
-          isAdmin ?
+          analysisContext.isAdmin ?
             <Button
               type="link"
               style={{ paddingLeft: 0 }}

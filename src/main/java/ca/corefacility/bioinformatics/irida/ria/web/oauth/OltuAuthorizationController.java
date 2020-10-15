@@ -25,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
  * Controller for handling OAuth2 authorizations
- * 
- *
  */
 @Controller
 public class OltuAuthorizationController {
@@ -49,22 +47,22 @@ public class OltuAuthorizationController {
 	/**
 	 * Begin authentication procedure by redirecting to remote authorization
 	 * location
-	 * 
-	 * @param remoteAPI
-	 *            The API we need to authenticate with
-	 * @param redirect
-	 *            The location to redirect back to after authentication is
-	 *            complete
+	 *
+	 * @param remoteAPI The API we need to authenticate with
+	 * @param redirect  The location to redirect back to after authentication is
+	 *                  complete
 	 * @return A ModelAndView beginning the authentication procedure
-	 * @throws OAuthSystemException
-	 *             if we can't read from the authorization server.
+	 * @throws OAuthSystemException if we can't read from the authorization server.
 	 */
 	public String authenticate(RemoteAPI remoteAPI, String redirect) throws OAuthSystemException {
 		// get the URI for the remote service we'll be requesting from
 		String serviceURI = remoteAPI.getServiceURI();
 
 		// build the authorization path
-		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("authorize").build();
+		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI)
+				.path("oauth")
+				.path("authorize")
+				.build();
 
 		logger.debug("Authenticating for service: " + remoteAPI);
 		logger.debug("Redirect after authentication: " + redirect);
@@ -75,8 +73,11 @@ public class OltuAuthorizationController {
 		// build the redirect query to request an authorization code from the
 		// remote API
 		OAuthClientRequest request = OAuthClientRequest.authorizationLocation(serviceAuthLocation.toString())
-				.setClientId(remoteAPI.getClientId()).setRedirectURI(tokenRedirect)
-				.setResponseType(ResponseType.CODE.toString()).setScope("read").buildQueryMessage();
+				.setClientId(remoteAPI.getClientId())
+				.setRedirectURI(tokenRedirect)
+				.setResponseType(ResponseType.CODE.toString())
+				.setScope("read")
+				.buildQueryMessage();
 
 		String locURI = request.getLocationUri();
 		logger.trace("Authorization request location: " + locURI);
@@ -86,21 +87,15 @@ public class OltuAuthorizationController {
 
 	/**
 	 * Receive the OAuth2 authorization code and request an OAuth2 token
-	 * 
-	 * @param request
-	 *            The incoming request
-	 * @param response
-	 *            The response to redirect
-	 * @param apiId
-	 *            the Long ID of the API we're requesting from
-	 * @param redirect
-	 *            The URL location to redirect to after completion
+	 *
+	 * @param request  The incoming request
+	 * @param response The response to redirect
+	 * @param apiId    the Long ID of the API we're requesting from
+	 * @param redirect The URL location to redirect to after completion
 	 * @return A ModelAndView redirecting back to the resource that was
-	 *         requested
-	 * @throws OAuthSystemException
-	 *             if we can't get an access token for the current request.
-	 * @throws OAuthProblemException
-	 *             if we can't get a response from the authorization server
+	 * requested
+	 * @throws OAuthSystemException  if we can't get an access token for the current request.
+	 * @throws OAuthProblemException if we can't get a response from the authorization server
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,
@@ -126,26 +121,27 @@ public class OltuAuthorizationController {
 
 	/**
 	 * Build the redirect URI for the token page with the API and resource page
-	 * 
-	 * @param apiId
-	 *            the Long ID of the API to request from
-	 * @param redirectPage
-	 *            the resource page to redirect to once the authorizatino is
-	 *            complete
+	 *
+	 * @param apiId        the Long ID of the API to request from
+	 * @param redirectPage the resource page to redirect to once the authorizatino is
+	 *                     complete
 	 * @return
 	 */
 	private String buildRedirectURI(Long apiId, String redirectPage) {
 
-		URI build = UriBuilder.fromUri(serverBase + TOKEN_ENDPOINT).queryParam("apiId", apiId)
-				.queryParam("redirect", redirectPage).build();
+		URI build = UriBuilder.fromUri(serverBase)
+				.path(TOKEN_ENDPOINT)
+				.queryParam("apiId", apiId)
+				.queryParam("redirect", redirectPage)
+				.build();
+
 		return build.toString();
 	}
 
 	/**
 	 * Set the base URL of this server
-	 * 
-	 * @param serverBase
-	 *            the base url of the server.
+	 *
+	 * @param serverBase the base url of the server.
 	 */
 	public void setServerBase(String serverBase) {
 		this.serverBase = serverBase;

@@ -2,6 +2,6 @@
 
 From the clients list, click on the Client ID of the client that you want to update:
 
-![Clients list.]({{ site.baseurl }}/images/tutorials/clients/clients-list.png)
+![Client details link.](images/client-details-link.png)
 
 When you click on the Client ID, you'll be directed to the client details page.

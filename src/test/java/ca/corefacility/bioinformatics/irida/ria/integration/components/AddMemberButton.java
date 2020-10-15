@@ -10,6 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
 public class AddMemberButton {
 	@FindBy(className = "t-add-member-btn")
 	private WebElement addMemberBtn;
@@ -34,6 +36,7 @@ public class AddMemberButton {
 		wait.until(ExpectedConditions.elementToBeClickable(addMemberBtn));
 		addMemberBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(addMemberModal));
+		AbstractPage.waitForTime(100);
 		WebElement input = driver.switchTo().activeElement();
 		input.sendKeys(name);
 		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
