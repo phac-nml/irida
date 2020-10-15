@@ -92,7 +92,7 @@ export default class Pipeline extends React.Component {
                 </Button>,
                 <Link
                   key="launch"
-                  to={setBaseUrl(`/cart/pipelines/${this.props.id}`)}
+                  to={setBaseUrl(`/pipelines/launch?id=${this.props.id}`)}
                 >
                   <Button>LAUNCH</Button>
                 </Link>,

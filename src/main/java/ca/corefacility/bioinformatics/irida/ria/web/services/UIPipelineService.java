@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -14,25 +25,15 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDat
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.components.Cart;
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
 @Component
-@Scope("session")
 public class UIPipelineService {
 	private final Cart cart;
 	private final IridaWorkflowsService workflowsService;
@@ -40,6 +41,7 @@ public class UIPipelineService {
 	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private final ReferenceFileService referenceFileService;
 	private final GalaxyToolDataService galaxyToolDataService;
+	private final ProjectService projectService;
 	private final MessageSource messageSource;
 
 	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
@@ -49,13 +51,14 @@ public class UIPipelineService {
 			WorkflowNamedParametersService namedParametersService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
 			ReferenceFileService referenceFileService, GalaxyToolDataService galaxyToolDataService,
-			MessageSource messageSource) {
+			ProjectService projectService, MessageSource messageSource) {
 		this.cart = cart;
 		this.workflowsService = workflowsService;
 		this.namedParametersService = namedParametersService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.referenceFileService = referenceFileService;
 		this.galaxyToolDataService = galaxyToolDataService;
+		this.projectService = projectService;
 		this.messageSource = messageSource;
 	}
 
@@ -65,7 +68,7 @@ public class UIPipelineService {
 		/*
 		Need to get a list of all the projects in the cart
 		 */
-		List<Project> projects = cart.getProjects();
+		List<Project> projects = (List<Project>) projectService.readMultiple(cart.getProjectIdsInCart());
 
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(workflowId);
 		UIPipelineDetailsResponse details = new UIPipelineDetailsResponse();
@@ -73,6 +76,7 @@ public class UIPipelineService {
 		IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
 		details.setId(workflowDescription.getId());
 		details.setName(workflowDescription.getName());
+		details.setDescription(workflowDescription.);
 
 		AnalysisType type = workflowDescription.getAnalysisType();
 

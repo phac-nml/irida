@@ -1,13 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipelines;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
-
 import java.util.List;
 import java.util.UUID;
+
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UIReferenceFile;
 
 public class UIPipelineDetailsResponse {
 	private UUID id;
 	private String name;
+	private String description;
 	private boolean canPipelineWriteToSamples;
 	private boolean requiresReference;
 	private List<UIReferenceFile> files;
@@ -83,5 +84,13 @@ public class UIPipelineDetailsResponse {
 
 	public void setDynamicSourceTools(List<DynamicSourceTool> dynamicSourceTools) {
 		this.dynamicSourceTools = dynamicSourceTools;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

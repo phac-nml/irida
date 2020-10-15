@@ -35,7 +35,11 @@ function launchReducer(state, action) {
   }
 }
 
-function LaunchProvider({ children, pipelineId, automated = false }) {
+function LaunchProvider({ children, automated = false }) {
+  const [pipelineId] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("id");
+  });
   const [loading, setLoading] = useState(true);
   const [state, dispatch] = useReducer(launchReducer, {
     name: "",
