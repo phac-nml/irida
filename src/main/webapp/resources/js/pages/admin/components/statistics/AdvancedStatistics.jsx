@@ -30,7 +30,6 @@ export default function AdvancedStatistics({ statType }) {
     updateUserStatsTimePeriod,
   } = useContext(AdminStatisticsContext);
 
-  const [timePeriod, setTimePeriod] = useState(defaultTimePeriod);
   const [chartType, setChartType] = useState(defaultChartType);
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -44,7 +43,6 @@ export default function AdvancedStatistics({ statType }) {
 
   useEffect(() => {
     setChartType(defaultChartType);
-    setTimePeriod(defaultTimePeriod);
     form.setFieldsValue({
       "time-period": defaultTimePeriod,
     });
@@ -64,7 +62,6 @@ export default function AdvancedStatistics({ statType }) {
     } else if (statType === statisticTypes.USERS) {
       updateUserStatsTimePeriod(currTimePeriod);
     }
-    setTimePeriod(currTimePeriod);
   }
 
   const chartTitle =
