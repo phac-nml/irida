@@ -43,6 +43,8 @@ export default function AdvancedStatistics({ statType }) {
 
   useEffect(() => {
     setChartType(defaultChartType);
+    // Get the stats for the default time period for the stat type
+    getStatsForStatType(defaultTimePeriod);
     form.setFieldsValue({
       "time-period": defaultTimePeriod,
     });
@@ -52,7 +54,7 @@ export default function AdvancedStatistics({ statType }) {
    * Updates the stats for the time period selected
    * for the stat type (analyses, projects, samples, or users
    */
-  function updateTimePeriod(currTimePeriod) {
+  function getStatsForStatType(currTimePeriod) {
     if (statType === statisticTypes.ANALYSES) {
       updateAnalysesStatsTimePeriod(currTimePeriod);
     } else if (statType === statisticTypes.PROJECTS) {
@@ -104,7 +106,7 @@ export default function AdvancedStatistics({ statType }) {
           }}
           style={{ marginBottom: SPACE_MD }}
         >
-          <TimePeriodSelect onChange={(e) => updateTimePeriod(e)} />
+          <TimePeriodSelect onChange={(e) => getStatsForStatType(e)} />
           <ChartTypeButtons
             onChange={(e) => setChartType(e.target.value)}
             value={chartType}
