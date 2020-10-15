@@ -41,6 +41,7 @@ export default function BasicStats() {
     AdminStatisticsContext
   );
 
+  const ADMIN_URL = setBaseUrl("/admin");
   const DEFAULT_URL = setBaseUrl("/admin/statistics");
 
   const cards = [
@@ -77,7 +78,7 @@ export default function BasicStats() {
   ];
   return (
     <div className="t-statistics">
-      {window.location.pathname === DEFAULT_URL ?
+      {window.location.pathname === ADMIN_URL || window.location.pathname === DEFAULT_URL ?
         <div style={{ marginBottom: SPACE_LG }} className="t-stats-basic">
           <Row gutter={[16, 16]}>
             {cards.map((card) => (

@@ -10,13 +10,20 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { navigate } from "@reach/router";
 
 export default function AdminStatistics() {
+  const ADMIN_URL = setBaseUrl("/admin")
   const DEFAULT_URL = setBaseUrl("/admin/statistics");
   const returnToBasicStats = () => navigate(DEFAULT_URL);
 
   return (
     <PageWrapper
       title={i18n("AdminPanel.statistics")}
-      onBack={window.location.pathname !== DEFAULT_URL ? returnToBasicStats : null}
+      onBack={
+        window.location.pathname !== ADMIN_URL
+        && window.location.pathname !== DEFAULT_URL ?
+          returnToBasicStats
+        :
+          null
+      }
       headerExtras={<AnalysesQueue />}
     >
       <BasicStats />
