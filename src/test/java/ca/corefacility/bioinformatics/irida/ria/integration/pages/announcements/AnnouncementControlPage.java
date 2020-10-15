@@ -11,13 +11,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * Page object to represent the Announcements Control Admin page
@@ -30,7 +28,7 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void goTo() {
-        get(driver, "announcements/admin");
+        get(driver, "admin/announcements");
 		waitForTime(1000);
 	}
 
@@ -70,7 +68,8 @@ public class AnnouncementControlPage extends AbstractPage {
     public void clickDateCreatedHeader() {
         WebElement header = driver.findElement(By.cssSelector("th.t-created-date"));
         header.click();
-        waitForAjax();
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.urlContains("/admin/announcements"));
     }
 
     public void clickCreateNewAnnouncementButton() {
@@ -88,10 +87,5 @@ public class AnnouncementControlPage extends AbstractPage {
         } else {
             throw new IndexOutOfBoundsException();
         }
-    }
-
-    private void waitForAjax() {
-        Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-        wait.until(Ajax.waitForAjax(60000));
     }
 }

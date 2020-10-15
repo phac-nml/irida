@@ -59,6 +59,8 @@ public class ToolsListExporter {
 	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
+		analysisTypesService.registerDefaultTypes();
+
 		context.getEnvironment().setActiveProfiles("dev");
 		context.register(new Class[] { IridaApiPropertyPlaceholderConfig.class, IridaWorkflowsConfig.class });
 		context.refresh();
