@@ -117,7 +117,6 @@ function AdminStatisticsProvider(props) {
   // Get updated analyses usage stats for the selected time period
   function updateAnalysesStatsTimePeriod(timePeriod) {
     getUpdatedAdminAnalysesStatistics(timePeriod).then(({analysesStats}) => {
-      console.log(analysesStats);
       if(analysesStats !== null) {
         setAdminStatisticsContext(adminStatisticsContext => {
           return {...adminStatisticsContext,

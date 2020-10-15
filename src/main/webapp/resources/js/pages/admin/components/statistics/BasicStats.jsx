@@ -4,7 +4,7 @@
  * charts
  */
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Card, Col, Row, Statistic } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { TinyColumn } from "@ant-design/charts";
@@ -30,7 +30,13 @@ const LinkCard = styled(Card)`
 `;
 
 export default function BasicStats() {
-  const { adminStatisticsContext } = useContext(AdminStatisticsContext);
+  const {
+    adminStatisticsContext,
+    updateAnalysesStatsTimePeriod,
+    updateProjectStatsTimePeriod,
+    updateSampleStatsTimePeriod,
+    updateUserStatsTimePeriod,
+  } = useContext(AdminStatisticsContext);
 
   const DEFAULT_URL = setBaseUrl("/admin/statistics");
 
@@ -66,6 +72,14 @@ export default function BasicStats() {
       url: `${DEFAULT_URL}`,
     },
   ];
+
+  useEffect(() => {
+    updateAnalysesStatsTimePeriod(defaultTimePeriod);
+    updateProjectStatsTimePeriod(defaultTimePeriod);
+    updateSampleStatsTimePeriod(defaultTimePeriod);
+    updateUserStatsTimePeriod(defaultTimePeriod);
+  }, []);
+
   return (
     <Row
       gutter={[16, 16]}
