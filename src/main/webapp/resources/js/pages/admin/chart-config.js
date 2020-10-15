@@ -55,9 +55,8 @@ export function getChartConfiguration(chartType, statsType, statistics) {
       legend: {
         visible: false,
       },
-      autoFit: false,
+      autoFit: true,
       height: 80,
-      width: 300,
       columnWidthRatio: 0.5,
     },
   };

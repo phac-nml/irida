@@ -14,7 +14,7 @@ import {
   chartTypes,
   statisticTypes
 } from "../../../../contexts/AdminStatisticsContext";
-import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
+import { SPACE_LG } from "../../../../styles/spacing";
 import { ChartTypeButtons } from "./ChartTypeButtons";
 import { getChartConfiguration } from "../../chart-config"
 
@@ -72,9 +72,6 @@ export default function AdvancedStatistics({statType}) {
         ("Number of Users Created")
     : null
   ;
-
-
-  console.log(chartTitle);
 
   function displayChart() {
     const Component = components[chartType];
