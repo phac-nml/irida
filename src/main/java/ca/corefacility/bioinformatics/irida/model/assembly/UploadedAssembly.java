@@ -2,16 +2,14 @@ package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.nio.file.Path;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 
 /**
  * A {@link GenomeAssembly} implementation that was uploaded by a user or service
@@ -22,12 +20,17 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Audited
 public class UploadedAssembly extends GenomeAssembly implements VersionedFileFields<Long> {
 
+
 	@NotNull
 	@Column(name = "file_path", unique = true)
 	private Path file;
 
 	@Column(name = "file_revision_number")
 	Long fileRevisionNumber;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "remote_status")
+	private RemoteStatus remoteStatus;
 
 	//default constructor for hibernate
 	protected UploadedAssembly() {
@@ -45,6 +48,10 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 		return file;
 	}
 
+	public void setFile(Path file) {
+		this.file = file;
+	}
+
 	@Override
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
@@ -53,5 +60,15 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 	@Override
 	public void incrementFileRevisionNumber() {
 		fileRevisionNumber++;
+	}
+
+	@Override
+	public RemoteStatus getRemoteStatus() {
+		return remoteStatus;
+	}
+
+	@Override
+	public void setRemoteStatus(RemoteStatus remoteStatus) {
+		this.remoteStatus = remoteStatus;
 	}
 }

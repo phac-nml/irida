@@ -10,7 +10,7 @@ export const steps = [
           <p>{i18n("linelist.tour.table.content")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: ".ag-header-cell:nth-of-type(2)",
@@ -32,7 +32,7 @@ export const steps = [
           </ol>
         </div>
       );
-    }
+    },
   },
   {
     selector: `[tour="tour-columns"]`,
@@ -48,7 +48,7 @@ export const steps = [
           <p>{i18n("linelist.tour.columns.content.end")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: `.ag-body-viewport-wrapper .ag-row:nth-of-type(1) .ag-cell:nth-of-type(1)`,
@@ -61,7 +61,7 @@ export const steps = [
           <p>{i18n("linelist.tour.edit.content.cancel")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: `[tour="tour-search"]`,
@@ -72,7 +72,7 @@ export const steps = [
           <p>{i18n("linelist.tour.search.content")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: `[tour="tour-filter-counts"]`,
@@ -84,7 +84,7 @@ export const steps = [
           <p>{i18n("linelist.tour.filterCounts.content.example")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: `[tour="tour-export"]`,
@@ -95,23 +95,32 @@ export const steps = [
           <p>{i18n("linelist.tour.export.content")}</p>
         </div>
       );
-    }
+    },
   },
-  {
-    selector: `[tour="tour-import"]`,
-    content() {
-      return (
-        <div>
-          <strong>{i18n("linelist.tour.import.title")}</strong>
-          <p>{i18n("linelist.tour.import.content.intro")}</p>
-          <ul>
-            <li>{i18n("linelist.tour.import.content.li1")}</li>
-            <li>{i18n("linelist.tour.import.content.li2")}</li>
-          </ul>
-        </div>
-      );
+  (function () {
+    /*
+    Since only managers can import metadata, we need to hide this step if a collaborator
+    is viewing the tour.
+     */
+    if (window.project.canManage) {
+      return {
+        selector: `[tour="tour-import"]`,
+        content() {
+          return (
+            <div>
+              <strong>{i18n("linelist.tour.import.title")}</strong>
+              <p>{i18n("linelist.tour.import.content.intro")}</p>
+              <ul>
+                <li>{i18n("linelist.tour.import.content.li1")}</li>
+                <li>{i18n("linelist.tour.import.content.li2")}</li>
+              </ul>
+            </div>
+          );
+        },
+      };
     }
-  },
+    return null;
+  })(),
   {
     selector: ".ag-row .ag-selection-checkbox:nth-of-type(1)",
     content() {
@@ -121,7 +130,7 @@ export const steps = [
           <p>{i18n("linelist.tour.select.content")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: `[tour="tour-counts"]`,
@@ -132,7 +141,7 @@ export const steps = [
           <p>{i18n("linelist.tour.selectCounts.content")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: `[tour="tour-cart"]`,
@@ -143,7 +152,7 @@ export const steps = [
           <p>{i18n("linelist.tour.cart.content")}</p>
         </div>
       );
-    }
+    },
   },
   {
     selector: ".js-tour-button",
@@ -153,6 +162,6 @@ export const steps = [
           <strong>{i18n("linelist.tour.end")}</strong>
         </div>
       );
-    }
-  }
-];
+    },
+  },
+].filter((i) => i); // Need to filter out any nulled out values.

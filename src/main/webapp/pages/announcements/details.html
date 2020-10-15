@@ -18,7 +18,7 @@
 <body>
 <div layout:fragment="page">
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
-        <form name="update_announcement" class="ng-cloak"
+        <form name="update_announcement"
               th:action="@{/announcements/{aID}/details(aID=${announcement.getId()})}"
               method="post" role="form"
               novalidate="novalidate">
@@ -58,7 +58,7 @@
                 </div>
                 <table id="announcementUsersTable"
                        class="table table-striped" cellspacing="0" width="100%"
-                       data:url="@{/announcements/{id}/details/ajax/list(id=${announcement.getId()})}">
+                       data:url="@{/ajax/announcements/{id}/details/list(id=${announcement.getId()})}">
                     <thead>
                     <tr role="row">
                         <th data-data="username" th:text="#{announcement.control.details.username}"></th>

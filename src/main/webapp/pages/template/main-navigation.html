@@ -38,10 +38,6 @@
                         </li>
                         <li role="separator" class="divider"></li>
                         <li>
-                            <a th:href="@{/projects/new}" th:text="#{nav.main.project-create}">
-                            </a>
-                        </li>
-                        <li>
                             <a th:href="@{/projects/synchronize}" th:text="#{nav.main.project-sync}">
                             </a>
                         </li>
@@ -77,17 +73,19 @@
                 <form id="global-search" class="navbar-form navbar-left" th:action="@{/search}" method="GET"
                       role="search">
                     <div class="form-group">
-                        <div class="search-wrapper">
-                            <span class="icon"><i class="fa fa-fw fa-search"></i></span>
+                        <div class="input-group">
+                            <span class="input-group-addon" style="background-color: white;"><i class="fa fa-fw fa-search"></i></span>
                             <input id="global-search-input" type="search" name="query"
+                                   style="border-right: none; border-left: none"
                                    class="form-control"
                                    th:placeholder="#{nav.main.search}"
                                    th:value="${searchQuery}"/>
                             <div class="input-group-btn search-dd" sec:authorize="hasAnyRole('ROLE_ADMIN')">
-                                <button type="button" id="admin-search-toggle" class="btn dropdown-toggle"
+                                <button type="button" id="admin-search-toggle" class="btn btn-default dropdown-toggle"
+                                        style="border-left: none; height: 34px"
                                         data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                    <span class="fa fa-angle-down" aria-hidden="true"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a href="#" id="search-admin-link" th:text="#{nav.main.search.admin}">_Search
@@ -151,14 +149,20 @@
                         </a>
                     </li>
 
-                    <li class="dropdown">
+                    <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                        <a th:href="@{/admin}" class="nav-icon-wrapper t-admin-panel-btn">
+                            <i class="fa fa-fw fa-user-shield nav-icon"></i>
+                        </a>
+                    </li>
+
+                    <li sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_USER', 'ROLE_TECHNICIAN')" class="dropdown">
                         <a href="#" class="dropdown-toggle nav-icon-wrapper" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">
                             <i class="fa fa-cog nav-icon" aria-hidden="true"></i>
                             <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+                            <th:block sec:authorize="hasAnyRole('ROLE_MANAGER')">
                                 <li>
                                     <a th:href="@{/users}" th:text="#{nav.main.users-list}">
                                         List Users
@@ -184,41 +188,28 @@
                                     Connections_</a>
                             </li>
 
-                            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')">
+                            <th:block sec:authorize="hasAnyRole('ROLE_TECHNICIAN')">
                                 <li role="seperator" class="divider"></li>
 
-                                <li sec:authorize="hasRole('ROLE_ADMIN')">
-                                    <a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">
-                                        _Clients_
-                                    </a>
-                                </li>
                                 <li>
                                     <a href="#" th:href="@{/sequencingRuns}" th:text="#{nav.main.sequencingruns}">
                                         _Sequencing Runs_
                                     </a>
-                                </li>
-                                <li sec:authorize="hasRole('ROLE_ADMIN')">
-                                    <a th:href="@{/export/ncbi}" th:text="#{nav.main.ncbi-uploads}">
-                                        _NCBI Exports_
-                                    </a>
-                                </li>
-                                <li sec:authorize="hasRole('ROLE_ADMIN')">
-                                    <a th:href="@{/announcements/admin}" th:text="#{nav.main.announcement}">_Announcements_</a>
                                 </li>
 
                             </th:block>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle nav-gravatar-wrapper" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false">
-                            <img class="nav-gravatar" th:src="${session.gravatar}" alt="User Icon"/>
+                              <i class="fas fa-user-circle nav-icon"></i>
                             <i class="fa fa-angle-down spaced-left__sm" aria-hidden="true"></i>
                         </a>
                         <ul class="dropdown-menu">
                             <li>
                                 <a th:href="@{/users/current}">
-                                    <i class="fa fa-user spaced-right__sm" aria-hidden="true"></i>
+                                    <i class="fas fa-user spaced-right__sm" aria-hidden="true"></i>
                                     <th:block th:text="#{nav.main.account}"/>
                                 </a>
                             </li>

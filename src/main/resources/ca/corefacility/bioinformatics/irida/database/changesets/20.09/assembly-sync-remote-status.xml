@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="assembly-sync-remote-status" author="tom">
+        <addColumn tableName="uploaded_assembly">
+            <column name="remote_status" type="bigint(20)">
+                <constraints foreignKeyName="FK_ASSEMBLY_REMOTE_STATUS"
+                             referencedColumnNames="id" referencedTableName="remote_status"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="uploaded_assembly_AUD">
+            <column name="remote_status" type="bigint(20)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

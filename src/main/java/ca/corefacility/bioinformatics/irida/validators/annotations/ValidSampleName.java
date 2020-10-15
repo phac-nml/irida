@@ -12,8 +12,8 @@ import javax.validation.constraints.Pattern;
 
 /**
  * A collection of patterns that validate the name of a sample.
- * 
- * 
+ *
+ *
  */
 @Pattern.List({ @Pattern(regexp = "^[^\\']*$", message = "{irida.name.invalid.single.quote}"),
 		@Pattern(regexp = "^[^\\.]*$", message = "{irida.name.invalid.period}"),
@@ -34,7 +34,7 @@ public @interface ValidSampleName {
 	/**
 	 * Characters not allowed in a sample name
 	 */
-	public static class ValidSampleNameBlacklist {
-		public static final char[] BLACKLIST = { '\'', '.', ' ', '\t' };
+	public static class ValidSampleNameBlocklist {
+		public static final char[] BLOCKLIST = { '\'', '.', ' ', '\t' };
 	}
 }

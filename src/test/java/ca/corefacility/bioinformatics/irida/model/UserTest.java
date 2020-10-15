@@ -238,7 +238,7 @@ public class UserTest {
 	@Test
 	public void testEqualsFields() {
 		User u1 = new User("username", "email", "password", "firstName", "lastName", "phoneNumber");
-		u1.setId(new Long(1111));
+		u1.setId(1111L);
 
 		User u2 = new User("username", "email", "password", "firstName", "notequal", "phoneNumber");
 		u2.setId(u1.getId());

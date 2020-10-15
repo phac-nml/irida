@@ -10,13 +10,15 @@ import {
   Select,
   Typography,
 } from "antd";
+import { useRoles } from "../../contexts/roles-context";
 
 const { Option } = Select;
 const { Text } = Typography;
 
 export function AddMemberButton({
+  label,
+  modalTitle,
   defaultRole,
-  roles = [],
   addMemberFn = () => {},
   getAvailableMembersFn = () => {},
   addMemberSuccessFn = () => {},
@@ -26,6 +28,8 @@ export function AddMemberButton({
   to it when the window opens.
    */
   const userRef = useRef();
+
+  const { roles } = useRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -119,14 +123,14 @@ export function AddMemberButton({
   return (
     <>
       <Button className="t-add-member-btn" onClick={() => setVisible(true)}>
-        {i18n("AddMemberButton.label")}
+        {label}
       </Button>
       <Modal
         className="t-add-member-modal"
         visible={visible}
         okButtonProps={{ disabled: typeof userId === "undefined" }}
         onCancel={onCancel}
-        title={i18n("AddMemberButton.modal.title")}
+        title={modalTitle}
         onOk={addMember}
         okText={i18n("AddMemberButton.modal.okText")}
       >

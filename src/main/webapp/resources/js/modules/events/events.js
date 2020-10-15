@@ -4,7 +4,7 @@
  */
 
 import angular from "angular";
-import "../../../sass/modules/events.scss";
+import "../../../css/modules/events.css";
 
 /**
  * Service to get events DOM from server.
@@ -24,14 +24,14 @@ function EventsService($http) {
       .get(url, {
         params: { size },
         headers: {
-          Accept: "text/html"
-        }
+          Accept: "text/html",
+        },
       })
-      .then(data => data.data);
+      .then((data) => data.data);
   }
 
   return {
-    getEvents
+    getEvents,
   };
 }
 
@@ -45,22 +45,22 @@ function events(svc, $compile) {
   return {
     template: "<div></div>",
     scope: {
-      url: "@"
+      url: "@",
     },
     replace: true,
     controllerAs: "eventsCtrl",
     controller: [
       "$scope",
       "$element",
-      function($scope, $element) {
+      function ($scope, $element) {
         const vm = this;
 
         vm.size = 10;
         $scope.$watch(
-          function() {
+          function () {
             return vm.size;
           },
-          function(n, o) {
+          function (n, o) {
             if (n !== o) {
               getEvents();
             }
@@ -68,15 +68,15 @@ function events(svc, $compile) {
         );
 
         function getEvents() {
-          svc.getEvents($scope.url, vm.size).then(function(data) {
+          svc.getEvents($scope.url, vm.size).then(function (data) {
             $element.html($compile(data)($scope));
             $('[data-toggle="tooltip"]').tooltip();
           });
         }
 
         getEvents();
-      }
-    ]
+      },
+    ],
   };
 }
 

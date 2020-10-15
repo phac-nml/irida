@@ -169,20 +169,7 @@
 
                   <!-- NEW SAMPLE LINK -->
                   <li role="menuitem">
-                    <a
-                      href="#"
-                      class="js-sample-project-tool-btn t-new-sample-btn"
-                      data:url="@{/projects/{id}/samples/new(id=${project.getId()})}"
-                      data-enabled-at="0"
-                      data-toggle="tooltip"
-                      data:remote-msg="#{project.samples.tooltip.new-sample.remote-project}"
-                    >
-                      <i
-                        class="fa fa-plus fa-fw spaced-right__sm"
-                        aria-hidden="true"
-                      ></i>
-                      <th:block th:text="#{project.samples.nav.new}" />
-                    </a>
+                    <span class="js-add-sample"></span>
                   </li>
                 </ul>
               </div>

@@ -7,7 +7,7 @@
     <title th:text="#{metadata.page-title}"></title>
     <link rel="stylesheet" th:href="@{/dist/css/samples-metadata-import.bundle.css}"/>
 </head>
-<body>
+<body ng-app="irida.metadata.importer">
 <div layout:fragment="main">
     <h3 th:text="#{metadata.upload.component.title}"></h3>
     <section ui-view=""></section>

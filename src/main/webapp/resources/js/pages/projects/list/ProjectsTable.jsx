@@ -15,6 +15,7 @@ import {
   IconFileExcel,
   IconSwap
 } from "../../../components/icons/Icons";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 
 const { Text } = Typography;
 
@@ -177,7 +178,15 @@ export function ProjectsTable() {
   );
 
   return (
-    <PageWrapper title={i18n("ProjectsTable_header")}>
+    <PageWrapper title={i18n("ProjectsTable_header")}
+       headerExtras={
+         <AddNewButton
+           href={setBaseUrl(`projects/new`)}
+           text={i18n("ProjectsTable_create_new_project")}
+           className="t-create-new-project-btn"
+         />
+       }
+    >
       <div>
         <div
           style={{

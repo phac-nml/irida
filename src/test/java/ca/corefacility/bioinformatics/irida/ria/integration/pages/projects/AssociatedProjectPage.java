@@ -41,8 +41,9 @@ public class AssociatedProjectPage extends AbstractPage {
 
 	public void toggleProjectAssociation(int row) {
 		WebElement btn = selectionSwitches.get(row);
+		String state = btn.getAttribute("aria-checked");
 		btn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.stalenessOf(btn));
+		wait.until(ExpectedConditions.attributeToBe(btn, "aria-checked", state.equals("true") ? "false" : "true"));
 	}
 }

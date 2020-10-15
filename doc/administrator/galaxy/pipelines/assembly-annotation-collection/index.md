@@ -9,12 +9,12 @@ Assembly and Annotation Collection
 
 This workflow can assemble and annotate multiple genomes in one submission.  The results from one submission will be packaged together into a single file.  The workflow uses the [shovill] and [Prokka][] software for assembly and annotation of genomes, respectively, as well as [QUAST] for assembly quality assessment.  The specific Galaxy tools are listed in the table below.
 
-| Tool Name                  | Owner    | Tool Revision  | Toolshed Installable Revision | Toolshed             |
-|:--------------------------:|:--------:|:--------------:|:-----------------------------:|:--------------------:|
-| **bundle_collections**     | irida    | [7bc329e1ada4] | 0 (2015-05-20)                | [IRIDA Toolshed][]   |
-| **shovill**                | iuc      | [865119fcb694] | 3 (2018-11-13)                | [Galaxy Main Shed][] |
-| **prokka**                 | crs4     | [eaee459f3d69] | 14 (2018-03-28)               | [Galaxy Main Shed][] |
-| **quast**                  | iuc      | [81df4950d65b] | 5 (2018-12-04)                | [Galaxy Main Shed][] |
+| Tool Name                  | Owner    | Tool Revision    | Toolshed Installable Revision | Toolshed             |
+|:--------------------------:|:--------:|:----------------:|:-----------------------------:|:--------------------:|
+| **bundle_collections**     | nml      | [705ebd286b57][] | 2 (2020-08-24)                | [Galaxy Main Shed][] |
+| **shovill**                | iuc      | [8d1af5db538d][] | 5 (2020-06-28)                | [Galaxy Main Shed][] |
+| **prokka**                 | crs4     | [111884f0d912][] | 17 (2020-06-04)               | [Galaxy Main Shed][] |
+| **quast**                  | iuc      | [ebb0dcdb621a][] | 8 (2020-02-03)                | [Galaxy Main Shed][] |
 
 
 To install these tools please proceed through the following steps.
@@ -33,10 +33,6 @@ The install progress can be checked by monitoring the Galaxy log files `galaxy/*
 
 **Note**: Prokka downloads several large databases and may take some time to install.
 
-### Updating `tbl2asn`
-
-The assembly workflow makes use of the software [Prokka][] for genome annotation.  Prokka makes use of [tbl2asn][], which has been programmed to stop working after 1 year from being built. The version of `tbl2asn` installed by default may have to be updated. Please see our [FAQ][] for more details. 
-
 ## Step 3: Testing Pipeline
 
 A Galaxy workflow and some test data has been included with this documentation to verify that all tools are installed correctly.  To test this pipeline, please proceed through the following steps.
@@ -51,7 +47,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     ![dataset-pair-screen][]
 
 4. This should have properly paired your data and named the sample **a**.  Enter the name of this paired dataset collection at the bottom and click **Create list**.
-5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **AssemblyAnnotationCollection-shovill-prokka-paired_reads-v0.4 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
+5. Run the uploaded workflow by clicking on **Workflow**, clicking on the name of the workflow **AssemblyAnnotationCollection-shovill-prokka-paired_reads-v0.5 (imported from uploaded file)** and clicking **Run**.  This should auto fill in the dataset collection.  At the very bottom of the screen click **Run workflow**.
 6. If everything was installed correctly, you should see each of the tools run successfully (turn green).  On completion this should look like.
 
     ![workflow-success][]
@@ -60,10 +56,10 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 If everything was successful then all dependencies for this pipeline have been properly installed.
 
-[7bc329e1ada4]: http://irida.corefacility.ca/galaxy-shed/view/irida/bundle_collections/7bc329e1ada4
-[865119fcb694]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/865119fcb694
-[eaee459f3d69]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/eaee459f3d69
-[81df4950d65b]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/81df4950d65b
+[705ebd286b57]: https://toolshed.g2.bx.psu.edu/view/nml/bundle_collections/705ebd286b57
+[8d1af5db538d]: https://toolshed.g2.bx.psu.edu/view/iuc/shovill/8d1af5db538d
+[111884f0d912]: https://toolshed.g2.bx.psu.edu/view/crs4/prokka/111884f0d912
+[ebb0dcdb621a]: https://toolshed.g2.bx.psu.edu/view/iuc/quast/ebb0dcdb621a
 [galaxy-config]: ../../setup#step-4-modify-configuration-file
 [SLURM]: https://slurm.schedmd.com
 [PILON]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4237348/
@@ -71,9 +67,7 @@ If everything was successful then all dependencies for this pipeline have been p
 [shovill]: https://github.com/tseemann/shovill/
 [Prokka]: http://www.vicbioinformatics.com/software.prokka.shtml
 [QUAST]: http://quast.sourceforge.net/quast.html
-[tbl2asn]: http://www.ncbi.nlm.nih.gov/genbank/tbl2asn2/
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
-[IRIDA Toolshed]: https://irida.corefacility.ca/galaxy-shed
 [Assembly Annotation Collection Galaxy Workflow]: ../test/assembly-annotation-collection/assembly-annotation-collection.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
 [test/reads]: ../test/assembly-annotation/reads
@@ -85,6 +79,5 @@ If everything was successful then all dependencies for this pipeline have been p
 [FAQ]: ../../../faq/#tbl2asn-out-of-date
 [conda]: https://conda.io/docs/intro.html
 [bioconda]: https://bioconda.github.io/
-[FAQ/Conda dependencies]: ../../../faq#installing-conda-dependencies-in-galaxy-versions--v1601
+[FAQ/Conda dependencies]: ../../../faq#4-installing-conda-dependencies-in-galaxy-versions--v1601
 [conda environment]: https://conda.io/docs/user-guide/tasks/manage-environments.html#saving-environment-variables
-[GALAXY_MEMORY_MB]: https://planemo.readthedocs.io/en/latest/writing_advanced.html#developing-for-clusters-galaxy-slots-galaxy-memory-mb-and-galaxy-memory-mb-per-slot

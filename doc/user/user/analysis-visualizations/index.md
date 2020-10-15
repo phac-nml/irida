@@ -31,7 +31,7 @@ To get to the advanced visualization page, on the analysis page, click the `View
 
 #### Toggling Sample Metadata Fields
 
-Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying the toggles for all the fields.  
+Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying a list of metadata fields with checkboxes to make them visible or hidden.  
 
 ![Open metadata selection btn](images/toggle_metadata_button.png)
 
@@ -39,7 +39,7 @@ Individual metadata field by clicking on the field label in the side panel.
 
 ![Toggle metadata field](images/toggle_metadatafield.png)
 
-After selecting 'PFGE-BlnI-pattern' the toggle is set to off and the metadata column is removed from the image.
+After unchecking the checkbox next to 'Province' the metadata column is removed from the image.
 
 ![Result of removing 'PFGE-BlnI-pattern'](images/toggle_metadatafield_after.png)
 

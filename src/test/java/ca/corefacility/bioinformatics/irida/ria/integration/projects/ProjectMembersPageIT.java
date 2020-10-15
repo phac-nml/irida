@@ -14,8 +14,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -27,7 +26,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");
 
-	private List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
+	private final List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
 			ImmutableMap.of("href", "/projects", "text", "Projects"),
 			ImmutableMap.of("href", "/projects/1", "text", "project"),
 			ImmutableMap.of("href", "/projects/1/settings", "text", "Settings"));
@@ -38,6 +37,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectMembersPage page = ProjectMembersPage.goTo(driver());
 		assertEquals("Check for proper translation in title", "Members", page.getPageHeaderTitle());
 		assertEquals("Should be 2 members in the project", 2, page.getNumberOfMembers());
+		assertTrue("Add Members button should be visible", page.isAddMemberBtnVisible());
 
 		// Test remove user from project
 		page.removeUser(1);
@@ -56,5 +56,12 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		// Tye updating the users role
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+	}
+
+	@Test
+	public void testCollaborator() {
+		LoginPage.loginAsUser(driver());
+		ProjectMembersPage page = ProjectMembersPage.goTo(driver());
+		assertFalse("Add Members button should not be visible", page.isAddMemberBtnVisible());
 	}
 }

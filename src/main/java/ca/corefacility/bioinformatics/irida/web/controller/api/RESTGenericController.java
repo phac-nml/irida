@@ -173,8 +173,8 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response containing the location of the newly persisted
 	 *         resource.
 	 */
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {
+	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public ModelMap create(@RequestBody Type resource, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 
 		// ask the subclass to map the de-serialized request to a concrete
@@ -246,7 +246,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * Update some of the fields of an individual resource in the database. The
 	 * client should only send the key-value pairs for the properties that are
 	 * to be updated in the database.
-	 * 
+	 *
 	 * @param identifier
 	 *            the identifier of the resource to be updated.
 	 * @param representation
@@ -254,7 +254,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response indicating that the resource was updated.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+			MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
 		// update the resource specified by the client. clients *may* be able
 		// to update the identifier of some resources, and so we should get a

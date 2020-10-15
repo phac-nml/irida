@@ -10,20 +10,13 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.clients.ClientsController;
-import ca.corefacility.bioinformatics.irida.ria.web.clients.dto.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -65,29 +58,6 @@ public class ClientsControllerTest {
 		assertTrue(model.containsAttribute("grants"));
 
 		verify(clientDetailsService).read(clientId);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAjaxClientList() {
-		IridaClientDetails client1 = new IridaClientDetails();
-		client1.setId(1L);
-		IridaClientDetails client2 = new IridaClientDetails();
-		client2.setId(2L);
-		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
-
-		when(clientDetailsService.search(any(Specification.class), any(Pageable.class))).thenReturn(clientPage);
-
-		ClientTableRequest params = new ClientTableRequest();
-		params.setCurrent(1);
-		params.setPageSize(10);
-		params.setSortColumn("createdDate");
-		params.setSortDirection("ascend");
-		TableResponse response = controller.getAjaxClientsList(params);
-
-		assertEquals(2, response.getDataSource().size());
-
-		verify(clientDetailsService).search(any(Specification.class), any(Pageable.class));
 	}
 
 	@Test
@@ -228,7 +198,7 @@ public class ClientsControllerTest {
 
 		String removeClient = controller.removeClient(id);
 
-		assertEquals("redirect:/clients", removeClient);
+		assertEquals("redirect:/admin/clients", removeClient);
 
 		verify(clientDetailsService).delete(id);
 	}

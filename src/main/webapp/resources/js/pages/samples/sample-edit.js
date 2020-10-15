@@ -1,14 +1,14 @@
 import $ from "jquery";
-import "../../../sass/pages/sample-edit.scss";
+import "../../../css/pages/sample-edit.css";
 
 /**
  * Serialize metadata to json for submission
  */
-$("#edit-form").submit(function() {
+$("#edit-form").submit(function () {
   const metadata = {};
   $("#other-metadata")
     .find(".metadata-entry")
-    .each(function() {
+    .each(function () {
       const entry = $(this);
       const key = entry.find(".metadata-key").val();
       const value = entry.find(".metadata-value").val();
@@ -24,7 +24,7 @@ $("#edit-form").submit(function() {
 /**
  * Add a metadata term from the template
  */
-$("#add-metadata").on("click", function() {
+$("#add-metadata").on("click", function () {
   const newMetadata = $("#metadata-template").clone(true);
   newMetadata.removeAttr("id");
   $("#metadata-fields").append(newMetadata);
@@ -33,8 +33,6 @@ $("#add-metadata").on("click", function() {
 /**
  * Remove a metadata term
  */
-$(".delete-metadata").on("click", function() {
-  $(this)
-    .closest(".metadata-entry")
-    .remove();
+$(".delete-metadata").on("click", function () {
+  $(this).closest(".metadata-entry").remove();
 });

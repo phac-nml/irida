@@ -1,8 +1,8 @@
 import $ from "jquery";
-import "../../../../sass/pages/project-settings-basic.scss";
+import "../../../../css/pages/project-settings-basic.css";
 
-const projectSettings = (function(page, notifications) {
-  $("#coverage-save").on("click", function() {
+const projectSettings = (function (page, notifications) {
+  $("#coverage-save").on("click", function () {
     const genomeSize = $("#genome-size").val();
     const minimumCoverage = $("#minimum-coverage").val();
     const maximumCoverage = $("#maximum-coverage").val();
@@ -13,10 +13,10 @@ const projectSettings = (function(page, notifications) {
       data: {
         genomeSize: genomeSize,
         minimumCoverage: minimumCoverage,
-        maximumCoverage: maximumCoverage
+        maximumCoverage: maximumCoverage,
       },
       statusCode: {
-        200: function(response) {
+        200: function (response) {
           notifications.show({ text: response.result });
 
           if (minimumCoverage) {
@@ -42,45 +42,45 @@ const projectSettings = (function(page, notifications) {
           }
 
           $(".edit-coverage").toggle();
-        }
+        },
       },
-      fail: function() {
+      fail: function () {
         notifications.show({
           text: i18n("project.settings.notifications.error"),
-          type: "error"
+          type: "error",
         });
-      }
+      },
     });
   });
 
-  $("#edit-coverage-btn, #coverage-cancel").on("click", function() {
+  $("#edit-coverage-btn, #coverage-cancel").on("click", function () {
     $(".edit-coverage").toggle();
   });
 
-  $("#confirm-deletion").on("change", function() {
+  $("#confirm-deletion").on("change", function () {
     toggleDeleteButton();
   });
 
   /**
    * Updating analysis priority on server
    */
-  $("#analysis-priority").on("change", function() {
+  $("#analysis-priority").on("change", function () {
     const priority = $("#analysis-priority").val();
 
     $.ajax({
       url: page.urls.priority,
       type: "POST",
       data: {
-        priority: priority
+        priority: priority,
       },
       statusCode: {
-        200: function(response) {
+        200: function (response) {
           notifications.show({ text: response.result });
-        }
+        },
       },
-      fail: function() {
+      fail: function () {
         notifications.show({ text: page.i18n.error, type: "error" });
-      }
+      },
     });
   });
 
@@ -96,11 +96,11 @@ const projectSettings = (function(page, notifications) {
    * Open a confirmation modal for removing an automated analysis pipeline
    * @param {number} templateId - the id for the analysis to remove
    */
-  const displayRemoveAnalysisModal = templateId => {
+  const displayRemoveAnalysisModal = (templateId) => {
     $("#removeAnalysisTemplateModal").load(
       `${window.PAGE.urls.deleteModal}#removeAnalysisTemplateModalGen`,
       { templateId },
-      function() {
+      function () {
         $(this).modal("show");
       }
     );
@@ -109,11 +109,9 @@ const projectSettings = (function(page, notifications) {
   /*
   Submission handler for when the user clicks on the remove analysis button.
    */
-  $(".remove-analysis-form").on("submit", function(e) {
+  $(".remove-analysis-form").on("submit", function (e) {
     e.preventDefault();
-    const templateId = $(this)
-      .find(`input[name="templateId"]`)
-      .val();
+    const templateId = $(this).find(`input[name="templateId"]`).val();
     displayRemoveAnalysisModal(templateId);
   });
 })(window.PAGE, window.notifications);

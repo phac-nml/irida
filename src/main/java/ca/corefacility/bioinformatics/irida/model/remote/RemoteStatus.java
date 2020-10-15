@@ -65,7 +65,7 @@ public class RemoteStatus {
 	private Date lastUpdate;
 
 	@SuppressWarnings("unused")
-	private RemoteStatus() {
+	protected RemoteStatus() {
 	}
 
 	public RemoteStatus(String url, RemoteAPI api) {

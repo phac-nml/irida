@@ -143,7 +143,7 @@ public class CRUDServiceImplTest {
 	@Ignore
 	@Test(expected = EntityNotFoundException.class)
 	public void testUpdateMissingEntity() {
-		Long id = new Long(1);
+		Long id = 1L;
 		Map<String, Object> updatedProperties = new HashMap<>();
 		when(crudRepository.existsById(id)).thenReturn(Boolean.FALSE);
 
@@ -169,7 +169,7 @@ public class CRUDServiceImplTest {
 	@Test
 	public void testUpdateWithBadPropertyType() {
 		IdentifiableTestEntity entity = new IdentifiableTestEntity();
-		entity.setId(new Long(1));
+		entity.setId(1L);
 		Map<String, Object> updatedProperties = new HashMap<>();
 		updatedProperties.put("integerValue", new Object());
 		when(crudRepository.findById(1L)).thenReturn(Optional.of(entity));
@@ -187,7 +187,7 @@ public class CRUDServiceImplTest {
 		IdentifiableTestEntity i = new IdentifiableTestEntity();
 		i.setNonNull("Definitely not null.");
 		i.setIntegerValue(Integer.MIN_VALUE);
-		Long id = new Long(1);
+		Long id = 1L;
 		i.setId(id);
 		when(crudRepository.existsById(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.findById(id)).thenReturn(Optional.of(i));
@@ -208,7 +208,7 @@ public class CRUDServiceImplTest {
 	@Test
 	public void testRead() {
 		IdentifiableTestEntity i = new IdentifiableTestEntity();
-		i.setId(new Long(1));
+		i.setId(1L);
 		i.setNonNull("Definitely not null");
 
 		when(crudRepository.findById(i.getId())).thenReturn(Optional.of(i));
@@ -238,7 +238,7 @@ public class CRUDServiceImplTest {
 	@Test
 	public void testExists() {
 		IdentifiableTestEntity i = new IdentifiableTestEntity();
-		i.setId(new Long(1));
+		i.setId(1L);
 		when(crudRepository.existsById(i.getId())).thenReturn(Boolean.TRUE);
 		assertTrue(crudService.exists(i.getId()));
 	}
@@ -246,7 +246,7 @@ public class CRUDServiceImplTest {
 	@Test
 	public void testValidDelete() {
 		IdentifiableTestEntity i = new IdentifiableTestEntity();
-		i.setId(new Long(1));
+		i.setId(1L);
 
 		when(crudService.exists(i.getId())).thenReturn(Boolean.TRUE);
 
@@ -260,7 +260,7 @@ public class CRUDServiceImplTest {
 	@Ignore
 	@Test(expected = EntityNotFoundException.class)
 	public void testInvalidDelete() {
-		Long id = new Long(1);
+		Long id = 1L;
 		when(crudRepository.existsById(id)).thenReturn(Boolean.FALSE);
 
 		crudService.delete(id);
@@ -269,7 +269,7 @@ public class CRUDServiceImplTest {
 	@Ignore
 	@Test(expected = EntityNotFoundException.class)
 	public void testGetMissingEntity() {
-		Long id = new Long(1);
+		Long id = 1L;
 		when(crudRepository.findById(id)).thenReturn(Optional.of(null));
 
 		crudService.read(id);

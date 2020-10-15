@@ -4,32 +4,16 @@
       data-layout-decorate="~{projects/_base}">
 <head>
   <title th:text="#{project.export.table.title}">SRA</title>
-  <script th:inline="javascript">
-  		var PAGE = {
-  			"URLS": {
-  				"projectBase": /*[[@{/projects/}]]*/ "/projects/1/export/"
-        },
-        "paging": false
-  		};
-  	</script>
+    <link rel="stylesheet" th:href="@{/dist/css/project-ncbi-exports.bundle.css}">
 </head>
 
 <body>
-<main layout:fragment="main">
-  <table id="exportTable" data:url="@{/ajax/projects/{id}/export/list(id=${project.id})}" class="table table-striped" cellspacing="0" width="100%">
-    <thead>
-    <tr role="row">
-      <th data-data="id" th:text="#{iridaThing.id}"></th>
-      <th data-data="sampleCount" th:text="#{project.export.table.samples}"></th>
-      <th class="dt-date" data-data="uploadState" th:text="#{project.export.table.state}"></th>
-      <th class="dt-date" data-data="createdDate" th:text="#{iridaThing.timestamp}"></th>
-    </tr>
-    </thead>
-  </table>
+<main layout:fragment="main" id="root">
+
 </main>
 
 <th:block layout:fragment="scripts">
-  <script th:src="@{/dist/js/ncbi-exports.bundle.js}"></script>
+  <script th:src="@{/dist/js/project-ncbi-exports.bundle.js}"></script>
 </th:block>
 </body>
 

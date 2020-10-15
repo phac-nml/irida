@@ -1,0 +1,81 @@
+$color-danger: #f44336;
+$color-danger-light: #FFF8F7;
+
+.alert > strong {
+  font-size: 2rem;
+}
+
+label > input[type="radio"] {
+  margin-top: 0 !important;
+}
+
+/*// Datatables*/
+.dataTables_scrollHeadInner .table {
+  margin-bottom: 0;
+}
+
+.dataTables_paginate {
+  margin-bottom: 2rem !important;
+}
+
+.pill-content {
+  padding-top: 1rem !important;
+}
+
+table.dataTable tbody,
+table.dataTable tbody td {
+  white-space: nowrap;
+}
+
+.dataTable tbody td {
+  padding-left: 2rem !important;
+}
+
+.dataTables_scroll {
+  border: 1px solid #dddddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.dataTables_paginate {
+  display: flex;
+  justify-content: center;
+}
+
+li.active .badge {
+  background-color: white !important;
+  color: RGB(55, 123, 181) !important;
+}
+
+th {
+  white-space: nowrap;
+}
+
+/*// Bootstrap nav*/
+.nav-pills > li#danger.active > a,
+.nav-pills > li#danger.active > a:hover {
+  border: 1px solid $color-danger;
+  background-color: rgb(244, 67, 54) !important;
+  color: white;
+}
+
+.nav-pills > li#danger.active .badge {
+  background-color: white;
+  color: $color-danger !important;
+}
+
+.nav-pills > li > a {
+  border: 1px solid lighten(rgb(176, 190, 197), 20%);
+}
+
+.nav-pills > li#danger > a {
+  color: rgb(244, 67, 54);
+  border: 1px solid $color-danger-light;
+}
+
+.nav-pills > li#danger > a:hover {
+  color: rgb(244, 67, 54);
+}
+
+.nav-pills > li#danger .badge {
+  background-color: rgb(244, 67, 54);
+}

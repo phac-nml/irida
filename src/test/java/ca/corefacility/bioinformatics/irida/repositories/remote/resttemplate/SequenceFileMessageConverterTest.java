@@ -86,9 +86,11 @@ public class SequenceFileMessageConverterTest {
 	@Test
 	public void testGetMediaTypes() {
 		List<MediaType> supportedMediaTypes = converter.getSupportedMediaTypes();
-		assertEquals(1, supportedMediaTypes.size());
-		MediaType next = supportedMediaTypes.iterator().next();
-		assertEquals("application", next.getType());
-		assertEquals("fastq", next.getSubtype());
+		assertEquals(2, supportedMediaTypes.size());
+
+		assertTrue(supportedMediaTypes.stream()
+				.anyMatch(m -> m.includes(new MediaType("application", "fastq"))));
+		assertTrue(supportedMediaTypes.stream()
+				.anyMatch(m -> m.includes(new MediaType("application", "fasta"))));
 	}
 }

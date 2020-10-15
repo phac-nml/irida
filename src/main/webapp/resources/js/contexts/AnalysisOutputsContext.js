@@ -3,7 +3,7 @@
  * required for displaying analysis outputs.
  */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AnalysisContext } from "../contexts/AnalysisContext";
 
 // Functions required by context
@@ -17,7 +17,7 @@ const initialContext = {
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
-const blacklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
+const blocklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 const excelFileExtSet = new Set(["xlsx"]);
@@ -27,14 +27,14 @@ function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
     initialContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
 
   function getPreviewForFileType(fileExt, type) {
     if (type === "text") {
       return (
         !tabExtSet.has(fileExt) &&
         !jsonExtSet.has(fileExt) &&
-        !blacklistExtSet.has(fileExt) &&
+        !blocklistExtSet.has(fileExt) &&
         !excelFileExtSet.has(fileExt) &&
         !imageFileExtSet.has(fileExt)
       );
@@ -56,7 +56,7 @@ function AnalysisOutputsProvider(props) {
     let hasExcelFile = false;
     let hasImageFile = false;
 
-    getOutputInfo(analysisContext.analysis.identifier).then((data) => {
+    getOutputInfo(analysisIdentifier).then((data) => {
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required

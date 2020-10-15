@@ -1,0 +1,19 @@
+/*
+The only place these get used are on the generic pipeline launch page.
+ */
+
+.btn-xl {
+  padding: 20px 35px !important;
+  font-size: 5rem !important;
+  line-height: 3;
+}
+
+.btn-action {
+  border: 1rem solid #dfdfdf !important;
+}
+
+.btn-affixed {
+  width: 100%;
+  white-space: normal !important;
+  text-wrap: normal !important;
+}

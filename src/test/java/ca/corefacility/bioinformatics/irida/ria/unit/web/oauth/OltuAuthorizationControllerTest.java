@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -93,5 +94,39 @@ public class OltuAuthorizationControllerTest {
 		String capturedRedirect = redirectArg.getValue();
 		assertTrue(capturedRedirect.contains(redirect));
 		assertTrue(capturedRedirect.contains(serverBase));
+	}
+
+	@Test
+	public void testGetTokenFromAuthCodeExtraSlash() throws IOException, OAuthSystemException, OAuthProblemException,
+			URISyntaxException {
+		Long apiId = 1L;
+		RemoteAPI remoteAPI = new RemoteAPI("name", "http://remoteLocation", "a description", "id", "secret");
+		remoteAPI.setId(apiId);
+		String code = "code";
+		String redirect = "http://originalPage";
+
+		//adding a trailing slash to the serverbase to try to confuse the redirect URI
+		controller.setServerBase(serverBase + "/");
+
+		when(apiService.read(apiId)).thenReturn(remoteAPI);
+
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		HttpServletResponse response = mock(HttpServletResponse.class);
+		Map<String, String[]> requestParams = new HashMap<>();
+		requestParams.put("code", new String[] { code });
+
+		when(request.getParameterMap()).thenReturn(requestParams);
+
+		controller.getTokenFromAuthCode(request, response, apiId, redirect);
+
+		verify(apiService).read(apiId);
+
+		ArgumentCaptor<String> redirectArg = ArgumentCaptor.forClass(String.class);
+		verify(tokenService).createTokenFromAuthCode(eq(code), eq(remoteAPI), redirectArg.capture());
+
+		String capturedRedirect = redirectArg.getValue();
+		assertTrue(capturedRedirect.contains(redirect));
+		assertTrue(capturedRedirect.contains(serverBase));
+		assertFalse(capturedRedirect.contains(serverBase + "//"));
 	}
 }

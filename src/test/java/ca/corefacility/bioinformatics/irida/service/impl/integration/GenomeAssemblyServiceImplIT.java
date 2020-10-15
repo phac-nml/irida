@@ -61,7 +61,7 @@ public class GenomeAssemblyServiceImplIT {
 				.next();
 		assertEquals("Should be same sample", s.getId(), join.getSubject()
 				.getId());
-		assertEquals("Should be same assembly", new Long(1L), join.getObject()
+		assertEquals("Should be same assembly", Long.valueOf(1), join.getObject()
 				.getId());
 	}
 

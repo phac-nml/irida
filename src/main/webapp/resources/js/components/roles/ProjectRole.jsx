@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
-import { updateUserRoleOnProject } from "../../apis/projects/members";
+import React, { useState } from "react";
 import { notification, Select } from "antd";
-import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
+import { RolesContext, useRoles } from "../../contexts/roles-context";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -13,15 +12,19 @@ import { ProjectRolesContext } from "../../contexts/ProjectRolesContext";
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ user }) {
-  const [role, setRole] = useState(user.role);
+export function ProjectRole({
+  item,
+  // eslint-disable-next-line no-console
+  updateFn = () => console.error("updateFn is required"),
+}) {
+  const [role, setRole] = useState(item.role);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useContext(ProjectRolesContext);
+  const { roles, getRoleFromKey } = useRoles();
 
   const onChange = (value) => {
     setLoading(true);
-    updateUserRoleOnProject({
-      id: user.id,
+    updateFn({
+      id: item.id,
       role: value,
     })
       .then((message) => {
@@ -56,6 +59,6 @@ export function ProjectRole({ user }) {
       ))}
     </Select>
   ) : (
-    getRoleFromKey(user.role)
+    getRoleFromKey(item.role)
   );
 }

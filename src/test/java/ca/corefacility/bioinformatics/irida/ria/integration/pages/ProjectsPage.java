@@ -27,6 +27,9 @@ public class ProjectsPage extends AbstractPage {
 	@FindBy(css = ".ant-input-search .ant-input")
 	WebElement searchInput;
 
+	@FindBy(className="t-create-new-project-btn")
+	List<WebElement> createNewButton;
+
 	public ProjectsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -57,5 +60,9 @@ public class ProjectsPage extends AbstractPage {
 		searchInput.sendKeys(projectName);
 		searchInput.sendKeys(Keys.ENTER);
 		waitForTime(300);
+	}
+
+	public boolean createNewButtonVisible() {
+		return createNewButton.size() == 1;
 	}
 }

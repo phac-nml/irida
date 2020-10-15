@@ -241,7 +241,7 @@ public class SequencingRunServiceImplIT {
 		List<SequencingRun> runs = Lists.newArrayList(findAll);
 		assertEquals("user should be able to see 1 run", 1, runs.size());
 		SequencingRun run = runs.iterator().next();
-		assertEquals("id should be 1", new Long(1), run.getId());
+		assertEquals("id should be 1", Long.valueOf(1), run.getId());
 	}
 
 	@Test

@@ -26,7 +26,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(className = "ag-header-cell-text")
 	private List<WebElement> headerText;
 
-	@FindBy(className = "ant-select-selection-search")
+	@FindBy(className = "ant-select-selector")
 	private WebElement templateSelectToggle;
 
 	@FindBy(css = ".ant-modal .ant-select-selection-search")
@@ -187,5 +187,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public int getTourStep() {
 		waitForTime(500);
 		return Integer.parseInt(tourStepBadge.getText());
+	}
+
+	public boolean isImportMetadataBtnVisible() {
+		return driver.findElements(By.className("t-import-metadata-btn")).size() > 0;
 	}
 }

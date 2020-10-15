@@ -24,7 +24,8 @@ import com.google.common.collect.Lists;
  * Path temporary file
  */
 public class SequenceFileMessageConverter implements HttpMessageConverter<Path> {
-	public static final MediaType MEDIA_TYPE = new MediaType("application","fastq");
+	public static final List<MediaType> SUPPORTED_TYPES = Lists.newArrayList(new MediaType("application", "fastq"),
+			new MediaType("application", "fasta"));
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileMessageConverter.class);
 	private final String fileName;
 
@@ -38,7 +39,8 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
 		logger.trace("Testing markdownConverter for class " + clazz.getName() + " and mediatype " + mediaType);
-		if (mediaType != null && MEDIA_TYPE.includes(mediaType) && clazz.equals(Path.class)) {
+		if (mediaType != null && clazz.equals(Path.class) && SUPPORTED_TYPES.stream()
+				.anyMatch(t -> t.includes(mediaType))) {
 			logger.trace("SequenceFileMessageConverter can read this message");
 			return true;
 		}
@@ -54,7 +56,7 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return Lists.newArrayList(MEDIA_TYPE);
+		return SUPPORTED_TYPES;
 	}
 
 	@Override

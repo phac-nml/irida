@@ -16,7 +16,7 @@ import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
 
 export default function AnalysisBioHansel() {
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
   const { analysisOutputsContext, getAnalysisOutputs } = useContext(
     AnalysisOutputsContext
   );
@@ -41,7 +41,7 @@ export default function AnalysisBioHansel() {
 
       if (outputInfo !== undefined) {
         getDataViaChunks({
-          submissionId: analysisContext.analysis.identifier,
+          submissionId: analysisIdentifier,
           fileId: outputInfo.id,
           seek: 0,
           chunk: outputInfo.fileSizeBytes

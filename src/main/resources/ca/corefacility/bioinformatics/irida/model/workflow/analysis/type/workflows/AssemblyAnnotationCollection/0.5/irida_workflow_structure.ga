@@ -1,0 +1,1138 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "Shovill assembly, Prokka annotation with ZIP bundling of outputs",
+    "format-version": "0.1",
+    "name": "AssemblyAnnotationCollection-shovill-prokka-paired_reads-v0.5",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "sequence_reads_paired"
+                }
+            ],
+            "label": "sequence_reads_paired",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "left": 200,
+                "top": 200
+            },
+            "tool_id": null,
+            "tool_state": "{\"optional\": false, \"collection_type\": \"list:paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "917f2843-92b8-4ba7-9a1a-5f886154980c",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "output",
+                    "uuid": "ad72a83e-d309-40d8-b922-cf7e7e463f66"
+                }
+            ]
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "library|input1": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Shovill",
+                    "name": "library"
+                }
+            ],
+            "label": null,
+            "name": "Shovill",
+            "outputs": [
+                {
+                    "name": "shovill_std_log",
+                    "type": "txt"
+                },
+                {
+                    "name": "contigs",
+                    "type": "fasta"
+                },
+                {
+                    "name": "contigs_graph",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "left": 486,
+                "top": 200
+            },
+            "post_job_actions": {},
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/shovill/shovill/1.0.4+galaxy1",
+            "tool_shed_repository": {
+                "changeset_revision": "8d1af5db538d",
+                "name": "shovill",
+                "owner": "iuc",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"adv\": {\"namefmt\": \"contig%05d\", \"depth\": \"100\", \"gsize\": \"\", \"kmers\": \"\", \"opts\": \"\", \"nocorr\": \"false\", \"minlen\": \"0\", \"mincov\": \"2\"}, \"assembler\": \"spades\", \"library\": {\"lib_type\": \"collection\", \"__current_case__\": 1, \"input1\": {\"__class__\": \"RuntimeValue\"}}, \"log\": \"true\", \"trim\": \"true\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.0.4+galaxy1",
+            "type": "tool",
+            "uuid": "04e633cb-5bfc-4afd-935e-ee49cc18c6c4",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "contigs_graph",
+                    "uuid": "d572f4c0-d087-439c-b2b0-ccebc983f92e"
+                },
+                {
+                    "label": null,
+                    "output_name": "contigs",
+                    "uuid": "19150b18-02d2-422f-be0b-0314689cf5a1"
+                },
+                {
+                    "label": null,
+                    "output_name": "shovill_std_log",
+                    "uuid": "fa188ec7-4b52-4d52-8241-c9afa1f13fec"
+                }
+            ]
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2+galaxy1",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "in|inputs": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Quast",
+            "outputs": [
+                {
+                    "name": "quast_tabular",
+                    "type": "tabular"
+                },
+                {
+                    "name": "report_html",
+                    "type": "html"
+                },
+                {
+                    "name": "report_pdf",
+                    "type": "pdf"
+                },
+                {
+                    "name": "log",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "left": 772,
+                "top": 200
+            },
+            "post_job_actions": {
+                "RenameDatasetActionlog": {
+                    "action_arguments": {
+                        "newname": "quast.log"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "log"
+                },
+                "RenameDatasetActionquast_tabular": {
+                    "action_arguments": {
+                        "newname": "quast.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "quast_tabular"
+                },
+                "RenameDatasetActionreport_html": {
+                    "action_arguments": {
+                        "newname": "quast.html.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "report_html"
+                },
+                "RenameDatasetActionreport_pdf": {
+                    "action_arguments": {
+                        "newname": "quast.pdf"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "report_pdf"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/quast/quast/5.0.2+galaxy1",
+            "tool_shed_repository": {
+                "changeset_revision": "ebb0dcdb621a",
+                "name": "quast",
+                "owner": "iuc",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"al\": {\"use_all_alignments\": \"false\", \"min_alignment\": \"65\", \"min_identity\": \"95.0\", \"ambiguity_usage\": \"one\", \"ambiguity_score\": \"0.99\", \"fragmented\": \"false\", \"fragmented_max_indent\": \"50\", \"upper_bound_assembly\": \"false\", \"upper_bound_min_con\": \"2\"}, \"assembly\": {\"type\": \"genome\", \"__current_case__\": 0, \"ref\": {\"use_ref\": \"false\", \"__current_case__\": 1, \"est_ref_size\": \"\"}, \"orga_type\": \"\"}, \"circos\": \"false\", \"contig_thresholds\": \"0,1000\", \"extensive_mis_size\": \"1000\", \"genes\": {\"gene_finding\": {\"tool\": \"none\", \"__current_case__\": 0}, \"rna_finding\": \"false\", \"conserved_genes_finding\": \"false\"}, \"in\": {\"custom\": \"false\", \"__current_case__\": 1, \"inputs\": {\"__class__\": \"ConnectedValue\"}}, \"k_mer\": {\"k_mer_stats\": \"\", \"__current_case__\": 1}, \"large\": \"false\", \"min_contig\": \"500\", \"scaffold_gap_max_size\": \"1000\", \"skip_unaligned_mis_contigs\": \"true\", \"split_scaffolds\": \"false\", \"strict_NA\": \"false\", \"unaligned_part_size\": \"500\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "5.0.2+galaxy1",
+            "type": "tool",
+            "uuid": "fd139253-df91-4972-abb3-31d7128cea28",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "log",
+                    "uuid": "22c20afc-8f4b-4706-b965-7a155b684557"
+                },
+                {
+                    "label": null,
+                    "output_name": "report_html",
+                    "uuid": "91b3939e-6f1f-4b19-912c-fd2e8e3b2832"
+                },
+                {
+                    "label": null,
+                    "output_name": "quast_tabular",
+                    "uuid": "82865869-0071-45c9-89cb-5296ee8e9c2f"
+                },
+                {
+                    "label": null,
+                    "output_name": "report_pdf",
+                    "uuid": "492aaa31-84ca-4736-8893-8263debd0e35"
+                }
+            ]
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 1,
+                    "output_name": "shovill_std_log"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 772,
+                "top": 494
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "shovill.log.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "2209d263-f797-4f14-9c2d-b75fa2418ae1",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "77e7db8f-63d4-427b-bfb2-f31f1c4aced5"
+                }
+            ]
+        },
+        "4": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 4,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 772,
+                "top": 615
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs.fasta.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "07ebb3e9-53ce-44a1-935c-87bda0164fbf",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "f6b6790d-b1db-419e-9837-ad00522e1287"
+                }
+            ]
+        },
+        "5": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 5,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 1,
+                    "output_name": "contigs_graph"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 772,
+                "top": 736
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "contigs.fastg.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "fdbe0c4a-272b-4bff-bf1e-4e0a4dee1567",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "885c5cbe-c8d4-4799-8552-7eb00704840b"
+                }
+            ]
+        },
+        "6": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.14.5+galaxy0",
+            "errors": null,
+            "id": 6,
+            "input_connections": {
+                "input": {
+                    "id": 1,
+                    "output_name": "contigs"
+                }
+            },
+            "inputs": [
+                {
+                    "description": "runtime parameter for tool Prokka",
+                    "name": "proteins"
+                }
+            ],
+            "label": null,
+            "name": "Prokka",
+            "outputs": [
+                {
+                    "name": "out_gff",
+                    "type": "gff"
+                },
+                {
+                    "name": "out_gbk",
+                    "type": "genbank"
+                },
+                {
+                    "name": "out_fna",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_faa",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_ffn",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_sqn",
+                    "type": "asn1"
+                },
+                {
+                    "name": "out_fsa",
+                    "type": "fasta"
+                },
+                {
+                    "name": "out_tbl",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_tsv",
+                    "type": "tabular"
+                },
+                {
+                    "name": "out_err",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_txt",
+                    "type": "txt"
+                },
+                {
+                    "name": "out_log",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "left": 772,
+                "top": 857
+            },
+            "post_job_actions": {},
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/crs4/prokka/prokka/1.14.5+galaxy0",
+            "tool_shed_repository": {
+                "changeset_revision": "111884f0d912",
+                "name": "prokka",
+                "owner": "crs4",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"centre\": \"\", \"compliant\": {\"compliant_select\": \"no\", \"__current_case__\": 0, \"addgenes\": \"false\", \"mincontig\": \"200\"}, \"evalue\": \"1e-06\", \"fast\": \"false\", \"genus\": \"\", \"gffver\": \"3\", \"increment\": \"1\", \"input\": {\"__class__\": \"ConnectedValue\"}, \"kingdom\": {\"kingdom_select\": \"Bacteria\", \"__current_case__\": 1, \"gcode\": \"11\"}, \"locustag\": \"P\", \"metagenome\": \"false\", \"norrna\": \"false\", \"notrna\": \"false\", \"outputs\": [\"gff\", \"gbk\", \"fna\", \"faa\", \"ffn\", \"sqn\", \"fsa\", \"tbl\", \"tsv\", \"err\", \"txt\"], \"plasmid\": \"\", \"proteins\": {\"__class__\": \"RuntimeValue\"}, \"rfam\": \"false\", \"species\": \"\", \"strain\": \"\", \"usegenus\": \"false\", \"__page__\": 0, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.14.5+galaxy0",
+            "type": "tool",
+            "uuid": "e355cb1c-66a5-4708-ad35-2f6bfd9b0792",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "out_gbk",
+                    "uuid": "bafc2e72-a025-45f1-8f22-d1ac441d85bd"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_faa",
+                    "uuid": "0fed3b0b-444a-432f-ad72-3306741f8b07"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_log",
+                    "uuid": "7559d94d-3be5-4ef3-8a28-9cebe1b5946d"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_fna",
+                    "uuid": "f413d5e1-cebe-4292-b7f5-afce45132fd2"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_tsv",
+                    "uuid": "7d26c219-4e56-4e84-ab66-e79a6d666bec"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_fsa",
+                    "uuid": "2c9a0c67-d4f8-4d37-8a98-fc6e05ad8543"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_ffn",
+                    "uuid": "38e6cbaf-13a0-4d3e-aea4-7b815ac4d853"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_err",
+                    "uuid": "625b1480-ed12-46cd-b894-8281c97b39ed"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_tbl",
+                    "uuid": "0832cb3d-4597-46c7-9af1-9102000beebc"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_txt",
+                    "uuid": "caac8a9c-51e2-4aa4-82ad-8359644637f0"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_sqn",
+                    "uuid": "2cbcde13-eefb-49eb-89c9-7105984b2815"
+                },
+                {
+                    "label": null,
+                    "output_name": "out_gff",
+                    "uuid": "5f5f3f9d-72f6-43bd-b98f-3ee1c79efc41"
+                }
+            ]
+        },
+        "7": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 7,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_gff"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 200
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.gff.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "b8ab8941-6b8d-4fbb-939e-22942e155901",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "3c061105-763e-4170-bdea-16b7c5ca504a"
+                }
+            ]
+        },
+        "8": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 8,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_gbk"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 321
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.gbk.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "71caf9ec-7617-48f6-bf56-84a094003b11",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "8aeae62b-fe23-4f0f-8c7d-995b4aa74918"
+                }
+            ]
+        },
+        "9": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 9,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_ffn"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 442
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.ffn.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "1cc97fa3-77bc-4b78-a664-556b958d091b",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "0037fd99-0b8b-424d-a85c-6b9e4849d144"
+                }
+            ]
+        },
+        "10": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 10,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_fna"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 563
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.fna.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "27efe604-26c4-4c56-9825-b737f63f0fb6",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "8766b0ea-83a6-4f64-893a-c2598099fbd8"
+                }
+            ]
+        },
+        "11": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 11,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_sqn"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 684
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.sqn.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "4b69b32e-8362-4c9b-915a-52390e6eabd2",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "ddffec4d-d9f2-4e4b-9dea-e7c586cc1d9d"
+                }
+            ]
+        },
+        "12": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 12,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_faa"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 805
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.faa.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "0ed11ee3-26c2-4fca-a194-a4df13527fe0",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "0d9e987b-558e-427e-aa1c-4e2d0cb4ac7c"
+                }
+            ]
+        },
+        "13": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 13,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_fsa"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 926
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.fsa.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "57e48c2b-810c-4d76-b5f5-2a026d636040",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "217cc6b8-463c-446f-8a00-f43d6452034c"
+                }
+            ]
+        },
+        "14": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 14,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_tbl"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 1047
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.tbl.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "323512ed-6d5e-467b-a9d0-bdf871f1661d",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "49b9ca01-95fe-46b3-a936-23c0f32a449d"
+                }
+            ]
+        },
+        "15": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 15,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_tsv"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 1168
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.tsv.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "4cee50fc-a38f-40a9-82c2-a9743f758a05",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "43d1fdc1-d87c-4673-844c-1f6116964089"
+                }
+            ]
+        },
+        "16": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 16,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_err"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 1289
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.err.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "695ff9b7-39ff-4bfb-bb4f-cc8fb2b35b6a",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "bca71bad-127a-47e8-b40d-cb4fcb97384d"
+                }
+            ]
+        },
+        "17": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 17,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_txt"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 1410
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.txt.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "4f48ee38-7c67-4d9c-8668-d3bf8d87480b",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "a688ecf0-ae83-42a1-bd08-3e709e3357a2"
+                }
+            ]
+        },
+        "18": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "errors": null,
+            "id": 18,
+            "input_connections": {
+                "singles_or_list|input": {
+                    "id": 6,
+                    "output_name": "out_log"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "Bundle Collection",
+            "outputs": [
+                {
+                    "name": "html_file",
+                    "type": "html"
+                }
+            ],
+            "position": {
+                "left": 1058,
+                "top": 1531
+            },
+            "post_job_actions": {
+                "RenameDatasetActionhtml_file": {
+                    "action_arguments": {
+                        "newname": "prokka.log.zip"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "html_file"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/bundle_collections/bundle_collection/1.3.0",
+            "tool_shed_repository": {
+                "changeset_revision": "705ebd286b57",
+                "name": "bundle_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"singles_or_list\": {\"type\": \"list\", \"__current_case__\": 1, \"input\": {\"__class__\": \"ConnectedValue\"}}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.3.0",
+            "type": "tool",
+            "uuid": "9297d102-1149-4a15-bcdf-35c2c38b965e",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "html_file",
+                    "uuid": "d18a738a-435f-4522-9fc6-254ec928191a"
+                }
+            ]
+        }
+    },
+    "tags": [],
+    "uuid": "29fdedde-028c-4a4b-991b-2716830c7317",
+    "version": 1
+}
