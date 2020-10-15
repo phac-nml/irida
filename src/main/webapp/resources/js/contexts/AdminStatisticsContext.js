@@ -30,7 +30,8 @@ export const chartTypes = {
   COLUMN: "column",
   DONUT: "donut",
   LINE: "line",
-  PIE: "pie"
+  PIE: "pie",
+  TINYCOLUMN: "tinyColumn"
 }
 
 export const statisticTypes = {
@@ -43,14 +44,14 @@ export const statisticTypes = {
 // Default is to display statistics for the last week
 export const defaultTimePeriod = 7;
 
-export const defaultChartType = chartTypes.BAR;
+export const defaultChartType = chartTypes.COLUMN;
 
 const initialContext = {
   statistics: {
-    analysesStats: null,
-    projectStats: null,
-    sampleStats: null,
-    userStats: null
+    analysesStats: [{}],
+    projectStats: [{}],
+    sampleStats: [{}],
+    userStats: [{}],
   },
   basicStats : {
     analysesRan: 0,
@@ -116,6 +117,7 @@ function AdminStatisticsProvider(props) {
   // Get updated analyses usage stats for the selected time period
   function updateAnalysesStatsTimePeriod(timePeriod) {
     getUpdatedAdminAnalysesStatistics(timePeriod).then(({analysesStats}) => {
+      console.log(analysesStats);
       if(analysesStats !== null) {
         setAdminStatisticsContext(adminStatisticsContext => {
           return {...adminStatisticsContext,

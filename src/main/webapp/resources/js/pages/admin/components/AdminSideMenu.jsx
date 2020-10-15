@@ -20,7 +20,7 @@ const { Sider } = Layout;
 export default function AdminHeader() {
   const DEFAULT_URL = setBaseUrl("/admin");
   const pathRegx = new RegExp(/([a-zA-Z_])+\/?(\d*$)/);
-
+  const statsPages = ["analyses", "projects", "samples", "users"];
   /**
    * Removes the end of the path that isn't part of the base route for the current admin page,
    * to allow the side menu item to be correctly selected for all paths on the route
@@ -45,7 +45,10 @@ export default function AdminHeader() {
               <Menu className={"t-admin-side-menu"} style={{ height: '100vh' }} theme={"dark"} mode={"inline"}
                     selectedKeys={[keyname ?
                       ( parseKey(keyname) !== "admin" ?
-                          parseKey(keyname)
+                          !statsPages.includes(parseKey(keyname)) ?
+                            parseKey(keyname)
+                            :
+                            ADMIN.STATISTICS
                           :
                           ADMIN.STATISTICS
                       )
