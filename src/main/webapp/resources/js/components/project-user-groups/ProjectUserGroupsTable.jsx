@@ -58,7 +58,7 @@ export function ProjectUserGroupsTable() {
           <RemoveTableItemButton
             confirmText={i18n("usergroups.remove.confirm")}
             tooltipText={i18n("usergroups.remove.tooltip")}
-            onRemove={() => removeUserGroupFromProject({groupId: group.id})}
+            onRemove={() => removeUserGroupFromProject({ groupId: group.id })}
             onRemoveSuccess={updateTable}
           />
         );
@@ -69,11 +69,13 @@ export function ProjectUserGroupsTable() {
   return (
     <PagedTable
       buttons={[
-        <AddGroupButton
-          key="add-group-btn"
-          defaultRole="PROJECT_USER"
-          onGroupAdded={updateTable}
-        />,
+        window.PAGE.canManage ? (
+          <AddGroupButton
+            key="add-group-btn"
+            defaultRole="PROJECT_USER"
+            onGroupAdded={updateTable}
+          />
+        ) : null,
       ]}
       search={true}
       columns={columns}

@@ -2,6 +2,7 @@ import React from "react";
 import {
   AppstoreOutlined,
   BoldOutlined,
+  CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
@@ -187,4 +188,8 @@ export const IconSortAscending = ({ ...props }) => (
 
 export const IconSortDescending = ({ ...props }) => (
   <SortDescendingOutlined {...props} />
+);
+
+export const IconCheckCircle = ({ ...props }) => (
+  <CheckCircleOutlined {...props} />
 );

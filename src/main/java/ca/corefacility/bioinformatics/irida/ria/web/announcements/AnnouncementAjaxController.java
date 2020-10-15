@@ -1,27 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.AnnouncementSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsService;
 
 /**
  * Controller for all ajax requests from the UI for announcements.
@@ -29,17 +22,15 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @RestController
 @RequestMapping("/ajax/announcements")
 public class AnnouncementAjaxController {
-	private final AnnouncementService announcementService;
-	private final UserService userService;
+	private final UIAnnouncementsService UIAnnouncementsService;
 
 	@Autowired
-	public AnnouncementAjaxController(AnnouncementService announcementService, UserService userService) {
-		this.announcementService = announcementService;
-		this.userService = userService;
+	public AnnouncementAjaxController(UIAnnouncementsService UIAnnouncementsService) {
+		this.UIAnnouncementsService = UIAnnouncementsService;
 	}
 
 	/**
-	 * Returns a paged list of announcements for an administrator.
+	 * Handle request for getting a paged list of announcements for an administrator.
 	 *
 	 * @param tableRequest details about the current page of the table requested
 	 * @return a {@link TableResponse} containing the list of announcements.
@@ -47,19 +38,11 @@ public class AnnouncementAjaxController {
 	@RequestMapping(value = "/control/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
-		final Page<Announcement> page = announcementService.search(
-				AnnouncementSpecification.searchAnnouncement(tableRequest.getSearch()),
-				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
-
-		final List<AnnouncementTableModel> announcements = page.getContent()
-				.stream()
-				.map(AnnouncementTableModel::new)
-				.collect(Collectors.toList());
-		return new TableResponse<>(announcements, page.getTotalElements());
+		return UIAnnouncementsService.getAnnouncementsAdmin(tableRequest);
 	}
 
 	/**
-	 * Creates a new announcement
+	 * Handles request to create a new announcement
 	 *
 	 * @param announcementRequest details about the announcement to create.
 	 * @param principal           the currently logged in user
@@ -67,33 +50,44 @@ public class AnnouncementAjaxController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void createNewAnnouncement(@RequestBody AnnouncementRequest announcementRequest, Principal principal) {
-		User user = userService.getUserByUsername(principal.getName());
-		Announcement announcement = new Announcement(announcementRequest.getMessage(), user);
-		announcementService.create(announcement);
+		UIAnnouncementsService.createNewAnnouncement(announcementRequest, principal);
 	}
 
 	/**
-	 * Update an existing announcement
+	 * Handles request to update an existing announcement
 	 *
 	 * @param announcementRequest - the details of the announcement to update.
 	 */
 	@RequestMapping(value = "/update", method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void updateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
-		Announcement announcement = announcementService.read(announcementRequest.getId());
-		announcement.setMessage(announcementRequest.getMessage());
-		announcementService.update(announcement);
+		UIAnnouncementsService.updateAnnouncement(announcementRequest);
 	}
 
 	/**
-	 * Delete an existing announcement.
+	 * Handles request to delete an existing announcement.
 	 *
 	 * @param announcementRequest - the announcement to delete
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
-		announcementService.delete(announcementRequest.getId());
+		UIAnnouncementsService.deleteAnnouncement(announcementRequest);
+	}
+
+	/**
+	 * Handles request for getting user read status for current announcement
+	 * @param announcementID {@link Long} identifier for the {@link Announcement}
+	 * @param params {@link DataTablesParams} parameters for current DataTable
+	 * @return {@link DataTablesResponse} containing the list of users.
+	 */
+	@RequestMapping(value = "/{announcementID}/details/list", method = RequestMethod.GET)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public @ResponseBody
+	DataTablesResponse getUserAnnouncementInfoTable(
+			@PathVariable Long announcementID,
+			final @DataTablesRequest DataTablesParams params) {
+		return UIAnnouncementsService.getUserAnnouncementInfoTable(announcementID, params);
 	}
 }
 

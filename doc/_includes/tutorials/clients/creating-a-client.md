@@ -1,12 +1,12 @@
-Start by clicking on the "Admin" menu (in the top, right-hand corner of the screen) and selecting "Clients":
+First navigate to the clients page via the admin panel side menu:
 
-![Administrator clients menu.]({{ site.baseurl }}/images/tutorials/clients/admin-clients-menu.png)
+![Clients side menu link.](images/clients-side-menu.png)
 
 The clients list shows all clients that are currently allowed to access the IRIDA REST API.
 
 You can add a new client by clicking on the "Add Client" button:
 
-![Add client button.]({{ site.baseurl }}/images/tutorials/clients/clients-list-add-client-button.png)
+![Add client button.](images/add-client-button.png)
 
 When you add a client, you'll be required to provide the following information:
 

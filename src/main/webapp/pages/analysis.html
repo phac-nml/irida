@@ -5,21 +5,10 @@
   data-layout-decorate="~{template/page}"
 >
   <head>
-    <title th:text="#{analysis.title(${analysisSubmission.getName()})}">ANALYSIS RESULTS</title>
+    <title th:text="#{analysis.title(${analysisName})}">ANALYSIS RESULTS</title>
     <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
 
     <script th:inline="javascript">
-      window.PAGE = {
-        analysis: [[${analysisSubmission}]],
-        analysisName: [[${analysisSubmission.getName()}]],
-        analysisState: [[${analysisSubmission.getAnalysisState()}]],
-        analysisType: [[${analysisType}]],
-        isAdmin: [[${isAdmin}]],
-        mailConfigured: [[${mailConfigured}]],
-        previousState: [[${previousState}]],
-        duration: [[${duration}]],
-      };
-
       window.translations = [{
         "AnalysisShare.saveResultsMessage": /*[[#{workflow.label.share-analysis-samples.__${analysisType}__}]]*/ "",
         "AnalysisDetailsPriority.LOW": /*[[#{AnalysisDetailsPriority.LOW}]]*/ "",

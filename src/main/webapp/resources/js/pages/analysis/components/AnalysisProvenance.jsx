@@ -29,7 +29,7 @@ import { ContentLoading } from "../../../components/loader";
 const { Panel } = Collapse;
 
 export default function AnalysisProvenance() {
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisIdentifier } = useContext(AnalysisContext);
   const { analysisOutputsContext, getAnalysisOutputs } = useContext(
     AnalysisOutputsContext
   );
@@ -77,7 +77,7 @@ export default function AnalysisProvenance() {
       ) {
         setCurrFileName(filename.toString());
         getAnalysisProvenanceByFile(
-          analysisContext.analysis.identifier,
+          analysisIdentifier,
           filename.toString()
         ).then(data => {
           setProvenance(data);

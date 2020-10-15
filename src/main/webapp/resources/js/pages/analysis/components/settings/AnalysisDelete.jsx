@@ -23,7 +23,7 @@ export default function AnalysisDelete() {
    * make the required context which contains
    * the state and methods available to the component
    */
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
 
   /* Delete the analysis if the user selected
    * the confirm delete checkbox and clicked
@@ -31,7 +31,7 @@ export default function AnalysisDelete() {
    * to the dashboard
    */
   function handleDeleteConfirm() {
-    deleteAnalysis(analysisContext.analysis.identifier).then(res =>
+    deleteAnalysis(analysisIdentifier).then(res =>
       showNotification({ text: res.result })
     );
 
