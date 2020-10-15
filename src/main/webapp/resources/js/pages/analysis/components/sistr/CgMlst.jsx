@@ -4,10 +4,13 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+const max_cgMLST_count = 330; /* the maximum number of possible cgMLST alleles in SISTR */
 
 export default function CgMlst({ sistrResults }) {
+
+
+
   function cgMLST330() {
     return [
       {
@@ -20,24 +23,40 @@ export default function CgMlst({ sistrResults }) {
       },
       {
         title: i18n("AnalysisSistr.allelesMatchingGenome"),
-        desc: `${sistrResults.cgmlst_matching_alleles}/330`
+        desc: `${sistrResults.cgmlst_matching_alleles}/${max_cgMLST_count}`
       },
       {
         title: i18n("AnalysisSistr.percentMatching"),
         desc:
-          sistrResults.cgmlst_distance !== null
-            ? `${getPercentage(sistrResults.cgmlst_distance) + ""}%`
-            : ""
+            sistrResults.cgmlst_distance !== null
+                ? `${getPercentageFromDistance(sistrResults.cgmlst_distance) + ""}%`
+                : "-"
+      },
+      {
+        title: i18n("AnalysisSistr.allelesFoundGenome"),
+        desc: sistrResults.cgmlst_found_loci !== null
+          ? `${sistrResults.cgmlst_found_loci}/${max_cgMLST_count}` + "" : "-"
+      },
+      {
+        title: i18n("AnalysisSistr.allelesFoundGenomePercent"),
+        desc: sistrResults.cgmlst_found_loci !== null
+            ? `${getPercentage(sistrResults.cgmlst_found_loci)+""}%` + "" : "-"
       },
       {
         title: i18n("AnalysisSistr.cgmlstSequenceType"),
-        desc: sistrResults.cgmlst_ST !== null ? sistrResults.cgmlst_ST + "" : ""
+        desc: sistrResults.cgmlst_ST !== null ? sistrResults.cgmlst_ST + "" : "-"
       }
     ];
   }
 
+  /*Converts decimal distance to percent similarity with 2 decimal points precision*/
+  function getPercentageFromDistance(str) {
+    return parseFloat((1 - str) * 100).toFixed(2);
+  }
+
+  /*Get percent value out of cgMLST allele counts out of 330 (maximum number of cgMLST alleles)*/
   function getPercentage(str) {
-    return parseFloat((1 - str) * 100).toFixed(1);
+    return parseFloat((str / max_cgMLST_count) * 100).toFixed(2);
   }
 
   /*

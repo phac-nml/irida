@@ -73,7 +73,7 @@ The overall architecture of IRIDA and Galaxy is as follows:
 [IRIDA/Galaxy FAQ]: ../faq
 [conda with Galaxy]: https://docs.galaxyproject.org/en/master/admin/conda_faq.html
 [galaxy-versions]: https://docs.galaxyproject.org/en/master/releases/index.html
-[faq-conda]: ../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
+[faq-conda]: ../faq/#4-installing-conda-dependencies-in-galaxy-versions--v1601
 [irida-conf]: ../web/#core-configuration
 [irida-web]: ../web/
 [galaxy-cleanup]: cleanup/

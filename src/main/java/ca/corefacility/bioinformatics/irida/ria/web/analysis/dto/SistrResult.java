@@ -34,9 +34,12 @@ public class SistrResult {
 	@JsonProperty("cgmlst_genome_match")
 	private String cgmlstGenomeMatch;
 	@JsonProperty("cgmlst_distance")
-	private Long cgmlstDistance;
+	private Float cgmlstDistance;
 	@JsonProperty("cgmlst_matching_alleles")
-	private Long cgmlstMatchingAlleles;
+	private Integer cgmlstMatchingAlleles;
+
+	@JsonProperty("cgmlst_found_loci")
+	private Integer cgmlstFoundAlleles;
 
 	@JsonProperty("mash_subspecies")
 	private String mashSubspecies;
@@ -47,12 +50,13 @@ public class SistrResult {
 	@JsonProperty("mash_distance")
 	private Float mashDistance;
 
+
 	public SistrResult() {
 	}
 
 	public SistrResult(String qcStatus, String qcMessages, String serovar, String serovarAntigen, String serovarCgmlst, String serogroup,
 			String h1, String h2, String oAntigen, Long cgmlstST, String cgmlstSubspecies, String cgmlstGenomeMatch,
-			Long cgmlstDistance, Long cgmlstMatchingAlleles, String mashSubspecies, String mashSerovar, String mashGenome,
+			Float cgmlstDistance, Integer cgmlstMatchingAlleles, Integer cgmlstFoundAlleles, String mashSubspecies, String mashSerovar, String mashGenome,
 			Float mashDistance) {
 		this.qcStatus = qcStatus;
 		this.qcMessages = qcMessages;
@@ -68,6 +72,7 @@ public class SistrResult {
 		this.cgmlstGenomeMatch = cgmlstGenomeMatch;
 		this.cgmlstDistance = cgmlstDistance;
 		this.cgmlstMatchingAlleles = cgmlstMatchingAlleles;
+		this.cgmlstFoundAlleles  = cgmlstFoundAlleles;
 		this.mashSubspecies = mashSubspecies;
 		this.mashSerovar = mashSerovar;
 		this.mashGenome = mashGenome;
@@ -170,26 +175,32 @@ public class SistrResult {
 		this.cgmlstGenomeMatch = cgmlstGenomeMatch;
 	}
 
-	public Long getCgmlstDistance() {
+	public Float getCgmlstDistance() {
 		return cgmlstDistance;
 	}
 
-	public void setCgmlstDistance(Long cgmlstDistance) {
+	public void setCgmlstDistance(Float cgmlstDistance) {
 		this.cgmlstDistance = cgmlstDistance;
 	}
 
-	public Long getCgmlstMatchingAlleles() {
+	public Integer getCgmlstMatchingAlleles() {
 		return cgmlstMatchingAlleles;
 	}
 
-	public void setCgmlstMatchingAlleles(Long cgmlstMatchingAlleles) {
+	public void setCgmlstMatchingAlleles(Integer cgmlstMatchingAlleles) {
 		this.cgmlstMatchingAlleles = cgmlstMatchingAlleles;
+	}
+
+	public Integer getCgmlstFoundAlleles() {
+		return cgmlstFoundAlleles;
+	}
+	public void setCgmlstFoundAlleles(Integer cgmlstFoundAlleles) {
+		this.cgmlstFoundAlleles = cgmlstFoundAlleles;
 	}
 
 	public String getMashSubspecies() {
 		return mashSubspecies;
 	}
-
 	public void setMashSubspecies(String mashSubspecies) {
 		this.mashSubspecies = mashSubspecies;
 	}
@@ -197,7 +208,6 @@ public class SistrResult {
 	public String getMashSerovar() {
 		return mashSerovar;
 	}
-
 	public void setMashSerovar(String mashSerovar) {
 		this.mashSerovar = mashSerovar;
 	}
@@ -205,7 +215,6 @@ public class SistrResult {
 	public String getMashGenome() {
 		return mashGenome;
 	}
-
 	public void setMashGenome(String mashGenome) {
 		this.mashGenome = mashGenome;
 	}
@@ -213,7 +222,6 @@ public class SistrResult {
 	public Float getMashDistance() {
 		return mashDistance;
 	}
-
 	public void setMashDistance(Float mashDistance) {
 		this.mashDistance = mashDistance;
 	}
