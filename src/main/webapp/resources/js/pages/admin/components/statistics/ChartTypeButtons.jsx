@@ -14,7 +14,6 @@ export function ChartTypeButtons({ onChange = () => {}, value }) {
   const buttonOptions = [
     { label: 'Bar Chart', value: chartTypes.BAR },
     { label: 'Column Chart', value: chartTypes.COLUMN },
-    { label: 'Donut Chart', value: chartTypes.DONUT },
     { label: 'Line Chart', value: chartTypes.LINE },
     { label: 'Pie Chart', value: chartTypes.PIE }
   ];

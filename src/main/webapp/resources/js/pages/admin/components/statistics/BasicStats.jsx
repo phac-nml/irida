@@ -4,100 +4,91 @@
  * charts
  */
 
-import React, { useContext, useState } from "react";
-import { Button, Card, Statistic } from "antd";
-import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
-import AdvancedStatistics from "./AdvancedStatistics";
+import React, { useContext } from "react";
+import { Card, Col, Row, Statistic } from "antd";
+import { SPACE_MD } from "../../../../styles/spacing";
+import { TinyColumn } from "@ant-design/charts";
+import { ADMINSTATS } from "../../routes";
+
 import {
   AdminStatisticsContext,
+  chartTypes,
   defaultTimePeriod,
-  statisticTypes,
-  timePeriodMap
+  timePeriodMap,
 } from "../../../../contexts/AdminStatisticsContext";
 
+import { getChartConfiguration } from "../../chart-config";
+import styled from "styled-components";
+import { blue6 } from "../../../../styles/colors";
+
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { Link } from "@reach/router";
+
+const LinkCard = styled(Card)`
+  &:hover {
+    border: ${blue6} solid 1px;
+  }
+`;
+
 export default function BasicStats() {
-  const [statsChartView, setStatsChartView] = useState(null);
+  const { adminStatisticsContext } = useContext(AdminStatisticsContext);
 
-  const { adminStatisticsContext } = useContext(
-    AdminStatisticsContext
-  );
+  const DEFAULT_URL = setBaseUrl("/admin/statistics");
 
+  const cards = [
+    {
+      key: `analyses`,
+      title: `Analyses run in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.analysesRan,
+      url: `${DEFAULT_URL}/${ADMINSTATS.ANALYSES}`,
+    },
+    {
+      key: `projects`,
+      title: `Projects created in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.projectsCreated,
+      url: `${DEFAULT_URL}/${ADMINSTATS.PROJECTS}`,
+    },
+    {
+      key: `samples`,
+      title: `Samples created in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.samplesCreated,
+      url: `${DEFAULT_URL}/${ADMINSTATS.SAMPLES}`,
+    },
+    {
+      key: `users`,
+      title: `Users created in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.usersCreated,
+      url: `${DEFAULT_URL}/${ADMINSTATS.USERS}`,
+    },
+    {
+      key: `usersLoggedIn`,
+      title: `Users logged on in past ${timePeriodMap[defaultTimePeriod]}`,
+      value: adminStatisticsContext.basicStats.usersLoggedIn,
+      url: `${DEFAULT_URL}`,
+    },
+  ];
   return (
-    <div className="t-statistics">
-      <div style={{marginBottom: SPACE_LG}} className="t-stats-basic">
-        <div style={{display: "flex",
-          justifyContent: "flex-start", flexWrap: "wrap"}}>
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Analyses run in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.analysesRan}
+    <Row
+      gutter={[16, 16]}
+      className="t-statistics t-stats-basic"
+      style={{ padding: SPACE_MD }}
+    >
+      {cards.map((card) => (
+        <Col sm={24} md={12} xl={8} xxl={6} key={card.key}>
+          <Link to={card.url}>
+            <LinkCard>
+              <Statistic title={card.title} value={card.value} />
+              <TinyColumn
+                {...getChartConfiguration(
+                  chartTypes.TINYCOLUMN,
+                  card.key,
+                  adminStatisticsContext.statistics
+                )}
               />
-              <Button
-                style={{ marginTop: 16, width: 170 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.ANALYSES} />)}
-              >
-                Analyses Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Projects created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.projectsCreated}
-              />
-              <Button
-                style={{ marginTop: 16, width: 170 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.PROJECTS} />)}
-              >
-                Project Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Samples created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.samplesCreated}
-              />
-              <Button
-                style={{ marginTop: 16, width: 170 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.SAMPLES} />)}
-              >
-                Sample Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Users created in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.usersCreated}
-              />
-              <Button
-                style={{ marginTop: 16, width: 170 }}
-                onClick={() => setStatsChartView(<AdvancedStatistics statType={statisticTypes.USERS} />)}
-              >
-                User Statistics
-              </Button>
-            </Card>
-
-            <Card style={{width: 240, marginRight: SPACE_XS, marginBottom: SPACE_XS}}>
-              <Statistic
-                title={`Users logged on in past ${timePeriodMap[defaultTimePeriod]}`}
-                value={adminStatisticsContext.basicStats.usersLoggedIn}
-              />
-              <Button
-                style={{ marginTop: 16, width: 170 }}
-                disabled={true}
-              >
-                User Usage Statistics
-              </Button>
-            </Card>
-
-        </div>
-      </div>
-
-      <div className="t-stats-chart">
-        {statsChartView}
-      </div>
-    </div>
+            </LinkCard>
+          </Link>
+        </Col>
+      ))}
+    </Row>
   );
 }

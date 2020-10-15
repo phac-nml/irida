@@ -13,3 +13,10 @@ export const ADMIN = {
   ANNOUNCEMENTS: "announcements",
   STATISTICS: "statistics"
 };
+
+export const ADMINSTATS = {
+  ANALYSES: "analyses",
+  PROJECTS: "projects",
+  SAMPLES: "samples",
+  USERS: "users"
+};
