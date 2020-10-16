@@ -36,6 +36,11 @@ export const fetchIridaAnalysisWorkflows = async function () {
   return axios.get(ajaxUrl).then((response) => response.data);
 };
 
+/**
+ * Get details about a specific pipeline to be able to launch.
+ * @param id - UUID identifier for the pipeline
+ * @returns {*}
+ */
 export const getPipelineDetails = ({ id }) =>
   axios
     .get(`${AJAX_URL}/${id}`)
