@@ -7,12 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Controller for workflow launch pages.
+ */
 @Controller
 @RequestMapping("/launch")
 public class LaunchController {
     private UICartService cartService;
-
-    // Setters
 
     @Autowired
     public void setCartService(UICartService cartService) {
