@@ -41,6 +41,25 @@ export default function AdvancedStatistics({ statType }) {
     [chartTypes.PIE]: Pie,
   };
 
+  const statTypes = {
+    [statisticTypes.ANALYSES]: {
+      title: "Number of Analyses Ran",
+      data: adminStatisticsContext.statistics.analysesStats
+    },
+    [statisticTypes.PROJECTS]: {
+      title: "Number of Projects Created",
+      data: adminStatisticsContext.statistics.projectStats
+    },
+    [statisticTypes.SAMPLES]: {
+      title: "Number of Samples Created",
+      data: adminStatisticsContext.statistics.sampleStats
+    },
+    [statisticTypes.USERS]: {
+      title: "Number of Users Created",
+      data: adminStatisticsContext.statistics.userStats
+    },
+  }
+
   useEffect(() => {
     setChartType(defaultChartType);
     form.setFieldsValue({
@@ -52,36 +71,14 @@ export default function AdvancedStatistics({ statType }) {
     getUpdatedStatsForStatType(statType, currTimePeriod);
   }
 
-  const chartTitle =
-    statType === statisticTypes.ANALYSES
-      ? "Number of Analyses Ran"
-      : statType === statisticTypes.PROJECTS
-      ? "Number of Projects Created"
-      : statType === statisticTypes.SAMPLES
-      ? "Number of Samples Created"
-      : statType === statisticTypes.USERS
-      ? "Number of Users Created"
-      : null;
-
   function displayChart() {
     const Component = components[chartType];
-    let data = [{"key":"", "value":""}];
-
-    if(statType === statisticTypes.ANALYSES) {
-      data = adminStatisticsContext.statistics.analysesStats;
-    } else if (statType === statisticTypes.PROJECTS) {
-      data = adminStatisticsContext.statistics.projectStats;
-    } else if (statType === statisticTypes.SAMPLES) {
-      data = adminStatisticsContext.statistics.sampleStats;
-    } else if (statType === statisticTypes.USERS) {
-      data = adminStatisticsContext.statistics.userStats;
-    }
 
     return Component ? (
       <Component
         {...getChartConfiguration(
           chartType,
-          data
+          statTypes[statType].data
         )}
       />
     ) : null;
@@ -90,12 +87,13 @@ export default function AdvancedStatistics({ statType }) {
   return (
     <>
       <PageHeader
-        title={chartTitle}
+        title={statTypes[statType].title}
         onBack={() => navigate(setBaseUrl(`/admin/statistics`))}
       />
       <Card style={{ margin: SPACE_LG }}>
         <Form
           form={form}
+          layout="vertical"
           initialValues={{
             "time-period": defaultTimePeriod,
             "chart-type": defaultChartType

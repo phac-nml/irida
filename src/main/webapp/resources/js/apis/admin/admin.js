@@ -10,7 +10,6 @@ const ADMIN_URL = setBaseUrl(`/ajax/statistics`);
  */
 export async function getAdminStatistics() {
   return await axios.get(`${ADMIN_URL}/basic`).then(({data}) => data).catch(error => {
-    console.log(error.response.data);
     throw new Error(error.response.data.error);
   });
 }
