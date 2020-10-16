@@ -3,7 +3,7 @@ import React from "react";
 import { render } from "react-dom";
 import Admin from "./components/Admin";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { AdminStatisticsProvider } from "../../contexts/AdminStatisticsContext"
+import { AdminStatisticsProvider } from "../../contexts/statistics-context";
 
 /*
 WEBPACK PUBLIC PATH:

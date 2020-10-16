@@ -8,12 +8,15 @@ import { Bar, Column, Line, Pie } from "@ant-design/charts";
 import { Card, Form, PageHeader } from "antd";
 import { TimePeriodSelect } from "./TimePeriodSelect";
 import {
-  AdminStatisticsContext,
+  AdminStatisticsContext
+} from "../../../../contexts/statistics-context";
+
+import {
   chartTypes,
   defaultChartType,
   defaultTimePeriod,
-  statisticTypes,
-} from "../../../../contexts/AdminStatisticsContext";
+  statisticTypes
+} from "../../statistics-constants";
 
 import { SPACE_LG, SPACE_MD } from "../../../../styles/spacing";
 import { ChartTypeButtons } from "./ChartTypeButtons";
@@ -24,10 +27,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 export default function AdvancedStatistics({ statType }) {
   const {
     adminStatisticsContext,
-    updateAnalysesStatsTimePeriod,
-    updateProjectStatsTimePeriod,
-    updateSampleStatsTimePeriod,
-    updateUserStatsTimePeriod,
+    getUpdatedStatsForStatType
   } = useContext(AdminStatisticsContext);
 
   const [chartType, setChartType] = useState(defaultChartType);
@@ -41,52 +41,45 @@ export default function AdvancedStatistics({ statType }) {
     [chartTypes.PIE]: Pie,
   };
 
+  const statTypes = {
+    [statisticTypes.ANALYSES]: {
+      title: "Number of Analyses Ran",
+      data: adminStatisticsContext.statistics.analysesStats
+    },
+    [statisticTypes.PROJECTS]: {
+      title: "Number of Projects Created",
+      data: adminStatisticsContext.statistics.projectStats
+    },
+    [statisticTypes.SAMPLES]: {
+      title: "Number of Samples Created",
+      data: adminStatisticsContext.statistics.sampleStats
+    },
+    [statisticTypes.USERS]: {
+      title: "Number of Users Created",
+      data: adminStatisticsContext.statistics.userStats
+    },
+  }
+
   useEffect(() => {
     setChartType(defaultChartType);
-    // Get the stats for the default time period for the stat type
-    getStatsForStatType(defaultTimePeriod);
+    getUpdatedStatsForStatType(statType, defaultTimePeriod);
     form.setFieldsValue({
       "time-period": defaultTimePeriod,
     });
   }, [statType]);
 
-  /*
-   * Updates the stats for the time period selected
-   * for the stat type (analyses, projects, samples, or users
-   */
-  function getStatsForStatType(currTimePeriod) {
-    if (statType === statisticTypes.ANALYSES) {
-      updateAnalysesStatsTimePeriod(currTimePeriod);
-    } else if (statType === statisticTypes.PROJECTS) {
-      updateProjectStatsTimePeriod(currTimePeriod);
-    } else if (statType === statisticTypes.SAMPLES) {
-      updateSampleStatsTimePeriod(currTimePeriod);
-    } else if (statType === statisticTypes.USERS) {
-      updateUserStatsTimePeriod(currTimePeriod);
-    }
+  function updateTimePeriod(e) {
+    getUpdatedStatsForStatType(statType, e.target.value);
   }
 
-  const chartTitle =
-    statType === statisticTypes.ANALYSES
-      ? "Number of Analyses Ran"
-      : statType === statisticTypes.PROJECTS
-      ? "Number of Projects Created"
-      : statType === statisticTypes.SAMPLES
-      ? "Number of Samples Created"
-      : statType === statisticTypes.USERS
-      ? "Number of Users Created"
-      : null
-  ;
-
-  // Displays the data in a chart of type selected
   function displayChart() {
     const Component = components[chartType];
+
     return Component ? (
       <Component
         {...getChartConfiguration(
           chartType,
-          statType,
-          adminStatisticsContext.statistics
+          statTypes[statType].data
         )}
       />
     ) : null;
@@ -95,18 +88,20 @@ export default function AdvancedStatistics({ statType }) {
   return (
     <>
       <PageHeader
-        title={chartTitle}
+        title={statTypes[statType].title}
         onBack={() => navigate(setBaseUrl(`/admin/statistics`))}
       />
       <Card style={{ margin: SPACE_LG }}>
         <Form
           form={form}
+          layout="vertical"
           initialValues={{
             "time-period": defaultTimePeriod,
+            "chart-type": defaultChartType
           }}
           style={{ marginBottom: SPACE_MD }}
         >
-          <TimePeriodSelect onChange={(e) => getStatsForStatType(e)} />
+          <TimePeriodSelect onChange={updateTimePeriod} />
           <ChartTypeButtons
             onChange={(e) => setChartType(e.target.value)}
             value={chartType}

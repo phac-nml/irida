@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Select } from "antd";
+import { Form, Radio } from "antd";
 
 /**
  * React component for updating the time period for statistics.
@@ -9,6 +9,19 @@ import { Form, Select } from "antd";
  * @constructor
  */
 export function TimePeriodSelect({ onChange = () => {} }) {
+
+  const options = [
+    { label: 'Day', value: 1 },
+    { label: 'Week', value: 7 },
+    { label: '2 Weeks', value: 14 },
+    { label: 'Month', value: 30 },
+    { label: 'Quarter', value: 90 },
+    { label: 'Year', value: 365 },
+    { label: '2 Years', value: 730 },
+    { label: '5 Years', value: 1825 },
+    { label: '10 Years', value: 3650 },
+  ];
+
   return (
     <Form.Item
         label ={
@@ -18,35 +31,10 @@ export function TimePeriodSelect({ onChange = () => {} }) {
         }
       name="time-period"
     >
-      <Select onChange={onChange} className={"t-time-period"} style={{width: 120}}>
-        <Select.Option value={1}>
-          Day
-        </Select.Option>
-        <Select.Option value={7}>
-          Week
-        </Select.Option>
-        <Select.Option value={14}>
-          2 Weeks
-        </Select.Option>
-        <Select.Option value={30}>
-          Month
-        </Select.Option>
-        <Select.Option value={90}>
-          Quarter
-        </Select.Option>
-        <Select.Option value={365}>
-          1 Year
-        </Select.Option>
-        <Select.Option value={730}>
-          2 Years
-        </Select.Option>
-        <Select.Option value={1825}>
-          5 Years
-        </Select.Option>
-        <Select.Option value={3650}>
-          10 Years
-        </Select.Option>
-      </Select>
+      <Radio.Group
+        options={options}
+        onChange={onChange}
+        optionType="button" />
     </Form.Item>
   );
 }

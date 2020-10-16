@@ -1,38 +1,17 @@
 import merge from "lodash/merge";
 import {
-  chartTypes,
-  statisticTypes
-} from "../../contexts/AdminStatisticsContext";
+  chartTypes
+} from "./statistics-constants";
 
 const chartHeight = 800;
 
 /*
- * Gets the config required for the chart
- * @param chartType - The type of chart (bar, column, line, or pie)
- * @param statsType - The type of statistics (projects, analyses, samples, users)
- * @param statistics - The data for the chart
- */
-export function getChartConfiguration(chartType, statsType, statistics) {
-  let data = [{"key":"", "value":""}];
-
-  if(statsType === statisticTypes.ANALYSES) {
-    data = statistics.analysesStats;
-  } else if (statsType === statisticTypes.PROJECTS) {
-    data = statistics.projectStats;
-  } else if (statsType === statisticTypes.SAMPLES)
-  {
-    data = statistics.sampleStats;
-  } else if (statsType === statisticTypes.USERS) {
-    data = statistics.userStats;
-  }
-
-  /*
-   * Tiny charts only require an array of values rather than
-   * an array of objects.
+   * Gets the config required for the chart
+   * @param chartType - The type of chart (bar, column, line, or pie)
+   * @param data - The data for the chart
+   * @param statsType - The type of statistics (projects, analyses, samples, users)
    */
-  if(chartType === chartTypes.TINYCOLUMN) {
-    data = data.map(obj => obj.value);
-  }
+export function getChartConfiguration(chartType, data) {
 
   const customChartTypeConfig = {
     [chartTypes.BAR]: {
@@ -52,15 +31,6 @@ export function getChartConfiguration(chartType, statsType, statistics) {
     [chartTypes.LINE]: {
       colorField: '',
     },
-    [chartTypes.TINYCOLUMN]: {
-      title: { visible: false},
-      legend: {
-        visible: false,
-      },
-      autoFit: true,
-      height: 80,
-      columnWidthRatio: 0.5,
-    },
   };
 
   // The configuration required to display a chart
@@ -70,7 +40,7 @@ export function getChartConfiguration(chartType, statsType, statistics) {
     xField: 'key',
     yField: 'value',
     width: "100%",
-    height: 800,
+    height: chartHeight,
     meta: { key: { alias: '' }, value: { alias: '' } },
     label: {
       visible: Boolean(data),
@@ -86,5 +56,22 @@ export function getChartConfiguration(chartType, statsType, statistics) {
   };
 
   return merge(config, customChartTypeConfig[chartType]);
+}
 
+export function getTinyChartConfiguration(data) {
+  // Tiny chart requires just an array of values
+  data = data.map(obj => obj.value);
+
+  const config = {
+    data: data,
+    title: { visible: false},
+    legend: {
+      visible: false,
+    },
+    autoFit: true,
+    height: 80,
+    columnWidthRatio: 0.5
+  }
+
+  return config;
 }
