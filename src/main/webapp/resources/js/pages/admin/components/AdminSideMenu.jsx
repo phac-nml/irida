@@ -18,7 +18,7 @@ export default function AdminHeader() {
     // should be right after the admin path
     const regExp = /admin\/(\w*)\/?/i;
     const found = window.location.href.match(regExp);
-    return found[1] || "statistics";
+    return found !== null ? found[1] : "statistics";
   });
   const DEFAULT_URL = setBaseUrl("/admin");
   // The following renders the AdminPanelSideMenu component
