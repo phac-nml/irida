@@ -8,12 +8,16 @@ import { Bar, Column, Line, Pie } from "@ant-design/charts";
 import { Card, Form, PageHeader } from "antd";
 import { TimePeriodSelect } from "./TimePeriodSelect";
 import {
-  AdminStatisticsContext,
+  AdminStatisticsContext
+} from "../../../../contexts/statistics-context";
+
+import {
   chartTypes,
   defaultChartType,
   defaultTimePeriod,
-  statisticTypes,
-} from "../../../../contexts/AdminStatisticsContext";
+  statisticTypes
+} from "../../statistics-constants";
+
 import { SPACE_LG, SPACE_MD } from "../../../../styles/spacing";
 import { ChartTypeButtons } from "./ChartTypeButtons";
 import { getChartConfiguration } from "../../chart-config";
@@ -23,13 +27,9 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 export default function AdvancedStatistics({ statType }) {
   const {
     adminStatisticsContext,
-    updateAnalysesStatsTimePeriod,
-    updateProjectStatsTimePeriod,
-    updateSampleStatsTimePeriod,
-    updateUserStatsTimePeriod,
+    getUpdatedStatsForStatType
   } = useContext(AdminStatisticsContext);
 
-  const [timePeriod, setTimePeriod] = useState(defaultTimePeriod);
   const [chartType, setChartType] = useState(defaultChartType);
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -43,23 +43,13 @@ export default function AdvancedStatistics({ statType }) {
 
   useEffect(() => {
     setChartType(defaultChartType);
-    setTimePeriod(defaultTimePeriod);
     form.setFieldsValue({
       "time-period": defaultTimePeriod,
     });
   }, [statType]);
 
   function updateTimePeriod(currTimePeriod) {
-    if (statType === statisticTypes.ANALYSES) {
-      updateAnalysesStatsTimePeriod(timePeriod);
-    } else if (statType === statisticTypes.PROJECTS) {
-      updateProjectStatsTimePeriod(timePeriod);
-    } else if (statType === statisticTypes.SAMPLES) {
-      updateSampleStatsTimePeriod(timePeriod);
-    } else if (statType === statisticTypes.USERS) {
-      updateUserStatsTimePeriod(timePeriod);
-    }
-    setTimePeriod(currTimePeriod);
+    getUpdatedStatsForStatType(statType, currTimePeriod);
   }
 
   const chartTitle =
@@ -75,12 +65,23 @@ export default function AdvancedStatistics({ statType }) {
 
   function displayChart() {
     const Component = components[chartType];
+    let data = [{"key":"", "value":""}];
+
+    if(statType === statisticTypes.ANALYSES) {
+      data = adminStatisticsContext.statistics.analysesStats;
+    } else if (statType === statisticTypes.PROJECTS) {
+      data = adminStatisticsContext.statistics.projectStats;
+    } else if (statType === statisticTypes.SAMPLES) {
+      data = adminStatisticsContext.statistics.sampleStats;
+    } else if (statType === statisticTypes.USERS) {
+      data = adminStatisticsContext.statistics.userStats;
+    }
+
     return Component ? (
       <Component
         {...getChartConfiguration(
           chartType,
-          statType,
-          adminStatisticsContext.statistics
+          data
         )}
       />
     ) : null;
@@ -97,10 +98,11 @@ export default function AdvancedStatistics({ statType }) {
           form={form}
           initialValues={{
             "time-period": defaultTimePeriod,
+            "chart-type": defaultChartType
           }}
           style={{ marginBottom: SPACE_MD }}
         >
-          <TimePeriodSelect onChange={(e) => updateTimePeriod(e)} />
+          <TimePeriodSelect onChange={updateTimePeriod} />
           <ChartTypeButtons
             onChange={(e) => setChartType(e.target.value)}
             value={chartType}
