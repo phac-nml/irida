@@ -88,7 +88,10 @@ export default class Pipeline extends React.Component {
                   href={pipelineUrl}
                 >
                   {i18n("pipelines.cart.select")}
-                </Button>
+                </Button>,
+              <Button type="link" href={setBaseUrl(`launch?id=${this.props.id}`)}>
+                  LAUNCH ME
+              </Button>
               ]
             : []
         }
