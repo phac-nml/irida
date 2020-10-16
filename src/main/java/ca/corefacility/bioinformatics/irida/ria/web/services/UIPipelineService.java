@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import org.checkerframework.checker.guieffect.qual.UI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -13,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * UI Service for all things related to workflow pipelines.
+ */
 @Component
 public class UIPipelineService {
     private final IridaWorkflowsService workflowsService;
@@ -24,6 +26,13 @@ public class UIPipelineService {
         this.messageSource = messageSource;
     }
 
+    /**
+     * Get the information about a specific workflow pipeline
+     * @param id for a {@link IridaWorkflow}
+     * @param locale current users {@link Locale}
+     * @return Details contained within a {@link UIPipelineDetailsResponse}
+     * @throws IridaWorkflowNotFoundException
+     */
     public UIPipelineDetailsResponse getPipelineDetails(UUID id, Locale locale) throws IridaWorkflowNotFoundException {
         IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
         IridaWorkflowDescription description = workflow.getWorkflowDescription();
