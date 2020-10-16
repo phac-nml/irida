@@ -70,7 +70,7 @@ export default function BasicStats() {
       title: `Users logged on in past ${defaultTimePeriodText}`,
       value: adminStatisticsContext.basicStats.usersLoggedIn,
       url: `${DEFAULT_URL}`,
-      chartData: [{}]
+      chartData: [{key: "", value: ""}]
     },
   ];
   return (
