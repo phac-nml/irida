@@ -1,6 +1,6 @@
 import React from "react";
-import { Radio } from "antd";
-import { chartTypes } from "../../../../contexts/AdminStatisticsContext";
+import { Form, Radio } from "antd";
+import { chartTypes } from "../../statistics-constants";
 
 /**
  * React component for displaying chart type buttons
@@ -19,11 +19,20 @@ export function ChartTypeButtons({ onChange = () => {}, value }) {
   ];
 
   return (
-    <Radio.Group
-      options={buttonOptions}
-      onChange={onChange}
-      value={value}
-      optionType="button"
-    />
+    <Form.Item
+      label ={
+        <span>
+            Chart Type
+          </span>
+      }
+      name="chart-type"
+    >
+      <Radio.Group
+        options={buttonOptions}
+        onChange={onChange}
+        value={value}
+        optionType="button"
+      />
+    </Form.Item>
   );
 }
