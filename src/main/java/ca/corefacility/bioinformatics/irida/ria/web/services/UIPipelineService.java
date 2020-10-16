@@ -76,7 +76,7 @@ public class UIPipelineService {
 		IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
 		details.setId(workflowDescription.getId());
 		details.setName(workflowDescription.getName());
-		details.setDescription(workflowDescription.);
+		details.setDescription(messageSource.getMessage("workflow." + workflowDescription.getAnalysisType().getType() + ".title", new Object[]{}, locale));
 
 		AnalysisType type = workflowDescription.getAnalysisType();
 

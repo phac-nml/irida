@@ -3,10 +3,8 @@ import { LaunchContent } from "./LaunchContent";
 import { Tabs, Typography } from "antd";
 import { useLaunchState } from "./launch-context";
 
-export function PipelineLaunchPage({ pipelineId }) {
-  const { pipelineName } = useLaunchState();
-
-  const [current, setCurrent] = React.useState(0);
+export function PipelineLaunchPage() {
+  const { pipelineName, description } = useLaunchState();
 
   // Update the page title with the current pipeline.
   const title = i18n("LaunchContent.title", pipelineName);
@@ -15,6 +13,7 @@ export function PipelineLaunchPage({ pipelineId }) {
   return (
     <>
       <Typography.Title>{title}</Typography.Title>
+      <Typography.Paragraph>{description}</Typography.Paragraph>
       <Tabs>
         <Tabs.TabPane tab={"PARAMETERS"} key="parameters">
           <LaunchContent />

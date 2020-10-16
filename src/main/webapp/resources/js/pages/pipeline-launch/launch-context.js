@@ -17,7 +17,7 @@ function launchReducer(state, action) {
         ...action.value,
         pipelineName: action.value.name,
         name: `${action.value.name}_${Date.now()}`,
-        description: "",
+        description: action.value.description,
         selectedPipeline: action.value.parameters[0].id,
       };
     case "detail_update":
