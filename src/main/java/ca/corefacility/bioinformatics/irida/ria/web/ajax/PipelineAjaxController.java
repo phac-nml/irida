@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * Controller to handle AJAX requests from the UI for Workflow Pipelines
+ */
 @RestController
 @RequestMapping("/ajax/pipeline")
 public class PipelineAjaxController {
