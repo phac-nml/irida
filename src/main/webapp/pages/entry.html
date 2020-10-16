@@ -18,7 +18,14 @@
       id="root"
       style="height: 100%; min-height: 100%"
       layout:fragment="page"
-    ></div>
+    >
+      <!--
+       THIS FILE CAN BE USED BY ANY REACT COMPONENT THAT DOES NOT REQUIRE ANY
+       SPECIAL HTML MARK UP.  THE SPRING CONTROLLER METHOD MUST ACCEPT THE MODEL
+       AND ADD A "entry" ATTRIBUTE WITH THE NAME OF THE ENTRY ADDED TO THE WEBPACK
+       "entries.js" FILE.
+       -->
+    </div>
     <th:block layout:fragment="scripts">
       <script th:src="@{/dist/js/{entry}.bundle.js(entry=${entry})}"></script>
     </th:block>
