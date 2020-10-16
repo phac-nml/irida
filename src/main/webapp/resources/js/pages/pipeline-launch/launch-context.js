@@ -13,11 +13,7 @@ function launchReducer(state, action) {
     case "loaded":
       return {
         ...state,
-        fetching: false,
         ...action.value,
-        pipelineName: action.value.name,
-        name: `${action.value.name}_${Date.now()}`,
-        description: action.value.description,
         selectedPipeline: action.value.parameters[0].id,
       };
     case "detail_update":
@@ -36,24 +32,26 @@ function launchReducer(state, action) {
 }
 
 function LaunchProvider({ children, automated = false }) {
+  const [details, setDetails] = useState({});
+
   const [pipelineId] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get("id");
   });
   const [loading, setLoading] = useState(true);
-  const [state, dispatch] = useReducer(launchReducer, {
-    name: "",
-    description: "",
-  });
+  const [state, dispatch] = useReducer(launchReducer, {});
 
   useEffect(() => {
     fetchPipelineDetails(pipelineId)
-      .then((data) =>
+      .then((data) => {
+        const { name, description, ...value } = data;
+        setDetails({ name, description });
+        value.name = `${name.replace(" ", "_")}_${Date.now()}`;
         dispatch({
           type: "loaded",
-          value: data,
-        })
-      )
+          value,
+        });
+      })
       .then(() => setLoading(false))
       .catch(() => dispatch({ type: "error" }));
   }, [pipelineId, automated]);
@@ -139,6 +137,7 @@ function LaunchProvider({ children, automated = false }) {
     <LaunchStateContext.Provider
       value={{
         ...state,
+        details,
         api: {
           updateDetailsField,
           modifyParameter,

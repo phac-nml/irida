@@ -9,7 +9,7 @@ import { useLaunchState } from "./launch-context";
  * @constructor
  */
 export function PipelineDetails({}) {
-  const { name, description, api } = useLaunchState();
+  const { name, desc, api } = useLaunchState();
   const nameRef = useRef();
 
   useEffect(() => {
@@ -44,10 +44,10 @@ export function PipelineDetails({}) {
       </Form.Item>
       <Form.Item label={i18n("PipelineDetails.description")}>
         <Input.TextArea
-          value={description}
+          value={desc}
           onChange={(e) =>
             api.updateDetailsField({
-              field: "description",
+              field: "desc",
               value: e.currentTarget.value,
             })
           }
