@@ -130,9 +130,6 @@ export default class CartTools extends Component {
                     }
                     automatedProject={window.PAGE.automatedProject}
                   />
-                  <PipelineLaunchPage
-                    path={setBaseUrl(`/cart/pipelines/:pipelineId`)}
-                  />
                   <LaunchComplete
                     path={setBaseUrl(`/cart/pipelines/complete`)}
                   />

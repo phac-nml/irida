@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -19,17 +30,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
 @Component
 public class UIPipelineService {
@@ -74,7 +76,7 @@ public class UIPipelineService {
 		IridaWorkflowDescription workflowDescription = workflow.getWorkflowDescription();
 		details.setId(workflowDescription.getId());
 		details.setName(messageSource.getMessage("workflow." + workflowDescription.getAnalysisType().getType() + ".title", new Object[]{}, locale));
-		details.setDescription(messageSource.getMessage("workflow" + workflowDescription.getAnalysisType().getType() + ".description", new Object[]{}, locale));
+		details.setDescription(messageSource.getMessage("workflow." + workflowDescription.getAnalysisType().getType() + ".description", new Object[]{}, locale));
 
 		AnalysisType type = workflowDescription.getAnalysisType();
 
