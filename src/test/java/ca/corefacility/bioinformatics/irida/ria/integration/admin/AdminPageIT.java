@@ -65,6 +65,7 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.comparePageTitle("Users"));
 	}
 
+	@Ignore
 	@Test
 	public void testPageSetUp() {
 		LoginPage.loginAsAdmin(driver());
