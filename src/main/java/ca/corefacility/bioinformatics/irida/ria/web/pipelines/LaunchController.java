@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
-import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 
 /**
  * Controller for workflow launch pages.
@@ -20,9 +21,10 @@ public class LaunchController {
         this.cartService = cartService;
     }
 
-
     /**
      * Mapping for the pipeline launch page.
+     *
+     * @param model Spring model to hold variables for the thymeleaf template.
      * @return The path to the launch page html file.
      */
     @GetMapping("")
