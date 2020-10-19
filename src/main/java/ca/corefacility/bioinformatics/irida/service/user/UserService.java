@@ -150,36 +150,48 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 
 	/**
 	 * Get count of users logged on during the time period
+	 *
+	 * @param createdDate the minimum date for users login
 	 * @return An {@link Long} count of users logged in
 	 */
 	public Long getUsersLoggedIn(Date createdDate);
 
 	/**
-	 * Get count of users created in the time period
-	 * @return An {@link Long} count of users logged in
+	 * Get count of users created during the time period
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link Long} count of users created
 	 */
 	public Long getUsersCreatedInTimePeriod(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of users created in the past 24 hours
+	 *
+	 * @param createdDate the minimum date for users created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of users created in the past n days
+	 *
+	 * @param createdDate the minimum date for users created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of users created in the past n months
+	 *
+	 * @param createdDate the minimum date for users created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of users created in the past n years
+	 *
+	 * @param createdDate the minimum date for users created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate);

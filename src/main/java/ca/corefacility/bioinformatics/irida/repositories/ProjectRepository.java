@@ -91,6 +91,7 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	/**
 	 * Get a count of all {@link Project}s created within time period
 	 *
+	 * @param createdDate the minimum created date for projects
 	 * @return a count of {@link Project}s
 	 */
 	@Query("select count(p.id) from Project p where p.createdDate >= ?1")

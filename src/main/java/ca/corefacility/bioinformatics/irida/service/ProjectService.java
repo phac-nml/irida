@@ -428,6 +428,8 @@ public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
 	 * Get count of projects created in the time period
+	 *
+	 * @param createdDate the minimum date for projects created
 	 * @return An {@link Long} count of projects created
 	 */
 	public Long getProjectsCreated(Date createdDate);
@@ -435,24 +437,32 @@ public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
 	 * Get list of {@link GenericStatModel} of projects created in the past 24 hours
+	 *
+	 * @param createdDate the minimum date for projects created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getProjectsCreatedHourly(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of projects created in the past n days
+	 *
+	 * @param createdDate the minimum date for projects created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getProjectsCreatedDaily(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of projects created in the past n months
+	 *
+	 * @param createdDate the minimum date for projects created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getProjectsCreatedMonthly(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of projects created in the past n years
+	 *
+	 * @param createdDate the minimum date for projects created
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getProjectsCreatedYearly(Date createdDate);

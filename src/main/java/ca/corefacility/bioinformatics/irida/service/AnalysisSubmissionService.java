@@ -338,30 +338,40 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 
 	/**
 	 * Get count of analyses run in the time period
+	 *
+	 * @param createdDate the minimum date for submissions ran
 	 * @return An {@link Long} count of analyses ran
 	 */
 	public Long getAnalysesRanInTimePeriod(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of analyses run in the past 24 hours
+	 *
+	 * @param createdDate the minimum date for submissions ran
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getAnalysesRanHourly(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of analyses run in the past n days
+	 *
+	 * @param createdDate the minimum date for submissions ran
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getAnalysesRanDaily(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of analyses run in the past n months
+	 *
+	 * @param createdDate the minimum date for submissions ran
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getAnalysesRanMonthly(Date createdDate);
 
 	/**
 	 * Get list of {@link GenericStatModel} of analyses run in the n years
+	 *
+	 * @param createdDate the minimum date for submissions ran
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getAnalysesRanYearly(Date createdDate);

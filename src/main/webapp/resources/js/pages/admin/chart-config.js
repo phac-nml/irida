@@ -6,13 +6,13 @@ import {
 const chartHeight = 800;
 
 /*
-   * Gets the config required for the chart
+   * Gets the config required for the chart. Data is accepted as an
+   * array of objects which have a key and value.
    * @param chartType - The type of chart (bar, column, line, or pie)
    * @param data - The data for the chart
    * @param statsType - The type of statistics (projects, analyses, samples, users)
    */
 export function getChartConfiguration(chartType, data) {
-
   const customChartTypeConfig = {
     [chartTypes.BAR]: {
       xField: "value",
@@ -58,10 +58,8 @@ export function getChartConfiguration(chartType, data) {
   return merge(config, customChartTypeConfig[chartType]);
 }
 
+// Tiny chart requires just an array of values
 export function getTinyChartConfiguration(data) {
-  // Tiny chart requires just an array of values
-  data = data.map(obj => obj.value);
-
   const config = {
     data: data,
     title: { visible: false},
@@ -70,7 +68,8 @@ export function getTinyChartConfiguration(data) {
     },
     autoFit: true,
     height: 80,
-    columnWidthRatio: 0.5
+    columnWidthRatio: 0.5,
+    tooltip: false
   }
 
   return config;

@@ -26,7 +26,11 @@ const initialContext = {
     projectsCreated: 0,
     samplesCreated: 0,
     usersCreated: 0,
-    usersLoggedIn: 0
+    usersLoggedIn: 0,
+    analysesStats: [],
+    projectStats: [],
+    sampleStats: [],
+    userStats: [],
   }
 };
 

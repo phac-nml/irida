@@ -68,6 +68,7 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long>, Samp
 	/**
 	 * Get a count of all {@link Sample}s created within time period
 	 *
+	 * @param createdDate the minimum created date for samples
 	 * @return a count of {@link Sample}s
 	 */
 	@Query("select count(s.id) from Sample s where s.createdDate >= ?1")
