@@ -1,5 +1,8 @@
 import React from "react";
-import { getPipelineDetails } from "../../apis/pipelines/pipelines";
+import {
+  getPipelineDetails,
+  launchPipeline,
+} from "../../apis/pipelines/pipelines";
 
 const LaunchStateContext = React.createContext();
 const LaunchDispatchContext = React.createContext();
@@ -31,9 +34,13 @@ function LaunchProvider({ children }) {
     });
   }, [id]);
 
+  function dispatchLaunch({ name, description }) {
+    launchPipeline({ id, name, description });
+  }
+
   return (
     <LaunchStateContext.Provider value={state}>
-      <LaunchDispatchContext.Provider value={dispatch}>
+      <LaunchDispatchContext.Provider value={{ dispatchLaunch }}>
         {children}
       </LaunchDispatchContext.Provider>
     </LaunchStateContext.Provider>
