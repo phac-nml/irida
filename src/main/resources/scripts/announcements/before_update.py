@@ -20,6 +20,8 @@ def create_json_file(json_file, host, user, password, database):
     cursor = db.cursor()
     cursor.execute("SELECT id, created_date, created_by_id, title, message, priority FROM announcement")
     result = cursor.fetchall()
+    cursor.close()
+    db.close()
 
     for id, created_date, created_by_id, title, message, priority in result:
         if not title:
@@ -33,7 +35,7 @@ def create_json_file(json_file, host, user, password, database):
                 message = soup
 
             json_data.append({"id":id, "created_date":created_date, "created_by_id":created_by_id, "title":title, "message":message, "priority":priority})
-        
+
     # convert the list to a JSON string
     json_string = json.dumps(json_data, indent=2, default=str)
     json_file.write(json_string)
