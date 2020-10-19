@@ -337,6 +337,8 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 
 	/**
 	 * Get count of analyses run in the time period
+	 *
+	 * @param createdDate the minimum date for submissions ran
 	 * @return An {@link Long} count of analyses ran
 	 */
 	public Long getAnalysesRan(Date createdDate);

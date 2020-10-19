@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.admin.dto;
 
+/**
+ *  Used by UI to encapsulate basic usage stats
+ */
+
+
 public class BasicStats {
 	private Long analysesRan;
 	private Long projectsCreated;

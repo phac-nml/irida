@@ -427,6 +427,8 @@ public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
 	 * Get count of projects created in the time period
+	 *
+	 * @param createdDate the minimum date for projects created
 	 * @return An {@link Long} count of projects created
 	 */
 	public Long getProjectsCreated(Date createdDate);
