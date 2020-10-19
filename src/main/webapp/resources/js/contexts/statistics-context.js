@@ -16,45 +16,13 @@ import { defaultTimePeriod, statisticTypes } from "../pages/admin/statistics-con
 
 const initialContext = {
   statistics: {
-    analysesStats: [
-      {key: "10/04", value: 10},
-      {key: "10/05", value: 12},
-      {key: "10/06", value: 16},
-      {key: "10/07", value: 30},
-      {key: "10/08", value: 100},
-      {key: "10/09", value: 350},
-      {key: "10/10", value: 999},
-    ],
-    projectStats: [
-      {key: "10/04", value: 20},
-      {key: "10/05", value: 12},
-      {key: "10/06", value: 16},
-      {key: "10/07", value: 30},
-      {key: "10/08", value: 100},
-      {key: "10/09", value: 350},
-      {key: "10/10", value: 999},
-    ],
-    sampleStats: [
-      {key: "10/04", value: 30},
-      {key: "10/05", value: 12},
-      {key: "10/06", value: 16},
-      {key: "10/07", value: 30},
-      {key: "10/08", value: 100},
-      {key: "10/09", value: 350},
-      {key: "10/10", value: 999},
-    ],
-    userStats: [
-      {key: "10/04", value: 40},
-      {key: "10/05", value: 12},
-      {key: "10/06", value: 16},
-      {key: "10/07", value: 30},
-      {key: "10/08", value: 100},
-      {key: "10/09", value: 350},
-      {key: "10/10", value: 999},
-    ]
+    analysesStats: [{}],
+    projectStats: [{}],
+    sampleStats: [{}],
+    userStats: [{}],
   },
   basicStats : {
-    analysesRun: 0,
+    analysesRan: 0,
     projectsCreated: 0,
     samplesCreated: 0,
     usersCreated: 0,
@@ -67,11 +35,13 @@ const AdminStatisticsContext = React.createContext(initialContext);
 function AdminStatisticsProvider(props) {
   const [adminStatisticsContext, setAdminStatisticsContext] = useState(initialContext);
 
-  // Get basic usage stats for the time period
   useEffect(() => {
-    getAdminStatistics(defaultTimePeriod).then(res => {
-      console.log(res);
-    }).catch(({message}) => {
+    // On load get the basic stats for the default time period
+    getAdminStatistics(defaultTimePeriod).then(basicStats => {
+      setAdminStatisticsContext(adminStatisticsContext => {
+        return {...adminStatisticsContext, basicStats: basicStats};
+      });
+    }).catch((message) => {
       notification.error({ message });
     });
   }, []);

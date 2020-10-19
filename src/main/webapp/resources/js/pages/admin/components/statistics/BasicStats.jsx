@@ -15,7 +15,6 @@ import {
 } from "../../../../contexts/statistics-context";
 
 import {
-  defaultTimePeriod,
   defaultTimePeriodText
 } from "../../statistics-constants";
 
@@ -41,7 +40,7 @@ export default function BasicStats() {
     {
       key: `analyses`,
       title: `Analyses run in past ${defaultTimePeriodText}`,
-      value: adminStatisticsContext.basicStats.analysesRun,
+      value: adminStatisticsContext.basicStats.analysesRan,
       url: `${DEFAULT_URL}/${ADMINSTATS.ANALYSES}`,
       chartData: adminStatisticsContext.statistics.analysesStats,
     },
@@ -71,7 +70,7 @@ export default function BasicStats() {
       title: `Users logged on in past ${defaultTimePeriodText}`,
       value: adminStatisticsContext.basicStats.usersLoggedIn,
       url: `${DEFAULT_URL}`,
-      chartData: [{}]
+      chartData: [{key: "", value: ""}]
     },
   ];
   return (

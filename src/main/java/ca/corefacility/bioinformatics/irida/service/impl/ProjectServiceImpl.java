@@ -941,4 +941,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		};
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getProjectsCreated(Date createdDate) {
+		Long projectsCount = projectRepository.countProjectsCreatedInTimePeriod(createdDate);
+		return projectsCount;
+	}
+
 }

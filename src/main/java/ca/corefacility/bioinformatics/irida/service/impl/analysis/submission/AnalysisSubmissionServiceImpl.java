@@ -806,4 +806,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return new AnalysisServiceStatus(running, queued);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getAnalysesRan(Date createdDate) {
+		Long analysesCount = analysisSubmissionRepository.countAnalysesRanInTimePeriod(createdDate);
+		return analysesCount;
+	}
+
 }

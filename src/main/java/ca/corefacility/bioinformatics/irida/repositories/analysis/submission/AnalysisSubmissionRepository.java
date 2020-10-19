@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.data.jpa.repository.Query;
 
@@ -154,4 +151,13 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
 			Set<UUID> workflowIds);
+
+	/**
+	 * Get a count of all {@link AnalysisSubmission}s ran within time period
+	 *
+	 * @param createdDate the minimum created date for submissions
+	 * @return a count of {@link User}s
+	 */
+	@Query("select count(s.id) from AnalysisSubmission s where s.createdDate >= ?1")
+	public Long countAnalysesRanInTimePeriod(Date createdDate);
 }
