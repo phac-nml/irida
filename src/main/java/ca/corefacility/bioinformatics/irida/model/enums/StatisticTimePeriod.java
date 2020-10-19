@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
+/**
+ * Defines a arrays of time periods used
+ * for getting statistics for the Admin Panel.
+ *
+ */
+
 public enum StatisticTimePeriod {
 	DAILY(7,14,30),
 	MONTHLY(90, 365),

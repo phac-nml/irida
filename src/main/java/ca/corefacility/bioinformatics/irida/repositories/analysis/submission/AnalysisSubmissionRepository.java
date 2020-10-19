@@ -137,7 +137,6 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 *
 	 * @param projectId   {@link Project} id
 	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
-	 * @param workflowIds Workflow UUIDs of workflow pipelines to get output files for
 	 * @return a list of {@link ProjectSampleAnalysisOutputInfo}
 	 */
 	List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
