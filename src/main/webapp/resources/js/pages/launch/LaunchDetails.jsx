@@ -15,7 +15,7 @@ export function LaunchDetails() {
         rules={[
           {
             required: true,
-            message: i18n("LaunchDLaunchDetails.name.required"),
+            message: i18n("LaunchDetails.name.required"),
           },
         ]}
       >
