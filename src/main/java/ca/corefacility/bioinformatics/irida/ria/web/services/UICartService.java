@@ -110,7 +110,7 @@ public class UICartService {
 	/**
 	 * Get the entire cart flushed out into {@link Project}s with their {@link Sample}s
 	 *
-	 * @return All proejcts and samples in the part
+	 * @return All projects and samples in the part
 	 */
 	public Map<Project, List<Sample>> getFullCart() {
 		Iterable<Project> projects = projectService.readMultiple(cart.getProjectIdsInCart());
@@ -121,5 +121,13 @@ public class UICartService {
 			results.put(project, samples);
 		});
 		return results;
+	}
+
+	/**
+	 * Determine if the cart is empty
+	 * @return Boolean if the cart is empty
+	 */
+	public Boolean isCartEmpty() {
+		return cart.isEmpty();
 	}
 }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link
+      rel="stylesheet"
+      th:href="@{/dist/css/{entry}.bundle.css(entry=${entry})}"
+    />
+  </head>
+  <body>
+    <div
+      id="root"
+      style="height: 100%; min-height: 100%"
+      layout:fragment="page"
+    >
+      <!--
+       THIS FILE CAN BE USED BY ANY REACT COMPONENT THAT DOES NOT REQUIRE ANY
+       SPECIAL HTML MARK UP.  THE SPRING CONTROLLER METHOD MUST ACCEPT THE MODEL
+       AND ADD A "entry" ATTRIBUTE WITH THE NAME OF THE ENTRY ADDED TO THE WEBPACK
+       "entries.js" FILE.
+       -->
+    </div>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/{entry}.bundle.js(entry=${entry})}"></script>
+    </th:block>
+  </body>
+</html>
