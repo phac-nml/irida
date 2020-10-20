@@ -1,6 +1,12 @@
 import React from "react";
 import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 
+/**
+ * @file React Context for providing to access to shared data and actions for the
+ * IRIDA Workflow launch system.
+ * @type {React.Context<unknown>}
+ */
+
 const LaunchStateContext = React.createContext();
 const LaunchDispatchContext = React.createContext();
 
@@ -39,6 +45,13 @@ function LaunchProvider({ children }) {
     </LaunchStateContext.Provider>
   );
 }
+
+/*
+ * Custom React hooks to get access to the contexts, prevents needing to wrap your child
+ * components in context consumers.
+ * See: {@link https://kentcdodds.com/blog/how-to-use-react-context-effectively#the-custom-consumer-hook}
+ * @returns {unknown}
+ */
 
 function useLaunchState() {
   const context = React.useContext(LaunchStateContext);
