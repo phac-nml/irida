@@ -87,7 +87,7 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 * @return A list of {@link GenericStatModel}s
 	 */
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, '%m/%y'), count(u.id))"
-			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.lastLogin, '%m/%y')")
+			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, '%m/%y')")
 	public List<GenericStatModel> countUsersCreatedMonthly(Date createdDate);
 
 	/**
