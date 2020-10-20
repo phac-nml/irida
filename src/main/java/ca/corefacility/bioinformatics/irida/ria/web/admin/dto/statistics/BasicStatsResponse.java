@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * UI Response to to encapsulate basic usage statistics.
  */
-public class BasicStats {
+public class BasicStatsResponse {
 	private Long analysesRan;
 	private Long projectsCreated;
 	private Long samplesCreated;
@@ -16,7 +16,7 @@ public class BasicStats {
 	private List<Long> sampleStats;
 	private List<Long> userStats;
 
-	public BasicStats(Long analysesRan, Long projectsCreated, Long samplesCreated, Long usersCreated,
+	public BasicStatsResponse(Long analysesRan, Long projectsCreated, Long samplesCreated, Long usersCreated,
 			Long usersLoggedIn, List<Long> analysesStats, List<Long> projectStats, List<Long> sampleStats,
 			List<Long> userStats) {
 		this.analysesRan = analysesRan;

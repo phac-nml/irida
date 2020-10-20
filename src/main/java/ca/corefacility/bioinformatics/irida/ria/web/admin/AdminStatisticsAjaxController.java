@@ -30,7 +30,7 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with basic usage stats
 	 */
 	@GetMapping("/basic")
-	public ResponseEntity<BasicStats> getAdminStatistics(@RequestParam int timePeriod) {
+	public ResponseEntity<BasicStatsResponse> getAdminStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminStatistics(timePeriod));
 	}
 
@@ -41,7 +41,7 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated project usage stats
 	 */
 	@GetMapping("/projects")
-	public ResponseEntity<ProjectStatsResponse> getAdminProjectStatistics(@RequestParam int timePeriod) {
+	public ResponseEntity<StatisticsResponse> getAdminProjectStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminProjectStatistics(timePeriod));
 	}
 
@@ -52,7 +52,7 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated user usage stats
 	 */
 	@GetMapping("/users")
-	public ResponseEntity<UserStatsResponse> getAdminUserStatistics(@RequestParam int timePeriod) {
+	public ResponseEntity<StatisticsResponse> getAdminUserStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminUserStatistics(timePeriod));
 	}
 
@@ -63,7 +63,7 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated analyses usage stats
 	 */
 	@GetMapping("/analyses")
-	public ResponseEntity<AnalysesStatsResponse> getAdminAnalysesStatistics(@RequestParam int timePeriod) {
+	public ResponseEntity<StatisticsResponse> getAdminAnalysesStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminAnalysesStatistics(timePeriod));
 	}
 
@@ -74,7 +74,7 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated sample usage stats
 	 */
 	@GetMapping("/samples")
-	public ResponseEntity<SampleStatsResponse> getAdminSampleStatistics(@RequestParam int timePeriod) {
+	public ResponseEntity<StatisticsResponse> getAdminSampleStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminSampleStatistics(timePeriod));
 	}
 }

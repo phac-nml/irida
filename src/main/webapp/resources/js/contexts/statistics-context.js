@@ -52,13 +52,13 @@ function AdminStatisticsProvider(props) {
 
   // Get updated project usage stats for the selected time period
   function updateProjectStatsTimePeriod(timePeriod) {
-    getUpdatedAdminProjectStatistics(timePeriod).then(({projectStats}) => {
-      if(projectStats !== null) {
+    getUpdatedAdminProjectStatistics(timePeriod).then(({statistics}) => {
+      if(statistics !== null) {
         setAdminStatisticsContext(adminStatisticsContext => {
           return {...adminStatisticsContext,
             statistics: {
               ...adminStatisticsContext.statistics,
-              projectStats: projectStats
+              projectStats: statistics
             }
           };
         });
@@ -70,13 +70,13 @@ function AdminStatisticsProvider(props) {
 
   // Get updated user usage stats for the selected time period
   function updateUserStatsTimePeriod(timePeriod) {
-    getUpdatedAdminUserStatistics(timePeriod).then(({userStats}) => {
-      if(userStats !== null) {
+    getUpdatedAdminUserStatistics(timePeriod).then(({statistics}) => {
+      if(statistics !== null) {
         setAdminStatisticsContext(adminStatisticsContext => {
           return {...adminStatisticsContext,
             statistics: {
               ...adminStatisticsContext.statistics,
-              userStats: userStats
+              userStats: statistics
             }
           };
         });
@@ -86,27 +86,15 @@ function AdminStatisticsProvider(props) {
     });
   }
 
-  function getUpdatedStatsForStatType(statType, timePeriod) {
-    if (statType === statisticTypes.ANALYSES) {
-      updateAnalysesStatsTimePeriod(timePeriod);
-    } else if (statType === statisticTypes.PROJECTS) {
-      updateProjectStatsTimePeriod(timePeriod);
-    } else if (statType === statisticTypes.SAMPLES) {
-      updateSampleStatsTimePeriod(timePeriod);
-    } else if (statType === statisticTypes.USERS) {
-      updateUserStatsTimePeriod(timePeriod);
-    }
-  }
-
   // Get updated analyses usage stats for the selected time period
   function updateAnalysesStatsTimePeriod(timePeriod) {
-    getUpdatedAdminAnalysesStatistics(timePeriod).then(({analysesStats}) => {
-      if(analysesStats !== null) {
+    getUpdatedAdminAnalysesStatistics(timePeriod).then(({statistics}) => {
+      if(statistics !== null) {
         setAdminStatisticsContext(adminStatisticsContext => {
           return {...adminStatisticsContext,
             statistics: {
               ...adminStatisticsContext.statistics,
-              analysesStats: analysesStats
+              analysesStats: statistics
             }
           };
         });
@@ -118,13 +106,13 @@ function AdminStatisticsProvider(props) {
 
   // Get updated sample usage stats for the selected time period
   function updateSampleStatsTimePeriod(timePeriod) {
-    getUpdatedAdminSampleStatistics(timePeriod).then(({sampleStats}) => {
-      if(sampleStats !== null) {
+    getUpdatedAdminSampleStatistics(timePeriod).then(({statistics}) => {
+      if(statistics !== null) {
         setAdminStatisticsContext(adminStatisticsContext => {
           return {...adminStatisticsContext,
             statistics: {
               ...adminStatisticsContext.statistics,
-              sampleStats: sampleStats
+              sampleStats: statistics
             }
           };
         });
@@ -132,6 +120,19 @@ function AdminStatisticsProvider(props) {
     }).catch(({message})  => {
       notification.error({ message });
     });
+  }
+
+  // Calls the relative function for stat type to get updated statistics for the time period
+  function getUpdatedStatsForStatType(statType, timePeriod) {
+    if (statType === statisticTypes.ANALYSES) {
+      updateAnalysesStatsTimePeriod(timePeriod);
+    } else if (statType === statisticTypes.PROJECTS) {
+      updateProjectStatsTimePeriod(timePeriod);
+    } else if (statType === statisticTypes.SAMPLES) {
+      updateSampleStatsTimePeriod(timePeriod);
+    } else if (statType === statisticTypes.USERS) {
+      updateUserStatsTimePeriod(timePeriod);
+    }
   }
 
   return (
