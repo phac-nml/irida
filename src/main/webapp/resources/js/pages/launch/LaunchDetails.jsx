@@ -1,5 +1,5 @@
 import React from "react";
-import {Form, Input} from "antd";
+import { Form, Input } from "antd";
 
 /**
  * React component for editing the basic information for launching an IRIDA Workflow Pipeline.
