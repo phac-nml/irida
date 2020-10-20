@@ -30,6 +30,7 @@ import {
   MenuUnfoldOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
+  RocketOutlined,
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
@@ -126,6 +127,10 @@ export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
 
 export const IconMetadataTemplate = ({ ...props }) => (
   <AppstoreOutlined {...props} />
+);
+
+export const IconLaunchPipeline = ({ ...props }) => (
+  <RocketOutlined {...props} />
 );
 
 /*

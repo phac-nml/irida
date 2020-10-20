@@ -46,3 +46,18 @@ export const getPipelineDetails = ({ id }) =>
     .get(`${AJAX_URL}/${id}`)
     .then(({ data }) => data)
     .catch((error) => console.log(error.response.data));
+
+/**
+ * Initiate a new IRIDA workflow pipeline
+ * @param id - Identifier for the workflow (UUID)
+ * @param name - Name to give the running pipeline
+ * @param description - Any extra information that should be attached.
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export const launchPipeline = ({ id, name, description }) =>
+  axios
+    .post(`${AJAX_URL}/${id}`, { name, description })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data);
+    });

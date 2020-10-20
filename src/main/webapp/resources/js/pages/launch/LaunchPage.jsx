@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Col, Row, Skeleton, Spin } from "antd";
 import { SPACE_LG } from "../../styles/spacing";
 import { useLaunchState } from "./launch-context";
-import { LaunchPageHeader } from "./LaunchPageHeader";
+import { LaunchContent } from "./LaunchContent";
 
 /**
  * React component to render the pipeline launch page.
@@ -12,11 +12,11 @@ import { LaunchPageHeader } from "./LaunchPageHeader";
 export function LaunchPage() {
   const { loading } = useLaunchState();
 
-  const content = loading ? <Skeleton /> : <LaunchPageHeader />;
+  const content = loading ? <Skeleton /> : <LaunchContent />;
 
   return (
     <Row>
-      <Col md={{ span: 12, offset: 5 }} style={{ marginTop: SPACE_LG }}>
+      <Col xl={{ span: 14, offset: 5 }} style={{ marginTop: SPACE_LG }}>
         <Card>
           <Spin spinning={loading} delay={500}>
             {content}

@@ -50,6 +50,7 @@ public class UIPipelineService {
          */
         detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[]{}, locale));
         detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[]{}, locale));
+        detailsResponse.setType(description.getName());
 
 
         return detailsResponse;

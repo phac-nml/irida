@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,17 +22,14 @@ public class LaunchController {
 
     /**
      * Mapping for the pipeline launch page.
-     *
-     * @param model Spring model to hold variables for the thymeleaf template.
      * @return The path to the launch page html file.
      */
     @GetMapping("")
-    public String getPipelineLaunchPage(Model model) {
+    public String getPipelineLaunchPage() {
         if(cartService.isCartEmpty()) {
             // User cannot launch a pipeline if the cart is empty.
             return "redirect:/cart/pipelines";
         }
-        model.addAttribute("entry", "launch");
-        return "entry";
+        return "launch";
     }
 }
