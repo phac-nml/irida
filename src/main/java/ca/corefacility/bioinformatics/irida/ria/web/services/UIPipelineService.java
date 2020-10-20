@@ -46,7 +46,7 @@ public class UIPipelineService {
         String prefix = "workflow." + description.getAnalysisType().getType() + ".";
 
         /*
-        Set up basic information for the pipeline being launch.
+        Set up basic information for the pipeline being launched.
          */
         detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[]{}, locale));
         detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[]{}, locale));
