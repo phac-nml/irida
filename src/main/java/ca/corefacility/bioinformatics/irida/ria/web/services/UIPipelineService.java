@@ -1,16 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
@@ -43,16 +49,59 @@ public class UIPipelineService {
         /*
         Prefix for getting messages from IRIDA message properties file
          */
-        String prefix = "workflow." + description.getAnalysisType().getType() + ".";
+        String prefix = "workflow." + description.getAnalysisType()
+                .getType() + ".";
 
         /*
         Set up basic information for the pipeline being launch.
          */
-        detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[]{}, locale));
-        detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[]{}, locale));
+        detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[] {}, locale));
+        detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[] {}, locale));
         detailsResponse.setType(description.getName());
 
+        /*
+        Add all pipeline parameters
+         */
+        detailsResponse.setParameterWithOptions(getPipelineSpecificParametersWithOptions(description, locale));
 
         return detailsResponse;
+    }
+
+    private List<PipelineParameterWithOptions> getPipelineSpecificParametersWithOptions(
+            IridaWorkflowDescription description, Locale locale) {
+        return description.getParameters()
+                .stream()
+                .filter(IridaWorkflowParameter::hasChoices)
+                .map(parameter -> {
+                    String name = description.getName()
+                            .toLowerCase();
+                    String label = localizedParamLabel(locale, name, parameter.getName());
+                    String defaultValue = parameter.getDefaultValue();
+                    List<SelectOption> options = parameter.getChoices()
+                            .stream()
+                            .map(option -> new SelectOption(option.getValue(),
+                                    localizedParamOptionLabel(locale, name, parameter.getName(), option.getName())))
+                            .collect(Collectors.toUnmodifiableList());
+                    return new PipelineParameterWithOptions(parameter.getName(), label, defaultValue, options);
+                })
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private String localizedParamLabel(Locale locale, String workflowName, String paramName) {
+        final String messageName = "pipeline.parameters." + workflowName + "." + paramName;
+        try {
+            return messageSource.getMessage(messageName, null, locale);
+        } catch (NoSuchMessageException e) {
+            return paramName;
+        }
+    }
+
+    private String localizedParamOptionLabel(Locale locale, String workflowName, String paramName, String optionName) {
+        String messageName = "pipeline.parameters." + workflowName + "." + paramName + "." + optionName;
+        try {
+            return messageSource.getMessage(messageName, null, locale);
+        } catch (NoSuchMessageException e) {
+            return paramName + "." + optionName;
+        }
     }
 }

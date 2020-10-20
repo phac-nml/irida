@@ -34,8 +34,8 @@ function LaunchProvider({ children }) {
     });
   }, [id]);
 
-  function dispatchLaunch({ name, description }) {
-    launchPipeline({ id, name, description });
+  function dispatchLaunch(values) {
+    launchPipeline(id, values);
   }
 
   return (
