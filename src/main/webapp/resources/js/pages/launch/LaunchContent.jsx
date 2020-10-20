@@ -4,7 +4,12 @@ import { LaunchDetails } from "./LaunchDetails";
 import { Button, Form } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 
+/**
+ * React component to layout the content of the pipeline launch.
+ * It will act as the top level logic controller.
+ */
 export function LaunchContent() {
   const { type } = useLaunchState();
   const { dispatchLaunch } = useLaunchDispatch();
@@ -26,7 +31,14 @@ export function LaunchContent() {
         name="details"
         layout="vertical"
         initialValues={{
-          name: `${type.replace(" ", "_")}_${Date.now()}`,
+          name: `${type.replace(" ", "_")}__${formatInternationalizedDateTime(
+            Date.now(),
+            {
+              year: "numeric",
+              month: "numeric",
+              day: "numeric",
+            }
+          ).replaceAll("/", "-")}`,
         }}
       >
         <LaunchDetails />
