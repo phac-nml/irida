@@ -67,6 +67,13 @@ public class UIPipelineService {
         return detailsResponse;
     }
 
+    /**
+     * Get a list of pipeline parameters that have specific options.
+     *
+     * @param description {@link IridaWorkflowDescription}
+     * @param locale      {@link Locale} current users locale
+     * @return List of pipeline parameters with options
+     */
     private List<PipelineParameterWithOptions> getPipelineSpecificParametersWithOptions(
             IridaWorkflowDescription description, Locale locale) {
         return description.getParameters()
@@ -87,6 +94,14 @@ public class UIPipelineService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    /**
+     * Internationalize a parameter label.  If there is not translation for it, just return the default text.
+     *
+     * @param locale       current users {@link Locale}
+     * @param workflowName name of the current {@link IridaWorkflow}
+     * @param paramName    name of the parameter to internationalize.
+     * @return the translated value
+     */
     private String localizedParamLabel(Locale locale, String workflowName, String paramName) {
         final String messageName = "pipeline.parameters." + workflowName + "." + paramName;
         try {
@@ -96,6 +111,15 @@ public class UIPipelineService {
         }
     }
 
+    /**
+     * Internationalize a parameter option.
+     *
+     * @param locale       current users {@link Locale}
+     * @param workflowName name of the current {@link IridaWorkflow
+     * @param paramName    name of the parameter the option belong to
+     * @param optionName   name of the option
+     * @return the translated value for the option
+     */
     private String localizedParamOptionLabel(Locale locale, String workflowName, String paramName, String optionName) {
         String messageName = "pipeline.parameters." + workflowName + "." + paramName + "." + optionName;
         try {

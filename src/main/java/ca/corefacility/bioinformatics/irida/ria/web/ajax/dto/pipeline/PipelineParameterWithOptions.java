@@ -6,6 +6,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
 import com.google.common.base.Strings;
 
+/**
+ * Represents a IRIDA Workflow Pipeline Parameter that has specific options to be render
+ * within the UI.
+ */
 public class PipelineParameterWithOptions {
 	private  String label;
 	private  String name;
