@@ -1,5 +1,6 @@
 import { setBaseUrl } from "../../utilities/url-utilities";
 import axios from "axios";
+import { statisticTypes } from "../../pages/admin/statistics-constants";
 
 const ADMIN_URL = setBaseUrl(`/ajax/statistics`);
 
@@ -9,14 +10,31 @@ const ADMIN_URL = setBaseUrl(`/ajax/statistics`);
  *                      `error` contains error information if an error occurred.
  */
 export async function getAdminStatistics(timePeriod) {
-  return await axios.get(`${ADMIN_URL}/basic`,{
-    params: {
-      timePeriod
-    }}
-  ).then(({data}) => data
-  ).catch(error => {
-    throw new Error(error.response.data.error);
-  });
+  return await axios
+    .get(`${ADMIN_URL}/basic`, {
+      params: {
+        timePeriod,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
+}
+
+export async function getUpdatedStatistics(type, timePeriod) {
+  switch (type) {
+    case statisticTypes.USERS:
+      return getUpdatedAdminUserStatistics(timePeriod);
+    case statisticTypes.SAMPLES:
+      return getUpdatedAdminSampleStatistics(timePeriod);
+    case statisticTypes.PROJECTS:
+      return getUpdatedAdminProjectStatistics(timePeriod);
+    case statisticTypes.ANALYSES:
+      return getUpdatedAdminAnalysesStatistics(timePeriod);
+    default:
+      throw new Error(`Cannot fetch updates for ${type}`);
+  }
 }
 
 /*
@@ -25,14 +43,16 @@ export async function getAdminStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminProjectStatistics(timePeriod) {
-  return await axios.get(`${ADMIN_URL}/projects`,{
-    params: {
-      timePeriod
-    }}
-  ).then(({data}) => data
-  ).catch(error => {
-    throw new Error(error.response.data.error);
-  });
+  return await axios
+    .get(`${ADMIN_URL}/projects`, {
+      params: {
+        timePeriod,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
 }
 
 /*
@@ -41,14 +61,16 @@ export async function getUpdatedAdminProjectStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
-  return await axios.get(`${ADMIN_URL}/analyses`,{
-    params: {
-      timePeriod
-    }}
-  ).then(({data}) => data
-  ).catch(error => {
-    throw new Error(error.response.data.error);
-  });
+  return await axios
+    .get(`${ADMIN_URL}/analyses`, {
+      params: {
+        timePeriod,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
 }
 
 /*
@@ -57,14 +79,16 @@ export async function getUpdatedAdminAnalysesStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminSampleStatistics(timePeriod) {
-  return await axios.get(`${ADMIN_URL}/samples`,{
-    params: {
-      timePeriod
-    }}
-  ).then(({data}) => data
-  ).catch(error => {
-    throw new Error(error.response.data.error);
-  });
+  return await axios
+    .get(`${ADMIN_URL}/samples`, {
+      params: {
+        timePeriod,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
 }
 
 /*
@@ -73,12 +97,14 @@ export async function getUpdatedAdminSampleStatistics(timePeriod) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getUpdatedAdminUserStatistics(timePeriod) {
-  return await axios.get(`${ADMIN_URL}/users`,{
-    params: {
-      timePeriod
-    }}
-  ).then(({data}) => data
-  ).catch(error => {
-    throw new Error(error.response.data.error);
-  });
+  return await axios
+    .get(`${ADMIN_URL}/users`, {
+      params: {
+        timePeriod,
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
 }

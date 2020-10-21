@@ -45,10 +45,6 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = new DateTime(new Date()).minusDays(timePeriod)
 				.toDate();
 
-		Long analysesRan = analysisSubmissionService.getAnalysesRanInTimePeriod(minimumCreatedDate);
-		Long projectsCreated = projectService.getProjectsCreated(minimumCreatedDate);
-		Long samplesCreated = sampleService.getSamplesCreated(minimumCreatedDate);
-		Long usersCreated = userService.getUsersCreatedInTimePeriod(minimumCreatedDate);
 		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
 
 		// These stats below are used in the UI by tiny charts which require just the values from the objects
@@ -72,7 +68,7 @@ public class UIAdminStatisticsService {
 				.map(GenericStatModel::getValue)
 				.collect(Collectors.toList());
 
-		return new BasicStatsResponse(analysesRan, projectsCreated, samplesCreated, usersCreated, usersLoggedIn, analysesCounts,
+		return new BasicStatsResponse(usersLoggedIn, analysesCounts,
 				projectCounts, sampleCounts, userCounts);
 	}
 

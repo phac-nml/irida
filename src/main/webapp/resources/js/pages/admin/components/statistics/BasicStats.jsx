@@ -4,18 +4,15 @@
  * charts
  */
 
-import React, { useContext } from "react";
+import React from "react";
 import { Card, Col, Row, Statistic } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { TinyColumn } from "@ant-design/charts";
 import { ADMINSTATS } from "../../routes";
 
 import {
-  AdminStatisticsContext
-} from "../../../../contexts/statistics-context";
-
-import {
-  defaultTimePeriodText
+  defaultTimePeriod,
+  defaultTimePeriodText,
 } from "../../statistics-constants";
 
 import { getTinyChartConfiguration } from "../../chart-config";
@@ -26,6 +23,7 @@ import { blue6 } from "../../../../styles/colors";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { Link } from "@reach/router";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
+import { getAdminStatistics } from "../../../../apis/admin/admin";
 
 const LinkCard = styled(Card)`
   &:hover {
@@ -34,54 +32,63 @@ const LinkCard = styled(Card)`
 `;
 
 export default function BasicStats() {
-  const {
-    adminStatisticsContext
-  } = useContext(AdminStatisticsContext);
+  const [cards, setCards] = React.useState([]);
 
   const DEFAULT_URL = setBaseUrl("/admin/statistics");
 
-  const cards = [
-    {
-      key: `analyses`,
-      title: `Analyses run in past ${defaultTimePeriodText}`,
-      value: adminStatisticsContext.basicStats.analysesRan,
-      url: `${DEFAULT_URL}/${ADMINSTATS.ANALYSES}`,
-      chartData: adminStatisticsContext.basicStats.analysesStats,
-    },
-    {
-      key: `projects`,
-      title: `Projects created in past ${defaultTimePeriodText}`,
-      value: adminStatisticsContext.basicStats.projectsCreated,
-      url: `${DEFAULT_URL}/${ADMINSTATS.PROJECTS}`,
-      chartData: adminStatisticsContext.basicStats.projectStats,
-    },
-    {
-      key: `samples`,
-      title: `Samples created in past ${defaultTimePeriodText}`,
-      value: adminStatisticsContext.basicStats.samplesCreated,
-      url: `${DEFAULT_URL}/${ADMINSTATS.SAMPLES}`,
-      chartData: adminStatisticsContext.basicStats.sampleStats,
-    },
-    {
-      key: `users`,
-      title: `Users created in past ${defaultTimePeriodText}`,
-      value: adminStatisticsContext.basicStats.usersCreated,
-      url: `${DEFAULT_URL}/${ADMINSTATS.USERS}`,
-      chartData: adminStatisticsContext.basicStats.userStats,
-    },
-    {
-      key: `usersLoggedIn`,
-      title: `Users logged on in past ${defaultTimePeriodText}`,
-      value: adminStatisticsContext.basicStats.usersLoggedIn,
-      url: `${DEFAULT_URL}`,
-      chartData: []
-    },
-  ];
+  React.useEffect(() => {
+    const sum = (a, b) => a + b;
+    getAdminStatistics(defaultTimePeriod).then(
+      ({
+        analysesStats,
+        projectStats,
+        sampleStats,
+        userStats,
+        usersLoggedIn,
+      }) => {
+        setCards([
+          {
+            key: `analyses`,
+            title: `Analyses run in past ${defaultTimePeriodText}`,
+            value: analysesStats.reduce(sum),
+            url: `${DEFAULT_URL}/${ADMINSTATS.ANALYSES}`,
+            chartData: analysesStats,
+          },
+          {
+            key: `projects`,
+            title: `Projects created in past ${defaultTimePeriodText}`,
+            value: projectStats.reduce(sum),
+            url: `${DEFAULT_URL}/${ADMINSTATS.PROJECTS}`,
+            chartData: projectStats,
+          },
+          {
+            key: `samples`,
+            title: `Samples created in past ${defaultTimePeriodText}`,
+            value: sampleStats.reduce(sum),
+            url: `${DEFAULT_URL}/${ADMINSTATS.SAMPLES}`,
+            chartData: sampleStats,
+          },
+          {
+            key: `users`,
+            title: `Users created in past ${defaultTimePeriodText}`,
+            value: userStats.reduce(sum),
+            url: `${DEFAULT_URL}/${ADMINSTATS.USERS}`,
+            chartData: userStats,
+          },
+          {
+            key: `usersLoggedIn`,
+            title: `Users logged on in past ${defaultTimePeriodText}`,
+            value: usersLoggedIn,
+            url: `${DEFAULT_URL}`,
+            chartData: [],
+          },
+        ]);
+      }
+    );
+  }, [DEFAULT_URL]);
 
   return (
-    <PageWrapper
-      title={i18n("AdminPanel.statistics")}
-    >
+    <PageWrapper title={i18n("AdminPanel.statistics")}>
       <Row
         gutter={[16, 16]}
         className="t-statistics t-stats-basic"
@@ -92,11 +99,7 @@ export default function BasicStats() {
             <Link to={card.url}>
               <LinkCard>
                 <Statistic title={card.title} value={card.value} />
-                <TinyColumn
-                  {...getTinyChartConfiguration(
-                    card.chartData
-                  )}
-                />
+                <TinyColumn {...getTinyChartConfiguration(card.chartData)} />
               </LinkCard>
             </Link>
           </Col>
