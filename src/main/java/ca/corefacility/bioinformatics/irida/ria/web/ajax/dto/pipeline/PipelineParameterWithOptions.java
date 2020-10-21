@@ -42,9 +42,15 @@ public class PipelineParameterWithOptions {
 		return name;
 	}
 
+	/**
+	 * Getter for the value, if there is no value, the value of the first option is returned.
+	 *
+	 * @return the defualt value for the parameter.
+	 */
 	public String getValue() {
-		if(Strings.isNullOrEmpty(value)) {
-			return options.get(0).getValue();
+		if (Strings.isNullOrEmpty(value)) {
+			return options.get(0)
+					.getValue();
 		}
 		return value;
 	}
