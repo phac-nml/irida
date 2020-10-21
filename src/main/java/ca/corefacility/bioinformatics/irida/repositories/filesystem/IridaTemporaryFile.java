@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.dto;
+package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.nio.file.Path;
 
