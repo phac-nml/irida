@@ -1,10 +1,9 @@
 import React from "react";
 import { LaunchPageHeader } from "./LaunchPageHeader";
 import { LaunchDetails } from "./LaunchDetails";
-import { Button, Form } from "antd";
+import { Button, Divider, Form } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { ParameterWithOptions } from "./ParameterWithOptions";
 
 /**
@@ -12,50 +11,19 @@ import { ParameterWithOptions } from "./ParameterWithOptions";
  * It will act as the top level logic controller.
  */
 export function LaunchContent() {
-  const { type, parameterWithOptions } = useLaunchState();
+  const { initialValues, parameterWithOptions } = useLaunchState();
   const { dispatchLaunch } = useLaunchDispatch();
-  console.log(parameterWithOptions);
   const [form] = Form.useForm();
 
+  /**
+   * Triggered when submitting the launch.
+   * This let's us perform any last minute validation and UI updates.
+   */
   const onFinish = () => {
     // Add any required extra validation here.
     form.validateFields().then((values) => dispatchLaunch(values));
     // Add any required UI updates here.
   };
-
-  /**
-   * Helper function to determine if the option should be rendered as a
-   * checkbox because it is either true or false.
-   * @param {array} options
-   * @returns {boolean}
-   */
-  const isTruthy = (options) => {
-    if (options.length > 2) return false;
-    return options[0].value === "true" || options[1].value === "true";
-  };
-
-  const initialValues = {
-    name: `${type.replace(" ", "_")}__${formatInternationalizedDateTime(
-      Date.now(),
-      {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      }
-    ).replaceAll("/", "-")}`,
-  };
-
-  // Add any parametersWithOption default values
-  parameterWithOptions.forEach((parameter) => {
-    if (isTruthy(parameter.options)) {
-      // Need to update to be actually boolean values
-      parameter.type = "checkbox";
-      parameter.options[0].value = parameter.options[0].value === "true";
-      parameter.options[1].value = parameter.options[0].value === "true";
-      parameter.value = parameter.value === "true";
-    }
-    initialValues[parameter.name] = parameter.value;
-  });
 
   return (
     <>
@@ -68,7 +36,8 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
-        <ParameterWithOptions options={parameterWithOptions} />
+        <Divider />
+        <ParameterWithOptions parameters={parameterWithOptions} />
         <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>
           {i18n("LaunchContent.submit")}
         </Button>
