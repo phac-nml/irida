@@ -45,6 +45,9 @@ public class SequenceFileController {
 	public static final String FILE_DETAIL_PAGE = BASE_URL + "file_details";
 	public static final String FILE_OVERREPRESENTED = BASE_URL + "file_overrepresented";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileController.class);
+
+	public static final String FS = BASE_URL + "fastqc";
+
 	/*
 	 * SUB NAV
 	 */
@@ -82,16 +85,18 @@ public class SequenceFileController {
 	 * @return The name of the template.
 	 */
 	@RequestMapping(value = {
-			"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary",
-			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary" })
+			"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
+			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**" })
 	public String getSequenceFilePage(final Model model, @PathVariable Long sequencingObjectId,
-			@PathVariable Long sequenceFileId) {
+			@PathVariable Long sequenceFileId, @PathVariable Long sampleId, @PathVariable Long projectId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
-		createDefaultPageInfo(sequencingObjectId, sequenceFileId, model);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
-		return FILE_DETAIL_PAGE;
+		model.addAttribute("seqObjectId", sequencingObjectId);
+		model.addAttribute("seqFileId", sequenceFileId);
+		model.addAttribute("sampleId", sampleId);
+		model.addAttribute("projectId", projectId);
+		return FS;
 	}
 
 	/**
