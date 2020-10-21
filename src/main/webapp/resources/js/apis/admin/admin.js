@@ -22,6 +22,11 @@ export async function getAdminStatistics(timePeriod) {
     });
 }
 
+/*
+ * Get updated stats for the stat type in time period
+ * @return {Promise<*>} `data` contains the OK response and the StatisticsReponse dto;
+ *                      `error` contains error information if an error occurred.
+ */
 export async function getUpdatedStatistics(type, timePeriod) {
   switch (type) {
     case statisticTypes.USERS:
