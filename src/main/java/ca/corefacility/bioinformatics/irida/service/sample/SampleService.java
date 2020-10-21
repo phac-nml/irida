@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -303,4 +304,36 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return An {@link Long} count of samples created
 	 */
 	public Long getSamplesCreated(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of samples created in the past 24 hours
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getSamplesCreatedHourly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of samples created in the past n days
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getSamplesCreatedDaily(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of samples created in the past n months
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getSamplesCreatedMonthly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of samples created in the past n years
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getSamplesCreatedYearly(Date createdDate);
 }

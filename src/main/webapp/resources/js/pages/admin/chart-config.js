@@ -1,16 +1,16 @@
 import merge from "lodash/merge";
-import {
-  chartTypes
-} from "./statistics-constants";
+import { chartTypes } from "./statistics-constants";
+
+const chartHeight = 800;
 
 /*
-   * Gets the config required for the chart
-   * @param chartType - The type of chart (bar, column, line, or pie)
-   * @param data - The data for the chart
-   * @param statsType - The type of statistics (projects, analyses, samples, users)
-   */
+ * Gets the config required for the chart. Data is accepted as an
+ * array of objects which have a key and value.
+ * @param chartType - The type of chart (bar, column, line, or pie)
+ * @param data - The data for the chart
+ * @param statsType - The type of statistics (projects, analyses, samples, users)
+ */
 export function getChartConfiguration(chartType, data) {
-
   const customChartTypeConfig = {
     [chartTypes.BAR]: {
       xField: "value",
@@ -18,58 +18,57 @@ export function getChartConfiguration(chartType, data) {
     },
     [chartTypes.PIE]: {
       appendPadding: 10,
-      colorField: 'key',
+      colorField: "key",
       radius: 0.8,
-      angleField: 'value',
+      angleField: "value",
       label: {
-        content: ''
+        content: "",
       },
     },
     [chartTypes.COLUMN]: {},
     [chartTypes.LINE]: {
-      colorField: '',
+      colorField: "",
     },
   };
 
   // The configuration required to display a chart
   const config = {
     data: data,
-    padding: 'auto',
-    xField: 'key',
-    yField: 'value',
+    padding: "auto",
+    xField: "key",
+    yField: "value",
     width: "100%",
-    height: 800,
-    meta: { key: { alias: '' }, value: { alias: '' } },
+    height: chartHeight,
+    meta: { key: { alias: "" }, value: { alias: "" } },
     label: {
       visible: Boolean(data),
-      position: 'middle',
+      position: "middle",
       adjustColor: true,
-      style: { fill: '#0D0E68', fontSize: 12, fontWeight: 600, opacity: 0.3 },
+      style: { fill: "#0D0E68", fontSize: 12, fontWeight: 600, opacity: 0.3 },
     },
-    colorField: 'key',
+    colorField: "key",
     legend: {
       visible: Boolean(data),
-      position: 'bottom',
+      position: "bottom",
     },
   };
 
   return merge(config, customChartTypeConfig[chartType]);
 }
 
+// Tiny chart requires just an array of values
 export function getTinyChartConfiguration(data) {
-  // Tiny chart requires just an array of values
-  data = data.map(obj => obj.value);
-
   const config = {
     data: data,
-    title: { visible: false},
+    title: { visible: false },
     legend: {
       visible: false,
     },
     autoFit: true,
     height: 80,
-    columnWidthRatio: 0.5
-  }
+    columnWidthRatio: 1,
+    tooltip: false,
+  };
 
   return config;
 }

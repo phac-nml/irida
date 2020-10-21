@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -162,4 +163,36 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return An {@link Long} count of users created
 	 */
 	public Long getUsersCreatedInTimePeriod(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users created in the past 24 hours
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users created in the past n days
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users created in the past n months
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users created in the past n years
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate);
 }

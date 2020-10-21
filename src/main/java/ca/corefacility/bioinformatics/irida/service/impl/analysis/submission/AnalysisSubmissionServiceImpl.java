@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Pro
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
@@ -810,9 +811,41 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Long getAnalysesRan(Date createdDate) {
+	public Long getAnalysesRanInTimePeriod(Date createdDate) {
 		Long analysesCount = analysisSubmissionRepository.countAnalysesRanInTimePeriod(createdDate);
 		return analysesCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getAnalysesRanHourly(Date createdDate) {
+		return analysisSubmissionRepository.countAnalysesRanHourly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getAnalysesRanDaily(Date createdDate) {
+		return analysisSubmissionRepository.countAnalysesRanDaily(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getAnalysesRanMonthly(Date createdDate) {
+		return analysisSubmissionRepository.countAnalysesRanMonthly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getAnalysesRanYearly(Date createdDate) {
+		return analysisSubmissionRepository.countAnalysesRanYearly(createdDate);
 	}
 
 }

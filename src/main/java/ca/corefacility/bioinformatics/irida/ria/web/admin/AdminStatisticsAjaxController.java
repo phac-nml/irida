@@ -1,19 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.admin;
 
-import java.util.Date;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.BasicStats;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.*;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAdminStatisticsService;
 
 /**
  * Controller to handle ajax requests for the Admin Panel statistics page.
@@ -22,18 +15,11 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 @RequestMapping("/ajax/statistics")
 public class AdminStatisticsAjaxController {
 
-	private ProjectService projectService;
-	private UserService userService;
-	private SampleService sampleService;
-	private AnalysisSubmissionService analysisSubmissionService;
+	private UIAdminStatisticsService uiAdminStatisticsService;
 
 	@Autowired
-	public AdminStatisticsAjaxController(ProjectService projectService, UserService userService,
-			SampleService sampleService, AnalysisSubmissionService analysisSubmissionService) {
-		this.projectService = projectService;
-		this.userService = userService;
-		this.sampleService = sampleService;
-		this.analysisSubmissionService = analysisSubmissionService;
+	public AdminStatisticsAjaxController(UIAdminStatisticsService uiAdminStatisticsService) {
+		this.uiAdminStatisticsService = uiAdminStatisticsService;
 	}
 
 	/**
@@ -44,18 +30,8 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with basic usage stats
 	 */
 	@GetMapping("/basic")
-	public ResponseEntity<BasicStats> getAdminStatistics(Integer timePeriod) {
-		Date currDate = new Date();
-		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
-				.toDate();
-
-		Long analysesRan = analysisSubmissionService.getAnalysesRan(minimumCreatedDate);
-		Long projectsCreated = projectService.getProjectsCreated(minimumCreatedDate);
-		Long samplesCreated = sampleService.getSamplesCreated(minimumCreatedDate);
-		Long usersCreated = userService.getUsersCreatedInTimePeriod(minimumCreatedDate);
-		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
-
-		return ResponseEntity.ok(new BasicStats(analysesRan, projectsCreated, samplesCreated, usersCreated, usersLoggedIn));
+	public ResponseEntity<BasicStatsResponse> getAdminStatistics(@RequestParam int timePeriod) {
+		return ResponseEntity.ok(uiAdminStatisticsService.getAdminStatistics(timePeriod));
 	}
 
 	/**
@@ -65,8 +41,8 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated project usage stats
 	 */
 	@GetMapping("/projects")
-	public ResponseEntity getAdminProjectStatistics(Long timePeriod) {
-		return ResponseEntity.ok("Retrieved stats for projects created in the last " + timePeriod);
+	public ResponseEntity<StatisticsResponse> getAdminProjectStatistics(@RequestParam int timePeriod) {
+		return ResponseEntity.ok(uiAdminStatisticsService.getAdminProjectStatistics(timePeriod));
 	}
 
 	/**
@@ -76,8 +52,8 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated user usage stats
 	 */
 	@GetMapping("/users")
-	public ResponseEntity getAdminUserStatistics(Long timePeriod) {
-		return ResponseEntity.ok("Retrieved stats for users created in the last " + timePeriod);
+	public ResponseEntity<StatisticsResponse> getAdminUserStatistics(@RequestParam int timePeriod) {
+		return ResponseEntity.ok(uiAdminStatisticsService.getAdminUserStatistics(timePeriod));
 	}
 
 	/**
@@ -87,8 +63,8 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated analyses usage stats
 	 */
 	@GetMapping("/analyses")
-	public ResponseEntity getAdminAnalysesStatistics(Long timePeriod) {
-		return ResponseEntity.ok("Retrieved stats for analyses ran in the last " + timePeriod);
+	public ResponseEntity<StatisticsResponse> getAdminAnalysesStatistics(@RequestParam int timePeriod) {
+		return ResponseEntity.ok(uiAdminStatisticsService.getAdminAnalysesStatistics(timePeriod));
 	}
 
 	/**
@@ -98,7 +74,7 @@ public class AdminStatisticsAjaxController {
 	 * @return dto with updated sample usage stats
 	 */
 	@GetMapping("/samples")
-	public ResponseEntity getAdminSampleStatistics(Long timePeriod) {
-		return ResponseEntity.ok("Retrieved stats for samples created in the last " + timePeriod);
+	public ResponseEntity<StatisticsResponse> getAdminSampleStatistics(@RequestParam int timePeriod) {
+		return ResponseEntity.ok(uiAdminStatisticsService.getAdminSampleStatistics(timePeriod));
 	}
 }

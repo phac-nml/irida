@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@ant-design/charts@^1.0.0":
+"@ant-design/charts@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@ant-design/charts/-/charts-1.0.1.tgz#e55e464ca547eea8b4fa618167083c57192dcaa8"
   integrity sha512-V3QZU+aje4Ne6p9IH5mTkM0kZwn9gplQbxoJkyPb8djw64zGVzuQPDq+AFJSL9n4qTtx49fVPe8k1S1mUiXgzA==

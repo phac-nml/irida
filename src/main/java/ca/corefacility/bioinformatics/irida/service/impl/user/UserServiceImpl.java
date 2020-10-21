@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
@@ -440,5 +441,37 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	public Long getUsersCreatedInTimePeriod(Date createdDate) {
 		Long usersCount = userRepository.countUsersCreatedInTimePeriod(createdDate);
 		return usersCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate) {
+		return userRepository.countUsersCreatedHourly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate) {
+		return userRepository.countUsersCreatedDaily(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate) {
+		return userRepository.countUsersCreatedMonthly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate) {
+		return userRepository.countUsersCreatedYearly(createdDate);
 	}
 }

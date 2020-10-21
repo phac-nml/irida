@@ -58,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import com.google.common.collect.ImmutableList;
@@ -949,6 +950,38 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Long getProjectsCreated(Date createdDate) {
 		Long projectsCount = projectRepository.countProjectsCreatedInTimePeriod(createdDate);
 		return projectsCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getProjectsCreatedHourly(Date createdDate) {
+		return projectRepository.countProjectsCreatedHourly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getProjectsCreatedDaily(Date createdDate) {
+		return projectRepository.countProjectsCreatedDaily(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getProjectsCreatedMonthly(Date createdDate) {
+		return projectRepository.countProjectsCreatedMonthly(createdDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getProjectsCreatedYearly(Date createdDate) {
+		return projectRepository.countProjectsCreatedYearly(createdDate);
 	}
 
 }

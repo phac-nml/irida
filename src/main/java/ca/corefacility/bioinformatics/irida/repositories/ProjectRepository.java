@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * Specialized repository for {@link Project}.
@@ -96,4 +97,43 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	@Query("select count(p.id) from Project p where p.createdDate >= ?1")
 	public Long countProjectsCreatedInTimePeriod(Date createdDate);
 
+	/**
+	 * Get a list of {@link GenericStatModel}s for projects created in the last day and grouped by hour
+	 *
+	 * @param createdDate The minimum created date for projects
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', p.createdDate, '%H:00'), count(p.id))"
+			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, '%H')")
+	public List<GenericStatModel> countProjectsCreatedHourly(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for projects created in the past 30 days and grouped by month and day
+	 *
+	 * @param createdDate The minimum created date for projects
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', p.createdDate, '%m/%d'), count(p.id))"
+			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, '%m/%d')")
+	public List<GenericStatModel> countProjectsCreatedDaily(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for projects created in the past 365 days and grouped by month and year
+	 *
+	 * @param createdDate The minimum created date for projects
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', p.createdDate, '%m/%y'), count(p.id))"
+			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, '%m/%y')")
+	public List<GenericStatModel> countProjectsCreatedMonthly(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for projects created in the past 2,5 and 10 years and grouped by year
+	 *
+	 * @param createdDate The minimum created date for projects
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', p.createdDate, '%Y'), count(p.id))"
+			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, '%Y')")
+	public List<GenericStatModel> countProjectsCreatedYearly(Date createdDate);
 }

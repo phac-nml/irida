@@ -3,7 +3,6 @@ import React from "react";
 import { render } from "react-dom";
 import Admin from "./components/Admin";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { AdminStatisticsProvider } from "../../contexts/statistics-context";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -13,9 +12,4 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(
-  <AdminStatisticsProvider>
-    <Admin />
-  </AdminStatisticsProvider>,
-  document.getElementById("root")
-);
+render(<Admin />, document.getElementById("root"));

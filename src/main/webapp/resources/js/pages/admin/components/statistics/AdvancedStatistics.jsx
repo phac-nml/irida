@@ -3,19 +3,16 @@
  * which displays statistics in charts
  */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bar, Column, Line, Pie } from "@ant-design/charts";
-import { Card, Form, PageHeader } from "antd";
+import { Card, Form, PageHeader, Spin } from "antd";
 import { TimePeriodSelect } from "./TimePeriodSelect";
-import {
-  AdminStatisticsContext
-} from "../../../../contexts/statistics-context";
 
 import {
   chartTypes,
   defaultChartType,
   defaultTimePeriod,
-  statisticTypes
+  statisticTypes,
 } from "../../statistics-constants";
 
 import { SPACE_LG, SPACE_MD } from "../../../../styles/spacing";
@@ -23,16 +20,22 @@ import { ChartTypeButtons } from "./ChartTypeButtons";
 import { getChartConfiguration } from "../../chart-config";
 import { useNavigate } from "@reach/router";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { getUpdatedStatistics } from "../../../../apis/admin/admin";
 
 export default function AdvancedStatistics({ statType }) {
-  const {
-    adminStatisticsContext,
-    getUpdatedStatsForStatType
-  } = useContext(AdminStatisticsContext);
-
+  const [loading, setLoading] = useState(true);
   const [chartType, setChartType] = useState(defaultChartType);
+  const [data, setData] = useState([]);
+
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUpdatedStatistics(statType, defaultTimePeriod).then(({ statistics }) => {
+      setData(statistics);
+      setLoading(false);
+    });
+  }, [statType]);
 
   const components = {
     [chartTypes.BAR]: Bar,
@@ -41,53 +44,33 @@ export default function AdvancedStatistics({ statType }) {
     [chartTypes.PIE]: Pie,
   };
 
-  const statTypes = {
-    [statisticTypes.ANALYSES]: {
-      title: "Number of Analyses Ran",
-      data: adminStatisticsContext.statistics.analysesStats
-    },
-    [statisticTypes.PROJECTS]: {
-      title: "Number of Projects Created",
-      data: adminStatisticsContext.statistics.projectStats
-    },
-    [statisticTypes.SAMPLES]: {
-      title: "Number of Samples Created",
-      data: adminStatisticsContext.statistics.sampleStats
-    },
-    [statisticTypes.USERS]: {
-      title: "Number of Users Created",
-      data: adminStatisticsContext.statistics.userStats
-    },
-  }
+  const TITLES = {
+    [statisticTypes.ANALYSES]: "Number of Analyses Ran",
+    [statisticTypes.PROJECTS]: "Number of Projects Created",
+    [statisticTypes.SAMPLES]: "Number of Samples Created",
+    [statisticTypes.USERS]: "Number of Users Created",
+  };
 
-  useEffect(() => {
-    setChartType(defaultChartType);
-    form.setFieldsValue({
-      "time-period": defaultTimePeriod,
+  function updateTimePeriod(e) {
+    setLoading(true);
+    getUpdatedStatistics(statType, e.target.value).then(({ statistics }) => {
+      setData(statistics);
+      setLoading(false);
     });
-  }, [statType]);
-
-  function updateTimePeriod(currTimePeriod) {
-    getUpdatedStatsForStatType(statType, currTimePeriod);
   }
 
   function displayChart() {
     const Component = components[chartType];
 
     return Component ? (
-      <Component
-        {...getChartConfiguration(
-          chartType,
-          statTypes[statType].data
-        )}
-      />
+      <Component {...getChartConfiguration(chartType, data)} />
     ) : null;
   }
 
   return (
     <>
       <PageHeader
-        title={statTypes[statType].title}
+        title={TITLES[statType]}
         onBack={() => navigate(setBaseUrl(`/admin/statistics`))}
       />
       <Card style={{ margin: SPACE_LG }}>
@@ -96,7 +79,7 @@ export default function AdvancedStatistics({ statType }) {
           layout="vertical"
           initialValues={{
             "time-period": defaultTimePeriod,
-            "chart-type": defaultChartType
+            "chart-type": defaultChartType,
           }}
           style={{ marginBottom: SPACE_MD }}
         >
@@ -106,7 +89,13 @@ export default function AdvancedStatistics({ statType }) {
             value={chartType}
           />
         </Form>
-        {displayChart()}
+        <Spin
+          spinning={loading}
+          delay={500}
+          tip={"Fetching data for updated time period"}
+        >
+          {displayChart()}
+        </Spin>
       </Card>
     </>
   );
