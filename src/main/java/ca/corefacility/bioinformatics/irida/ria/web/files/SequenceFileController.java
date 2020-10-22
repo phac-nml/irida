@@ -90,12 +90,14 @@ public class SequenceFileController {
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
 			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**" })
 	public String getSequenceFilePage(final Model model, @PathVariable Long sequencingObjectId,
-			@PathVariable Long sequenceFileId, @PathVariable Long sampleId, @PathVariable Long projectId) {
+			@PathVariable Long sequenceFileId, @PathVariable(required = false) Long sampleId, @PathVariable(required = false) Long projectId,
+			@PathVariable(required = false) Long runId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		model.addAttribute("seqObjectId", sequencingObjectId);
 		model.addAttribute("seqFileId", sequenceFileId);
 		model.addAttribute("sampleId", sampleId);
 		model.addAttribute("projectId", projectId);
+		model.addAttribute("runId", runId);
 		return FS;
 	}
 

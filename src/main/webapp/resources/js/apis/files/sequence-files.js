@@ -5,7 +5,7 @@ const BASE_URL = setBaseUrl(`/ajax/sequenceFiles`);
 
 export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
   try {
-    const { data } = await axios.get(`${BASE_URL}/getFastQCDetails`, {
+    const { data } = await axios.get(`${BASE_URL}/fastqc-details`, {
       params: {
         sequencingObjectId,
         sequenceFileId

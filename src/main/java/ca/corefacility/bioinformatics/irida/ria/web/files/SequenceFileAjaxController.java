@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.ria.web.files.dto.FastQCDetailsResponse;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 @RestController
@@ -17,10 +19,12 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 @RequestMapping("/ajax/sequenceFiles")
 public class SequenceFileAjaxController {
 
+	private AnalysisService analysisService;
 	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
-	public SequenceFileAjaxController(SequencingObjectService sequencingObjectService) {
+	public SequenceFileAjaxController(AnalysisService analysisService, SequencingObjectService sequencingObjectService) {
+		this.analysisService = analysisService;
 		this.sequencingObjectService = sequencingObjectService;
 	}
 
@@ -29,8 +33,9 @@ public class SequenceFileAjaxController {
 
 		SequencingObject seqObject = sequencingObjectService.read(sequencingObjectId);
 		SequenceFile file = seqObject.getFileWithId(sequenceFileId);
+		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(seqObject, file.getId());
 
-		return new FastQCDetailsResponse(seqObject, file);
+		return new FastQCDetailsResponse(seqObject, file, fastQC);
 	}
 
 	@GetMapping("/fastqc-images")
