@@ -38,9 +38,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	private BlobContainerClient containerClient ;
 
 	@Autowired
-	public IridaFileStorageAzureUtilityImpl(String connectionStr, String containerName){
-		this.blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionStr)
-				.buildClient();
+	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName){
+		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl).sasToken(sasToken).buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
 	}
 

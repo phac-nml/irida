@@ -135,8 +135,11 @@ public class IridaApiServicesConfig {
 	@Value("${azure.container.name:#{null}}")
 	private String containerName;
 
-	@Value("${azure.account.connection.string:#{null}}")
-	private String connectionStr;
+	@Value("${azure.container.url:#{null}}")
+	private String containerUrl;
+
+	@Value("${azure.sas.token:#{null}}")
+	private String sasToken;
 
 
 	@Autowired
@@ -307,7 +310,7 @@ public class IridaApiServicesConfig {
 	public IridaFileStorageUtility iridaFileStorageUtility() {
 		IridaFileStorageUtility iridaFileStorageUtility;
 		if(storageType.equalsIgnoreCase("azure")) {
-			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(connectionStr, containerName);
+			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		}
