@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.*;
@@ -952,36 +953,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return projectsCount;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getProjectsCreatedHourly(Date createdDate) {
-		return projectRepository.countProjectsCreatedHourly(createdDate);
-	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getProjectsCreatedDaily(Date createdDate) {
-		return projectRepository.countProjectsCreatedDaily(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getProjectsCreatedMonthly(Date createdDate) {
-		return projectRepository.countProjectsCreatedMonthly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getProjectsCreatedYearly(Date createdDate) {
-		return projectRepository.countProjectsCreatedYearly(createdDate);
+	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, GroupByFormat groupByFormat) {
+		return projectRepository.countProjectsCreatedGrouped(createdDate, groupByFormat.toString());
 	}
 
 }

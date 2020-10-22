@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -447,31 +448,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate) {
-		return userRepository.countUsersCreatedHourly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate) {
-		return userRepository.countUsersCreatedDaily(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate) {
-		return userRepository.countUsersCreatedMonthly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate) {
-		return userRepository.countUsersCreatedYearly(createdDate);
+	public List<GenericStatModel> getUsersCreatedGrouped(Date createdDate, GroupByFormat groupByFormat) {
+		return userRepository.countUsersCreatedGrouped(createdDate, groupByFormat.toString());
 	}
 }

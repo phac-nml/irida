@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -152,44 +153,16 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	public Long countAnalysesRanInTimePeriod(Date createdDate);
 
 	/**
-	 * Get a list of {@link GenericStatModel}s for analyses run in the last day and grouped by hour
+	 * Get a list of {@link GenericStatModel}s for analyses ran in past n time period
+	 * grouped by format provided.
 	 *
 	 * @param createdDate The minimum created date for the analysis submission
+	 * @param groupByFormat The format to use for grouping the results.
 	 * @return A list of {@link GenericStatModel}s
 	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%H:00'), count(s.id))"
-			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%H')")
-	public List<GenericStatModel> countAnalysesRanHourly(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for analyses run in the past 30 days and grouped by month and day
-	 *
-	 * @param createdDate The minimum created date for the analysis submission
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%m/%d'), count(s.id))"
-			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%m/%d')")
-	public List<GenericStatModel> countAnalysesRanDaily(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for analyses run in the past 365 days and grouped by month and year
-	 *
-	 * @param createdDate The minimum created date for the analysis submission
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%m/%y'), count(s.id))"
-			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%m/%y')")
-	public List<GenericStatModel> countAnalysesRanMonthly(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for analyses run in the past 2,5 and 10 years and grouped by year
-	 *
-	 * @param createdDate The minimum created date for the analysis submission
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%Y'), count(s.id))"
-			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%Y')")
-	public List<GenericStatModel> countAnalysesRanYearly(Date createdDate);
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, ?2), count(s.id))"
+			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2)")
+	public List<GenericStatModel> countAnalysesRanGrouped(Date createdDate, String groupByFormat);
 
 }
 

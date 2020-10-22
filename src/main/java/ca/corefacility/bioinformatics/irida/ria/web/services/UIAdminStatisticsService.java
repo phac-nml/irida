@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.*;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -68,8 +69,7 @@ public class UIAdminStatisticsService {
 				.map(GenericStatModel::getValue)
 				.collect(Collectors.toList());
 
-		return new BasicStatsResponse(usersLoggedIn, analysesCounts,
-				projectCounts, sampleCounts, userCounts);
+		return new BasicStatsResponse(usersLoggedIn, analysesCounts, projectCounts, sampleCounts, userCounts);
 	}
 
 	/**
@@ -86,17 +86,21 @@ public class UIAdminStatisticsService {
 
 		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanDaily(minimumCreatedDate));
+			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate,
+					GroupByFormat.fromString("daily")));
 		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanMonthly(minimumCreatedDate));
+			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate,
+					GroupByFormat.fromString("monthly")));
 		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanYearly(minimumCreatedDate));
+			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate,
+					GroupByFormat.fromString("yearly")));
 		} else {
 			minimumCreatedDate = new DateTime(currDate).minusHours(24)
 					.toDate();
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanHourly(minimumCreatedDate));
+			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate,
+					GroupByFormat.fromString("hourly")));
 		}
 	}
 
@@ -114,17 +118,21 @@ public class UIAdminStatisticsService {
 
 		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(projectService.getProjectsCreatedDaily(minimumCreatedDate));
+			return new StatisticsResponse(
+					projectService.getProjectsCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("daily")));
 		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(projectService.getProjectsCreatedMonthly(minimumCreatedDate));
+			return new StatisticsResponse(
+					projectService.getProjectsCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("monthly")));
 		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(projectService.getProjectsCreatedYearly(minimumCreatedDate));
+			return new StatisticsResponse(
+					projectService.getProjectsCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("yearly")));
 		} else {
 			minimumCreatedDate = new DateTime(currDate).minusHours(24)
 					.toDate();
-			return new StatisticsResponse(projectService.getProjectsCreatedHourly(minimumCreatedDate));
+			return new StatisticsResponse(
+					projectService.getProjectsCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("hourly")));
 		}
 	}
 
@@ -142,17 +150,21 @@ public class UIAdminStatisticsService {
 
 		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(sampleService.getSamplesCreatedDaily(minimumCreatedDate));
+			return new StatisticsResponse(
+					sampleService.getSamplesCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("daily")));
 		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(sampleService.getSamplesCreatedMonthly(minimumCreatedDate));
+			return new StatisticsResponse(
+					sampleService.getSamplesCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("monthly")));
 		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(sampleService.getSamplesCreatedYearly(minimumCreatedDate));
+			return new StatisticsResponse(
+					sampleService.getSamplesCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("yearly")));
 		} else {
 			minimumCreatedDate = new DateTime(currDate).minusHours(24)
 					.toDate();
-			return new StatisticsResponse(sampleService.getSamplesCreatedHourly(minimumCreatedDate));
+			return new StatisticsResponse(
+					sampleService.getSamplesCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("hourly")));
 		}
 	}
 
@@ -170,17 +182,21 @@ public class UIAdminStatisticsService {
 
 		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(userService.getUsersCreatedDaily(minimumCreatedDate));
+			return new StatisticsResponse(
+					userService.getUsersCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("daily")));
 		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(userService.getUsersCreatedMonthly(minimumCreatedDate));
+			return new StatisticsResponse(
+					userService.getUsersCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("monthly")));
 		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
 				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(userService.getUsersCreatedYearly(minimumCreatedDate));
+			return new StatisticsResponse(
+					userService.getUsersCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("yearly")));
 		} else {
 			minimumCreatedDate = new DateTime(currDate).minusHours(24)
 					.toDate();
-			return new StatisticsResponse(userService.getUsersCreatedHourly(minimumCreatedDate));
+			return new StatisticsResponse(
+					userService.getUsersCreatedGrouped(minimumCreatedDate, GroupByFormat.fromString("hourly")));
 		}
 	}
 

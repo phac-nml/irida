@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -434,37 +435,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Long getProjectsCreated(Date createdDate);
 
-
 	/**
-	 * Get list of {@link GenericStatModel} of projects created in the past 24 hours
+	 * Get list of {@link GenericStatModel} of projects created in the past n time period
+	 * and grouped by the format provided.
 	 *
 	 * @param createdDate the minimum date for projects created
+	 * @param groupByFormat the format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getProjectsCreatedHourly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of projects created in the past n days
-	 *
-	 * @param createdDate the minimum date for projects created
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getProjectsCreatedDaily(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of projects created in the past n months
-	 *
-	 * @param createdDate the minimum date for projects created
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getProjectsCreatedMonthly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of projects created in the past n years
-	 *
-	 * @param createdDate the minimum date for projects created
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getProjectsCreatedYearly(Date createdDate);
+	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, GroupByFormat groupByFormat);
 
 }
