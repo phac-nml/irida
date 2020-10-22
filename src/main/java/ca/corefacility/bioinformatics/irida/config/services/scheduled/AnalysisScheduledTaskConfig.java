@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
@@ -11,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisW
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +46,6 @@ public class AnalysisScheduledTaskConfig {
 
 	@Autowired
 	private EmailController emailController;
-
-	@Autowired
-	private IridaWorkflowsService workflowsService;
-
-	@Autowired
-	private GalaxyHistoriesService galaxyHistoriesService;
 
 	@Autowired
 	private AnalysisWorkspaceService analysisWorkspaceService;
