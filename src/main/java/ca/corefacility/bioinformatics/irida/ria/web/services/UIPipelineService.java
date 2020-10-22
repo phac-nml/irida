@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -25,11 +27,13 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @Component
 public class UIPipelineService {
     private final IridaWorkflowsService workflowsService;
+    private final WorkflowNamedParametersService namedParametersService;
     private final MessageSource messageSource;
 
     @Autowired
-    public UIPipelineService(IridaWorkflowsService workflowsService, MessageSource messageSource) {
+    public UIPipelineService(IridaWorkflowsService workflowsService, WorkflowNamedParametersService namedParametersService, MessageSource messageSource) {
         this.workflowsService = workflowsService;
+        this.namedParametersService = namedParametersService;
         this.messageSource = messageSource;
     }
 
@@ -55,14 +59,19 @@ public class UIPipelineService {
         /*
         Set up basic information for the pipeline being launch.
          */
-        detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[] {}, locale));
-        detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[] {}, locale));
+        detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[]{}, locale));
+        detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[]{}, locale));
         detailsResponse.setType(description.getName());
 
         /*
         Add all pipeline parameters
          */
         detailsResponse.setParameterWithOptions(getPipelineSpecificParametersWithOptions(description, locale));
+
+        /*
+        Add saved parameter sets
+         */
+        detailsResponse.setSavedPipelineParameters(getSavedPipelineParameters(workflow, locale));
 
         return detailsResponse;
     }
@@ -127,5 +136,53 @@ public class UIPipelineService {
         } catch (NoSuchMessageException e) {
             return paramName + "." + optionName;
         }
+    }
+
+    private List<SavedPipelineParameters> getSavedPipelineParameters(IridaWorkflow workflow, Locale locale) {
+        IridaWorkflowDescription description = workflow.getWorkflowDescription();
+        List<IridaWorkflowParameter> workflowParameters = description.getParameters();
+        String pipelineName = description.getName()
+                .toLowerCase();
+        List<SavedPipelineParameters> savedParameters = new ArrayList<>();
+
+        /*
+        If there are no parameters just return an empty list.
+         */
+        if (workflowParameters == null) {
+            return savedParameters;
+        }
+
+        /*
+        Get the default parameter set
+         */
+        List<PipelineParameter> defaultParameters = workflowParameters.stream()
+                .filter(p -> !p.isRequired())
+                .map(p -> new PipelineParameter(
+                        p.getName(),
+                        messageSource.getMessage("pipeline.parameters." + pipelineName + "." + p.getName(), new Object[]{}, locale),
+                        p.getDefaultValue()))
+                .collect(Collectors.toList());
+        savedParameters.add(new SavedPipelineParameters(0L, messageSource.getMessage("workflow.parameters.named.default", new Object[]{}, locale), defaultParameters));
+
+        /*
+        Add any saved parameter sets
+         */
+        List<IridaWorkflowNamedParameters> namedParameters = namedParametersService.findNamedParametersForWorkflow(workflow.getWorkflowIdentifier());
+        savedParameters.addAll(namedParameters.stream().map(wp -> {
+            Map<String, String> inputParameter = wp.getInputParameters();
+
+            // Go through the parameters and see which ones are getting overwritten.
+            List<PipelineParameter> parameters = defaultParameters.stream()
+                    .map(parameter -> {
+                        if (inputParameter.containsKey(parameter.getName())) {
+                            return new PipelineParameter(parameter.getLabel(), inputParameter.get(parameter.getName()), parameter.getName());
+                        }
+                        return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
+                    }).collect(Collectors.toList());
+            return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
+        }).collect(Collectors.toList()));
+
+
+        return savedParameters;
     }
 }

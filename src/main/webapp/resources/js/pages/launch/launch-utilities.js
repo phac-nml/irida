@@ -38,7 +38,7 @@ export function isTruthy(options) {
  * @param {array} parameters - list of parameters, each one should have a set of options
  * @returns {*}
  */
-export function formatParametersWithOptions(parameters) {
+export function formatParametersWithOptions(parameters = []) {
   return parameters.map((p) => {
     const parameter = { ...p };
     if (isTruthy(parameter.options)) {
