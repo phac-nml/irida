@@ -27,22 +27,22 @@ export default function OverRepresentedSequences() {
 
   const columns = [
     {
-      title: "Sequence",
+      title: i18n("FastQC.overrepresented.sequence"),
       key: "sequence",
       dataIndex: "sequence",
     },
     {
-      title: "Percentage",
+      title: i18n("FastQC.overrepresented.percentage"),
       key: "percentage",
       dataIndex: "percentage",
     },
     {
-      title: "Count",
+      title: i18n("FastQC.overrepresented.count"),
       key: "overrepresentedSequenceCount",
       dataIndex: "overrepresentedSequenceCount",
     },
     {
-      title: "Possible Source",
+      title: i18n("FastQC.overrepresented.possibleSource"),
       key: "possibleSource",
       dataIndex: "possibleSource",
     },
@@ -51,7 +51,7 @@ export default function OverRepresentedSequences() {
 
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={`Overrepresented Sequences`}>
+      <TabPaneContent title={i18n("FastQC.overrepresentedSequences")}>
         <Typography.Paragraph className="text-info">{fastQC.description}</Typography.Paragraph>
         <Table
           bordered

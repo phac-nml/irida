@@ -7,16 +7,6 @@
 <head>
     <title>FastQC Summary</title>
     <link rel="stylesheet" th:href="@{/dist/css/sequence-files.bundle.css}" />
-
-    <script th:inline="javascript">
-      window.PAGE = {
-        seqObjectId: /*[[${seqObjectId}]]*/ "0",
-        seqFileId: /*[[${seqFileId}]]*/ "0",
-        sampleId: /*[[${sampleId}]]*/ "0",
-        projectId: /*[[${projectId}]]*/ "0",
-        runId: /*[[${runId}]]*/ "0",
-      };
-    </script>
 </head>
 <body>
 <div id="root" style="height: 100%;" layout:fragment="page">
