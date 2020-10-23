@@ -8,10 +8,10 @@ import React, { Suspense, useEffect, useState } from "react";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { Link, Location, Router } from "@reach/router";
-import { Menu } from "antd";
+import { Badge, Menu } from "antd";
 import { ContentLoading } from "../../../components/loader";
 
-import { SPACE_MD } from "../../../styles/spacing"
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing"
 import { getFastQCDetails } from "../../../apis/files/sequence-files";
 import {
   projId,
@@ -21,6 +21,7 @@ import {
   runId
 } from "../fastqc-constants";
 import { InfoAlert } from "../../../components/alerts";
+import { blue6 } from "../../../styles/colors";
 
 const FastQCDetails = React.lazy(() => import("./FastQCDetails"));
 const FastQCCharts = React.lazy(() => import("./FastQCCharts"));
@@ -78,10 +79,12 @@ export default function FastQC() {
                       </Link>
                     </Menu.Item>
                     <Menu.Item key="overrepresented">
-                      <Link to={`${DEFAULT_URL}/overrepresented`}
-                            onClick={() => setSelectedKeys("overrepresented")}>
-                        {i18n("FastQC.overrepresentedSequences")}
-                      </Link>
+                        <Link to={`${DEFAULT_URL}/overrepresented`}
+                              onClick={() => setSelectedKeys("overrepresented")}>
+                          {i18n("FastQC.overrepresentedSequences")}
+                          <Badge count={fastQC.overrepresentedSequences.length}
+                                 style={{ backgroundColor: blue6, marginLeft: SPACE_XS }} />
+                        </Link>
                     </Menu.Item>
                     <Menu.Item key="details">
                       <Link to={`${DEFAULT_URL}/details`}

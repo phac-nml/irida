@@ -19,7 +19,6 @@ export default function OverRepresentedSequences() {
 
   useEffect(() => {
     getOverRepresentedSequences(seqObjId, seqFileId).then(analysisFastQC => {
-      console.log(analysisFastQC);
       setFastQC(analysisFastQC);
       setLoading(false);
     });
@@ -55,7 +54,7 @@ export default function OverRepresentedSequences() {
         <Typography.Paragraph className="text-info">{fastQC.description}</Typography.Paragraph>
         <Table
           bordered
-          rowKey="id"
+          rowKey={(item) => item.identifier}
           loading={loading}
           columns={columns}
           dataSource={fastQC.overrepresentedSequences}
