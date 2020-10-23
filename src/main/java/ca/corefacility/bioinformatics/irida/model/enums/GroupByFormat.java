@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
+/**
+ * Defines a set of formats which admin statistics
+ * can be grouped by
+ *
+ */
+
 public enum GroupByFormat {
 	HOURLY("%H:00"),
 	DAILY("%m/%d"),
@@ -12,6 +18,12 @@ public enum GroupByFormat {
 		this.groupByFormat = groupByFormat;
 	}
 
+	/**
+	 * Gets the group by format from a string
+	 *
+	 * @param timePeriod The time period for which to get the group by format
+	 * @return the group by format for the time period
+	 */
 	public static GroupByFormat fromString(String timePeriod) {
 		switch (timePeriod.toUpperCase()) {
 		case "DAILY":

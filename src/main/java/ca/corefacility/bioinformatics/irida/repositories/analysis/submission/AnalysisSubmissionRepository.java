@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
