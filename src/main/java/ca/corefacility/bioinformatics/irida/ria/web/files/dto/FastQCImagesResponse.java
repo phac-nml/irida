@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files.dto;
 
+/**
+ *  Used by UI to encapsulate fastqc images data.
+ */
+
 public class FastQCImagesResponse {
 	private byte[] perbaseChart;
 	private byte[] persequenceChart;

@@ -4,6 +4,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
+/**
+ *  Used by UI to encapsulate fastqc details.
+ */
+
 public class FastQCDetailsResponse {
 	private AnalysisFastQC analysisFastQC;
 	private SequencingObject sequencingObject;
