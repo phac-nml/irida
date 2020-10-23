@@ -44,18 +44,13 @@ public class SequenceFileController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @param sampleId           Optional sample id depending on the request mapping
-	 * @param projectId          Optional project id depending on the request mapping
-	 * @param runId              Optional run id depending on the request mapping
 	 * @return The name of the template.
 	 */
 	@RequestMapping(value = { "/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
 			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**" })
-	public String getSequenceFilePage(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,
-			@PathVariable(required = false) Long sampleId, @PathVariable(required = false) Long projectId,
-			@PathVariable(required = false) Long runId) {
+	public String getSequenceFilePage(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		return FASTQC_PAGE;
 	}

@@ -101,7 +101,10 @@ export default function FastQC() {
             </Suspense>
           </div>
             :
+          <div>
+            <InfoAlert message={i18n("FastQC.noResults")} />
             <InfoAlert message={i18n("FastQC.noFastQCDataAvailable")} />
+          </div>
       }
     </PageWrapper>
   );

@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +23,7 @@ import org.springframework.ui.Model;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * Unit Tests for @{link SequenceFileController}
@@ -40,14 +37,10 @@ public class SequenceFileControllerTest {
 	private SequenceFileController controller;
 
 	// Services
-	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
-	private AnalysisService analysisService;
 
 	@Before
 	public void setUp() {
-		sequencingRunService = mock(SequencingRunService.class);
-		analysisService = mock(AnalysisService.class);
 		objectService = mock(SequencingObjectService.class);
 		controller = new SequenceFileController(objectService);
 
@@ -63,13 +56,12 @@ public class SequenceFileControllerTest {
 	 * PAGE TESTS
 	 *********************************************************************************************
 	 */
-	@Ignore
 	@Test
 	public void testGetSequenceFilePage() {
 		logger.debug("Testing getSequenceFilePage");
 		Model model = new ExtendedModelMap();
 
-		String response = controller.getSequenceFilePage(OBJECT_ID, FILE_ID, null, null, null);
+		String response = controller.getSequenceFilePage(OBJECT_ID, FILE_ID);
 		assertEquals("Should return the correct page", SequenceFileController.FASTQC_PAGE, response);
 	}
 
