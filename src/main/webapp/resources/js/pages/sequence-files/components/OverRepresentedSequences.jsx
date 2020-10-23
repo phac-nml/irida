@@ -1,17 +1,25 @@
+/*
+ * This file renders the OverRepresentedSequences component.
+ */
+
 import React, { useEffect, useState } from "react";
-import { Layout, Table } from "antd";
+import { Layout, Table, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { getFastQCDetails } from "../../../apis/files/sequence-files";
-
+import { getOverRepresentedSequences } from "../../../apis/files/sequence-files";
+import {
+  seqObjId,
+  seqFileId
+} from "../fastqc-constants";
 
 export default function OverRepresentedSequences() {
   const [fastQC, setFastQC] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getFastQCDetails(window.PAGE.seqObjectId, window.PAGE.seqFileId).then(({ analysisFastQC }) => {
+    getOverRepresentedSequences(seqObjId, seqFileId).then(analysisFastQC => {
+      console.log(analysisFastQC);
       setFastQC(analysisFastQC);
       setLoading(false);
     });
@@ -44,8 +52,7 @@ export default function OverRepresentedSequences() {
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <TabPaneContent title={`Overrepresented Sequences`}>
-        <p>On overrepresented sequences page</p>
-
+        <Typography.Paragraph className="text-info">{fastQC.description}</Typography.Paragraph>
         <Table
           bordered
           rowKey="id"

@@ -49,7 +49,7 @@ public class SequenceFileControllerTest {
 		sequencingRunService = mock(SequencingRunService.class);
 		analysisService = mock(AnalysisService.class);
 		objectService = mock(SequencingObjectService.class);
-		controller = new SequenceFileController(objectService, sequencingRunService, analysisService);
+		controller = new SequenceFileController(objectService);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
@@ -69,19 +69,8 @@ public class SequenceFileControllerTest {
 		logger.debug("Testing getSequenceFilePage");
 		Model model = new ExtendedModelMap();
 
-		String response = controller.getSequenceFilePage(model, OBJECT_ID, FILE_ID, null, null, null);
-		assertEquals("Should return the correct page", SequenceFileController.FILE_DETAIL_PAGE, response);
-		testModel(model);
-	}
-
-	@Ignore
-	@Test
-	public void testGetSequenceFileOverrepresentedPage() {
-		logger.debug("Testing getSequenceFilePage");
-		Model model = new ExtendedModelMap();
-		String response = controller.getSequenceFileOverrepresentedPage(model, OBJECT_ID, FILE_ID);
-		assertEquals("Should return the correct page", SequenceFileController.FILE_OVERREPRESENTED, response);
-		testModel(model);
+		String response = controller.getSequenceFilePage(OBJECT_ID, FILE_ID, null, null, null);
+		assertEquals("Should return the correct page", SequenceFileController.FASTQC_PAGE, response);
 	}
 
 	/***********************************************************************************************
@@ -105,10 +94,4 @@ public class SequenceFileControllerTest {
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
 	}
 
-	private void testModel(Model model) {
-		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
-		assertTrue("Model should contain the created date for the file.", model.containsAttribute("created"));
-		assertTrue("Model should contain the fastQC data for the file.", model.containsAttribute("fastQC"));
-		assertTrue("Model should contain the active nav id", model.containsAttribute(SequenceFileController.ACTIVE_NAV));
-	}
 }

@@ -1,3 +1,7 @@
+/*
+ * This file renders the FastQC details component.
+ */
+
 import React, { useEffect, useState } from "react";
 import { Divider, Layout, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
@@ -7,17 +11,16 @@ import { BasicList } from "../../../components/lists";
 import { getFastQCDetails } from "../../../apis/files/sequence-files";
 import { formatDate } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
+import { seqFileId, seqObjId } from "../fastqc-constants";
 
 export default function FastQCDetails() {
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState({});
-  const [seqObject, setSeqObject] = useState({});
   const [fastQC, setFastQC] = useState({});
 
   useEffect(() => {
-    getFastQCDetails(window.PAGE.seqObjectId, window.PAGE.seqFileId).then(({ sequenceFile, sequencingObject, analysisFastQC }) => {
+    getFastQCDetails(seqObjId, seqFileId).then(({ sequenceFile, analysisFastQC }) => {
       setFile(sequenceFile);
-      setSeqObject(sequencingObject);
       setFastQC(analysisFastQC);
       setLoading(false);
     });
@@ -25,38 +28,38 @@ export default function FastQCDetails() {
 
   const fileDetails = [
     {
-      title: "ID",
+      title: i18n("FastQC.id"),
       desc: file.identifier
     },
     {
-      title: "Uploaded On",
+      title: i18n("FastQC.uploadedOn"),
       desc: formatDate({ date: file.createdDate })
     },
     {
-      title: "Encoding",
+      title: i18n("FastQC.encoding"),
       desc: fastQC.encoding
     },
   ];
 
   const sequenceDetails = [
     {
-      title: "Total Sequences",
+      title: i18n("FastQC.totalSequences"),
       desc: fastQC.totalSequences
     },
     {
-      title: "Total Bases",
+      title: i18n("FastQC.totalBases"),
       desc: fastQC.totalBases
     },
     {
-      title: "Min. Length",
+      title: i18n("FastQC.minLength"),
       desc: fastQC.minLength
     },
     {
-      title: "Max. Length",
+      title: i18n("FastQC.maxLength"),
       desc: fastQC.maxLength
     },
     {
-      title: "GC Content",
+      title: i18n("FastQC.gcContent"),
       desc: fastQC.gcContent
     },
   ];
@@ -67,20 +70,17 @@ export default function FastQCDetails() {
         { loading ?
           <div>
             <ContentLoading
-              message="Fetching fastqc details"
+              message={i18n("FastQC.fetchingDetails")}
             />
           </div>
           :
-          !fastQC ?
-              <p>There is no FastQC data available for this file.</p>
-            :
-            <div>
-              <Typography.Title level={4}>File Details</Typography.Title>
-              <BasicList dataSource={fileDetails} />
-              <Divider />
-              <Typography.Title level={4}>Sequence Details</Typography.Title>
-              <BasicList dataSource={sequenceDetails} />
-            </div>
+          <div>
+            <Typography.Title level={4}>{i18n("FastQC.fileDetails")}</Typography.Title>
+            <BasicList dataSource={fileDetails} />
+            <Divider />
+            <Typography.Title level={4}>{i18n("FastQC.sequenceDetails")}</Typography.Title>
+            <BasicList dataSource={sequenceDetails} />
+          </div>
         }
       </TabPaneContent>
     </Layout>
