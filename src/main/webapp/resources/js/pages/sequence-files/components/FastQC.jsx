@@ -14,11 +14,9 @@ import { ContentLoading } from "../../../components/loader";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing"
 import { getFastQCDetails } from "../../../apis/files/sequence-files";
 import {
-  projId,
-  sampleId,
   seqObjId,
   seqFileId,
-  runId
+  urlMatch
 } from "../fastqc-constants";
 import { InfoAlert } from "../../../components/alerts";
 import { blue6 } from "../../../styles/colors";
@@ -32,12 +30,6 @@ export default function FastQC() {
   const [fastQC, setFastQC] = useState({});
   const [file, setFile] = useState({});
 
-  // 4 different urls map to this page
-  const url1 = `projects/${projId}/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
-  const url2 = `projects/${projId}/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}`;
-  const url3 = `sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
-  const url4 = `sequencingRuns/${runId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
-  const urlMatch = window.location.href.match(url1) || window.location.href.match(url2) || window.location.href.match(url3) || window.location.href.match(url4);
   const DEFAULT_URL = setBaseUrl(urlMatch[0]);
 
   const [selectedKeys, setSelectedKeys] = React.useState(() => {
@@ -83,7 +75,9 @@ export default function FastQC() {
                               onClick={() => setSelectedKeys("overrepresented")}>
                           {i18n("FastQC.overrepresentedSequences")}
                           <Badge count={fastQC.overrepresentedSequences.length}
-                                 style={{ backgroundColor: blue6, marginLeft: SPACE_XS }} />
+                                 showZero
+                                 style={{ backgroundColor: blue6, marginLeft: SPACE_XS }}
+                          />
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="details">
