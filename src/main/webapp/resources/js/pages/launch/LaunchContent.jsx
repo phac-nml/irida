@@ -1,21 +1,24 @@
 import React from "react";
 import { LaunchPageHeader } from "./LaunchPageHeader";
 import { LaunchDetails } from "./LaunchDetails";
-import { Button, Form } from "antd";
+import { Button, Divider, Form } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { ParameterWithOptions } from "./ParameterWithOptions";
 
 /**
  * React component to layout the content of the pipeline launch.
  * It will act as the top level logic controller.
  */
 export function LaunchContent() {
-  const { type } = useLaunchState();
+  const { initialValues, parameterWithOptions } = useLaunchState();
   const { dispatchLaunch } = useLaunchDispatch();
-
   const [form] = Form.useForm();
 
+  /**
+   * Triggered when submitting the launch.
+   * This let's us perform any last minute validation and UI updates.
+   */
   const onFinish = () => {
     // Add any required extra validation here.
     form.validateFields().then((values) => dispatchLaunch(values));
@@ -30,18 +33,11 @@ export function LaunchContent() {
         onFinish={onFinish}
         name="details"
         layout="vertical"
-        initialValues={{
-          name: `${type.replace(" ", "_")}__${formatInternationalizedDateTime(
-            Date.now(),
-            {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-            }
-          ).replaceAll("/", "-")}`,
-        }}
+        initialValues={initialValues}
       >
         <LaunchDetails />
+        <Divider />
+        <ParameterWithOptions parameters={parameterWithOptions} />
         <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>
           {i18n("LaunchContent.submit")}
         </Button>

@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch;
 
+import java.util.List;
+
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 
 /**
  * Model class to send details about a workflow pipeline to the UI
@@ -10,6 +13,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
+    private List<PipelineParameterWithOptions> parameterWithOptions;
 
     public String getName() {
         return name;
@@ -33,5 +37,13 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<PipelineParameterWithOptions> getParameterWithOptions() {
+        return parameterWithOptions;
+    }
+
+    public void setParameterWithOptions(List<PipelineParameterWithOptions> parameterWithOptions) {
+        this.parameterWithOptions = parameterWithOptions;
     }
 }
