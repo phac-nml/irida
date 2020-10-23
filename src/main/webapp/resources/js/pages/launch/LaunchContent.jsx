@@ -12,11 +12,7 @@ import { SavedParameters } from "./SavedParameters";
  * It will act as the top level logic controller.
  */
 export function LaunchContent() {
-  const {
-    initialValues,
-    parameterWithOptions,
-    savedPipelineParameters,
-  } = useLaunchState();
+  const { initialValues, parameterWithOptions } = useLaunchState();
   const { dispatchLaunch } = useLaunchDispatch();
   const [form] = Form.useForm();
 
@@ -42,7 +38,7 @@ export function LaunchContent() {
       >
         <LaunchDetails />
         <Divider />
-        <SavedParameters sets={savedPipelineParameters} />
+        <SavedParameters form={form} />
         <Divider />
         <ParameterWithOptions parameters={parameterWithOptions} />
         <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>

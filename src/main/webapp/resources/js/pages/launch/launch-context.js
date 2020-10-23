@@ -14,12 +14,25 @@ const LaunchDispatchContext = React.createContext();
 
 const TYPES = {
   LOADED: "launch:loaded",
+  PARAMETER_SET: "launch:parameters",
+  MODIFIED_PARAMETERS: "launch:modified_params",
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case TYPES.LOADED:
       return { ...state, loading: false, ...action.payload };
+    case TYPES.PARAMETER_SET:
+      return { ...state, parameterSet: action.payload.set };
+    case TYPES.MODIFIED_PARAMETERS:
+      return {
+        ...state,
+        parameterSet: action.payload.set,
+        savedPipelineParameters: [
+          ...state.savedPipelineParameters,
+          action.payload.set,
+        ],
+      };
   }
 };
 
@@ -64,6 +77,9 @@ function LaunchProvider({ children }) {
           name: formatDefaultPipelineName(type, Date.now()),
         };
 
+        // Set the default parameter set
+        initial.parameterSet = 0;
+
         // Get initial values for parameters with options.
         formattedParameterWithOptions.forEach((parameter) => {
           initial[parameter.name] =
@@ -75,6 +91,9 @@ function LaunchProvider({ children }) {
           type: TYPES.LOADED,
           payload: {
             ...details,
+            parameterSet: JSON.parse(
+              JSON.stringify(details.savedPipelineParameters[0])
+            ), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
           },
         });
@@ -82,13 +101,43 @@ function LaunchProvider({ children }) {
     );
   }, [id]);
 
+  function dispatchUseSavedParameterSet(id) {
+    const set = state.savedPipelineParameters.find((p) => p.id === id);
+    dispatch({
+      type: TYPES.PARAMETER_SET,
+      payload: { set: JSON.parse(JSON.stringify(set)) },
+    });
+  }
+
   function dispatchLaunch(values) {
     launchPipeline(id, values);
   }
 
+  function dispatchUseModifiedParameters(parameters) {
+    const set = JSON.parse(JSON.stringify(state.parameterSet));
+    set.parameters = set.parameters.map((parameter) => ({
+      ...parameter,
+      value: parameters[parameter.name],
+    }));
+
+    set.id = `${set.id}-1`;
+    set.label = `${set.label} *modified`;
+
+    dispatch({
+      type: TYPES.MODIFIED_PARAMETERS,
+      payload: { set },
+    });
+  }
+
   return (
     <LaunchStateContext.Provider value={{ ...state, pipeline, initialValues }}>
-      <LaunchDispatchContext.Provider value={{ dispatchLaunch }}>
+      <LaunchDispatchContext.Provider
+        value={{
+          dispatchLaunch,
+          dispatchUseSavedParameterSet,
+          dispatchUseModifiedParameters,
+        }}
+      >
         {children}
       </LaunchDispatchContext.Provider>
     </LaunchStateContext.Provider>

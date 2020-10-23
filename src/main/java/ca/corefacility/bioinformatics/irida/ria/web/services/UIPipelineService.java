@@ -3,10 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
-import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -16,10 +12,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
 /**
  * UI Service for all things related to workflow pipelines.
@@ -175,7 +175,7 @@ public class UIPipelineService {
             List<PipelineParameter> parameters = defaultParameters.stream()
                     .map(parameter -> {
                         if (inputParameter.containsKey(parameter.getName())) {
-                            return new PipelineParameter(parameter.getLabel(), inputParameter.get(parameter.getName()), parameter.getName());
+                            return new PipelineParameter(parameter.getName(), parameter.getLabel(), inputParameter.get(parameter.getName()));
                         }
                         return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
                     }).collect(Collectors.toList());
