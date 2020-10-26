@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -820,32 +821,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getAnalysesRanHourly(Date createdDate) {
-		return analysisSubmissionRepository.countAnalysesRanHourly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getAnalysesRanDaily(Date createdDate) {
-		return analysisSubmissionRepository.countAnalysesRanDaily(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getAnalysesRanMonthly(Date createdDate) {
-		return analysisSubmissionRepository.countAnalysesRanMonthly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getAnalysesRanYearly(Date createdDate) {
-		return analysisSubmissionRepository.countAnalysesRanYearly(createdDate);
+	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return analysisSubmissionRepository.countAnalysesRanGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 
 }

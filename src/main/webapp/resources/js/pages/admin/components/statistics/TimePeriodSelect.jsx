@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Select } from "antd";
+import { Form, Radio } from "antd";
 
 /**
  * React component for updating the time period for statistics.
@@ -9,6 +9,19 @@ import { Form, Select } from "antd";
  * @constructor
  */
 export function TimePeriodSelect({ onChange = () => {} }) {
+
+  const options = [
+    { label: i18n("TimePeriodSelect.day"), value: 1 },
+    { label: i18n("TimePeriodSelect.week"), value: 7 },
+    { label: i18n("TimePeriodSelect.twoWeeks"), value: 14 },
+    { label: i18n("TimePeriodSelect.month"), value: 30 },
+    { label: i18n("TimePeriodSelect.quarter"), value: 90 },
+    { label: i18n("TimePeriodSelect.year"), value: 365 },
+    { label: i18n("TimePeriodSelect.twoYears"), value: 730 },
+    { label: i18n("TimePeriodSelect.fiveYears"), value: 1825 },
+    { label: i18n("TimePeriodSelect.tenYears"), value: 3650 },
+  ];
+
   return (
     <Form.Item
         label ={
@@ -18,35 +31,10 @@ export function TimePeriodSelect({ onChange = () => {} }) {
         }
       name="time-period"
     >
-      <Select onChange={onChange} className={"t-time-period"} style={{width: 120}}>
-        <Select.Option value={1}>
-          {i18n("TimePeriodSelect.day")}
-        </Select.Option>
-        <Select.Option value={7}>
-          {i18n("TimePeriodSelect.week")}
-        </Select.Option>
-        <Select.Option value={14}>
-          {i18n("TimePeriodSelect.twoWeeks")}
-        </Select.Option>
-        <Select.Option value={30}>
-          {i18n("TimePeriodSelect.month")}
-        </Select.Option>
-        <Select.Option value={90}>
-          {i18n("TimePeriodSelect.quarter")}
-        </Select.Option>
-        <Select.Option value={365}>
-          {i18n("TimePeriodSelect.year")}
-        </Select.Option>
-        <Select.Option value={730}>
-          {i18n("TimePeriodSelect.twoYears")}
-        </Select.Option>
-        <Select.Option value={1825}>
-          {i18n("TimePeriodSelect.fiveYears")}
-        </Select.Option>
-        <Select.Option value={3650}>
-          {i18n("TimePeriodSelect.tenYears")}
-        </Select.Option>
-      </Select>
+      <Radio.Group
+        options={options}
+        onChange={onChange}
+        optionType="button" />
     </Form.Item>
   );
 }

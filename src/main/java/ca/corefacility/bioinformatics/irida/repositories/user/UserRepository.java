@@ -44,6 +44,7 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	/**
 	 * Get a count of all {@link User}s logged in within time period
 	 *
+	 * @param createdDate the minimum last login date for users
 	 * @return a count of {@link User}s
 	 */
 	@Query("select count(u.id) from User u where u.lastLogin >= ?1")
@@ -52,50 +53,22 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	/**
 	 * Get a count of all {@link User}s created within time period
 	 *
+	 * @param createdDate the minimum created date for users
 	 * @return a count of {@link User}s
 	 */
 	@Query("select count(u.id) from User u where u.createdDate >= ?1")
 	public Long countUsersCreatedInTimePeriod(Date createdDate);
 
-
 	/**
-	 * Get a list of {@link GenericStatModel}s for users created in the last day and grouped by hour
+	 * Get a list of {@link GenericStatModel}s for users created in the n time period
+	 * grouped by the format provided.
 	 *
 	 * @param createdDate The minimum created date for users
+	 * @param groupByFormat the format for which to group the results by
 	 * @return A list of {@link GenericStatModel}s
 	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, '%H:00'), count(u.id))"
-			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, '%H')")
-	public List<GenericStatModel> countUsersCreatedHourly(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for users created in the past 30 days and grouped by month and day
-	 *
-	 * @param createdDate The minimum created date for users
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, '%m/%d'), count(u.id))"
-			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, '%m/%d')")
-	public List<GenericStatModel> countUsersCreatedDaily(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for users created in the past 365 days and grouped by month and year
-	 *
-	 * @param createdDate The minimum created date for users
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, '%m/%y'), count(u.id))"
-			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.lastLogin, '%m/%y')")
-	public List<GenericStatModel> countUsersCreatedMonthly(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for users created in the past 2,5 and 10 years and grouped by year
-	 *
-	 * @param createdDate The minimum created date for users
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, '%Y'), count(u.id))"
-			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, '%Y')")
-	public List<GenericStatModel> countUsersCreatedYearly(Date createdDate);
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, ?2), count(u.id))"
+			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, ?2)")
+	public List<GenericStatModel> countUsersCreatedGrouped(Date createdDate, String groupByFormat);
 
 }

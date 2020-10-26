@@ -3,19 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.*;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAdminStatisticsService;
 
-
 /**
  * Controller to handle ajax requests for the Admin Panel statistics page.
  */
-
 @RestController
 @RequestMapping("/ajax/statistics")
 public class AdminStatisticsAjaxController {
@@ -34,8 +29,8 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve usage stats for
 	 * @return dto with basic usage stats
 	 */
-	@RequestMapping(value = "/basic", method = RequestMethod.GET)
-	public ResponseEntity<BasicStats> getAdminStatistics(@RequestParam int timePeriod) {
+	@GetMapping("/basic")
+	public ResponseEntity<BasicStatsResponse> getAdminStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminStatistics(timePeriod));
 	}
 
@@ -45,8 +40,8 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated project usage stats for
 	 * @return dto with updated project usage stats
 	 */
-	@RequestMapping(value = "/projects", method = RequestMethod.GET)
-	public ResponseEntity<ProjectStatsResponse> getAdminProjectStatistics(@RequestParam int timePeriod) {
+	@GetMapping("/projects")
+	public ResponseEntity<StatisticsResponse> getAdminProjectStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminProjectStatistics(timePeriod));
 	}
 
@@ -56,8 +51,8 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated user usage stats for
 	 * @return dto with updated user usage stats
 	 */
-	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	public ResponseEntity<UserStatsResponse> getAdminUserStatistics(@RequestParam int timePeriod) {
+	@GetMapping("/users")
+	public ResponseEntity<StatisticsResponse> getAdminUserStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminUserStatistics(timePeriod));
 	}
 
@@ -67,8 +62,8 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated analyses usage stats for
 	 * @return dto with updated analyses usage stats
 	 */
-	@RequestMapping(value = "/analyses", method = RequestMethod.GET)
-	public ResponseEntity<AnalysesStatsResponse> getAdminAnalysesStatistics(@RequestParam int timePeriod) {
+	@GetMapping("/analyses")
+	public ResponseEntity<StatisticsResponse> getAdminAnalysesStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminAnalysesStatistics(timePeriod));
 	}
 
@@ -78,8 +73,8 @@ public class AdminStatisticsAjaxController {
 	 * @param timePeriod The time period for which to retrieve updated sample usage stats for
 	 * @return dto with updated sample usage stats
 	 */
-	@RequestMapping(value = "/samples", method = RequestMethod.GET)
-	public ResponseEntity<SampleStatsResponse> getAdminSampleStatistics(@RequestParam int timePeriod) {
+	@GetMapping("/samples")
+	public ResponseEntity<StatisticsResponse> getAdminSampleStatistics(@RequestParam int timePeriod) {
 		return ResponseEntity.ok(uiAdminStatisticsService.getAdminSampleStatistics(timePeriod));
 	}
 }

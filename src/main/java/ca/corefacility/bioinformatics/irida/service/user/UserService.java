@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -150,37 +151,27 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 
 	/**
 	 * Get count of users logged on during the time period
+	 *
+	 * @param createdDate the minimum date for users login
 	 * @return An {@link Long} count of users logged in
 	 */
 	public Long getUsersLoggedIn(Date createdDate);
 
 	/**
-	 * Get count of users created in the time period
-	 * @return An {@link Long} count of users logged in
+	 * Get count of users created during the time period
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link Long} count of users created
 	 */
 	public Long getUsersCreatedInTimePeriod(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of users created in the past 24 hours
+	 * Get list of {@link GenericStatModel} of users created in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getUsersCreatedHourly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of users created in the past n days
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getUsersCreatedDaily(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of users created in the past n months
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getUsersCreatedMonthly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of users created in the past n years
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getUsersCreatedYearly(Date createdDate);
+	public List<GenericStatModel> getUsersCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 }
