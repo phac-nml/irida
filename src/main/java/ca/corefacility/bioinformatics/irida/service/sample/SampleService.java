@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -311,8 +311,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * grouped by the format provided.
 	 *
 	 * @param createdDate the minimum date for samples created
-	 * @param groupByFormat the format for which to group the results by
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, GroupByFormat groupByFormat);
+	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 }

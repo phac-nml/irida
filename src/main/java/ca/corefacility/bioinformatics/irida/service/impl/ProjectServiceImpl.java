@@ -30,8 +30,8 @@ import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
-import ca.corefacility.bioinformatics.irida.model.enums.GroupByFormat;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -958,8 +958,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, GroupByFormat groupByFormat) {
-		return projectRepository.countProjectsCreatedGrouped(createdDate, groupByFormat.toString());
+	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return projectRepository.countProjectsCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 
 }
