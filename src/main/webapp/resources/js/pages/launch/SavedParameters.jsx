@@ -2,7 +2,7 @@ import React from "react";
 import Form from "antd/es/form";
 import { Button, Select, Space, Typography } from "antd";
 import { IconEdit } from "../../components/icons/Icons";
-import { ParametersModal } from "./ParametersModal";
+import ParametersModal from "./components/ParametersModal";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
 
 export function SavedParameters({ form }) {

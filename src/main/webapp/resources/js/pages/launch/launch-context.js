@@ -3,7 +3,6 @@ import {
   getPipelineDetails,
   launchPipeline,
 } from "../../apis/pipelines/pipelines";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
   formatDefaultPipelineName,
   formatParametersWithOptions,
@@ -129,6 +128,17 @@ function LaunchProvider({ children }) {
     });
   }
 
+  /**
+   * Dispatch function for overwriting a saved parameter set.
+   *
+   * @param {object} parameters - the full listing of parameters to update.
+   */
+  function dispatchOverwriteParameterSave(parameters) {
+    console.log(state.parameterSet.id);
+
+    // TODO: Save parameters......
+  }
+
   return (
     <LaunchStateContext.Provider value={{ ...state, pipeline, initialValues }}>
       <LaunchDispatchContext.Provider
@@ -136,6 +146,7 @@ function LaunchProvider({ children }) {
           dispatchLaunch,
           dispatchUseSavedParameterSet,
           dispatchUseModifiedParameters,
+          dispatchOverwriteParameterSave,
         }}
       >
         {children}
