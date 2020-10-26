@@ -17,8 +17,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -59,8 +57,6 @@ public class SequenceFileControllerTest {
 	@Test
 	public void testGetSequenceFilePage() {
 		logger.debug("Testing getSequenceFilePage");
-		Model model = new ExtendedModelMap();
-
 		String response = controller.getSequenceFilePage(OBJECT_ID, FILE_ID);
 		assertEquals("Should return the correct page", SequenceFileController.FASTQC_PAGE, response);
 	}

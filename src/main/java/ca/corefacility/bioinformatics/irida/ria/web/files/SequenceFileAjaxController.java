@@ -52,13 +52,13 @@ public class SequenceFileAjaxController {
 	 * sequence file, and the fastqc result.
 	 */
 	@GetMapping("/fastqc-details")
-	public FastQCDetailsResponse getFastQCDetails(@RequestParam Long sequencingObjectId,
+	public ResponseEntity<FastQCDetailsResponse> getFastQCDetails(@RequestParam Long sequencingObjectId,
 			@RequestParam Long sequenceFileId) {
 		SequencingObject seqObject = sequencingObjectService.read(sequencingObjectId);
 		SequenceFile file = seqObject.getFileWithId(sequenceFileId);
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(seqObject, file.getId());
 
-		return new FastQCDetailsResponse(seqObject, file, fastQC);
+		return ResponseEntity.ok(new FastQCDetailsResponse(seqObject, file, fastQC));
 	}
 
 	/**
@@ -68,6 +68,7 @@ public class SequenceFileAjaxController {
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
 	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images
 	 * as well as the fastqc version
+	 * @throws IOException if entity is not found
 	 */
 	@GetMapping("/fastqc-charts")
 	public ResponseEntity<FastQCImagesResponse> getFastQCCharts(@RequestParam Long sequencingObjectId,

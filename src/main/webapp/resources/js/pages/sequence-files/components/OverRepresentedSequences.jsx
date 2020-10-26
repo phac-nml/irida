@@ -12,6 +12,7 @@ import {
   seqObjId,
   seqFileId
 } from "../fastqc-constants";
+import { Monospace } from "../../../components/typography";
 
 export default function OverRepresentedSequences() {
   const [fastQC, setFastQC] = useState({});
@@ -29,11 +30,17 @@ export default function OverRepresentedSequences() {
       title: i18n("FastQC.overrepresented.sequence"),
       key: "sequence",
       dataIndex: "sequence",
+      render(data) {
+        return <Monospace>{data}</Monospace>;
+      }
     },
     {
       title: i18n("FastQC.overrepresented.percentage"),
       key: "percentage",
       dataIndex: "percentage",
+      render(data) {
+        return `${parseInt(data)}%`;
+      }
     },
     {
       title: i18n("FastQC.overrepresented.count"),
@@ -45,7 +52,6 @@ export default function OverRepresentedSequences() {
       key: "possibleSource",
       dataIndex: "possibleSource",
     },
-
   ]
 
   return (
