@@ -8,7 +8,7 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 public enum StatisticTimePeriod {
 	HOURLY(new int[] {1}, "%H:00"),
-	DAILY(new int[] {7,14,30}, "%%m/%d"),
+	DAILY(new int[] {7,14,30}, "%m/%d"),
 	MONTHLY(new int[] {90, 365}, "%m/%y"),
 	YEARLY(new int[] {730, 1825, 3650}, "%Y");
 
@@ -18,18 +18,6 @@ public enum StatisticTimePeriod {
 	private StatisticTimePeriod(int[] values, String groupByFormat) {
 		this.values = values;
 		this.groupByFormat = groupByFormat;
-	}
-
-	public int[] getDaily() {
-		return DAILY.values;
-	}
-
-	public int[] getMonthly() {
-		return MONTHLY.values;
-	}
-
-	public int[] getYearly() {
-		return YEARLY.values;
 	}
 
 	public int[] getValues() {
