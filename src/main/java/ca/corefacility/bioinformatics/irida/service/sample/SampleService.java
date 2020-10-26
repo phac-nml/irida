@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -299,31 +300,19 @@ public interface SampleService extends CRUDService<Long, Sample> {
 
 	/**
 	 * Get count of samples created in the time period
+	 *
+	 * @param createdDate the minimum date for samples created
 	 * @return An {@link Long} count of samples created
 	 */
 	public Long getSamplesCreated(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past 24 hours
+	 * Get list of {@link GenericStatModel} of samples created in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getSamplesCreatedHourly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past n days
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getSamplesCreatedDaily(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past n months
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getSamplesCreatedMonthly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past n years
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getSamplesCreatedYearly(Date createdDate);
+	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 }
