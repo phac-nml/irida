@@ -6,11 +6,24 @@ import ParametersModal from "./components/ParametersModal";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import { SPACE_XS } from "../../styles/spacing";
 
+/**
+ * React component to render a select input and modifying button for
+ * selecting saved pipeline parameters.
+ *
+ * @param {object} form - Ant Design form api.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SavedParameters({ form }) {
   const { savedPipelineParameters, parameterSet } = useLaunchState();
   const { dispatchUseSavedParameterSet } = useLaunchDispatch();
   const [visible, setVisible] = React.useState(false);
 
+  /**
+   * If the parameters are updated in the modal window, the selected template
+   * will change.  This watches for this and updates the select value to
+   * make sure the appropriate template is selected.
+   */
   React.useEffect(() => {
     form.setFieldsValue({ parameterSet: parameterSet.id });
   }, [form, parameterSet]);
