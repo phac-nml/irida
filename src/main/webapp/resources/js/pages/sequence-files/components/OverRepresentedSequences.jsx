@@ -39,7 +39,7 @@ export default function OverRepresentedSequences() {
       key: "percentage",
       dataIndex: "percentage",
       render(data) {
-        return `${parseInt(data)}%`;
+        return `${(Math.round(data * 10) / 10).toFixed(1)} %`;
       }
     },
     {
