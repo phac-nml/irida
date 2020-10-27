@@ -1,3 +1,10 @@
+.announcement-icon {
+  display: flex;
+  justify-content: center;
+  flex: 0 0 35px;
+  margin-right: 10px;
+}
+
 .announcement-item {
   display: flex;
 }

@@ -23,10 +23,16 @@
                              data:message="${ann.getSubject().getMessage()}"
                              data:createdDate="${ann.getSubject().getCreatedDate()}"
                              data:readon="${ann.createdDate}">
-                            <div class="col-md-9 announcement-content">
-                                <div class="markdown"></div>
+                            <div class="col-md-1">
+                                <div class="priority"><i class="fa fa-exclamation-circle fa-fw" th:if="${ann.getSubject().getPriority()}"></i></div>
                             </div>
-                            <div class="col-md-3" th:with="dateFormat=#{locale.date.long}">
+                            <div class="col-md-3">
+                                <div class="title" th:text="${ann.getSubject().getTitle()}"></div>
+                            </div>
+                            <div class="col-md-6 announcement-content">
+                                <div class="content-markdown"></div>
+                            </div>
+                            <div class="col-md-2" th:with="dateFormat=#{locale.date.long}">
                                 <div class="announcement-date">
                                     <p>
                                         <span th:text="#{announcement.user.created}">Created </span>

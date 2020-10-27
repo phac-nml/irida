@@ -627,12 +627,12 @@ INSERT INTO `ncbi_export_submission_biosample` (ncbi_export_submission_id, bioSa
 INSERT INTO `ncbi_export_biosample_sequence_file_pair` (ncbi_export_biosample_id, pairs_id) VALUES ('SUB001XXX', 1);
 
 -- announcement
-INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (1, now(), "Welcome **to IRIDA!**", "Welcome **to IRIDA!**", 1, 4);
-INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (2, '2016-08-15 08:05:53', "Here's `another` announcement!", "Here's `another` announcement!", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (1, now(), "Welcome to IRIDA!", "Welcome **to IRIDA!**", 1, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (2, '2016-08-15 08:05:53', "Here's another announcement!", "Here's `another` announcement!", 0, 4);
 INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (3, '2016-08-10 08:05:53', "Oh man this is cool!", "Oh man this is cool!", 0, 4);
-INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (4, '2016-08-05 08:05:53', "Time to **analyze!**", "Time to **analyze!**", 0, 4);
-INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (5, '2016-07-25 08:05:53', "You are **now** ready to try science.", "You are **now** ready to try science.", 0, 4);
-INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (6, '2016-06-10 08:05:53', "**Don't** forget **your** *wallet*", "**Don't** forget **your** *wallet*", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (4, '2016-08-05 08:05:53', "Time to analyze!", "Time to **analyze!**", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (5, '2016-07-25 08:05:53', "You are now ready to try science.", "You are **now** ready to try science.", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (6, '2016-06-10 08:05:53', "Don't forget your wallet", "**Don't** forget **your** *wallet*", 0, 4);
 
 -- announcement_user
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (1, now(), 1, 4);

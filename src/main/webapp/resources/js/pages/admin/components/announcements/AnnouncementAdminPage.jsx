@@ -22,16 +22,18 @@ import { PagedTableProvider } from "../../../../components/ant.design/PagedTable
 export default function AnnouncementAdminPage({}) {
   const tableRef = useRef(null);
 
-  function addNewAnnouncement(message) {
-    createNewAnnouncement({ message }).then(() =>
+  function addNewAnnouncement(title, message, priority) {
+    createNewAnnouncement({ title, message, priority }).then(() =>
       tableRef.current.updateTable()
     );
   }
 
-  function updateTableAnnouncement({ id, message }) {
+  function updateTableAnnouncement({ id, title, message, priority }) {
     updateAnnouncement({
       id,
-      message
+      title,
+      message,
+      priority
     }).then(() => tableRef.current.updateTable());
   }
 

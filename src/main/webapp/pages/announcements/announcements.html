@@ -2,7 +2,11 @@
     <div class="form-group" ng-controller="AnnouncementItemCtrl as aCtrl">
         <ul class="list-group" id="announcement-list">
             <li class="list-group-item announcement-item" th:each="ann : ${announcements}">
+                <div class="announcement-icon">
+                    <i class="fa fa-exclamation-circle fa-fw" th:if="${ann.getPriority()}"></i>
+                </div>
                 <div class="announcement-content pull-left">
+                    <marked th:inline="text">[[${ann.getTitle()}]]</marked>
                     <marked th:inline="text">[[${ann.getMessage()}]]</marked>
                 </div>
                 <div class="announcement-info">
@@ -10,12 +14,12 @@
                          th:text="${#dates.format(ann.getCreatedDate(), dateFormat)}">
                     </div>
                     <div class='btn-group pull-right announcement-markread'>
-                    <button class="btn btn-default btn-xs"
-                          data:uib-tooltip="#{announcement.markRead}"
-                          tooltip-placement="top"
-                          th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\', $event);'">
-                        <i class="fas fa-check"></i>
-                    </button>
+                        <button class="btn btn-default btn-xs"
+                                data:uib-tooltip="#{announcement.markRead}"
+                                tooltip-placement="top"
+                                th:attr="ng-click='markRead(\'' + ${ann.getId()} + '\', $event);'">
+                            <i class="fas fa-check"></i>
+                        </button>
                     </div>
                 </div>
             </li>

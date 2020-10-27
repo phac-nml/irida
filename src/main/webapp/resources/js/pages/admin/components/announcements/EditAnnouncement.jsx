@@ -6,17 +6,19 @@ import { IconEdit } from "../../../../components/icons/Icons";
 
 /**
  * Render React component to edit an announcement.
- * @param {string} announcement - announcement to edit.
+ * @param {string} title - announcement to edit.
+ * @param {string} message - announcement to edit.
+ * @param {boolean} priority - announcement to edit.
  * @param {function} updateAnnouncement - function to update the announcement.
  * @returns {*}
  * @constructor
  */
-export function EditAnnouncement({ announcement, updateAnnouncement }) {
+export function EditAnnouncement({ title, message, priority, updateAnnouncement }) {
   const markdownRef = useRef();
 
   function saveMarkdown() {
     const md = markdownRef.current.getMarkdown();
-    updateAnnouncement({ message: md, id: announcement.id });
+    updateAnnouncement({ id: announcement.id, title: announcement.title, message: md, priority: announcement.priority });
   }
 
   function displayModal() {
