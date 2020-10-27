@@ -49,7 +49,8 @@ public class SequenceFileController {
 	@RequestMapping(value = { "/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
-			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**" })
+			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**",
+			"samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary/**"})
 	public String getSequenceFilePage(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		return FASTQC_PAGE;

@@ -31,6 +31,7 @@ export default function FastQC() {
   const [file, setFile] = useState({});
   const DEFAULT_URL = setBaseUrl(urlMatch[0]);
 
+
   const [selectedKeys, setSelectedKeys] = React.useState(() => {
     // Create a regex from the string with an additional string at the end
     const regexStr = urlMatch[0] + "/(\\w*)?";

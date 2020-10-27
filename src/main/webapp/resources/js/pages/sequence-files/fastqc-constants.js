@@ -11,12 +11,15 @@ const sampleId = window.location.href.match(/samples\/(\d+)/) !== null ? window.
 const runId = window.location.href.match(/sequencingRuns\/(\d+)/) !== null ? window.location.href.match(/sequencingRuns\/(\d+)/)[1] : null;
 
 // URLs that map to this page
-const url1 = `projects/${projId}/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
-const url2 = `projects/${projId}/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}`;
-const url3 = `sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
-const url4 = `sequencingRuns/${runId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
+const url1 = `/projects/${projId}/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
+const url2 = `/projects/${projId}/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}`;
+const url3 = `/samples/${sampleId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`
+const url4 = `/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
+const url5 = `/sequencingRuns/${runId}/sequenceFiles/${seqObjId}/file/${seqFileId}/summary`;
 
-export const urlMatch = window.location.href.match(url1) ||
-  window.location.href.match(url2) ||
-  window.location.href.match(url3) ||
-  window.location.href.match(url4);
+export const urlMatch =
+  window.location.pathname.match(url1) ||
+  window.location.pathname.match(url2) ||
+  window.location.pathname.match(url3) ||
+  window.location.pathname.match(url4) ||
+  window.location.pathname.match(url5);
