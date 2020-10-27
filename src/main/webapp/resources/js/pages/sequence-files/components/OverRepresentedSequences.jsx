@@ -64,6 +64,7 @@ export default function OverRepresentedSequences() {
           loading={loading}
           columns={columns}
           dataSource={fastQC.overrepresentedSequences}
+          className="t-overrepresented-sequences-table"
         />
       </TabPaneContent>
     </Layout>

@@ -63,6 +63,7 @@ export default function FastQC() {
                   <Menu
                     mode="horizontal"
                     selectedKeys={[selectedKeys]}
+                    className="t-fastQC-nav"
                   >
                     <Menu.Item key="charts">
                       <Link to={`${DEFAULT_URL}/charts`}
@@ -77,6 +78,7 @@ export default function FastQC() {
                           <Badge count={fastQC.overrepresentedSequences.length}
                                  showZero
                                  style={{ backgroundColor: blue6, marginLeft: SPACE_XS }}
+                                 className="t-overrepresented-sequences-count"
                           />
                         </Link>
                     </Menu.Item>
@@ -102,7 +104,11 @@ export default function FastQC() {
           </div>
             :
           <div>
-            <InfoAlert message={i18n("FastQC.noResults")} style={{marginBottom: SPACE_XS}} />
+            <InfoAlert
+              message={i18n("FastQC.noResults")}
+              style={{marginBottom: SPACE_XS}}
+              className="t-fastQC-no-run"
+            />
           </div>
       }
     </PageWrapper>

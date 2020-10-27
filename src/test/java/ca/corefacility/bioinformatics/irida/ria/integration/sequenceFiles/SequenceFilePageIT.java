@@ -20,7 +20,7 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final String FILE_NAME = "test_file.fastq";
 	private static final String FILE_ID = "1";
 	private static final String FILE_ENCODING = "Sanger / Illumina 1.9";
-	private static final String FILE_CREATED = "Jul 18, 2013";
+	private static final String FILE_CREATED = "Jul. 18, 2013, 2:20 p.m.";
 	private static final String FILE_TOTAL_SEQUENCE = "4";
 	private static final String FILE_TOTAL_BASES = "937";
 	private static final String FILE_MIN_LENGTH = "184";
@@ -36,20 +36,18 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testSequenceFileDetailsPage() {
-		logger.debug("Testing the Sequence File Details / Chart Page");
-		page.goToDetailsPage();
+	public void testSequenceFileFastQCChartsPage() {
+		logger.debug("Testing the Sequence File FastQC Charts Page");
+		page.goToChartsPage();
 		assertTrue(page.isFastQCLinksVisible());
-		assertTrue(page.isFastQCDetailsVisisble());
 		assertFalse(page.isFastQCNoRunWarningDisplayed());
-		testPageChrome();
 		assertEquals("Should display three charts", 3, page.getChartCount());
 	}
 
 	@Test
 	public void testSequenceFileOverrepresentedSequencePage() {
+		logger.debug("Testing the Sequence File FastQC Overrepresented Sequences Page");
 		page.goToOverrepresentedPage();
-		testPageChrome();
 		assertEquals("Should display 1 overrepresented sequence", 1, page.getNumberOfOverrepresentedSequences());
 		assertTrue("Should display a sequence", page.getOverrepresentedSequence().matches("^[aAtTgGcC]+$"));
 		assertTrue("Should display the percentage with a percent sign",
@@ -59,11 +57,19 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testSequenceFileFastQCDetailsPage() {
+		logger.debug("Testing the Sequence File FastQC Details Page");
+		page.goToDetailsPage();
+		assertTrue(page.isFastQCLinksVisible());
+		assertFalse(page.isFastQCNoRunWarningDisplayed());
+		testPageChrome();
+	}
+
+	@Test
 	public void testNoFastQCData() {
 		page.goToDetailsPageWithNoData();
 		assertEquals("sequenceFile2", page.getPageTitle());
 		assertFalse(page.isFastQCLinksVisible());
-		assertFalse(page.isFastQCDetailsVisisble());
 		assertTrue(page.isFastQCNoRunWarningDisplayed());
 	}
 

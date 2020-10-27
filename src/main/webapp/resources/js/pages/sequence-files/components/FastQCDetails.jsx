@@ -29,38 +29,46 @@ export default function FastQCDetails() {
   const fileDetails = [
     {
       title: i18n("FastQC.id"),
-      desc: file.identifier
+      desc: file.identifier,
+      className: "t-fastqc-id"
     },
     {
       title: i18n("FastQC.uploadedOn"),
-      desc: formatDate({ date: file.createdDate })
+      desc: formatDate({ date: file.createdDate }),
+      className: "t-fastqc-uploaded-on"
     },
     {
       title: i18n("FastQC.encoding"),
-      desc: fastQC.encoding
+      desc: fastQC.encoding,
+      className: "t-fastqc-encoding"
     },
   ];
 
   const sequenceDetails = [
     {
       title: i18n("FastQC.totalSequences"),
-      desc: fastQC.totalSequences
+      desc: fastQC.totalSequences,
+      className: "t-fastqc-total-sequences"
     },
     {
       title: i18n("FastQC.totalBases"),
-      desc: fastQC.totalBases
+      desc: fastQC.totalBases,
+      className: "t-fastqc-total-bases"
     },
     {
       title: i18n("FastQC.minLength"),
-      desc: fastQC.minLength
+      desc: fastQC.minLength,
+      className: "t-fastqc-min-length"
     },
     {
       title: i18n("FastQC.maxLength"),
-      desc: fastQC.maxLength
+      desc: fastQC.maxLength,
+      className: "t-fastqc-max-length"
     },
     {
       title: i18n("FastQC.gcContent"),
-      desc: fastQC.gcContent
+      desc: fastQC.gcContent,
+      className: "t-fastqc-gc-content"
     },
   ];
 
@@ -75,11 +83,11 @@ export default function FastQCDetails() {
           </div>
           :
           <div>
-            <Typography.Title level={4}>{i18n("FastQC.fileDetails")}</Typography.Title>
-            <BasicList dataSource={fileDetails} />
+            <Typography.Title level={4} className="t-file-details-title">{i18n("FastQC.fileDetails")}</Typography.Title>
+            <BasicList dataSource={fileDetails} customClassNames={true} />
             <Divider />
-            <Typography.Title level={4}>{i18n("FastQC.sequenceDetails")}</Typography.Title>
-            <BasicList dataSource={sequenceDetails} />
+            <Typography.Title level={4} className="t-sequence-details-title">{i18n("FastQC.sequenceDetails")}</Typography.Title>
+            <BasicList dataSource={sequenceDetails} customClassNames={true} />
           </div>
         }
       </TabPaneContent>
