@@ -29,7 +29,6 @@ export default function FastQC() {
   const [loading, setLoading] = useState(true);
   const [fastQC, setFastQC] = useState({});
   const [file, setFile] = useState({});
-
   const DEFAULT_URL = setBaseUrl(urlMatch[0]);
 
   const [selectedKeys, setSelectedKeys] = React.useState(() => {
@@ -102,8 +101,7 @@ export default function FastQC() {
           </div>
             :
           <div>
-            <InfoAlert message={i18n("FastQC.noResults")} />
-            <InfoAlert message={i18n("FastQC.noFastQCDataAvailable")} />
+            <InfoAlert message={i18n("FastQC.noResults")} style={{marginBottom: SPACE_XS}} />
           </div>
       }
     </PageWrapper>
