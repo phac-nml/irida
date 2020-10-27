@@ -85,6 +85,9 @@ export function ParametersModal({ visible, closeModal }) {
 
   return (
     <Modal
+      bodyStyle={{
+        padding: 0,
+      }}
       visible={visible}
       keyboard={false}
       maskClosable={false}
