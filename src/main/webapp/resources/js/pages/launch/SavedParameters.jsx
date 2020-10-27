@@ -1,9 +1,10 @@
 import React from "react";
 import Form from "antd/es/form";
-import { Button, Col, Row, Select } from "antd";
+import { Button, Select } from "antd";
 import { IconEdit } from "../../components/icons/Icons";
 import ParametersModal from "./components/ParametersModal";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
+import { SPACE_XS } from "../../styles/spacing";
 
 export function SavedParameters({ form }) {
   const { savedPipelineParameters, parameterSet } = useLaunchState();
@@ -17,8 +18,8 @@ export function SavedParameters({ form }) {
   return (
     <>
       <Form.Item label={i18n("SavedParameters.title")}>
-        <Row gutter={8}>
-          <Col span={20}>
+        <div style={{ display: "flex" }}>
+          <div style={{ flexGrow: 1, marginRight: SPACE_XS }}>
             <Form.Item name="parameterSet">
               <Select
                 value={parameterSet.id}
@@ -31,11 +32,11 @@ export function SavedParameters({ form }) {
                 ))}
               </Select>
             </Form.Item>
-          </Col>
-          <Col span={4}>
+          </div>
+          <div>
             <Button icon={<IconEdit />} onClick={() => setVisible(true)} />
-          </Col>
-        </Row>
+          </div>
+        </div>
       </Form.Item>
       <ParametersModal visible={visible} closeModal={() => setVisible(false)} />
     </>
