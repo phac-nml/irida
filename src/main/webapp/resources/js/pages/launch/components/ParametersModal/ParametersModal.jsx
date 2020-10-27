@@ -15,7 +15,21 @@ import { IconExclamationCircle } from "../../../../components/icons/Icons";
 import { SPACE_SM, SPACE_XS } from "../../../../styles/spacing";
 import { grey9, yellow6 } from "../../../../styles/colors";
 
+/**
+ * React component to render a modal window for modifying and saving pipeline
+ * parameters.
+ *
+ * @param {boolean} visible - determines if the modal should be displayed or not.
+ * @param {function} closeModal - function to close the modal window.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ParametersModal({ visible, closeModal }) {
+  /*
+   The currently selected parameter set.  If it is the pipelines default set,
+   it can be used modified (but not saved over), or it can be saved as a new
+   parameter set.
+   */
   const { parameterSet } = useLaunchState();
   const {
     dispatchUseModifiedParameters,
@@ -156,7 +170,7 @@ export function ParametersModal({ visible, closeModal }) {
         </Space>
       }
     >
-      <section style={{ maxHeight: 600, overflow: "auto" }}>
+      <section style={{ maxHeight: 600, overflow: "auto", padding: SPACE_SM }}>
         <Form form={form} layout="vertical" fields={fields}>
           {parameterSet.parameters.map((parameter) => (
             <Form.Item
