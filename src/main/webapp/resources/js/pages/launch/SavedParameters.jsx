@@ -1,6 +1,6 @@
 import React from "react";
 import Form from "antd/es/form";
-import { Button, Select } from "antd";
+import { Button, Select, Space, Tag } from "antd";
 import { IconEdit } from "../../components/icons/Icons";
 import ParametersModal from "./components/ParametersModal";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
@@ -15,7 +15,7 @@ import { SPACE_XS } from "../../styles/spacing";
  * @constructor
  */
 export function SavedParameters({ form }) {
-  const { savedPipelineParameters, parameterSet } = useLaunchState();
+  const { parameterSets, parameterSet } = useLaunchState();
   const { dispatchUseSavedParameterSet } = useLaunchDispatch();
   const [visible, setVisible] = React.useState(false);
 
@@ -38,9 +38,12 @@ export function SavedParameters({ form }) {
                 value={parameterSet.id}
                 onChange={dispatchUseSavedParameterSet}
               >
-                {savedPipelineParameters.map((set) => (
-                  <Select.Option key={set.label} value={set.id}>
-                    {set.label}
+                {parameterSets.map((set) => (
+                  <Select.Option key={set.key} value={set.id}>
+                    <Space>
+                      {set.label}
+                      {set.key.endsWith("MODIFIED") ? <Tag>MODIFIED</Tag> : ""}
+                    </Space>
                   </Select.Option>
                 ))}
               </Select>

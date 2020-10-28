@@ -55,3 +55,17 @@ export function formatParametersWithOptions(parameters = []) {
     return parameter;
   });
 }
+
+export function formatSavedParameterSets(sets = []) {
+  return sets.map((set) => ({ ...set, key: `set-${set.id}` }));
+}
+
+/**
+ * Use to copy objects and arrays, breaking any references.
+ *
+ * @param {array|object} object - item to make a deep copy of
+ * @returns {any}
+ */
+export function deepCopy(object) {
+  return JSON.parse(JSON.stringify(object));
+}

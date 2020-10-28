@@ -13,11 +13,12 @@ import { grey9, yellow6 } from "../../../../styles/colors";
 import { IconExclamationCircle } from "../../../../components/icons/Icons";
 import { SPACE_SM, SPACE_XS } from "../../../../styles/spacing";
 import { useLaunchState } from "../../launch-context";
+import { SaveParametersAsFooter } from "./SaveParametersAsFooter";
 
 export function ParametersFooter({
   modified,
   onCancel,
-  useModifiedParameters,
+  saveModifiedParameters,
 }) {
   const { parameterSet } = useLaunchState();
 
@@ -35,11 +36,11 @@ export function ParametersFooter({
     <Menu>
       {parameterSet.id !== 0 ? (
         <Menu.Item key="copy" onClick={() => setShowSave(true)}>
-          Save
+          {i18n("SavedParameters.save")}
         </Menu.Item>
       ) : null}
       <Menu.Item key="save" onClick={() => setShowSaveAs(true)}>
-        Save as ...
+        {i18n("SavedParameters.saveAs")}
       </Menu.Item>
     </Menu>
   );
@@ -68,7 +69,7 @@ export function ParametersFooter({
                     key="leftButton"
                   >
                     {React.cloneElement(leftButton, {
-                      onClick: useModifiedParameters,
+                      onClick: saveModifiedParameters,
                     })}
                   </Tooltip>,
                   rightButton,
@@ -85,13 +86,7 @@ export function ParametersFooter({
         </div>
       )}
       {showSaveAs ? (
-        <Form layout="vertical">
-          <Form.Item label={"NAME"}>
-            <Input defaultValue={`${parameterSet.label} (copy)`} />
-          </Form.Item>
-          <Button onClick={() => setShowSaveAs(false)}>Cancel</Button>
-          <Button onClick={() => {}}>Save</Button>
-        </Form>
+        <SaveParametersAsFooter onCancel={() => setShowSaveAs(false)} />
       ) : null}
       {showSave ? (
         <Form layout="vertical">

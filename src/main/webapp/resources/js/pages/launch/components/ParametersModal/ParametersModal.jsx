@@ -1,6 +1,6 @@
 import React from "react";
 import isEqual from "lodash/isEqual";
-import { Form, Input, Modal } from "antd";
+import { Form, Input, Modal, Space, Tag } from "antd";
 import { useLaunchDispatch, useLaunchState } from "../../launch-context";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
@@ -21,11 +21,7 @@ export function ParametersModal({ visible, closeModal }) {
    parameter set.
    */
   const { parameterSet } = useLaunchState();
-
-  const {
-    dispatchUseModifiedParameters,
-    dispatchOverwriteParameterSave,
-  } = useLaunchDispatch();
+  const { dispatchUseModifiedParameters } = useLaunchDispatch();
 
   /*
   Store a copy of the original values to compare against to see if they
@@ -60,30 +56,11 @@ export function ParametersModal({ visible, closeModal }) {
     );
   }, [parameterSet]);
 
-  const saveParameters = (name) => {
-    form.validateFields().then((values) => console.log(values));
-  };
-
-  const useModifiedParameters = () => {
-    form.validateFields().then((values) => {
-      if (form.isFieldsTouched()) {
-        dispatchUseModifiedParameters(values);
-      }
-      closeModal();
-    });
-  };
-
   const saveModifiedParameters = () => {
     form.validateFields().then((values) => {
-      // dispatchUseModifiedParameters(values);
+      dispatchUseModifiedParameters(values);
+      closeModal();
     });
-  };
-
-  /**
-   * Overwrite an existing saved parameter set with new values.
-   */
-  const overwriteParameterSet = () => {
-    form.validateFields().then(dispatchOverwriteParameterSave);
   };
 
   /**
@@ -102,16 +79,24 @@ export function ParametersModal({ visible, closeModal }) {
         padding: 0,
       }}
       visible={visible}
-      keyboard={false}
       maskClosable={false}
       onCancel={closeModal}
-      title={`${parameterSet.label}${modified ? "*" : ""}`}
+      title={
+        <Space>
+          {parameterSet.label}
+          {parameterSet.key.endsWith("MODIFIED") ? (
+            <Tag color="red">MODIFIED</Tag>
+          ) : (
+            ""
+          )}
+        </Space>
+      }
       width={600}
       footer={
         <ParametersFooter
           modified={modified}
           onCancel={closeModal}
-          useModifiedParameters={useModifiedParameters}
+          saveModifiedParameters={saveModifiedParameters}
         />
       }
     >

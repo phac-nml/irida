@@ -4,9 +4,12 @@ import {
   launchPipeline,
 } from "../../apis/pipelines/pipelines";
 import {
+  deepCopy,
   formatDefaultPipelineName,
   formatParametersWithOptions,
+  formatSavedParameterSets,
 } from "./launch-utilities";
+import { Tag } from "antd";
 
 /**
  * @file React Context for providing to access to shared data and actions for the
@@ -33,10 +36,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         parameterSet: action.payload.set,
-        savedPipelineParameters: [
-          ...state.savedPipelineParameters,
-          action.payload.set,
-        ],
+        parameterSets: action.payload.sets,
       };
   }
 };
@@ -71,19 +71,31 @@ function LaunchProvider({ children }) {
 
   React.useEffect(() => {
     getPipelineDetails({ id }).then(
-      ({ name, description, type, parameterWithOptions, ...details }) => {
+      ({
+        name,
+        description,
+        type,
+        parameterWithOptions,
+        savedPipelineParameters,
+        ...details
+      }) => {
+        /*
+        These set up immutable page state for the header.
+         */
         setPipeline({ name, description });
 
         const formattedParameterWithOptions = formatParametersWithOptions(
           parameterWithOptions
         );
 
+        const formattedParameterSets = formatSavedParameterSets(
+          savedPipelineParameters
+        );
+
         const initial = {
           name: formatDefaultPipelineName(type, Date.now()),
+          parameterSet: 0,
         };
-
-        // Set the default parameter set
-        initial.parameterSet = 0;
 
         // Get initial values for parameters with options.
         formattedParameterWithOptions.forEach((parameter) => {
@@ -96,10 +108,9 @@ function LaunchProvider({ children }) {
           type: TYPES.LOADED,
           payload: {
             ...details,
-            parameterSet: JSON.parse(
-              JSON.stringify(details.savedPipelineParameters[0])
-            ), // This will be the default set of saved parameters
+            parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
+            parameterSets: formattedParameterSets,
           },
         });
       }
@@ -107,10 +118,10 @@ function LaunchProvider({ children }) {
   }, [id]);
 
   function dispatchUseSavedParameterSet(id) {
-    const set = state.savedPipelineParameters.find((p) => p.id === id);
+    const set = state.parameterSets.find((p) => p.id === id);
     dispatch({
       type: TYPES.PARAMETER_SET,
-      payload: { set: JSON.parse(JSON.stringify(set)) },
+      payload: { set: deepCopy(set) },
     });
   }
 
@@ -118,20 +129,93 @@ function LaunchProvider({ children }) {
     launchPipeline(id, values);
   }
 
+  /**
+   * Dispatch function called when a user modifies the current saved parameter
+   * set parameter values, and wants to use them without saving.
+   *
+   * @param {array} parameters - list of key value pairs for the parameters ({mame: value})
+   */
   function dispatchUseModifiedParameters(parameters) {
-    const set = JSON.parse(JSON.stringify(state.parameterSet));
-    set.parameters = set.parameters.map((parameter) => ({
+    /*
+    Suffix to be added to the identifier to identify when it is modified
+     */
+    const SUFFIX = `-MODIFIED`;
+
+    /*
+    Get a copy of the currently display parameter set.
+     */
+    const currentSet = deepCopy(state.parameterSet);
+
+    /*
+    Get a copy of all the sets
+     */
+    const sets = deepCopy(state.parameterSets);
+
+    /*
+    Update the parameters to the new values
+     */
+    currentSet.parameters = currentSet.parameters.map((parameter) => ({
       ...parameter,
       value: parameters[parameter.name],
     }));
 
-    set.id = `${set.id}-1`;
-    set.label = `${set.label} *modified`;
+    /*
+    Three different states:
+      1. Set that has not been modified before
+      2. Set that has been modified before and currently selected
+      3. Set that has been modified before but the original is selected
+     */
 
-    dispatch({
-      type: TYPES.MODIFIED_PARAMETERS,
-      payload: { set },
-    });
+    if (`${currentSet.key}`.endsWith(SUFFIX)) {
+      // Previously modified and selected.
+      // Remove the modified one from the list and add the updated one
+      const updatedSets = sets.filter((a) => a.id !== currentSet.id);
+      updatedSets.push(currentSet);
+
+      dispatch({
+        type: TYPES.MODIFIED_PARAMETERS,
+        payload: {
+          sets: updatedSets,
+          set: currentSet,
+        },
+      });
+    } else if (!currentSet.modified) {
+      // First time modified
+      currentSet.modified = true;
+      // Set modified to the original set
+      sets.find((s) => s.id === currentSet.id).modified = true;
+
+      // Update the id to show that it has been modified
+      currentSet.id = `${currentSet.id}${SUFFIX}`;
+      currentSet.key = `set-${currentSet.id}`;
+
+      // Add the current set to the list
+      sets.push(currentSet);
+
+      // Update the data model
+      dispatch({
+        type: TYPES.MODIFIED_PARAMETERS,
+        payload: {
+          sets,
+          set: currentSet,
+        },
+      });
+    } else {
+      // Need to find the actual modified set
+      const index = sets.findIndex((s) => s.id === `${currentSet.id}${SUFFIX}`);
+      // Remove the current set.
+      const [item] = sets.splice(index, 1);
+
+      item.parameters = currentSet.parameters;
+      sets.push(item);
+      dispatch({
+        type: TYPES.MODIFIED_PARAMETERS,
+        payload: {
+          sets,
+          set: item,
+        },
+      });
+    }
   }
 
   /**
