@@ -6,7 +6,7 @@ export const idColumnFormat = () => ({
   dataIndex: "id",
   key: "identifier",
   sorter: true,
-  width: 120
+  width: 120,
 });
 
 export const nameColumnFormat = ({ url }) => {
@@ -26,14 +26,16 @@ export const nameColumnFormat = ({ url }) => {
           {name}
         </a>
       );
-    }
+    },
   };
 };
 
 export const dateColumnFormat = ({ className = "" } = {}) => ({
   sorter: true,
   width: 230,
-  render: date => (
-    <span className={className}>{formatInternationalizedDateTime(date)}</span>
-  )
+  render: (date) => (
+    <span className={className}>
+      {date ? formatInternationalizedDateTime(date) : ""}
+    </span>
+  ),
 });
