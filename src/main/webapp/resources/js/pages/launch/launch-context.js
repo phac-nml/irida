@@ -206,8 +206,10 @@ function LaunchProvider({ children }) {
       // Remove the current set.
       const [item] = sets.splice(index, 1);
 
+      // Use the new modified parameters
       item.parameters = currentSet.parameters;
       sets.push(item);
+
       dispatch({
         type: TYPES.MODIFIED_PARAMETERS,
         payload: {
