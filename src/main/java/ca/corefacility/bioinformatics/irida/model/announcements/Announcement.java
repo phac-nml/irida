@@ -48,9 +48,16 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     @Column(name = "created_date", updatable = false)
     private Date createdDate;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "message")
     @Lob
     private String message;
+
+    @Column(name = "priority")
+    @NotNull
+    private Boolean priority;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "created_by_id")
@@ -64,7 +71,9 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
      */
     private Announcement() {
         createdDate = new Date();
+        this.title = null;
         this.message = null;
+        this.priority = false;
         this.user = null;
     }
 
@@ -73,9 +82,27 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
      * @param message Content of the announcement
      * @param user The {@link User} that created the announcement
      */
+    @Deprecated
     public Announcement(String message, User user) {
         this();
+        this.title = null;
         this.message = message;
+        this.priority = false;
+        this.user = user;
+    }
+
+    /**
+     *      Create a new {@link Announcement} object, for display on the front page.
+     * @param title of the announcement
+     * @param message Content of the announcement
+     * @param priority of the announcement
+     * @param user The {@link User} that created the announcement
+     */
+    public Announcement(String title, String message, Boolean priority, User user) {
+        this();
+        this.title = title;
+        this.message = message;
+        this.priority = priority;
         this.user = user;
     }
 
@@ -92,8 +119,16 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         return createdDate;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public String getMessage() {
         return message;
+    }
+
+    public Boolean getPriority() {
+        return priority;
     }
 
     public User getUser() {
@@ -104,8 +139,16 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         return getMessage();
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setPriority(Boolean priority) {
+        this.priority = priority;
     }
 
     public void setUser(User user) {
