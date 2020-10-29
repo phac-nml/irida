@@ -249,6 +249,7 @@ function LaunchProvider({ children }) {
     const data = await saveNewPipelineParameters({
       label: name,
       parameters: params,
+      id,
     });
     console.log(data);
   }

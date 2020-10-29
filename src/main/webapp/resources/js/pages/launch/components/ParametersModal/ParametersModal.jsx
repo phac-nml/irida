@@ -69,7 +69,7 @@ export function ParametersModal({ visible, closeModal }) {
 
   const onSaveAs = (name) => {
     form.validateFields().then((values) => {
-      dispatchUseModifiedParameters(name, values);
+      dispatchUseSaveAs(name, values);
     });
   };
 

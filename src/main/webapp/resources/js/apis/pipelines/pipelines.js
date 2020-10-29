@@ -63,7 +63,7 @@ export const launchPipeline = (id, parameters) =>
       throw new Error(error.response.data);
     });
 
-export function saveNewPipelineParameters({ label, parameters }) {
+export function saveNewPipelineParameters({ label, parameters, id }) {
   return axios
     .post(`${AJAX_URL}/${id}`, { label, parameters })
     .then(({ data }) => data);
