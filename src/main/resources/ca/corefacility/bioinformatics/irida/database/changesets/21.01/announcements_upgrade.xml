@@ -7,10 +7,12 @@
 
     <changeSet id="announcement_upgrade" author="katherine">
         <addColumn tableName="announcement">
-            <column name="title" type="varchar(255)" />
+            <column name="title" type="varchar(255)" value="Announcement title not found">
+                <constraints nullable="false" />
+            </column>
         </addColumn>
         <addColumn tableName="announcement">
-            <column name="priority" type="tinyint(1)">
+            <column name="priority" type="tinyint(1)" value="0">
                 <constraints nullable="false" />
             </column>
         </addColumn>
@@ -19,9 +21,7 @@
             <column name="title" type="varchar(255)" />
         </addColumn>
         <addColumn tableName="announcement_AUD">
-            <column name="priority" type="tinyint(1)" value="0">
-                <constraints nullable="true" />
-            </column>
+            <column name="priority" type="tinyint(1)" />
         </addColumn>
     </changeSet>
 </databaseChangeLog>
