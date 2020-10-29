@@ -76,6 +76,14 @@ public class UIPipelineService {
         return detailsResponse;
     }
 
+    public Long saveNewPipelineParameters(UUID id, SavedPipelineParameters savedPipelineParameters) {
+        Map<String, String> parameters = new HashMap<>();
+
+        for (PipelineParameter parameter : savedPipelineParameters.getParameters()) {
+        }
+        IridaWorkflowNamedParameters namedParameters = namedParametersService.create()
+    }
+
     /**
      * Get a list of pipeline parameters that have specific options.
      *
