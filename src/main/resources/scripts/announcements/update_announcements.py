@@ -3,6 +3,18 @@ import argparse
 import json
 import mysql.connector
 
+# This script will update the title and message content from the announcement
+# table, given a json file generated from the generate_json.py script.
+#
+# Step #1: Run the update_announcement.py script to generate a json file
+# with the modified announcement data.
+#
+# Step #2: Please review the json file to make sure the title was parsed
+# correctly from the message content.
+#
+# Step #3: Run this script to update the announcement table with the data from the
+# json file.
+
 def update_db(json_file, host, user, password, database):
     try:
         db = mysql.connector.connect(

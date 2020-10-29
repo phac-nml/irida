@@ -6,6 +6,19 @@ from markdown import markdown
 import mysql.connector
 import re
 
+# This script will fetch all the rows from the announcement table, then parse
+# the title out from the message content and return a json file with the newly
+# populated title and modified message content.
+#
+# Step #1: Run this script to generate a json file with the modified
+# announcement data.
+#
+# Step #2: Please review the json file to make sure the title was parsed
+# correctly from the message content.
+#
+# Step #3: To update the announcement table with the json file run the
+# update_announcement.py script next.
+
 def create_json_file(json_file, host, user, password, database):
 
     json_data = []
