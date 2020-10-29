@@ -37,11 +37,13 @@ public class SequenceFilePages extends AbstractPage {
 	public void goToOverrepresentedPage() {
 		logger.debug("Going to Sequence File FastQC Overrepresented Page.");
 		get(driver, OVERREPRESENTED_URL);
+		waitForTime(700);
 	}
 
 	public void goToDetailsPage() {
 		logger.debug("Going to Sequence File FastQC details page.");
 		get(driver, DETAILS_URL);
+		waitForTime(700);
 	}
 
 	//***********************************************************************************************

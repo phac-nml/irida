@@ -2,10 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
@@ -20,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 @Component
 public class UISequenceFileService {
+	private static final Logger logger = LoggerFactory.getLogger(UISequenceFileService.class);
 	private AnalysisService analysisService;
 	private SequencingObjectService sequencingObjectService;
 
@@ -76,7 +78,7 @@ public class UISequenceFileService {
 			} else if (type.equals(IMG_DUPLICATION_LEVEL)) {
 				duplicationLevelChart = fastQC.getDuplicationLevelChart();
 			} else {
-				throw new EntityNotFoundException("Image not found");
+				throw new IOException("Image not found");
 			}
 		}
 		return new FastQCImagesResponse(perBaseChart, perSequenceChart, duplicationLevelChart,

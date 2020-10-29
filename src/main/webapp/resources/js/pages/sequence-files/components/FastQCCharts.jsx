@@ -64,7 +64,7 @@ export default function FastQCCharts() {
                 <StyledImage src={perSeq} className="t-sequenceFile-qc-chart" alt={i18n("FastQC.chart.persequence")} />
               </Col>
               <Col span={24} xl={16} xxl={12}>
-                <StyledImage src={duplicationLevel} className="t-sequenceFile-qc-chart"  alt={i18n("FastQC.chart.duplicationlevel")} />
+                <StyledImage src={duplicationLevel} className="t-sequenceFile-qc-chart" alt={i18n("FastQC.chart.duplicationlevel")} />
               </Col>
             </Row>
           </TabPaneContent>
