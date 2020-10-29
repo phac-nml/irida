@@ -2,6 +2,7 @@ import React from "react";
 import {
   getPipelineDetails,
   launchPipeline,
+  saveNewPipelineParameters,
 } from "../../apis/pipelines/pipelines";
 import {
   deepCopy,
@@ -231,6 +232,27 @@ function LaunchProvider({ children }) {
     // TODO: Save parameters......
   }
 
+  async function dispatchUseSaveAs(name, parameters) {
+    /*
+    Get a copy of the currently display parameter set.
+     */
+    const currentSet = deepCopy(state.parameterSet);
+
+    /*
+    Update the parameters to the new values
+     */
+    const params = currentSet.parameters.map((parameter) => ({
+      ...parameter,
+      value: parameters[parameter.name],
+    }));
+
+    const data = await saveNewPipelineParameters({
+      label: name,
+      parameters: params,
+    });
+    console.log(data);
+  }
+
   return (
     <LaunchStateContext.Provider value={{ ...state, pipeline, initialValues }}>
       <LaunchDispatchContext.Provider
@@ -239,6 +261,7 @@ function LaunchProvider({ children }) {
           dispatchUseSavedParameterSet,
           dispatchUseModifiedParameters,
           dispatchOverwriteParameterSave,
+          dispatchUseSaveAs,
         }}
       >
         {children}

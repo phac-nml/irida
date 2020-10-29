@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
 
-import com.google.common.base.Strings;
-
 public class PipelineParameter {
     private String label;
     private String name;
     private String value;
+
+    public PipelineParameter() {
+    }
 
     public PipelineParameter(String name, String label, String value) {
         this.label = label;

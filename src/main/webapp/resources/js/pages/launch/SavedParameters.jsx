@@ -42,7 +42,11 @@ export function SavedParameters({ form }) {
                   <Select.Option key={set.key} value={set.id}>
                     <Space>
                       {set.label}
-                      {set.key.endsWith("MODIFIED") ? <Tag>MODIFIED</Tag> : ""}
+                      {set.key.endsWith("MODIFIED") ? (
+                        <Tag>{i18n("ParametersModal.modified")}</Tag>
+                      ) : (
+                        ""
+                      )}
                     </Space>
                   </Select.Option>
                 ))}

@@ -4,6 +4,7 @@ import { Form, Input, Modal, Space, Tag } from "antd";
 import { useLaunchDispatch, useLaunchState } from "../../launch-context";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
+import { useResetFormOnCloseModal } from "../../../../hooks";
 
 /**
  * React component to render a modal window for modifying and saving pipeline
@@ -21,7 +22,10 @@ export function ParametersModal({ visible, closeModal }) {
    parameter set.
    */
   const { parameterSet } = useLaunchState();
-  const { dispatchUseModifiedParameters } = useLaunchDispatch();
+  const {
+    dispatchUseSaveAs,
+    dispatchUseModifiedParameters,
+  } = useLaunchDispatch();
 
   /*
   Store a copy of the original values to compare against to see if they
@@ -63,6 +67,12 @@ export function ParametersModal({ visible, closeModal }) {
     });
   };
 
+  const onSaveAs = (name) => {
+    form.validateFields().then((values) => {
+      dispatchUseModifiedParameters(name, values);
+    });
+  };
+
   /**
    * Helper function to determine if the original parameters of this set have
    * been modified (which would result in updates to the UI).
@@ -76,7 +86,7 @@ export function ParametersModal({ visible, closeModal }) {
   return (
     <Modal
       bodyStyle={{
-        padding: 0,
+        padding: 0, // Removed to allow the scrollbar to be right at the side.
       }}
       visible={visible}
       maskClosable={false}
@@ -85,7 +95,7 @@ export function ParametersModal({ visible, closeModal }) {
         <Space>
           {parameterSet.label}
           {parameterSet.key.endsWith("MODIFIED") ? (
-            <Tag color="red">MODIFIED</Tag>
+            <Tag color="red">{i18n("ParametersModal.modified")}</Tag>
           ) : (
             ""
           )}
@@ -97,6 +107,7 @@ export function ParametersModal({ visible, closeModal }) {
           modified={modified}
           onCancel={closeModal}
           saveModifiedParameters={saveModifiedParameters}
+          onSaveAs={onSaveAs}
         />
       }
     >

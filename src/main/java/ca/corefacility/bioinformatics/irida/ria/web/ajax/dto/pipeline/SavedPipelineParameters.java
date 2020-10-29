@@ -3,9 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
 import java.util.List;
 
 public class SavedPipelineParameters {
-    private final Long id;
-    private final String label;
-    private final List<PipelineParameter> parameters;
+    private  Long id;
+    private  String label;
+    private  List<PipelineParameter> parameters;
+
+    public SavedPipelineParameters() {
+    }
 
     public SavedPipelineParameters(Long id, String label, List<PipelineParameter> parameters) {
         this.id = id;
@@ -23,5 +26,13 @@ public class SavedPipelineParameters {
 
     public List<PipelineParameter> getParameters() {
         return parameters;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setParameters(List<PipelineParameter> parameters) {
+        this.parameters = parameters;
     }
 }

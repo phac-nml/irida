@@ -19,6 +19,7 @@ export function ParametersFooter({
   modified,
   onCancel,
   saveModifiedParameters,
+  onSaveAs,
 }) {
   const { parameterSet } = useLaunchState();
 
@@ -86,7 +87,10 @@ export function ParametersFooter({
         </div>
       )}
       {showSaveAs ? (
-        <SaveParametersAsFooter onCancel={() => setShowSaveAs(false)} />
+        <SaveParametersAsFooter
+          onCancel={() => setShowSaveAs(false)}
+          onSaveAs={onSaveAs}
+        />
       ) : null}
       {showSave ? (
         <Form layout="vertical">

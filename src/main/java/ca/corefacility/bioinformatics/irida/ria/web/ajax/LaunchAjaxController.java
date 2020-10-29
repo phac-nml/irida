@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.LaunchRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
 /**
@@ -53,5 +55,11 @@ public class LaunchAjaxController {
     @PostMapping("/{id}")
     public ResponseEntity<String> launchPipeline(@RequestBody LaunchRequest request) {
         return ResponseEntity.ok("YAY!!!!");
+    }
+
+    @PostMapping("/{id}/parameters")
+    public ResponseEntity<AjaxResponse> saveNewPipelineParameters(@PathVariable UUID id, @RequestBody
+            SavedPipelineParameters parameters) {
+        return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(1L));
     }
 }
