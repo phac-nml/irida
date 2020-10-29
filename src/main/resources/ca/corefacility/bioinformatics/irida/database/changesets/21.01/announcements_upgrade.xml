@@ -19,8 +19,8 @@
             <column name="title" type="varchar(255)" />
         </addColumn>
         <addColumn tableName="announcement_AUD">
-            <column name="priority" type="tinyint(1)">
-                <constraints nullable="false" />
+            <column name="priority" type="tinyint(1)" value="0">
+                <constraints nullable="true" />
             </column>
         </addColumn>
     </changeSet>
