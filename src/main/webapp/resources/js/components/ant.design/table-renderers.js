@@ -35,6 +35,10 @@ export const dateColumnFormat = ({ className = "" } = {}) => ({
   width: 230,
   render: (date) => (
     <span className={className}>
+      {/*
+          If no date is past just return an empty string as a null value
+          will render the epoch time stamp - BAD STUFF
+       */}
       {date ? formatInternationalizedDateTime(date) : ""}
     </span>
   ),
