@@ -57,7 +57,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
 
     @Column(name = "priority")
     @NotNull
-    private Boolean priority;
+    private boolean priority;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "created_by_id")
@@ -98,7 +98,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
      * @param priority of the announcement
      * @param user The {@link User} that created the announcement
      */
-    public Announcement(String title, String message, Boolean priority, User user) {
+    public Announcement(String title, String message, boolean priority, User user) {
         this();
         this.title = title;
         this.message = message;
@@ -127,7 +127,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         return message;
     }
 
-    public Boolean getPriority() {
+    public boolean getPriority() {
         return priority;
     }
 
@@ -147,7 +147,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         this.message = message;
     }
 
-    public void setPriority(Boolean priority) {
+    public void setPriority(boolean priority) {
         this.priority = priority;
     }
 
