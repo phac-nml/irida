@@ -21,8 +21,7 @@ const { Text } = Typography;
 
 export function BasicList({
   itemLayout = "horizontal",
-  dataSource = { dataSource },
-  customClassNames = false
+  dataSource = { dataSource }
 }) {
   return (
     <List
@@ -33,7 +32,7 @@ export function BasicList({
           <List.Item.Meta
             title={<Text strong>{item.title}</Text>}
             description={item.desc}
-            className={customClassNames ? item.className : ""}
+            {...item.props}
           />
         </List.Item>
       )}

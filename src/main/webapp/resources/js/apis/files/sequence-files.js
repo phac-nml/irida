@@ -15,17 +15,17 @@ const BASE_URL = setBaseUrl(`/ajax/sequenceFiles`);
  *                      `error` contains error information if an error occurred.
  */
 export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
-  try {
-    const { data } = await axios.get(`${BASE_URL}/fastqc-details`, {
+  return await axios
+    .get(`${BASE_URL}/fastqc-details`, {
       params: {
         sequencingObjectId,
         sequenceFileId
-      }
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
     });
-    return data;
-  }  catch (error) {
-    return { error };
-  }
 }
 
 /*
@@ -36,17 +36,17 @@ export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getFastQCImages(sequencingObjectId, sequenceFileId) {
-  try {
-    const {data} = await axios.get(`${BASE_URL}/fastqc-charts`, {
+  return await axios
+    .get(`${BASE_URL}/fastqc-charts`, {
       params: {
         sequencingObjectId,
-        sequenceFileId,
-      }
+        sequenceFileId
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
     });
-    return data;
-  } catch (error) {
-    return {error};
-  }
 }
 
 /*
@@ -57,15 +57,15 @@ export async function getFastQCImages(sequencingObjectId, sequenceFileId) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getOverRepresentedSequences(sequencingObjectId, sequenceFileId) {
-  try {
-    const {data} = await axios.get(`${BASE_URL}/overrepresented-sequences`, {
+  return await axios
+    .get(`${BASE_URL}/overrepresented-sequences`, {
       params: {
         sequencingObjectId,
-        sequenceFileId,
-      }
+        sequenceFileId
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
     });
-    return data;
-  } catch (error) {
-    return {error};
-  }
 }
