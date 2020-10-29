@@ -1,5 +1,6 @@
 /*
- * This file renders the FastQC details component.
+ * This file renders the FastQC details component which
+ * lists the file details as well as the sequence details.
  */
 
 import React, { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ export default function FastQCDetails() {
   const [fastQC, setFastQC] = useState({});
 
   useEffect(() => {
+    // Get the FastQC details and set the file and fastQC states
     getFastQCDetails(seqObjId, seqFileId).then(({ sequenceFile, analysisFastQC }) => {
       setFile(sequenceFile);
       setFastQC(analysisFastQC);
@@ -26,6 +28,7 @@ export default function FastQCDetails() {
     });
   }, []);
 
+  // List details for file
   const fileDetails = [
     {
       title: i18n("FastQC.id"),
@@ -44,6 +47,7 @@ export default function FastQCDetails() {
     },
   ];
 
+  // List details for sequence
   const sequenceDetails = [
     {
       title: i18n("FastQC.totalSequences"),

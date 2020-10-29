@@ -1,5 +1,6 @@
 /*
- * This file renders the OverRepresentedSequences component.
+ * This file renders the OverRepresentedSequences component
+ * which is a table.
  */
 
 import React, { useEffect, useState } from "react";
@@ -19,18 +20,21 @@ export default function OverRepresentedSequences() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Get the overrepresented sequences and set the fastQC state
     getOverRepresentedSequences(seqObjId, seqFileId).then(analysisFastQC => {
       setFastQC(analysisFastQC);
       setLoading(false);
     });
   }, []);
 
+  // Columns for the table
   const columns = [
     {
       title: i18n("FastQC.overrepresented.sequence"),
       key: "sequence",
       dataIndex: "sequence",
       render(data) {
+        // Display sequence in monospace font
         return <Monospace>{data}</Monospace>;
       }
     },
@@ -39,6 +43,7 @@ export default function OverRepresentedSequences() {
       key: "percentage",
       dataIndex: "percentage",
       render(data) {
+        // Round to the nearest 10th and display 1 decimal point
         return `${(Math.round(data * 10) / 10).toFixed(1)} %`;
       }
     },
