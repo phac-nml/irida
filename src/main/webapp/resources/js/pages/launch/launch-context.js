@@ -251,7 +251,24 @@ function LaunchProvider({ children }) {
       parameters: params,
       id,
     });
-    console.log(data);
+
+    /*
+    Get a copy of all the sets
+     */
+    const sets = deepCopy(state.parameterSets);
+
+    currentSet.id = data.id;
+    currentSet.label = name;
+    currentSet.key = `set-${data.id}`;
+    sets.push(currentSet);
+
+    dispatch({
+      type: TYPES.MODIFIED_PARAMETERS,
+      payload: {
+        sets,
+        set: currentSet,
+      },
+    });
   }
 
   return (

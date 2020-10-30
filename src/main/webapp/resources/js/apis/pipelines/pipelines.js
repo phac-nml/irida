@@ -65,6 +65,6 @@ export const launchPipeline = (id, parameters) =>
 
 export function saveNewPipelineParameters({ label, parameters, id }) {
   return axios
-    .post(`${AJAX_URL}/${id}`, { label, parameters })
+    .post(`${AJAX_URL}/${id}/parameters`, { label, parameters })
     .then(({ data }) => data);
 }
