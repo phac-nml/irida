@@ -22,6 +22,7 @@ const StyledImage = styled.img`
 `;
 
 export default function FastQCCharts() {
+  const { sequenceFileId, fileId } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [perBase, setPerBase] = useState("");
