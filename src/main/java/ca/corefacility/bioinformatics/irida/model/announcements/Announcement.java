@@ -31,7 +31,7 @@ import java.util.List;
  * An announcement object. Announcements can be created only by admin users, and announcements
  * are displayed on the dashboard page.
  */
-@Entity
+@Entity.sql
 @Table(name = "announcement")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
@@ -49,6 +49,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     private Date createdDate;
 
     @Column(name = "title")
+    @NotNull
     private String title;
 
     @Column(name = "message")
