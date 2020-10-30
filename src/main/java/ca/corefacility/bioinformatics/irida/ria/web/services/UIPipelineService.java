@@ -1,13 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -20,6 +12,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipel
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * UI Service for all things related to workflow pipelines.
@@ -80,8 +79,11 @@ public class UIPipelineService {
         Map<String, String> parameters = new HashMap<>();
 
         for (PipelineParameter parameter : savedPipelineParameters.getParameters()) {
+            parameters.put(parameter.getName(), parameter.getValue());
         }
-        IridaWorkflowNamedParameters namedParameters = namedParametersService.create()
+        IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(savedPipelineParameters.getLabel(), id, parameters);
+        namedParameters = namedParametersService.create(namedParameters);
+        return namedParameters.getId();
     }
 
     /**
