@@ -396,7 +396,7 @@ INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, to
 INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (11, '2015-03-04 13:58:45', 'galaxyIdentifier', 'assembly', '0.4.3', '/bin/assembly');
 INSERT INTO `tool_execution` (id, created_date, execution_manager_identifier, tool_name, tool_version, command_line) VALUES (12, '2015-03-04 13:58:45', 'galaxyIdentifier', 'bio_hansel', '2.0.0', '/bin/bio_hansel');
 
--- tool_execution_parameters for "SNP Matrix" user
+-- tool_execution_parameters for "SNP Matrix"
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('1', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
 
 -- tool_execution_parameters for "VCF 2 pseudoalignment"
@@ -466,7 +466,7 @@ INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execu
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_fraction', '0.75');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_qsum', '0');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_total', '1');
-INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, executio user n_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_coverage', '15');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_coverage', '15');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.mismatch_base_quality_threshold', '10');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.min_base_quality', '30');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.min_mapping_quality', '30');
@@ -627,12 +627,12 @@ INSERT INTO `ncbi_export_submission_biosample` (ncbi_export_submission_id, bioSa
 INSERT INTO `ncbi_export_biosample_sequence_file_pair` (ncbi_export_biosample_id, pairs_id) VALUES ('SUB001XXX', 1);
 
 -- announcement
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (1, now(), "Welcome **to IRIDA!**", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (2, '2016-08-15 08:05:53', "Here's `another` announcement!", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (3, '2016-08-10 08:05:53', "Oh man this is cool!", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (4, '2016-08-05 08:05:53', "Time to **analyze!**", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (5, '2016-07-25 08:05:53', "You are **now** ready to try science.", 4);
-INSERT INTO `announcement` (id, created_date, message, created_by_id) VALUES (6, '2016-06-10 08:05:53', "**Don't** forget **your** *wallet*", 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (1, now(), "Welcome to IRIDA!", "Welcome **to IRIDA!**", 1, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (2, '2016-08-15 08:05:53', "Here's another announcement!", "Here's `another` announcement!", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (3, '2016-08-10 08:05:53', "Oh man this is cool!", "Oh man this is cool!", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (4, '2016-08-05 08:05:53', "Time to analyze!", "Time to **analyze!**", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (5, '2016-07-25 08:05:53', "You are now ready to try science.", "You are **now** ready to try science.", 0, 4);
+INSERT INTO `announcement` (id, created_date, title, message, priority, created_by_id) VALUES (6, '2016-06-10 08:05:53', "Don't forget your wallet", "**Don't** forget **your** *wallet*", 0, 4);
 
 -- announcement_user
 INSERT INTO `announcement_user` (id, created_date, announcement_id, user_id) VALUES (1, now(), 1, 4);
