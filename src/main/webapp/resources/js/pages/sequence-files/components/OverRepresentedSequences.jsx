@@ -9,22 +9,23 @@ import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { getOverRepresentedSequences } from "../../../apis/files/sequence-files";
-import {
-  seqObjId,
-  seqFileId
-} from "../fastqc-constants";
 import { Monospace } from "../../../components/typography";
+import { useParams } from "@reach/router";
 
 export default function OverRepresentedSequences() {
+  const { sequenceFileId, fileId } = useParams();
+
   const [fastQC, setFastQC] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get the overrepresented sequences and set the fastQC state
-    getOverRepresentedSequences(seqObjId, seqFileId).then(analysisFastQC => {
-      setFastQC(analysisFastQC);
-      setLoading(false);
-    });
+    getOverRepresentedSequences(sequenceFileId, fileId).then(
+      (analysisFastQC) => {
+        setFastQC(analysisFastQC);
+        setLoading(false);
+      }
+    );
   }, []);
 
   // Columns for the table
@@ -36,7 +37,7 @@ export default function OverRepresentedSequences() {
       render(data) {
         // Display sequence in monospace font
         return <Monospace>{data}</Monospace>;
-      }
+      },
     },
     {
       title: i18n("FastQC.overrepresented.percentage"),
@@ -45,7 +46,7 @@ export default function OverRepresentedSequences() {
       render(data) {
         // Round to the nearest 10th and display 1 decimal point
         return `${(Math.round(data * 10) / 10).toFixed(1)} %`;
-      }
+      },
     },
     {
       title: i18n("FastQC.overrepresented.count"),
@@ -57,12 +58,14 @@ export default function OverRepresentedSequences() {
       key: "possibleSource",
       dataIndex: "possibleSource",
     },
-  ]
+  ];
 
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <TabPaneContent title={i18n("FastQC.overrepresentedSequences")}>
-        <Typography.Paragraph className="text-info">{fastQC.description}</Typography.Paragraph>
+        <Typography.Paragraph className="text-info">
+          {fastQC.description}
+        </Typography.Paragraph>
         <Table
           bordered
           rowKey={(item) => item.identifier}
