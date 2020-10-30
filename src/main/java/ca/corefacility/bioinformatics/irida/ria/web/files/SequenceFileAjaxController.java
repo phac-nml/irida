@@ -10,15 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.ria.web.files.dto.FastQCDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.files.dto.FastQCImagesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 /**
  * Ajax controller to get data for the fastqc page.
