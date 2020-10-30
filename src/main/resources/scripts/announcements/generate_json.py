@@ -37,9 +37,13 @@ def create_json_file(json_file, host, user, password, database):
     for id, created_date, created_by_id, title, message, priority in result:
         
         if not title:
+            # split the message into two,
+            # the first line and the rest of the message
             lines = message.split("\n",1)
 
             if len(lines) > 0:
+                # check if the first line in the message is a header
+                # by trying to find number signs in front of a word
                 first_line = lines[0]
                 header = re.match(r"^#+\s(.+)$", first_line)
                 
@@ -50,9 +54,13 @@ def create_json_file(json_file, host, user, password, database):
                         message = lines[1]
                 else:
                     if len(lines) > 1:
+                        # split the rest of the message into two again,
+                        # the first line and the rest of the message
                         lines = lines[1].split("\n",1)
 
                         if len(lines) > 0:
+                            # check if the second line in the message is a header
+                            # by trying to find any number of = or - characters
                             second_line = lines[0]
                             underline = re.match(r"^(-|=)+$", second_line)
 
