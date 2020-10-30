@@ -41,7 +41,7 @@ def create_json_file(json_file, host, user, password, database):
 
             if len(lines) > 0:
                 first_line = lines[0]
-                header = re.match(r"^#+\s(.+)\w(.+)$", first_line)
+                header = re.match(r"^#+\s(.+)$", first_line)
                 
                 if header:
                     title = header[1]
