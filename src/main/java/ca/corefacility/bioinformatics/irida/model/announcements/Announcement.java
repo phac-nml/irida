@@ -31,7 +31,7 @@ import java.util.List;
  * An announcement object. Announcements can be created only by admin users, and announcements
  * are displayed on the dashboard page.
  */
-@Entity.sql
+@Entity
 @Table(name = "announcement")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
