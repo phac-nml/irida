@@ -1,8 +1,6 @@
 #!/usr/bin/python
 import argparse
-from bs4 import BeautifulSoup
 import json
-from markdown import markdown
 import mysql.connector
 import re
 
@@ -37,15 +35,32 @@ def create_json_file(json_file, host, user, password, database):
     db.close()
 
     for id, created_date, created_by_id, title, message, priority in result:
+        
         if not title:
-            soup = BeautifulSoup(markdown(message), 'html.parser')
-            # find any header elements
-            headers = soup.find_all(re.compile('^h[1-6]$'))
-            if headers:
-                title = headers[0].string
-                # remove header from message
-                headers[0].extract()
-                message = soup
+            lines = message.split("\n",1)
+
+            if len(lines) > 0:
+                first_line = lines[0]
+                header = re.match(r"^#+\s(.+)\w(.+)$", first_line)
+                
+                if header:
+                    title = header[1]
+
+                    if len(lines) > 1:
+                        message = lines[1]
+                else:
+                    if len(lines) > 1:
+                        lines = lines[1].split("\n",1)
+
+                        if len(lines) > 0:
+                            second_line = lines[0]
+                            underline = re.match(r"^(-|=)+$", second_line)
+
+                            if underline:
+                                title = first_line
+
+                                if len(lines) > 1:
+                                    message = lines[1]
 
             json_data.append({"id":id, "created_date":created_date, "created_by_id":created_by_id, "title":title, "message":message, "priority":priority})
 
