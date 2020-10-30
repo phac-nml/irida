@@ -57,7 +57,6 @@ public class SequenceFileAjaxController {
 	@GetMapping("/fastqc-charts")
 	public ResponseEntity<FastQCImagesResponse> getFastQCCharts(@RequestParam Long sequencingObjectId,
 			@RequestParam Long sequenceFileId) throws IOException {
-
 		return ResponseEntity.ok(uiSequenceFileService.getFastQCCharts(sequencingObjectId, sequenceFileId));
 	}
 
