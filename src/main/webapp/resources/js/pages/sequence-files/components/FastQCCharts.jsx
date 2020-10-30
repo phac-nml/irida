@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Col, Layout , Row, Typography} from "antd";
+import { Col, Layout, Row, Typography} from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1, grey4 } from "../../../styles/colors";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";

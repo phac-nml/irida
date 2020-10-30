@@ -182,10 +182,15 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	 * Read the bytes for an image output file
 	 *
 	 * @return the bytes for the file
-	 * @throws IOException if the file couldn't be read
 	 */
-	public byte[] getBytesForFile() throws IOException  {
-		byte[] bytes = Files.readAllBytes(getFile());
+	public byte[] getBytesForFile() {
+		byte[] bytes;
+		try {
+			bytes = Files.readAllBytes(getFile());
+			return bytes;
+		} catch(IOException e) {
+			bytes = new byte[0];
+		}
 		return bytes;
 	}
 }

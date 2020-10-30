@@ -389,9 +389,15 @@ public class AnalysisFastQC extends Analysis {
 	 * @return the bytes for the file
 	 * @throws IOException if the file couldn't be read
 	 */
-	private byte[] getBytesForFile(String key) throws IOException {
+	private byte[] getBytesForFile(String key) {
 		AnalysisOutputFile chart = getAnalysisOutputFile(key);
-		byte[] bytes = Files.readAllBytes(chart.getFile());
+		byte[] bytes;
+
+		try {
+			bytes = Files.readAllBytes(chart.getFile());
+		} catch(IOException e) {
+			bytes = new byte[0];
+		}
 		return bytes;
 	}
 }
