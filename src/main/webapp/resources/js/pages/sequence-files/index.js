@@ -3,6 +3,12 @@ import React from "react";
 import { render } from "react-dom";
 import FastQC from "./components/FastQC";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { Location, Router } from "@reach/router";
+import { getRootPath } from "./fastqc-utilities";
+
+import FastQCDetails from "./components/FastQCDetails";
+import FastQCCharts from "./components/FastQCCharts";
+import OverRepresentedSequences from "./components/OverRepresentedSequences";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -13,6 +19,22 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
 render(
-    <FastQC />,
+  <Location style={{ backgroundColor: "red", height: "100%" }}>
+    {({ location }) => {
+      const [path, route] = getRootPath(location.pathname);
+      return (
+        <Router style={{ height: "100%" }}>
+          <FastQC path={path} route={route}>
+            <FastQCCharts path={`${path}/charts`} default key="charts" />
+            <OverRepresentedSequences
+              path="/overrepresented"
+              key="overrepresented"
+            />
+            <FastQCDetails path="/details" key="details" />
+          </FastQC>
+        </Router>
+      );
+    }}
+  </Location>,
   document.getElementById("root")
 );
