@@ -67,6 +67,11 @@ export function ParametersModal({ visible, closeModal }) {
     });
   };
 
+  /**
+   * Save a modified set of parameters with a new name
+   *
+   * @param {string} name - The new name to save the modified parameter with
+   */
   const onSaveAs = (name) => {
     form.validateFields().then((values) => {
       dispatchUseSaveAs(name, values).then(closeModal);

@@ -232,6 +232,13 @@ function LaunchProvider({ children }) {
     // TODO: Save parameters......
   }
 
+  /**
+   * Save a modified set of parameters with a new name
+   *
+   * @param {string} name - name to save the modified set with
+   * @param {array} parameters - updated parameter values
+   * @returns {Promise<void>}
+   */
   async function dispatchUseSaveAs(name, parameters) {
     /*
     Get a copy of the currently display parameter set.
@@ -262,6 +269,7 @@ function LaunchProvider({ children }) {
     currentSet.key = `set-${data.id}`;
     sets.push(currentSet);
 
+    // Update the state
     dispatch({
       type: TYPES.MODIFIED_PARAMETERS,
       payload: {

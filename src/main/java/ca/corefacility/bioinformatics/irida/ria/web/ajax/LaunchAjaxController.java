@@ -1,5 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
+import java.util.Locale;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -7,13 +15,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Locale;
-import java.util.UUID;
 
 /**
  * Controller to handle AJAX requests from the UI for Workflow Pipelines
@@ -56,9 +57,17 @@ public class LaunchAjaxController {
         return ResponseEntity.ok("YAY!!!!");
     }
 
+    /**
+     * Save a new set of named pipeline parameters
+     *
+     * @param id         identifier for a irida workflow
+     * @param parameters details about the new set of parameters
+     * @return
+     */
     @PostMapping("/{id}/parameters")
-    public ResponseEntity<AjaxResponse> saveNewPipelineParameters(@PathVariable UUID id, @RequestBody
-            SavedPipelineParameters parameters) {
-        return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(pipelineService.saveNewPipelineParameters(id, parameters)));
+    public ResponseEntity<AjaxResponse> saveNewPipelineParameters(@PathVariable UUID id,
+            @RequestBody SavedPipelineParameters parameters) {
+        return ResponseEntity.ok(
+                new AjaxCreateItemSuccessResponse(pipelineService.saveNewPipelineParameters(id, parameters)));
     }
 }
