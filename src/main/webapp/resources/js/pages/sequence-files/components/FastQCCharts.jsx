@@ -2,15 +2,16 @@
  * This file renders the FastQC charts component.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Layout, Row, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1, grey4 } from "../../../styles/colors";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { getFastQCImages } from "../../../apis/files/sequence-files";
 import { ContentLoading } from "../../../components/loader";
 
 import styled from "styled-components";
-import { useFastQCDispatch, useFastQCState } from "../fastqc-context";
+import { useParams } from "@reach/router";
 
 const StyledImage = styled.img`
   height: 100%;
@@ -21,20 +22,32 @@ const StyledImage = styled.img`
 `;
 
 export default function FastQCCharts() {
-  const {
-    loading,
-    perBase,
-    perSeq,
-    duplicationLevel,
-    fastQCVersion,
-  } = useFastQCState();
-  const { dispatchGetFastQCImages } = useFastQCDispatch();
+  const { sequenceObjectId, fileId } = useParams();
 
-  React.useEffect(() => {
-    if (!perBase) {
-      dispatchGetFastQCImages();
-    }
-  }, [dispatchGetFastQCImages, perBase]);
+  const [loading, setLoading] = useState(true);
+  const [perBase, setPerBase] = useState("");
+  const [perSeq, setPerSeq] = useState("");
+  const [duplicationLevel, setDuplicationLevel] = useState("");
+  const [fastQCVersion, setFastQCVersion] = useState("");
+
+  useEffect(() => {
+    getFastQCImages(sequenceObjectId, fileId).then(
+      ({
+        perbaseChart,
+        persequenceChart,
+        duplicationlevelChart,
+        fastQCVersion,
+      }) => {
+        // Convert the images from byte arrays into a png images
+        setPerBase(`data:image/png;base64,${perbaseChart}`);
+        setPerSeq(`data:image/png;base64,${persequenceChart}`);
+        setDuplicationLevel(`data:image/png;base64,${duplicationlevelChart}`);
+
+        setFastQCVersion(fastQCVersion);
+        setLoading(false);
+      }
+    );
+  }, [fileId, sequenceObjectId]);
 
   return (
     <div>

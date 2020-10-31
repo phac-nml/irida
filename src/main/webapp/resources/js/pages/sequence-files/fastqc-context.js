@@ -57,33 +57,9 @@ function FastQCProvider({ children, sequenceObjectId, fileId }) {
     );
   }
 
-  async function dispatchGetFastQCImages() {
-    dispatch({ type: TYPES.LOADING });
-    getFastQCImages(sequenceObjectId, fileId).then(
-      ({
-        perbaseChart,
-        persequenceChart,
-        duplicationlevelChart,
-        fastQCVersion,
-      }) => {
-        dispatch({
-          type: TYPES.LOADED,
-          payload: {
-            perBase: perbaseChart,
-            perSeq: persequenceChart,
-            duplicationLevel: duplicationlevelChart,
-            fastQCVersion,
-          },
-        });
-      }
-    );
-  }
-
   return (
     <FastQCStateContext.Provider value={state}>
-      <FastQCDispatchContext.Provider
-        value={{ getOverrepresentedDetails, dispatchGetFastQCImages }}
-      >
+      <FastQCDispatchContext.Provider value={{ getOverrepresentedDetails }}>
         {children}
       </FastQCDispatchContext.Provider>
     </FastQCStateContext.Provider>
