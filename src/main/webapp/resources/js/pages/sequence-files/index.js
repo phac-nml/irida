@@ -25,11 +25,12 @@ render(
       return (
         <Router style={{ height: "100%" }}>
           <FastQC path={path} route={route}>
+            <OverRepresentedSequences path="overrepresented" />
+            <FastQCDetails path="details" />
             <FastQCCharts path="charts" />
             {/* Handles legacy link case */}
             <FastQCCharts path="summary" />
-            <OverRepresentedSequences path="overrepresented" />
-            <FastQCDetails path="details" />
+            <FastQCCharts path="" default />
           </FastQC>
         </Router>
       );
@@ -37,3 +38,4 @@ render(
   </Location>,
   document.getElementById("root")
 );
+
