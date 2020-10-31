@@ -14,6 +14,7 @@ Changes
 * [Developer]: Removed `resolve-url-loader` from front end dependencies.
 * [Developer]: Removed UI dependency for `bootstrap-sass`.
 * [UI]: Fixed bug on users listing page where if a user has never logged into the system there last login date showed `Dec 31 1969`,
+* [Documentation]: Corrected `window.PAGE` to `window.TL` in docs on how to make custom login pages.
 
 20.05 to 20.09
 --------------
