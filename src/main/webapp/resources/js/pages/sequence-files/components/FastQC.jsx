@@ -48,7 +48,7 @@ export default function FastQC({
             className="t-fastQC-nav"
           >
             <Menu.Item key="charts">
-              <Link to={uri}>{i18n("FastQC.charts")}</Link>
+              <Link to={`${uri}/charts`}>{i18n("FastQC.charts")}</Link>
             </Menu.Item>
             <Menu.Item key="overrepresented">
               <Link to={`${uri}/overrepresented`}>
