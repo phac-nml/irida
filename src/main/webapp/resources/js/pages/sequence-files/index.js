@@ -19,7 +19,7 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
 render(
-  <Location style={{ backgroundColor: "red", height: "100%" }}>
+  <Location style={{ height: "100%" }}>
     {({ location }) => {
       const [path, route] = getRootPath(location.pathname);
       return (

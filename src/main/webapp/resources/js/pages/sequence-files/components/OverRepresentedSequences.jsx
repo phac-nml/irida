@@ -3,30 +3,23 @@
  * which is a table.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Layout, Table, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { getOverRepresentedSequences } from "../../../apis/files/sequence-files";
 import { Monospace } from "../../../components/typography";
-import { useParams } from "@reach/router";
+import { useFastQCDispatch, useFastQCState } from "../fastqc-context";
 
 export default function OverRepresentedSequences() {
-  const { sequenceFileId, fileId } = useParams();
+  const { loading, analysisFastQC } = useFastQCState();
+  const { getOverrepresentedDetails } = useFastQCDispatch();
 
-  const [fastQC, setFastQC] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Get the overrepresented sequences and set the fastQC state
-    getOverRepresentedSequences(sequenceFileId, fileId).then(
-      (analysisFastQC) => {
-        setFastQC(analysisFastQC);
-        setLoading(false);
-      }
-    );
-  }, []);
+  React.useEffect(() => {
+    if (!analysisFastQC) {
+      getOverrepresentedDetails();
+    }
+  }, [getOverrepresentedDetails]);
 
   // Columns for the table
   const columns = [
@@ -60,21 +53,21 @@ export default function OverRepresentedSequences() {
     },
   ];
 
-  return (
+  return analysisFastQC ? (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
       <TabPaneContent title={i18n("FastQC.overrepresentedSequences")}>
         <Typography.Paragraph className="text-info">
-          {fastQC.description}
+          {analysisFastQC.description}
         </Typography.Paragraph>
         <Table
           bordered
           rowKey={(item) => item.identifier}
           loading={loading}
           columns={columns}
-          dataSource={fastQC.overrepresentedSequences}
+          dataSource={analysisFastQC.overrepresentedSequences}
           className="t-overrepresented-sequences-table"
         />
       </TabPaneContent>
     </Layout>
-  );
+  ) : null;
 }

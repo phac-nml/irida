@@ -4,67 +4,53 @@
  * FastQCCharts component.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { Link } from "@reach/router";
 import { Badge, Menu, Space } from "antd";
 import { ContentLoading } from "../../../components/loader";
 
 import { SPACE_XS } from "../../../styles/spacing";
-import { getFastQCDetails } from "../../../apis/files/sequence-files";
 import { InfoAlert } from "../../../components/alerts";
 import { blue6 } from "../../../styles/colors";
+import { FastQCProvider, useFastQCState } from "../fastqc-context";
 
-export default function FastQC({
-  sequenceFileId,
-  fileId,
-  children,
-  route,
-  uri,
-}) {
-  const [loading, setLoading] = useState(true);
-  const [fastQC, setFastQC] = useState({});
-  const [file, setFile] = useState({});
-
-  useEffect(() => {
-    getFastQCDetails(sequenceFileId, fileId).then(
-      ({ analysisFastQC, sequenceFile }) => {
-        setFile(sequenceFile);
-        setFastQC(analysisFastQC);
-        setLoading(false);
-      }
-    );
-  }, []);
+function FastQCMenu({ route, uri }) {
+  const { loading, fastQC } = useFastQCState();
 
   return (
+    <Menu mode="horizontal" selectedKeys={[route]} className="t-fastQC-nav">
+      <Menu.Item key="charts">
+        <Link to={`${uri}/charts`}>{i18n("FastQC.charts")}</Link>
+      </Menu.Item>
+      <Menu.Item key="overrepresented">
+        <Link to={`${uri}/overrepresented`}>
+          {i18n("FastQC.overrepresentedSequences")}
+          <Badge
+            count={loading ? "-" : fastQC.overrepresentedSequences.length}
+            showZero
+            style={{ backgroundColor: blue6, marginLeft: SPACE_XS }}
+            className="t-overrepresented-sequences-count"
+          />
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="details">
+        <Link to={`${uri}/details`}>{i18n("FastQC.details")}</Link>
+      </Menu.Item>
+    </Menu>
+  );
+}
+
+function FastQCContent({ children, route, uri }) {
+  const { loading, fastQC, file } = useFastQCState();
+
+  return loading ? (
+    <ContentLoading />
+  ) : (
     <PageWrapper title={file.fileName}>
-      {loading ? (
-        <ContentLoading message={i18n("FastQC.fetchingData")} />
-      ) : fastQC ? (
+      {fastQC ? (
         <Space direction="vertical" style={{ width: `100%` }}>
-          <Menu
-            mode="horizontal"
-            selectedKeys={[route]}
-            className="t-fastQC-nav"
-          >
-            <Menu.Item key="charts">
-              <Link to={`${uri}/charts`}>{i18n("FastQC.charts")}</Link>
-            </Menu.Item>
-            <Menu.Item key="overrepresented">
-              <Link to={`${uri}/overrepresented`}>
-                {i18n("FastQC.overrepresentedSequences")}
-                <Badge
-                  count={fastQC.overrepresentedSequences.length}
-                  showZero
-                  style={{ backgroundColor: blue6, marginLeft: SPACE_XS }}
-                  className="t-overrepresented-sequences-count"
-                />
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="details">
-              <Link to={`${uri}/details`}>{i18n("FastQC.details")}</Link>
-            </Menu.Item>
-          </Menu>
+          <FastQCMenu route={route} uri={uri} />
           {children}
         </Space>
       ) : (
@@ -77,5 +63,21 @@ export default function FastQC({
         </div>
       )}
     </PageWrapper>
+  );
+}
+
+export default function FastQC({
+  sequenceObjectId,
+  fileId,
+  children,
+  route,
+  uri,
+}) {
+  return (
+    <FastQCProvider sequenceObjectId={sequenceObjectId} fileId={fileId}>
+      <FastQCContent route={route} uri={uri}>
+        {children}
+      </FastQCContent>
+    </FastQCProvider>
   );
 }

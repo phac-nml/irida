@@ -22,7 +22,7 @@ const StyledImage = styled.img`
 `;
 
 export default function FastQCCharts() {
-  const { sequenceFileId, fileId } = useParams();
+  const { sequenceObjectId, fileId } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [perBase, setPerBase] = useState("");
@@ -31,7 +31,7 @@ export default function FastQCCharts() {
   const [fastQCVersion, setFastQCVersion] = useState("");
 
   useEffect(() => {
-    getFastQCImages(sequenceFileId, fileId).then(
+    getFastQCImages(sequenceObjectId, fileId).then(
       ({
         perbaseChart,
         persequenceChart,
@@ -47,7 +47,7 @@ export default function FastQCCharts() {
         setLoading(false);
       }
     );
-  }, []);
+  }, [fileId, sequenceObjectId]);
 
   return (
     <div>
