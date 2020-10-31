@@ -45,6 +45,7 @@ public class SequenceFileController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param httpServletRequest The request object
 	 * @return redirect.
 	 */
 	@RequestMapping(value = {"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**",
