@@ -13,24 +13,10 @@ import { getFastQCDetails } from "../../../apis/files/sequence-files";
 import { formatDate } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
 import { useParams } from "@reach/router";
+import { useFastQCState } from "../fastqc-context";
 
 export default function FastQCDetails() {
-  const { sequenceFileId, fileId } = useParams();
-
-  const [loading, setLoading] = useState(true);
-  const [file, setFile] = useState({});
-  const [fastQC, setFastQC] = useState({});
-
-  useEffect(() => {
-    // Get the FastQC details and set the file and fastQC states
-    getFastQCDetails(sequenceFileId, fileId).then(
-      ({ sequenceFile, analysisFastQC }) => {
-        setFile(sequenceFile);
-        setFastQC(analysisFastQC);
-        setLoading(false);
-      }
-    );
-  }, []);
+  const { loading, file, fastQC } = useFastQCState();
 
   // List details for file
   const fileDetails = [

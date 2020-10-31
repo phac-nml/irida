@@ -13,16 +13,16 @@ export function getRootPath(pathname) {
   switch (path) {
     case "projects":
       return [
-        `${BASE}projects/:projectId/samples/:sampleId/sequenceFiles/:sequenceFileId/file/:fileId/`,
+        `${BASE}projects/:projectId/samples/:sampleId/sequenceFiles/:sequenceObjectId/file/:fileId/`,
         route,
       ];
     case "samples":
       return [
-        `${BASE}samples/:sampleId/sequenceFiles/:sequenceFileId/file/:fileId/`,
+        `${BASE}samples/:sampleId/sequenceFiles/:sequenceObjectId/file/:fileId/`,
         route,
       ];
     case "sequenceFiles":
-      return [`${BASE}sequenceFiles/:sequenceFileId/file/:fileId/`, route];
+      return [`${BASE}sequenceFiles/:sequenceObjectId/file/:fileId/`, route];
     case "sequencingRuns":
       return [
         `${BASE}sequencingRuns/:runId/sequenceFiles/:seqObjId/file/:fileId/`,
