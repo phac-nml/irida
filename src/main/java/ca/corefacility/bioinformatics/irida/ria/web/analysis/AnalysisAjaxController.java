@@ -929,23 +929,17 @@ public class AnalysisAjaxController {
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 
-		try {
-			for (AnalysisOutputFile file : files) {
-				if (file.getFile()
-						.toFile()
-						.getName()
-						.contains(filename)) {
-					outputFile = file;
-					break;
-				}
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename)) {
+				outputFile = file;
+				break;
 			}
-			return ResponseEntity.ok(Base64.getEncoder()
-					.encodeToString(outputFile.getBytesForFile()));
-		} catch (IOException e) {
-			logger.error("Unable to open image file");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(messageSource.getMessage("AnalysisOutputs.unableToReadImageFile", null, locale));
 		}
+		return ResponseEntity.ok(Base64.getEncoder()
+				.encodeToString(outputFile.getBytesForFile()));
 	}
 
 	/**

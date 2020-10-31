@@ -12,10 +12,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 14-08-06.
  */
 public class SequenceFilePages extends AbstractPage {
-	public static final String MAIN_URL = "sequenceFiles/1/file/1/summary";
-	public static final String MAIN_URL_NO_DATA = "sequenceFiles/2/file/2/summary";
-	public static final String OVERREPRESENTED_URL = "sequenceFiles/1/file/1/summary/overrepresented";
-	public static final String DETAILS_URL = "sequenceFiles/1/file/1/summary/details";
+	public static final String MAIN_URL = "sequenceFiles/1/file/1";
+	public static final String MAIN_URL_NO_DATA = "sequenceFiles/2/file/2";
+	public static final String OVERREPRESENTED_URL = "sequenceFiles/1/file/1/overrepresented";
+	public static final String DETAILS_URL = "sequenceFiles/1/file/1/details";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePages.class);
 
 	public SequenceFilePages(WebDriver driver) {

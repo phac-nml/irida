@@ -1,7 +1,6 @@
 import React from "react";
 import {
   getFastQCDetails,
-  getFastQCImages,
   getOverRepresentedSequences,
 } from "../../apis/files/sequence-files";
 
