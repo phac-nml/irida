@@ -25,7 +25,7 @@ export function getRootPath(pathname) {
       return [`${BASE}sequenceFiles/:sequenceObjectId/file/:fileId/`, route];
     case "sequencingRuns":
       return [
-        `${BASE}sequencingRuns/:runId/sequenceFiles/:seqObjId/file/:fileId/`,
+        `${BASE}sequencingRuns/:runId/sequenceFiles/:sequenceObjectId/file/:fileId/`,
         route,
       ];
     default:
