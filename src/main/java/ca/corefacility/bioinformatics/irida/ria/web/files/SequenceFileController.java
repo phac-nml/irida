@@ -41,7 +41,7 @@ public class SequenceFileController {
 	}
 
 	/**
-	 * Gets the redirect to template for the sequence file chart / main page.
+	 * Gets the redirect to template for the sequence file fastqc page.
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
@@ -54,14 +54,7 @@ public class SequenceFileController {
 			"samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**"
 	})
 	public String getSequenceFilePageRedirect(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId, HttpServletRequest httpServletRequest) {
-		String[] urlTokens = httpServletRequest.getServletPath().split("/summary");
-		if(urlTokens.length > 1){
-			// Has string after /summary/
-			return "redirect:" + urlTokens[0] + urlTokens[1].split("/")[0];
-		} else {
-			// Doesn't have string after /summary/
-			return "redirect:" + urlTokens[0];
-		}
+		return "redirect:" + httpServletRequest.getServletPath().replace("/summary", "");
 	}
 
 	/**
