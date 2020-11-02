@@ -12,8 +12,9 @@ Changes
 * [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality added in 20.09. (20.09.2)
 * [Developer]: Updated deprecated runWorkflow blend4j call to invokeWorkflow and switched to using jar for blend4j
 * [Developer]: Removed `resolve-url-loader` from front end dependencies.
-* [Developer]: Removed UI dependency for `bootstrap-sass`.
 * [UI]: Fixed bug on users listing page where if a user has never logged into the system there last login date showed `Dec 31 1969`,
+* [Developer]: Removed UI dependency for `bootstrap-sass`.
+* [Developer]: Updated to React v17.0.1, Babel v7.12.1, and Ant Design v4.7.3.
 
 20.05 to 20.09
 --------------
