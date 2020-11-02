@@ -59,6 +59,9 @@
 	<overrepresented_sequence id="4" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1' percentage="25.00" possibleSource="No Hit" sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>
 
     <analysis id="1" createdDate="2013-07-18 14:30:19.0" description="Analysis projected by FastQC" executionManagerAnalysisId="internal-fastqc" analysis_type="FASTQC" />
+
+	<analysis id="2" createdDate="2014-07-18 14:30:19.0" description="Analysis projected by FastQC" executionManagerAnalysisId="internal-fastqc" analysis_type="FASTQC" />
+
     <analysis_fastqc id="1"
                      encoding="Sanger / Illumina 1.9"
                      fileType="Conventional base calls"
@@ -68,6 +71,14 @@
                      minLength="184"
                      totalBases="937"
                      totalSequences="4" fastqcVersion="1.0.0"/>
+
+	<analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="perBaseQualityScoreChart.png" file_path="src/test/resources/files/perBaseQualityScoreChart.png" />
+	<analysis_output_file id="2" created_date="2014-03-06 10:01:02" execution_manager_file_id="perSequenceQualityScoreChart.png" file_path="src/test/resources/files/perSequenceQualityScoreChart.png" />
+	<analysis_output_file id="3" created_date="2014-03-06 10:01:02" execution_manager_file_id="duplicationLevelChart.png" file_path="src/test/resources/files/duplicationLevelChart.png" />
+	<analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="perBaseQualityScoreChart" />
+	<analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="2" analysis_output_file_key="perSequenceQualityScoreChart" />
+	<analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="3" analysis_output_file_key="duplicationLevelChart" />
+
 	<analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="1" />
 	<analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="2" />
 	<analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="3" />
