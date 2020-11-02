@@ -17,15 +17,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * Unit Tests for @{link SequenceFileController}
@@ -39,16 +35,12 @@ public class SequenceFileControllerTest {
 	private SequenceFileController controller;
 
 	// Services
-	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
-	private AnalysisService analysisService;
 
 	@Before
 	public void setUp() {
-		sequencingRunService = mock(SequencingRunService.class);
-		analysisService = mock(AnalysisService.class);
 		objectService = mock(SequencingObjectService.class);
-		controller = new SequenceFileController(objectService, sequencingRunService, analysisService);
+		controller = new SequenceFileController(objectService);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
@@ -62,24 +54,11 @@ public class SequenceFileControllerTest {
 	 * PAGE TESTS
 	 *********************************************************************************************
 	 */
-
 	@Test
 	public void testGetSequenceFilePage() {
 		logger.debug("Testing getSequenceFilePage");
-		Model model = new ExtendedModelMap();
-
-		String response = controller.getSequenceFilePage(model, OBJECT_ID, FILE_ID);
-		assertEquals("Should return the correct page", SequenceFileController.FILE_DETAIL_PAGE, response);
-		testModel(model);
-	}
-
-	@Test
-	public void testGetSequenceFileOverrepresentedPage() {
-		logger.debug("Testing getSequenceFilePage");
-		Model model = new ExtendedModelMap();
-		String response = controller.getSequenceFileOverrepresentedPage(model, OBJECT_ID, FILE_ID);
-		assertEquals("Should return the correct page", SequenceFileController.FILE_OVERREPRESENTED, response);
-		testModel(model);
+		String response = controller.getSequenceFilePage(OBJECT_ID, FILE_ID);
+		assertEquals("Should return the correct page", SequenceFileController.FASTQC_PAGE, response);
 	}
 
 	/***********************************************************************************************
@@ -103,10 +82,4 @@ public class SequenceFileControllerTest {
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
 	}
 
-	private void testModel(Model model) {
-		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
-		assertTrue("Model should contain the created date for the file.", model.containsAttribute("created"));
-		assertTrue("Model should contain the fastQC data for the file.", model.containsAttribute("fastQC"));
-		assertTrue("Model should contain the active nav id", model.containsAttribute(SequenceFileController.ACTIVE_NAV));
-	}
 }
