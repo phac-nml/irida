@@ -71,11 +71,11 @@ function AnalysisDetailsProvider(props) {
     reducer,
     initialContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
 
   // On page load get the analysis details
   useEffect(() => {
-    getVariablesForDetails(analysisContext.analysis.identifier).then(data => {
+    getVariablesForDetails(analysisIdentifier).then(data => {
       dispatch({ type: TYPES.DETAILS, payload: data });
     });
   }, [getVariablesForDetails]);
@@ -89,7 +89,7 @@ function AnalysisDetailsProvider(props) {
    * `updateSamples` state variable.
    */
   function saveResultsToRelatedSamples() {
-    saveToRelatedSamples(analysisContext.analysis.identifier).then(res => {
+    saveToRelatedSamples(analysisIdentifier).then(res => {
       if (res.type === "error") {
         showErrorNotification({ text: res.text, type: res.type });
       } else {
@@ -105,7 +105,7 @@ function AnalysisDetailsProvider(props) {
    */
   function analysisDetailsContextUpdateSubmissionPriority(updatedPriority) {
     updateAnalysis({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       analysisName: null,
       priority: updatedPriority
     }).then(res => {
@@ -127,7 +127,7 @@ function AnalysisDetailsProvider(props) {
     emailPipelineResult
   ) {
     updateAnalysisEmailPipelineResult({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       emailPipelineResult: emailPipelineResult
     }).then(res => {
       if (res.type === "error") {

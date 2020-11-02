@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import java.util.Map;
 
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -20,14 +21,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * Tests for the {@link AnalysisParameterServiceGalaxy} class.
- * 
+ *
  *
  */
 public class AnalysisParameterServiceGalaxyTest {
@@ -60,7 +61,7 @@ public class AnalysisParameterServiceGalaxyTest {
 	/**
 	 * Tests preparing workflow parameters and overriding with custom value
 	 * successfully.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -73,18 +74,18 @@ public class AnalysisParameterServiceGalaxyTest {
 
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
 		assertEquals("galaxy-tool1,parameter1 is not valid", "1", tool1Parameters.get("parameter1"));
 	}
-	
+
 	/**
 	 * Tests preparing workflow parameters with multiple levels and overriding
 	 * with custom value successfully.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -104,19 +105,19 @@ public class AnalysisParameterServiceGalaxyTest {
 
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
 		assertEquals("parameter not properly defined", ImmutableMap.of("level1", ImmutableMap.of("parameter1", "1")),
 				tool1Parameters);
 	}
-	
+
 	/**
 	 * Tests preparing workflow parameters with multiple levels, multiple
 	 * parameters and overriding with custom value successfully.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -138,8 +139,8 @@ public class AnalysisParameterServiceGalaxyTest {
 
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
@@ -150,7 +151,7 @@ public class AnalysisParameterServiceGalaxyTest {
 	/**
 	 * Tests preparing workflow parameters with three levels, multiple
 	 * parameters and overriding with custom value successfully.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -173,8 +174,8 @@ public class AnalysisParameterServiceGalaxyTest {
 
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
@@ -187,7 +188,7 @@ public class AnalysisParameterServiceGalaxyTest {
 
 	/**
 	 * Tests preparing workflow parameters and using the default value defined.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -198,17 +199,17 @@ public class AnalysisParameterServiceGalaxyTest {
 				iridaWorkflow);
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
 		assertEquals("galaxy-tool1,parameter1 is not valid", "0", tool1Parameters.get("parameter1"));
 	}
-	
+
 	/**
 	 * Tests preparing workflow parameters and ignoring the default value successfully.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -220,15 +221,15 @@ public class AnalysisParameterServiceGalaxyTest {
 				iridaWorkflow);
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 		assertNull("should be no parameter set for galaxy-tool1", workflowParameters.get("galaxy-tool1"));
 	}
 
 	/**
 	 * Tests preparing workflow parameters and overriding with custom value
 	 * successfully in two tools.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
@@ -249,8 +250,8 @@ public class AnalysisParameterServiceGalaxyTest {
 
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInvocationInputs.getParameters();
 
 		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
@@ -261,7 +262,7 @@ public class AnalysisParameterServiceGalaxyTest {
 	/**
 	 * Tests preparing workflow parameters and failing due to parameters not
 	 * defined within the IRIDA workflow.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test(expected = IridaWorkflowParameterException.class)
@@ -271,36 +272,36 @@ public class AnalysisParameterServiceGalaxyTest {
 
 		analysisParameterService.prepareAnalysisParameters(parameters, iridaWorkflow);
 	}
-	
+
 	/**
 	 * Tests preparing workflow parameters when there are no parameters to prepare.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
 	public void testPrepareParametersSuccessNoParameters() throws IridaWorkflowParameterException {
 		when(iridaWorkflowDescription.acceptsParameters()).thenReturn(false);
-		
+
 		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(ImmutableMap.of(),
 				iridaWorkflow);
 
 		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
 
-		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
-		assertNotNull("workflowInputs is null", workflowInputs);
-		
+		WorkflowInvocationInputs workflowInvocationInputs = workflowInputsGalaxy.getInputsObject();
+		assertNotNull("workflowInvocationInputs is null", workflowInvocationInputs);
+
 		verify(iridaWorkflowDescription).acceptsParameters();
 	}
-	
+
 	/**
 	 * Tests failing to prepare workflow parameters when there are some parameters passed but the workflow accepts no parameters.
-	 * 
+	 *
 	 * @throws IridaWorkflowParameterException
 	 */
 	@Test(expected=IridaWorkflowParameterException.class)
 	public void testPrepareParametersSuccessNoAcceptParametersWithParameters() throws IridaWorkflowParameterException {
 		when(iridaWorkflowDescription.acceptsParameters()).thenReturn(false);
-		
+
 		analysisParameterService.prepareAnalysisParameters(ImmutableMap.of("name", "value"),
 				iridaWorkflow);
 	}

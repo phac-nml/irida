@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -34,6 +35,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
 
 /**
  * Service class to run a project synchornization task. Ths class will be
@@ -373,8 +376,15 @@ public class ProjectSynchronizationService {
 			}
 		}
 
-		//list the remote assemblies for the sample
-		List<UploadedAssembly> genomeAssembliesForSample = assemblyRemoteService.getGenomeAssembliesForSample(sample);
+		//list the remote assemblies for the sample.
+		List<UploadedAssembly> genomeAssembliesForSample;
+		try {
+			genomeAssembliesForSample = assemblyRemoteService.getGenomeAssembliesForSample(sample);
+		} catch (LinkNotFoundException e) {
+			//if the target IRIDA doesn't support assemblies yet, warn and ignore assemblies.
+			logger.warn("The sample on the referenced IRIDA doesn't support assemblies: " + sample.getSelfHref());
+			genomeAssembliesForSample = Lists.newArrayList();
+		}
 
 		//for each assembly
 		for (UploadedAssembly file : genomeAssembliesForSample) {

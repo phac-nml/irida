@@ -1,9 +1,3 @@
-You may create a new user account in IRIDA if you have the **Manager** or **Administrator** system role.
-
-After logging in to IRIDA, click on the **Users** menu, and select "Create User":
-
-![Create user menu.]({{ site.baseurl }}/images/tutorials/common/users/create-user-menu.png)
-
 Fill in the user details fields. All fields are required for a user account in IRIDA:
 
 ![User details form.]({{ site.baseurl }}/images/tutorials/common/users/user-details-form.png)
