@@ -69,12 +69,10 @@ If everything was successfull then all dependencies for this pipeline have been 
 [upload-history]: ../test/sistr/images/upload-history.png
 [datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
 [dataset-pair-screen]: ../test/sistr/images/dataset-pair-screen.png
-
 [1-workflow-run]: ../test/refseq_masher/images/1-workflow-run.png
 [2-workflow-output]: ../test/refseq_masher/images/2-workflow-output.png
 [3-workflow-matches-output]: ../test/refseq_masher/images/3-workflow-matches-output.png
 [4-workflow-contains-output]: ../test/refseq_masher/images/4-workflow-contains-output.png
 [view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
-
 [Conda]: https://conda.io/docs/intro.html
-[FAQ/Conda dependencies]: ../../../faq#installing-conda-dependencies-in-galaxy-versions--v1601
+[FAQ/Conda dependencies]: ../../../faq#4-installing-conda-dependencies-in-galaxy-versions--v1601

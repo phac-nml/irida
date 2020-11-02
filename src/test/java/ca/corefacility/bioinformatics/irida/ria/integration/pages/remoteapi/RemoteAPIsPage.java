@@ -10,6 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
+import com.google.common.base.Strings;
+
 public class RemoteAPIsPage extends AbstractPage {
 	private static final String RELATIVE_URL = "remote_api";
 
@@ -40,5 +42,10 @@ public class RemoteAPIsPage extends AbstractPage {
 		}
 
 		return false;
+	}
+
+	public boolean canSeeRemoteDetails() {
+		return !Strings.isNullOrEmpty(table.findElement(By.className("t-api-name"))
+				.getAttribute("href"));
 	}
 }

@@ -32,6 +32,7 @@ export function BasicList({
           <List.Item.Meta
             title={<Text strong>{item.title}</Text>}
             description={item.desc}
+            {...item.props}
           />
         </List.Item>
       )}
@@ -45,7 +46,10 @@ BasicList.propTypes = {
   /*data for the List component to display*/
   dataSource: PropTypes.arrayOf(
     PropTypes.shape({
-      title: PropTypes.string.isRequired,
+      title: PropTypes.oneOfType([
+        PropTypes.string.isRequired,
+        PropTypes.object
+      ]),
       desc: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,

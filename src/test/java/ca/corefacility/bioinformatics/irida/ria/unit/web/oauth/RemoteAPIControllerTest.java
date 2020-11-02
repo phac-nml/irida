@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
 import java.net.MalformedURLException;
 import java.security.Principal;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,16 +16,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -38,7 +34,6 @@ public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
 	private ProjectRemoteService projectRemoteService;
-	private RemoteAPITokenService tokenService;
 	private UserService userService;
 	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
@@ -53,9 +48,8 @@ public class RemoteAPIControllerTest {
 		messageSource = mock(MessageSource.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		tokenService = mock(RemoteAPITokenService.class);
 		userService = mock(UserService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService, tokenService,
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService,
 				authController, messageSource);
 		locale = LocaleContextHolder.getLocale();
 
@@ -71,17 +65,6 @@ public class RemoteAPIControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 		String list = remoteAPIController.list(model, principal);
 		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
-	}
-
-	@Test
-	public void testRemoveRemoteAPI() {
-		Long id = 1L;
-
-		String removeClient = remoteAPIController.removeClient(id);
-
-		assertEquals("redirect:/remote_api", removeClient);
-
-		verify(remoteAPIService).delete(id);
 	}
 
 	@Test
@@ -104,7 +87,7 @@ public class RemoteAPIControllerTest {
 
 		String postCreateClient = remoteAPIController.postCreateRemoteAPI(client, model, locale);
 
-		assertEquals("redirect:/remote_api/1", postCreateClient);
+		assertEquals("redirect:/admin/remote_api/1", postCreateClient);
 		verify(remoteAPIService).create(client);
 	}
 
@@ -149,39 +132,6 @@ public class RemoteAPIControllerTest {
 		when(projectRemoteService.getServiceStatus(client)).thenReturn(true);
 		String connectToAPI = remoteAPIController.connectToAPI(apiId, model);
 		assertEquals(RemoteAPIController.PARENT_FRAME_RELOAD_PAGE, connectToAPI);
-	}
-
-	@Test
-	public void testRead() {
-		Long apiId = 1L;
-		ExtendedModelMap model = new ExtendedModelMap();
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		RemoteAPIToken remoteAPIToken = new RemoteAPIToken("xyz", client, new Date());
-		when(remoteAPIService.read(apiId)).thenReturn(client);
-		when(tokenService.getToken(client)).thenReturn(remoteAPIToken);
-
-		remoteAPIController.read(apiId, model, locale);
-
-		verify(remoteAPIService).read(apiId);
-		verify(tokenService).getToken(client);
-
-		assertTrue(model.containsAttribute("remoteApi"));
-	}
-
-	@Test
-	public void testReadNoToken() {
-		Long apiId = 1L;
-		ExtendedModelMap model = new ExtendedModelMap();
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		when(remoteAPIService.read(apiId)).thenReturn(client);
-		when(tokenService.getToken(client)).thenThrow(new EntityNotFoundException("no token"));
-
-		remoteAPIController.read(apiId, model, locale);
-
-		verify(remoteAPIService).read(apiId);
-		verify(tokenService).getToken(client);
-
-		assertTrue(model.containsAttribute("remoteApi"));
 	}
 
 	@Test

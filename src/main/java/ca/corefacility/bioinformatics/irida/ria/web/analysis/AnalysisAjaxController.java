@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,11 +35,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -53,9 +52,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -95,6 +92,8 @@ public class AnalysisAjaxController {
 	private UpdateAnalysisSubmissionPermission updateAnalysisPermission;
 	private ExecutionManagerConfig configFile;
 	private AnalysisAudit analysisAudit;
+	private AnalysisTypesService analysisTypesService;
+	private EmailController emailController;
 
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
@@ -103,7 +102,7 @@ public class AnalysisAjaxController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
 			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource,
-			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit) {
+			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService, EmailController emailController) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -118,6 +117,8 @@ public class AnalysisAjaxController {
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.configFile = configFile;
 		this.analysisAudit = analysisAudit;
+		this.analysisTypesService = analysisTypesService;
+		this.emailController = emailController;
 	}
 
 	/**
@@ -747,39 +748,46 @@ public class AnalysisAjaxController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisType.equals(BuiltInAnalysisTypes.SISTR_TYPING)) {
+		if (analysisTypesService.getViewerForAnalysisType(analysisType).get().equals("sistr")) {
 			Analysis analysis = submission.getAnalysis();
-			Path path = analysis.getAnalysisOutputFile(sistrFileKey)
-					.getFile();
 
-			try {
-				String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
-						.next();
+			Path path = null;
+			if(analysis.getAnalysisOutputFile(sistrFileKey) != null) {
+				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
 
-				// verify file is proper json file and map to a SistrResult list
-				ObjectMapper mapper = new ObjectMapper();
-				List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
-				});
+				try {
+					String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
+							.next();
 
-				if (sistrResults.size() > 0) {
-					// should only ever be one sample for these results
-					if (samples != null && samples.size() == 1) {
-						Sample sample = samples.iterator()
-								.next();
-						return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
+					// verify file is proper json file and map to a SistrResult list
+					ObjectMapper mapper = new ObjectMapper();
+					List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
+					});
+
+					if (sistrResults.size() > 0) {
+						// should only ever be one sample for these results
+						if (samples != null && samples.size() == 1) {
+							Sample sample = samples.iterator().next();
+							return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
+						} else {
+							logger.error("Invalid number of associated samples for submission " + submission);
+						}
 					} else {
-						logger.error("Invalid number of associated samples for submission " + submission);
+						logger.error("SISTR results for file [" + path + "] are not correctly formatted");
 					}
-				} else {
-					logger.error("SISTR results for file [" + path + "] are not correctly formatted");
+				} catch (FileNotFoundException e) {
+					logger.error("File [" + path + "] not found", e);
+				} catch (JsonParseException | JsonMappingException e) {
+					logger.error("Error attempting to parse file [" + path + "] as JSON", e);
+				} catch (IOException e) {
+					logger.error("Error reading file [" + path + "]", e);
 				}
-			} catch (FileNotFoundException e) {
-				logger.error("File [" + path + "] not found", e);
-			} catch (JsonParseException | JsonMappingException e) {
-				logger.error("Error attempting to parse file [" + path + "] as JSON", e);
-			} catch (IOException e) {
-				logger.error("Error reading file [" + path + "]", e);
+			} else {
+				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
+						"No output file was found for the default sistrFileKey \""+sistrFileKey + "\". "+
+						"Check irida_workflow.xml for \"sistr-predictions\" attribute (<output name=\"sistr-predictions\">).");
 			}
+
 		}
 		return new AnalysisSistrResults(null, true, null);
 	}
@@ -920,23 +928,17 @@ public class AnalysisAjaxController {
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 
-		try {
-			for (AnalysisOutputFile file : files) {
-				if (file.getFile()
-						.toFile()
-						.getName()
-						.contains(filename)) {
-					outputFile = file;
-					break;
-				}
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename)) {
+				outputFile = file;
+				break;
 			}
-			return ResponseEntity.ok(Base64.getEncoder()
-					.encodeToString(outputFile.getBytesForFile()));
-		} catch (IOException e) {
-			logger.error("Unable to open image file");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(messageSource.getMessage("AnalysisOutputs.unableToReadImageFile", null, locale));
 		}
+		return ResponseEntity.ok(Base64.getEncoder()
+				.encodeToString(outputFile.getBytesForFile()));
 	}
 
 	/**
@@ -1205,6 +1207,68 @@ public class AnalysisAjaxController {
 
 		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration));
 
+	}
+
+	/**
+	 * Get the analysis details
+	 *
+	 * @param submissionId The analysis submission id
+	 * @param principal    Principal {@link User}
+	 * @param locale       The users current {@link Locale}
+	 * @return dto which contains the analysis details
+	 */
+	@RequestMapping(value = "/{submissionId}/analysis-details")
+	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal, Locale locale) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+
+		final User currentUser = userService.getUserByUsername(principal.getName());
+
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
+
+		// Get the name of the workflow
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
+
+		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
+		String viewer = "";
+		if (viewerForAnalysisType.isPresent()) {
+			viewer = viewerForAnalysisType.get();
+		} else {
+			viewer = "none";
+		}
+
+		AnalysisState prevState = submission.getAnalysisState();
+		if (submission.getAnalysisState() == AnalysisState.ERROR) {
+			prevState = analysisAudit.getPreviousStateBeforeError(submissionId);
+		}
+
+		// Get the run time of the analysis runtime using the analysis
+		Long duration;
+		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+			Date currentDate = new Date();
+			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
+		} else {
+			duration = analysisAudit.getAnalysisRunningTime(submission);
+		}
+
+		boolean treeDefault = false;
+
+		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
+			try {
+				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
+
+				if(analysisTreeResponse.getNewick() != null) {
+					treeDefault = true;
+				}
+			} catch (IOException e) {
+				logger.error("Unable to get newick string for submission ", e);
+			}
+		}
+
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,
+				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault));
 	}
 
 	/*

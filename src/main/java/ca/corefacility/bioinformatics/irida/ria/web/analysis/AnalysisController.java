@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.security.Principal;
-import java.util.Date;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -22,11 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
-import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -50,21 +43,14 @@ public class AnalysisController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
-	private EmailController emailController;
-	private AnalysisAudit analysisAudit;
-	private AnalysisTypesService analysisTypesService;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, EmailController emailController,
-			AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
-		this.emailController = emailController;
-		this.analysisAudit = analysisAudit;
-		this.analysisTypesService = analysisTypesService;
 	}
 
 	// ************************************************************************************************
@@ -132,55 +118,20 @@ public class AnalysisController {
 	 *
 	 * @param submissionId the ID of the submission
 	 * @param model        Model for the view
-	 * @param principal    Principal {@link User}
 	 * @return name of the details page view
 	 */
 
 	@RequestMapping(value = "/{submissionId}/**", produces = MediaType.TEXT_HTML_VALUE)
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, final Principal principal) {
+	public String getDetailsPage(@PathVariable Long submissionId, Model model) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		model.addAttribute("analysisSubmission", submission);
-
-		final User currentUser = userService.getUserByUsername(principal.getName());
-
-		// AnalysisControllerTest throws a null pointer error if not checked
-		if (currentUser != null) {
-			model.addAttribute("isAdmin", currentUser.getSystemRole()
-					.equals(Role.ROLE_ADMIN));
-		}
+		model.addAttribute("analysisName", submission.getName());
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
-		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-
-		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
-
-		if (viewerForAnalysisType.isPresent()) {
-			model.addAttribute("viewer", viewerForAnalysisType.get());
-		} else {
-			model.addAttribute("viewer", "none");
-		}
-
 		model.addAttribute("analysisType", analysisType);
-		model.addAttribute("mailConfigured", emailController.isMailConfigured());
-
-		if (submission.getAnalysisState() == AnalysisState.ERROR) {
-			model.addAttribute("previousState", analysisAudit.getPreviousStateBeforeError(submissionId));
-		}
-
-		// Get the run time of the analysis runtime using the analysis
-		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
-			Date currentDate = new Date();
-			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
-		} else {
-			duration = analysisAudit.getAnalysisRunningTime(submission);
-		}
-		model.addAttribute("duration", duration);
-
 		return "analysis";
 	}
 
