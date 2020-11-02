@@ -16,7 +16,7 @@ import { SPACE_XS } from "../../styles/spacing";
  */
 export function SavedParameters({ form }) {
   const { parameterSets, parameterSet } = useLaunchState();
-  const { dispatchUseSavedParameterSet } = useLaunchDispatch();
+  const { dispatchUseParameterSetById } = useLaunchDispatch();
   const [visible, setVisible] = React.useState(false);
 
   /**
@@ -36,7 +36,7 @@ export function SavedParameters({ form }) {
             <Form.Item name="parameterSet">
               <Select
                 value={parameterSet.id}
-                onChange={dispatchUseSavedParameterSet}
+                onChange={dispatchUseParameterSetById}
               >
                 {parameterSets.map((set) => (
                   <Select.Option key={set.key} value={set.id}>

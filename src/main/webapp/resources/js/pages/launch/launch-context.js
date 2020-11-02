@@ -10,7 +10,6 @@ import {
   formatParametersWithOptions,
   formatSavedParameterSets,
 } from "./launch-utilities";
-import { Tag } from "antd";
 
 /**
  * @file React Context for providing to access to shared data and actions for the
@@ -118,7 +117,7 @@ function LaunchProvider({ children }) {
     );
   }, [id]);
 
-  function dispatchUseSavedParameterSet(id) {
+  function dispatchUseParameterSetById(id) {
     const set = state.parameterSets.find((p) => p.id === id);
     dispatch({
       type: TYPES.PARAMETER_SET,
@@ -284,7 +283,7 @@ function LaunchProvider({ children }) {
       <LaunchDispatchContext.Provider
         value={{
           dispatchLaunch,
-          dispatchUseSavedParameterSet,
+          dispatchUseParameterSetById,
           dispatchUseModifiedParameters,
           dispatchOverwriteParameterSave,
           dispatchUseSaveAs,

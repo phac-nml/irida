@@ -1,18 +1,8 @@
 import React from "react";
-import {
-  Alert,
-  Button,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  Space,
-  Tooltip,
-} from "antd";
+import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
 import { grey9, yellow6 } from "../../../../styles/colors";
 import { IconExclamationCircle } from "../../../../components/icons/Icons";
-import { SPACE_SM, SPACE_XS } from "../../../../styles/spacing";
-import { useLaunchState } from "../../launch-context";
+import { SPACE_XS } from "../../../../styles/spacing";
 import { SaveParametersAsFooter } from "./SaveParametersAsFooter";
 
 export function ParametersFooter({
@@ -21,13 +11,6 @@ export function ParametersFooter({
   saveModifiedParameters,
   onSaveAs,
 }) {
-  const { parameterSet } = useLaunchState();
-
-  /*
-  Determines if the save form should be displayed.
-   */
-  const [showSave, setShowSave] = React.useState(false);
-
   /*
   Determines if the save as... form should be displayed
    */
@@ -35,11 +18,6 @@ export function ParametersFooter({
 
   const menu = (
     <Menu>
-      {parameterSet.id !== 0 ? (
-        <Menu.Item key="copy" onClick={() => setShowSave(true)}>
-          {i18n("SavedParameters.save")}
-        </Menu.Item>
-      ) : null}
       <Menu.Item key="save" onClick={() => setShowSaveAs(true)}>
         {i18n("SavedParameters.saveAs")}
       </Menu.Item>
@@ -48,7 +26,7 @@ export function ParametersFooter({
 
   return (
     <Space style={{ width: `100%` }} direction="vertical">
-      {showSaveAs || showSave ? null : (
+      {showSaveAs ? null : (
         <div style={{ display: "flex", flexDirection: "row-reverse" }}>
           <Space>
             <Button onClick={onCancel}>Cancel</Button>
@@ -91,21 +69,6 @@ export function ParametersFooter({
           onCancel={() => setShowSaveAs(false)}
           onSaveAs={onSaveAs}
         />
-      ) : null}
-      {showSave ? (
-        <Form layout="vertical">
-          <Alert
-            style={{ textAlign: "left", marginBottom: SPACE_SM }}
-            type="warning"
-            showIcon
-            message="This will overwrite the current parameter set"
-            description={
-              "EVerytihng else will magically be the same. Have fun and do evil things."
-            }
-          />
-          <Button onClick={() => setShowSave(false)}>Cancel</Button>
-          <Button onClick={() => overwriteParameterSet()}>Save</Button>
-        </Form>
       ) : null}
     </Space>
   );

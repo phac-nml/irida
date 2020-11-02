@@ -29,7 +29,7 @@ export function SaveParametersAsFooter({ onCancel, onSaveAs }) {
       <Button onClick={onCancel}>
         {i18n("SaveParametersAsFooter.cancel")}
       </Button>
-      <Button onClick={() => onSaveAs(name)}>
+      <Button onClick={() => onSaveAs(name)} type="primary">
         {i18n("SaveParametersAsFooter.save")}
       </Button>
     </Form>
