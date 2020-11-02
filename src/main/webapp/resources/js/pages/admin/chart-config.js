@@ -15,6 +15,7 @@ export function getChartConfiguration(chartType, data) {
     [chartTypes.BAR]: {
       xField: "value",
       yField: "key",
+      seriesField: 'key',
     },
     [chartTypes.PIE]: {
       appendPadding: 10,
@@ -25,10 +26,10 @@ export function getChartConfiguration(chartType, data) {
         content: "",
       },
     },
-    [chartTypes.COLUMN]: {},
-    [chartTypes.LINE]: {
-      colorField: "",
+    [chartTypes.COLUMN]: {
+      seriesField: 'key'
     },
+    [chartTypes.LINE]: { },
   };
 
   // The configuration required to display a chart
@@ -46,7 +47,6 @@ export function getChartConfiguration(chartType, data) {
       adjustColor: true,
       style: { fill: "#0D0E68", fontSize: 12, fontWeight: 600, opacity: 0.3 },
     },
-    colorField: "key",
     legend: {
       visible: Boolean(data),
       position: "bottom",
