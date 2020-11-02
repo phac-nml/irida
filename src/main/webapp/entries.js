@@ -79,4 +79,5 @@ module.exports = {
   "project-metadata-templates":
     "./resources/js/pages/projects/metadata-templates",
   admin: "./resources/js/pages/admin/index.js",
+  "sequence-files": "./resources/js/pages/sequence-files/",
 };
