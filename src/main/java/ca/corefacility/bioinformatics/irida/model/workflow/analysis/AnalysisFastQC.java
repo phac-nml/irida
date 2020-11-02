@@ -13,12 +13,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Specific implementation of {@link Analysis} for storing properties created by FastQC.
  */
 @Entity
 @Table(name = "analysis_fastqc")
 public class AnalysisFastQC extends Analysis {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisFastQC.class);
 
 	@NotNull
 	private final String fastqcVersion;
@@ -387,11 +391,16 @@ public class AnalysisFastQC extends Analysis {
 	 *
 	 * @param key the file key to read
 	 * @return the bytes for the file
-	 * @throws IOException if the file couldn't be read
 	 */
-	private byte[] getBytesForFile(String key) throws IOException {
+	private byte[] getBytesForFile(String key) {
 		AnalysisOutputFile chart = getAnalysisOutputFile(key);
-		byte[] bytes = Files.readAllBytes(chart.getFile());
-		return bytes;
+		byte[] bytes = new byte[0];
+		try {
+			bytes = Files.readAllBytes(chart.getFile());
+		} catch (IOException e){
+			logger.error("Unable to read fastqc file.", e);
+		} finally {
+			return bytes;
+		}
 	}
 }

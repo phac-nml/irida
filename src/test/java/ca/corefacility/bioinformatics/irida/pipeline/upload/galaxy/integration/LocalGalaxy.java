@@ -177,7 +177,7 @@ public class LocalGalaxy {
 		String content = readFile(workflowFile);
 		
 		WorkflowsClient workflowsClient = galaxyInstanceAdmin.getWorkflowsClient();
-		Workflow workflow = workflowsClient.importWorkflow(content);
+		Workflow workflow = workflowsClient.importWorkflow(content, false);
 		
 		if (workflow != null && workflow.getId() != null) {	
 			return workflow.getId();
