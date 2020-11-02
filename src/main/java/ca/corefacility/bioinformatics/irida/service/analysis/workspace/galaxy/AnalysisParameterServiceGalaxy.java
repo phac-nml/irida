@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisParameterService;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs;
 import com.google.common.collect.Sets;
 
 /**
@@ -50,7 +50,7 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 		checkNotNull(parameters, "parameters is null");
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
 
-		WorkflowInputs inputs = new WorkflowInputs();
+		WorkflowInvocationInputs inputs = new WorkflowInvocationInputs();
 		Set<String> parameterNamesUsed = Sets.newHashSet();
 
 		if (!iridaWorkflow.getWorkflowDescription().acceptsParameters()) {
