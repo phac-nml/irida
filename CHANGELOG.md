@@ -9,10 +9,13 @@ Changes
 * [UI]: Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
 * [UI]: Fixed bug where users could not see or connect to Remote APIs (20.09.2)
 * [UI]: Fixed bug on project page where incorrect link to Remote API was displayed. (20.09.2)
-* [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality addded in 20.09. (20.09.2)
+* [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality added in 20.09. (20.09.2)
 * [Developer]: Updated deprecated runWorkflow blend4j call to invokeWorkflow and switched to using jar for blend4j
 * [Developer]: Removed `resolve-url-loader` from front end dependencies.
-* [Developer]: Removed UI dependecy for `bootstrap-sass`.
+* [UI]: Fixed bug on users listing page where if a user has never logged into the system there last login date showed `Dec 31 1969`,
+* [Developer]: Removed UI dependency for `bootstrap-sass`.
+* [Developer]: Updated to React v17.0.1, Babel v7.12.1, and Ant Design v4.7.3.
+* [UI]: Updated FastQC page to use Ant Design.
 
 20.05 to 20.09
 --------------

@@ -32,6 +32,7 @@ export function BasicList({
           <List.Item.Meta
             title={<Text strong>{item.title}</Text>}
             description={item.desc}
+            {...item.props}
           />
         </List.Item>
       )}
