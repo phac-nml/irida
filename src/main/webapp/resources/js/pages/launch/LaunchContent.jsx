@@ -6,6 +6,7 @@ import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import { ParameterWithOptions } from "./ParameterWithOptions";
 import { SavedParameters } from "./SavedParameters";
+import { ReferenceFiles } from "./components/ReferenceFiles";
 
 /**
  * React component to layout the content of the pipeline launch.
@@ -37,6 +38,8 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
+        <Divider />
+        <ReferenceFiles />
         <Divider />
         <SavedParameters form={form} />
         <Divider />

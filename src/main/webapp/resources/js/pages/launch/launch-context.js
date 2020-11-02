@@ -24,6 +24,8 @@ const TYPES = {
   LOADED: "launch:loaded",
   PARAMETER_SET: "launch:parameters",
   MODIFIED_PARAMETERS: "launch:modified_params",
+  REFERENCE_FILE: "launch:reference_file",
+  ADD_REFERENCE: "launch:add_reference",
 };
 
 const reducer = (state, action) => {
@@ -32,6 +34,14 @@ const reducer = (state, action) => {
       return { ...state, loading: false, ...action.payload };
     case TYPES.PARAMETER_SET:
       return { ...state, parameterSet: action.payload.set };
+    case TYPES.REFERENCE_FILE:
+      return { ...state, referenceFile: action.payload.referenceFile };
+    case TYPES.ADD_REFERENCE:
+      return {
+        ...state,
+        referenceFile: action.payload.referenceFile,
+        referenceFiles: action.payload.referenceFiles,
+      };
     case TYPES.MODIFIED_PARAMETERS:
       return {
         ...state,
@@ -111,6 +121,10 @@ function LaunchProvider({ children }) {
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
             parameterSets: formattedParameterSets,
+            referenceFile:
+              details.requiresReference && details.referenceFiles.length
+                ? details.referenceFiles[0].id
+                : undefined,
           },
         });
       }
@@ -278,6 +292,25 @@ function LaunchProvider({ children }) {
     });
   }
 
+  const dispatchUseReferenceFile = (id) => {
+    dispatch({
+      type: TYPES.REFERENCE_FILE,
+      payload: { referenceFile: id },
+    });
+  };
+
+  const dispatchReferenceFileUploaded = ({ name, id }) => {
+    const referenceFiles = [...state.referenceFiles];
+    referenceFiles.push({ name, id });
+    dispatch({
+      type: TYPES.ADD_REFERENCE,
+      payload: {
+        referenceFiles,
+        referenceFile: id,
+      },
+    });
+  };
+
   return (
     <LaunchStateContext.Provider value={{ ...state, pipeline, initialValues }}>
       <LaunchDispatchContext.Provider
@@ -287,6 +320,8 @@ function LaunchProvider({ children }) {
           dispatchUseModifiedParameters,
           dispatchOverwriteParameterSave,
           dispatchUseSaveAs,
+          dispatchReferenceFileUploaded,
+          dispatchUseReferenceFile,
         }}
       >
         {children}

@@ -9,6 +9,7 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
@@ -17,7 +18,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDe
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
@@ -26,14 +31,22 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
  */
 @Component
 public class UIPipelineService {
+    private final Cart cart;
     private final IridaWorkflowsService workflowsService;
     private final WorkflowNamedParametersService namedParametersService;
+    private final ProjectService projectService;
+    private final ReferenceFileService referenceFileService;
     private final MessageSource messageSource;
 
     @Autowired
-    public UIPipelineService(IridaWorkflowsService workflowsService, WorkflowNamedParametersService namedParametersService, MessageSource messageSource) {
+    public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
+            WorkflowNamedParametersService namedParametersService, ProjectService projectService,
+            ReferenceFileService referenceFileService, MessageSource messageSource) {
+        this.cart = cart;
         this.workflowsService = workflowsService;
         this.namedParametersService = namedParametersService;
+        this.projectService = projectService;
+        this.referenceFileService = referenceFileService;
         this.messageSource = messageSource;
     }
 
@@ -72,6 +85,19 @@ public class UIPipelineService {
         Add saved parameter sets
          */
         detailsResponse.setSavedPipelineParameters(getSavedPipelineParameters(workflow, locale));
+
+        /*
+        Check / add reference files
+         */
+        if (description.requiresReference()) {
+            /*
+            Need to get a list of all the projects in the cart
+             */
+            List<Project> projects = (List<Project>) projectService.readMultiple(cart.getProjectIdsInCart());
+
+            detailsResponse.setRequiresReference(true);
+            detailsResponse.setReferenceFiles(getReferenceFilesForPipeline(projects));
+        }
 
         return detailsResponse;
     }
@@ -194,14 +220,26 @@ public class UIPipelineService {
             List<PipelineParameter> parameters = defaultParameters.stream()
                     .map(parameter -> {
                         if (inputParameter.containsKey(parameter.getName())) {
-                            return new PipelineParameter(parameter.getName(), parameter.getLabel(), inputParameter.get(parameter.getName()));
+                            return new PipelineParameter(parameter.getName(), parameter.getLabel(),
+                                    inputParameter.get(parameter.getName()));
                         }
                         return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
-                    }).collect(Collectors.toList());
+                    })
+                    .collect(Collectors.toList());
             return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
-        }).collect(Collectors.toList()));
-
+        })
+                .collect(Collectors.toList()));
 
         return savedParameters;
+    }
+
+    private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
+        return projects.stream()
+                .map(project -> referenceFileService.getReferenceFilesForProject(project)
+                        .stream()
+                        .map(UIReferenceFile::new)
+                        .collect(Collectors.toList()))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 }
