@@ -31,7 +31,12 @@ const TYPES = {
 const reducer = (state, action) => {
   switch (action.type) {
     case TYPES.LOADED:
-      return { ...state, loading: false, ...action.payload };
+      return {
+        ...state,
+        shareResultsWithProjects: true,
+        loading: false,
+        ...action.payload,
+      };
     case TYPES.PARAMETER_SET:
       return { ...state, parameterSet: action.payload.set };
     case TYPES.REFERENCE_FILE:
@@ -105,6 +110,8 @@ function LaunchProvider({ children }) {
         const initial = {
           name: formatDefaultPipelineName(type, Date.now()),
           parameterSet: 0,
+          shareResultsWithProjects: true,
+          updateSamples: false,
         };
 
         // Get initial values for parameters with options.
@@ -140,6 +147,7 @@ function LaunchProvider({ children }) {
   }
 
   function dispatchLaunch(values) {
+    console.log(values);
     launchPipeline(id, values);
   }
 

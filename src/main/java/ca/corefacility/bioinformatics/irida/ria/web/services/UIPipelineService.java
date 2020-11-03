@@ -6,21 +6,25 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
-import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -31,22 +35,27 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
  */
 @Component
 public class UIPipelineService {
-    private final Cart cart;
+    private final UICartService cartService;
     private final IridaWorkflowsService workflowsService;
     private final WorkflowNamedParametersService namedParametersService;
     private final ProjectService projectService;
     private final ReferenceFileService referenceFileService;
+    private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+    private final UpdateSamplePermission updateSamplePermission;
     private final MessageSource messageSource;
 
     @Autowired
-    public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
+    public UIPipelineService(UICartService cartService, IridaWorkflowsService workflowsService,
             WorkflowNamedParametersService namedParametersService, ProjectService projectService,
-            ReferenceFileService referenceFileService, MessageSource messageSource) {
-        this.cart = cart;
+            ReferenceFileService referenceFileService,
+            AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
+        this.cartService = cartService;
         this.workflowsService = workflowsService;
         this.namedParametersService = namedParametersService;
         this.projectService = projectService;
         this.referenceFileService = referenceFileService;
+        this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+        this.updateSamplePermission = updateSamplePermission;
         this.messageSource = messageSource;
     }
 
@@ -93,10 +102,26 @@ public class UIPipelineService {
             /*
             Need to get a list of all the projects in the cart
              */
-            List<Project> projects = (List<Project>) projectService.readMultiple(cart.getProjectIdsInCart());
+            List<Project> projects = (List<Project>) projectService.readMultiple(cartService.getProjectIdsInCart());
 
             detailsResponse.setRequiresReference(true);
             detailsResponse.setReferenceFiles(getReferenceFilesForPipeline(projects));
+        }
+
+        /*
+        Can the pipeline write back
+         */
+        Map<Project, List<Sample>> cart = cartService.getFullCart();
+        boolean canUpdateSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(description.getAnalysisType());
+        if (canUpdateSamples) {
+            Authentication authentication = SecurityContextHolder.getContext()
+                    .getAuthentication();
+            // Need to make sure that all samples are allowed to be updated.
+            canUpdateSamples = cart.values()
+                    .stream()
+                    .map(samples -> updateSamplePermission.isAllowed(authentication, samples))
+                    .reduce(true, (a, b) -> a && b);
+            detailsResponse.setCanUpdateSamples(canUpdateSamples);
         }
 
         return detailsResponse;

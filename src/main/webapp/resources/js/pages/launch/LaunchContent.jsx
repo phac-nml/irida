@@ -7,6 +7,8 @@ import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import { ParameterWithOptions } from "./ParameterWithOptions";
 import { SavedParameters } from "./SavedParameters";
 import { ReferenceFiles } from "./components/ReferenceFiles";
+import { ShareResultsWithProjects } from "./components/ShareResultsWithProjects";
+import { ShareResultsWithSamples } from "./components/ShareResultsWithSamples";
 
 /**
  * React component to layout the content of the pipeline launch.
@@ -38,6 +40,9 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
+        <Divider />
+        <ShareResultsWithProjects />
+        <ShareResultsWithSamples />
         <Divider />
         <ReferenceFiles />
         <Divider />

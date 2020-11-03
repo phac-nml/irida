@@ -15,7 +15,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
-    private String canShareWithProject;
+    private boolean canUpdateSamples;
     private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
@@ -77,11 +77,11 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.referenceFiles = referenceFiles;
     }
 
-    public String getCanShareWithProject() {
-        return canShareWithProject;
+    public boolean isCanUpdateSamples() {
+        return canUpdateSamples;
     }
 
-    public void setCanShareWithProject(String canShareWithProject) {
-        this.canShareWithProject = canShareWithProject;
+    public void setCanUpdateSamples(boolean canUpdateSamples) {
+        this.canUpdateSamples = canUpdateSamples;
     }
 }
