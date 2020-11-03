@@ -11,10 +11,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenc
  * Model class to send details about a workflow pipeline to the UI
  * Used on the launch pipeline page.
  */
-public class UIPipelineDetailsResponse extends AjaxResponse {s
+public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
+    private String canShareWithProject;
     private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
@@ -74,5 +75,13 @@ public class UIPipelineDetailsResponse extends AjaxResponse {s
 
     public void setReferenceFiles(List<UIReferenceFile> referenceFiles) {
         this.referenceFiles = referenceFiles;
+    }
+
+    public String getCanShareWithProject() {
+        return canShareWithProject;
+    }
+
+    public void setCanShareWithProject(String canShareWithProject) {
+        this.canShareWithProject = canShareWithProject;
     }
 }
