@@ -9,7 +9,7 @@ export function ReferenceFiles() {
   return requiresReference ? (
     <section>
       {referenceFiles.length ? (
-        <Form.Item label={"Reference File"} name="referenceFile">
+        <Form.Item label={i18n("ReferenceFiles.label")} name="referenceFile">
           <Radio.Group>
             {referenceFiles.map((file) => (
               <Radio key={file.id} value={file.id}>
