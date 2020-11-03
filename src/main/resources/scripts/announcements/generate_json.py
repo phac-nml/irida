@@ -84,8 +84,8 @@ def main():
     parser.add_argument( 'json_file', help="The output json file of announcement titles to be populated.")
     parser.add_argument( '--host', default='localhost', help="The database host name.", required=False)
     parser.add_argument( '--database', default='irida_test', help="The database name.", required=False)
-    parser.add_argument( '--user', default='root', help="The database user name.", required=False)
-    parser.add_argument( '--password', help="The database password.", required=False)
+    parser.add_argument( '--user', default='test', help="The database user name.", required=False)
+    parser.add_argument( '--password', default='test', help="The database password.", required=False)
 
     args = parser.parse_args()
 
