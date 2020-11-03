@@ -335,19 +335,16 @@ export async function parseExcel(submissionId, filename, sheetIndex) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getHtmlFile(submissionId, filename) {
-  try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/html-output`,
-      {
-        params: {
-          filename
-        }
-      }
-    );
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+  return await axios
+    .get(`${ANALYSIS_URL}/html-output`, {
+      params: {
+        filename
+      },
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
 }
 
 /**
