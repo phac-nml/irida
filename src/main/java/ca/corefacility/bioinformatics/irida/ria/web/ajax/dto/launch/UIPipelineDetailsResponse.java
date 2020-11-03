@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 
@@ -11,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipel
  * Model class to send details about a workflow pipeline to the UI
  * Used on the launch pipeline page.
  */
-public class UIPipelineDetailsResponse extends AjaxResponse {
+public class UIPipelineDetailsResponse extends AjaxResponse {s
     private String name;
     private String description;
     private String type;
