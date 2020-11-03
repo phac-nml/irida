@@ -36,7 +36,7 @@ def create_json_file(json_file, host, user, password, database):
 
     for id, created_date, created_by_id, title, message, priority in result:
         
-        if not title:
+        if message:
             # split the message into two,
             # the first line and the rest of the message
             lines = message.split("\n",1)
