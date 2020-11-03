@@ -17,6 +17,7 @@ Changes
 * [Developer]: Updated to React v17.0.1, Babel v7.12.1, and Ant Design v4.7.3.
 * [UI]: Updated FastQC page to use Ant Design.
 * [Documentation]: Added documentation for sequence file fastqc page.
+* [UI]: Added html viewer for analysis output files.
 
 20.05 to 20.09
 --------------
