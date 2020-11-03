@@ -16,7 +16,7 @@ export function UploadReferenceFile() {
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        message.success(i18n("UploadReferenceFile.success", info.file.name));
         dispatchReferenceFileUploaded({
           name: info.file.name,
           id: info.file.response.id,
@@ -33,12 +33,9 @@ export function UploadReferenceFile() {
         <IconCloudUpload />
       </p>
       <p className="ant-upload-text">
-        Click or drag new reference file to this area to upload
+        {i18n("UploadReferenceFile.upload-text")}
       </p>
-      <p className="ant-upload-hint">
-        Support for a single or bulk upload. Strictly prohibit from uploading
-        company data or other band files
-      </p>
+      <p className="ant-upload-hint">{i18n("UploadReferenceFile.hint")}</p>
     </Dragger>
   );
 }
