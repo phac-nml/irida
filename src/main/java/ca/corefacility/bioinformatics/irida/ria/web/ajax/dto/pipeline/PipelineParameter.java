@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
 
+/**
+ * Used in the UI to render a Irida Workflow Pipeline Parameter option
+ */
 public class PipelineParameter {
     private String label;
     private String name;

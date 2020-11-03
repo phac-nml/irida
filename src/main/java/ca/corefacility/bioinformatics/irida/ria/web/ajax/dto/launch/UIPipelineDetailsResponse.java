@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenc
  * Model class to send details about a workflow pipeline to the UI
  * Used on the launch pipeline page.
  */
-public class UIPipelineDetailsResponse extends AjaxResponse {
+public class UIPipelineDetailsResponse extends AjaxResponse {s
     private String name;
     private String description;
     private String type;
