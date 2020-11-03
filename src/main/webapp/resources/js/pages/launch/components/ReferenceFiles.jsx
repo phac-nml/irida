@@ -1,20 +1,16 @@
 import React from "react";
 import { Form, Radio, Result } from "antd";
-import { useLaunchDispatch, useLaunchState } from "../launch-context";
+import { useLaunchState } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 
 export function ReferenceFiles() {
-  const { requiresReference, referenceFiles, referenceFile } = useLaunchState();
-  const { dispatchUseReferenceFile } = useLaunchDispatch();
+  const { requiresReference, referenceFiles } = useLaunchState();
 
   return requiresReference ? (
     <section>
-      {requiresReference ? (
-        <Form.Item label={"Reference File"} required>
-          <Radio.Group
-            onChange={(e) => dispatchUseReferenceFile(e.target.value)}
-            value={referenceFile}
-          >
+      {referenceFiles.length ? (
+        <Form.Item label={"Reference File"} name="referenceFile">
+          <Radio.Group>
             {referenceFiles.map((file) => (
               <Radio key={file.id} value={file.id}>
                 {file.name}
@@ -25,8 +21,8 @@ export function ReferenceFiles() {
       ) : (
         <Result
           status="404"
-          title={"Cannot find any reference files for your projects :("}
-          subTitle={"You can upload a custom reference file below."}
+          title={i18n("ReferenceFiles.not-found.title")}
+          subTitle={i18n("ReferenceFiles.not-found.subTitle")}
         />
       )}
       <UploadReferenceFile />

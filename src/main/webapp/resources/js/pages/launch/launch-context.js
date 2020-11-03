@@ -104,6 +104,10 @@ function LaunchProvider({ children }) {
 
         const initial = {
           name: formatDefaultPipelineName(type, Date.now()),
+          referenceFile:
+            details.requiresReference && details.referenceFiles.length
+              ? details.referenceFiles[0].id
+              : null,
           parameterSet: 0,
         };
 
@@ -121,10 +125,6 @@ function LaunchProvider({ children }) {
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
             parameterSets: formattedParameterSets,
-            referenceFile:
-              details.requiresReference && details.referenceFiles.length
-                ? details.referenceFiles[0].id
-                : undefined,
           },
         });
       }
@@ -140,6 +140,7 @@ function LaunchProvider({ children }) {
   }
 
   function dispatchLaunch(values) {
+    console.log(values);
     launchPipeline(id, values);
   }
 
@@ -292,13 +293,6 @@ function LaunchProvider({ children }) {
     });
   }
 
-  const dispatchUseReferenceFile = (id) => {
-    dispatch({
-      type: TYPES.REFERENCE_FILE,
-      payload: { referenceFile: id },
-    });
-  };
-
   const dispatchReferenceFileUploaded = ({ name, id }) => {
     const referenceFiles = [...state.referenceFiles];
     referenceFiles.push({ name, id });
@@ -321,7 +315,6 @@ function LaunchProvider({ children }) {
           dispatchOverwriteParameterSave,
           dispatchUseSaveAs,
           dispatchReferenceFileUploaded,
-          dispatchUseReferenceFile,
         }}
       >
         {children}
