@@ -1,25 +1,25 @@
 Please follow the instructions below on how to run the generate_json.py and update_announcement.py scripts.
-The assumption is that Python and pip are already installed.
+The assumption is that Python3 and pip3 are already installed.
 
 Install virtual env.
-$ pip install virtualenv
+$ pip3 install virtualenv
 
 Create a virtual python environment.
-$ virtualenv --python C:\Path\To\Python\python.exe venv
+$ python3 -m venv .virtualenv
 
 Activate the environment.
-$ .\venv\Scripts\activate
+$ source .virtualenv/bin/activate
 
 Install libraries.
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 
 Run the first script to generate a list of announcements with the updated title and message.
-$ python generate_json.py announcement_list.json
+$ python3 generate_json.py announcement_list.json
 
 Review the json file with the new title and message.
 
 Run the second script to update the announcements table with the json file.
-$ python update_announcements.py announcement_list.json
+$ python3 update_announcements.py announcement_list.json
 
 Activate the environment.
 $ deactivate
