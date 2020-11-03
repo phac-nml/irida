@@ -1,1 +1,1 @@
-mysql.connector
+mysql-connector-python==8.0.22
