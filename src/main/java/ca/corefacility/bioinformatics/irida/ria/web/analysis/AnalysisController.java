@@ -1,7 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Locale;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +16,17 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -150,5 +158,38 @@ public class AnalysisController {
 		model.addAttribute("submissionId", submissionId);
 		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
+	}
+
+	@RequestMapping("/{submissionId}/html-output")
+	public String getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename, Model model, Locale locale) {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Set<AnalysisOutputFile> files = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+		AnalysisOutputFile outputFile = null;
+		String htmlExt = "html";
+		String htmlOutput = "";
+
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename) && FilenameUtils.getExtension(filename)
+					.equals(htmlExt)) {
+				outputFile = file;
+				break;
+			}
+		}
+
+		try {
+			htmlOutput = FileUtils.readFileToString(outputFile.getFile()
+					.toFile(), StandardCharsets.UTF_8.toString());
+		} catch (IOException e) {
+			// We don't want the page to error out so we just log the error and set htmlOutput to the message
+			logger.debug("Html output not found.");
+			htmlOutput = "NO FILE FOUND";//messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
+		} finally {
+			model.addAttribute("content", htmlOutput);
+			return BASE + "html-output";
+		}
 	}
 }
