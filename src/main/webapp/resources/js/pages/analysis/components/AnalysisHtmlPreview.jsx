@@ -7,6 +7,7 @@ import { Button, Divider } from "antd";
 import Iframe from "react-iframe";
 import { OutputFileHeader } from "../../../components/OutputFiles";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { grey4 } from "../../../styles/colors";
 
 export default function AnalysisHtmlPreview({ output }) {
   /*
@@ -32,16 +33,21 @@ export default function AnalysisHtmlPreview({ output }) {
           ]}
         />
         <Divider />
-        <Iframe
-          url={URL}
-          width="100%"
-          height="600"
-          style={{ border: "none", minHeight: 600 }}
-          frameBorder={0}
-          id="html-output-iframe"
-          display="initial"
-          position="relative"
-        />
+        <div
+          style={{
+            border: `solid 1px ${grey4}`}}
+        >
+          <Iframe
+            url={URL}
+            width="100%"
+            height="600"
+            style={{ minHeight: 600 }}
+            frameBorder={1}
+            id="html-output-iframe"
+            display="initial"
+            position="relative"
+          />
+        </div>
       </div>
     );
   }

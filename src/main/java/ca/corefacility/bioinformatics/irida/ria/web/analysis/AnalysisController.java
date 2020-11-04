@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,14 +52,16 @@ public class AnalysisController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
+	private MessageSource messageSource;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	// ************************************************************************************************
@@ -186,7 +189,7 @@ public class AnalysisController {
 		} catch (IOException e) {
 			// We don't want the page to error out so we just log the error and set htmlOutput to the message
 			logger.debug("Html output not found.");
-			htmlOutput = "NO FILE FOUND";//messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
+			htmlOutput = messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
 		} finally {
 			model.addAttribute("content", htmlOutput);
 			return BASE + "html-output";

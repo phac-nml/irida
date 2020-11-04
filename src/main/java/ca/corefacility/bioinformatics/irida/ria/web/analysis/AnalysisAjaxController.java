@@ -911,47 +911,6 @@ public class AnalysisAjaxController {
 			throw new IOException("Newick file could not be found for this submission");
 		}
 	}
-//
-//	/**
-//	 * Get an html file associated with a specific {@link AnalysisSubmission} by file name.
-//	 *
-//	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
-//	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
-//	 * @param locale       locale of the logged in user
-//	 * @return {@link String} containing the html file contents.
-//	 */
-//	@RequestMapping("{submissionId}/html-output")
-//	@ResponseBody
-//	public ResponseEntity<String> getHtmlFile(@PathVariable Long submissionId, String filename, Locale locale) {
-//		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-//		Set<AnalysisOutputFile> files = submission.getAnalysis()
-//				.getAnalysisOutputFiles();
-//		AnalysisOutputFile outputFile = null;
-//		String htmlExt = "html";
-//		String htmlOutput = "";
-//
-//		for (AnalysisOutputFile file : files) {
-//			if (file.getFile()
-//					.toFile()
-//					.getName()
-//					.contains(filename) && FilenameUtils.getExtension(filename)
-//					.equals(htmlExt)) {
-//				outputFile = file;
-//				break;
-//			}
-//		}
-//
-//		try {
-//			htmlOutput = FileUtils.readFileToString(outputFile.getFile()
-//					.toFile(), StandardCharsets.UTF_8.toString());
-//		} catch (IOException e) {
-//			// We don't want the page to error out so we just log the error and set htmlOutput to the message
-//			logger.debug("Html output not found.");
-//			htmlOutput = messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
-//		} finally {
-//			return ResponseEntity.ok(htmlOutput);
-//		}
-//	}
 
 	/**
 	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
