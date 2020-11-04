@@ -106,10 +106,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
-			throw new StorageException("Unable to locate file on azure", e);
-		} finally {
-			return fileSize;
 		}
+		return fileSize;
 	}
 
 	/**
@@ -158,11 +156,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 					.split("/");
 			fileName = blobNameTokens[blobNameTokens.length - 1];
 		} catch (BlobStorageException e) {
-			logger.error("Couldn't find file on azure [" + e + "]");
-			throw new StorageException("Unable to locate file on azure", e);
-		} finally {
-			return fileName;
+			logger.error("Couldn't retrieve filename. File not found on azure [" + e + "]");
 		}
+		return fileName;
 	}
 
 	/**
