@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.is;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 
+import com.jayway.restassured.http.ContentType;
+
 /**
  * General tests relating to security for the REST API.
  * 
@@ -19,7 +21,7 @@ public class SecurityIT {
 	 */
 	@Test
 	public void testAccessWithoutAuthentication() {
-		expect().body("error", is("invalid_request")).and()
+		expect().contentType(ContentType.JSON).body("error", is("invalid_request")).and()
 				.body("error_description", containsString("No client credentials were provided"))
 				.statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
 	}

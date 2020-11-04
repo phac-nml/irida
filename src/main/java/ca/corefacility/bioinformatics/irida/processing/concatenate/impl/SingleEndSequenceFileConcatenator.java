@@ -32,7 +32,6 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 	public SingleEndSequenceFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 		Path tempFile;
-
 		String extension = null;
 
 		try {

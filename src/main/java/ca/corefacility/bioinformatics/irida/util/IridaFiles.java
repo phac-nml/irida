@@ -20,6 +20,7 @@ public final class IridaFiles {
 	public static void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
 		IridaFiles.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
+
 	private IridaFiles() {
 	}
 
@@ -63,6 +64,16 @@ public final class IridaFiles {
 	 */
 	public static String getFileExtension(List<? extends SequencingObject> files) throws IOException {
 		return iridaFileStorageUtility.getFileExtension(files);
+	}
+
+	/**
+	 * Checks if the file exists
+	 *
+	 * @param file The path to the file
+	 * @return if file exists or not
+	 */
+	public static boolean fileExists(Path file) {
+		return iridaFileStorageUtility.fileExists(file);
 	}
 
 }

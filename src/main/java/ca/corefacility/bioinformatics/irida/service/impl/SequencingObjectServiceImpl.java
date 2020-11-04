@@ -251,7 +251,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 				.getConcatenator(toJoin, iridaFileStorageUtility);
 
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
-		
+
 		SampleSequencingObjectJoin created = createSequencingObjectInSample(concatenated, targetSample);
 		
 		concatenationRepository.save(new SequenceConcatenation(created.getObject(), toJoin));

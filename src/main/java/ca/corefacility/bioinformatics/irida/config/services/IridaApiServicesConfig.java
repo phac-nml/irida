@@ -129,6 +129,18 @@ public class IridaApiServicesConfig {
 	@Value("${locales.enabled}")
 	private String availableLocales;
 
+	@Value("${irida.storage.type}")
+	private String storageType;
+
+	@Value("${azure.container.name:#{null}}")
+	private String containerName;
+
+	@Value("${azure.container.url:#{null}}")
+	private String containerUrl;
+
+	@Value("${azure.sas.token:#{null}}")
+	private String sasToken;
+
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -296,7 +308,12 @@ public class IridaApiServicesConfig {
 	 */
 	@Bean(name = "iridaFileStorageUtility")
 	public IridaFileStorageUtility iridaFileStorageUtility() {
-		IridaFileStorageUtility iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFileStorageUtility iridaFileStorageUtility;
+		if(storageType.equalsIgnoreCase("azure")) {
+			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
+		} else {
+			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		}
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		return iridaFileStorageUtility;
 	}
