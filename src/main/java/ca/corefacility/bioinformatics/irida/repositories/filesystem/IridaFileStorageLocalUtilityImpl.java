@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
@@ -38,10 +37,21 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File getTemporaryFile(Path file) {
-		File fileToProcess = null;
-		fileToProcess = file.toFile();
-		return fileToProcess;
+	public IridaTemporaryFile getTemporaryFile(Path file) {
+		return new IridaTemporaryFile(file, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
+		if(iridaTemporaryFile.getFile() != null) {
+			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile().toString() + "]");
+		}
+		if(iridaTemporaryFile.getDirectoryPath() != null) {
+			logger.trace("Directory resides on local filesystem. Not cleaning up directory [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
+		}
 	}
 
 	/**

@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -20,32 +21,26 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
 
 /**
- * Component implementation of file utitlities for aws storage
+ * Component implementation of file utitlities for azure storage
  */
 @Component
-public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
-	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
+public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility {
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityImpl.class);
 
-	private String bucketName;
-	private BasicAWSCredentials awsCreds;
-	private AmazonS3 s3;
+	private BlobServiceClient blobServiceClient;
+	private BlobContainerClient containerClient ;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
-		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
-				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
-		this.bucketName = bucketName;
+	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName){
+		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl).sasToken(sasToken).buildClient();
+		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
 	}
 
 	/**
@@ -53,27 +48,20 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file) {
+		// We set the blobClient "path" to which file we want to get
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+
 		try {
-			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
-			Path tempDirectory = Files.createTempDirectory("aws-tmp-");
+			logger.trace("Getting file from azure [" + file.toString() + "]");
+			Path tempDirectory = Files.createTempDirectory("azure-tmp-");
 			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
-
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
-
-			org.apache.commons.io.FileUtils.copyInputStreamToFile(s3ObjectInputStream, tempFile.toFile());
-
-			s3ObjectInputStream.close();
-			s3Object.close();
-
+			InputStream initialStream = blobClient.openInputStream();
+			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
+			initialStream.close();
 			return new IridaTemporaryFile(tempFile, tempDirectory);
-
-		} catch (AmazonServiceException e) {
-			logger.error(e.getErrorMessage());
-			throw new StorageException(e.getMessage());
-		} catch (FileNotFoundException e) {
-			logger.error(e.getMessage());
-			throw new StorageException(e.getMessage());
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't find file on azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			throw new StorageException(e.getMessage());
@@ -87,7 +75,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		try {
 			if(iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {
-				logger.trace("Cleaning up temporary file downloaded from aws s3 [" + iridaTemporaryFile.getFile().toString() + "]");
+				logger.trace("Cleaning up temporary file downloaded from azure [" + iridaTemporaryFile.getFile().toString() + "]");
 				Files.delete(iridaTemporaryFile.getFile());
 			}
 		} catch (IOException e) {
@@ -97,7 +85,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 
 		try {
 			if(iridaTemporaryFile.getDirectoryPath() != null && Files.isDirectory(iridaTemporaryFile.getDirectoryPath())) {
-				logger.trace("Cleaning up temporary directory created for aws s3 temporary file [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
+				logger.trace("Cleaning up temporary directory created for azure temporary file [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
 				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath().toFile());
 			}
 		} catch (IOException e) {
@@ -113,18 +101,12 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
-					.getContentLength(), true);
-			try {
-				s3Object.close();
-			} catch (IOException e) {
-				logger.error("Unable to close connection to s3object: " + e);
-			}
-		} catch (AmazonServiceException e) {
-			logger.error("Unable to get file size from s3 bucket: " + e);
+			// We set the blobClient "path" to which we want to get a file size for
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
 		}
-
 		return fileSize;
 	}
 
@@ -133,13 +115,15 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
+		// We set the blobClient "path" to which we want to upload our file to
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
 		try {
-			logger.trace("Uploading file to s3 bucket: [" + target.getFileName() + "]");
-			s3.putObject(bucketName, getAwsFileAbsolutePath(target), source.toFile());
-			logger.trace("File uploaded to s3 bucket: [" + s3.getUrl(bucketName, target.toAbsolutePath().toString()) + "]");
-		} catch (AmazonServiceException e) {
-			logger.error("Unable to upload file to s3 bucket: " + e);
-			throw new StorageException("Unable to upload file s3 bucket", e);
+			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
+			blobClient.uploadFromFile(source.toString(), false);
+			logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
+		} catch (BlobStorageException e) {
+			logger.error("Unable to upload file to azure [" + e + "]");
+			throw new StorageException("Unable to upload file to azure", e);
 		}
 
 		try {
@@ -164,20 +148,16 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
-			String[] nameTokens = s3Object.getKey()
+			String[] blobNameTokens = blobClient.getBlobName()
 					.split("/");
-			fileName = nameTokens[nameTokens.length - 1];
-			s3Object.close();
-		} catch (AmazonServiceException e) {
-			logger.error("Couldn't find file [" + e + "]");
-		} catch (IOException e) {
-			logger.error("Unable to close connection to s3object: " + e);
+			fileName = blobNameTokens[blobNameTokens.length - 1];
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't retrieve filename. File not found on azure [" + e + "]");
 		}
-
 		return fileName;
 	}
 
@@ -186,7 +166,11 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public boolean fileExists(Path file) {
-		return s3.doesObjectExist(bucketName, getAwsFileAbsolutePath(file));
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		if(blobClient.exists()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -194,13 +178,14 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
+		BlobClient blobClient;
 		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			logger.trace("Opening input stream to file in s3 bucket [" + file.toString() + "]");
-			return s3Object.getObjectContent();
-		} catch (AmazonServiceException e) {
-			logger.error("Couldn't read file from s3 bucket [" + e + "]");
-			throw new StorageException("Unable to locate file in s3 bucket", e);
+			logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
+			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			return blobClient.openInputStream();
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't read file from azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
 		}
 	}
 
@@ -209,9 +194,9 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public boolean isGzipped(Path file) throws IOException {
-		try (InputStream inputStream = getFileInputStream(file)) {
+		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
-			inputStream.read(bytes);
+			is.read(bytes);
 			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
 		}
@@ -224,7 +209,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 * @param file
 	 * @return
 	 */
-	private String getAwsFileAbsolutePath(Path file) {
+	private String getAzureFileAbsolutePath(Path file) {
 		String absolutePath = file.toAbsolutePath().toString();
 		if(absolutePath.charAt(0) == '/') {
 			absolutePath = file.toAbsolutePath()
@@ -233,8 +218,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 		}
 		return absolutePath;
 	}
-
 	/**
+
 	 * {@inheritDoc}
 	 */
 	@Override
