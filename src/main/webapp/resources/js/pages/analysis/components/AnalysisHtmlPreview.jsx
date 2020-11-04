@@ -42,7 +42,7 @@ export default function AnalysisHtmlPreview({ output }) {
             width="100%"
             height="600"
             style={{ minHeight: 600 }}
-            frameBorder={1}
+            frameBorder={0}
             id="html-output-iframe"
             display="initial"
             position="relative"
