@@ -107,8 +107,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
 			throw new StorageException("Unable to locate file on azure", e);
+		} finally {
+			return fileSize;
 		}
-		return fileSize;
 	}
 
 	/**
@@ -159,9 +160,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't find file on azure [" + e + "]");
 			throw new StorageException("Unable to locate file on azure", e);
+		} finally {
+			return fileName;
 		}
-
-		return fileName;
 	}
 
 	/**
