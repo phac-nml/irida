@@ -336,7 +336,7 @@ export async function parseExcel(submissionId, filename, sheetIndex) {
  */
 export async function getHtmlFile(submissionId, filename) {
   return await axios
-    .get(`${ANALYSIS_URL}/html-output`, {
+    .get(`${ANALYSIS_URL}/${submissionId}/html-output`, {
       params: {
         filename
       },
