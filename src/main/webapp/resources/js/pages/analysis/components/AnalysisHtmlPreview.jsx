@@ -17,15 +17,16 @@ const HtmlOutputWrapper = styled.div`
   margin-bottom: ${SPACE_XS};
   border: solid 1px ${grey4};
   overflow: auto;
+  padding: ${SPACE_XS};
 `;
 
 export default function AnalysisHtmlPreview({ output }) {
   const [htmlOutput, setHtmlOutput] = React.useState(null);
 
   React.useEffect(() => {
-    getHtmlFile(output.analysisSubmissionId, output.filename).then(({data}) => {
+    getHtmlFile(output.analysisSubmissionId, output.filename).then(html => {
       // Sanitize the html output before setting it in the state.
-      setHtmlOutput(DOMPurify.sanitize(data));
+      setHtmlOutput(DOMPurify.sanitize(html));
     });
   }, []);
 
@@ -43,7 +44,6 @@ export default function AnalysisHtmlPreview({ output }) {
           dangerouslySetInnerHTML={{
             __html: htmlOutput
           }}
-          style={{padding: SPACE_XS}}
         />
       </div>
     );
