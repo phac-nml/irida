@@ -163,8 +163,18 @@ public class AnalysisController {
 		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
+	/**
+	 * Get the html page from the file name provided.
+	 *
+	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param filename     The html file name
+	 * @param model        {@link Model}
+	 * @param locale       User's locale
+	 * @return {@link String} path to the page template.
+	 */
 	@RequestMapping("/{submissionId}/html-output")
-	public String getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename, Model model, Locale locale) {
+	public String getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename,
+			Model model, Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
