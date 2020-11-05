@@ -8,6 +8,7 @@ import Iframe from "react-iframe";
 import { OutputFileHeader } from "../../../components/OutputFiles";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { grey4 } from "../../../styles/colors";
+import { IconLinkOut } from "../../../components/icons/Icons";
 
 export default function AnalysisHtmlPreview({ output }) {
   /*
@@ -27,7 +28,7 @@ export default function AnalysisHtmlPreview({ output }) {
         <OutputFileHeader
           output={output}
           extras={[
-            <Button onClick={openPopup} key="open-html">
+            <Button onClick={openPopup} key="open-html" icon={<IconLinkOut />}>
               Open in new window
             </Button>,
           ]}
@@ -35,7 +36,8 @@ export default function AnalysisHtmlPreview({ output }) {
         <Divider />
         <div
           style={{
-            border: `solid 1px ${grey4}`}}
+            border: `solid 1px ${grey4}`,
+          }}
         >
           <Iframe
             url={URL}
