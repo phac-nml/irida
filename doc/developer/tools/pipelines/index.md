@@ -242,6 +242,18 @@ Normally this file will be generated for you by [irida-wf-ga2xml][]. A few key e
 
 Additional details and a description of the syntax of this file can be found in the [IRIDA Workflow Description][] documentation.
 
+**Note:**
+
+If the pipeline outputs an html file, then any custom styling (css) required for the page must be added directly to the html page. There are two ways to do this:
+
+1) Pull directly from a CDN provider by adding `<script src="URL_TO_CSS_FILE"></script>` to the `<head></head>` tags in the html output.
+2) Add your styles directly in the `<head></head>` tags as follows:
+`<style>
+    //CSS styles go here
+</style>`
+
+Any javascript required by the page will also need to be either embedded in the html file in `<script></script>` tags or pulled from a CDN provider by adding `<script src="URL_TO_JS_FILE"></script>`
+
 #### 3.2.3.3. `messages_en.properties`
 
 This file contains information on the text to display in the IRIDA UI for each pipeline (specifically the *en* or English text, other languages can be stored in other `messages_xx.properties` files). An example of this file is:
