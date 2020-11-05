@@ -13,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,9 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails>
 		implements IridaClientDetailsService {
-	private IridaClientDetailsRepository clientDetailsRepository;
+	private final IridaClientDetailsRepository clientDetailsRepository;
 
-	private TokenStore tokenStore;
+	private final TokenStore tokenStore;
 
 	@Autowired
 	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, TokenStore tokenStore,
@@ -60,7 +59,7 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 */
 	@Override
 	@PreAuthorize("permitAll()")
-	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
+	public ClientDetails loadClientByClientId(String clientId) throws NoSuchClientException {
 		IridaClientDetails client = clientDetailsRepository.loadClientDetailsByClientId(clientId);
 		if (client == null) {
 			throw new NoSuchClientException("Client with this clientId does not exist: " + clientId);

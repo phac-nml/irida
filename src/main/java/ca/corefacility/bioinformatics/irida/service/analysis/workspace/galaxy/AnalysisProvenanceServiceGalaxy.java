@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
 public class AnalysisProvenanceServiceGalaxy {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisProvenanceServiceGalaxy.class);
 	private static final Set<String> PARAMETERS_TO_IGNORE = Sets.newHashSet("chromInfo", "dbkey", "async_datasets",
-			"paramfile", "uuid", "__current_case__", "__index__", "__workflow_invocation_uuid__");
+			"paramfile", "uuid", "__current_case__", "__index__", "__workflow_invocation_uuid__", "__input_ext");
 	private static final String ID_PARAM_KEY = "id";
 	private static final Joiner KEY_JOINER = Joiner.on(IridaToolParameter.PARAMETER_NAME_SEPARATOR).skipNulls();
 	private static final String JSON_TEXT_MAP_INDICATOR = JsonToken.START_OBJECT.asString(); // "{"

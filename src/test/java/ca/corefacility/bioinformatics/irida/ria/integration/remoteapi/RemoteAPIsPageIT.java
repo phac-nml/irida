@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -9,23 +8,29 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.Remo
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/RemoteApisIT.xml")
 public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
-	private RemoteAPIsPage apisPage;
 
-	@Before
-	public void setUpTest() {
-		LoginPage.loginAsManager(driver());
-		apisPage = RemoteAPIsPage.goTo(driver());
+	@Test
+	public void testRemoteAPIPageAsAdmin() {
+		LoginPage.loginAsAdmin(driver());
+		RemoteAPIsPage apisPage = RemoteAPIsPage.goTo(driver());
+		int clientsTableSize = apisPage.remoteApisTableSize();
+		assertEquals(2, clientsTableSize);
+		assertTrue("Should be able to see client details", apisPage.canSeeRemoteDetails());
+		assertTrue(apisPage.checkRemoteApiExistsInTable("a client"));
+		assertTrue(apisPage.checkRemoteApiExistsInTable("another client"));
 	}
 
 	@Test
-	public void testCheckClientsPageNumber() {
+	public void testRemoteAPIPageAsUser() {
+		LoginPage.loginAsUser(driver());
+		RemoteAPIsPage apisPage = RemoteAPIsPage.goTo(driver());
 		int clientsTableSize = apisPage.remoteApisTableSize();
 		assertEquals(2, clientsTableSize);
+		assertFalse("Should not be able to link to client details", apisPage.canSeeRemoteDetails());
 		assertTrue(apisPage.checkRemoteApiExistsInTable("a client"));
 		assertTrue(apisPage.checkRemoteApiExistsInTable("another client"));
 	}

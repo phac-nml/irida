@@ -2,9 +2,9 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -14,36 +14,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
+
 /**
  * Component implementation of file utitlities for aws storage
  */
 @Component
-
 public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
 	private String bucketName;
-	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
-		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
-				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+	public IridaFileStorageAwsUtilityImpl(String bucketName){
+		this.s3 = AmazonS3ClientBuilder.standard().build();
 		this.bucketName = bucketName;
 	}
 
@@ -51,44 +46,58 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File getTemporaryFile(Path file) {
-		File fileToProcess = null;
-
+	public IridaTemporaryFile getTemporaryFile(Path file) {
 		try {
-
-			String tmpDir = "/tmp/" + new Date().toString().replaceAll("\\W", "");
-
-			// Since the file system is virtual the full file path is the file name.
-			// We split it on "/" and get the last token which is the actual file name.
-			String [] nameTokens = file.toAbsolutePath().toString().split("/");
-			String fileName = nameTokens[nameTokens.length-1];
+			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
+			Path tempDirectory = Files.createTempDirectory("aws-tmp-");
+			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 
 			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
-			fileToProcess = new File(tmpDir+fileName);
+			org.apache.commons.io.FileUtils.copyInputStreamToFile(s3ObjectInputStream, tempFile.toFile());
 
-			// Stream the file from the bucket into a local file
-			FileOutputStream fileOutputStream = new FileOutputStream(fileToProcess);
-			logger.trace("Downloading s3 object to: " + fileToProcess.getAbsolutePath());
-
-			byte[] read_buf = new byte[1024];
-			int read_len = 0;
-			while ((read_len = s3ObjectInputStream.read(read_buf)) > 0) {
-				fileOutputStream.write(read_buf, 0, read_len);
-			}
 			s3ObjectInputStream.close();
-			fileOutputStream.close();
 			s3Object.close();
+
+			return new IridaTemporaryFile(tempFile, tempDirectory);
+
 		} catch (AmazonServiceException e) {
 			logger.error(e.getErrorMessage());
+			throw new StorageException(e.getMessage());
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage());
+			throw new StorageException(e.getMessage());
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			throw new StorageException(e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
+		try {
+			if(iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {
+				logger.trace("Cleaning up temporary file downloaded from aws s3 [" + iridaTemporaryFile.getFile().toString() + "]");
+				Files.delete(iridaTemporaryFile.getFile());
+			}
+		} catch (IOException e) {
+			logger.error("Unable to delete local file", e);
+			throw new StorageException(e.getMessage());
 		}
 
-		return fileToProcess;
+		try {
+			if(iridaTemporaryFile.getDirectoryPath() != null && Files.isDirectory(iridaTemporaryFile.getDirectoryPath())) {
+				logger.trace("Cleaning up temporary directory created for aws s3 temporary file [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
+				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath().toFile());
+			}
+		} catch (IOException e) {
+			logger.error("Unable to delete local directory", e);
+			throw new StorageException(e.getMessage());
+		}
 	}
 
 	/**
@@ -101,12 +110,15 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
 					.getContentLength(), true);
-			s3Object.close();
+			try {
+				s3Object.close();
+			} catch (IOException e) {
+				logger.error("Unable to close connection to s3object: " + e);
+			}
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
-		} catch (IOException e) {
-			logger.error("Unable to close connection to s3object: " + e);
 		}
+
 		return fileSize;
 	}
 
@@ -121,6 +133,15 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 			logger.trace("File uploaded to s3 bucket: [" + s3.getUrl(bucketName, target.toAbsolutePath().toString()) + "]");
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to upload file to s3 bucket: " + e);
+			throw new StorageException("Unable to upload file s3 bucket", e);
+		}
+
+		try {
+			// The source file is the temp file which is no longer required
+			Files.deleteIfExists(source);
+		} catch (IOException e) {
+			logger.error("Unable to clean up source file", e);
+			throw new StorageException("Unable to clean up source file", e);
 		}
 	}
 
@@ -167,14 +188,14 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
-		InputStream inputStream = null;
 		try {
 			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			inputStream = s3Object.getObjectContent();
+			logger.trace("Opening input stream to file in s3 bucket [" + file.toString() + "]");
+			return s3Object.getObjectContent();
 		} catch (AmazonServiceException e) {
-			logger.error(e.getErrorMessage());
+			logger.error("Couldn't read file from s3 bucket [" + e + "]");
+			throw new StorageException("Unable to locate file in s3 bucket", e);
 		}
-		return inputStream;
 	}
 
 	/**
@@ -191,22 +212,42 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	}
 
 	/**
+	 * Removes the leading "/" from the absolute path
+	 * returns the rest of the path.
+	 *
+	 * @param file
+	 * @return
+	 */
+	private String getAwsFileAbsolutePath(Path file) {
+		String absolutePath = file.toAbsolutePath().toString();
+		if(absolutePath.charAt(0) == '/') {
+			absolutePath = file.toAbsolutePath()
+					.toString()
+					.substring(1);
+		}
+		return absolutePath;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void appendToFile(Path target, SequenceFile file) throws IOException {
+		IridaTemporaryFile iridaTemporaryFile = getTemporaryFile(file.getFile());
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
-			try (FileChannel in = new FileInputStream(getTemporaryFile(file.getFile())).getChannel()) {
+			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
 				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new IOException("Could not open input file for reading", e);
+				throw new StorageException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {
-			throw new IOException("Could not open target file for writing", e);
+			throw new StorageException("Could not open target file for writing", e);
+		} finally {
+			cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 		}
 	}
 
@@ -249,30 +290,23 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public byte[] readAllBytes(Path file) {
-		byte[] bytes = new byte[0];
+		byte [] bytes = new byte[0];
 		try {
-			bytes = getFileInputStream(file).readAllBytes();
-		} catch (IOException e)
-		{
-			logger.error("Unable to read file");
-		}
-		return bytes;
-	}
+			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+			bytes = s3ObjectInputStream.readAllBytes();
 
-	/**
-	 * Removes the leading "/" from the absolute path
-	 * returns the rest of the path.
-	 *
-	 * @param file
-	 * @return
-	 */
-	private String getAwsFileAbsolutePath(Path file) {
-		String absolutePath = file.toAbsolutePath().toString();
-		if(absolutePath.charAt(0) == '/') {
-			absolutePath = file.toAbsolutePath()
-					.toString()
-					.substring(1);
+			try {
+				s3Object.close();
+			} catch (IOException e) {
+				logger.error("Unable to close connection to s3object: " + e);
+			}
+		} catch (IOException e) {
+			logger.error("Couldn't get bytes from file [" + e + "]");
+		} catch (AmazonServiceException e) {
+			logger.error("Couldn't read file from aws s3 bucket [" + e + "]");
 		}
-		return absolutePath;
+
+		return bytes;
 	}
 }

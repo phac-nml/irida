@@ -25,7 +25,8 @@ const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
   EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
   PRIORITY: "UPDATED_PRIORITY",
-  UPDATE_SAMPLES: "UPDATE_SAMPLES"
+  UPDATE_SAMPLES: "UPDATE_SAMPLES",
+  UPDATE_DURATION: "UPDATE_DURATION"
 };
 
 // Updates the state and returns a new copy.
@@ -42,6 +43,8 @@ const reducer = (context, action) => {
       return { ...context, priority: action.priority };
     case TYPES.UPDATE_SAMPLES:
       return { ...context, updateSamples: action.updateSamples };
+    case TYPES.UPDATE_DURATION:
+      return { ...context, duration: action.duration };
     default:
       return;
   }
@@ -68,21 +71,25 @@ function AnalysisDetailsProvider(props) {
     reducer,
     initialContext
   );
-  const { analysisContext } = useContext(AnalysisContext);
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
 
   // On page load get the analysis details
   useEffect(() => {
-    getVariablesForDetails(analysisContext.analysis.identifier).then(data => {
+    getVariablesForDetails(analysisIdentifier).then(data => {
       dispatch({ type: TYPES.DETAILS, payload: data });
     });
   }, [getVariablesForDetails]);
+
+  useEffect(() => {
+    dispatch({ type: TYPES.UPDATE_DURATION, duration: analysisContext.duration });
+  }, [analysisContext.duration]);
 
   /*
    * Saves results to related samples and updates
    * `updateSamples` state variable.
    */
   function saveResultsToRelatedSamples() {
-    saveToRelatedSamples(analysisContext.analysis.identifier).then(res => {
+    saveToRelatedSamples(analysisIdentifier).then(res => {
       if (res.type === "error") {
         showErrorNotification({ text: res.text, type: res.type });
       } else {
@@ -98,7 +105,7 @@ function AnalysisDetailsProvider(props) {
    */
   function analysisDetailsContextUpdateSubmissionPriority(updatedPriority) {
     updateAnalysis({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       analysisName: null,
       priority: updatedPriority
     }).then(res => {
@@ -120,7 +127,7 @@ function AnalysisDetailsProvider(props) {
     emailPipelineResult
   ) {
     updateAnalysisEmailPipelineResult({
-      submissionId: analysisContext.analysis.identifier,
+      submissionId: analysisIdentifier,
       emailPipelineResult: emailPipelineResult
     }).then(res => {
       if (res.type === "error") {

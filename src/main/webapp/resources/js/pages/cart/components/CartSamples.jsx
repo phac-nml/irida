@@ -72,13 +72,13 @@ function CartSamplesComponent({
   emptyCart,
   displaySample,
   removeSample,
-  removeProject
+  removeProject,
 }) {
-  const filterSamples = e => applyFilter(e.target.value);
+  const filterSamples = (e) => applyFilter(e.target.value);
 
-  const removeOneSample = sample => removeSample(sample.project.id, sample.id);
+  const removeOneSample = (sample) => removeSample(sample);
 
-  const removeOneProject = id => removeProject(id);
+  const removeOneProject = (id) => removeProject(id);
 
   const renderSample = ({ index, data, style }) => (
     <SampleRenderer
@@ -127,20 +127,20 @@ function CartSamplesComponent({
 CartSamplesComponent.propTypes = {
   displaySample: PropTypes.func.isRequired,
   removeSample: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired
+  removeProject: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  samples: state.cart.filteredSamples
+const mapStateToProps = (state) => ({
+  samples: state.cart.filteredSamples,
 });
 
-const mapDispatchToProps = dispatch => ({
-  applyFilter: filter => dispatch(actions.applyFilter(filter)),
+const mapDispatchToProps = (dispatch) => ({
+  applyFilter: (filter) => dispatch(actions.applyFilter(filter)),
   emptyCart: () => dispatch(actions.emptyCart()),
-  displaySample: sample => dispatch(sampleDetailsActions.displaySample(sample)),
-  removeSample: (projectId, sampleId) =>
-    dispatch(actions.removeSample(projectId, sampleId)),
-  removeProject: id => dispatch(actions.removeProject(id))
+  displaySample: (sample) =>
+    dispatch(sampleDetailsActions.displaySample(sample)),
+  removeSample: (sample) => dispatch(actions.removeSample(sample)),
+  removeProject: (id) => dispatch(actions.removeProject(id)),
 });
 
 const CartSamples = connect(
