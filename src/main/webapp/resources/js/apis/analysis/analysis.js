@@ -335,23 +335,6 @@ export async function parseExcel(submissionId, filename, sheetIndex) {
 }
 
 /**
- * Gets the html file data as a string.
- * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
- */
-export async function getHtmlFile(submissionId, filename) {
-  return await axios
-    .get(`${ANALYSIS_URL}/${submissionId}/html-output`, {
-      params: {
-        filename,
-      },
-    })
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw new Error(error.response.data.error);
-    });
-}
-
-/**
  * Gets the image file data as a base64 encoded string.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
