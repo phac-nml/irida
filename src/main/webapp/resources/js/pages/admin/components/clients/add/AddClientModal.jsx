@@ -8,6 +8,7 @@ import {
   validateClientId,
 } from "../../../../../apis/clients/clients";
 import { HelpPopover } from "../../../../../components/popovers";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const { Item } = Form;
 const { Paragraph } = Typography;
@@ -47,11 +48,8 @@ export function AddClientModal({ visible, onCancel, onComplete }) {
   const onOk = async () => {
     try {
       const values = await form.validateFields();
-      createClient(values).then(() => {
-        // Clear the form and reset the table
-        updateTable();
-        form.resetFields();
-        onComplete();
+      createClient(values).then(({ id }) => {
+        window.location.href = setBaseUrl(`/clients/${id}`);
       });
     } catch (errors) {
       // Re-enforce the error to the user

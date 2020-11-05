@@ -66,4 +66,18 @@ public interface AnalysisWorkspaceService {
 	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
 			IridaWorkflowAnalysisTypeException;
+
+	/**
+	 * Checks if all output files from a given AnalysisSubmission are available on galaxy.
+	 *
+	 * @param analysisSubmission The {@link AnalysisSubmission}.
+	 * @return boolean
+	 * @throws ExecutionManagerException
+	 *             If there was an error getting the results.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow passed to this analysis submission could not
+	 *             be found.
+	 */
+	public boolean outputFilesExist(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException;
 }

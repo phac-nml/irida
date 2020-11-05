@@ -434,3 +434,17 @@ export async function deleteAnalysisSubmissions({ ids }) {
 export async function fetchAnalysesQueueCounts() {
   return axios.get(`${ANALYSES_URL}/queue`).then(({ data }) => data);
 }
+
+/**
+ * Get the updated progress of an analysis
+ * @param {number} submissionID Submission ID
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function getUpdatedTableDetails(submissionId) {
+  try {
+    const res = await axios.get(`${ANALYSES_URL}/${submissionId}/updated-table-progress`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}

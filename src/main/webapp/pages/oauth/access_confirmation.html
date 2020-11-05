@@ -13,7 +13,7 @@
     </style>
   </head>
   <body>
-    <section class="modal-body" style="margin-top: 0;">
+    <section class="modal-body" style="margin-top: 0">
       <h3 style="margin-top: 0" th:text="#{auth.title}">
         _IRIDA OAuth2 Approval Page_
       </h3>
@@ -61,7 +61,9 @@
           name="authorize"
           id="authorize-btn"
           type="submit"
-        ><span th:text="#{auth.authorize}">Authorize</span></button>
+        >
+          <span th:text="#{auth.authorize}">Authorize</span>
+        </button>
       </form>
       <form
         id="denialForm"
@@ -78,25 +80,17 @@
           value="false"
         />
         <input name="user_oauth_approval" value="false" type="hidden" />
-        <button
-          class="ant-btn"
-          name="deny"
-          type="submit"
-        ><span th:text="#{auth.deny}">deny</span>
+        <button class="ant-btn" name="deny" type="submit">
+          <span th:text="#{auth.deny}">deny</span>
         </button>
       </form>
     </div>
     <script>
-      window.onbeforeunload = function() {
+      window.onbeforeunload = function () {
         if (window.opener) {
           window.opener.handleClosing();
         }
       };
-
-      function handleSubmit() {
-        window.onbeforeunload = undefined;
-        return true;
-      }
     </script>
   </body>
 </html>

@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErro
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -119,6 +120,9 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private EmailController emailController;
+
+	@Autowired
+	private AnalysisWorkspaceService analysisWorkspaceService;
 	
 	@Autowired
 	private GzipFileProcessor gzipFileProcessor;
@@ -169,7 +173,8 @@ public class SNVPhylAnalysisIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService, jobErrorRepository, emailController);
+				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
+				jobErrorRepository, emailController, analysisWorkspaceService);
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
@@ -290,7 +295,7 @@ public class SNVPhylAnalysisIT {
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 		
 		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
-				"filter-density-threshold", "2", "filter-density-window-size", "3");
+				"filter-density-threshold", "2", "filter-density-window-size", "3", "enable-density-filter", "true");
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
@@ -433,7 +438,8 @@ public class SNVPhylAnalysisIT {
 		Map<String, String> parameters = ImmutableMap.<String, String> builder()
 				.put("snv-abundance-ratio", "0.90").put("minimum-read-coverage", "2")
 				.put("minimum-percent-coverage", "75").put("minimum-mean-mapping-quality", "20")
-				.put("filter-density-threshold", "3").put("filter-density-window-size", "30").build();
+				.put("filter-density-threshold", "3").put("filter-density-window-size", "30")
+				.put("enable-density-filter", "false").build();
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -524,6 +530,7 @@ public class SNVPhylAnalysisIT {
 		String minimumDepthVerify = null;
 		String filterDensityThreshold = null;
 		String filterDensityWindowSize = null;
+		String enableFilterDensity = null;
 		
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
@@ -536,8 +543,9 @@ public class SNVPhylAnalysisIT {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
 				altAlleleFraction = params.get("snv_abundance_ratio");
-				filterDensityThreshold = params.get("use_density_filter.threshold");
-				filterDensityWindowSize = params.get("use_density_filter.window_size");
+				filterDensityThreshold = params.get("threshold");
+				filterDensityWindowSize = params.get("window_size");
+				enableFilterDensity = params.get("use_density_filter");
 				break;
 			}
 		}
@@ -563,8 +571,9 @@ public class SNVPhylAnalysisIT {
 		assertEquals("incorrect alternative allele fraction", "\"0.90\"", altAlleleFraction);
 		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
 		assertEquals("incorrect min percent coverage for verify map", "\"75\"", minimumPercentCoverage);
-		assertEquals("incorrect filter density threshold", "3", filterDensityThreshold);
-		assertEquals("incorrect filter density window size", "30", filterDensityWindowSize);
+		assertEquals("incorrect filter density threshold", "\"3\"", filterDensityThreshold);
+		assertEquals("incorrect filter density window size", "\"30\"", filterDensityWindowSize);
+		assertEquals("incorrect value for use_density_filter", "\"false\"", enableFilterDensity);
 	}
 	
 	/**
@@ -583,7 +592,7 @@ public class SNVPhylAnalysisIT {
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
 		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
-				"filter-density-threshold", "2", "filter-density-window-size", "4");
+				"filter-density-threshold", "2", "filter-density-window-size", "4", "enable-density-filter", "true");
 		
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
@@ -674,6 +683,7 @@ public class SNVPhylAnalysisIT {
 		String minimumDepthVerify = null;
 		String filterDensityThreshold = null;
 		String filterDensityWindowSize = null;
+		String enableFilterDensity = null;
 		
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
@@ -686,8 +696,9 @@ public class SNVPhylAnalysisIT {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minVcf2AlignCov = params.get("coverage");
 				altAlleleFraction = params.get("snv_abundance_ratio");
-				filterDensityThreshold = params.get("use_density_filter.threshold");
-				filterDensityWindowSize = params.get("use_density_filter.window_size");
+				filterDensityThreshold = params.get("threshold");
+				filterDensityWindowSize = params.get("window_size");
+				enableFilterDensity = params.get("use_density_filter");
 				break;
 			}
 		}
@@ -713,7 +724,8 @@ public class SNVPhylAnalysisIT {
 		assertEquals("incorrect alternative allele fraction", "\"0.75\"", altAlleleFraction);
 		assertEquals("incorrect minimum depth for verify map", "\"2\"", minimumDepthVerify);
 		assertEquals("incorrect min percent coverage for verify map", "\"80\"", minimumPercentCoverage);
-		assertEquals("incorrect filter density threshold", "2", filterDensityThreshold);
-		assertEquals("incorrect filter density window size", "4", filterDensityWindowSize);
+		assertEquals("incorrect filter density threshold", "\"2\"", filterDensityThreshold);
+		assertEquals("incorrect filter density window size", "\"4\"", filterDensityWindowSize);
+		assertEquals("incorrect value for use_density_filter", "\"true\"", enableFilterDensity);
 	}
 }
