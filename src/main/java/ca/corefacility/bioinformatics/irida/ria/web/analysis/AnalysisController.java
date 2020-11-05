@@ -200,9 +200,9 @@ public class AnalysisController {
 			// We don't want the page to error out so we just log the error and set htmlOutput to the message
 			logger.debug("Html output not found.");
 			htmlOutput = messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
-		} finally {
-			model.addAttribute("content", htmlOutput);
-			return BASE + "html-output";
 		}
+
+		model.addAttribute("content", htmlOutput);
+		return BASE + "html-output";
 	}
 }
