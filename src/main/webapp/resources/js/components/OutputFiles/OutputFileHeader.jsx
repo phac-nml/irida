@@ -5,7 +5,7 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Typography } from "antd";
+import { Button, Space, Typography } from "antd";
 import { convertFileSize } from "../../utilities/file-utilities";
 import { downloadOutputFile } from "../../apis/analysis/analysis";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
@@ -25,32 +25,34 @@ const OutputFileHeaderWrapper = styled.div`
 /**
  * Stateless UI component for creating the file header with download button
  * @param {object} output - The current output file
+ * @param {array} extras - Extra buttons to be rendered
  *
  * @returns {Element} - Returns a component which has a file header with download button
  */
 
-export function OutputFileHeader({ output }) {
+export function OutputFileHeader({ output, extras = [] }) {
   return (
     <OutputFileHeaderWrapper>
       <div>
         <Text
           style={{
-            fontSize: FONT_SIZE_DEFAULT
+            fontSize: FONT_SIZE_DEFAULT,
           }}
           className="t-file-name"
         >
           {`${output.toolName} ${output.toolVersion} - ${output.outputName} - ${output.filename}`}
         </Text>
       </div>
-      <div>
+      <Space>
+        {extras}
         <Button
           style={{
-            marginLeft: SPACE_XS
+            marginLeft: SPACE_XS,
           }}
           onClick={() =>
             downloadOutputFile({
               submissionId: output.analysisSubmissionId,
-              fileId: output.id
+              fileId: output.id,
             })
           }
           icon={<IconDownloadFile />}
@@ -58,12 +60,12 @@ export function OutputFileHeader({ output }) {
         >
           {`${output.filename} (${convertFileSize(output.fileSizeBytes)})`}
         </Button>
-      </div>
+      </Space>
     </OutputFileHeaderWrapper>
   );
 }
 
 OutputFileHeader.propTypes = {
   /*Output file object*/
-  output: PropTypes.object.isRequired
+  output: PropTypes.object.isRequired,
 };

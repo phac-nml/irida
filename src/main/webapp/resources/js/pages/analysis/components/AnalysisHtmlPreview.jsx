@@ -3,48 +3,53 @@
  */
 
 import React from "react";
-import { Divider } from "antd";
-import DOMPurify from 'dompurify';
+import { Button, Divider } from "antd";
+import Iframe from "react-iframe";
 import { OutputFileHeader } from "../../../components/OutputFiles";
-import { getHtmlFile } from "../../../apis/analysis/analysis";
-import styled from "styled-components";
-import { SPACE_XS } from "../../../styles/spacing";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import { grey4 } from "../../../styles/colors";
-
-const HtmlOutputWrapper = styled.div`
-  max-height: 500px;
-  width: 100%;
-  margin-bottom: ${SPACE_XS};
-  border: solid 1px ${grey4};
-  overflow: auto;
-  padding: ${SPACE_XS};
-`;
+import { IconLinkOut } from "../../../components/icons/Icons";
 
 export default function AnalysisHtmlPreview({ output }) {
-  const [htmlOutput, setHtmlOutput] = React.useState(null);
-
-  React.useEffect(() => {
-    getHtmlFile(output.analysisSubmissionId, output.filename).then(html => {
-      // Sanitize the html output before setting it in the state.
-      setHtmlOutput(DOMPurify.sanitize(html));
-    });
-  }, []);
-
   /*
    * Displays the html output as well
    * as the name of the file and a download button for
    * the file.
    */
   function displayHtmlOutput() {
+    const URL = setBaseUrl(
+      `/analysis/${output.analysisSubmissionId}/html-output?filename=${output.filename}`
+    );
+
+    const openPopup = () => window.open(URL);
+
     return (
       <div>
-        <OutputFileHeader output={output} />
-        <Divider />
-        <HtmlOutputWrapper
-          dangerouslySetInnerHTML={{
-            __html: htmlOutput
-          }}
+        <OutputFileHeader
+          output={output}
+          extras={[
+            <Button onClick={openPopup} key="open-html" icon={<IconLinkOut />}>
+              Open in new window
+            </Button>,
+          ]}
         />
+        <Divider />
+        <div
+          style={{
+            border: `solid 1px ${grey4}`,
+          }}
+        >
+          <Iframe
+            url={URL}
+            width="100%"
+            height="600"
+            style={{ minHeight: 600 }}
+            frameBorder={0}
+            id="html-output-iframe"
+            display="initial"
+            position="relative"
+          />
+        </div>
       </div>
     );
   }
