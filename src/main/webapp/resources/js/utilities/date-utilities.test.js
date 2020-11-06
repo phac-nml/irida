@@ -12,10 +12,6 @@ const STRING_DATE_1 = "May 21, 2020, 3:46 PM";
 const STRING_DATE_2 = "04 Dec 1995 00:12:00 GMT";
 const SOME_RANDOM_STRING = "Some other string";
 
-window.TL = {
-  LANGUAGE_TAG: "en",
-};
-
 test("Should format to internationalized date and time", () => {
   expect(formatInternationalizedDateTime(MILLISECOND_DATE_1)).toBe(
     STRING_DATE_1

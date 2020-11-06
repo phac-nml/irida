@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
+import { getUserLocale } from "./user-utilities";
 
 export function formatInternationalizedDateTime(
   date,
@@ -13,7 +14,7 @@ export function formatInternationalizedDateTime(
   }
 ) {
   if (!isDate(date)) return "";
-  return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, options).format(
+  return new Intl.DateTimeFormat(getUserLocale(), options).format(
     new Date(date)
   );
 }
