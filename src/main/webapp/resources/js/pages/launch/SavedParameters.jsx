@@ -1,6 +1,5 @@
 import React from "react";
-import Form from "antd/es/form";
-import { Button, Select, Space, Tag } from "antd";
+import { Button, Form, Select, Space, Tag } from "antd";
 import { IconEdit } from "../../components/icons/Icons";
 import ParametersModal from "./components/ParametersModal";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
