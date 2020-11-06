@@ -187,14 +187,25 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
+		byte[] bytes = new byte[0];
 		try {
 			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 			logger.trace("Opening input stream to file in s3 bucket [" + file.toString() + "]");
-			return s3Object.getObjectContent();
+			try {
+				/*
+				 * We get the bytes of the content and store it in a byte array
+				 * so we can close the inputstream from s3 before returning
+				 */
+				bytes = s3Object.getObjectContent().readAllBytes();
+				s3Object.close();
+			} catch (IOException e) {
+				logger.error("Unable to close connection to s3object: " + e);
+			}
 		} catch (AmazonServiceException e) {
 			logger.error("Couldn't read file from s3 bucket [" + e + "]");
 			throw new StorageException("Unable to locate file in s3 bucket", e);
 		}
+		return new ByteArrayInputStream(bytes);
 	}
 
 	/**
