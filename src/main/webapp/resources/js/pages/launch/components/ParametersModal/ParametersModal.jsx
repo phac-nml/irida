@@ -4,7 +4,6 @@ import { Form, Input, Modal, Space, Tag } from "antd";
 import { useLaunchDispatch, useLaunchState } from "../../launch-context";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
-import { useResetFormOnCloseModal } from "../../../../hooks";
 
 /**
  * React component to render a modal window for modifying and saving pipeline
@@ -42,7 +41,7 @@ export function ParametersModal({ visible, closeModal }) {
   const [modified, setModified] = React.useState(false);
 
   /*
-  Use by the ant form to set original values for the parameters.
+  Used by the ant form to set original values for the parameters.
    */
   const [fields, setFields] = React.useState([]);
 

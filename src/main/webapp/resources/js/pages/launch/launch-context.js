@@ -148,7 +148,7 @@ function LaunchProvider({ children }) {
    * Dispatch function called when a user modifies the current saved parameter
    * set parameter values, and wants to use them without saving.
    *
-   * @param {array} parameters - list of key value pairs for the parameters ({mame: value})
+   * @param {array} parameters - list of key value pairs for the parameters ({name: value})
    */
   function dispatchUseModifiedParameters(parameters) {
     /*
