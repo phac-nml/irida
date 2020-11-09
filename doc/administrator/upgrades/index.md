@@ -96,14 +96,14 @@ Due to the updates described above regarding IRIDA's metadata storage refactors,
 There are 2 files that must be updated:
 
 * The plugin's `AnalysisSampleUpdater` implementation.  This will need to change any methods interacting with sample metadata to use the new service methods.
-* The `pom.xml` file.  This will need to increment version numbers to tell IRIDA to use the new plugin version.
+* The `pom.xml` file.  This will tell your IRIDA plugin to target the `21.01` version of IRIDA's code in order to take advantage of the new features.  You will also need to increment your plugin version number in this file to tell IRIDA to use your new version.
 
 Examples of how to update these files is shown below.  After these updates are complete you can re-compile your plugin and push a new release to your plugin's GitHub repository.
 
 ### Preparing your development environment
 {:.no_toc}
 
-Before building your updated plugin, you must pull and install the new version of IRIDA to your local Maven repository.  Follow the instructions at <https://irida.corefacility.ca/documentation/developer/tools/pipelines/#321-install-irida-to-local-maven-repository>.  Ensure you've checked out the `21.01` IRIDA version.
+Before building your updated plugin, you must pull and install the new version of IRIDA to your local Maven repository.  Follow the instructions at <https://irida.corefacility.ca/documentation/developer/tools/pipelines/#321-install-irida-to-local-maven-repository>.  Ensure you've checked out the `21.01` IRIDA version.  Note if you are preparing your plugin prior to the `21.01` release, you can install IRIDA's `development` branch.  In that case you will use the `21.01-SNAPSHOT` version for IRIDA version references below.
 
 ### `AnalysisSampleUpdater` class
 {:.no_toc}
@@ -138,7 +138,7 @@ Updates to the `pom.xml` file will be required to indicate to IRIDA that this pl
 * The `<version>` tag for your plugin should be incremented <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L9>
 * The `<plugin.version>` property should be incremented <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L16>
 * The `<plugin.requires.runtime>` property should be updated to be `1.1.0` <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L19>
-* The `<irida.version.compiletime>` property should be set to `21.01` <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L22>
+* The `<irida.version.compiletime>` property should be set to `21.01` <https://github.com/phac-nml/irida-plugin-example/blob/0.1.0/pom.xml#L22>.  Note if you are preparing your plugin prior to the `21.01` release and you have installed IRIDA's development version, you can set this to `21.01-SNAPSHOT`.
 
 IRIDA's newer versions have also moved to using Java 11.  Since you're already editing this file, you can update your Java version to 11 for the plugin as well.  Set the following properties:
 
