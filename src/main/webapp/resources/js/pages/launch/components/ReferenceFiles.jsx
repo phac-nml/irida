@@ -1,8 +1,15 @@
 import React from "react";
-import { Form, Radio, Result } from "antd";
+import { Divider, Form, Radio, Result } from "antd";
 import { useLaunchState } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 
+/**
+ * React component for selecting and uploading reference files for a pipeline
+ * if required.
+ *
+ * @returns {JSX.Element|null}
+ * @constructor
+ */
 export function ReferenceFiles() {
   const { requiresReference, referenceFiles } = useLaunchState();
 
@@ -26,6 +33,7 @@ export function ReferenceFiles() {
         />
       )}
       <UploadReferenceFile />
+      <Divider />
     </section>
   ) : null;
 }

@@ -38,11 +38,8 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
-        <Divider />
         <ReferenceFiles />
-        <Divider />
         <SavedParameters form={form} />
-        <Divider />
         <ParameterWithOptions parameters={parameterWithOptions} />
         <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>
           {i18n("LaunchContent.submit")}

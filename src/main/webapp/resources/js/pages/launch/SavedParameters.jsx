@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Select, Space, Tag } from "antd";
+import { Button, Divider, Form, Select, Space, Tag } from "antd";
 import { IconEdit } from "../../components/icons/Icons";
 import ParametersModal from "./components/ParametersModal";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
@@ -28,7 +28,7 @@ export function SavedParameters({ form }) {
   }, [form, parameterSet]);
 
   return (
-    <>
+    <section>
       <Form.Item label={i18n("SavedParameters.title")}>
         <div style={{ display: "flex" }}>
           <div style={{ flexGrow: 1, marginRight: SPACE_XS }}>
@@ -58,6 +58,7 @@ export function SavedParameters({ form }) {
         </div>
       </Form.Item>
       <ParametersModal visible={visible} closeModal={() => setVisible(false)} />
-    </>
+      <Divider />
+    </section>
   );
 }
