@@ -56,35 +56,6 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 			Cookie pathCookie = new Cookie("cp", cp);
 			pathCookie.setPath(contextPath);
 			httpServletResponse.addCookie(pathCookie);
-
-
-			/*
-			Get and store the locale
-			 */
-			Locale locale = Locale.forLanguageTag(user.getLocale());
-			localeResolver.setLocale(httpServletRequest, httpServletResponse, locale);
-			Cookie localeCookie = new Cookie("locale", locale.toLanguageTag());
-			localeCookie.setPath(contextPath);
-			httpServletResponse.addCookie(localeCookie);
-
-
-			/*
-			Add the session expiration time.
-			 */
-			Cookie timeCookie = new Cookie("expiration_time", String.valueOf(session.getMaxInactiveInterval()));
-			timeCookie.setPath(contextPath);
-			httpServletResponse.addCookie(timeCookie);
-
-			/**
-			 * Add the user
-			 */
-			Cookie username = new Cookie("username", user.getUsername());
-			httpServletResponse.addCookie(username);
-			Cookie userId = new Cookie("user_id", String.valueOf(user.getId()));
-			httpServletResponse.addCookie(userId);
-			Cookie systemRole = new Cookie("system_role", user.getSystemRole()
-					.getName());
-			httpServletResponse.addCookie(systemRole);
 		} catch (NullPointerException ex) {
 			logger.warn("Locale cannot be resolved for " + user.getLocale() + ".  Setting system default locale.");
 			localeResolver.setLocale(httpServletRequest, httpServletResponse, Locale.getDefault());
