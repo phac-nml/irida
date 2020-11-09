@@ -221,17 +221,6 @@ function LaunchProvider({ children }) {
   }
 
   /**
-   * Dispatch function for overwriting a saved parameter set.
-   *
-   * @param {object} parameters - the full listing of parameters to update.
-   */
-  function dispatchOverwriteParameterSave(parameters) {
-    console.log(state.parameterSet.id);
-
-    // TODO: Save parameters......
-  }
-
-  /**
    * Save a modified set of parameters with a new name
    *
    * @param {string} name - name to save the modified set with
@@ -266,6 +255,7 @@ function LaunchProvider({ children }) {
     currentSet.id = data.id;
     currentSet.label = name;
     currentSet.key = `set-${data.id}`;
+    currentSet.parameters = params;
     sets.push(currentSet);
 
     // Update the state
@@ -285,7 +275,6 @@ function LaunchProvider({ children }) {
           dispatchLaunch,
           dispatchUseParameterSetById,
           dispatchUseModifiedParameters,
-          dispatchOverwriteParameterSave,
           dispatchUseSaveAs,
         }}
       >
