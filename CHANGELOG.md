@@ -16,6 +16,7 @@ Changes
 * [Developer]: Removed UI dependency for `bootstrap-sass`.
 * [Developer]: Updated to React v17.0.1, Babel v7.12.1, and Ant Design v4.7.3.
 * [UI]: Updated FastQC page to use Ant Design.
+* [Documentation]: Added documentation for sequence file fastqc page.
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 
 20.05 to 20.09

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Date;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
@@ -197,10 +198,11 @@ public class ProjectSynchronizationServiceTest {
 	@Test
 	public void testSyncSampleNoAssemblies() {
 		Sample sample = new Sample();
-		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
 		when(assemblyRemoteService.getGenomeAssembliesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());
@@ -208,7 +210,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(projectService).addSampleToProject(expired, sample, true);
 		verify(assemblyRemoteService, times(0)).mirrorAssembly(any(UploadedAssembly.class));
 
-		assertEquals(SyncStatus.SYNCHRONIZED,sample.getRemoteStatus().getSyncStatus());
+		assertEquals(SyncStatus.SYNCHRONIZED, sample.getRemoteStatus().getSyncStatus());
 	}
 	
 	@Test
