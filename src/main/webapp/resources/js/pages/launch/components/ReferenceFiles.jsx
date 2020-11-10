@@ -11,13 +11,13 @@ import { UploadReferenceFile } from "./UploadReferenceFile";
  * @constructor
  */
 export function ReferenceFiles() {
-  const { requiresReference, referenceFiles } = useLaunchState();
+  const { requiresReference, referenceFiles, referenceFile } = useLaunchState();
 
   return requiresReference ? (
     <section>
       {referenceFiles.length ? (
-        <Form.Item label={i18n("ReferenceFiles.label")} name="referenceFile">
-          <Radio.Group>
+        <Form.Item label={i18n("ReferenceFiles.label")}>
+          <Radio.Group value={referenceFile}>
             {referenceFiles.map((file) => (
               <Radio key={file.id} value={file.id}>
                 {file.name}
