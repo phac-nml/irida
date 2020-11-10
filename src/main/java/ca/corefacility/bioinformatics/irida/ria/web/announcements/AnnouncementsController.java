@@ -109,12 +109,10 @@ public class AnnouncementsController extends BaseController {
     /**
      * Get the admin-accessible announcement control page
      *
-     * @param model
-     *              The model for the returned view
+     * @param model The model for the returned view
      * @return The announcement control page
      */
-    @RequestMapping(value = "/admin")
-    public String getControlCentreAdminPage(final Model model) {
+    @RequestMapping(value = "/admin") public String getControlCentreAdminPage(final Model model) {
         List<Announcement> announcements = announcementService.getAllAnnouncements();
 
         logger.trace("Announcements list size: " + announcements.size());
