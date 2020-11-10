@@ -5,6 +5,7 @@ import { Button, Divider, Form } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import { ParameterWithOptions } from "./ParameterWithOptions";
+import { SavedParameters } from "./SavedParameters";
 
 /**
  * React component to layout the content of the pipeline launch.
@@ -36,6 +37,8 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
+        <Divider />
+        <SavedParameters form={form} />
         <Divider />
         <ParameterWithOptions parameters={parameterWithOptions} />
         <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>

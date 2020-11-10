@@ -4,6 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 
 /**
  * Model class to send details about a workflow pipeline to the UI
@@ -13,6 +14,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
+    private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
 
     public String getName() {
@@ -45,5 +47,13 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setParameterWithOptions(List<PipelineParameterWithOptions> parameterWithOptions) {
         this.parameterWithOptions = parameterWithOptions;
+    }
+
+    public List<SavedPipelineParameters> getSavedPipelineParameters() {
+        return savedPipelineParameters;
+    }
+
+    public void setSavedPipelineParameters(List<SavedPipelineParameters> savedPipelineParameters) {
+        this.savedPipelineParameters = savedPipelineParameters;
     }
 }
