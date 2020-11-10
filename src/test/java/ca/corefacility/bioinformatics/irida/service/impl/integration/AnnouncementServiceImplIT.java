@@ -65,7 +65,7 @@ public class AnnouncementServiceImplIT {
     public void testCreateAnnouncementAsAdmin() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        Announcement an = new Announcement("This is a message", "This is a message", false, user);
+        Announcement an = new Announcement("This is a message title", "This is a message", false, user);
         try {
             announcementService.create(an);
         } catch (AccessDeniedException e) {
@@ -82,7 +82,7 @@ public class AnnouncementServiceImplIT {
     public void testCreateAnnouncementNotAdmin() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        announcementService.create(new Announcement("This is a message", "This is a message", false, user));
+        announcementService.create(new Announcement("This is a message title", "This is a message", false, user));
     }
 
     @Test
