@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax;
 
+/**
+ * UI Response for successfully removing an item. Will return the internationalized
+ * success text.
+ */
 public class AjaxRemoveItemSuccessResponse extends AjaxResponse {
 	public String responseMessage;
 

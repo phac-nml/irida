@@ -15,7 +15,7 @@ import { formatInternationalizedDateTime } from "../../../utilities/date-utiliti
 import { ContentLoading } from "../../../components/loader";
 import { DownloadTableItemButton, RemoveTableItemButton } from "../../../components/Buttons";
 
-
+const { Dragger } = Upload;
 const { Title } = Typography;
 
 /**
@@ -114,18 +114,22 @@ export function ReferenceFiles() {
     },
   };
 
-  // Returns the upload button if a user is allowed to manage the project
+  /*
+   * Returns the upload section if a user is allowed to manage the project.
+   * Supports drag and drop as well as click to upload
+   */
   function displayUploadButton() {
      if (canManage)
       return (
-        <Upload {...referenceFileUploadOptions}>
-          <Button
-            icon={<IconFileUpload />}
-            style={{marginBottom: SPACE_XS}}
-          >
-            {i18n("ReferenceFile.uploadReferenceFile")}
-          </Button>
-        </Upload>
+        <Dragger {...referenceFileUploadOptions} style={{marginBottom: SPACE_XS}}>
+          <p className="ant-upload-drag-icon">
+            <IconFileUpload />
+          </p>
+          <p className="ant-upload-text">{i18n("ReferenceFile.clickorDrag")}</p>
+          <p className="ant-upload-hint">
+            {i18n("ReferenceFile.singleOrMultiple")}
+          </p>
+        </Dragger>
       );
   }
 
