@@ -104,10 +104,6 @@ function LaunchProvider({ children }) {
 
         const initial = {
           name: formatDefaultPipelineName(type, Date.now()),
-          referenceFile:
-            details.requiresReference && details.referenceFiles.length
-              ? details.referenceFiles[0].id
-              : null,
           parameterSet: 0,
         };
 
@@ -125,6 +121,10 @@ function LaunchProvider({ children }) {
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
             parameterSets: formattedParameterSets,
+            referenceFile:
+              details.requiresReference && details.referenceFiles.length
+                ? details.referenceFiles[0].id
+                : null,
           },
         });
       }
