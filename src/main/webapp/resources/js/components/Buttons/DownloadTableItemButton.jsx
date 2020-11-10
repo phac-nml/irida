@@ -44,7 +44,7 @@ export function DownloadTableItemButton({
       <Button
         className="t-download-btn"
         icon={<IconDownloadFile />}
-        shape="circle-outline"
+        shape="circle"
         loading={loading}
         onClick={downloadItem}
       />

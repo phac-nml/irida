@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, notification, Table, Typography, Upload } from "antd";
+import { Button, notification, Space, Table, Typography, Upload } from "antd";
 import { InfoAlert } from "../../../components/alerts";
 import {
   IconFileUpload
@@ -55,7 +55,7 @@ export function ReferenceFiles() {
     {
       align: "right",
       render(file) {
-        return (
+        let actionButtons =
           [
             <DownloadTableItemButton
               key={`download-btn-${file.id}`}
@@ -79,7 +79,8 @@ export function ReferenceFiles() {
               :
               null
           ]
-        );
+        // Return download and remove buttons spaced
+        return (<Space size="small">{actionButtons}</Space>);
       },
     },
   ];
@@ -108,7 +109,7 @@ export function ReferenceFiles() {
         notification.success({message: `${i18n("ReferenceFile.uploadFileSuccess", info.file.name, projectName)}`});
         updateReferenceFileTable();
       } else if (status === "error") {
-        notification.error({message: info.file.response.message});
+        notification.error({message: info.file.response.error});
       }
     },
   };
@@ -118,7 +119,12 @@ export function ReferenceFiles() {
      if (canManage)
       return (
         <Upload {...referenceFileUploadOptions}>
-          <Button icon={<IconFileUpload />} style={{marginBottom: SPACE_XS}}>{i18n("ReferenceFile.uploadReferenceFile")}</Button>
+          <Button
+            icon={<IconFileUpload />}
+            style={{marginBottom: SPACE_XS}}
+          >
+            {i18n("ReferenceFile.uploadReferenceFile")}
+          </Button>
         </Upload>
       );
   }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class ProjectReferenceFileController {
 	}
 
 	/**
-	 * Get the reference files fro a project
+	 * Get the reference files for a project
 	 *
 	 * @param projectId the ID of the project
 	 * @param locale    locale of the logged in user
@@ -94,7 +95,7 @@ public class ProjectReferenceFileController {
 			map.put("createdDate", file.getCreatedDate());
 			Path path = file.getFile();
 			try {
-				map.put("size", Files.size(path));
+				map.put("size", FileUtilities.humanReadableByteCount(Files.size(path), true));
 			} catch (IOException e) {
 				logger.error("Cannot find the size of file " + file.getLabel());
 				map.put("size", messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
