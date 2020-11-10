@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,7 +26,6 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
 
 	private final UserRepository userRepository;
-
 	private final LocaleResolver localeResolver;
 
 	public LoginSuccessHandler(UserRepository userRepository, LocaleResolver localeResolver) {
@@ -36,23 +36,55 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
 			Authentication authentication) throws IOException, ServletException {
-		super.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 
 		HttpSession session = httpServletRequest.getSession();
 		User user = (User) authentication.getPrincipal();
 
 		//set the user's selected locale
 		try {
+
+			/*
+			Get the context path, used by the client JS for requests
+			 */
+			String contextPath = httpServletRequest.getContextPath();
+			String cp = contextPath;
+			if(!cp.endsWith("/")) {
+				// If the context path is set to anything other the "/" it will look like "/foobar"
+				// the UI needs the final slash.
+				cp = cp + "/";
+			}
+			Cookie pathCookie = new Cookie("cp", cp);
+			pathCookie.setPath(contextPath);
+			httpServletResponse.addCookie(pathCookie);
+
+
+			/*
+			Get and store the locale
+			 */
 			Locale locale = Locale.forLanguageTag(user.getLocale());
 			localeResolver.setLocale(httpServletRequest, httpServletResponse, locale);
+			Cookie localeCookie = new Cookie("locale", locale.toLanguageTag());
+			localeCookie.setPath(contextPath);
+			httpServletResponse.addCookie(localeCookie);
+
+
+			/*
+			Add the session expiration time.
+			 */
+			Cookie timeCookie = new Cookie("expiration_time", String.valueOf(session.getMaxInactiveInterval()));
+			timeCookie.setPath(contextPath);
+			httpServletResponse.addCookie(timeCookie);
+
+			/**
+			 * Add the user
+			 */
+			session.setAttribute("user", user);
 		} catch (NullPointerException ex) {
 			logger.warn("Locale cannot be resolved for " + user.getLocale() + ".  Setting system default locale.");
 			localeResolver.setLocale(httpServletRequest, httpServletResponse, Locale.getDefault());
 		}
 
-		// Add the user into the session
-		session.setAttribute("user", user);
-
 		userRepository.updateLogin(user, new Date());
+		super.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 	}
 }
