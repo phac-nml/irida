@@ -97,7 +97,7 @@ public class ProjectReferenceFileController {
 				map.put("size", Files.size(path));
 			} catch (IOException e) {
 				logger.error("Cannot find the size of file " + file.getLabel());
-				map.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[] {}, locale));
+				map.put("size", messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
 			}
 			files.add(map);
 		}
