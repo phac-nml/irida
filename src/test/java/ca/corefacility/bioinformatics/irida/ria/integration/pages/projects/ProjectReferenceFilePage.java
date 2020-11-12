@@ -25,8 +25,14 @@ public class ProjectReferenceFilePage extends AbstractPage {
 	@FindBy(className = "t-files-table")
 	private List<WebElement> filesTable;
 
-	@FindBy(className = "removeBtn")
+	@FindBy(className = "t-remove-btn")
 	List<WebElement> removeBtns;
+
+	@FindBy(className = "t-download-btn")
+	List<WebElement> downloadBtns;
+
+	@FindBy(className = "t-remove-confirm")
+	List<WebElement> removeConfirmBtns;
 
 	@FindBy(className = "ref-file-row")
 	List<WebElement> fileRows;
@@ -64,16 +70,15 @@ public class ProjectReferenceFilePage extends AbstractPage {
 		return removeBtns.size() > 0;
 	}
 
-//	public int numRefFiles() {
-//		return fileRows.size();
-//	}
+	public boolean areDownloadFileBtnsAvailable() {
+		return downloadBtns.size() > 0;
+	}
 
 	public void removeFirstRefFile() {
 		removeBtns.get(0).click();
-		By deleteModalLocator = By.id("delete-modal");
-		waitForElementVisible(deleteModalLocator);
-		driver.findElement(By.id("deleteBtn")).click();
-		waitForElementInvisible(deleteModalLocator);
+		waitForTime(500);
+		removeConfirmBtns.get(0).click();
+		waitForTime(500);
 	}
 
 	public boolean isUploadReferenceFileBtnPresent() {

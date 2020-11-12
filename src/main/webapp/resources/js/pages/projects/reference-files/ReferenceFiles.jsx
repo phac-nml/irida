@@ -5,11 +5,14 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
-  removeProjectReferenceFile
+  removeProjectReferenceFile,
 } from "../../../apis/projects/reference-files";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
-import { DownloadTableItemButton, RemoveTableItemButton } from "../../../components/Buttons";
+import {
+  DownloadTableItemButton,
+  RemoveTableItemButton,
+} from "../../../components/Buttons";
 import { DragUpload } from "../../../components/files/DragUpload";
 
 import { getProjectInfo } from "../../../apis/projects/projects";
@@ -32,19 +35,27 @@ export function ReferenceFiles() {
   // On first load of page call method to get the reference files for the project
   // as well as get info about the project and permissions
   React.useEffect(() => {
-    getProjectInfo(projectId).then((data) => {
-      setProjectInfo(data);
-    }).catch((message) => {
-      notification.error({ message });
-    });
+    getProjectInfo(projectId)
+      .then((data) => {
+        setProjectInfo(data);
+      })
+      .catch((message) => {
+        notification.error({ message });
+      });
     updateReferenceFileTable();
   }, []);
 
   // Object to hold alert messages for if a user can manage the project or not
   const alertMessage = {
-    true: {text: i18n("ReferenceFile.ownerUploadFileAlert"), alertClass: "t-rf-owner"},
-    false: {text: i18n("ReferenceFile.userUploadFileAlert"), alertClass: "t-rf-user"}
-  }
+    true: {
+      text: i18n("ReferenceFile.ownerUploadFileAlert"),
+      alertClass: "t-rf-owner",
+    },
+    false: {
+      text: i18n("ReferenceFile.userUploadFileAlert"),
+      alertClass: "t-rf-user",
+    },
+  };
 
   // Columns for the reference file table
   const referenceFileTableColumns = [
@@ -66,44 +77,54 @@ export function ReferenceFiles() {
     {
       align: "right",
       render(file) {
-        let actionButtons =
-          [
-            <DownloadTableItemButton
-              key={`download-btn-${file.id}`}
-              onDownload={() => downloadProjectReferenceFile(file.id)}
-              onDownloadSuccess={() => {
-                notification.success({message: i18n("ReferenceFile.downloadingFileSuccess", file.label, projectInfo.projectName)});
+        let actionButtons = [
+          <DownloadTableItemButton
+            key={`download-btn-${file.id}`}
+            onDownload={() => downloadProjectReferenceFile(file.id)}
+            onDownloadSuccess={() => {
+              notification.success({
+                message: i18n(
+                  "ReferenceFile.downloadingFileSuccess",
+                  file.label,
+                  projectInfo.projectName
+                ),
+              });
+            }}
+            tooltipText={i18n("ReferenceFile.downloadTooltip")}
+          />,
+          // Only display remove button for reference files if user can manage project
+          projectInfo.canManage ? (
+            <RemoveTableItemButton
+              key={`remove-btn-${file.id}`}
+              onRemove={() => removeProjectReferenceFile(projectId, file.id)}
+              onRemoveSuccess={() => {
+                updateReferenceFileTable();
               }}
-              tooltipText={i18n("ReferenceFile.downloadTooltip")}
-            />,
-            // Only display remove button for reference files if user can manage project
-            projectInfo.canManage ?
-              <RemoveTableItemButton
-                key={`remove-btn-${file.id}`}
-                onRemove={() => removeProjectReferenceFile(projectId, file.id) }
-                onRemoveSuccess={() => {
-                  updateReferenceFileTable();
-                }}
-                tooltipText={i18n("ReferenceFile.removeTooltip")}
-                confirmText={i18n("ReferenceFile.confirmText", file.label, projectInfo.projectName)}
-              />
-              :
-              null
-          ]
+              tooltipText={i18n("ReferenceFile.removeTooltip")}
+              confirmText={i18n(
+                "ReferenceFile.confirmText",
+                file.label,
+                projectInfo.projectName
+              )}
+            />
+          ) : null,
+        ];
         // Return download and remove buttons spaced
-        return (<Space size="small">{actionButtons}</Space>);
+        return <Space size="small">{actionButtons}</Space>;
       },
     },
   ];
 
   // Get the reference files for the project
-  function updateReferenceFileTable(){
-    getProjectReferenceFiles(projectId).then(({files}) => {
-      setProjectReferenceFiles(files);
-      setLoading(false);
-    }).catch((message) => {
-      notification.error({ message });
-    });
+  function updateReferenceFileTable() {
+    getProjectReferenceFiles(projectId)
+      .then(({ files }) => {
+        setProjectReferenceFiles(files);
+        setLoading(false);
+      })
+      .catch((message) => {
+        notification.error({ message });
+      });
   }
 
   // Options for the Ant Design upload component
@@ -114,10 +135,16 @@ export function ReferenceFiles() {
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {
-        notification.success({message: `${i18n("ReferenceFile.uploadFileSuccess", info.file.name, projectInfo.projectName)}`});
+        notification.success({
+          message: `${i18n(
+            "ReferenceFile.uploadFileSuccess",
+            info.file.name,
+            projectInfo.projectName
+          )}`,
+        });
         updateReferenceFileTable();
       } else if (status === "error") {
-        notification.error({message: info.file.response.error});
+        notification.error({ message: info.file.response.error });
       }
     },
   };
@@ -127,10 +154,8 @@ export function ReferenceFiles() {
    * Supports drag and drop as well as click to upload
    */
   function displayUploadButton() {
-     if (projectInfo && projectInfo.canManage)
-      return (
-        <DragUpload {...referenceFileUploadOptions} />
-      );
+    if (projectInfo && projectInfo.canManage)
+      return <DragUpload {...referenceFileUploadOptions} />;
   }
 
   // Displays the reference files table or an alert if no reference files found for project
@@ -159,14 +184,10 @@ export function ReferenceFiles() {
   return (
     <>
       <Title level={2}>{i18n("ReferenceFile.title")}</Title>
-      <Space direction="vertical" style={{width: `100%`}}>
+      <Space direction="vertical" style={{ width: `100%` }}>
         {displayUploadButton()}
 
-        { loading ?
-          <ContentLoading />
-          :
-          displayReferenceFiles()
-        }
+        {loading ? <ContentLoading /> : displayReferenceFiles()}
       </Space>
     </>
   );

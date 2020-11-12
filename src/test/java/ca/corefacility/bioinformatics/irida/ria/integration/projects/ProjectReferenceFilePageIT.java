@@ -40,10 +40,11 @@ public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(page_withFiles.isNoFileNoticeDisplayed());
 		assertTrue(page_withFiles.isFilesTableDisplayed());
 		assertEquals(2, page_withFiles.numRefFiles());
-//		assertFalse(page_withFiles.areRemoveFileBtnsAvailable());
-//
-//		// Ensure upload button not present
-//		assertFalse(page_noFiles.isUploadReferenceFileBtnPresent());
+		assertTrue(page_withFiles.areDownloadFileBtnsAvailable());
+		assertFalse(page_withFiles.areRemoveFileBtnsAvailable());
+
+		// Ensure upload button not present
+		assertFalse(page_noFiles.isUploadReferenceFileBtnPresent());
 
 	}
 
@@ -68,9 +69,10 @@ public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(page_withFiles.isNoFileNoticeDisplayed());
 		assertTrue(page_withFiles.isFilesTableDisplayed());
 		assertEquals(2, page_withFiles.numRefFiles());
-//		assertTrue(page_withFiles.areRemoveFileBtnsAvailable());
-//		// Ensure upload button present
-//		assertTrue(page_noFiles.isUploadReferenceFileBtnPresent());
+		assertTrue(page_withFiles.areDownloadFileBtnsAvailable());
+		assertTrue(page_withFiles.areRemoveFileBtnsAvailable());
+		// Ensure upload button present
+		assertTrue(page_noFiles.isUploadReferenceFileBtnPresent());
 	}
 
 	@Test
@@ -78,8 +80,8 @@ public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectReferenceFilePage page = ProjectReferenceFilePage.goTo(driver(), PROJECT_ID_WITH_REFERENCE_FILES);
 
-		//assertEquals(2, page.numRefFiles());
-		//page.removeFirstRefFile();
-		//assertEquals(1, page.numRefFiles());
+		assertEquals(2, page.numRefFiles());
+		page.removeFirstRefFile();
+		assertEquals(1, page.numRefFiles());
 	}
 }
