@@ -79,7 +79,9 @@ public class UIAnnouncementsService {
 	 */
 	public void updateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
 		Announcement announcement = announcementService.read(announcementRequest.getId());
+		announcement.setTitle(announcementRequest.getTitle());
 		announcement.setMessage(announcementRequest.getMessage());
+		announcement.setPriority(announcementRequest.getPriority());
 		announcementService.update(announcement);
 	}
 

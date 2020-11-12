@@ -79,14 +79,15 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     }
 
     /**
-     *      Create a new {@link Announcement} object, for display on the front page.
+     * Create a new {@link Announcement} object, for display on the front page.
+     *
      * @param message Content of the announcement
-     * @param user The {@link User} that created the announcement
+     * @param user    The {@link User} that created the announcement
      */
     @Deprecated
     public Announcement(String message, User user) {
         this();
-        this.title = null;
+        this.title = "title placeholder";
         this.message = message;
         this.priority = false;
         this.user = user;
