@@ -130,6 +130,7 @@ export function ReferenceFiles() {
   // Options for the Ant Design upload component
   const referenceFileUploadOptions = {
     multiple: true,
+    accept: ".fasta",
     showUploadList: false,
     action: setBaseUrl(`ajax/reference-files/project/${projectId}`),
     onChange(info) {
