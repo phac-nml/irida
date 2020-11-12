@@ -90,12 +90,10 @@ public class UIProjectReferenceFileServiceTest {
 		when(projectService.read(project.getId())).thenReturn(project);
 		when(referenceFileService.read(file.getId())).thenReturn(file);
 
-		AjaxResponse result = uiProjectReferenceFileService
-				.deleteReferenceFile(file.getId(), project.getId(), Locale.US);
+		uiProjectReferenceFileService.deleteReferenceFile(file.getId(), project.getId(), Locale.US);
 
 		verify(projectService, times(1)).removeReferenceFileFromProject(project, file);
 
-		assertNotNull(result);
 	}
 
 	@Test
