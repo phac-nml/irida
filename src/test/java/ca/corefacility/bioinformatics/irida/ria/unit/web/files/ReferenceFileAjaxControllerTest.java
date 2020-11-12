@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.files.ReferenceFileAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.ReferenceFileAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 
 import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;

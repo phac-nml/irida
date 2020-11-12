@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.files;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceF
  */
 
 @RestController
-@RequestMapping("/ajax/referenceFiles")
+@RequestMapping("/ajax/reference-files")
 public class ReferenceFileAjaxController {
 	private static final Logger logger = LoggerFactory.getLogger(ReferenceFileAjaxController.class);
 	private final UIProjectReferenceFileService uiProjectReferenceFileService;
