@@ -49,11 +49,11 @@ public class UIProjectReferenceFileService {
 	 * @param projectId The id of the project to add the file to.
 	 * @param files     {@link List} of {@link MultipartFile} file being uploaded.
 	 * @param locale    locale of the logged in user
-	 * @return Return success or error message if file was successfully uploaded or not
+	 * @return Return success message or error if file was successfully uploaded or not
 	 * @throws UnsupportedReferenceFileContentError if content is invalid
 	 * @throws IOException if there is an I/O error
 	 */
-	public AjaxResponse addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
+	public String addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
 		Project project = projectService.read(projectId);
 		logger.debug("Adding reference file to project " + projectId);
 
@@ -81,7 +81,7 @@ public class UIProjectReferenceFileService {
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
 		}
 
-		return new AjaxUpdateItemSuccessResponse("Upload complete");
+		return "Upload complete";
 	}
 
 	/**
@@ -93,15 +93,15 @@ public class UIProjectReferenceFileService {
 	 * @return Success or error based on the result of deleting the file.
 	 * @throws EntityNotFoundException if project or reference file cannot be read
 	 */
-	public AjaxResponse deleteReferenceFile(Long fileId, Long projectId, Locale locale) throws EntityNotFoundException {
+	public String deleteReferenceFile(Long fileId, Long projectId, Locale locale) throws EntityNotFoundException {
 		Project project = projectService.read(projectId);
 		ReferenceFile file = referenceFileService.read(fileId);
+
 		try {
 			logger.info("Removing file with id of : " + fileId);
 			projectService.removeReferenceFileFromProject(project, file);
-			return new AjaxUpdateItemSuccessResponse(
-					messageSource.getMessage("server.projects.reference-file.delete-success",
-							new Object[] { file.getLabel(), project.getName() }, locale));
+			return messageSource.getMessage("server.projects.reference-file.delete-success",
+							new Object[] { file.getLabel(), project.getName() }, locale);
 		} catch (EntityNotFoundException e) {
 			logger.error("Failed to remove reference file, reason unknown.", e);
 			throw new EntityNotFoundException(messageSource.getMessage("server.projects.reference-file.delete-error",

@@ -42,8 +42,8 @@ export function ReferenceFiles() {
 
   // Object to hold alert messages for if a user can manage the project or not
   const alertMessage = {
-    true: i18n("ReferenceFile.ownerUploadFileAlert"),
-    false:i18n("ReferenceFile.userUploadFileAlert")
+    true: {text: i18n("ReferenceFile.ownerUploadFileAlert"), alertClass: "t-rf-owner"},
+    false: {text: i18n("ReferenceFile.userUploadFileAlert"), alertClass: "t-rf-user"}
   }
 
   // Columns for the reference file table
@@ -135,12 +135,13 @@ export function ReferenceFiles() {
 
   // Displays the reference files table or an alert if no reference files found for project
   function displayReferenceFiles() {
-    if (projectReferenceFiles.length) {
+    if (projectReferenceFiles.length > 0) {
       return (
         <Table
           columns={referenceFileTableColumns}
           dataSource={projectReferenceFiles}
           rowKey={(file) => file.id}
+          className="t-files-table"
         />
       );
     }
@@ -150,20 +151,23 @@ export function ReferenceFiles() {
      * Depending on if user can manage project or not a different
      * alert message will be returned
      */
-    let message = alertMessage[projectInfo.canManage]
-    return <InfoAlert message={message}/>;
+    let message = alertMessage[projectInfo.canManage].text;
+    let alertClass = alertMessage[projectInfo.canManage].alertClass;
+    return <InfoAlert message={message} className={alertClass} />;
   }
 
   return (
     <>
       <Title level={2}>{i18n("ReferenceFile.title")}</Title>
-      {displayUploadButton()}
+      <Space direction="vertical" style={{width: `100%`}}>
+        {displayUploadButton()}
 
-      { loading ?
-        <ContentLoading />
-        :
-        displayReferenceFiles()
-      }
+        { loading ?
+          <ContentLoading />
+          :
+          displayReferenceFiles()
+        }
+      </Space>
     </>
   );
 }

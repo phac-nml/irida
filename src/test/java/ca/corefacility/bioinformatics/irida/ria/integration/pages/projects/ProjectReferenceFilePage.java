@@ -13,11 +13,17 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  */
 public class ProjectReferenceFilePage extends AbstractPage {
-	@FindBy(id = "rf-notice")
-	private WebElement noFileNotice;
+	@FindBy(className = "ant-alert-info")
+	private List<WebElement> noFileNotice;
 
-	@FindBy(id = "files-table")
-	private WebElement filesTable;
+	@FindBy(className = "t-rf-owner")
+	private List<WebElement> noFileNoticeOwner;
+
+	@FindBy(className = "t-rf-user")
+	private List<WebElement> noFileNoticeUser;
+
+	@FindBy(className = "t-files-table")
+	private List<WebElement> filesTable;
 
 	@FindBy(className = "removeBtn")
 	List<WebElement> removeBtns;
@@ -25,7 +31,7 @@ public class ProjectReferenceFilePage extends AbstractPage {
 	@FindBy(className = "ref-file-row")
 	List<WebElement> fileRows;
 
-	@FindBy(className = "uploadRefBtn")
+	@FindBy(className = "ant-upload-btn")
 	private List<WebElement> uploadRefBtn;
 
 	public ProjectReferenceFilePage(WebDriver driver) {
@@ -34,29 +40,33 @@ public class ProjectReferenceFilePage extends AbstractPage {
 
 	public static ProjectReferenceFilePage goTo(WebDriver driver, Long projectId) {
 		get(driver, "projects/" + projectId + "/settings/referenceFiles");
-		waitForTime(500);
+		waitForTime(1000);
 		return PageFactory.initElements(driver, ProjectReferenceFilePage.class);
 	}
 
 	public boolean isNoFileNoticeDisplayed() {
-		return noFileNotice.isDisplayed();
+		return noFileNotice.size() > 0 && noFileNotice.get(0).isDisplayed();
 	}
 
 	public boolean isNoFileNoticeOwner() {
-		return noFileNotice.getAttribute("class").contains("rf-owner");
+		return noFileNoticeOwner.size() > 0 && noFileNoticeOwner.get(0).isDisplayed();
+	}
+
+	public boolean isNoFileNoticeUser() {
+		return noFileNoticeUser.size() > 0 && noFileNoticeUser.get(0).isDisplayed();
 	}
 
 	public boolean isFilesTableDisplayed() {
-		return filesTable.isDisplayed();
+		return filesTable.size() > 0 && filesTable.get(0).isDisplayed();
 	}
 
 	public boolean areRemoveFileBtnsAvailable() {
 		return removeBtns.size() > 0;
 	}
 
-	public int numRefFiles() {
-		return fileRows.size();
-	}
+//	public int numRefFiles() {
+//		return fileRows.size();
+//	}
 
 	public void removeFirstRefFile() {
 		removeBtns.get(0).click();
@@ -68,5 +78,9 @@ public class ProjectReferenceFilePage extends AbstractPage {
 
 	public boolean isUploadReferenceFileBtnPresent() {
 		return uploadRefBtn.size() > 0;
+	}
+
+	public int numRefFiles() {
+		return driver.findElements(By.cssSelector("table tbody tr")).size();
 	}
 }
