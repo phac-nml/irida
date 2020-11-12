@@ -12,6 +12,8 @@ import { ContentLoading } from "../../../components/loader";
 import { DownloadTableItemButton, RemoveTableItemButton } from "../../../components/Buttons";
 import { DragUpload } from "../../../components/files/DragUpload";
 
+import { getProjectInfo } from "../../../apis/projects/projects";
+
 const { Title } = Typography;
 
 /**
@@ -21,9 +23,22 @@ const { Title } = Typography;
  */
 export function ReferenceFiles() {
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState(0);
+  const [projectInfo, setProjectInfo] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  // Destructure and rename id and label to projectId and projectName for clarity
-  const { id: projectId, label: projectName, canManage } = window.project;
+
+  const pathRegx = new RegExp(/projects\/(\d+)/);
+  const projectId = window.location.pathname.match(pathRegx)[1];
+
+  // On first load of page call method to get the reference files for the project
+  // as well as get info about the project and permissions
+  React.useEffect(() => {
+    getProjectInfo(projectId).then((data) => {
+      setProjectInfo(data);
+    }).catch((message) => {
+      notification.error({ message });
+    });
+    updateReferenceFileTable();
+  }, []);
 
   // Object to hold alert messages for if a user can manage the project or not
   const alertMessage = {
@@ -57,12 +72,12 @@ export function ReferenceFiles() {
               key={`download-btn-${file.id}`}
               onDownload={() => downloadProjectReferenceFile(file.id)}
               onDownloadSuccess={() => {
-                notification.success({message: i18n("ReferenceFile.downloadingFileSuccess", file.label, projectName)});
+                notification.success({message: i18n("ReferenceFile.downloadingFileSuccess", file.label, projectInfo.projectName)});
               }}
               tooltipText={i18n("ReferenceFile.downloadTooltip")}
             />,
             // Only display remove button for reference files if user can manage project
-            canManage ?
+            projectInfo.canManage ?
               <RemoveTableItemButton
                 key={`remove-btn-${file.id}`}
                 onRemove={() => removeProjectReferenceFile(projectId, file.id) }
@@ -70,7 +85,7 @@ export function ReferenceFiles() {
                   updateReferenceFileTable();
                 }}
                 tooltipText={i18n("ReferenceFile.removeTooltip")}
-                confirmText={i18n("ReferenceFile.confirmText", file.label, projectName)}
+                confirmText={i18n("ReferenceFile.confirmText", file.label, projectInfo.projectName)}
               />
               :
               null
@@ -80,11 +95,6 @@ export function ReferenceFiles() {
       },
     },
   ];
-
-  // On first load of page call method to get the reference files for the project
-  React.useEffect(() => {
-    updateReferenceFileTable();
-  }, []);
 
   // Get the reference files for the project
   function updateReferenceFileTable(){
@@ -100,11 +110,11 @@ export function ReferenceFiles() {
   const referenceFileUploadOptions = {
     multiple: true,
     showUploadList: false,
-    action: setBaseUrl(`ajax/referenceFiles/project/${projectId}`),
+    action: setBaseUrl(`ajax/reference-files/project/${projectId}`),
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {
-        notification.success({message: `${i18n("ReferenceFile.uploadFileSuccess", info.file.name, projectName)}`});
+        notification.success({message: `${i18n("ReferenceFile.uploadFileSuccess", info.file.name, projectInfo.projectName)}`});
         updateReferenceFileTable();
       } else if (status === "error") {
         notification.error({message: info.file.response.error});
@@ -117,7 +127,7 @@ export function ReferenceFiles() {
    * Supports drag and drop as well as click to upload
    */
   function displayUploadButton() {
-     if (canManage)
+     if (projectInfo && projectInfo.canManage)
       return (
         <DragUpload {...referenceFileUploadOptions} />
       );
@@ -140,7 +150,7 @@ export function ReferenceFiles() {
      * Depending on if user can manage project or not a different
      * alert message will be returned
      */
-    let message = alertMessage[canManage]
+    let message = alertMessage[projectInfo.canManage]
     return <InfoAlert message={message}/>;
   }
 

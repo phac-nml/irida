@@ -22,7 +22,7 @@ export async function getProjectReferenceFiles(projectId) {
  */
 export async function downloadProjectReferenceFile(fileId) {
   window.open(
-    setBaseUrl(`ajax/referenceFiles/download/${fileId}`),
+    setBaseUrl(`ajax/reference-files/download/${fileId}`),
     "_blank"
   );
 }
@@ -35,7 +35,7 @@ export async function downloadProjectReferenceFile(fileId) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function removeProjectReferenceFile(projectId, fileId) {
-  return await axios.delete(setBaseUrl(`ajax/referenceFiles/?fileId=${fileId}&projectId=${projectId}`)
+  return await axios.delete(setBaseUrl(`ajax/reference-files/?fileId=${fileId}&projectId=${projectId}`)
   ).then(({ data }) => data.responseMessage
   ).catch((error) => {
     throw new Error(error.response.data.error);
