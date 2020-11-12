@@ -49,22 +49,6 @@ public class ReferenceFileController {
 	}
 
 	/**
-	 * Download a reference file based on the id passed.
-	 *
-	 * @param fileId   The id of the file to download
-	 * @param response {@link HttpServletResponse} to write to file to
-	 * @throws IOException if we fail to read the file from disk.
-	 */
-	@RequestMapping(value = "/download/{fileId}")
-	public void downloadReferenceFile(@PathVariable Long fileId, HttpServletResponse response) throws IOException {
-		ReferenceFile file = referenceFileService.read(fileId);
-		Path path = file.getFile();
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
-		response.flushBuffer();
-	}
-
-	/**
 	 * Upload a transient reference file, to be used for a single analysis.
 	 *
 	 * @param file     the new reference file
