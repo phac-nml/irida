@@ -57,6 +57,11 @@ export function ReferenceFiles() {
     },
   };
 
+  const uploadHintMessage = {
+    true: i18n("ReferenceFile.singleOrMultiple"),
+    false: "Supports single file upload",
+  };
+
   // Columns for the reference file table
   const referenceFileTableColumns = [
     {
@@ -156,7 +161,13 @@ export function ReferenceFiles() {
    */
   function displayUploadButton() {
     if (projectInfo && projectInfo.canManage)
-      return <DragUpload {...referenceFileUploadOptions} />;
+      return (
+        <DragUpload
+          {...referenceFileUploadOptions}
+          uploadText={i18n("ReferenceFile.clickorDrag")}
+          uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
+        />
+      );
   }
 
   // Displays the reference files table or an alert if no reference files found for project
