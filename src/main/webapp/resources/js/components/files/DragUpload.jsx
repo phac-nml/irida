@@ -6,6 +6,7 @@ const { Dragger } = Upload;
 
 /**
  * React component for rendering the drag and drop upload functionality.
+ * @param {object} - upload options as well as text/hint for drag and drop
  * @returns {*}
  * @constructor
  */
