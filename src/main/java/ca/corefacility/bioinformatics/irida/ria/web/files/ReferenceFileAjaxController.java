@@ -7,6 +7,8 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +24,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceF
  */
 
 @RestController
-@RequestMapping("ajax/referenceFiles")
+@RequestMapping("/ajax/referenceFiles")
 public class ReferenceFileAjaxController {
-
+	private static final Logger logger = LoggerFactory.getLogger(ReferenceFileAjaxController.class);
 	private final UIProjectReferenceFileService uiProjectReferenceFileService;
 
 	@Autowired
@@ -40,7 +42,7 @@ public class ReferenceFileAjaxController {
 	 * @param locale    locale of the logged in user
 	 * @return Success message if file was successfully uploaded
 	 */
-	@PostMapping("/project/{projectId}/new")
+	@PostMapping("/project/{projectId}")
 	public ResponseEntity<AjaxResponse> addReferenceFileToProject(@PathVariable Long projectId,
 			@RequestParam(value = "file") List<MultipartFile> files, final Locale locale) {
 		try
@@ -64,7 +66,7 @@ public class ReferenceFileAjaxController {
 	 * @param locale    the locale specified by the browser.
 	 * @return Success or error based on the result of deleting the file.
 	 */
-	@DeleteMapping("/delete")
+	@DeleteMapping("")
 	public ResponseEntity<AjaxResponse> deleteReferenceFile(@RequestParam(value = "fileId") Long fileId,
 			@RequestParam(value = "projectId") Long projectId, Locale locale) {
 		try {
@@ -75,4 +77,19 @@ public class ReferenceFileAjaxController {
 		}
 	}
 
+	/**
+	 * Download a reference file based on the id passed.
+	 *
+	 * @param fileId   The id of the file to download
+	 * @param response {@link HttpServletResponse} to write to file to
+	 * @throws IOException if we fail to read the file from disk.
+	 */
+	@RequestMapping(value = "/download/{fileId}")
+	public void downloadReferenceFile(@PathVariable Long fileId, HttpServletResponse response) {
+		try {
+			uiProjectReferenceFileService.downloadReferenceFile(fileId, response);
+		} catch (IOException e) {
+			logger.error("Unable to read file to download", e);
+		}
+	}
 }

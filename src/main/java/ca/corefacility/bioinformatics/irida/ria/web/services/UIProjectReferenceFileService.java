@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxRemoveItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -71,7 +72,7 @@ public class UIProjectReferenceFileService {
 				Files.deleteIfExists(target);
 				Files.deleteIfExists(temp);
 			}
-		} catch (final UnsupportedReferenceFileContentError e) {
+		} catch (UnsupportedReferenceFileContentError e) {
 			logger.error("User uploaded a reference file that biojava couldn't parse as DNA.", e);
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.invalid-content", new Object[] {},
 					locale), e);
@@ -80,7 +81,7 @@ public class UIProjectReferenceFileService {
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
 		}
 
-		return new AjaxSuccessResponse("Upload complete");
+		return new AjaxUpdateItemSuccessResponse("Upload complete");
 	}
 
 	/**
@@ -98,7 +99,7 @@ public class UIProjectReferenceFileService {
 		try {
 			logger.info("Removing file with id of : " + fileId);
 			projectService.removeReferenceFileFromProject(project, file);
-			return new AjaxRemoveItemSuccessResponse(
+			return new AjaxUpdateItemSuccessResponse(
 					messageSource.getMessage("server.projects.reference-file.delete-success",
 							new Object[] { file.getLabel(), project.getName() }, locale));
 		} catch (EntityNotFoundException e) {
@@ -106,5 +107,20 @@ public class UIProjectReferenceFileService {
 			throw new EntityNotFoundException(messageSource.getMessage("server.projects.reference-file.delete-error",
 					new Object[] { file.getLabel(), project.getName() }, locale));
 		}
+	}
+
+	/**
+	 * Download a reference file based on the id passed.
+	 *
+	 * @param fileId   The id of the file to download
+	 * @param response {@link HttpServletResponse} to write to file to
+	 * @throws IOException if we fail to read the file from disk.
+	 */
+	public void downloadReferenceFile(Long fileId, HttpServletResponse response) throws IOException {
+		ReferenceFile file = referenceFileService.read(fileId);
+		Path path = file.getFile();
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 }

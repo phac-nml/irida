@@ -1,11 +1,7 @@
 import React from "react";
-import { Button, notification, Space, Table, Typography, Upload } from "antd";
+import { notification, Space, Table, Typography } from "antd";
 import { InfoAlert } from "../../../components/alerts";
-import {
-  IconFileUpload
-} from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { SPACE_XS } from "../../../styles/spacing";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
@@ -14,8 +10,8 @@ import {
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
 import { DownloadTableItemButton, RemoveTableItemButton } from "../../../components/Buttons";
+import { DragUpload } from "../../../components/files/DragUpload";
 
-const { Dragger } = Upload;
 const { Title } = Typography;
 
 /**
@@ -95,14 +91,16 @@ export function ReferenceFiles() {
     getProjectReferenceFiles(projectId).then(({files}) => {
       setProjectReferenceFiles(files);
       setLoading(false);
-    }).catch()
+    }).catch((message) => {
+      notification.error({ message });
+    });
   }
 
   // Options for the Ant Design upload component
   const referenceFileUploadOptions = {
     multiple: true,
     showUploadList: false,
-    action: setBaseUrl(`ajax/referenceFiles/project/${projectId}/new`),
+    action: setBaseUrl(`ajax/referenceFiles/project/${projectId}`),
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {
@@ -121,15 +119,7 @@ export function ReferenceFiles() {
   function displayUploadButton() {
      if (canManage)
       return (
-        <Dragger {...referenceFileUploadOptions} style={{marginBottom: SPACE_XS}}>
-          <p className="ant-upload-drag-icon">
-            <IconFileUpload />
-          </p>
-          <p className="ant-upload-text">{i18n("ReferenceFile.clickorDrag")}</p>
-          <p className="ant-upload-hint">
-            {i18n("ReferenceFile.singleOrMultiple")}
-          </p>
-        </Dragger>
+        <DragUpload {...referenceFileUploadOptions} />
       );
   }
 
