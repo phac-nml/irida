@@ -155,51 +155,33 @@ export function ReferenceFiles() {
     },
   };
 
-  /*
-   * Returns the upload section if a user is allowed to manage the project.
-   * Supports drag and drop as well as click to upload
-   */
-  function displayUploadButton() {
-    if (projectInfo && projectInfo.canManage)
-      return (
-        <DragUpload
-          {...referenceFileUploadOptions}
-          uploadText={i18n("ReferenceFile.clickorDrag")}
-          uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
-        />
-      );
-  }
-
-  // Displays the reference files table or an alert if no reference files found for project
-  function displayReferenceFiles() {
-    if (projectReferenceFiles.length > 0) {
-      return (
-        <Table
-          columns={referenceFileTableColumns}
-          dataSource={projectReferenceFiles}
-          rowKey={(file) => file.id}
-          className="t-files-table"
-        />
-      );
-    }
-
-    /*
-     * Only return alert if there are no project reference files.
-     * Depending on if user can manage project or not a different
-     * alert message will be returned
-     */
-    let message = alertMessage[projectInfo.canManage].text;
-    let alertClass = alertMessage[projectInfo.canManage].alertClass;
-    return <InfoAlert message={message} className={alertClass} />;
-  }
-
   return (
     <>
       <Title level={2}>{i18n("ReferenceFile.title")}</Title>
       <Space direction="vertical" style={{ width: `100%` }}>
-        {displayUploadButton()}
+        {projectInfo && projectInfo.canManage ? (
+          <DragUpload
+            {...referenceFileUploadOptions}
+            uploadText={i18n("ReferenceFile.clickorDrag")}
+            uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
+          />
+        ) : null}
 
-        {loading ? <ContentLoading /> : displayReferenceFiles()}
+        {loading ? (
+          <ContentLoading />
+        ) : projectReferenceFiles.length > 0 ? (
+          <Table
+            columns={referenceFileTableColumns}
+            dataSource={projectReferenceFiles}
+            rowKey={(file) => file.id}
+            className="t-files-table"
+          />
+        ) : (
+          <InfoAlert
+            message={alertMessage[projectInfo.canManage].text}
+            className={alertMessage[projectInfo.canManage].alertClass}
+          />
+        )}
       </Space>
     </>
   );
