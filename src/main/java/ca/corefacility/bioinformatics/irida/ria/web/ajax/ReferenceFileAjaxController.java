@@ -78,7 +78,6 @@ public class ReferenceFileAjaxController {
 	 *
 	 * @param fileId   The id of the file to download
 	 * @param response {@link HttpServletResponse} to write to file to
-	 * @throws IOException if we fail to read the file from disk.
 	 */
 	@RequestMapping(value = "/download/{fileId}")
 	public void downloadReferenceFile(@PathVariable Long fileId, HttpServletResponse response) {

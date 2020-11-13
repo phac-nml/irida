@@ -103,7 +103,7 @@ public class UIProjectsService {
 	 * Get information about a project as well as permissions
 	 *
 	 * @param projectId - The project to get info for
-	 * @return {@ProjectInfoResponse}
+	 * @return {@link ProjectInfoResponse}
 	 */
 	public ProjectInfoResponse getProjectInfo(Long projectId) {
 		Project project = projectService.read(projectId);
