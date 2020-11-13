@@ -310,9 +310,9 @@ public class IridaApiServicesConfig {
 	 * @return A new {@link IridaFileStorageUtility} implementation.
 	 */
 	@Bean(name = "iridaFileStorageUtility")
-	public IridaFileStorageUtility iridaFileStorageUtility() {
+	public IridaFileStorageUtility iridaFileStorageService() {
 		IridaFileStorageUtility iridaFileStorageUtility;
-		if(storageType.equalsIgnoreCase("aws")) {
+		if (storageType.equalsIgnoreCase("aws")) {
 			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName);
 		} else if(storageType.equalsIgnoreCase("azure")) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);

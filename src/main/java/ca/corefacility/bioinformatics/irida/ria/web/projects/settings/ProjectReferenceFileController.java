@@ -91,7 +91,7 @@ public class ProjectReferenceFileController {
 			map.put("label", file.getLabel());
 			map.put("createdDate", file.getCreatedDate());
 			Path path = file.getFile();
-			map.put("size", file.getFileLength());
+			map.put("size", file.getFileSize());
 			files.add(map);
 		}
 		return ImmutableMap.of("files", files);

@@ -149,6 +149,12 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 		this.fileLength = fileLength;
 	}
 
+	@JsonIgnore
+	public String getFileSize() {
+		return IridaFiles.getFileSize(file);
+	}
+
+
 	/**
 	 * Gets reference file input stream
 	 *
