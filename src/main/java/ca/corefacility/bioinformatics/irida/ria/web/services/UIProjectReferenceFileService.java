@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,10 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -53,7 +54,8 @@ public class UIProjectReferenceFileService {
 	 * @throws UnsupportedReferenceFileContentError if content is invalid
 	 * @throws IOException if there is an I/O error
 	 */
-	public String addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
+	public List<UIReferenceFile> addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
+		List<UIReferenceFile> uiFiles = new ArrayList<>();
 		try {
 			for (MultipartFile file : files) {
 				// Prepare a new reference file using the multipart file supplied by the caller
@@ -62,11 +64,14 @@ public class UIProjectReferenceFileService {
 				Path target = temp.resolve(file.getOriginalFilename());
 				file.transferTo(target.toFile());
 
-				ReferenceFile referenceFile = new ReferenceFile(target);
+				ReferenceFile referenceFile = referenceFileService.create(new ReferenceFile(target));
 				if (projectId != null) {
 					logger.debug("Adding reference file to project " + projectId);
 					Project project = projectService.read(projectId);
-					projectService.addReferenceFileToProject(project, referenceFile);
+					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
+					uiFiles.add(new UIReferenceFile(join));
+				} else {
+					uiFiles.add(new UIReferenceFile(referenceFile));
 				}
 
 				// Clean up temporary files
@@ -82,7 +87,7 @@ public class UIProjectReferenceFileService {
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
 		}
 
-		return "Upload complete";
+		return uiFiles;
 	}
 
 	/**

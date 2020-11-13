@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,9 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
@@ -18,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDe
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -245,10 +248,19 @@ public class UIPipelineService {
 
     private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
         return projects.stream()
-                .map(project -> referenceFileService.getReferenceFilesForProject(project)
-                        .stream()
-                        .map(UIReferenceFile::new)
-                        .collect(Collectors.toList()))
+                .map(project -> {
+					List<UIReferenceFile> list = new ArrayList<>();
+					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
+							project)) {
+						try {
+							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin);
+							list.add(uiReferenceFile);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					return list;
+				})
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }

@@ -19,7 +19,7 @@ export function ReferenceFiles() {
         <Form.Item label={i18n("ReferenceFiles.label")}>
           <Radio.Group value={referenceFile}>
             {referenceFiles.map((file) => (
-              <Radio key={file.id} value={file.id}>
+              <Radio key={`file-${file.id}`} value={file.id}>
                 {file.name}
               </Radio>
             ))}

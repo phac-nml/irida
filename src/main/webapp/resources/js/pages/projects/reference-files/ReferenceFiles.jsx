@@ -161,7 +161,7 @@ export function ReferenceFiles() {
       <Space direction="vertical" style={{ width: `100%` }}>
         {projectInfo && projectInfo.canManage ? (
           <DragUpload
-            {...referenceFileUploadOptions}
+            options={referenceFileUploadOptions}
             uploadText={i18n("ReferenceFile.clickorDrag")}
             uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
           />

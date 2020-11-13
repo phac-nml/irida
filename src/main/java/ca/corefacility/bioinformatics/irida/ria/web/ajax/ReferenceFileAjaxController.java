@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UploadReferenceFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 
 /**
@@ -47,7 +48,7 @@ public class ReferenceFileAjaxController {
 			@RequestParam(value = "file") List<MultipartFile> files, final Locale locale) {
 		try
 		{
-			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(uiProjectReferenceFileService.addReferenceFileToProject(projectId, files, locale)));
+			return ResponseEntity.ok(new UploadReferenceFilesResponse(uiProjectReferenceFileService.addReferenceFileToProject(projectId, files, locale)));
 		} catch (UnsupportedReferenceFileContentError | IOException e) {
 			return ResponseEntity.status(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE)
 					.body(new AjaxErrorResponse(e.getMessage()));

@@ -1,10 +1,8 @@
 import React from "react";
-import { message, Upload } from "antd";
+import { message } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { IconCloudUpload } from "../../../components/icons/Icons";
 import { useLaunchDispatch } from "../launch-context";
-
-const { Dragger } = Upload;
+import { DragUpload } from "../../../components/files/DragUpload.jsx";
 
 export function UploadReferenceFile() {
   const { dispatchReferenceFileUploaded } = useLaunchDispatch();
@@ -28,14 +26,10 @@ export function UploadReferenceFile() {
   };
 
   return (
-    <Dragger {...options}>
-      <p className="ant-upload-drag-icon">
-        <IconCloudUpload />
-      </p>
-      <p className="ant-upload-text">
-        {i18n("UploadReferenceFile.upload-text")}
-      </p>
-      <p className="ant-upload-hint">{i18n("UploadReferenceFile.hint")}</p>
-    </Dragger>
+    <DragUpload
+      uploadText={i18n("UploadReferenceFile.upload-text")}
+      uploadHint={i18n("UploadReferenceFile.hint")}
+      options={options}
+    />
   );
 }

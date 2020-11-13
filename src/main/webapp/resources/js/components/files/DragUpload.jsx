@@ -11,9 +11,9 @@ const { Dragger } = Upload;
  * @constructor
  */
 
-export function DragUpload({ uploadText, uploadHint, ...uploadOptions }) {
+export function DragUpload({ uploadText, uploadHint, options }) {
   return (
-    <Dragger {...uploadOptions}>
+    <Dragger {...options}>
       <p className="ant-upload-drag-icon">
         <IconFileUpload />
       </p>
