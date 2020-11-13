@@ -12,7 +12,7 @@ export function UploadReferenceFile() {
   const options = {
     multiple: true,
     showUploadList: false,
-    action: setBaseUrl(`/ajax/references/add`),
+    action: setBaseUrl(`/ajax/reference-files`),
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {

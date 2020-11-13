@@ -5,8 +5,8 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
-  removeProjectReferenceFile
-} from "../../../apis/projects/reference-files";
+  removeProjectReferenceFile,
+} from "../../../apis/references/reference-files";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
 import { DownloadTableItemButton, RemoveTableItemButton } from "../../../components/Buttons";
@@ -110,7 +110,7 @@ export function ReferenceFiles() {
   const referenceFileUploadOptions = {
     multiple: true,
     showUploadList: false,
-    action: setBaseUrl(`ajax/reference-files/project/${projectId}`),
+    action: setBaseUrl(`ajax/reference-files?projectId=${projectId}`),
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {

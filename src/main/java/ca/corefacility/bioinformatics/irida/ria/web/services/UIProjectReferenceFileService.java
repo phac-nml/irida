@@ -54,9 +54,6 @@ public class UIProjectReferenceFileService {
 	 * @throws IOException if there is an I/O error
 	 */
 	public String addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
-		Project project = projectService.read(projectId);
-		logger.debug("Adding reference file to project " + projectId);
-
 		try {
 			for (MultipartFile file : files) {
 				// Prepare a new reference file using the multipart file supplied by the caller
@@ -66,7 +63,11 @@ public class UIProjectReferenceFileService {
 				file.transferTo(target.toFile());
 
 				ReferenceFile referenceFile = new ReferenceFile(target);
-				projectService.addReferenceFileToProject(project, referenceFile);
+				if (projectId != null) {
+					logger.debug("Adding reference file to project " + projectId);
+					Project project = projectService.read(projectId);
+					projectService.addReferenceFileToProject(project, referenceFile);
+				}
 
 				// Clean up temporary files
 				Files.deleteIfExists(target);
