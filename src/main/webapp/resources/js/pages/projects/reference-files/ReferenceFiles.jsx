@@ -96,6 +96,9 @@ export function ReferenceFiles() {
               });
             }}
             tooltipText={i18n("ReferenceFile.downloadTooltip")}
+            disableDownloadButton={
+              file.size === i18n("server.projects.reference-file.not-found")
+            }
           />,
           // Only display remove button for reference files if user can manage project
           projectInfo.canManage ? (

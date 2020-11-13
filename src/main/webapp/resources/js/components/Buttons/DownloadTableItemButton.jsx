@@ -11,7 +11,8 @@ import { IconDownloadFile } from "../icons/Icons";
 export function DownloadTableItemButton({
   onDownload,
   onDownloadSuccess = () => {},
-  tooltipText = ""
+  tooltipText = "",
+  disableDownloadButton,
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -47,6 +48,7 @@ export function DownloadTableItemButton({
         shape="circle"
         loading={loading}
         onClick={downloadItem}
+        disabled={disableDownloadButton}
       />
     </Tooltip>
   );
