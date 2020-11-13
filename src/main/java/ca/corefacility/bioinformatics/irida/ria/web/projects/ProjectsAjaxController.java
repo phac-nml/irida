@@ -55,7 +55,7 @@ public class ProjectsAjaxController {
 	 * Get project info abd permissions
 	 *
 	 * @param projectId - the project to get info for
-	 * @return {@ProjectInfo}
+	 * @return {@link ProjectInfoResponse}
 	 */
 	@RequestMapping("/{projectId}/info")
 	public ResponseEntity<ProjectInfoResponse> getProjectInfo(@PathVariable Long projectId) {
