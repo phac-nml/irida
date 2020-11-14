@@ -66,7 +66,7 @@ export function ReferenceFiles() {
   const referenceFileTableColumns = [
     {
       title: i18n("ReferenceFile.name"),
-      dataIndex: "label",
+      dataIndex: "name",
     },
     {
       title: i18n("ReferenceFile.size"),
@@ -126,7 +126,7 @@ export function ReferenceFiles() {
   // Get the reference files for the project
   function updateReferenceFileTable() {
     getProjectReferenceFiles(projectId)
-      .then(({ files }) => {
+      .then((files) => {
         setProjectReferenceFiles(files);
         setLoading(false);
       })

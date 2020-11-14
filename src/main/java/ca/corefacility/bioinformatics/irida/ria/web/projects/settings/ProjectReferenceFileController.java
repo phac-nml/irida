@@ -1,16 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
@@ -30,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for ajax request dealing with project reference files.
@@ -82,26 +77,23 @@ public class ProjectReferenceFileController {
 	 * @return information about the reference files in the project
 	 */
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
-	public @ResponseBody Map<String, Object> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
+	public @ResponseBody List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale)
+			throws IOException {
 		Project project = projectService.read(projectId);
-		// Let's add the reference files
+		// Let's get the reference files
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, Object>> files = new ArrayList<>();
+		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
 			ReferenceFile file = join.getObject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("label", file.getLabel());
-			map.put("createdDate", file.getCreatedDate());
-			Path path = file.getFile();
 			try {
-				map.put("size", FileUtilities.humanReadableByteCount(Files.size(path), true));
+				refFiles.add(new UIReferenceFile(file));
 			} catch (IOException e) {
 				logger.error("Cannot find the size of file " + file.getLabel());
-				map.put("size", messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
+				UIReferenceFile uiReferenceFile = new UIReferenceFile(file);
+				uiReferenceFile.setSize(messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
+				refFiles.add(uiReferenceFile);
 			}
-			files.add(map);
 		}
-		return ImmutableMap.of("files", files);
+		return refFiles;
 	}
 }
