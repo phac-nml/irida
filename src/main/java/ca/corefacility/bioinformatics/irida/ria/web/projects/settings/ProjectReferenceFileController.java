@@ -75,6 +75,7 @@ public class ProjectReferenceFileController {
 	 * @param projectId the ID of the project
 	 * @param locale    locale of the logged in user
 	 * @return information about the reference files in the project
+	 * @throws IOException if file size can't be read
 	 */
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
 	public @ResponseBody List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale)
