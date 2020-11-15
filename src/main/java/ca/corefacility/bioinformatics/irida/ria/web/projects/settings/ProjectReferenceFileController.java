@@ -84,12 +84,11 @@ public class ProjectReferenceFileController {
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
-			ReferenceFile file = join.getObject();
 			try {
-				refFiles.add(new UIReferenceFile(file));
+				refFiles.add(new UIReferenceFile(join));
 			} catch (IOException e) {
-				logger.error("Cannot find the size of file " + file.getLabel());
-				UIReferenceFile uiReferenceFile = new UIReferenceFile(file);
+				logger.error("Cannot find the size of file " + join.getObject().getLabel());
+				UIReferenceFile uiReferenceFile = new UIReferenceFile(join);
 				uiReferenceFile.setSize(messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
 				refFiles.add(uiReferenceFile);
 			}
