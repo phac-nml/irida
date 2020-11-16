@@ -1,17 +1,23 @@
 import React from "react";
-import { Divider, Form, Radio, Result } from "antd";
+import { Divider, Form, Radio, Result, Tag } from "antd";
 import { useLaunchDispatch, useLaunchState } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 import styled from "styled-components";
-import { SPACE_XS } from "../../../styles/spacing";
 import { grey2 } from "../../../styles/colors";
+import { SPACE_XS } from "../../../styles/spacing";
 
-const RadioItem = styled(Radio)`
+const RadioItem = styled.button`
   padding: ${SPACE_XS};
-  border-radius: 2px;
-  transition: background-color ease-in 0.3s;
+  transition: all ease-in 0.3s;
+  border: 1px dashed transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background-color: transparent;
   &:hover {
     background-color: ${grey2};
+    border: 1px dashed rgb(217, 217, 217);
+    cursor: pointer;
   }
 `;
 
@@ -26,6 +32,11 @@ export function ReferenceFiles() {
   const { requiresReference, referenceFiles, referenceFile } = useLaunchState();
   const { dispatchUseReferenceFileById } = useLaunchDispatch();
 
+  const setReferenceFile = (e, file) => {
+    e.preventDefault();
+    dispatchUseReferenceFileById(file.id);
+  };
+
   return requiresReference ? (
     <section>
       {referenceFiles.length ? (
@@ -34,10 +45,10 @@ export function ReferenceFiles() {
             {referenceFiles.map((file) => (
               <RadioItem
                 key={`file-${file.id}`}
-                value={file.id}
-                onClick={() => dispatchUseReferenceFileById(file.id)}
+                onClick={(e) => setReferenceFile(e, file)}
               >
-                {file.name}
+                <Radio value={file.id}>{file.name}</Radio>
+                {file.projectName ? <Tag>{file.projectName}</Tag> : null}
               </RadioItem>
             ))}
           </Radio.Group>
