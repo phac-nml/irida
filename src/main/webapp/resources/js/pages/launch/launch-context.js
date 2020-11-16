@@ -26,6 +26,7 @@ const TYPES = {
   MODIFIED_PARAMETERS: "launch:modified_params",
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
+  USE_REFERENCE: "launch:use_reference",
 };
 
 const reducer = (state, action) => {
@@ -47,6 +48,11 @@ const reducer = (state, action) => {
         ...state,
         parameterSet: action.payload.set,
         parameterSets: action.payload.sets,
+      };
+    case TYPES.USE_REFERENCE:
+      return {
+        ...state,
+        referenceFile: action.payload.id,
       };
   }
 };
@@ -295,6 +301,9 @@ function LaunchProvider({ children }) {
     });
   };
 
+  const dispatchUseReferenceFileById = (id) =>
+    dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
+
   return (
     <LaunchStateContext.Provider value={{ ...state, pipeline, initialValues }}>
       <LaunchDispatchContext.Provider
@@ -304,6 +313,7 @@ function LaunchProvider({ children }) {
           dispatchUseModifiedParameters,
           dispatchUseSaveAs,
           dispatchReferenceFileUploaded,
+          dispatchUseReferenceFileById,
         }}
       >
         {children}
