@@ -29,8 +29,8 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       align: "center",
       fixed: "left",
       dataIndex: "priority",
-      render(item) {
-        return <IconFlag style={ item ? { color: blue6 } : { color: grey2 }} />;
+      render(hasPriority) {
+        return <IconFlag style={{ color: hasPriority ? blue6 : grey2 }} />;
       },
       sorter: true
     },
