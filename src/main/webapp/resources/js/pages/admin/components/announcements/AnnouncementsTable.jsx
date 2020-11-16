@@ -7,6 +7,8 @@ import { dateColumnFormat } from "../../../../components/ant.design/table-render
 import { SPACE_XS } from "../../../../styles/spacing";
 import { EditAnnouncement } from "./EditAnnouncement";
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
+import { IconFlag } from "../../../../components/icons/Icons";
+import { blue6, grey2 } from "../../../../styles/colors";
 import {
   PagedTable,
   PagedTableContext
@@ -23,35 +25,43 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
 
   const columns = [
     {
-      title: i18n("iridaThing.id"),
-      width: 80,
-      dataIndex: "id",
+      title: i18n("announcement.control.priority"),
+      align: "center",
+      fixed: "left",
+      dataIndex: "priority",
+      render(hasPriority) {
+        return <IconFlag style={{ color: hasPriority ? blue6 : grey2 }} />;
+      },
       sorter: true
     },
     {
-      title: i18n("AnnouncementTable.title"),
-      dataIndex: "name",
+      title: i18n("announcement.control.title"),
+      align: "left",
+      fixed: "left",
+      dataIndex: "title",
       className: "t-announcement",
       render(text, full) {
         return (
-          <a href={setBaseUrl(`announcements/${full.id}/details`)}>
-            <MarkdownViewer markdown={text} />
-          </a>
+            <a href={setBaseUrl(`announcements/${full.id}/details`)}>
+              <MarkdownViewer markdown={text}/>
+            </a>
         );
-      }
+      },
+      sorter: true
     },
     {
       title: i18n("announcement.control.createdBy"),
       dataIndex: "user",
       render(text, item) {
         return <a href={item.user.id}>{item.user.username}</a>;
-      }
+      },
+      sorter: true
     },
     {
       ...dateColumnFormat(),
       className: "t-created-date",
       title: i18n("iridaThing.timestamp"),
-      dataIndex: "createdDate"
+      dataIndex: "createdDate",
     },
     {
       key: "actions",

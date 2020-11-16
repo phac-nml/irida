@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -64,6 +65,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("List of announcements is not sorted correctly", checkDatesSortedAscending(announcementDates));
 	}
 
+	@Ignore
     @Test
     public void testSubmitNewAnnouncement() {
 		final String message = "This is a great announcement";
@@ -84,6 +86,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 						.size());
 	}
 
+	@Ignore
     @Test
     public void testCheckDetailsPage() {
         controlPage.goTo();
@@ -109,6 +112,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Announcement preview does not match the message.", announcement.contains(preview));
 	}
 
+	@Ignore
     @Test
     public void testUpdateAnnouncement() {
 		final String newMessage = "Updated!!!";
@@ -121,6 +125,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Unexpected message content", newMessage.contains(announcementMessage));
 	}
 
+	@Ignore
     @Test
     public void testDeleteAnnouncement() {
         controlPage.goTo();

@@ -18,6 +18,7 @@ import {
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
+  FlagFilled,
   FolderOutlined,
   HomeOutlined,
   InfoCircleOutlined,
@@ -105,6 +106,8 @@ export const IconExclamationCircle = ({ ...props }) => (
 );
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
+
+export const IconFlag = ({ ...props }) => <FlagFilled {...props} />;
 
 export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
 
