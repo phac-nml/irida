@@ -282,7 +282,7 @@ You can view or add reference files by clicking on the "Reference Files" tab in 
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
-You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
+You can upload a new reference file to the project by clicking on the "Upload Reference File" button or by dragging and dropping files onto it:
 
 ![Upload reference file button.](images/upload-reference-file-button.png)
 

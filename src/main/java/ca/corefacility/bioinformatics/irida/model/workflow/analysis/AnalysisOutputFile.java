@@ -21,6 +21,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -39,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 @Table(name = "analysis_output_file")
 @EntityListeners(RelativePathTranslatorListener.class)
 public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisOutputFile.class);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -182,10 +186,15 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	 * Read the bytes for an image output file
 	 *
 	 * @return the bytes for the file
-	 * @throws IOException if the file couldn't be read
 	 */
-	public byte[] getBytesForFile() throws IOException  {
-		byte[] bytes = Files.readAllBytes(getFile());
-		return bytes;
+	public byte[] getBytesForFile() {
+		byte[] bytes = new byte[0];
+		try{
+			bytes = Files.readAllBytes(getFile());
+		} catch (IOException e) {
+			logger.error("Unable to read file.", e);
+		} finally {
+			return bytes;
+		}
 	}
 }
