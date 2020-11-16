@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
@@ -75,18 +77,17 @@ public class ProjectReferenceFileController {
 	 * @param projectId the ID of the project
 	 * @param locale    locale of the logged in user
 	 * @return information about the reference files in the project
-	 * @throws IOException if file size can't be read
 	 */
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
 	public @ResponseBody
-	List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) throws IOException {
+	List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		// Let's get the reference files
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
 			try {
-				refFiles.add(new UIReferenceFile(join, null));
+				refFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(Files.size(join.getObject().getFile()), true)));
 			} catch (IOException e) {
 				logger.error("Cannot find the size of file " + join.getObject()
 						.getLabel());
