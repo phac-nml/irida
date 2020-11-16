@@ -10,6 +10,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
+/**
+ * Represents a reference file in the UI.
+ */
 public class UIReferenceFile {
 	private final Long id;
 	private final String name;
@@ -27,7 +30,7 @@ public class UIReferenceFile {
 		this.projectName = project.getName();
 		this.projectId = project.getId();
 		this.createdDate = file.getCreatedDate();
-		this.size = FileUtilities.humanReadableByteCount(Files.size(path), true);
+		this.size = size == null ? FileUtilities.humanReadableByteCount(Files.size(path), true) : size;
 	}
 
 	public UIReferenceFile(ReferenceFile file) throws IOException {

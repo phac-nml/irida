@@ -66,7 +66,7 @@ export function ReferenceFiles() {
   const referenceFileTableColumns = [
     {
       title: i18n("ReferenceFile.name"),
-      dataIndex: "label",
+      dataIndex: "name",
     },
     {
       title: i18n("ReferenceFile.size"),
@@ -96,6 +96,9 @@ export function ReferenceFiles() {
               });
             }}
             tooltipText={i18n("ReferenceFile.downloadTooltip")}
+            disableDownloadButton={
+              file.size === i18n("server.projects.reference-file.not-found")
+            }
           />,
           // Only display remove button for reference files if user can manage project
           projectInfo.canManage ? (
@@ -123,7 +126,7 @@ export function ReferenceFiles() {
   // Get the reference files for the project
   function updateReferenceFileTable() {
     getProjectReferenceFiles(projectId)
-      .then(({ files }) => {
+      .then((files) => {
         setProjectReferenceFiles(files);
         setLoading(false);
       })
