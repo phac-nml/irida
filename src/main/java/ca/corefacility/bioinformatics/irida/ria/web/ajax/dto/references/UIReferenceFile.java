@@ -21,7 +21,7 @@ public class UIReferenceFile {
 	private final String projectName;
 	private final Long projectId;
 
-	public UIReferenceFile(Join<Project, ReferenceFile> join) throws IOException {
+	public UIReferenceFile(Join<Project, ReferenceFile> join, String size) throws IOException {
 		Project project = join.getSubject();
 		ReferenceFile file = join.getObject();
 		Path path = file.getFile();
