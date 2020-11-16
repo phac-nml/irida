@@ -21,16 +21,15 @@ public class UIReferenceFile {
 	private final String projectName;
 	private final Long projectId;
 
-	public UIReferenceFile(Join<Project, ReferenceFile> join, String size) throws IOException {
+	public UIReferenceFile(Join<Project, ReferenceFile> join, String size) {
 		Project project = join.getSubject();
 		ReferenceFile file = join.getObject();
-		Path path = file.getFile();
 		this.id = file.getId();
 		this.name = file.getLabel();
 		this.projectName = project.getName();
 		this.projectId = project.getId();
 		this.createdDate = file.getCreatedDate();
-		this.size = size == null ? FileUtilities.humanReadableByteCount(Files.size(path), true) : size;
+		this.size = size;
 	}
 
 	public UIReferenceFile(ReferenceFile file) throws IOException {
