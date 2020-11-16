@@ -22,7 +22,7 @@ public class UIReferenceFile {
 	private String projectName;
 	private Long projectId;
 
-	public UIReferenceFile(Join<Project, ReferenceFile> join) throws IOException {
+	public UIReferenceFile(Join<Project, ReferenceFile> join, String size) throws IOException {
 		Project project = join.getSubject();
 		ReferenceFile file = join.getObject();
 		Path path = file.getFile();
@@ -31,7 +31,7 @@ public class UIReferenceFile {
 		this.projectName = project.getName();
 		this.projectId = project.getId();
 		this.createdDate = file.getCreatedDate();
-		this.size = FileUtilities.humanReadableByteCount(Files.size(path), true);
+		this.size = size == null ? FileUtilities.humanReadableByteCount(Files.size(path), true) : size;
 	}
 
 	public UIReferenceFile(ReferenceFile file) throws IOException {
@@ -66,9 +66,5 @@ public class UIReferenceFile {
 
 	public String getSize() {
 		return size;
-	}
-
-	public void setSize(String fileSize) {
-		this.size = fileSize;
 	}
 }

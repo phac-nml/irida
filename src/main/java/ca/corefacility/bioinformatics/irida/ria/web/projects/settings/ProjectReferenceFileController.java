@@ -78,19 +78,20 @@ public class ProjectReferenceFileController {
 	 * @throws IOException if file size can't be read
 	 */
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
-	public @ResponseBody List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale)
-			throws IOException {
+	public @ResponseBody
+	List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) throws IOException {
 		Project project = projectService.read(projectId);
 		// Let's get the reference files
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
 			try {
-				refFiles.add(new UIReferenceFile(join));
+				refFiles.add(new UIReferenceFile(join, null));
 			} catch (IOException e) {
-				logger.error("Cannot find the size of file " + join.getObject().getLabel());
-				UIReferenceFile uiReferenceFile = new UIReferenceFile(join);
-				uiReferenceFile.setSize(messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
+				logger.error("Cannot find the size of file " + join.getObject()
+						.getLabel());
+				UIReferenceFile uiReferenceFile = new UIReferenceFile(join,
+						messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
 				refFiles.add(uiReferenceFile);
 			}
 		}
