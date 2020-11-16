@@ -25,7 +25,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
 
   const columns = [
     {
-      title: il8n("announcement.control.priority"),
+      title: i18n("announcement.control.priority"),
       align: "center",
       fixed: "left",
       dataIndex: "priority",
@@ -35,7 +35,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       sorter: true
     },
     {
-      title: il8n("announcement.control.title"),
+      title: i18n("announcement.control.title"),
       align: "left",
       fixed: "left",
       dataIndex: "title",
