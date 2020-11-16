@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileC
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -69,7 +70,9 @@ public class UIProjectReferenceFileService {
 					logger.debug("Adding reference file to project " + projectId);
 					Project project = projectService.read(projectId);
 					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
-					uiFiles.add(new UIReferenceFile(join));
+					ReferenceFile refFile = join.getObject();
+					Long filesize = Files.size(refFile.getFile());
+					uiFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
 				} else {
 					uiFiles.add(new UIReferenceFile(referenceFile));
 				}

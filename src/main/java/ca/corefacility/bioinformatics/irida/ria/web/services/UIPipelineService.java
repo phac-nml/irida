@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
@@ -253,7 +256,10 @@ public class UIPipelineService {
 					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
 							project)) {
 						try {
-							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin);
+							ReferenceFile file = projectReferenceFileJoin.getObject();
+							Path path = file.getFile();
+							String filesize = FileUtilities.humanReadableByteCount(Files.size(path), true);
+							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
 							list.add(uiReferenceFile);
 						} catch (IOException e) {
 							e.printStackTrace();
