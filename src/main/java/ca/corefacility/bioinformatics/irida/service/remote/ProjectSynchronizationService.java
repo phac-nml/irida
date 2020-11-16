@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -59,6 +60,7 @@ public class ProjectSynchronizationService {
 	private SingleEndSequenceFileRemoteService singleEndRemoteService;
 	private SequenceFilePairRemoteService pairRemoteService;
 	private GenomeAssemblyRemoteService assemblyRemoteService;
+	private Fast5ObjectRemoteService fast5ObjectRemoteService;
 	private RemoteAPITokenService tokenService;
 	private EmailController emailController;
 
@@ -68,7 +70,7 @@ public class ProjectSynchronizationService {
 			GenomeAssemblyService assemblyService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
 			SequenceFilePairRemoteService pairRemoteService, GenomeAssemblyRemoteService assemblyRemoteService,
-			RemoteAPITokenService tokenService, EmailController emailController) {
+			Fast5ObjectRemoteService fast5ObjectRemoteService, RemoteAPITokenService tokenService, EmailController emailController) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -80,6 +82,7 @@ public class ProjectSynchronizationService {
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
 		this.assemblyRemoteService = assemblyRemoteService;
+		this.fast5ObjectRemoteService = fast5ObjectRemoteService;
 		this.tokenService = tokenService;
 		this.emailController = emailController;
 	}
@@ -374,6 +377,24 @@ public class ProjectSynchronizationService {
 			}
 		}
 
+		//list the fast5 files from the remote api
+		List<Fast5Object> fast5FilesForSample = fast5ObjectRemoteService.getFast5FilesForSample(sample);
+
+		//for each fast5 file
+		for (Fast5Object fast5Object : fast5FilesForSample) {
+			//check if we already have it
+			if (!objectsByUrl.contains(fast5Object.getRemoteStatus().getURL())) {
+				fast5Object.setId(null);
+				//if not, get it locally and save it
+				try {
+					syncFast5File(fast5Object, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
+			}
+		}
+
+
 		//list the remote assemblies for the sample.
 		List<UploadedAssembly> genomeAssembliesForSample;
 		try {
@@ -397,6 +418,8 @@ public class ProjectSynchronizationService {
 				}
 			}
 		}
+
+
 
 
 		//if we have no errors, report that the sample is sync'd
@@ -461,6 +484,39 @@ public class ProjectSynchronizationService {
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
+					e);
+		}
+	}
+
+	/**
+	 * Synchronize a given {@link Fast5Object} to the local
+	 * installation
+	 *
+	 * @param fast5Object
+	 *            the {@link Fast5Object} to sync
+	 * @param sample
+	 *            the {@link Sample} to add the file to
+	 */
+	public void syncFast5File(Fast5Object fast5Object, Sample sample) {
+		RemoteStatus fileStatus = fast5Object.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
+		try {
+			fast5Object = fast5ObjectRemoteService.mirrorSequencingObject(fast5Object);
+
+			fast5Object.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
+			fast5Object.setFileProcessor(null);
+
+			fast5Object.getFile().setId(null);
+			fast5Object.getFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+			objectService.createSequencingObjectInSample(fast5Object, sample);
+
+			fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+			objectService.updateRemoteStatus(fast5Object.getId(), fileStatus);
+		} catch (Exception e) {
+			logger.error("Error transferring file: " + fast5Object.getRemoteStatus().getURL(), e);
+			throw new ProjectSynchronizationException("Could not synchronize file " + fast5Object.getRemoteStatus().getURL(),
 					e);
 		}
 	}
