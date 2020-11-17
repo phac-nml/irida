@@ -68,7 +68,7 @@ public class UIAnnouncementsService {
 	 */
 	public void createNewAnnouncement(@RequestBody AnnouncementRequest announcementRequest, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
-		Announcement announcement = new Announcement(announcementRequest.getMessage(), user);
+		Announcement announcement = new Announcement(announcementRequest.getTitle(), announcementRequest.getMessage(), announcementRequest.getPriority(), user);
 		announcementService.create(announcement);
 	}
 

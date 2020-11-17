@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Modal } from "antd";
+import { Checkbox, Form, Input, Modal } from "antd";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
@@ -13,10 +13,16 @@ import { IconEdit } from "../../../../components/icons/Icons";
  */
 export function CreateNewAnnouncement({ createAnnouncement }) {
   const markdownRef = useRef();
+  const [form] = Form.useForm();
 
   function saveMarkdown() {
-    const md = markdownRef.current.getMarkdown();
-    createAnnouncement(md);
+    form.validateFields().then((values) => {
+      const markdown = markdownRef.current.getMarkdown();
+      const title = values.title;
+      const priority = values.priority;
+
+      createAnnouncement(title, markdown, priority);
+    });
   }
 
   function displayModal() {
@@ -24,14 +30,35 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
       title: i18n("CreateNewAnnouncement.title"),
       icon: <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />,
       width: "80%",
-      content: <MarkdownEditor ref={markdownRef} />,
+      content: (
+        <Form layout="vertical" form={form}>
+          <Form.Item
+            name="title"
+            label="Title"
+            rules={[
+              {
+                required: true,
+                message: "Please input a title",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="message" label="Message">
+            <MarkdownEditor ref={markdownRef} />
+          </Form.Item>
+          <Form.Item name="priority" label="Priority" valuePropName="checked">
+            <Checkbox />
+          </Form.Item>
+        </Form>
+      ),
       okText: i18n("CreateNewAnnouncement.okBtn"),
       okButtonProps: {
-        className: "t-submit-announcement"
+        className: "t-submit-announcement",
       },
       onOk() {
         saveMarkdown();
-      }
+      },
     });
   }
 

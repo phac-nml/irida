@@ -10,11 +10,13 @@ const BASE = setBaseUrl(`ajax/announcements`);
 
 /**
  * Create a new announcement.
+ * @param {string} title - the title of the new announcement.
  * @param {string} message - the content of the new announcement.
+ * @param {boolean} priority - the priority of the new announcement.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function createNewAnnouncement({ message }) {
-  return axios.post(`${BASE}/create`, { message });
+export function createNewAnnouncement({ title, message, priority }) {
+  return axios.post(`${BASE}/create`, { title, message, priority });
 }
 
 /**
@@ -37,7 +39,7 @@ export function deleteAnnouncement({ id }) {
     method: "delete",
     url: `${BASE}/delete`,
     data: {
-      id
-    }
+      id,
+    },
   });
 }
