@@ -29,7 +29,7 @@ export function Session() {
   Initially set in seconds by spring, but we need it in milliseconds.
   Adding an extra 5 seconds to confirm the server has timed out.
    */
-  const SESSION_LENGTH = Number(getCookieByName("expiration_time")) * 1000;
+  const SESSION_LENGTH = window.TL.SESSION_LENGTH * 1000;
 
   const [visible, setVisibility] = useState(false);
 
