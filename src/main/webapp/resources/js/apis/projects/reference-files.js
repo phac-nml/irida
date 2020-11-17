@@ -8,7 +8,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  */
 export async function getProjectReferenceFiles(projectId) {
   return await axios
-    .get(setBaseUrl(`/projects/${projectId}/settings/ajax/reference/all`))
+    .get(setBaseUrl(`ajax/reference-files/${projectId}/all`))
     .then(({ data }) => data)
     .catch((error) => {
       throw new Error(error.response.data.error);
