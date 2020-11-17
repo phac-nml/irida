@@ -51,3 +51,13 @@ export async function getProjectDetails(projectId) {
 export async function updateProjectAttribute({ projectId, field, value }) {
   return axios.put(`${URL}/${projectId}/details/edit`, { field, value });
 }
+
+
+/**
+ * Get project info (name, permissions)
+ * @param {number} projectId - identifier for a project
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export async function getProjectInfo(projectId) {
+  return axios.get(`${URL}/${projectId}/info`).then(({ data }) => data);
+}
