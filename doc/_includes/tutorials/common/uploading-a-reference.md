@@ -2,7 +2,7 @@
 
     ![your-projects-menu.png][]
 
-2. Select the **Reference Files** link from within the project and then select **Upload Reference File**.
+2. Select the **Reference Files** link from within the project and then either select the **Upload Reference File** or drag and drop files onto it.
 
     ![reference-files-page.png][]
 

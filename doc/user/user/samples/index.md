@@ -66,6 +66,10 @@ Samples can contain different types of files, either **Sequence Files** which ar
 
 You can download all sequence files in a sample by following the instructions in the [exporting samples](#exporting-samples) section about [downloading samples](#downloading-samples).
 
+#### Viewing sequence file quality control (FastQC) results
+
+{% include tutorials/common/view-sequence-file-fastqc.md %}
+
 #### Deleting a sequence file
 
 If you need to delete a sequence file from IRIDA, you can do so by clicking on the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
