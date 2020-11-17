@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
@@ -27,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for ajax request dealing with project reference files.
@@ -79,21 +76,15 @@ public class ProjectReferenceFileController {
 	 * @return information about the reference files in the project
 	 */
 	@RequestMapping("/{projectId}/settings/ajax/reference/all")
-	public @ResponseBody Map<String, Object> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
+	public @ResponseBody
+	List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		// Let's add the reference files
+		// Let's get the reference files
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, Object>> files = new ArrayList<>();
+		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
-			ReferenceFile file = join.getObject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("label", file.getLabel());
-			map.put("createdDate", file.getCreatedDate());
-			Path path = file.getFile();
-			map.put("size", file.getFileSize());
-			files.add(map);
+			refFiles.add(new UIReferenceFile(join, join.getObject().getFileSize()));
 		}
-		return ImmutableMap.of("files", files);
+		return refFiles;
 	}
 }
