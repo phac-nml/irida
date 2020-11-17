@@ -1,5 +1,3 @@
-import { getCookieByName } from "./cookie-utilities";
-
 /**
  * Since IRIDA can be served within a container, all requests need to have
  * the correct base url.  This will add, if required, the base url.
@@ -14,7 +12,7 @@ export function setBaseUrl(url) {
   /*
     Get the base url which is set via the thymeleaf template engine.
      */
-  const BASE_URL = getCookieByName("cp") || "/";
+  const BASE_URL = window.TL?._BASE_URL || "/";
 
   /*
     Check to make sure that the given url has not already been given the

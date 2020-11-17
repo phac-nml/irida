@@ -1,6 +1,4 @@
-import { getUserLocale } from "./user-utilities";
-
 export const stringSorter = (property) => (a, b) =>
-  a[property].localeCompare(b[property], getUserLocale(), {
+  a[property].localeCompare(b[property], window.TL.LANGUAGE_TAG, {
     sensitivity: "base",
   });

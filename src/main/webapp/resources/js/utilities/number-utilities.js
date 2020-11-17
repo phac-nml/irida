@@ -3,8 +3,8 @@
  * @param {number} number
  * @return {string}
  */
-import { getUserLocale } from "./user-utilities";
-
 export function formatNumber(number) {
-  return new Intl.NumberFormat(getUserLocale()).format(number);
+  return new Intl.NumberFormat(window.TL.LANGUAGE_TAG || "en-CA").format(
+    number
+  );
 }

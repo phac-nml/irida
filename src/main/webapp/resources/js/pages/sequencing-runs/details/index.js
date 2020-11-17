@@ -3,7 +3,6 @@ import { render } from "react-dom";
 import { Button, PageHeader, Popconfirm } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { deleteSequencingRun } from "../../../apis/sequencing-runs/sequencing-runs";
-import { isUserAdmin } from "../../../utilities/user-utilities";
 
 function SequencingRunDetails() {
   const runId = window.location.href.match(/sequencingRuns\/(\d+)/)[1];
@@ -15,7 +14,7 @@ function SequencingRunDetails() {
         (window.location.href = setBaseUrl(`/admin/sequencing_runs`))
       }
       extra={[
-        isUserAdmin() ? (
+        window.TL._USER.systemRole === "ROLE_ADMIN" ? (
           <Popconfirm
             key="remove-btn"
             title={i18n("SequenceRunDetails.delete.confirmation")}
