@@ -5,18 +5,16 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 
 /**
- * Controller for handling all ajax requests on the Projects listing page.
+ * Controller for handling all ajax requests for Projects.
  */
 @RestController
 @RequestMapping("/ajax/projects")
@@ -51,5 +49,16 @@ public class ProjectsAjaxController {
 	@RequestMapping("/roles")
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
 		return ResponseEntity.ok(UIProjectsService.getProjectRoles(locale));
+	}
+
+	/**
+	 * Get project info abd permissions
+	 *
+	 * @param projectId - the project to get info for
+	 * @return {@link ProjectInfoResponse}
+	 */
+	@RequestMapping("/{projectId}/info")
+	public ResponseEntity<ProjectInfoResponse> getProjectInfo(@PathVariable Long projectId) {
+		return ResponseEntity.ok(UIProjectsService.getProjectInfo(projectId));
 	}
 }
