@@ -7,9 +7,32 @@ package ca.corefacility.bioinformatics.irida.model.enums;
  */
 
 public enum StatisticTimePeriod {
+	/*
+	 * Each enum attribute contains an int array of values
+	 * which is the time period in days, and a groupByFormat
+	 * which is used to group statistics by the defined string.
+	 */
+
+
+	/*
+	 * Time Period: Last day
+	 * Grouped by: HOUR
+	 */
 	HOURLY(new int[] {1}, "%H:00"),
+	/*
+	 * Time Period: 7, 14, and 30 days
+	 * Grouped by: month/day
+	 */
 	DAILY(new int[] {7,14,30}, "%m/%d"),
+	/*
+	 * Time Period: 90 and 365 days
+	 * Grouped by: month/year
+	 */
 	MONTHLY(new int[] {90, 365}, "%m/%y"),
+	/*
+	 * Time Period: 730, 1825, and 3650 days (2 years, 5 years, 10 years)
+	 * Grouped by: year
+	 */
 	YEARLY(new int[] {730, 1825, 3650}, "%Y");
 
 	private int [] values;
@@ -24,16 +47,7 @@ public enum StatisticTimePeriod {
 		return values;
 	}
 
-	public void setValues(int[] values) {
-		this.values = values;
-	}
-
 	public String getGroupByFormat() {
 		return groupByFormat;
 	}
-
-	public void setGroupByFormat(String groupByFormat) {
-		this.groupByFormat = groupByFormat;
-	}
-
 }
