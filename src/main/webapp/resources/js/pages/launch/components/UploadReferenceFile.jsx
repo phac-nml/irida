@@ -4,6 +4,11 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useLaunchDispatch } from "../launch-context";
 import { DragUpload } from "../../../components/files/DragUpload.jsx";
 
+/**
+ * Component to upload a reference file to the launch pipeline page.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function UploadReferenceFile() {
   const { dispatchReferenceFileUploaded } = useLaunchDispatch();
 
