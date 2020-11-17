@@ -5,7 +5,6 @@ import { Button, Checkbox } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../ant.design/table-renderers";
 import { IconEdit } from "../icons/Icons";
-import { getUsername, isUserAdmin } from "../../utilities/user-utilities";
 
 /**
  * React component for displaying paged table of all users in the system
@@ -14,7 +13,7 @@ import { getUsername, isUserAdmin } from "../../utilities/user-utilities";
  */
 export function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
-  const IS_ADMIN = isUserAdmin();
+  const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
 
   function updateUser(user) {
     setUsersDisabledStatus({
@@ -32,7 +31,8 @@ export function UsersTable() {
       sorter: true,
       render(text, full) {
         // Don't let the current user disabled themselves!
-        const disabled = !IS_ADMIN || getUsername() === full.username;
+        const disabled =
+          !IS_ADMIN || window.TL._USER.username === full.username;
         return (
           <Checkbox
             className="t-cb-enable"

@@ -43,7 +43,7 @@
       }
     };
   </script>
-  
+
   <script th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}" th:inline="javascript">
     window.GALAXY = {
       URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
