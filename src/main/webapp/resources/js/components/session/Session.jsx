@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import SessionModal from "./SessionModal";
-import { getCookieByName } from "../../utilities/cookie-utilities";
 
 function interceptHTTP(handler) {
   // Capture all ajax requests, these will indicate a need to reset the timeout.
