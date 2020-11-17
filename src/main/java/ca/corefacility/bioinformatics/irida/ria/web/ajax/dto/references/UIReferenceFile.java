@@ -14,12 +14,12 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
  * Represents a reference file in the UI.
  */
 public class UIReferenceFile {
-	private final Long id;
-	private final String name;
-	private final Date createdDate;
-	private final String size;
-	private final String projectName;
-	private final Long projectId;
+	private Long id;
+	private String name;
+	private Date createdDate;
+	private String size;
+	private String projectName;
+	private Long projectId;
 
 	public UIReferenceFile(Join<Project, ReferenceFile> join, String size) {
 		Project project = join.getSubject();
