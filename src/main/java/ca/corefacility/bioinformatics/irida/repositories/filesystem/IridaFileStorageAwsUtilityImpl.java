@@ -20,6 +20,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
@@ -33,11 +36,14 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
 	private String bucketName;
+	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName){
-		this.s3 = AmazonS3ClientBuilder.standard().build();
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey){
+		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
+		this.s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(bucketRegion))
+				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 		this.bucketName = bucketName;
 	}
 
@@ -51,19 +57,19 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 			Path tempDirectory = Files.createTempDirectory("aws-tmp-");
 			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
-
-			org.apache.commons.io.FileUtils.copyInputStreamToFile(s3ObjectInputStream, tempFile.toFile());
-
-			s3ObjectInputStream.close();
-			s3Object.close();
+			try(S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
+				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+				org.apache.commons.io.FileUtils.copyInputStreamToFile(s3ObjectInputStream, tempFile.toFile());
+				s3ObjectInputStream.close();
+			} catch (AmazonServiceException e) {
+				logger.error(e.getErrorMessage());
+				throw new StorageException(e.getMessage());
+			} catch (Exception e) {
+				logger.error("Unable to get object from aws S3: " + e);
+				throw new StorageException(e.getMessage());
+			}
 
 			return new IridaTemporaryFile(tempFile, tempDirectory);
-
-		} catch (AmazonServiceException e) {
-			logger.error(e.getErrorMessage());
-			throw new StorageException(e.getMessage());
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage());
 			throw new StorageException(e.getMessage());
@@ -105,19 +111,14 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	@Override
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
-		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
 			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
 					.getContentLength(), true);
-			try {
-				s3Object.close();
-			} catch (IOException e) {
-				logger.error("Unable to close connection to s3object: " + e);
-			}
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
-
 		return fileSize;
 	}
 
@@ -157,18 +158,16 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+		try(S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
 			String[] nameTokens = s3Object.getKey()
 					.split("/");
 			fileName = nameTokens[nameTokens.length - 1];
-			s3Object.close();
 		} catch (AmazonServiceException e) {
 			logger.error("Couldn't find file [" + e + "]");
-		} catch (IOException e) {
-			logger.error("Unable to close connection to s3object: " + e);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 
 		return fileName;
@@ -188,22 +187,13 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility{
 	@Override
 	public InputStream getFileInputStream(Path file) {
 		byte[] bytes = new byte[0];
-		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			logger.trace("Opening input stream to file in s3 bucket [" + file.toString() + "]");
-			try {
-				/*
-				 * We get the bytes of the content and store it in a byte array
-				 * so we can close the inputstream from s3 before returning
-				 */
-				bytes = s3Object.getObjectContent().readAllBytes();
-				s3Object.close();
-			} catch (IOException e) {
-				logger.error("Unable to close connection to s3object: " + e);
-			}
+		try(S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
+			bytes = s3Object.getObjectContent().readAllBytes();
 		} catch (AmazonServiceException e) {
 			logger.error("Couldn't read file from s3 bucket [" + e + "]");
 			throw new StorageException("Unable to locate file in s3 bucket", e);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 		return new ByteArrayInputStream(bytes);
 	}
