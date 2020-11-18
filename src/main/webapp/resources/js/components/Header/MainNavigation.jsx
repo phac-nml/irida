@@ -1,0 +1,155 @@
+import React from "react";
+import { Badge, Col, Form, Input, Menu, Row } from "antd";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { grey3, grey6 } from "../../styles/colors";
+import { SPACE_MD } from "../../styles/spacing";
+import {
+  IconQuestionCircle,
+  IconSearch,
+  IconShoppingCart,
+  IconUser,
+} from "../icons/Icons";
+
+export function MainNavigation() {
+  const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
+
+  return (
+    <Row
+      style={{
+        display: "flex",
+        alignItems: "center",
+        borderBottom: `2px solid ${grey3}`,
+      }}
+    >
+      <Col md={9} sm={24}>
+        <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
+          <img
+            style={{ height: 28 }}
+            src={setBaseUrl("/resources/img/irida_logo_light.svg")}
+            alt={i18n("global.title")}
+          />
+        </a>
+        <Menu
+          mode="horizontal"
+          style={{ display: "inline-block", borderBottom: "none" }}
+        >
+          <Menu.SubMenu key="projects" title={i18n("nav.main.project")}>
+            <Menu.Item key="project:list">
+              <a href={setBaseUrl("/projects")}>
+                {i18n("nav.main.project-list")}
+              </a>
+            </Menu.Item>
+            {isAdmin && (
+              <Menu.Item key="project:all">
+                <a href={setBaseUrl("/projects/all")}>
+                  {i18n("nav.main.project-list-all")}
+                </a>
+              </Menu.Item>
+            )}
+            <Menu.Divider />
+            <Menu.Item key="project:sync">
+              <a href={setBaseUrl("/projects/synchronize")}>
+                {i18n("nav.main.project-sync")}
+              </a>
+            </Menu.Item>
+          </Menu.SubMenu>
+          <Menu.SubMenu title={i18n("nav.main.analysis")}>
+            <Menu.Item>
+              <a href={setBaseUrl(`/analysis`)}>
+                {i18n("nav.main.analysis-admin-user")}
+              </a>
+            </Menu.Item>
+            {isAdmin && (
+              <Menu.Item key="project:all">
+                <a href={setBaseUrl("/analysis/all")}>
+                  {i18n("nav.main.analysis-admin-all")}
+                </a>
+              </Menu.Item>
+            )}
+            <Menu.Divider />
+            <Menu.Item>
+              <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
+                {i18n("Analysis.outputFiles")}
+              </a>
+            </Menu.Item>
+          </Menu.SubMenu>
+        </Menu>
+      </Col>
+      <Col
+        md={15}
+        sm={24}
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          alignItems: "center",
+          width: `100%`,
+        }}
+      >
+        <Menu
+          mode="horizontal"
+          style={{
+            display: "inline-block",
+            borderBottom: "none",
+          }}
+        >
+          <Menu.SubMenu title={<IconQuestionCircle />}>
+            <Menu.ItemGroup title="Documentation">
+              <Menu.Item>
+                <a
+                  href="https://irida.corefacility.ca/documentation/user/user"
+                  target="_blank"
+                >
+                  {i18n("nav.main.userguide")}
+                </a>
+              </Menu.Item>
+              {isAdmin && (
+                <Menu.Item>
+                  <a href="https://irida.corefacility.ca/documentation/user/administrator">
+                    {i18n("nav.main.adminguide")}
+                  </a>
+                </Menu.Item>
+              )}
+            </Menu.ItemGroup>
+            <Menu.Divider />
+            <Menu.Item>
+              <a
+                href="http://www.irida.ca"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {i18n("generic.irida.website")}
+              </a>
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
+          </Menu.SubMenu>
+          <Menu.Item
+            icon={
+              <Badge count={99}>
+                <IconShoppingCart />
+              </Badge>
+            }
+          />
+          <Menu.SubMenu title={<IconUser />}>
+            <Menu.Item>{i18n("nav.main.account")}</Menu.Item>
+            <Menu.Item>
+              <a href={setBaseUrl("/logout")}>{i18n("nav.main.logout")}</a>
+            </Menu.Item>
+          </Menu.SubMenu>
+        </Menu>
+        <Form layout="inline" style={{ display: "inline-block" }}>
+          <Form.Item style={{ width: 300 }}>
+            <Input
+              prefix={<IconSearch style={{ color: grey6 }} />}
+              placeholder={i18n("nav.main.search")}
+              style={{
+                border: "none",
+                borderBottom: `1px solid ${grey3}`,
+              }}
+            />
+          </Form.Item>
+        </Form>
+      </Col>
+    </Row>
+  );
+}
