@@ -11,8 +11,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Page object to represent the Announcements Creation page
  */
 public class CreateAnnouncementComponent extends AbstractPage {
+    @FindBy(id = "title")
+    private WebElement input;
+
     @FindBy(className = "mde-text")
     private WebElement textarea;
+
+    @FindBy(id = "priority")
+    private WebElement checkbox;
 
     @FindBy(className = "t-submit-announcement")
     private WebElement submitButton;
@@ -25,8 +31,12 @@ public class CreateAnnouncementComponent extends AbstractPage {
         return PageFactory.initElements(driver, CreateAnnouncementComponent.class);
     }
 
-    public void enterMessage(String message) {
+    public void enterAnnouncement(String title, String message, Boolean priority) {
+        input.sendKeys(title);
         textarea.sendKeys(message);
+        if(priority){
+            checkbox.click();
+        }
         submitButton.click();
         waitForTime(400);
     }

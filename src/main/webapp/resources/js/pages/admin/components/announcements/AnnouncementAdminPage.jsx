@@ -6,7 +6,7 @@ import { render } from "react-dom";
 import {
   createNewAnnouncement,
   deleteAnnouncement,
-  updateAnnouncement
+  updateAnnouncement,
 } from "../../../../apis/announcements/announcements";
 import { CreateNewAnnouncement } from "./CreateNewAnnouncement";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -22,8 +22,8 @@ import { PagedTableProvider } from "../../../../components/ant.design/PagedTable
 export default function AnnouncementAdminPage({}) {
   const tableRef = useRef(null);
 
-  function addNewAnnouncement(message) {
-    createNewAnnouncement({ message }).then(() =>
+  function addNewAnnouncement(title, message, priority) {
+    createNewAnnouncement({ title, message, priority }).then(() =>
       tableRef.current.updateTable()
     );
   }
@@ -31,7 +31,7 @@ export default function AnnouncementAdminPage({}) {
   function updateTableAnnouncement({ id, message }) {
     updateAnnouncement({
       id,
-      message
+      message,
     }).then(() => tableRef.current.updateTable());
   }
 
