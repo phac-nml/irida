@@ -12,6 +12,11 @@ export function CreateAnnouncementModal({
   const markdownRef = useRef();
   const [form] = Form.useForm();
 
+  const onCancel = () => {
+    form.resetFields();
+    closeModal();
+  };
+
   function saveMarkdown() {
     form.validateFields().then((values) => {
       const markdown = markdownRef.current.getMarkdown();
@@ -37,9 +42,9 @@ export function CreateAnnouncementModal({
         className: "t-submit-announcement",
       }}
       onOk={saveMarkdown}
-      onCancel={closeModal}
+      onCancel={onCancel}
     >
-      <Form layout="vertical" form={form} preserve={false}>
+      <Form layout="vertical" form={form}>
         <Form.Item
           name="title"
           label="Title"
