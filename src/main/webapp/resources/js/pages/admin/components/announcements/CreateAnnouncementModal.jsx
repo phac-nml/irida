@@ -46,7 +46,7 @@ export function CreateAnnouncementModal({
           rules={[
             {
               required: true,
-              message: "Please input a title",
+              message: i18n("CreateNewAnnouncement.form.title"),
             },
           ]}
         >
