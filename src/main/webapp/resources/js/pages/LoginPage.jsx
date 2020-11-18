@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, Row } from "antd";
 import { IconLocked, IconUser } from "../components/icons/Icons";
+import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
 
@@ -36,7 +37,7 @@ function LoginForm() {
       form={form}
       onFinish={onFinish}
       name="loginForm"
-      action={`${window.TL._BASE_URL}login`}
+      action={setBaseUrl(`/login`)}
       method="POST"
       size="large"
     >
@@ -75,18 +76,14 @@ function LoginForm() {
           {i18n("LoginPage.submit")}
         </Button>
       </Item>
-      {window.TL.emailConfigured ? (
-        <Item>
-          <Row justify="space-between">
-            <a href={`${window.TL._BASE_URL}password_reset`}>
-              {i18n("LoginPage.forgot")}
-            </a>
-            <a href={`${window.TL._BASE_URL}password_reset/activate`}>
-              {i18n("LoginPage.activate")}
-            </a>
-          </Row>
-        </Item>
-      ) : null}
+      {window.TL.emailConfigured ? <Item>
+        <Row justify="space-between">
+          <a href={setBaseUrl(`password_reset`)}>{i18n("LoginPage.forgot")}</a>
+          <a href={setBaseUrl(`password_reset/activate`)}>
+            {i18n("LoginPage.activate")}
+          </a>
+        </Row>
+      </Item> : null}
     </Form>
   );
 }
@@ -104,7 +101,7 @@ function LoginPage() {
       <Col style={{ width: 300 }}>
         <Row justify="center" style={{ marginBottom: SPACE_MD }}>
           <img
-            src={`${window.TL._BASE_URL}resources/img/irida_logo_light.svg`}
+            src={setBaseUrl("/resources/img/irida_logo_light.svg")}
             height={60}
             alt={i18n("generic.irida.website")}
           />
@@ -122,7 +119,7 @@ function LoginPage() {
             description={
               <>
                 {i18n("LoginPage.error.description")}{" "}
-                <a href={`${window.TL._BASE_URL}password_reset`}>
+                <a href={setBaseUrl("password_reset")}>
                   {i18n("LoginPage.recover")}
                 </a>
               </>
