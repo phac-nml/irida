@@ -25,13 +25,15 @@ export function CreateAnnouncementModal({
     closeModal();
   };
 
-  function saveMarkdown() {
+  function saveAnnouncement() {
     form.validateFields().then((values) => {
       const markdown = markdownRef.current.getMarkdown();
       const title = values.title;
       const priority = values.priority;
 
       createAnnouncement(title, markdown, priority);
+
+      form.resetFields();
       closeModal();
     });
   }
@@ -49,7 +51,7 @@ export function CreateAnnouncementModal({
       okButtonProps={{
         className: "t-submit-announcement",
       }}
-      onOk={saveMarkdown}
+      onOk={saveAnnouncement}
       onCancel={onCancel}
     >
       <Form layout="vertical" form={form}>
