@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge, Col, Form, Input, Menu, Row } from "antd";
+import { Badge, Button, Col, Form, Input, Menu, Row } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { grey3, grey6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
@@ -9,6 +9,8 @@ import {
   IconShoppingCart,
   IconUser,
 } from "../icons/Icons";
+import { CartLink } from "./main-navigation/components/CartLink";
+import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
@@ -21,7 +23,7 @@ export function MainNavigation() {
         borderBottom: `2px solid ${grey3}`,
       }}
     >
-      <Col md={9} sm={24}>
+      <Col md={10} sm={24}>
         <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
           <img
             style={{ height: 28 }}
@@ -76,7 +78,7 @@ export function MainNavigation() {
         </Menu>
       </Col>
       <Col
-        md={15}
+        md={14}
         sm={24}
         style={{
           display: "flex",
@@ -92,6 +94,14 @@ export function MainNavigation() {
             borderBottom: "none",
           }}
         >
+          <Menu.Item icon={<CartLink />} />
+          {isAdmin && (
+            <Menu.Item>
+              <a href={setBaseUrl("/admin")}>
+                {i18n("MainNavigation.admin").toUpperCase()}
+              </a>
+            </Menu.Item>
+          )}
           <Menu.SubMenu title={<IconQuestionCircle />}>
             <Menu.ItemGroup title="Documentation">
               <Menu.Item>
@@ -123,13 +133,6 @@ export function MainNavigation() {
             <Menu.Divider />
             <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
           </Menu.SubMenu>
-          <Menu.Item
-            icon={
-              <Badge count={99}>
-                <IconShoppingCart />
-              </Badge>
-            }
-          />
           <Menu.SubMenu title={<IconUser />}>
             <Menu.Item>{i18n("nav.main.account")}</Menu.Item>
             <Menu.Item>
@@ -137,18 +140,7 @@ export function MainNavigation() {
             </Menu.Item>
           </Menu.SubMenu>
         </Menu>
-        <Form layout="inline" style={{ display: "inline-block" }}>
-          <Form.Item style={{ width: 300 }}>
-            <Input
-              prefix={<IconSearch style={{ color: grey6 }} />}
-              placeholder={i18n("nav.main.search")}
-              style={{
-                border: "none",
-                borderBottom: `1px solid ${grey3}`,
-              }}
-            />
-          </Form.Item>
-        </Form>
+        <GlobalSearch />
       </Col>
     </Row>
   );
