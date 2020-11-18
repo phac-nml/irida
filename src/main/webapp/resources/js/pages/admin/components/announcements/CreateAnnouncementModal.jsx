@@ -68,12 +68,8 @@ export function CreateAnnouncementModal({
         <Form.Item name="message" label={i18n("announcement.control.message")}>
           <MarkdownEditor ref={markdownRef} />
         </Form.Item>
-        <Form.Item
-          name="priority"
-          label={i18n("announcement.control.priority")}
-          valuePropName="checked"
-        >
-          <Checkbox />
+        <Form.Item name="priority" valuePropName="checked">
+          <Checkbox>{i18n("announcement.control.priority")}</Checkbox>
         </Form.Item>
       </Form>
     </Modal>
