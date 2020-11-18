@@ -11,7 +11,7 @@ import { IconFlag } from "../../../../components/icons/Icons";
 import { blue6, grey2 } from "../../../../styles/colors";
 import {
   PagedTable,
-  PagedTableContext
+  PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
 import { MarkdownViewer } from "../../../../components/markdown/MarkdownViewer";
 
@@ -32,7 +32,8 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       render(hasPriority) {
         return <IconFlag style={{ color: hasPriority ? blue6 : grey2 }} />;
       },
-      sorter: true
+      sorter: true,
+      width: 50,
     },
     {
       title: i18n("announcement.control.title"),
@@ -42,12 +43,12 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       className: "t-announcement",
       render(text, full) {
         return (
-            <a href={setBaseUrl(`announcements/${full.id}/details`)}>
-              <MarkdownViewer markdown={text}/>
-            </a>
+          <a href={setBaseUrl(`announcements/${full.id}/details`)}>
+            <MarkdownViewer markdown={text} />
+          </a>
         );
       },
-      sorter: true
+      sorter: true,
     },
     {
       title: i18n("announcement.control.createdBy"),
@@ -55,7 +56,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       render(text, item) {
         return <a href={item.user.id}>{item.user.username}</a>;
       },
-      sorter: true
+      sorter: true,
     },
     {
       ...dateColumnFormat(),
@@ -83,14 +84,14 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
             />
           </span>
         );
-      }
-    }
+      },
+    },
   ];
 
   useImperativeHandle(ref, () => ({
     updateTable() {
       updateTable();
-    }
+    },
   }));
 
   return <PagedTable columns={columns} />;
