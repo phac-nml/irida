@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Checkbox, Form, Input, Modal } from "antd";
+import { Checkbox, Form, Input, Modal, Space } from "antd";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
@@ -39,10 +39,10 @@ export function CreateAnnouncementModal({
     <Modal
       visible={visible}
       title={
-        <>
+        <Space>
           <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
           {i18n("CreateNewAnnouncement.title")}
-        </>
+        </Space>
       }
       width="80%"
       okText={i18n("CreateNewAnnouncement.okBtn")}
