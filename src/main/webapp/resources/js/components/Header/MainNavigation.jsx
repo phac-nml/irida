@@ -134,7 +134,11 @@ export function MainNavigation() {
             <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
           </Menu.SubMenu>
           <Menu.SubMenu title={<IconUser />}>
-            <Menu.Item>{i18n("nav.main.account")}</Menu.Item>
+            <Menu.Item>
+              <a href={setBaseUrl(`/users/current`)}>
+                {i18n("nav.main.account")}
+              </a>
+            </Menu.Item>
             <Menu.Item>
               <a href={setBaseUrl("/logout")}>{i18n("nav.main.logout")}</a>
             </Menu.Item>
