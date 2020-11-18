@@ -12,6 +12,7 @@ import { IconEdit } from "../../../../components/icons/Icons";
  * @constructor
  */
 export function CreateNewAnnouncement({ createAnnouncement }) {
+  const [visible, setVisible] = React.useState(false);
   const markdownRef = useRef();
 
   function saveMarkdown() {
@@ -38,7 +39,7 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
   return (
     <AddNewButton
       className="t-create-announcement"
-      onClick={displayModal}
+      onClick={() => setVisible(true)}
       text={i18n("CreateNewAnnouncement.title")}
     />
   );
