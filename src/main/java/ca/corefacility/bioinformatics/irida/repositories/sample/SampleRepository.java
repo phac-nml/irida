@@ -75,42 +75,14 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long>, Samp
 	public Long countSamplesCreatedInTimePeriod(Date createdDate);
 
 	/**
-	 * Get a list of {@link GenericStatModel}s for samples created in the last day and grouped by hour
+	 * Get a list of {@link GenericStatModel}s for samples created in the past n time period
+	 * and grouped by the format provided.
 	 *
 	 * @param createdDate The minimum created date for samples
+	 * @param groupByFormat the format for which to group the results by
 	 * @return A list of {@link GenericStatModel}s
 	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%H:00'), count(s.id))"
-			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%H')")
-	public List<GenericStatModel> countSamplesCreatedHourly(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for samples created in the past 30 days and grouped by month and day
-	 *
-	 * @param createdDate The minimum created date for samples
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%m/%d'), count(s.id))"
-			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%m/%d')")
-	public List<GenericStatModel> countSamplesCreatedDaily(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for samples created in the past 365 days and grouped by month and year
-	 *
-	 * @param createdDate The minimum created date for samples
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%m/%y'), count(s.id))"
-			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%m/%y')")
-	public List<GenericStatModel> countSamplesCreatedMonthly(Date createdDate);
-
-	/**
-	 * Get a list of {@link GenericStatModel}s for samples created in the past 2,5 and 10 years and grouped by year
-	 *
-	 * @param createdDate The minimum created date for samples
-	 * @return A list of {@link GenericStatModel}s
-	 */
-	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, '%Y'), count(s.id))"
-			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, '%Y')")
-	public List<GenericStatModel> countSamplesCreatedYearly(Date createdDate);
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, ?2), count(s.id))"
+			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2)")
+	public List<GenericStatModel> countSamplesCreatedGrouped(Date createdDate, String groupByFormat);
 }

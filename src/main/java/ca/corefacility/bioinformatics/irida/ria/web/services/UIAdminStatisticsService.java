@@ -68,8 +68,7 @@ public class UIAdminStatisticsService {
 				.map(GenericStatModel::getValue)
 				.collect(Collectors.toList());
 
-		return new BasicStatsResponse(usersLoggedIn, analysesCounts,
-				projectCounts, sampleCounts, userCounts);
+		return new BasicStatsResponse(usersLoggedIn, analysesCounts, projectCounts, sampleCounts, userCounts);
 	}
 
 	/**
@@ -80,24 +79,10 @@ public class UIAdminStatisticsService {
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
 	 */
 	public StatisticsResponse getAdminAnalysesStatistics(Integer timePeriod) {
-		Date currDate = new Date();
-		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
-				.toDate();
+		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
+		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanDaily(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanMonthly(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanYearly(minimumCreatedDate));
-		} else {
-			minimumCreatedDate = new DateTime(currDate).minusHours(24)
-					.toDate();
-			return new StatisticsResponse(analysisSubmissionService.getAnalysesRanHourly(minimumCreatedDate));
-		}
+		return new StatisticsResponse(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod));
 	}
 
 	/**
@@ -108,24 +93,10 @@ public class UIAdminStatisticsService {
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
 	 */
 	public StatisticsResponse getAdminProjectStatistics(Integer timePeriod) {
-		Date currDate = new Date();
-		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
-				.toDate();
+		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
+		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(projectService.getProjectsCreatedDaily(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(projectService.getProjectsCreatedMonthly(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(projectService.getProjectsCreatedYearly(minimumCreatedDate));
-		} else {
-			minimumCreatedDate = new DateTime(currDate).minusHours(24)
-					.toDate();
-			return new StatisticsResponse(projectService.getProjectsCreatedHourly(minimumCreatedDate));
-		}
+		return new StatisticsResponse(projectService.getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
 	}
 
 	/**
@@ -136,24 +107,10 @@ public class UIAdminStatisticsService {
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
 	 */
 	public StatisticsResponse getAdminSampleStatistics(Integer timePeriod) {
-		Date currDate = new Date();
-		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
-				.toDate();
+		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
+		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(sampleService.getSamplesCreatedDaily(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(sampleService.getSamplesCreatedMonthly(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(sampleService.getSamplesCreatedYearly(minimumCreatedDate));
-		} else {
-			minimumCreatedDate = new DateTime(currDate).minusHours(24)
-					.toDate();
-			return new StatisticsResponse(sampleService.getSamplesCreatedHourly(minimumCreatedDate));
-		}
+		return new StatisticsResponse(sampleService.getSamplesCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
 	}
 
 	/**
@@ -164,23 +121,43 @@ public class UIAdminStatisticsService {
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
 	 */
 	public StatisticsResponse getAdminUserStatistics(Integer timePeriod) {
-		Date currDate = new Date();
-		Date minimumCreatedDate = new DateTime(currDate).minusDays(timePeriod)
-				.toDate();
+		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
+		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		if (IntStream.of(StatisticTimePeriod.DAILY.getDaily())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(userService.getUsersCreatedDaily(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.MONTHLY.getMonthly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(userService.getUsersCreatedMonthly(minimumCreatedDate));
-		} else if (IntStream.of(StatisticTimePeriod.YEARLY.getYearly())
-				.anyMatch((x -> x == timePeriod))) {
-			return new StatisticsResponse(userService.getUsersCreatedYearly(minimumCreatedDate));
-		} else {
-			minimumCreatedDate = new DateTime(currDate).minusHours(24)
+		return new StatisticsResponse(userService.getUsersCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
+	}
+
+	/**
+	 * Get the StatisticTimePeriod enum for the time period which contains
+	 * the group by format for the statistics. Will return DAILY as default.
+	 *
+	 * @param timePeriod The time period of the statistics
+	 * @return {@link StatisticTimePeriod} enum
+	 */
+	private StatisticTimePeriod getStatisticTimePeriod(Integer timePeriod) {
+		for(StatisticTimePeriod stp : StatisticTimePeriod.values()) {
+			boolean found = IntStream.of(stp.getValues()).anyMatch((x -> x == timePeriod));
+			if(found) {
+				return stp;
+			}
+		}
+		return StatisticTimePeriod.DAILY;
+	}
+
+	/**
+	 * Get the minimum created date depending on the time period provided
+	 *
+	 * @param timePeriod The time period of the statistics
+	 * @return minimum created date for statistics
+	 */
+	private Date getMinimumCreatedDate(Integer timePeriod) {
+		Date currDate = new Date();
+		if(timePeriod == 1) {
+			return new DateTime(currDate).minusHours(24)
 					.toDate();
-			return new StatisticsResponse(userService.getUsersCreatedHourly(minimumCreatedDate));
+		} else {
+			return new DateTime(currDate).minusDays(timePeriod)
+					.toDate();
 		}
 	}
 

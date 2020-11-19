@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -645,31 +646,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getSamplesCreatedHourly(Date createdDate) {
-		return sampleRepository.countSamplesCreatedHourly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getSamplesCreatedDaily(Date createdDate) {
-		return sampleRepository.countSamplesCreatedDaily(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getSamplesCreatedMonthly(Date createdDate) {
-		return sampleRepository.countSamplesCreatedMonthly(createdDate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<GenericStatModel> getSamplesCreatedYearly(Date createdDate) {
-		return sampleRepository.countSamplesCreatedYearly(createdDate);
+	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return sampleRepository.countSamplesCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 }

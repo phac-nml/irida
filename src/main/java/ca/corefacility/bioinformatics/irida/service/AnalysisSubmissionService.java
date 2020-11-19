@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -345,36 +346,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public Long getAnalysesRanInTimePeriod(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of analyses run in the past 24 hours
+	 * Get list of {@link GenericStatModel} of analyses run in the past n time period
+	 * grouped by the format provided.
 	 *
 	 * @param createdDate the minimum date for submissions ran
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
-	public List<GenericStatModel> getAnalysesRanHourly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of analyses run in the past n days
-	 *
-	 * @param createdDate the minimum date for submissions ran
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getAnalysesRanDaily(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of analyses run in the past n months
-	 *
-	 * @param createdDate the minimum date for submissions ran
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getAnalysesRanMonthly(Date createdDate);
-
-	/**
-	 * Get list of {@link GenericStatModel} of analyses run in the n years
-	 *
-	 * @param createdDate the minimum date for submissions ran
-	 * @return An {@link GenericStatModel} list
-	 */
-	public List<GenericStatModel> getAnalysesRanYearly(Date createdDate);
+	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 
 	/**
 	 * Class to store the number of running and queued analyses

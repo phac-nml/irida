@@ -1,31 +1,53 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
 /**
- * Defines a arrays of time periods used
+ * Defines a arrays of time periods and group by formats used
  * for getting statistics for the Admin Panel.
  *
  */
 
 public enum StatisticTimePeriod {
-	DAILY(7,14,30),
-	MONTHLY(90, 365),
-	YEARLY(730, 1825, 3650);
+	/*
+	 * Each enum attribute contains an int array of values
+	 * which is the time period in days, and a groupByFormat
+	 * which is used to group statistics by the defined string.
+	 */
+
+
+	/*
+	 * Time Period: Last day
+	 * Grouped by: HOUR
+	 */
+	HOURLY(new int[] {1}, "%H:00"),
+	/*
+	 * Time Period: 7, 14, and 30 days
+	 * Grouped by: month/day
+	 */
+	DAILY(new int[] {7,14,30}, "%m/%d"),
+	/*
+	 * Time Period: 90 and 365 days
+	 * Grouped by: month/year
+	 */
+	MONTHLY(new int[] {90, 365}, "%m/%y"),
+	/*
+	 * Time Period: 730, 1825, and 3650 days (2 years, 5 years, 10 years)
+	 * Grouped by: year
+	 */
+	YEARLY(new int[] {730, 1825, 3650}, "%Y");
 
 	private int [] values;
+	private String groupByFormat;
 
-	private StatisticTimePeriod(int... values) {
+	private StatisticTimePeriod(int[] values, String groupByFormat) {
 		this.values = values;
+		this.groupByFormat = groupByFormat;
 	}
 
-	public int[] getDaily() {
-		return DAILY.values;
+	public int[] getValues() {
+		return values;
 	}
 
-	public int[] getMonthly() {
-		return MONTHLY.values;
-	}
-
-	public int[] getYearly() {
-		return YEARLY.values;
+	public String getGroupByFormat() {
+		return groupByFormat;
 	}
 }
