@@ -1,33 +1,55 @@
 import React from "react";
 import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { grey6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
+import styled from "styled-components";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const { highlight, theme } = window.IRIDA.site;
+
+  const StyledMenu = styled(Row)`
+    .ant-menu.ant-menu-dark {
+      li.ant-menu-item-only-child.ant-menu-item-active {
+        background-color: ${highlight};
+      }
+
+      li.ant-menu-submenu.ant-menu-submenu-horizontal.ant-menu-submenu-active {
+        color: ${highlight};
+      }
+    }
+
+    .ant-menu.ant-menu-light {
+      li.ant-menu-submenu.ant-menu-submenu-open.ant-menu-submenu-active,
+      li.ant-menu-item.ant-menu-item-only-child.ant-menu-item-active {
+        border-bottom: 2px solid ${highlight};
+      }
+    }
+  `;
 
   return (
-    <Row
+    <StyledMenu
       style={{
+        backgroundColor: theme === "dark" ? "#001529" : "transparent",
         display: "flex",
         alignItems: "center",
-        borderBottom: `2px solid ${window.IRIDA.site.theme}`,
+        borderBottom: `2px solid ${highlight}`,
       }}
     >
       <Col md={10} sm={24}>
         <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
           <img
             style={{ height: 28 }}
-            src={setBaseUrl("/resources/img/irida_logo_light.svg")}
+            src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
             alt={i18n("global.title")}
           />
         </a>
         <Menu
           mode="horizontal"
+          theme={theme}
           style={{ display: "inline-block", borderBottom: "none" }}
         >
           <Menu.SubMenu key="projects" title={i18n("nav.main.project")}>
@@ -84,9 +106,11 @@ export function MainNavigation() {
       >
         <Menu
           mode="horizontal"
+          theme={theme}
           style={{
             display: "inline-block",
             borderBottom: "none",
+            marginLeft: SPACE_MD,
           }}
         >
           <Menu.Item icon={<CartLink />} />
@@ -133,7 +157,7 @@ export function MainNavigation() {
               <Space>
                 <Avatar
                   size="small"
-                  style={{ backgroundColor: window.IRIDA.site.theme }}
+                  style={{ backgroundColor: highlight }}
                   icon={<IconUser />}
                 />
                 {window.TL._USER.username}
@@ -152,6 +176,6 @@ export function MainNavigation() {
         </Menu>
         <GlobalSearch />
       </Col>
-    </Row>
+    </StyledMenu>
   );
 }

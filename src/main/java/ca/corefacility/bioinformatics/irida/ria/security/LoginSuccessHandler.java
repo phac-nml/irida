@@ -26,7 +26,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
 
 	@Value("${site.theme}")
-	private String theme;
+	private String siteTheme;
+
+	@Value("${site.highlight}")
+	private String siteHighlight;
 
 	private final UserRepository userRepository;
 
@@ -58,7 +61,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		session.setAttribute("user", user);
 
 		// Add the site them
-		session.setAttribute("theme", theme);
+		session.setAttribute("siteTheme", siteTheme);
+		session.setAttribute("siteHighlight", siteHighlight);
 
 		userRepository.updateLogin(user, new Date());
 	}

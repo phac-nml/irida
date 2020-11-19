@@ -24,7 +24,8 @@
   <script th:inline="javascript">
     window.IRIDA = window.IRIDA || {};
     window.IRIDA.site = {
-      theme: /*[[${session.theme}]]*/ "#bfbfbf"
+      theme: /*[[${session.siteTheme}]]*/ "light",
+      highlight: /*[[${session.siteHighlight}]]*/ "#bfbfbf",
     };
 
     window.TL = {
