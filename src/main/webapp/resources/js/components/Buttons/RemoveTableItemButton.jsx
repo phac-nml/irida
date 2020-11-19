@@ -53,7 +53,7 @@ export function RemoveTableItemButton({
         <Button
           className="t-remove-btn"
           icon={<IconRemove />}
-          shape="circle-outline"
+          shape="circle"
           loading={loading}
         />
       </Tooltip>
