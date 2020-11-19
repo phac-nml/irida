@@ -1,14 +1,9 @@
 import React from "react";
-import { Badge, Button, Col, Form, Input, Menu, Row } from "antd";
+import { Col, Menu, Row } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { grey3, grey6 } from "../../styles/colors";
+import { grey6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
-import {
-  IconQuestionCircle,
-  IconSearch,
-  IconShoppingCart,
-  IconUser,
-} from "../icons/Icons";
+import { IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 
@@ -20,7 +15,7 @@ export function MainNavigation() {
       style={{
         display: "flex",
         alignItems: "center",
-        borderBottom: `2px solid ${grey3}`,
+        borderBottom: `2px solid ${grey6}`,
       }}
     >
       <Col md={10} sm={24}>
