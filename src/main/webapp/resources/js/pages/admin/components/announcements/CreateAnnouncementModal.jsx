@@ -57,21 +57,24 @@ export function CreateAnnouncementModal({
       <Form layout="vertical" form={form}>
         <Form.Item
           name="title"
-          label={i18n("announcement.control.title")}
+          label={i18n("CreateNewAnnouncement.form.title")}
           rules={[
             {
               required: true,
-              message: i18n("announcement.create.form.error.title"),
+              message: i18n("CreateNewAnnouncement.form.error.title"),
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="message" label={i18n("announcement.control.message")}>
+        <Form.Item
+          name="message"
+          label={i18n("CreateNewAnnouncement.form.message")}
+        >
           <MarkdownEditor ref={markdownRef} />
         </Form.Item>
         <Form.Item name="priority" valuePropName="checked">
-          <Checkbox>{i18n("announcement.create.form.priority")}</Checkbox>
+          <Checkbox>{i18n("CreateNewAnnouncement.form.priority")}</Checkbox>
         </Form.Item>
       </Form>
     </Modal>
