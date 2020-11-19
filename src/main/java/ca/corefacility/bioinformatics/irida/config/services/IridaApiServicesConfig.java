@@ -132,6 +132,18 @@ public class IridaApiServicesConfig {
 	@Value("${irida.storage.type}")
 	private String storageType;
 
+	@Value("${aws.bucket.name:#{null}}")
+	private String awsBucketName;
+
+	@Value("${aws.bucket.region:#{null}}")
+	private String awsBucketRegion;
+
+	@Value("${aws.access.key:#{null}}")
+	private String awsAccessKey;
+
+	@Value("${aws.secret.key:#{null}}")
+	private String awsSecretKey;
+
 	@Value("${azure.container.name:#{null}}")
 	private String containerName;
 
@@ -140,9 +152,6 @@ public class IridaApiServicesConfig {
 
 	@Value("${azure.sas.token:#{null}}")
 	private String sasToken;
-
-	@Value("${aws.bucket.name:#{null}}")
-	private String awsBucketName;
 
 
 	@Autowired
@@ -313,7 +322,8 @@ public class IridaApiServicesConfig {
 	public IridaFileStorageUtility iridaFileStorageService() {
 		IridaFileStorageUtility iridaFileStorageUtility;
 		if (storageType.equalsIgnoreCase("aws")) {
-			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName);
+			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
+					awsSecretKey);
 		} else if(storageType.equalsIgnoreCase("azure")) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {
