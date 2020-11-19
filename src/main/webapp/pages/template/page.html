@@ -22,6 +22,11 @@
   </div>
 
   <script th:inline="javascript">
+    window.IRIDA = window.IRIDA || {};
+    window.IRIDA.site = {
+      theme: /*[[${session.theme}]]*/ "#bfbfbf"
+    };
+
     window.TL = {
       _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
       _BASE_URL      : /*[[@{/}]]*/ '/',

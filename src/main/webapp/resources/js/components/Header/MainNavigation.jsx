@@ -15,7 +15,7 @@ export function MainNavigation() {
       style={{
         display: "flex",
         alignItems: "center",
-        borderBottom: `2px solid ${grey6}`,
+        borderBottom: `2px solid ${window.IRIDA.site.theme}`,
       }}
     >
       <Col md={10} sm={24}>

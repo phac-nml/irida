@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
@@ -23,6 +24,9 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  */
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 	private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
+
+	@Value("${site.theme}")
+	private String theme;
 
 	private final UserRepository userRepository;
 
@@ -52,6 +56,9 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
 		// Add the user into the session
 		session.setAttribute("user", user);
+
+		// Add the site them
+		session.setAttribute("theme", theme);
 
 		userRepository.updateLogin(user, new Date());
 	}
