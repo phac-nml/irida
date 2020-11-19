@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Menu, Row } from "antd";
+import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { grey6 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
@@ -128,7 +128,18 @@ export function MainNavigation() {
             <Menu.Divider />
             <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
           </Menu.SubMenu>
-          <Menu.SubMenu title={<IconUser />}>
+          <Menu.SubMenu
+            title={
+              <Space>
+                <Avatar
+                  size="small"
+                  style={{ backgroundColor: window.IRIDA.site.theme }}
+                  icon={<IconUser />}
+                />
+                {window.TL._USER.username}
+              </Space>
+            }
+          >
             <Menu.Item>
               <a href={setBaseUrl(`/users/current`)}>
                 {i18n("nav.main.account")}
