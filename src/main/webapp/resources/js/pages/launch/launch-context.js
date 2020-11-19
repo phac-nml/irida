@@ -155,7 +155,7 @@ function LaunchProvider({ children }) {
    * Dispatch function called when a user modifies the current saved parameter
    * set parameter values, and wants to use them without saving.
    *
-   * @param {array} parameters - list of key value pairs for the parameters ({mame: value})
+   * @param {array} parameters - list of key value pairs for the parameters ({name: value})
    */
   function dispatchUseModifiedParameters(parameters) {
     /*
@@ -243,17 +243,6 @@ function LaunchProvider({ children }) {
   }
 
   /**
-   * Dispatch function for overwriting a saved parameter set.
-   *
-   * @param {object} parameters - the full listing of parameters to update.
-   */
-  function dispatchOverwriteParameterSave(parameters) {
-    console.log(state.parameterSet.id);
-
-    // TODO: Save parameters......
-  }
-
-  /**
    * Save a modified set of parameters with a new name
    *
    * @param {string} name - name to save the modified set with
@@ -288,6 +277,7 @@ function LaunchProvider({ children }) {
     currentSet.id = data.id;
     currentSet.label = name;
     currentSet.key = `set-${data.id}`;
+    currentSet.parameters = params;
     sets.push(currentSet);
 
     // Update the state
@@ -319,7 +309,6 @@ function LaunchProvider({ children }) {
           dispatchLaunch,
           dispatchUseParameterSetById,
           dispatchUseModifiedParameters,
-          dispatchOverwriteParameterSave,
           dispatchUseSaveAs,
           dispatchReferenceFileUploaded,
         }}

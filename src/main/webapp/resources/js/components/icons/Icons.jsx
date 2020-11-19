@@ -45,6 +45,7 @@ import {
   TeamOutlined,
   UnorderedListOutlined,
   UserOutlined,
+  UploadOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -197,4 +198,8 @@ export const IconSortDescending = ({ ...props }) => (
 
 export const IconCheckCircle = ({ ...props }) => (
   <CheckCircleOutlined {...props} />
+);
+
+export const IconFileUpload = ({ ...props }) => (
+  <UploadOutlined {...props} />
 );
