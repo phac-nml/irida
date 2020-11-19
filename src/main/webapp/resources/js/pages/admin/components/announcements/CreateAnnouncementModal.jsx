@@ -61,7 +61,7 @@ export function CreateAnnouncementModal({
           rules={[
             {
               required: true,
-              message: i18n("CreateNewAnnouncement.form.title"),
+              message: i18n("announcement.create.form.error.title"),
             },
           ]}
         >
@@ -71,7 +71,7 @@ export function CreateAnnouncementModal({
           <MarkdownEditor ref={markdownRef} />
         </Form.Item>
         <Form.Item name="priority" valuePropName="checked">
-          <Checkbox>{i18n("announcement.control.priority")}</Checkbox>
+          <Checkbox>{i18n("announcement.create.form.priority")}</Checkbox>
         </Form.Item>
       </Form>
     </Modal>
