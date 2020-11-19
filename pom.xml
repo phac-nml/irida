@@ -672,6 +672,31 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>${aws-java-sdk-s3.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${org.apache.httpcomponents.httpclient.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
 			<groupId>com.azure</groupId>
 			<artifactId>azure-storage-blob</artifactId>
 			<version>${azure.storage.blob.version}</version>
@@ -1180,6 +1205,8 @@
 		<hamcrest.version>1.3</hamcrest.version>
 		<javax.activation.version>1.2.0</javax.activation.version>
 		<com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
+		<aws-java-sdk-s3.version>1.11.894</aws-java-sdk-s3.version>
+		<org.apache.httpcomponents.httpclient.version>4.5.12</org.apache.httpcomponents.httpclient.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
