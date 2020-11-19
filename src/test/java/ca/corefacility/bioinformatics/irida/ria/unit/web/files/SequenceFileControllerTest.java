@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Unit Tests for @{link SequenceFileController}
@@ -36,6 +36,7 @@ public class SequenceFileControllerTest {
 	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileControllerTest.class);
 	private SequenceFileController controller;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	// Services
 	private SequencingObjectService objectService;
@@ -44,6 +45,8 @@ public class SequenceFileControllerTest {
 	public void setUp() {
 		objectService = mock(SequencingObjectService.class);
 		controller = new SequenceFileController(objectService);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
