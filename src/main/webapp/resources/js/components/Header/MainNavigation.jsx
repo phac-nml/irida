@@ -5,38 +5,18 @@ import { SPACE_MD } from "../../styles/spacing";
 import { IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
-import styled from "styled-components";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
-  const { highlight, theme } = window.IRIDA.site;
-
-  const StyledMenu = styled(Row)`
-    .ant-menu.ant-menu-dark {
-      li.ant-menu-item-only-child.ant-menu-item-active {
-        background-color: ${highlight};
-      }
-
-      li.ant-menu-submenu.ant-menu-submenu-horizontal.ant-menu-submenu-active {
-        color: ${highlight};
-      }
-    }
-
-    .ant-menu.ant-menu-light {
-      li.ant-menu-submenu.ant-menu-submenu-open.ant-menu-submenu-active,
-      li.ant-menu-item.ant-menu-item-only-child.ant-menu-item-active {
-        border-bottom: 2px solid ${highlight};
-      }
-    }
-  `;
+  const { colours, theme } = window.IRIDA.site;
 
   return (
-    <StyledMenu
+    <Row
       style={{
         backgroundColor: theme === "dark" ? "#001529" : "transparent",
         display: "flex",
         alignItems: "center",
-        borderBottom: `2px solid ${highlight}`,
+        borderBottom: `2px solid ${colours.primary}`,
       }}
     >
       <Col md={10} sm={24}>
@@ -157,7 +137,7 @@ export function MainNavigation() {
               <Space>
                 <Avatar
                   size="small"
-                  style={{ backgroundColor: highlight }}
+                  style={{ backgroundColor: colours.primary }}
                   icon={<IconUser />}
                 />
                 {window.TL._USER.username}
@@ -176,6 +156,6 @@ export function MainNavigation() {
         </Menu>
         <GlobalSearch />
       </Col>
-    </StyledMenu>
+    </Row>
   );
 }

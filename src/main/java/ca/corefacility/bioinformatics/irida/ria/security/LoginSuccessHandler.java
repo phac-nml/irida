@@ -28,8 +28,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	@Value("${site.theme}")
 	private String siteTheme;
 
-	@Value("${site.highlight}")
-	private String siteHighlight;
+	@Value("${site.colours.primary}")
+	private String siteColourPrimary;
 
 	private final UserRepository userRepository;
 
@@ -62,7 +62,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
 		// Add the site them
 		session.setAttribute("siteTheme", siteTheme);
-		session.setAttribute("siteHighlight", siteHighlight);
+		session.setAttribute("siteColourPrimary", siteColourPrimary);
 
 		userRepository.updateLogin(user, new Date());
 	}

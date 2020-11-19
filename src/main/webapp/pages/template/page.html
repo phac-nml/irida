@@ -21,11 +21,14 @@
     <div class="row" layout:fragment="page"></div>
   </div>
 
+
   <script th:inline="javascript">
     window.IRIDA = window.IRIDA || {};
     window.IRIDA.site = {
       theme: /*[[${session.siteTheme}]]*/ "light",
-      highlight: /*[[${session.siteHighlight}]]*/ "#bfbfbf",
+      colours: {
+        primary: /*[[${session.siteColourPrimary}]]*/ "#006d75"
+      }
     };
 
     window.TL = {
