@@ -18,6 +18,7 @@ Changes
 * [UI]: Updated FastQC page to use Ant Design.
 * [Documentation]: Added documentation for sequence file fastqc page.
 * [UI]: Updated Project Reference File page to use Ant Design.
+* [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
 
 20.05 to 20.09
 --------------
