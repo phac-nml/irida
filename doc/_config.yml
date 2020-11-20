@@ -1,14 +1,7 @@
-# Site settings
-title: IRIDA
+baseurl: /irida-docs
 email: irida-mail@sfu.ca
-description: > # this means to ignore newlines until "baseurl:"
-        Integrated Rapid Infectious Disease Analysis (IRIDA): A platform for genomic epidemiology.
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://localhost:4000" # the base hostname & protocol for your site
-keep_files: [ developer/apidocs ]
+title: IRIDA Documentation
+description: Integrated Rapid Infectious Disease Analysis (IRIDA) - An open-source platform for public health genomics
 
-# Build settings
-markdown: KramdownPygments
-
-kramdown:
-        input: GFM
+github:
+  repository_url: https://github.com/phac-nml/irida
