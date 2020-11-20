@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.remote.*;
@@ -247,7 +248,7 @@ public class ProjectSynchronizationServiceTest {
 	public void testSyncFast5Files() {
 		Sample sample = new Sample();
 
-		Fast5Object fast5Object = new Fast5Object(null);
+		Fast5Object fast5Object = new Fast5Object(new SequenceFile());
 		RemoteStatus pairStatus = new RemoteStatus("http://fast5", api);
 		fast5Object.setRemoteStatus(pairStatus);
 		fast5Object.setId(1L);
