@@ -1,9 +1,6 @@
-import React, { useRef } from "react";
-import { Modal } from "antd";
+import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
-import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
-import { IconEdit } from "../../../../components/icons/Icons";
+import { CreateAnnouncementModal } from "./CreateAnnouncementModal";
 
 /**
  * Component to add a button which will open a modal to create an announcement.
@@ -12,34 +9,20 @@ import { IconEdit } from "../../../../components/icons/Icons";
  * @constructor
  */
 export function CreateNewAnnouncement({ createAnnouncement }) {
-  const markdownRef = useRef();
-
-  function saveMarkdown() {
-    const md = markdownRef.current.getMarkdown();
-    createAnnouncement(md);
-  }
-
-  function displayModal() {
-    Modal.confirm({
-      title: i18n("CreateNewAnnouncement.title"),
-      icon: <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />,
-      width: "80%",
-      content: <MarkdownEditor ref={markdownRef} />,
-      okText: i18n("CreateNewAnnouncement.okBtn"),
-      okButtonProps: {
-        className: "t-submit-announcement"
-      },
-      onOk() {
-        saveMarkdown();
-      }
-    });
-  }
+  const [visible, setVisible] = React.useState(false);
 
   return (
-    <AddNewButton
-      className="t-create-announcement"
-      onClick={displayModal}
-      text={i18n("CreateNewAnnouncement.title")}
-    />
+    <>
+      <AddNewButton
+        className="t-create-announcement"
+        onClick={() => setVisible(true)}
+        text={i18n("CreateNewAnnouncement.title")}
+      />
+      <CreateAnnouncementModal
+        visible={visible}
+        closeModal={() => setVisible(false)}
+        createAnnouncement={createAnnouncement}
+      />
+    </>
   );
 }

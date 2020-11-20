@@ -65,22 +65,23 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("List of announcements is not sorted correctly", checkDatesSortedAscending(announcementDates));
 	}
 
-	@Ignore
     @Test
     public void testSubmitNewAnnouncement() {
+		final String title = "Title announcement";
 		final String message = "This is a great announcement";
+		final Boolean priority = true;
 		controlPage.goTo();
 
 		int numAnnouncementsBefore = controlPage.getCreatedDates()
 				.size();
 		CreateAnnouncementComponent createAnnouncementComponent = CreateAnnouncementComponent.goTo(driver());
 		controlPage.clickCreateNewAnnouncementButton();
-		createAnnouncementComponent.enterMessage(message);
+		createAnnouncementComponent.enterAnnouncement(title, message, priority);
 
 		// New messages should appear first in the table
 		String newMessage = controlPage.getAnnouncement(0);
 
-		assertTrue("Unexpected announcement content.", newMessage.equals(message));
+		assertTrue("Unexpected announcement content.", newMessage.equals(title));
 		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
 				controlPage.getCreatedDates()
 						.size());
