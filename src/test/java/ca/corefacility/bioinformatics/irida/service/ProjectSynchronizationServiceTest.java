@@ -251,7 +251,7 @@ public class ProjectSynchronizationServiceTest {
 		Sample sample = new Sample();
 		Path p1 = Paths.get("src/test/resources/files/testfast5file.fast5");
 		Fast5Object fast5Object = new Fast5Object(new SequenceFile(p1));
-		RemoteStatus fast5Status = new RemoteStatus("http://sample/sequenceFiles/fast5", api);
+		RemoteStatus fast5Status = new RemoteStatus("http://fast5", api);
 		fast5Object.setRemoteStatus(fast5Status);
 		fast5Object.setId(1L);
 
