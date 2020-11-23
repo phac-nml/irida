@@ -137,7 +137,7 @@ public class AbstractPage {
 	}
 
 	public int getCartCount() {
-		return Integer.parseInt(driver.findElement(By.className("js-cart-count")).getText());
+		return Integer.parseInt(driver.findElement(By.className("t-cart-count")).getAttribute("data-count"));
 	}
 
 	/**

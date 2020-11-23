@@ -37,7 +37,7 @@ export function CartLink() {
   return (
     <Badge count={count}>
       <a href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}>
-        <IconShoppingCart />
+        <IconShoppingCart className="t-cart-count" data-count={count} />
       </a>
     </Badge>
   );
