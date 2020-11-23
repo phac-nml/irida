@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -67,8 +66,8 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
     @Test
     public void testSubmitNewAnnouncement() {
-		final String title = "Title announcement";
-		final String message = "This is a great announcement";
+		final String title = "Announcement Title";
+		final String message = "This is a the announcement message content.";
 		final Boolean priority = true;
 		controlPage.goTo();
 
@@ -79,33 +78,32 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		createAnnouncementComponent.enterAnnouncement(title, message, priority);
 
 		// New messages should appear first in the table
-		String newMessage = controlPage.getAnnouncement(0);
+		String newTitle = controlPage.getAnnouncementTitle(0);
 
-		assertTrue("Unexpected announcement content.", newMessage.equals(title));
+		assertTrue("Unexpected announcement content.", newTitle.equals(title));
 		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
 				controlPage.getCreatedDates()
 						.size());
 	}
 
-	@Ignore
     @Test
     public void testCheckDetailsPage() {
         controlPage.goTo();
 
-		String preview0 = controlPage.getAnnouncement(0);
-		String preview1 = controlPage.getAnnouncement(1);
-		String preview2 = controlPage.getAnnouncement(2);
+		String title0 = controlPage.getAnnouncementTitle(0);
+		String title1 = controlPage.getAnnouncementTitle(1);
+		String title2 = controlPage.getAnnouncementTitle(2);
 
 		controlPage.gotoMessageDetails(0);
-		compareMessages(detailPage.getInputText(), preview0);
+		compareMessages(detailPage.getTitle(), title0);
 		detailPage.clickCancelButton();
 
 		controlPage.gotoMessageDetails(1);
-		compareMessages(detailPage.getInputText(), preview1);
+		compareMessages(detailPage.getTitle(), title1);
 		detailPage.clickCancelButton();
 
 		controlPage.gotoMessageDetails(2);
-		compareMessages(detailPage.getInputText(), preview2);
+		compareMessages(detailPage.getTitle(), title2);
 		detailPage.clickCancelButton();
 	}
 
@@ -113,29 +111,29 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Announcement preview does not match the message.", announcement.contains(preview));
 	}
 
-	@Ignore
     @Test
     public void testUpdateAnnouncement() {
-		final String newMessage = "Updated!!!";
+		final String newTitle = "Updated Title!!!";
+		final String newMessage = "Updated Message Content!!!";
+		final boolean newPriority = true;
 
 		controlPage.goTo();
 		controlPage.gotoMessageDetails(4);
-		detailPage.enterMessage(newMessage);
+		detailPage.enterMessage(newTitle, newMessage, newPriority);
 
-		String announcementMessage = controlPage.getAnnouncement(4);
-		assertTrue("Unexpected message content", newMessage.contains(announcementMessage));
+		String announcementTitle = controlPage.getAnnouncementTitle(4);
+		assertTrue("Unexpected message content", newTitle.contains(announcementTitle));
 	}
 
-	@Ignore
     @Test
     public void testDeleteAnnouncement() {
         controlPage.goTo();
 		List<Date> dates = controlPage.getCreatedDates();
 
-		String messagePreview = controlPage.getAnnouncement(2);
+		String messageTitle = controlPage.getAnnouncementTitle(2);
 
 		controlPage.gotoMessageDetails(2);
-		assertTrue("Announcement content doesn't match expected", detailPage.getInputText().contains(messagePreview));
+		assertTrue("Announcement content doesn't match expected", detailPage.getTitle().contains(messageTitle));
 
         detailPage.clickDeleteButton();
 

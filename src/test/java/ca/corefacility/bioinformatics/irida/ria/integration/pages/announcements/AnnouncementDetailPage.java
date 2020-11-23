@@ -15,16 +15,36 @@ public class AnnouncementDetailPage extends AbstractPage {
         super(driver);
     }
 
-    public String getInputText() {
-        return driver.findElement(By.cssSelector("textarea.announcement-input")).getText();
+    public String getTitle() {
+        return driver.findElement(By.cssSelector("#title")).getAttribute("value");
     }
 
-    public void enterMessage(String message) {
+    public String getMessage() {
+        return driver.findElement(By.cssSelector("#message")).getText();
+    }
+
+    public boolean getPriority() {
+        return driver.findElement(By.cssSelector("#priority")).isSelected();
+    }
+
+    public void enterMessage(String title, String message, boolean priority) {
+        WebElement titleElement = driver.findElement(By.id("title"));
         WebElement messageElement = driver.findElement(By.id("message"));
+        WebElement priorityElement = driver.findElement(By.id("priority"));
         WebElement submitButton = driver.findElement(By.id("submitBtn"));
+
+        titleElement.clear();
+        titleElement.sendKeys(title);
 
         messageElement.clear();
         messageElement.sendKeys(message);
+
+        if(priority && !priorityElement.isSelected()) {
+            priorityElement.click();
+        } else if (!priority && priorityElement.isSelected()) {
+            priorityElement.click();
+        }
+
         submitAndWait(submitButton);
     }
 
