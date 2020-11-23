@@ -1,6 +1,6 @@
 import React from "react";
 import { Divider, Form, Radio, Result, Tag } from "antd";
-import { useLaunchDispatch, useLaunchState } from "../launch-context";
+import { setReferenceFileById, useLaunch } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 import styled from "styled-components";
 import { grey2 } from "../../../styles/colors";
@@ -29,12 +29,14 @@ const RadioItem = styled.button`
  * @constructor
  */
 export function ReferenceFiles() {
-  const { requiresReference, referenceFiles, referenceFile } = useLaunchState();
-  const { dispatchUseReferenceFileById } = useLaunchDispatch();
+  const [
+    { requiresReference, referenceFiles, referenceFile },
+    launchDispatch,
+  ] = useLaunch();
 
   const setReferenceFile = (e, file) => {
     e.preventDefault();
-    dispatchUseReferenceFileById(file.id);
+    setReferenceFileById(launchDispatch, file.id);
   };
 
   return requiresReference ? (

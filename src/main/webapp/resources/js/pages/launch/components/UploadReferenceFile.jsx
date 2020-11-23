@@ -1,8 +1,8 @@
 import React from "react";
 import { message } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { useLaunchDispatch } from "../launch-context";
 import { DragUpload } from "../../../components/files/DragUpload.jsx";
+import { referenceFileUploadComplete, useLaunch } from "../launch-context";
 
 /**
  * Component to upload a reference file to the launch pipeline page.
@@ -10,7 +10,7 @@ import { DragUpload } from "../../../components/files/DragUpload.jsx";
  * @constructor
  */
 export function UploadReferenceFile() {
-  const { dispatchReferenceFileUploaded } = useLaunchDispatch();
+  const [, launchDispatch] = useLaunch();
 
   const options = {
     multiple: true,
@@ -20,10 +20,11 @@ export function UploadReferenceFile() {
       const { status } = info.file;
       if (status === "done") {
         message.success(i18n("UploadReferenceFile.success", info.file.name));
-        dispatchReferenceFileUploaded({
-          name: info.file.name,
-          id: info.file.response.id,
-        });
+        referenceFileUploadComplete(
+          launchDispatch,
+          info.file.name,
+          info.file.response.id
+        );
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }

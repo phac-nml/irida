@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Col, Row, Skeleton, Spin } from "antd";
 import { SPACE_LG } from "../../styles/spacing";
-import { useLaunchState } from "./launch-context";
+import { useLaunch } from "./launch-context";
 import { LaunchContent } from "./LaunchContent";
 
 /**
@@ -10,7 +10,7 @@ import { LaunchContent } from "./LaunchContent";
  * @constructor
  */
 export function LaunchPage() {
-  const { loading } = useLaunchState();
+  const [{ loading }] = useLaunch();
 
   const content = loading ? <Skeleton /> : <LaunchContent />;
 

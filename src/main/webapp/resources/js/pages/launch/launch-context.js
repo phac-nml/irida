@@ -17,146 +17,32 @@ import {
  * @type {React.Context<unknown>}
  */
 
-const LaunchStateContext = React.createContext();
-const LaunchDispatchContext = React.createContext();
+const LaunchContext = React.createContext();
+LaunchContext.displayName = "LaunchContext";
 
 const TYPES = {
   LOADED: "launch:loaded",
   PARAMETER_SET: "launch:parameters",
   MODIFIED_PARAMETERS: "launch:modified_params",
+  USE_MODIFIED_PARAMETERS: "launch:use_modified_params",
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
   USE_REFERENCE: "launch:use_reference",
 };
 
 const reducer = (state, action) => {
-  switch (action.type) {
-    case TYPES.LOADED:
-      return { ...state, loading: false, ...action.payload };
-    case TYPES.PARAMETER_SET:
-      return { ...state, parameterSet: action.payload.set };
-    case TYPES.REFERENCE_FILE:
-      return { ...state, referenceFile: action.payload.referenceFile };
-    case TYPES.ADD_REFERENCE:
-      return {
-        ...state,
-        referenceFile: action.payload.referenceFile,
-        referenceFiles: action.payload.referenceFiles,
-      };
-    case TYPES.MODIFIED_PARAMETERS:
-      return {
-        ...state,
-        parameterSet: action.payload.set,
-        parameterSets: action.payload.sets,
-      };
-    case TYPES.USE_REFERENCE:
-      return {
-        ...state,
-        referenceFile: action.payload.id,
-      };
+  function addReference(file) {
+    const files = [...state.referenceFiles];
+    files.push(file);
+    return files;
   }
-};
 
-function LaunchProvider({ children }) {
-  /*
-  IRIDA Workflow identifier can be found as a query parameter within the URL.
-  Here we grab it and hold onto it so that we can use it to gather all the
-  details about the pipeline.
-   */
-  const [id] = React.useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("id");
-  });
-
-  /*
-  This will hold the initial values for the form, the "default values".
-   */
-  const [initialValues, setInitialValues] = React.useState({});
-
-  /*
-  Pipeline state is for non-user modifiable data such as the name of the official
-  name of the pipeline and it's description.
-   */
-  const [pipeline, setPipeline] = React.useState({});
-
-  /*
-  Using a reducer to hold all user data that the user can modify and must be
-  sent to the server to launch the workflow pipeline.
-   */
-  const [state, dispatch] = React.useReducer(reducer, { loading: true });
-
-  React.useEffect(() => {
-    getPipelineDetails({ id }).then(
-      ({
-        name,
-        description,
-        type,
-        parameterWithOptions,
-        savedPipelineParameters,
-        ...details
-      }) => {
-        /*
-        These set up immutable page state for the header.
-         */
-        setPipeline({ name, description });
-
-        const formattedParameterWithOptions = formatParametersWithOptions(
-          parameterWithOptions
-        );
-
-        const formattedParameterSets = formatSavedParameterSets(
-          savedPipelineParameters
-        );
-
-        const initial = {
-          name: formatDefaultPipelineName(type, Date.now()),
-          parameterSet: 0,
-        };
-
-        // Get initial values for parameters with options.
-        formattedParameterWithOptions.forEach((parameter) => {
-          initial[parameter.name] =
-            parameter.value || parameter.options[0].value;
-        });
-
-        setInitialValues(initial);
-        dispatch({
-          type: TYPES.LOADED,
-          payload: {
-            ...details,
-            parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
-            parameterWithOptions: formattedParameterWithOptions,
-            parameterSets: formattedParameterSets,
-            referenceFile:
-              details.requiresReference && details.referenceFiles.length
-                ? details.referenceFiles[0].id
-                : null,
-          },
-        });
-      }
-    );
-  }, [id]);
-
-  function dispatchUseParameterSetById(id) {
+  function setParameterSetById(id) {
     const set = state.parameterSets.find((p) => p.id === id);
-    dispatch({
-      type: TYPES.PARAMETER_SET,
-      payload: { set: deepCopy(set) },
-    });
+    return deepCopy(set);
   }
 
-  function dispatchLaunch(values) {
-    console.log(values);
-    launchPipeline(id, values);
-  }
-
-  /**
-   * Dispatch function called when a user modifies the current saved parameter
-   * set parameter values, and wants to use them without saving.
-   *
-   * @param {array} parameters - list of key value pairs for the parameters ({name: value})
-   */
-  function dispatchUseModifiedParameters(parameters) {
+  function useModifiedParameters(parameters) {
     /*
     Suffix to be added to the identifier to identify when it is modified
      */
@@ -193,13 +79,10 @@ function LaunchProvider({ children }) {
       const updatedSets = sets.filter((a) => a.id !== currentSet.id);
       updatedSets.push(currentSet);
 
-      dispatch({
-        type: TYPES.MODIFIED_PARAMETERS,
-        payload: {
-          sets: updatedSets,
-          set: currentSet,
-        },
-      });
+      return {
+        parameterSets: updatedSets,
+        parameterSet: currentSet,
+      };
     } else if (!currentSet.modified) {
       // First time modified
       currentSet.modified = true;
@@ -214,32 +97,123 @@ function LaunchProvider({ children }) {
       sets.push(currentSet);
 
       // Update the data model
-      dispatch({
-        type: TYPES.MODIFIED_PARAMETERS,
-        payload: {
-          sets,
-          set: currentSet,
-        },
-      });
+      return {
+        parameterSets: sets,
+        parameterSet: currentSet,
+      };
     } else {
       // Need to find the actual modified set
       const index = sets.findIndex((s) => s.id === `${currentSet.id}${SUFFIX}`);
       // Remove the current set.
-      const [item] = sets.splice(index, 1);
+      const [set] = sets.splice(index, 1);
 
       // Use the new modified parameters
-      item.parameters = currentSet.parameters;
-      sets.push(item);
+      set.parameters = currentSet.parameters;
+      sets.push(set);
 
-      dispatch({
-        type: TYPES.MODIFIED_PARAMETERS,
-        payload: {
-          sets,
-          set: item,
-        },
-      });
+      return { parameterSets: sets, parameterSet: set };
     }
   }
+
+  switch (action.type) {
+    case TYPES.LOADED:
+      return { ...state, loading: false, ...action.payload };
+    case TYPES.PARAMETER_SET:
+      return {
+        ...state,
+        parameterSet: setParameterSetById(action.payload.id),
+      };
+    case TYPES.USE_MODIFIED_PARAMETERS:
+      return {
+        ...state,
+        ...useModifiedParameters(action.payload.parameters),
+      };
+    case TYPES.REFERENCE_FILE:
+      return { ...state, referenceFile: action.payload.referenceFile };
+    case TYPES.ADD_REFERENCE:
+      return {
+        ...state,
+        referenceFile: action.payload.id,
+        referenceFiles: addReference(action.payload),
+      };
+    case TYPES.MODIFIED_PARAMETERS:
+      return {
+        ...state,
+        parameterSet: action.payload.set,
+        parameterSets: action.payload.sets,
+      };
+    case TYPES.USE_REFERENCE:
+      return {
+        ...state,
+        referenceFile: action.payload.id,
+      };
+  }
+};
+
+function LaunchProvider({ children }) {
+  /*
+  IRIDA Workflow identifier can be found as a query parameter within the URL.
+  Here we grab it and hold onto it so that we can use it to gather all the
+  details about the pipeline.
+   */
+  const [id] = React.useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("id");
+  });
+
+  /*
+  Using a reducer to hold all user data that the user can modify and must be
+  sent to the server to launch the workflow pipeline.
+   */
+  const [state, dispatch] = React.useReducer(reducer, { loading: true });
+
+  React.useEffect(() => {
+    getPipelineDetails({ id }).then(
+      ({
+        name,
+        description,
+        type,
+        parameterWithOptions,
+        savedPipelineParameters,
+        ...details
+      }) => {
+        const formattedParameterWithOptions = formatParametersWithOptions(
+          parameterWithOptions
+        );
+
+        const formattedParameterSets = formatSavedParameterSets(
+          savedPipelineParameters
+        );
+
+        const initialValues = {
+          name: formatDefaultPipelineName(type, Date.now()),
+          parameterSet: 0,
+        };
+
+        // Get initial values for parameters with options.
+        formattedParameterWithOptions.forEach((parameter) => {
+          initialValues[parameter.name] =
+            parameter.value || parameter.options[0].value;
+        });
+
+        dispatch({
+          type: TYPES.LOADED,
+          payload: {
+            ...details,
+            initialValues,
+            pipeline: { name, description },
+            parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
+            parameterWithOptions: formattedParameterWithOptions,
+            parameterSets: formattedParameterSets,
+            referenceFile:
+              details.requiresReference && details.referenceFiles.length
+                ? details.referenceFiles[0].id
+                : null,
+          },
+        });
+      }
+    );
+  }, [id]);
 
   /**
    * Save a modified set of parameters with a new name
@@ -289,37 +263,43 @@ function LaunchProvider({ children }) {
     });
   }
 
-  const dispatchReferenceFileUploaded = ({ name, id }) => {
-    const referenceFiles = [...state.referenceFiles];
-    referenceFiles.push({ name, id });
-    dispatch({
-      type: TYPES.ADD_REFERENCE,
-      payload: {
-        referenceFiles,
-        referenceFile: id,
-      },
-    });
-  };
-
-  const dispatchUseReferenceFileById = (id) =>
-    dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
-
+  const value = [state, dispatch];
   return (
-    <LaunchStateContext.Provider value={{ ...state, pipeline, initialValues }}>
-      <LaunchDispatchContext.Provider
-        value={{
-          dispatchLaunch,
-          dispatchUseParameterSetById,
-          dispatchUseModifiedParameters,
-          dispatchUseSaveAs,
-          dispatchReferenceFileUploaded,
-          dispatchUseReferenceFileById,
-        }}
-      >
-        {children}
-      </LaunchDispatchContext.Provider>
-    </LaunchStateContext.Provider>
+    <LaunchContext.Provider value={value}>{children}</LaunchContext.Provider>
   );
+}
+
+const setReferenceFileById = (dispatch, id) =>
+  dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
+
+function launchNewPipeline(dispatch, values) {
+  console.log(values);
+}
+
+function referenceFileUploadComplete(dispatch, name, id) {
+  dispatch({ type: TYPES.ADD_REFERENCE, payload: { id, name } });
+}
+
+function setParameterSetById(dispatch, id) {
+  dispatch({
+    type: TYPES.PARAMETER_SET,
+    payload: { id },
+  });
+}
+
+/**
+ * Dispatch function called when a user modifies the current saved parameter
+ * set parameter values, and wants to use them without saving.
+ *
+ * @param {array} parameters - list of key value pairs for the parameters ({name: value})
+ */
+function setModifiedParameters(dispatch, parameters) {
+  dispatch({
+    type: TYPES.USE_MODIFIED_PARAMETERS,
+    payload: {
+      parameters,
+    },
+  });
 }
 
 /*
@@ -329,20 +309,20 @@ function LaunchProvider({ children }) {
  * @returns {unknown}
  */
 
-function useLaunchState() {
-  const context = React.useContext(LaunchStateContext);
+function useLaunch() {
+  const context = React.useContext(LaunchContext);
   if (context === undefined) {
     throw new Error(`useLaunchState must be used with a LaunchProvider`);
   }
   return context;
 }
 
-function useLaunchDispatch() {
-  const context = React.useContext(LaunchDispatchContext);
-  if (context === undefined) {
-    throw new Error(`useLaunchDispatch must be used with a LaunchProvider`);
-  }
-  return context;
-}
-
-export { LaunchProvider, useLaunchState, useLaunchDispatch };
+export {
+  LaunchProvider,
+  useLaunch,
+  launchNewPipeline,
+  setReferenceFileById,
+  referenceFileUploadComplete,
+  setParameterSetById,
+  setModifiedParameters,
+};
