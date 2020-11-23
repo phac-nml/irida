@@ -28,7 +28,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
-
 /**
  * Component implementation of file utitlities for aws storage
  */
@@ -299,23 +298,16 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public byte[] readAllBytes(Path file) {
-		byte [] bytes = new byte[0];
-		try {
-			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-			S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+		byte[] bytes = new byte[0];
+		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 			bytes = s3ObjectInputStream.readAllBytes();
-
-			try {
-				s3Object.close();
-			} catch (IOException e) {
-				logger.error("Unable to close connection to s3object: " + e);
-			}
+		} catch (AmazonServiceException e) {
+			logger.error(e.getMessage());
+			throw new StorageException("Unable to read object from aws s3 bucket", e);
 		} catch (IOException e) {
 			logger.error("Couldn't get bytes from file [" + e + "]");
-		} catch (AmazonServiceException e) {
-			logger.error("Couldn't read file from aws s3 bucket [" + e + "]");
 		}
-
 		return bytes;
 	}
 }
