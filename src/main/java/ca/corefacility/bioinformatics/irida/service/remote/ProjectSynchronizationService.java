@@ -507,7 +507,7 @@ public class ProjectSynchronizationService {
 			fast5Object.setFileProcessor(null);
 
 			fast5Object.getFile().setId(null);
-			fast5Object.getFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+			fast5Object.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
 
 			objectService.createSequencingObjectInSample(fast5Object, sample);
 
