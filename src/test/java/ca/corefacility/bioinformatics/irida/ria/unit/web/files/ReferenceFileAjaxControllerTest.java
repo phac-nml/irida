@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.ReferenceFileAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 
 import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
@@ -61,6 +62,12 @@ public class ReferenceFileAjaxControllerTest {
 	@Test
 	public void testDeleteReferenceFile() {
 		ResponseEntity<AjaxResponse> response = controller.deleteReferenceFile(FILE_ID, PROJECT_ID, Locale.ENGLISH);
+		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
+	}
+
+	@Test
+	public void testGetReferenceFiles() {
+		ResponseEntity<List<UIReferenceFile>> response = controller.getReferenceFilesForProject(PROJECT_ID, Locale.ENGLISH);
 		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
 	}
 }

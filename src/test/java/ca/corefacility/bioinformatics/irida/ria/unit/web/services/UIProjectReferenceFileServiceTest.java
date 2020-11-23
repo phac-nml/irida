@@ -117,6 +117,21 @@ public class UIProjectReferenceFileServiceTest {
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
 	}
 
+	@Test
+	public void testGetReferenceFileForProject() {
+		logger.debug("Testing getting reference file(s) for project");
+		Project project = TestDataFactory.constructProject();
+		ReferenceFile file = TestDataFactory.constructReferenceFile();
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(referenceFileService.read(file.getId())).thenReturn(file);
+
+		uiProjectReferenceFileService.getReferenceFilesForProject(project.getId(), Locale.ENGLISH);
+
+		verify(projectService, times(1)).read(project.getId());
+		verify(referenceFileService, times(1)).getReferenceFilesForProject(project);
+	}
+
 	class TestReferenceFile extends ReferenceFile {
 		private Long id;
 
