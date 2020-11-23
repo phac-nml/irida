@@ -9,7 +9,7 @@ Changes
 * [UI]: Fixed bug where users could not see or connect to Remote APIs (20.09.2)
 * [UI]: Fixed bug on project page where incorrect link to Remote API was displayed. (20.09.2)
 * [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality addded in 20.09. (20.09.2)
-* [Developer]: Removed invalid javax.interceptor-api Maven artifact.  It was no longer needed for the project and was causing build failures.  (20.09.3)
+* [Developer]: Removed invalid javax.interceptor-api Maven artifact.  It was no longer needed for the project and was causing build failures.  Existing `20.09.2` installations do not need to be upgraded, this change only affects building IRIDA from source.  (20.09.3)
 
 20.05 to 20.09
 --------------
