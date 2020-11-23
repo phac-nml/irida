@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>20.09.2</version>
+	<version>20.09.3</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -256,11 +256,6 @@
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
 			<version>${commons.net.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.interceptor</groupId>
-			<artifactId>javax.interceptor-api</artifactId>
-			<version>${javax.interceptor-api.version}</version>
 		</dependency>
 
 		<!-- RDF Database -->
@@ -1151,7 +1146,6 @@
 		<selenium-driver.version>3.141.59</selenium-driver.version>
 		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
 		<attoparser.version>2.0.4.RELEASE</attoparser.version>
-		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
 		<jsonpath.version>2.4.0</jsonpath.version>
