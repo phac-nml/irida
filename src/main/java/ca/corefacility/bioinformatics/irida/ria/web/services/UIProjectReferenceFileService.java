@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,8 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -120,5 +124,31 @@ public class UIProjectReferenceFileService {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
 		Files.copy(path, response.getOutputStream());
 		response.flushBuffer();
+	}
+
+	/**
+	 * Get the reference files for a project
+	 *
+	 * @param projectId the ID of the project
+	 * @param locale    locale of the logged in user
+	 * @return information about the reference files in the project
+	 */
+	public List<UIReferenceFile> getReferenceFilesForProject(Long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		// Let's get the reference files
+		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+		List<UIReferenceFile> refFiles = new ArrayList<>();
+		for (Join<Project, ReferenceFile> join : joinList) {
+			try {
+				refFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(Files.size(join.getObject().getFile()), true)));
+			} catch (IOException e) {
+				logger.error("Cannot find the size of file " + join.getObject()
+						.getLabel());
+				UIReferenceFile uiReferenceFile = new UIReferenceFile(join,
+						messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
+				refFiles.add(uiReferenceFile);
+			}
+		}
+		return refFiles;
 	}
 }
