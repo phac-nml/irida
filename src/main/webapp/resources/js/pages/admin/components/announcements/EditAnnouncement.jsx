@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "antd";
 import { IconEdit } from "../../../../components/icons/Icons";
-import { EditAnnouncementModal } from "./EditAnnouncementModal";
+import { AnnouncementModal } from "./AnnouncementModal";
 
 /**
  * Render React component to edit an announcement.
@@ -18,7 +18,7 @@ export function EditAnnouncement({ announcement, updateAnnouncement }) {
       <Button shape={"circle"} onClick={() => setVisible(true)}>
         <IconEdit />
       </Button>
-      <EditAnnouncementModal
+      <AnnouncementModal
         visible={visible}
         closeModal={() => setVisible(false)}
         announcement={announcement}

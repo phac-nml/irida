@@ -9,14 +9,16 @@ import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
  * @param {boolean} visible - whether the modal is open or not
  * @param {function} closeModal - the function to close the modal
  * @param {object} announcement - the announcement to be updated
+ * @param {function} createAnnouncement - the function to create a new announcement and refresh the table
  * @param {function} updateAnnouncement - the function to update an announcement and refresh the table
  * @returns {JSX.Element}
  * @constructor
  */
-export function EditAnnouncementModal({
+export function AnnouncementModal({
   visible,
   closeModal,
   announcement,
+  createAnnouncement,
   updateAnnouncement,
 }) {
   const markdownRef = useRef();
@@ -33,14 +35,18 @@ export function EditAnnouncementModal({
       const title = values.title;
       const priority = values.priority;
 
-      updateAnnouncement({
-        id: announcement.id,
-        title: title,
-        message: markdown,
-        priority: priority,
-      });
+      if (announcement) {
+        updateAnnouncement({
+          id: announcement.id,
+          title: title,
+          message: markdown,
+          priority: priority,
+        });
+      } else {
+        createAnnouncement(title, markdown, priority);
+        form.resetFields();
+      }
 
-      form.resetFields();
       closeModal();
     });
   }
@@ -50,32 +56,44 @@ export function EditAnnouncementModal({
       title={
         <Space>
           <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
-          {i18n("EditAnnouncement.title")}
+          {announcement
+            ? i18n("AnnouncementModal.edit.title")
+            : i18n("AnnouncementModal.create.title")}
         </Space>
       }
       width="80%"
-      okText={i18n("EditAnnouncement.okBtn")}
+      okText={
+        announcement
+          ? i18n("AnnouncementModal.edit.okBtn")
+          : i18n("AnnouncementModal.create.okBtn")
+      }
       onOk={saveAnnouncement}
       onCancel={onCancel}
     >
       <Form layout="vertical" form={form} initialValues={announcement}>
         <Form.Item
           name="title"
-          label={i18n("EditAnnouncement.form.title")}
+          label={i18n("AnnouncementModal.form.title")}
           rules={[
             {
               required: true,
-              message: i18n("EditAnnouncement.form.error.title"),
+              message: i18n("AnnouncementModal.form.error.title"),
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="message" label={i18n("EditAnnouncement.form.message")}>
-          <MarkdownEditor ref={markdownRef} markdown={announcement.message} />
+        <Form.Item
+          name="message"
+          label={i18n("AnnouncementModal.form.message")}
+        >
+          <MarkdownEditor
+            ref={markdownRef}
+            markdown={announcement ? announcement.message : null}
+          />
         </Form.Item>
         <Form.Item name="priority" valuePropName="checked">
-          <Checkbox>{i18n("EditAnnouncement.form.priority")}</Checkbox>
+          <Checkbox>{i18n("AnnouncementModal.form.priority")}</Checkbox>
         </Form.Item>
       </Form>
     </Modal>
