@@ -11,15 +11,15 @@ import { Form, Radio } from "antd";
 export function TimePeriodSelect({ onChange = () => {} }) {
 
   const options = [
-    { label: 'Day', value: 1 },
-    { label: 'Week', value: 7 },
-    { label: '2 Weeks', value: 14 },
-    { label: 'Month', value: 30 },
-    { label: 'Quarter', value: 90 },
-    { label: 'Year', value: 365 },
-    { label: '2 Years', value: 730 },
-    { label: '5 Years', value: 1825 },
-    { label: '10 Years', value: 3650 },
+    { label: i18n("TimePeriodSelect.day"), value: 1 },
+    { label: i18n("TimePeriodSelect.week"), value: 7 },
+    { label: i18n("TimePeriodSelect.twoWeeks"), value: 14 },
+    { label: i18n("TimePeriodSelect.month"), value: 30 },
+    { label: i18n("TimePeriodSelect.quarter"), value: 90 },
+    { label: i18n("TimePeriodSelect.year"), value: 365 },
+    { label: i18n("TimePeriodSelect.twoYears"), value: 730 },
+    { label: i18n("TimePeriodSelect.fiveYears"), value: 1825 },
+    { label: i18n("TimePeriodSelect.tenYears"), value: 3650 },
   ];
 
   return (
