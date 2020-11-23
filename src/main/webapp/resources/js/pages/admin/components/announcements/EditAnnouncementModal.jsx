@@ -74,7 +74,7 @@ export function EditAnnouncementModal({
           <MarkdownEditor ref={markdownRef} markdown={announcement.message} />
         </Form.Item>
         <Form.Item name="priority">
-          <Checkbox checked={announcement.priority}>
+          <Checkbox defaultChecked={announcement.priority}>
             {i18n("EditAnnouncement.form.priority")}
           </Checkbox>
         </Form.Item>
