@@ -45,10 +45,10 @@ export default function AdvancedStatistics({ statType }) {
   };
 
   const TITLES = {
-    [statisticTypes.ANALYSES]: "Number of Analyses Ran",
-    [statisticTypes.PROJECTS]: "Number of Projects Created",
-    [statisticTypes.SAMPLES]: "Number of Samples Created",
-    [statisticTypes.USERS]: "Number of Users Created",
+    [statisticTypes.ANALYSES]: i18n("AdminPanelStatistics.advancedStatistics.titleAnalysesRan"),
+    [statisticTypes.PROJECTS]: i18n("AdminPanelStatistics.advancedStatistics.titleProjectsCreated"),
+    [statisticTypes.SAMPLES]: i18n("AdminPanelStatistics.advancedStatistics.titleSamplesCreated"),
+    [statisticTypes.USERS]: i18n("AdminPanelStatistics.advancedStatistics.titleUsersCreated"),
   };
 
   function updateTimePeriod(e) {
@@ -92,7 +92,7 @@ export default function AdvancedStatistics({ statType }) {
         <Spin
           spinning={loading}
           delay={500}
-          tip={"Fetching data for updated time period"}
+          tip={i18n("AdminPanelStatistics.advancedStatistics.fetchingData")}
         >
           {displayChart()}
         </Spin>
