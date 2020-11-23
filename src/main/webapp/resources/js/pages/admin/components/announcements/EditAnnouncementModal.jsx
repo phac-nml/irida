@@ -32,6 +32,7 @@ export function EditAnnouncementModal({
       const markdown = markdownRef.current.getMarkdown();
       const title = values.title;
       const priority = values.priority;
+
       updateAnnouncement({
         id: announcement.id,
         title: title,
@@ -73,10 +74,8 @@ export function EditAnnouncementModal({
         <Form.Item name="message" label={i18n("EditAnnouncement.form.message")}>
           <MarkdownEditor ref={markdownRef} markdown={announcement.message} />
         </Form.Item>
-        <Form.Item name="priority">
-          <Checkbox defaultChecked={announcement.priority}>
-            {i18n("EditAnnouncement.form.priority")}
-          </Checkbox>
+        <Form.Item name="priority" valuePropName="checked">
+          <Checkbox>{i18n("EditAnnouncement.form.priority")}</Checkbox>
         </Form.Item>
       </Form>
     </Modal>

@@ -28,10 +28,12 @@ export default function AnnouncementAdminPage({}) {
     );
   }
 
-  function updateTableAnnouncement({ id, message }) {
+  function updateTableAnnouncement({ id, title, message, priority }) {
     updateAnnouncement({
       id,
+      title,
       message,
+      priority,
     }).then(() => tableRef.current.updateTable());
   }
 
