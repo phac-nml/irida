@@ -5,10 +5,10 @@ import { SPACE_MD } from "../../styles/spacing";
 import { IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
+import { primaryColour, theme } from "../../utilities/style-utilities";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
-  const { colours, theme } = window.IRIDA.site;
 
   return (
     <Row
@@ -16,7 +16,7 @@ export function MainNavigation() {
         backgroundColor: theme === "dark" ? "#001529" : "transparent",
         display: "flex",
         alignItems: "center",
-        borderBottom: `2px solid ${colours.primary}`,
+        borderBottom: `2px solid ${primaryColour}`,
       }}
     >
       <Col md={10} sm={24}>
@@ -137,7 +137,7 @@ export function MainNavigation() {
               <Space>
                 <Avatar
                   size="small"
-                  style={{ backgroundColor: colours.primary }}
+                  style={{ backgroundColor: primaryColour }}
                   icon={<IconUser />}
                 />
                 {window.TL._USER.username}

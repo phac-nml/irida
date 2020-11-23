@@ -4,20 +4,7 @@ import { Input } from "antd";
 import { IconSearch } from "../../../icons/Icons";
 import { grey3, grey6, grey7 } from "../../../../styles/colors";
 import styled from "styled-components";
-
-const darkTheme = styled(Input)`
-  border: none;
-  background-color: #334454;
-  input {
-    background-color: transparent;
-    color: ${grey3};
-  }
-`;
-
-const lightTheme = styled(Input)`
-  border: none;
-  border-bottom: 1px solid ${grey3};
-`;
+import { primaryColour, theme } from "../../../../utilities/style-utilities";
 
 /**
  * React component to render a global search input to the main navigation.
@@ -25,7 +12,21 @@ const lightTheme = styled(Input)`
  * @constructor
  */
 export function GlobalSearch() {
-  const { theme } = window.IRIDA.site;
+  const darkTheme = styled(Input)`
+    border: none;
+    background-color: #334454;
+    input {
+      background-color: transparent;
+      color: ${grey3};
+    }
+  `;
+
+  const lightTheme = styled(Input)`
+    border: none;
+    border-bottom: 1px solid ${primaryColour};
+    border-radius: 0;
+  `;
+
   const ThemedInput = theme === "dark" ? darkTheme : lightTheme;
 
   return (

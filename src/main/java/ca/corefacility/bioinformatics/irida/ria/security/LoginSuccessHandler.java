@@ -25,10 +25,10 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 	private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
 
-	@Value("${site.theme}")
+	@Value("${styles.theme}")
 	private String siteTheme;
 
-	@Value("${site.colours.primary}")
+	@Value("${styles.ant.primary-color}")
 	private String siteColourPrimary;
 
 	private final UserRepository userRepository;
