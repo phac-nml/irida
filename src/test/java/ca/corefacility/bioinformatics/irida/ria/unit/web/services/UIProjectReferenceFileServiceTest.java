@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -111,6 +110,21 @@ public class UIProjectReferenceFileServiceTest {
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
+	}
+
+	@Test
+	public void testGetReferenceFileForProject() {
+		logger.debug("Testing getting reference file(s) for project");
+		Project project = TestDataFactory.constructProject();
+		ReferenceFile file = TestDataFactory.constructReferenceFile();
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(referenceFileService.read(file.getId())).thenReturn(file);
+
+		uiProjectReferenceFileService.getReferenceFilesForProject(project.getId(), Locale.ENGLISH);
+
+		verify(projectService, times(1)).read(project.getId());
+		verify(referenceFileService, times(1)).getReferenceFilesForProject(project);
 	}
 
 	class TestReferenceFile extends ReferenceFile {
