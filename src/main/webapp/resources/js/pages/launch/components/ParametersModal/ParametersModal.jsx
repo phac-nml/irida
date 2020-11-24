@@ -3,7 +3,11 @@ import isEqual from "lodash/isEqual";
 import { Form, Input, Modal, Space, Tag } from "antd";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
-import { setModifiedParameters, useLaunch } from "../../launch-context";
+import {
+  saveModifiedParametersAs,
+  setModifiedParameters,
+  useLaunch,
+} from "../../launch-context";
 
 /**
  * React component to render a modal window for modifying and saving pipeline
@@ -69,7 +73,14 @@ export function ParametersModal({ visible, closeModal }) {
    */
   const onSaveAs = (name) => {
     form.validateFields().then((values) => {
-      dispatchUseSaveAs(name, values).then(closeModal);
+      const parameters = parameterSet.parameters.map((parameter) => ({
+        ...parameter,
+        value: values[parameter.name],
+      }));
+
+      saveModifiedParametersAs(launchDispatch, name, parameters).then(
+        closeModal
+      );
     });
   };
 

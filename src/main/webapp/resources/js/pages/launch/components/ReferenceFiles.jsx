@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Form, Radio, Result, Tag } from "antd";
+import { Alert, Divider, Form, Radio, Space, Tag } from "antd";
 import { setReferenceFileById, useLaunch } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 import styled from "styled-components";
@@ -40,7 +40,7 @@ export function ReferenceFiles() {
   };
 
   return requiresReference ? (
-    <section>
+    <Space direction="vertical" style={{ width: `100%` }}>
       {referenceFiles.length ? (
         <Form.Item label={i18n("ReferenceFiles.label")}>
           <Radio.Group style={{ width: "100%" }} value={referenceFile}>
@@ -56,14 +56,15 @@ export function ReferenceFiles() {
           </Radio.Group>
         </Form.Item>
       ) : (
-        <Result
-          status="404"
-          title={i18n("ReferenceFiles.not-found.title")}
-          subTitle={i18n("ReferenceFiles.not-found.subTitle")}
+        <Alert
+          type="info"
+          showIcon
+          message={i18n("ReferenceFiles.not-found.title")}
+          description={i18n("ReferenceFiles.not-found.subTitle")}
         />
       )}
       <UploadReferenceFile />
       <Divider />
-    </section>
+    </Space>
   ) : null;
 }

@@ -17,6 +17,16 @@ import {
  * @type {React.Context<unknown>}
  */
 
+/*
+IRIDA Workflow identifier can be found as a query parameter within the URL.
+Here we grab it and hold onto it so that we can use it to gather all the
+details about the pipeline.
+ */
+const PIPELINE_ID = (() => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+})();
+
 const LaunchContext = React.createContext();
 LaunchContext.displayName = "LaunchContext";
 
@@ -25,6 +35,7 @@ const TYPES = {
   PARAMETER_SET: "launch:parameters",
   MODIFIED_PARAMETERS: "launch:modified_params",
   USE_MODIFIED_PARAMETERS: "launch:use_modified_params",
+  SAVE_MODIFIED_PARAMETERS: "launch:save_modified_params",
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
   USE_REFERENCE: "launch:use_reference",
@@ -128,6 +139,12 @@ const reducer = (state, action) => {
         ...state,
         ...useModifiedParameters(action.payload.parameters),
       };
+    case TYPES.SAVE_MODIFIED_PARAMETERS:
+      return {
+        ...state,
+        parameterSets: [...state.parameterSets, action.parameterSet],
+        parameterSet: action.parameterSet,
+      };
     case TYPES.REFERENCE_FILE:
       return { ...state, referenceFile: action.payload.referenceFile };
     case TYPES.ADD_REFERENCE:
@@ -152,23 +169,13 @@ const reducer = (state, action) => {
 
 function LaunchProvider({ children }) {
   /*
-  IRIDA Workflow identifier can be found as a query parameter within the URL.
-  Here we grab it and hold onto it so that we can use it to gather all the
-  details about the pipeline.
-   */
-  const [id] = React.useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("id");
-  });
-
-  /*
   Using a reducer to hold all user data that the user can modify and must be
   sent to the server to launch the workflow pipeline.
    */
   const [state, dispatch] = React.useReducer(reducer, { loading: true });
 
   React.useEffect(() => {
-    getPipelineDetails({ id }).then(
+    getPipelineDetails({ id: PIPELINE_ID }).then(
       ({
         name,
         description,
@@ -213,55 +220,7 @@ function LaunchProvider({ children }) {
         });
       }
     );
-  }, [id]);
-
-  /**
-   * Save a modified set of parameters with a new name
-   *
-   * @param {string} name - name to save the modified set with
-   * @param {array} parameters - updated parameter values
-   * @returns {Promise<void>}
-   */
-  async function dispatchUseSaveAs(name, parameters) {
-    /*
-    Get a copy of the currently display parameter set.
-     */
-    const currentSet = deepCopy(state.parameterSet);
-
-    /*
-    Update the parameters to the new values
-     */
-    const params = currentSet.parameters.map((parameter) => ({
-      ...parameter,
-      value: parameters[parameter.name],
-    }));
-
-    const data = await saveNewPipelineParameters({
-      label: name,
-      parameters: params,
-      id,
-    });
-
-    /*
-    Get a copy of all the sets
-     */
-    const sets = deepCopy(state.parameterSets);
-
-    currentSet.id = data.id;
-    currentSet.label = name;
-    currentSet.key = `set-${data.id}`;
-    currentSet.parameters = params;
-    sets.push(currentSet);
-
-    // Update the state
-    dispatch({
-      type: TYPES.MODIFIED_PARAMETERS,
-      payload: {
-        sets,
-        set: currentSet,
-      },
-    });
-  }
+  }, []);
 
   const value = [state, dispatch];
   return (
@@ -308,13 +267,45 @@ function setModifiedParameters(dispatch, parameters) {
  * See: {@link https://kentcdodds.com/blog/how-to-use-react-context-effectively#the-custom-consumer-hook}
  * @returns {unknown}
  */
-
 function useLaunch() {
   const context = React.useContext(LaunchContext);
   if (context === undefined) {
     throw new Error(`useLaunchState must be used with a LaunchProvider`);
   }
   return context;
+}
+
+/**
+ * Save a modified set of parameters with a new name
+ *
+ * @param {string} name - name to save the modified set with
+ * @param {array} parameters - updated parameter values
+ * @returns {Promise<void>}
+ */
+async function saveModifiedParametersAs(dispatch, label, parameters) {
+  try {
+    const data = await saveNewPipelineParameters({
+      label,
+      parameters,
+      id: PIPELINE_ID,
+    });
+
+    const newParameterSet = {
+      id: data.id,
+      label,
+      key: `set-${data.id}`,
+      parameters,
+    };
+
+    // Update the state
+    dispatch({
+      type: TYPES.SAVE_MODIFIED_PARAMETERS,
+      parameterSet: newParameterSet,
+    });
+    return data;
+  } catch (e) {
+    return Promise.reject(e);
+  }
 }
 
 export {
@@ -325,4 +316,5 @@ export {
   referenceFileUploadComplete,
   setParameterSetById,
   setModifiedParameters,
+  saveModifiedParametersAs,
 };
