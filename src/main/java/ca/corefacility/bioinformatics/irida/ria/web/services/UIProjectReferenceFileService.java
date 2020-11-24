@@ -56,7 +56,7 @@ public class UIProjectReferenceFileService {
 	 * @throws IOException if there is an I/O error
 	 */
 	public List<UIReferenceFile> addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
-		List<UIReferenceFile> uiFiles = new ArrayList<>();
+		List<UIReferenceFile> referenceFiles = new ArrayList<>();
 		try {
 			for (MultipartFile file : files) {
 				// Prepare a new reference file using the multipart file supplied by the caller
@@ -71,10 +71,10 @@ public class UIProjectReferenceFileService {
 					Project project = projectService.read(projectId);
 					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
 					ReferenceFile refFile = join.getObject();
-					Long filesize = Files.size(refFile.getFile());
-					uiFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
+					long filesize = Files.size(refFile.getFile());
+					referenceFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
 				} else {
-					uiFiles.add(new UIReferenceFile(referenceFile));
+					referenceFiles.add(new UIReferenceFile(referenceFile));
 				}
 
 				// Clean up temporary files
@@ -90,7 +90,7 @@ public class UIProjectReferenceFileService {
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
 		}
 
-		return uiFiles;
+		return referenceFiles;
 	}
 
 	/**
