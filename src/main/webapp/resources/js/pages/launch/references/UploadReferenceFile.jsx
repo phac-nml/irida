@@ -1,5 +1,5 @@
 import React from "react";
-import { message, notification } from "antd";
+import { notification } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { DragUpload } from "../../../components/files/DragUpload.jsx";
 import { referenceFileUploadComplete, useLaunch } from "../launch-context";
