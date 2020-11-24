@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -37,6 +39,8 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
  */
 @Component
 public class UIPipelineService {
+	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
+
 	private final Cart cart;
     private final IridaWorkflowsService workflowsService;
     private final WorkflowNamedParametersService namedParametersService;
@@ -262,7 +266,7 @@ public class UIPipelineService {
 							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
 							list.add(uiReferenceFile);
 						} catch (IOException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 					}
 					return list;
