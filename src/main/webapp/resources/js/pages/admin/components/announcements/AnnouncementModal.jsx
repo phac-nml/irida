@@ -5,7 +5,7 @@ import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
 
 /**
- * React component to display an Ant Design Modal containing a form to update an announcement
+ * React component to display an Ant Design Modal containing a form to create or update an announcement
  * @param {boolean} visible - whether the modal is open or not
  * @param {function} closeModal - the function to close the modal
  * @param {object} announcement - the announcement to be updated
