@@ -29,7 +29,7 @@ export function UploadReferenceFile() {
         );
       } else if (status === "error") {
         notification.error({
-          message: `${info.file.name} file upload failed.`,
+          message: i18n("UploadReferenceFile.error", info.file.name),
         });
       }
     },
