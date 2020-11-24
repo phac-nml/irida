@@ -1,9 +1,9 @@
 import React from "react";
 import { Button, Divider, Form, Select, Space, Tag } from "antd";
-import { IconEdit } from "../../components/icons/Icons";
-import ParametersModal from "./components/ParametersModal";
-import { setParameterSetById, useLaunch } from "./launch-context";
-import { SPACE_XS } from "../../styles/spacing";
+import { IconEdit } from "../../../components/icons/Icons";
+import { ParametersModal } from "./ParametersModal";
+import { setParameterSetById, useLaunch } from "../launch-context";
+import { SPACE_XS } from "../../../styles/spacing";
 
 /**
  * React component to render a select input and modifying button for

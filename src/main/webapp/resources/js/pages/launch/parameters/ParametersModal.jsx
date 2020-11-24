@@ -1,13 +1,14 @@
 import React from "react";
 import isEqual from "lodash/isEqual";
 import { Form, Input, Modal, Space, Tag } from "antd";
-import { SPACE_SM } from "../../../../styles/spacing";
+import {} from "../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
 import {
   saveModifiedParametersAs,
   setModifiedParameters,
   useLaunch,
-} from "../../launch-context";
+} from "../launch-context";
+import { deepCopy } from "../launch-utilities";
 
 /**
  * React component to render a modal window for modifying and saving pipeline
@@ -59,19 +60,25 @@ export function ParametersModal({ visible, closeModal }) {
     );
   }, [parameterSet]);
 
-  const saveModifiedParameters = () => {
+  function storeModifiedParameters() {
     form.validateFields().then((values) => {
-      setModifiedParameters(launchDispatch, values);
+      const set = deepCopy(parameterSet);
+      set.parameters = set.parameters.map((parameter) => ({
+        ...parameter,
+        value: values[parameter.name],
+      }));
+
+      setModifiedParameters(launchDispatch, set);
       closeModal();
     });
-  };
+  }
 
   /**
    * Save a modified set of parameters with a new name
    *
    * @param {string} name - The new name to save the modified parameter with
    */
-  const onSaveAs = (name) => {
+  function onSaveAs(name) {
     form.validateFields().then((values) => {
       const parameters = parameterSet.parameters.map((parameter) => ({
         ...parameter,
@@ -82,7 +89,7 @@ export function ParametersModal({ visible, closeModal }) {
         closeModal
       );
     });
-  };
+  }
 
   /**
    * Helper function to determine if the original parameters of this set have
@@ -117,7 +124,7 @@ export function ParametersModal({ visible, closeModal }) {
         <ParametersFooter
           modified={modified}
           onCancel={closeModal}
-          saveModifiedParameters={saveModifiedParameters}
+          saveModifiedParameters={storeModifiedParameters}
           onSaveAs={onSaveAs}
         />
       }

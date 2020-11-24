@@ -1,7 +1,6 @@
 import React from "react";
 import {
   getPipelineDetails,
-  launchPipeline,
   saveNewPipelineParameters,
 } from "../../apis/pipelines/pipelines";
 import {
@@ -53,29 +52,16 @@ const reducer = (state, action) => {
     return deepCopy(set);
   }
 
-  function useModifiedParameters(parameters) {
+  function updateModifiedParameters(currentSet) {
     /*
     Suffix to be added to the identifier to identify when it is modified
      */
     const SUFFIX = `-MODIFIED`;
 
     /*
-    Get a copy of the currently display parameter set.
-     */
-    const currentSet = deepCopy(state.parameterSet);
-
-    /*
     Get a copy of all the sets
      */
     const sets = deepCopy(state.parameterSets);
-
-    /*
-    Update the parameters to the new values
-     */
-    currentSet.parameters = currentSet.parameters.map((parameter) => ({
-      ...parameter,
-      value: parameters[parameter.name],
-    }));
 
     /*
     Three different states:
@@ -97,6 +83,7 @@ const reducer = (state, action) => {
     } else if (!currentSet.modified) {
       // First time modified
       currentSet.modified = true;
+
       // Set modified to the original set
       sets.find((s) => s.id === currentSet.id).modified = true;
 
@@ -137,7 +124,7 @@ const reducer = (state, action) => {
     case TYPES.USE_MODIFIED_PARAMETERS:
       return {
         ...state,
-        ...useModifiedParameters(action.payload.parameters),
+        ...updateModifiedParameters(action.payload.set),
       };
     case TYPES.SAVE_MODIFIED_PARAMETERS:
       return {
@@ -228,17 +215,45 @@ function LaunchProvider({ children }) {
   );
 }
 
-const setReferenceFileById = (dispatch, id) =>
-  dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
-
-function launchNewPipeline(dispatch, values) {
-  console.log(values);
+/**
+ * Launch a the pipeline.
+ *
+ * @param {function} dispatch - specific the the launch context
+ * @param {object} parameters - all parameters required to launch the pipe
+ * @returns {Promise<void>}
+ */
+async function launchNewPipeline(dispatch, parameters) {
+  console.log(parameters);
+  return Promise.resolve();
 }
 
+/**
+ * Set the currently selected reference file by its id.
+ *
+ * @param {function} dispatch - specific the the launch context
+ * @param {number} id - identifier for the reference file to use
+ */
+function setReferenceFileById(dispatch, id) {
+  dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
+}
+
+/**
+ * Called when a reference file has been uploaded to the server.
+ *
+ * @param {function} dispatch - specific the the launch context
+ * @param {string} name - filename
+ * @param {number} id - identifier for the reference file
+ */
 function referenceFileUploadComplete(dispatch, name, id) {
   dispatch({ type: TYPES.ADD_REFERENCE, payload: { id, name } });
 }
 
+/**
+ * Set the current parameter set by its identifier.
+ *
+ * @param {function} dispatch - specific the the launch context
+ * @param {number} id - identifier for the set of parameters to use.
+ */
 function setParameterSetById(dispatch, id) {
   dispatch({
     type: TYPES.PARAMETER_SET,
@@ -247,40 +262,28 @@ function setParameterSetById(dispatch, id) {
 }
 
 /**
- * Dispatch function called when a user modifies the current saved parameter
- * set parameter values, and wants to use them without saving.
+ * Use a set of modified.  This will store them and add it as a "modified" set
+ * the the list of available parameter sets.  NOTE: This will not save them.
  *
- * @param {array} parameters - list of key value pairs for the parameters ({name: value})
+ * @param {function} dispatch - specific the the launch context
+ * @param {object} set - modified parameter set.
  */
-function setModifiedParameters(dispatch, parameters) {
+function setModifiedParameters(dispatch, set) {
   dispatch({
     type: TYPES.USE_MODIFIED_PARAMETERS,
     payload: {
-      parameters,
+      set,
     },
   });
 }
 
-/*
- * Custom React hooks to get access to the contexts, prevents needing to wrap your child
- * components in context consumers.
- * See: {@link https://kentcdodds.com/blog/how-to-use-react-context-effectively#the-custom-consumer-hook}
- * @returns {unknown}
- */
-function useLaunch() {
-  const context = React.useContext(LaunchContext);
-  if (context === undefined) {
-    throw new Error(`useLaunchState must be used with a LaunchProvider`);
-  }
-  return context;
-}
-
 /**
- * Save a modified set of parameters with a new name
+ * Save a set of modified parameters.
  *
- * @param {string} name - name to save the modified set with
- * @param {array} parameters - updated parameter values
- * @returns {Promise<void>}
+ * @param {function} dispatch - specific the the launch context
+ * @param {string} label - new label for the parameter set.
+ * @param {array} parameters - list of modified parameters to save.
+ * @returns {Promise<*|void>}
  */
 async function saveModifiedParametersAs(dispatch, label, parameters) {
   try {
@@ -306,6 +309,20 @@ async function saveModifiedParametersAs(dispatch, label, parameters) {
   } catch (e) {
     return Promise.reject(e);
   }
+}
+
+/*
+ * Custom React hooks to get access to the contexts, prevents needing to wrap your child
+ * components in context consumers.
+ * See: {@link https://kentcdodds.com/blog/how-to-use-react-context-effectively#the-custom-consumer-hook}
+ * @returns {unknown}
+ */
+function useLaunch() {
+  const context = React.useContext(LaunchContext);
+  if (context === undefined) {
+    throw new Error(`useLaunchState must be used with a LaunchProvider`);
+  }
+  return context;
 }
 
 export {

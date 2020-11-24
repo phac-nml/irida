@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Input } from "antd";
-import { useLaunch } from "../../launch-context";
+import { useLaunch } from "../launch-context";
 
 /**
  * React component to render the footer of the saved parameters modal

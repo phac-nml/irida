@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
-import { grey9, yellow6 } from "../../../../styles/colors";
-import { IconExclamationCircle } from "../../../../components/icons/Icons";
-import { SPACE_XS } from "../../../../styles/spacing";
+import { grey9, yellow6 } from "../../../styles/colors";
+import { IconExclamationCircle } from "../../../components/icons/Icons";
+import { SPACE_XS } from "../../../styles/spacing";
 import { SaveParametersAsFooter } from "./SaveParametersAsFooter";
 
 export function ParametersFooter({

@@ -4,8 +4,8 @@ import { LaunchDetails } from "./LaunchDetails";
 import { Button, Form } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { ParameterWithOptions } from "./ParameterWithOptions";
-import { SavedParameters } from "./SavedParameters";
-import { ReferenceFiles } from "./components/ReferenceFiles";
+import { SavedParameters } from "./parameters/SavedParameters";
+import { ReferenceFiles } from "./references/ReferenceFiles";
 import { launchNewPipeline, useLaunch } from "./launch-context";
 
 /**
