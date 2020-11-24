@@ -1,7 +1,5 @@
 const propertiesReader = require("properties-reader");
 
-const properties = propertiesReader("../resources/configuration.properties");
-
 const defaults = {
   "primary-color": "#1890ff",
   "info-color": "#1890ff",
@@ -13,12 +11,18 @@ const defaults = {
 function formatAntStyles() {
   const custom = {};
   const re = /styles.ant.([\w+-]*)/;
-  properties.each((key, value) => {
-    const found = key.match(re);
-    if (found) {
-      custom[found[1]] = value;
-    }
-  });
+
+  try {
+    const properties = propertiesReader("/etc/irida/irida.conf");
+    properties.each((key, value) => {
+      const found = key.match(re);
+      if (found) {
+        custom[found[1]] = value;
+      }
+    });
+  } catch (e) {
+    console.log("No styles in `/etc/irida/irida.conf`");
+  }
   return Object.assign({}, defaults, custom);
 }
 
