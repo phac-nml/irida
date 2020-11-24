@@ -1,7 +1,7 @@
 import React from "react";
 import isEqual from "lodash/isEqual";
 import { Form, Input, Modal, Space, Tag } from "antd";
-import {} from "../../../styles/spacing";
+import { SPACE_SM } from "../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
 import {
   saveModifiedParametersAs,

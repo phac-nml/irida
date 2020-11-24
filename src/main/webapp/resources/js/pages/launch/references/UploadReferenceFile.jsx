@@ -1,5 +1,5 @@
 import React from "react";
-import { message } from "antd";
+import { message, notification } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { DragUpload } from "../../../components/files/DragUpload.jsx";
 import { referenceFileUploadComplete, useLaunch } from "../launch-context";
@@ -19,14 +19,18 @@ export function UploadReferenceFile() {
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {
-        message.success(i18n("UploadReferenceFile.success", info.file.name));
+        notification.success({
+          message: i18n("UploadReferenceFile.success", info.file.name),
+        });
         referenceFileUploadComplete(
           launchDispatch,
           info.file.name,
           info.file.response.id
         );
       } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        notification.error({
+          message: `${info.file.name} file upload failed.`,
+        });
       }
     },
   };
