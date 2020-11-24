@@ -24,32 +24,28 @@ export function AnnouncementModal({
   const markdownRef = useRef();
   const [form] = Form.useForm();
 
-  const onCancel = () => {
+  const resetModal = () => {
     form.resetFields();
     closeModal();
   };
 
   function saveAnnouncement() {
-    form.validateFields().then((values) => {
+    form.validateFields().then(({ title, priority }) => {
       const markdown = markdownRef.current.getMarkdown();
-      const title = values.title;
-      const priority = values.priority;
 
       if (announcement) {
         updateAnnouncement({
           id: announcement.id,
-          title: title,
+          title,
           message: markdown,
-          priority: priority,
-        });
+          priority,
+        }).then(resetModal);
       } else {
-        createAnnouncement(title, markdown, priority);
-        form.resetFields();
+        createAnnouncement(title, markdown, priority).then(resetModal);
       }
-
-      closeModal();
     });
   }
+
   return (
     <Modal
       visible={visible}
@@ -68,7 +64,7 @@ export function AnnouncementModal({
           : i18n("AnnouncementModal.create.okBtn")
       }
       onOk={saveAnnouncement}
-      onCancel={onCancel}
+      onCancel={resetModal}
     >
       <Form layout="vertical" form={form} initialValues={announcement}>
         <Form.Item
