@@ -1,14 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import org.slf4j.Logger;
@@ -20,11 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -69,33 +59,5 @@ public class ProjectReferenceFileController {
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "referenceFiles");
 		return "projects/settings/pages/references";
-	}
-
-	/**
-	 * Get the reference files for a project
-	 *
-	 * @param projectId the ID of the project
-	 * @param locale    locale of the logged in user
-	 * @return information about the reference files in the project
-	 */
-	@RequestMapping("/{projectId}/settings/ajax/reference/all")
-	public @ResponseBody
-	List<UIReferenceFile> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
-		Project project = projectService.read(projectId);
-		// Let's get the reference files
-		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<UIReferenceFile> refFiles = new ArrayList<>();
-		for (Join<Project, ReferenceFile> join : joinList) {
-			try {
-				refFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(Files.size(join.getObject().getFile()), true)));
-			} catch (IOException e) {
-				logger.error("Cannot find the size of file " + join.getObject()
-						.getLabel());
-				UIReferenceFile uiReferenceFile = new UIReferenceFile(join,
-						messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
-				refFiles.add(uiReferenceFile);
-			}
-		}
-		return refFiles;
 	}
 }
