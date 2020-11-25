@@ -25,10 +25,17 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 	private static final Logger logger = LoggerFactory.getLogger(LoginSuccessHandler.class);
 
-	@Value("${styles.theme}")
+	/*
+	Defaults to the light theme
+	This primarily controls the colour of the main navigation bar
+	 */
+	@Value("${styles.theme:light}")
 	private String siteTheme;
 
-	@Value("${styles.ant.primary-color}")
+	/*
+	Defaults to ant design blue
+	 */
+	@Value("${styles.ant.primary-color:#1890ff}")
 	private String siteColourPrimary;
 
 	private final UserRepository userRepository;
