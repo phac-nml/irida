@@ -45,8 +45,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInvocationInputs.WorkflowInvocationInput;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -306,7 +306,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
@@ -345,7 +345,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_SINGLE_NAME));
 
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
 	}
@@ -377,7 +377,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(
 				1L, sequenceFilePathA, sequenceFilePath2A);
@@ -414,7 +414,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPaired, false);
@@ -461,7 +461,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
 	}
@@ -489,7 +489,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		Map<String, String> parameters = ImmutableMap.of("coverage", "20");
 
@@ -510,10 +510,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
 		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 
-		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInputs is null", workflowInputs);
+		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
 
-		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
 				"core_pipeline_outputs_paired_with_parameters");
 		assertNotNull("toolParameters is null", toolParameters);
 
@@ -548,7 +548,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters, false);
@@ -566,10 +566,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
 		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 
-		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInputs is null", workflowInputs);
+		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
 
-		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
 				"core_pipeline_outputs_paired_with_parameters");
 		assertNotNull("toolParameters is null", toolParameters);
 
@@ -604,7 +604,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
 
@@ -624,10 +624,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
 		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 
-		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInputs is null", workflowInputs);
+		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
 
-		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
 				"core_pipeline_outputs_paired_with_parameters");
 		assertNull("toolParameters is not null", toolParameters);
 	}
@@ -655,7 +655,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		Map<String, String> parameters = ImmutableMap.of("invalid", "20");
 
@@ -691,7 +691,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		// construct two pairs of sequence files with same sample (1L)
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
@@ -725,7 +725,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
 				.setupSinglePairSubmissionInDatabaseDifferentSample(1L, 2L, pairSequenceFiles1A, pairSequenceFiles2A,
@@ -757,7 +757,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 3, workflowInputsMap.size());
 	}
@@ -785,7 +785,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
 				.setupSinglePairSubmissionInDatabaseSameSample(1L, pairSequenceFiles1A, pairSequenceFiles2A,
@@ -864,7 +864,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);
@@ -931,7 +931,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingleSingleSample);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingleSingleSample, false);
@@ -998,7 +998,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
 		List<Path> paths2 = new ArrayList<>();
@@ -1073,7 +1073,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedSingleSample);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
 		List<Path> paths2 = new ArrayList<>();
@@ -1148,7 +1148,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedSingleSample);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
 		List<Path> paths2 = new ArrayList<>();
@@ -1215,7 +1215,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSinglePaired);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		List<Path> paths1 = new ArrayList<>();
 		paths1.add(sequenceFilePathA);
@@ -1291,7 +1291,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(phylogenomicsWorkflowId);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, phylogenomicsWorkflowId, false);
@@ -1351,7 +1351,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdSingle);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
-		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle, false);

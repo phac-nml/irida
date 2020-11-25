@@ -282,7 +282,7 @@ You can view or add reference files by clicking on the "Reference Files" tab in 
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
-You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
+You can upload a new reference file to the project by clicking on the "Upload Reference File" button or by dragging and dropping files onto it:
 
 ![Upload reference file button.](images/upload-reference-file-button.png)
 
@@ -347,7 +347,7 @@ After you have selected your project, you can select a synchronization frequency
 
 ![Synchronize details](images/synchronize-details.png)
 
-The advanced section allows you to manually paste in an IRIDA project's REST URL rather than selecting it from the projects dropdown.  This option should only be used by advanced IRIDA users.
+If you know the URL of the project you want to synchronize, you can directly add the url by checking the `Set URL Manually` and entering it into the input field.
 
 Once your project and an appropriate synchronization frequency have been selected, click the **Synchronize Project** button to create your project.
 

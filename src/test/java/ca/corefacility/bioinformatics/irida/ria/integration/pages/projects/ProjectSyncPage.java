@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,19 +14,16 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class ProjectSyncPage extends AbstractPage {
 
-	@FindBy(id = "api-selection")
+	@FindBy(className = "t-api-select")
 	private WebElement apiSelection;
 
-	@FindBy(id = "project-select")
+	@FindBy(className = "t-project-select")
 	private WebElement projectSelection;
 
-	@FindBy(id = "projectUrl")
+	@FindBy(className = "t-project-url")
 	private WebElement projectUrlTextBox;
 
-	@FindBy(id = "advancedToggle")
-	private WebElement advancedToggle;
-
-	@FindBy(id = "submitBtn")
+	@FindBy(className = "t-sync-submit")
 	private WebElement submitBtn;
 
 	public ProjectSyncPage(WebDriver driver) {
@@ -38,19 +37,23 @@ public class ProjectSyncPage extends AbstractPage {
 	}
 
 	public void selectApi(int index) {
-		new Select(apiSelection).selectByIndex(index);
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementToBeClickable(apiSelection));
+		apiSelection.findElement(By.className("ant-select-selection-item")).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-item")));
+		driver.findElements(By.className("ant-select-item")).get(index).click();
 	}
 
 	public boolean areProjectsAvailable() {
-		return projectSelection.isEnabled();
+		return projectSelection.isDisplayed();
 	}
 
-	public void selectProjectInListing(int index) {
-		new Select(projectSelection).selectByIndex(index);
-	}
-
-	public void openAdvanced() {
-		advancedToggle.click();
+	public void selectProjectInListing(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementToBeClickable(projectSelection));
+		projectSelection.findElement(By.className("ant-select-selection-search")).click();
+		driver.switchTo().activeElement().sendKeys(name);
+		driver.switchTo().activeElement().sendKeys(Keys.ENTER);
 	}
 
 	public String getSelectedProjectName() {

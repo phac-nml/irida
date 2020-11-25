@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { Icon } from "antd";
 import { green6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
+import { IconCheckCircle } from "./Icons";
 
 /**
  * Stateless UI component for displaying a 'Success' icon
@@ -19,10 +19,7 @@ import { SPACE_XS } from "../../styles/spacing";
 export function Success({ message }) {
   return (
     <span>
-      <Icon
-        type="check-circle"
-        style={{ marginRight: SPACE_XS, color: green6 }}
-      />
+      <IconCheckCircle style={{color: green6, marginRight: SPACE_XS}} />
       {message}
     </span>
   );

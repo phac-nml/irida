@@ -43,7 +43,12 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.service.*;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
+import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
@@ -88,10 +93,10 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Autowired
 	private EmailController emailController;
 
-	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
-
 	@Autowired
-	private SequencingObjectService sequencingObjectService;
+	private AnalysisWorkspaceService analysisWorkspaceService;
+
+	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
@@ -120,7 +125,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
-				galaxyJobErrorsService, jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -187,7 +192,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);

@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -22,9 +21,16 @@ public interface IridaFileStorageUtility {
 	 * Get a file from storage
 	 *
 	 * @param file The {@link Path} to the file
-	 * @return {@link File} which was retrieved from path
+	 * @return {@link IridaTemporaryFile} which includes the file and optional temporary directory
 	 */
-	public File getFile(Path file);
+	public IridaTemporaryFile getTemporaryFile(Path file);
+
+	/**
+	 * Delete temporary downloaded file and/or directory.
+	 *
+	 * @param iridaTemporaryFile The {@link IridaTemporaryFile} object which includes the file path and/or directory path
+	 */
+	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile);
 
 	/**
 	 * Get file size
@@ -122,5 +128,15 @@ public interface IridaFileStorageUtility {
 	 * @return {@link Long} size of file in bytes retrieved from path
 	 */
 	public Long getFileSizeBytes(Path file);
+
+	/**
+	 * Get file in chunks
+	 *
+	 * @param file The {@link Path} to the file
+	 * @param seek File pointer to where to start reading from
+	 * @param chunk Size in bytes to read from seek point
+	 * @return {@link String} The text from the file in chunks
+	 */
+	public String readChunk(Path file, Long seek, Long chunk);
 
 }

@@ -4,9 +4,9 @@
  */
 
 import React from "react";
-import { Icon } from "antd";
 import { red6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
+import { IconCloseCircle } from "./Icons";
 
 /**
  * Stateless UI component for displaying an 'Error' icon
@@ -19,10 +19,7 @@ import { SPACE_XS } from "../../styles/spacing";
 export function Error({ message }) {
   return (
     <span>
-      <Icon
-        type="close-circle"
-        style={{ marginRight: SPACE_XS, color: red6 }}
-      />
+      <IconCloseCircle style={{color: red6 , marginRight: SPACE_XS}} />
       {message}
     </span>
   );

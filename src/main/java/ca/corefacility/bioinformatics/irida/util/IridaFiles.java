@@ -20,6 +20,7 @@ public final class IridaFiles {
 	public static void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
 		IridaFiles.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
+
 	private IridaFiles() {
 	}
 

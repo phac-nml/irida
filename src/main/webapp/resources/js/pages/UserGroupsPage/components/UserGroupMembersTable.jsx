@@ -3,7 +3,7 @@ import { formatInternationalizedDateTime } from "../../../utilities/date-utiliti
 import React from "react";
 import { SPACE_XS } from "../../../styles/spacing";
 import { stringSorter } from "../../../utilities/table-utilities";
-import { AddMemberButton } from "../../../components/Buttons/AddMemberButton";
+import { AddMemberButton } from "../../../components/Buttons";
 import { RemoveTableItemButton } from "../../../components/Buttons";
 import {
   addMemberToUserGroup,

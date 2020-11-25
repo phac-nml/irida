@@ -50,20 +50,13 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
+import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.ToolParameter;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
@@ -180,7 +173,7 @@ public class GalaxyWorkflowsIT {
 	 * @param workflowInputLabel The label of a workflow input in Galaxy.
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
-	private WorkflowOutputs runSingleCollectionWorkflow(List<Path> inputFilesForward, List<Path> inputFilesReverse,
+	private WorkflowInvocationOutputs runSingleCollectionWorkflow(List<Path> inputFilesForward, List<Path> inputFilesReverse,
 			InputFileType inputFileType, String workflowId, String workflowInputLabel)
 			throws ExecutionManagerException {
 		checkNotNull(inputFilesForward, "inputFilesForward is null");
@@ -216,14 +209,14 @@ public class GalaxyWorkflowsIT {
 		
 		String workflowInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, workflowInputLabel);
 
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
+		WorkflowInvocationInputs inputs = new WorkflowInvocationInputs();
+		inputs.setDestination(new WorkflowInvocationInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(collection.getId(),
-				WorkflowInputs.InputSourceType.HDCA));
+		inputs.setInput(workflowInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(collection.getId(),
+				WorkflowInvocationInputs.InputSourceType.HDCA));
 		
 		// execute workflow
-		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+		WorkflowInvocationOutputs output = workflowsClient.invokeWorkflow(inputs);
 
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
@@ -345,7 +338,7 @@ public class GalaxyWorkflowsIT {
 		dataFilesReverse.add(dataFile3);
 		dataFilesReverse.add(dataFile4);
 		
-		WorkflowOutputs workflowOutput = runSingleCollectionWorkflow(dataFilesForward,
+		WorkflowInvocationOutputs workflowOutput = runSingleCollectionWorkflow(dataFilesForward,
 						dataFilesReverse, FILE_TYPE, workflowId, workflowInputLabel);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
@@ -353,15 +346,6 @@ public class GalaxyWorkflowsIT {
 		// history should exist
 		HistoryDetails historyDetails = historiesClient.showHistory(workflowOutput.getHistoryId());
 		assertNotNull(historyDetails);
-		
-		// outputs should exist
-		assertNotNull(workflowOutput.getOutputIds());
-		assertEquals(1, workflowOutput.getOutputIds().size());
-		String outputId = workflowOutput.getOutputIds().get(0);
-		
-		// output dataset should exist
-		Dataset outputDataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
-		assertNotNull(outputDataset);
 		
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
@@ -378,7 +362,7 @@ public class GalaxyWorkflowsIT {
 	 * @param workflowInputLabel The label of a workflow input in Galaxy.
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
-	private WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
+	private WorkflowInvocationOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
 			String workflowId, String workflowInputLabel) throws ExecutionManagerException {
 		return runSingleFileWorkflow(inputFile, inputFileType, workflowId, workflowInputLabel, null);
 	}
@@ -392,7 +376,7 @@ public class GalaxyWorkflowsIT {
 	 * @param toolParameters  A map of tool parameters to set.
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
-	private WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
+	private WorkflowInvocationOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
 			String workflowId, String workflowInputLabel, Map<String, ToolParameter> toolParameters)
 			throws ExecutionManagerException {
 		checkNotNull(inputFile, "file is null");
@@ -411,10 +395,10 @@ public class GalaxyWorkflowsIT {
 		String workflowInputId = galaxyWorkflowService.
 				getWorkflowInputId(workflowDetails, workflowInputLabel);
 
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
+		WorkflowInvocationInputs inputs = new WorkflowInvocationInputs();
+		inputs.setDestination(new WorkflowInvocationInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
+		inputs.setInput(workflowInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(inputDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
 		
 		if (toolParameters != null) {
 			for (String toolId : toolParameters.keySet()) {
@@ -424,7 +408,7 @@ public class GalaxyWorkflowsIT {
 		}
 		
 		// execute workflow
-		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+		WorkflowInvocationOutputs output = workflowsClient.invokeWorkflow(inputs);
 
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
@@ -443,7 +427,7 @@ public class GalaxyWorkflowsIT {
 	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
-	private WorkflowOutputs runSingleFileTabularWorkflowFilterTool(History history, Path inputFile,
+	private WorkflowInvocationOutputs runSingleFileTabularWorkflowFilterTool(History history, Path inputFile,
 			String filterParameters) throws ExecutionManagerException {
 		String workflowId = localGalaxy.getWorkflowFilterId();
 		String workflowInputLabel = localGalaxy.getWorkflowFilterLabel();
@@ -465,7 +449,7 @@ public class GalaxyWorkflowsIT {
 	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
-	private WorkflowOutputs runSingleFileTabularWorkflowSleepTool(History history, Path inputFile, String sleepTime)
+	private WorkflowInvocationOutputs runSingleFileTabularWorkflowSleepTool(History history, Path inputFile, String sleepTime)
 			throws ExecutionManagerException {
 		String workflowId = localGalaxy.getWorkflowSleepId();
 		String workflowInputLabel = localGalaxy.getWorkflowSleepLabel();
@@ -492,7 +476,7 @@ public class GalaxyWorkflowsIT {
 	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
-	private WorkflowOutputs runSingleFileTabularWorkflow(String workflowId, String workflowInputLabel, History history,
+	private WorkflowInvocationOutputs runSingleFileTabularWorkflow(String workflowId, String workflowInputLabel, History history,
 			Path inputFile, String toolName, ToolParameter toolParameter) throws ExecutionManagerException {
 
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
@@ -505,16 +489,16 @@ public class GalaxyWorkflowsIT {
 
 		String workflowInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, workflowInputLabel);
 
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(history.getId()));
+		WorkflowInvocationInputs inputs = new WorkflowInvocationInputs();
+		inputs.setDestination(new WorkflowInvocationInputs.ExistingHistory(history.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(),
-				WorkflowInputs.InputSourceType.HDA));
+		inputs.setInput(workflowInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(inputDataset.getId(),
+				WorkflowInvocationInputs.InputSourceType.HDA));
 
 		inputs.setToolParameter(toolName, toolParameter);
 
 		// execute workflow
-		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+		WorkflowInvocationOutputs output = workflowsClient.invokeWorkflow(inputs);
 
 		logger.debug("Running workflow in history " + output.getHistoryId());
 
@@ -531,7 +515,7 @@ public class GalaxyWorkflowsIT {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
-		WorkflowOutputs workflowOutput = 
+		WorkflowInvocationOutputs workflowOutput =
 				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
@@ -539,16 +523,6 @@ public class GalaxyWorkflowsIT {
 		// history should exist
 		HistoryDetails historyDetails = historiesClient.showHistory(workflowOutput.getHistoryId());
 		assertNotNull(historyDetails);
-		
-		// outputs should exist
-		assertNotNull(workflowOutput.getOutputIds());
-		assertTrue(workflowOutput.getOutputIds().size() > 0);
-		
-		// each output dataset should exist
-		for (String outputId : workflowOutput.getOutputIds()) {
-			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
-			assertNotNull(dataset);
-		}
 		
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
@@ -567,7 +541,7 @@ public class GalaxyWorkflowsIT {
 	public void testGetWorkflowStatusComplete() throws ExecutionManagerException, TimeoutException, InterruptedException {	
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
-		WorkflowOutputs workflowOutput = 
+		WorkflowInvocationOutputs workflowOutput =
 				runSingleFileTabularWorkflowFilterTool(history, dataFile1, VALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
@@ -590,7 +564,7 @@ public class GalaxyWorkflowsIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
 		// no column c2 for this input file, so should give an error
-		WorkflowOutputs workflowOutput = 
+		WorkflowInvocationOutputs workflowOutput =
 				runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
@@ -614,7 +588,7 @@ public class GalaxyWorkflowsIT {
 		
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
-		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
+		WorkflowInvocationOutputs workflowOutput = runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -661,7 +635,7 @@ public class GalaxyWorkflowsIT {
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 
 		Map<String, ToolParameter> toolParameters = ImmutableMap.of(toolId, new ToolParameter("pattern", "^#"));
-		WorkflowOutputs workflowOutput = runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel,
+		WorkflowInvocationOutputs workflowOutput = runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel,
 				toolParameters);
 		assertNotNull("workflowOutput should not be null", workflowOutput);
 		assertNotNull("workflowOutput history id should not be null", workflowOutput.getHistoryId());
@@ -669,23 +643,6 @@ public class GalaxyWorkflowsIT {
 		// history should exist
 		HistoryDetails historyDetails = historiesClient.showHistory(workflowOutput.getHistoryId());
 		assertNotNull("historyDetails for the history for the workflow should not be null", historyDetails);
-
-		// outputs should exist
-		assertNotNull("outputIds for the workflow should not be null", workflowOutput.getOutputIds());
-		assertTrue("there should exist output dataset ids for the workflow", workflowOutput.getOutputIds().size() > 0);
-
-		// each output dataset should exist
-		for (String outputId : workflowOutput.getOutputIds()) {
-			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
-			assertNotNull("the output dataset should exist", dataset);
-
-			HistoryContentsProvenance provenance = historiesClient.showProvenance(workflowOutput.getHistoryId(),
-					dataset.getId());
-			if (toolId.equals(provenance.getToolId())) {
-				Map<String, Object> parametersMap = provenance.getParameters();
-				assertEquals("pattern parameter is correct", "\"^#\"", parametersMap.get("pattern"));
-			}
-		}
 
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());

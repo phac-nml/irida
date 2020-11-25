@@ -96,6 +96,7 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 	public boolean getServiceStatus(RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 		ResponseEntity<String> forEntity = restTemplate.getForEntity(remoteAPI.getServiceURI(), String.class);
+
 		return forEntity.getStatusCode() == HttpStatus.OK;
 	}
 

@@ -7,13 +7,19 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -27,17 +33,20 @@ public class UIProjectsService {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MessageSource messageSource;
-
+	private final ProjectOwnerPermission projectOwnerPermission;
+	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	/*
 	All roles that are available on a project.
 	 */
 	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
 
 	@Autowired
-	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource) {
+	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource, ProjectOwnerPermission projectOwnerPermission, ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
+		this.projectOwnerPermission = projectOwnerPermission;
+		this.projectMembersPermission = projectMembersPermission;
 	}
 
 	/**
@@ -89,4 +98,32 @@ public class UIProjectsService {
 		return projectService.findProjectsForUser(tableRequest.getSearch(), tableRequest.getCurrent(),
 				tableRequest.getPageSize(), tableRequest.getSort());
 	}
+
+	/**
+	 * Get information about a project as well as permissions
+	 *
+	 * @param projectId - The project to get info for
+	 * @return {@link ProjectInfoResponse}
+	 */
+	public ProjectInfoResponse getProjectInfo(Long projectId) {
+		Project project = projectService.read(projectId);
+
+		User user = (User) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+		boolean isAdmin = user.getSystemRole()
+				.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
+
+		String projectName = project.getName();
+
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+
+		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
+
+		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
+
+		return new ProjectInfoResponse(project.getId(), projectName, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
+	}
+
 }

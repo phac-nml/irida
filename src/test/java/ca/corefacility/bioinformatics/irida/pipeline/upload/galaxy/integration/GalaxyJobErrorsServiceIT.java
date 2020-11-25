@@ -31,7 +31,11 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErro
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.service.*;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
+import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 
@@ -78,11 +82,10 @@ public class GalaxyJobErrorsServiceIT {
 	private EmailController emailController;
 
 	@Autowired
-	private SequencingObjectService sequencingObjectService;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
-
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -102,7 +105,8 @@ public class GalaxyJobErrorsServiceIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
+
 	}
 
 	/**
