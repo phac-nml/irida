@@ -1,8 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -11,18 +16,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -35,15 +43,20 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
  */
 @Component
 public class UIPipelineService {
+	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
+
 	private final UICartService cartService;
     private final IridaWorkflowsService workflowsService;
     private final WorkflowNamedParametersService namedParametersService;
     private final ProjectService projectService;
     private final ReferenceFileService referenceFileService;
+	private final MessageSource messageSource;
     private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
     private final UpdateSamplePermission updateSamplePermission;
 	private final MessageSource messageSource;
 
+	@Autowired
+	public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
 	@Autowired
 	public UIPipelineService(UICartService cartService, IridaWorkflowsService workflowsService,
             WorkflowNamedParametersService namedParametersService, ProjectService projectService,
@@ -54,6 +67,9 @@ public class UIPipelineService {
         this.namedParametersService = namedParametersService;
         this.projectService = projectService;
         this.referenceFileService = referenceFileService;
+		this.messageSource = messageSource;
+	}
+
         this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
         this.updateSamplePermission = updateSamplePermission;
 		this.messageSource = messageSource;
@@ -270,10 +286,22 @@ public class UIPipelineService {
 
     private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
         return projects.stream()
-                .map(project -> referenceFileService.getReferenceFilesForProject(project)
-                        .stream()
-                        .map(UIReferenceFile::new)
-                        .collect(Collectors.toList()))
+                .map(project -> {
+					List<UIReferenceFile> list = new ArrayList<>();
+					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
+							project)) {
+						try {
+							ReferenceFile file = projectReferenceFileJoin.getObject();
+							Path path = file.getFile();
+							String filesize = FileUtilities.humanReadableByteCount(Files.size(path), true);
+							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
+							list.add(uiReferenceFile);
+						} catch (IOException e) {
+							logger.error(e.getMessage());
+						}
+					}
+					return list;
+				})
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }

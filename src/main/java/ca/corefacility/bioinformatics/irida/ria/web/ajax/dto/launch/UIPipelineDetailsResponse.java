@@ -5,7 +5,7 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 
 /**
  * Model class to send details about a workflow pipeline to the UI

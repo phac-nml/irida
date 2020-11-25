@@ -6,7 +6,7 @@ import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
   removeProjectReferenceFile,
-} from "../../../apis/projects/reference-files";
+} from "../../../apis/references/reference-files";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
 import {
@@ -140,7 +140,7 @@ export function ReferenceFiles() {
     multiple: true,
     accept: ".fasta",
     showUploadList: false,
-    action: setBaseUrl(`ajax/reference-files/project/${projectId}`),
+    action: setBaseUrl(`ajax/reference-files?projectId=${projectId}`),
     onChange(info) {
       const { status } = info.file;
       if (status === "done") {
@@ -164,7 +164,7 @@ export function ReferenceFiles() {
       <Space direction="vertical" style={{ width: `100%` }}>
         {projectInfo && projectInfo.canManage ? (
           <DragUpload
-            {...referenceFileUploadOptions}
+            options={referenceFileUploadOptions}
             uploadText={i18n("ReferenceFile.clickorDrag")}
             uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
           />
