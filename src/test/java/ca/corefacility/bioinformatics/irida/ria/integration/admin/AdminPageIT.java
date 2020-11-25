@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.admin;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -17,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/admin/AdminPageView.xml")
 public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 
-	@Ignore
+
 	@Test
 	public void accessPageAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
@@ -70,7 +69,7 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("User cannot navigate to admin panel, admin page title should not be present", page.comparePageTitle("Statistics"));
 	}
 
-	@Ignore
+
 	@Test
 	public void testPageSetUp() {
 		LoginPage.loginAsAdmin(driver());
