@@ -1,4 +1,5 @@
 const propertiesReader = require("properties-reader");
+const fs = require("fs");
 
 const defaults = {
   "primary-color": "#1890ff",
@@ -7,23 +8,37 @@ const defaults = {
   "font-size-base": "14px",
   "border-radius-base": "2px",
 };
+const iridaConfig = "/etc/irida/irida.conf";
+const propertiesConfig = "../resources/configuration.properties";
 
 function formatAntStyles() {
-  const custom = {};
+  const colourProperties = {};
   const re = /styles.ant.([\w+-]*)/;
 
   try {
-    const properties = propertiesReader("/etc/irida/irida.conf");
-    properties.each((key, value) => {
-      const found = key.match(re);
-      if (found) {
-        custom[found[1]] = value;
-      }
-    });
+    if (fs.existsSync(propertiesConfig)) {
+      const properties = propertiesReader(propertiesConfig);
+      properties.each((key, value) => {
+        const found = key.match(re);
+        if (found) {
+          colourProperties[found[1]] = value;
+        }
+      });
+    }
+
+    if (fs.existsSync(iridaConfig)) {
+      const properties = propertiesReader(iridaConfig);
+      properties.each((key, value) => {
+        const found = key.match(re);
+        if (found) {
+          colourProperties[found[1]] = value;
+        }
+      });
+    }
   } catch (e) {
     console.log("No styles in `/etc/irida/irida.conf`");
   }
-  return Object.assign({}, defaults, custom);
+  return Object.assign({}, defaults, colourProperties);
 }
 
 module.exports = { formatAntStyles };
