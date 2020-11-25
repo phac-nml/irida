@@ -50,13 +50,10 @@ public class UIPipelineService {
     private final WorkflowNamedParametersService namedParametersService;
     private final ProjectService projectService;
     private final ReferenceFileService referenceFileService;
-	private final MessageSource messageSource;
     private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
     private final UpdateSamplePermission updateSamplePermission;
 	private final MessageSource messageSource;
 
-	@Autowired
-	public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
 	@Autowired
 	public UIPipelineService(UICartService cartService, IridaWorkflowsService workflowsService,
             WorkflowNamedParametersService namedParametersService, ProjectService projectService,
@@ -67,9 +64,6 @@ public class UIPipelineService {
         this.namedParametersService = namedParametersService;
         this.projectService = projectService;
         this.referenceFileService = referenceFileService;
-		this.messageSource = messageSource;
-	}
-
         this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
         this.updateSamplePermission = updateSamplePermission;
 		this.messageSource = messageSource;

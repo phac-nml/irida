@@ -6,9 +6,10 @@ import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { ParameterWithOptions } from "./ParameterWithOptions";
 import { SavedParameters } from "./parameters/SavedParameters";
 import { ReferenceFiles } from "./references/ReferenceFiles";
-import { ShareResultsWithProjects } from "./components/ShareResultsWithProjects";
-import { ShareResultsWithSamples } from "./components/ShareResultsWithSamples";
+import { ShareResultsWithProjects } from "./share-results/ShareResultsWithProjects";
+import { ShareResultsWithSamples } from "./share-results/ShareResultsWithSamples";
 import { launchNewPipeline, useLaunch } from "./launch-context";
+import { SharePipelineResults } from "./SharePipelineResults";
 
 /**
  * React component to layout the content of the pipeline launch.
@@ -44,8 +45,7 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
-        <ShareResultsWithProjects />
-        <ShareResultsWithSamples />
+        <SharePipelineResults />
         <ReferenceFiles />
         <SavedParameters form={form} />
         <ParameterWithOptions parameters={parameterWithOptions} />
