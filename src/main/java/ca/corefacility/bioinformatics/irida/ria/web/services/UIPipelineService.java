@@ -1,23 +1,36 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
@@ -26,15 +39,24 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
  */
 @Component
 public class UIPipelineService {
-	private final IridaWorkflowsService workflowsService;
-	private final WorkflowNamedParametersService namedParametersService;
+	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
+
+	private final Cart cart;
+    private final IridaWorkflowsService workflowsService;
+    private final WorkflowNamedParametersService namedParametersService;
+    private final ProjectService projectService;
+    private final ReferenceFileService referenceFileService;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public UIPipelineService(IridaWorkflowsService workflowsService,
-			WorkflowNamedParametersService namedParametersService, MessageSource messageSource) {
-		this.workflowsService = workflowsService;
-		this.namedParametersService = namedParametersService;
+	public UIPipelineService(Cart cart, IridaWorkflowsService workflowsService,
+            WorkflowNamedParametersService namedParametersService, ProjectService projectService,
+            ReferenceFileService referenceFileService, MessageSource messageSource) {
+        this.cart = cart;
+        this.workflowsService = workflowsService;
+        this.namedParametersService = namedParametersService;
+        this.projectService = projectService;
+        this.referenceFileService = referenceFileService;
 		this.messageSource = messageSource;
 	}
 
@@ -74,8 +96,21 @@ public class UIPipelineService {
          */
 		detailsResponse.setSavedPipelineParameters(getSavedPipelineParameters(workflow, locale));
 
-		return detailsResponse;
-	}
+		/*
+        Check / add reference files
+         */
+        if (description.requiresReference()) {
+            /*
+            Need to get a list of all the projects in the cart
+             */
+            List<Project> projects = (List<Project>) projectService.readMultiple(cart.getProjectIdsInCart());
+
+            detailsResponse.setRequiresReference(true);
+            detailsResponse.setReferenceFiles(getReferenceFilesForPipeline(projects));
+        }
+
+        return detailsResponse;
+    }
 
 	/**
 	 * Save a new set of {@link IridaWorkflowNamedParameters}
@@ -201,21 +236,42 @@ public class UIPipelineService {
 				.map(wp -> {
 					Map<String, String> inputParameter = wp.getInputParameters();
 
-					// Go through the parameters and see which ones are getting overwritten.
-					List<PipelineParameter> parameters = defaultParameters.stream()
-							.map(parameter -> {
-								if (inputParameter.containsKey(parameter.getName())) {
-									return new PipelineParameter(parameter.getName(), parameter.getLabel(),
-											inputParameter.get(parameter.getName()));
-								}
-								return new PipelineParameter(parameter.getName(), parameter.getLabel(),
-										parameter.getValue());
-							})
+            // Go through the parameters and see which ones are getting overwritten.
+            List<PipelineParameter> parameters = defaultParameters.stream()
+                    .map(parameter -> {
+                        if (inputParameter.containsKey(parameter.getName())) {
+                            return new PipelineParameter(parameter.getName(), parameter.getLabel(),
+                                    inputParameter.get(parameter.getName()));
+                        }
+                        return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
+                    })
 							.collect(Collectors.toList());
-					return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
-				})
-				.collect(Collectors.toList()));
+            return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
+        })
+                .collect(Collectors.toList()));
 
 		return savedParameters;
 	}
+
+    private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
+        return projects.stream()
+                .map(project -> {
+					List<UIReferenceFile> list = new ArrayList<>();
+					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
+							project)) {
+						try {
+							ReferenceFile file = projectReferenceFileJoin.getObject();
+							Path path = file.getFile();
+							String filesize = FileUtilities.humanReadableByteCount(Files.size(path), true);
+							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
+							list.add(uiReferenceFile);
+						} catch (IOException e) {
+							logger.error(e.getMessage());
+						}
+					}
+					return list;
+				})
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
 }

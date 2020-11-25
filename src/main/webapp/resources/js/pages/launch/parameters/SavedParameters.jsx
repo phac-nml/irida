@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Form, Select, Space, Tag } from "antd";
-import { IconEdit } from "../../components/icons/Icons";
-import ParametersModal from "./components/ParametersModal";
-import { useLaunchDispatch, useLaunchState } from "./launch-context";
-import { SPACE_XS } from "../../styles/spacing";
+import { Button, Divider, Form, Select, Space, Tag } from "antd";
+import { IconEdit } from "../../../components/icons/Icons";
+import { ParametersModal } from "./ParametersModal";
+import { setParameterSetById, useLaunch } from "../launch-context";
+import { SPACE_XS } from "../../../styles/spacing";
 
 /**
  * React component to render a select input and modifying button for
@@ -14,8 +14,7 @@ import { SPACE_XS } from "../../styles/spacing";
  * @constructor
  */
 export function SavedParameters({ form }) {
-  const { parameterSets, parameterSet } = useLaunchState();
-  const { dispatchUseParameterSetById } = useLaunchDispatch();
+  const [{ parameterSets, parameterSet }, launchDispatch] = useLaunch();
   const [visible, setVisible] = React.useState(false);
 
   /**
@@ -28,14 +27,14 @@ export function SavedParameters({ form }) {
   }, [form, parameterSet]);
 
   return (
-    <>
+    <section>
       <Form.Item label={i18n("SavedParameters.title")}>
         <div style={{ display: "flex" }}>
           <div style={{ flexGrow: 1, marginRight: SPACE_XS }}>
             <Form.Item name="parameterSet">
               <Select
                 value={parameterSet.id}
-                onChange={dispatchUseParameterSetById}
+                onChange={(id) => setParameterSetById(launchDispatch, id)}
               >
                 {parameterSets.map((set) => (
                   <Select.Option key={set.key} value={set.id}>
@@ -58,6 +57,7 @@ export function SavedParameters({ form }) {
         </div>
       </Form.Item>
       <ParametersModal visible={visible} closeModal={() => setVisible(false)} />
-    </>
+      <Divider />
+    </section>
   );
 }

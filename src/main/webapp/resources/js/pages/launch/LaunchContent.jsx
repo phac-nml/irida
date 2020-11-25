@@ -1,19 +1,22 @@
 import React from "react";
 import { LaunchPageHeader } from "./LaunchPageHeader";
 import { LaunchDetails } from "./LaunchDetails";
-import { Button, Divider, Form } from "antd";
+import { Button, Form } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
-import { useLaunchDispatch, useLaunchState } from "./launch-context";
 import { ParameterWithOptions } from "./ParameterWithOptions";
-import { SavedParameters } from "./SavedParameters";
+import { SavedParameters } from "./parameters/SavedParameters";
+import { ReferenceFiles } from "./references/ReferenceFiles";
+import { launchNewPipeline, useLaunch } from "./launch-context";
 
 /**
  * React component to layout the content of the pipeline launch.
  * It will act as the top level logic controller.
  */
 export function LaunchContent() {
-  const { initialValues, parameterWithOptions } = useLaunchState();
-  const { dispatchLaunch } = useLaunchDispatch();
+  const [
+    { initialValues, pipeline, parameterWithOptions },
+    launchDispatch,
+  ] = useLaunch();
   const [form] = Form.useForm();
 
   /**
@@ -22,13 +25,15 @@ export function LaunchContent() {
    */
   const onFinish = () => {
     // Add any required extra validation here.
-    form.validateFields().then((values) => dispatchLaunch(values));
+    form
+      .validateFields()
+      .then((values) => launchNewPipeline(launchDispatch, values));
     // Add any required UI updates here.
   };
 
   return (
     <>
-      <LaunchPageHeader />
+      <LaunchPageHeader pipeline={pipeline} />
       <Form
         form={form}
         onFinish={onFinish}
@@ -37,9 +42,8 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
-        <Divider />
+        <ReferenceFiles />
         <SavedParameters form={form} />
-        <Divider />
         <ParameterWithOptions parameters={parameterWithOptions} />
         <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>
           {i18n("LaunchContent.submit")}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input } from "antd";
+import { Divider, Form, Input } from "antd";
 
 /**
  * React component for editing the basic information for launching an IRIDA Workflow Pipeline.
@@ -8,7 +8,7 @@ import { Form, Input } from "antd";
  */
 export function LaunchDetails() {
   return (
-    <>
+    <section>
       <Form.Item
         label={i18n("LaunchDetails.name")}
         name="name"
@@ -24,6 +24,7 @@ export function LaunchDetails() {
       <Form.Item label={i18n("LaunchDetails.description")} name="description">
         <Input.TextArea />
       </Form.Item>
-    </>
+      <Divider />
+    </section>
   );
 }

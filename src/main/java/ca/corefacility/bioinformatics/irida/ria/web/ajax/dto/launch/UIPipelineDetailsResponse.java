@@ -5,6 +5,7 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 
 /**
  * Model class to send details about a workflow pipeline to the UI
@@ -14,8 +15,10 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
+    private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
+    private List<UIReferenceFile> referenceFiles;
 
     public String getName() {
         return name;
@@ -55,5 +58,21 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setSavedPipelineParameters(List<SavedPipelineParameters> savedPipelineParameters) {
         this.savedPipelineParameters = savedPipelineParameters;
+    }
+
+    public boolean isRequiresReference() {
+        return requiresReference;
+    }
+
+    public void setRequiresReference(boolean requiresReference) {
+        this.requiresReference = requiresReference;
+    }
+
+    public List<UIReferenceFile> getReferenceFiles() {
+        return referenceFiles;
+    }
+
+    public void setReferenceFiles(List<UIReferenceFile> referenceFiles) {
+        this.referenceFiles = referenceFiles;
     }
 }

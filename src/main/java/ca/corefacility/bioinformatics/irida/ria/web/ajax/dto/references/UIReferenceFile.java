@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 /**
  * Represents a reference file in the UI.
  */
-
 public class UIReferenceFile {
 	private Long id;
 	private String name;

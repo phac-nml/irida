@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Form, Radio, Select } from "antd";
+import { Checkbox, Divider, Form, Radio, Select } from "antd";
 
 /**
  * React Component to display workflow "parameters with options", this would include
@@ -16,7 +16,7 @@ import { Checkbox, Form, Radio, Select } from "antd";
  * @constructor
  */
 export function ParameterWithOptions({ parameters }) {
-  return parameters.map((parameter) => {
+  const content = parameters.map((parameter) => {
     switch (parameter.type) {
       case "checkbox":
         return (
@@ -56,4 +56,11 @@ export function ParameterWithOptions({ parameters }) {
         );
     }
   });
+
+  return (
+    <section>
+      {content}
+      <Divider />
+    </section>
+  );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Input } from "antd";
-import { useLaunchState } from "../../launch-context";
+import { useLaunch } from "../launch-context";
 
 /**
  * React component to render the footer of the saved parameters modal
@@ -12,7 +12,7 @@ import { useLaunchState } from "../../launch-context";
  * @constructor
  */
 export function SaveParametersAsFooter({ onCancel, onSaveAs }) {
-  const { parameterSet } = useLaunchState();
+  const [{ parameterSet }] = useLaunch();
   const inputRef = React.useRef();
 
   const [name, setName] = React.useState(
