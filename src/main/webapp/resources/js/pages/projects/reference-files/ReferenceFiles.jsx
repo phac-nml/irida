@@ -92,7 +92,7 @@ export function ReferenceFiles() {
               notification.success({
                 message: i18n(
                   "ReferenceFile.downloadingFileSuccess",
-                  file.label,
+                  file.name,
                   projectInfo.projectName
                 ),
               });

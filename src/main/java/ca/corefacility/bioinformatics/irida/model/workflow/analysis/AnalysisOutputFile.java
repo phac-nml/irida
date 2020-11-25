@@ -196,9 +196,8 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 			bytes = IridaFiles.getBytesForFile(getFile());
 		} catch (IOException e) {
 			logger.error("Unable to read file.", e);
-		} finally {
-			return bytes;
 		}
+		return bytes;
 	}
 
 	/**
