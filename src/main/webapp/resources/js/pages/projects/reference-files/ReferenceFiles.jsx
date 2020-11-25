@@ -168,11 +168,11 @@ export function ReferenceFiles() {
       .catch((error) => {
         onError("Error");
         notification.error({
-          message:
-            "Upload failed for reference file " +
-            file.name +
-            ". " +
-            error.message,
+          message: i18n(
+            "ReferenceFile.uploadFileError",
+            file.name,
+            error.message
+          ),
         });
       });
   };
