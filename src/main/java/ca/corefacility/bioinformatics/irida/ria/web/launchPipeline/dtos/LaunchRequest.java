@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch;
+package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 
 /**
  * Information required to launch a IRIDA Workflow Pipeline

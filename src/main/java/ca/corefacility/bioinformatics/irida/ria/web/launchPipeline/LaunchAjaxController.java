@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.LaunchRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
@@ -44,6 +44,11 @@ public class LaunchAjaxController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new AjaxErrorResponse("Cannot find this pipeline"));
         }
+    }
+
+    @GetMapping("/samples")
+    public void getPipelineSamples() {
+
     }
 
     /**
