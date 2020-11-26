@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,7 +86,13 @@ public class SequenceFileController {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
-		sequenceFile.getFileInputStream().transferTo(response.getOutputStream());
+
+		try(InputStream inputStream = sequenceFile.getFileInputStream()) {
+			inputStream.transferTo(response.getOutputStream());
+		} catch (IOException e) {
+			logger.error("Unable to read input stream from file", e);
+		}
+
 		response.flushBuffer();
 	}
 

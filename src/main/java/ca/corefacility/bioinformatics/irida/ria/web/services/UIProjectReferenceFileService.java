@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -120,7 +121,13 @@ public class UIProjectReferenceFileService {
 	public void downloadReferenceFile(Long fileId, HttpServletResponse response) throws IOException {
 		ReferenceFile file = referenceFileService.read(fileId);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-		file.getFileInputStream().transferTo(response.getOutputStream());
+
+		try(InputStream inputStream = file.getFileInputStream()) {
+			inputStream.transferTo(response.getOutputStream());
+		} catch (IOException e) {
+			logger.error("Unable to read input stream from file", e);
+		}
+
 		response.flushBuffer();
 	}
 
