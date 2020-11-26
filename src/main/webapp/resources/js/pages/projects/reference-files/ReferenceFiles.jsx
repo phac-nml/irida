@@ -1,13 +1,12 @@
 import React from "react";
-import { notification, Progress, Space, Table, Typography } from "antd";
+import { notification, Space, Table, Typography } from "antd";
 import { InfoAlert } from "../../../components/alerts";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
   removeProjectReferenceFile,
-  uploadProjectReferenceFiles,
 } from "../../../apis/projects/reference-files";
-import { getProjectInfo } from "../../../apis/projects/projects";
 
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
@@ -16,6 +15,8 @@ import {
   RemoveTableItemButton,
 } from "../../../components/Buttons";
 import { DragUpload } from "../../../components/files/DragUpload";
+
+import { getProjectInfo } from "../../../apis/projects/projects";
 
 const { Title } = Typography;
 
@@ -28,8 +29,6 @@ export function ReferenceFiles() {
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState(0);
   const [projectInfo, setProjectInfo] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-
-  const [progress, setProgress] = React.useState(0);
 
   const pathRegx = new RegExp(/projects\/(\d+)/);
   const projectId = window.location.pathname.match(pathRegx)[1];
@@ -135,52 +134,27 @@ export function ReferenceFiles() {
       });
   }
 
-  // Custom request for drag upload to display progress of uploads
-  const uploadFiles = async (options) => {
-    const { onSuccess, onError, file, onProgress } = options;
-
-    const formData = new FormData();
-    const config = {
-      headers: { "content-type": "multipart/form-data" },
-      onUploadProgress: (event) => {
-        const percent = Math.floor((event.loaded / event.total) * 100);
-        setProgress(percent);
-        if (percent === 100) {
-          setTimeout(() => setProgress(0), 1000);
-        }
-        onProgress({ percent: (event.loaded / event.total) * 100 });
-      },
-    };
-    formData.append("file", file);
-
-    uploadProjectReferenceFiles(projectId, formData, config)
-      .then(() => {
-        onSuccess("Ok");
-        notification.success({
-          message: `${i18n(
-            "ReferenceFile.uploadFileSuccess",
-            file.name,
-            projectInfo.projectName
-          )}`,
-        });
-        updateReferenceFileTable();
-      })
-      .catch((error) => {
-        onError("Error");
-        notification.error({
-          message: i18n(
-            "ReferenceFile.uploadFileError",
-            file.name,
-            error.message
-          ),
-        });
-      });
-  };
-
   // Options for the Ant Design upload component
   const referenceFileUploadOptions = {
     multiple: true,
     accept: ".fasta",
+    showUploadList: false,
+    action: setBaseUrl(`ajax/reference-files/project/${projectId}`),
+    onChange(info) {
+      const { status } = info.file;
+      if (status === "done") {
+        notification.success({
+          message: `${i18n(
+            "ReferenceFile.uploadFileSuccess",
+            info.file.name,
+            projectInfo.projectName
+          )}`,
+        });
+        updateReferenceFileTable();
+      } else if (status === "error") {
+        notification.error({ message: info.file.response.error });
+      }
+    },
   };
 
   return (
@@ -190,8 +164,6 @@ export function ReferenceFiles() {
         {projectInfo && projectInfo.canManage ? (
           <DragUpload
             {...referenceFileUploadOptions}
-            progress={<Progress percent={progress} />}
-            customRequest={uploadFiles}
             uploadText={i18n("ReferenceFile.clickorDrag")}
             uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
           />
