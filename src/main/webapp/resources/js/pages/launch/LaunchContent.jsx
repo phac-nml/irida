@@ -1,13 +1,11 @@
 import React from "react";
 import { LaunchPageHeader } from "./LaunchPageHeader";
 import { LaunchDetails } from "./LaunchDetails";
-import { Button, Form } from "antd";
+import { Button, Col, Form, Row } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { ParameterWithOptions } from "./ParameterWithOptions";
 import { SavedParameters } from "./parameters/SavedParameters";
 import { ReferenceFiles } from "./references/ReferenceFiles";
-import { ShareResultsWithProjects } from "./share-results/ShareResultsWithProjects";
-import { ShareResultsWithSamples } from "./share-results/ShareResultsWithSamples";
 import { launchNewPipeline, useLaunch } from "./launch-context";
 import { SharePipelineResults } from "./SharePipelineResults";
 
@@ -37,22 +35,33 @@ export function LaunchContent() {
   return (
     <>
       <LaunchPageHeader pipeline={pipeline} />
-      <Form
-        form={form}
-        onFinish={onFinish}
-        name="details"
-        layout="vertical"
-        initialValues={initialValues}
-      >
-        <LaunchDetails />
-        <SharePipelineResults />
-        <ReferenceFiles />
-        <SavedParameters form={form} />
-        <ParameterWithOptions parameters={parameterWithOptions} />
-        <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>
-          {i18n("LaunchContent.submit")}
-        </Button>
-      </Form>
+      <Row gutter={[16, 16]}>
+        <Col sm={24} md={12} xl={14}>
+          <Form
+            form={form}
+            onFinish={onFinish}
+            name="details"
+            layout="vertical"
+            initialValues={initialValues}
+          >
+            <LaunchDetails />
+            <SharePipelineResults />
+            <ReferenceFiles />
+            <SavedParameters form={form} />
+            <ParameterWithOptions parameters={parameterWithOptions} />
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<IconLaunchPipeline />}
+            >
+              {i18n("LaunchContent.submit")}
+            </Button>
+          </Form>
+        </Col>
+        <Col sm={24} md={12} xl={10}>
+          SAMPLES
+        </Col>
+      </Row>
     </>
   );
 }
