@@ -16,7 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UploadReferenceFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 
@@ -88,4 +91,17 @@ public class ReferenceFileAjaxController {
 			logger.error("Unable to read file to download", e);
 		}
 	}
+
+	/**
+	 * Get the reference files for a project
+	 *
+	 * @param projectId the ID of the project
+	 * @param locale    locale of the logged in user
+	 * @return information about the reference files in the project
+	 */
+	@GetMapping("/{projectId}")
+	public ResponseEntity<List<UIReferenceFile>> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
+		return ResponseEntity.ok(uiProjectReferenceFileService.getReferenceFilesForProject(projectId, locale));
+	}
+
 }
