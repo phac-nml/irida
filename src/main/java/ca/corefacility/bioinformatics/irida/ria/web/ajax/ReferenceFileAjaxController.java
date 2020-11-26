@@ -16,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UploadReferenceFilesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UploadReferenceFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 
 /**
