@@ -132,4 +132,30 @@ public class UIProjectReferenceFileService {
 		Files.copy(path, response.getOutputStream());
 		response.flushBuffer();
 	}
+
+	/**
+	 * Get the reference files for a project
+	 *
+	 * @param projectId the ID of the project
+	 * @param locale    locale of the logged in user
+	 * @return information about the reference files in the project
+	 */
+	public List<UIReferenceFile> getReferenceFilesForProject(Long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		// Let's get the reference files
+		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+		List<UIReferenceFile> refFiles = new ArrayList<>();
+		for (Join<Project, ReferenceFile> join : joinList) {
+			try {
+				refFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(Files.size(join.getObject().getFile()), true)));
+			} catch (IOException e) {
+				logger.error("Cannot find the size of file " + join.getObject()
+						.getLabel());
+				UIReferenceFile uiReferenceFile = new UIReferenceFile(join,
+						messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
+				refFiles.add(uiReferenceFile);
+			}
+		}
+		return refFiles;
+	}
 }

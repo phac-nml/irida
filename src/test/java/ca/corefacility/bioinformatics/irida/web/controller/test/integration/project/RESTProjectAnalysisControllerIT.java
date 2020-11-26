@@ -1,13 +1,15 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
-import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
-import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asOtherUser;
-import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static org.hamcrest.Matchers.hasItems;
-
-import org.eclipse.jetty.http.HttpStatus;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -15,14 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
+import static org.hamcrest.Matchers.hasItems;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -41,7 +37,7 @@ public class RESTProjectAnalysisControllerIT {
 
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
-		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().statusCode(HttpStatus.OK_200)
+		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
@@ -54,24 +50,24 @@ public class RESTProjectAnalysisControllerIT {
 	@Test
 	public void testGetProjectAnalysisAsOtherUser() {
 		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then()
-				.statusCode(HttpStatus.FORBIDDEN_403);
+				.statusCode(HttpStatus.FORBIDDEN.value());
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
-		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK_200)
+		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
-		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK_200)
+		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsOtherUser() {
 		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then()
-				.statusCode(HttpStatus.FORBIDDEN_403);
+				.statusCode(HttpStatus.FORBIDDEN.value());
 	}
 }
