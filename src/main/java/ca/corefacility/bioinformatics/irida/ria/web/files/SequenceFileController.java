@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,7 +84,6 @@ public class SequenceFileController {
 			HttpServletResponse response) throws IOException {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
-		Path path = sequenceFile.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
 		sequenceFile.getFileInputStream().transferTo(response.getOutputStream());
 		response.flushBuffer();
