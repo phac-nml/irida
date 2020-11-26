@@ -41,3 +41,23 @@ export async function removeProjectReferenceFile(projectId, fileId) {
       throw new Error(error.response.data.error);
     });
 }
+
+/**
+ * Remove the reference file from the project id provided
+ * @param {projectId} project for which to remove reference file from
+ * @param {formData} List of files to upload
+ * @param config Configuration options for upload
+ * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
+ */
+export async function uploadProjectReferenceFiles(projectId, formData, config) {
+  return await axios
+    .post(
+      setBaseUrl(`ajax/reference-files/project/${projectId}`),
+      formData,
+      config
+    )
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(error.response.data.error);
+    });
+}
