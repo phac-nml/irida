@@ -797,8 +797,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<outputDirectory>doc/_site/developer/apidocs/</outputDirectory>
-					<reportOutputDirectory>doc/_site/developer/apidocs/</reportOutputDirectory>
+					<outputDirectory>doc/developer/apidocs/</outputDirectory>
+					<reportOutputDirectory>doc/developer/apidocs/</reportOutputDirectory>
 					<quiet>true</quiet>
                     <doclint>all</doclint>
 				</configuration>
