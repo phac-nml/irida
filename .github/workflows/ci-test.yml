@@ -49,11 +49,6 @@ jobs:
           java-version: 11
       - name: Install libraries # Install our non-maven backed dependencies
         run: pushd lib; ./install-libs.sh; popd
-      - name: Verify MySQL connection
-        run: |
-          while ! mysqladmin ping -h${{ env.MYSQL_HOST }} -P${{ env.MYSQL_PORT }} --silent; do
-            sleep 1
-          done
       - name: Run tests with Maven # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }}  --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
 
