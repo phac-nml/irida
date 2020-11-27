@@ -41,7 +41,7 @@ When the Administrative Panel is accessed you will be taken to the landing page 
 
 This page displays usage statistics for the number of analyses ran, projects created, samples created, users created, and users logged in within the default time period which is set to 7 days.
 
-Clicking on any of the graphs will take you to another page for you to see advanced stats where you can select different time periods as well as, different chart types.
+Clicking on a graph will take you to the full details of the graph. There you can set different time periods to explore the data and select different chart types.
 
 ![Admin panel statistics link.](images/admin-panel-adv-stats.png)
 
