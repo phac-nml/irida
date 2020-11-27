@@ -95,8 +95,8 @@ Due to the updates described above regarding IRIDA's metadata storage refactors,
 
 There are 2 files that must be updated:
 
-* The plugin's `AnalysisSampleUpdater` implementation.  This will need to change any methods interacting with sample metadata to use the new service methods.
-* The `pom.xml` file.  This will tell your IRIDA plugin to target the `21.01` version of IRIDA's code in order to take advantage of the new features.  You will also need to increment your plugin version number in this file to tell IRIDA to use your new version.
+* The plugin's `AnalysisSampleUpdater` implementation.  You will need to change any methods interacting with sample metadata to use the new service methods.
+* The `pom.xml` file.  You will need to tell your IRIDA plugin to target the `21.01` version of IRIDA's code in order to take advantage of the new features.  You will also need to increment your plugin version number in this file to tell IRIDA to use your new version.
 
 Examples of how to update these files is shown below.  After these updates are complete you can re-compile your plugin and push a new release to your plugin's GitHub repository.
 
