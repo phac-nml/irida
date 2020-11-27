@@ -1,3 +1,7 @@
+#####################################################################
+# Integration test suite definition for IRIDA using GitHub Actions
+#####################################################################
+
 name: Integration Tests
 
 on: pull_request
