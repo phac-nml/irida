@@ -66,6 +66,7 @@ export function AnnouncementModal({
           ? i18n("AnnouncementModal.edit.okBtn")
           : i18n("AnnouncementModal.create.okBtn")
       }
+      okButtonProps={{ className: "t-submit-announcement" }}
       onOk={saveAnnouncement}
       onCancel={resetModal}
     >
