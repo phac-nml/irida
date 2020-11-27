@@ -11,8 +11,9 @@
 
     <!-- Default CSS not required just for this layout -->
     <script th:inline="javascript">
-      window.PAGE = {
-        BASE_URL: /*[[@{"/"}]]*/ "/"
+      window.TL = {
+        _BASE_URL: /*[[@{/}]]*/ "/",
+        emailConfigured: /*[[${emailConfigured}]]*/ false
       };
     </script>
     <style>
