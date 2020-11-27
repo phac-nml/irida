@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Checkbox, Form, Input, Modal, Space } from "antd";
+import { Checkbox, Form, Input, Modal, notification, Space } from "antd";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
@@ -24,30 +24,29 @@ export function AnnouncementModal({
   const markdownRef = useRef();
   const [form] = Form.useForm();
 
-  const onCancel = () => {
+  const resetModal = () => {
     form.resetFields();
     closeModal();
   };
 
   function saveAnnouncement() {
-    form.validateFields().then((values) => {
+    form.validateFields().then(({ title, priority }) => {
       const markdown = markdownRef.current.getMarkdown();
-      const title = values.title;
-      const priority = values.priority;
 
       if (announcement) {
         updateAnnouncement({
           id: announcement.id,
-          title: title,
+          title,
           message: markdown,
-          priority: priority,
-        });
+          priority,
+        })
+          .then(closeModal)
+          .catch((message) => notification.error({ message }));
       } else {
-        createAnnouncement(title, markdown, priority);
-        form.resetFields();
+        createAnnouncement(title, markdown, priority)
+          .then(resetModal)
+          .catch((message) => notification.error({ message }));
       }
-
-      closeModal();
     });
   }
   return (
@@ -68,7 +67,7 @@ export function AnnouncementModal({
           : i18n("AnnouncementModal.create.okBtn")
       }
       onOk={saveAnnouncement}
-      onCancel={onCancel}
+      onCancel={resetModal}
     >
       <Form layout="vertical" form={form} initialValues={announcement}>
         <Form.Item

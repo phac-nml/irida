@@ -16,7 +16,11 @@ const BASE = setBaseUrl(`ajax/announcements`);
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function createNewAnnouncement({ title, message, priority }) {
-  return axios.post(`${BASE}/create`, { title, message, priority });
+  try {
+    return axios.post(`${BASE}/create`, { title, message, priority });
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
 }
 
 /**
@@ -28,7 +32,11 @@ export function createNewAnnouncement({ title, message, priority }) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function updateAnnouncement({ id, title, message, priority }) {
-  return axios.put(`${BASE}/update`, { id, title, message, priority });
+  try {
+    return axios.put(`${BASE}/update`, { id, title, message, priority });
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
 }
 
 /**

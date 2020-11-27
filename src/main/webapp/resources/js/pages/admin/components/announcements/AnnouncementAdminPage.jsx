@@ -2,7 +2,6 @@
  * @fileOverview Announcements administration page.
  */
 import React, { useRef } from "react";
-import { render } from "react-dom";
 import {
   createNewAnnouncement,
   deleteAnnouncement,
@@ -23,13 +22,13 @@ export default function AnnouncementAdminPage({}) {
   const tableRef = useRef(null);
 
   function addNewAnnouncement(title, message, priority) {
-    createNewAnnouncement({ title, message, priority }).then(() =>
+    return createNewAnnouncement({ title, message, priority }).then(() =>
       tableRef.current.updateTable()
     );
   }
 
   function updateTableAnnouncement({ id, title, message, priority }) {
-    updateAnnouncement({
+    return updateAnnouncement({
       id,
       title,
       message,
