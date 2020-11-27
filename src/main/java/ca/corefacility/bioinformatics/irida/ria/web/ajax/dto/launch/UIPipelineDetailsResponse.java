@@ -15,6 +15,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
+    private boolean canUpdateSamples;
     private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
@@ -74,5 +75,13 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setReferenceFiles(List<UIReferenceFile> referenceFiles) {
         this.referenceFiles = referenceFiles;
+    }
+
+    public boolean isCanUpdateSamples() {
+        return canUpdateSamples;
+    }
+
+    public void setCanUpdateSamples(boolean canUpdateSamples) {
+        this.canUpdateSamples = canUpdateSamples;
     }
 }

@@ -7,6 +7,7 @@ import { ParameterWithOptions } from "./ParameterWithOptions";
 import { SavedParameters } from "./parameters/SavedParameters";
 import { ReferenceFiles } from "./references/ReferenceFiles";
 import { launchNewPipeline, useLaunch } from "./launch-context";
+import { SharePipelineResults } from "./SharePipelineResults";
 
 /**
  * React component to layout the content of the pipeline launch.
@@ -42,6 +43,7 @@ export function LaunchContent() {
         initialValues={initialValues}
       >
         <LaunchDetails />
+        <SharePipelineResults />
         <ReferenceFiles />
         <SavedParameters form={form} />
         <ParameterWithOptions parameters={parameterWithOptions} />

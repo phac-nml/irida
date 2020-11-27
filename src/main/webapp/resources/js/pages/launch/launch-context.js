@@ -115,7 +115,12 @@ const reducer = (state, action) => {
 
   switch (action.type) {
     case TYPES.LOADED:
-      return { ...state, loading: false, ...action.payload };
+      return {
+        ...state,
+        shareResultsWithProjects: true,
+        loading: false,
+        ...action.payload,
+      };
     case TYPES.PARAMETER_SET:
       return {
         ...state,
@@ -182,6 +187,8 @@ function LaunchProvider({ children }) {
         const initialValues = {
           name: formatDefaultPipelineName(type, Date.now()),
           parameterSet: 0,
+          shareResultsWithProjects: true,
+          updateSamples: false,
         };
 
         // Get initial values for parameters with options.
