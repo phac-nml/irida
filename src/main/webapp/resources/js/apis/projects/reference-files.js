@@ -50,14 +50,14 @@ export async function removeProjectReferenceFile(projectId, fileId) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function uploadProjectReferenceFiles(projectId, formData, config) {
-  return await axios
-    .post(
+  try {
+    const { data } = await axios.post(
       setBaseUrl(`ajax/reference-files/project/${projectId}`),
       formData,
       config
-    )
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw new Error(error.response.data.error);
-    });
+    );
+    return data;
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
 }

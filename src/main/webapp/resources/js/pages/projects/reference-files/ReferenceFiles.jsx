@@ -25,10 +25,9 @@ const { Title } = Typography;
  * @constructor
  */
 export function ReferenceFiles() {
-  const [projectReferenceFiles, setProjectReferenceFiles] = React.useState(0);
+  const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [projectInfo, setProjectInfo] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-
   const [progress, setProgress] = React.useState(0);
 
   const pathRegx = new RegExp(/projects\/(\d+)/);
@@ -173,11 +172,7 @@ export function ReferenceFiles() {
       .catch((error) => {
         onError("Error");
         notification.error({
-          message: i18n(
-            "ReferenceFile.uploadFileError",
-            file.name,
-            error.message
-          ),
+          message: i18n("ReferenceFile.uploadFileError", file.name, error),
         });
       });
   };

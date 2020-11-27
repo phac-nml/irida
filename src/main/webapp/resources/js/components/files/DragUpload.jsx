@@ -13,7 +13,14 @@ const { Dragger } = Upload;
 
 export function DragUpload({ uploadText, uploadHint, ...uploadOptions }) {
   return (
-    <Dragger {...uploadOptions}>
+    /*
+    Progress needs to be set to a string or number to keep it in the DOM.
+    Otherwise there are warnings in console:
+    'Warning: Invalid value for prop `$$typeof` on <div> tag. Either remove it from the
+    element, or pass a string or number value to keep it in the DOM. For details,
+    see https://reactjs.org/link/attribute-behavior'
+     */
+    <Dragger {...uploadOptions} progress={0}>
       <p className="ant-upload-drag-icon">
         <IconFileUpload />
       </p>
