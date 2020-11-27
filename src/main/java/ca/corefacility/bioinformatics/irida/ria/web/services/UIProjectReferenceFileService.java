@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileC
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -121,7 +121,13 @@ public class UIProjectReferenceFileService {
 	public void downloadReferenceFile(Long fileId, HttpServletResponse response) throws IOException {
 		ReferenceFile file = referenceFileService.read(fileId);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-		file.getFileInputStream().transferTo(response.getOutputStream());
+
+		try(InputStream inputStream = file.getFileInputStream()) {
+			inputStream.transferTo(response.getOutputStream());
+		} catch (IOException e) {
+			logger.error("Unable to read input stream from file", e);
+		}
+
 		response.flushBuffer();
 	}
 
@@ -129,24 +135,15 @@ public class UIProjectReferenceFileService {
 	 * Get the reference files for a project
 	 *
 	 * @param projectId the ID of the project
-	 * @param locale    locale of the logged in user
 	 * @return information about the reference files in the project
 	 */
-	public List<UIReferenceFile> getReferenceFilesForProject(Long projectId, Locale locale) {
+	public List<UIReferenceFile> getReferenceFilesForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		// Let's get the reference files
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
-			try {
-				refFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(Files.size(join.getObject().getFile()), true)));
-			} catch (IOException e) {
-				logger.error("Cannot find the size of file " + join.getObject()
-						.getLabel());
-				UIReferenceFile uiReferenceFile = new UIReferenceFile(join,
-						messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
-				refFiles.add(uiReferenceFile);
-			}
+			refFiles.add(new UIReferenceFile(join, join.getObject().getFileSize()));
 		}
 		return refFiles;
 	}

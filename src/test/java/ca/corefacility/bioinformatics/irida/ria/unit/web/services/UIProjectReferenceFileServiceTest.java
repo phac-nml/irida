@@ -129,7 +129,7 @@ public class UIProjectReferenceFileServiceTest {
 		when(projectService.read(project.getId())).thenReturn(project);
 		when(referenceFileService.read(file.getId())).thenReturn(file);
 
-		uiProjectReferenceFileService.getReferenceFilesForProject(project.getId(), Locale.ENGLISH);
+		uiProjectReferenceFileService.getReferenceFilesForProject(project.getId());
 
 		verify(projectService, times(1)).read(project.getId());
 		verify(referenceFileService, times(1)).getReferenceFilesForProject(project);

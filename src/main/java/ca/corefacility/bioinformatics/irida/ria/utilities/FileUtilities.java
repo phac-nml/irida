@@ -83,9 +83,12 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				InputStream inputStream = file.getFileInputStream();
-				IOUtils.copy(inputStream,outputStream);
-				inputStream.close();
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
+
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
@@ -153,9 +156,11 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				InputStream inputStream = file.getFileInputStream();
-				IOUtils.copy(inputStream,outputStream);
-				inputStream.close();
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
@@ -190,10 +195,8 @@ public class FileUtilities {
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName);
 		response.setContentType(CONTENT_TYPE_TEXT);
 
-		try (ServletOutputStream outputStream = response.getOutputStream()) {
-			InputStream inputStream = file.getFileInputStream();
-			IOUtils.copy(inputStream, outputStream);
-			inputStream.close();
+		try (InputStream inputStream = file.getFileInputStream()) {
+			IOUtils.copy(inputStream, response.getOutputStream());
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this

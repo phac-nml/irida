@@ -1097,8 +1097,8 @@ public class AnalysisAjaxController {
 		} else {
 			AnalysisOutputFile file = treeOptional.get();
 
-			try {
-				List<String> lines = IOUtils.readLines(file.getFileInputStream());
+			try(InputStream inputStream = file.getFileInputStream()) {
+				List<String> lines = IOUtils.readLines(inputStream);
 
 				if (lines.size() > 0) {
 					tree = lines.get(0);
@@ -1118,8 +1118,11 @@ public class AnalysisAjaxController {
 					}
 				}
 			} catch (NoSuchFileException e) {
-				logger.debug("File was not found: " + e.toString());
+				logger.error("File was not found: " + e.toString());
+			} catch (IOException e) {
+				logger.error("Unable to read input stream for file");
 			}
+
 		}
 		return new AnalysisTreeResponse(tree, message);
 	}

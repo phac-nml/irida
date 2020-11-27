@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,20 +199,14 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
-		byte[] bytes = new byte[0];
+		logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		try {
-			logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
-			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			try (BlobInputStream blobInputStream = blobClient.openInputStream()) {
-				bytes = blobInputStream.readAllBytes();
-			} catch (IOException e) {
-				logger.error("Couldn't get bytes from file [" + e + "]");
-			}
+			return blobClient.openInputStream();
 		} catch (BlobStorageException e) {
-			logger.error("Couldn't read file from azure [" + e + "]");
-			throw new StorageException("Unable to locate file on azure", e);
+			logger.error("Couldn't get file input stream from azure [" + e + "]");
+			throw new StorageException("Couldn't get file input stream from azure", e);
 		}
-		return new ByteArrayInputStream(bytes);
 	}
 
 	/**
