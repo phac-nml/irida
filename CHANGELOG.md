@@ -20,6 +20,8 @@ Changes
 * [Documentation]: Added documentation for sequence file fastqc page.
 * [UI]: Updated Project Reference File page to use Ant Design.
 * [Developer]: Removed invalid javax.interceptor-api Maven artifact.  It was no longer needed for the project and was causing build failures.  Existing `20.09.2` installations do not need to be upgraded, this change only affects building IRIDA from source.  (20.09.3)
+* [Developer]: Changed to using GitHub Actions for integration tests.
+* [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
 
 20.05 to 20.09
 --------------
