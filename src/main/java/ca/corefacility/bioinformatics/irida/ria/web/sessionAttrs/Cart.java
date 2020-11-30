@@ -84,10 +84,12 @@ public class Cart extends HashMap<Long, HashSet<Long>> {
 		return this.get(projectId);
 	}
 
-	public boolean isSampleInCart(Long id) {
-		return this.values()
-				.stream()
-				.filter(set -> set.contains(id))
-				.count() > 0;
+	public Long isSampleInCart(Long id) {
+		for (Long projectId : this.keySet()) {
+			if(this.get(projectId).contains(id)) {
+				return projectId;
+			}
+		}
+		return null;
 	}
 }

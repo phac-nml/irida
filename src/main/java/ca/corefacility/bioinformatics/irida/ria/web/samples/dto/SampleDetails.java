@@ -13,13 +13,13 @@ public class SampleDetails {
 	private Sample sample;
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	private boolean modifiable;
-	private boolean inCart;
+	private Long projectId; // If set, means sample is in the cart
 
-	public SampleDetails(Sample sample, boolean modifiable, boolean inCart) {
+	public SampleDetails(Sample sample, boolean modifiable, Long cartProjectId) {
 		this.sample = sample;
 		this.metadata = sample.getMetadata();
 		this.modifiable = modifiable;
-		this.inCart = inCart;
+		this.projectId = cartProjectId;
 	}
 
 	public Sample getSample() {
@@ -34,7 +34,7 @@ public class SampleDetails {
 		return modifiable;
 	}
 
-	public boolean isInCart() {
-		return inCart;
+	public Long getProjectId() {
+		return projectId;
 	}
 }
