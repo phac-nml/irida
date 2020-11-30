@@ -16,17 +16,27 @@ const BASE = setBaseUrl(`ajax/announcements`);
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function createNewAnnouncement({ title, message, priority }) {
-  return axios.post(`${BASE}/create`, { title, message, priority });
+  try {
+    return axios.post(`${BASE}/create`, { title, message, priority });
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
 }
 
 /**
  * Update an existing announcement.
  * @param {number} id - existing announcements identifier
- * @param {string} message - the updated announcement
+ * @param {string} title - the new title of the updated announcement
+ * @param {string} message - the new message of the updated announcement
+ * @param {boolean} priority - the new priority of the updated announcement
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function updateAnnouncement({ id, message }) {
-  return axios.put(`${BASE}/update`, { id, message });
+export function updateAnnouncement({ id, title, message, priority }) {
+  try {
+    return axios.put(`${BASE}/update`, { id, title, message, priority });
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
 }
 
 /**

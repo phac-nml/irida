@@ -1,6 +1,6 @@
 import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { CreateAnnouncementModal } from "./CreateAnnouncementModal";
+import { AnnouncementModal } from "./AnnouncementModal";
 
 /**
  * Component to add a button which will open a modal to create an announcement.
@@ -18,7 +18,7 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
         onClick={() => setVisible(true)}
         text={i18n("CreateNewAnnouncement.title")}
       />
-      <CreateAnnouncementModal
+      <AnnouncementModal
         visible={visible}
         closeModal={() => setVisible(false)}
         createAnnouncement={createAnnouncement}
