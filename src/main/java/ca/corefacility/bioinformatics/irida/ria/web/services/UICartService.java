@@ -1,18 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
 
 /**
  * Service for handling all aspects interaction with the Cart.
@@ -22,12 +25,15 @@ public class UICartService {
 	private final Cart cart;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public UICartService(Cart cart, ProjectService projectService, SampleService sampleService) {
+	public UICartService(Cart cart, ProjectService projectService, SampleService sampleService,
+			MessageSource messageSource) {
 		this.cart = cart;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -36,7 +42,19 @@ public class UICartService {
 	 * @param request Information about the project and samples to add to the cart
 	 * @return number of total samples in the cart
 	 */
-	public int addSamplesToCart(AddToCartRequest request) {
+	public AddToCartResponse addSamplesToCart(AddToCartRequest request) {
+		// Modify the cart here so we can properly return the UI.
+		HashSet<Long> existing = cart.containsKey(request.getProjectId()) ?
+				cart.get(request.getProjectId()) :
+				new HashSet<>();
+
+		int duplicates = 0;
+		for (Long sampleId : request.getSampleIds()) {
+			if (existing.contains(sampleId)) {
+				duplicates++;
+			}
+		}
+
 		return cart.add(request.getProjectId(), (List<Long>) request.getSampleIds());
 	}
 

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class CartAjaxController {
 	 * @return the number of samples currrently in the cart
 	 */
 	@PostMapping("")
-	public ResponseEntity<Integer> addSamplesToCart(@RequestBody AddToCartRequest request) {
+	public ResponseEntity<AddToCartResponse> addSamplesToCart(@RequestBody AddToCartRequest request) {
 		return ResponseEntity.ok(service.addSamplesToCart(request));
 	}
 
