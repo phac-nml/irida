@@ -5,7 +5,9 @@ SCRIPT_DIR=`pwd`
 DATABASE_NAME=irida_integration_test
 DATABASE_USER=test
 DATABASE_PASSWORD=test
-JDBC_URL=jdbc:mysql://localhost:3306/$DATABASE_NAME
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
 TMP_DIRECTORY=`mktemp -d /tmp/irida-test-XXXXXXXX`
 chmod 777 $TMP_DIRECTORY # Needs to be world-accessible so that Docker/Galaxy can access
 
@@ -55,6 +57,8 @@ check_dependencies() {
 }
 
 pretest_cleanup() {
+  JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
+
 	if [ "$NO_CLEANUP" = true ];
 	then
 		return
@@ -62,13 +66,13 @@ pretest_cleanup() {
 		DB_ERR="Failed to clean/create new database named '$DATABASE_NAME'. Perhaps you need to grant permission first with 'echo \"grant all privileges on $DATABASE_NAME.* to '$DATABASE_USER'@'localhost';\" | mysql -u root -p'."
 
 		set -x
-		echo "drop database if exists $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -u$DATABASE_USER -p$DATABASE_PASSWORD
+		echo "drop database if exists $DATABASE_NAME; create database $DATABASE_NAME;" | mysql -h $DATABASE_HOST -P $DATABASE_PORT -u$DATABASE_USER -p$DATABASE_PASSWORD
 		if [ $? -ne 0 ];
 		then
 			set +x
 			exit_error $DB_ERR
 		fi
-		mysql -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
+		mysql -h $DATABASE_HOST -P $DATABASE_PORT -u$DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME < $SCRIPT_DIR/ci/irida_latest.sql
 		if [ $? -ne 0 ];
 		then
 			set +x
@@ -187,6 +191,8 @@ then
 	echo -e "Options:"
 	echo -e "\t-d|--database:   Override name of database ($DATABASE_NAME) used for testing."
 	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
+	echo -e "\t--db-host:   Override the database host ($DATABASE_HOST) used for testing."
+	echo -e "\t--db-port:   Override the port used to connect to the database ($DATABASE_PORT) for testing."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
@@ -211,12 +217,22 @@ check_dependencies
 
 cd $SCRIPT_DIR
 
-while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" -o "$1" = "--no-headless" -o "$1" = "--selenium-docker" ];
+while [ "$1" = "--database" -o "$1" = "-d" -o "$1" = "--db-host" -o "$1" = "--db-port" -o "$1" = "--no-kill-docker" -o "$1" = "-c" -o "$1" = "--no-cleanup" -o "$1" = "--no-headless" -o "$1" = "--selenium-docker" ];
 do
 	if [ "$1" = "--database" -o "$1" = "-d" ];
 	then
 		shift
 		DATABASE_NAME=$1
+		shift
+	elif [ "$1" = "--db-host" ];
+	then
+		shift
+		DATABASE_HOST=$1
+		shift
+	elif [ "$1" = "--db-port" ];
+	then
+		shift
+		DATABASE_PORT=$1
 		shift
 	elif [ "$1" = "--no-kill-docker" ];
 	then
