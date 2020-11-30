@@ -191,6 +191,8 @@ then
 	echo -e "Options:"
 	echo -e "\t-d|--database:   Override name of database ($DATABASE_NAME) used for testing."
 	echo -e "\t-c|--no-cleanup: Do not cleanup previous test database before execution."
+	echo -e "\t--db-host:   Override the database host ($DATABASE_HOST) used for testing."
+	echo -e "\t--db-port:   Override the port used to connect to the database ($DATABASE_PORT) for testing."
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
