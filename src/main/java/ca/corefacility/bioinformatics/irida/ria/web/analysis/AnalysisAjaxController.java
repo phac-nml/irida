@@ -1096,7 +1096,7 @@ public class AnalysisAjaxController {
 			} catch (NoSuchFileException e) {
 				logger.error("File was not found: " + e.toString());
 			} catch (IOException e) {
-				logger.error("Unable to read input stream for file");
+				logger.error("Unable to read input stream for file", e);
 			}
 
 		}
