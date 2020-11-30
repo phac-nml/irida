@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -141,4 +142,13 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 		return Objects.equals(this.id, other.id) && Objects.equals(this.createdDate, other.createdDate);
 	}
 
+	/**
+	 * Gets assembly file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(getFile());
+	}
 }

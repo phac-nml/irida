@@ -158,6 +158,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			 */
 			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 			try {
+				logger.trace("Removing directory: " + outputDirectory.toString());
 				// Delete the analysis-output* temp directory
 				FileUtils.deleteDirectory(outputDirectory.toFile());
 			} catch (IOException e) {

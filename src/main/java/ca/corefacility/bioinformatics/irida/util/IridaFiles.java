@@ -67,6 +67,19 @@ public final class IridaFiles {
 	}
 
 	/**
+	 * Get the bytes for a file
+	 *
+	 * @param file The path to the file
+	 * @return the bytes for the file
+	 * @throws IOException if the file couldn't be read
+	 */
+	public static byte[] getBytesForFile(Path file) throws IOException  {
+		byte[] bytes = iridaFileStorageUtility.readAllBytes(file);
+		return bytes;
+	}
+
+	/**
+	 * Check if file exists
 	 * Checks if the file exists
 	 *
 	 * @param file The path to the file

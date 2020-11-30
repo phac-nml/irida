@@ -191,17 +191,16 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
-		byte[] bytes = new byte[0];
-		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
-			bytes = s3Object.getObjectContent()
-					.readAllBytes();
+		try {
+			S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+			return s3Object.getObjectContent();
 		} catch (AmazonServiceException e) {
 			logger.error("Couldn't read file from s3 bucket [" + e + "]");
 			throw new StorageException("Unable to locate file in s3 bucket", e);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			throw new StorageException("Unable to read file inputstream from s3 bucket", e);
 		}
-		return new ByteArrayInputStream(bytes);
 	}
 
 	/**
@@ -290,5 +289,23 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		}
 
 		return selectedExtension;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] readAllBytes(Path file) {
+		byte[] bytes = new byte[0];
+		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
+			bytes = s3ObjectInputStream.readAllBytes();
+		} catch (AmazonServiceException e) {
+			logger.error(e.getMessage());
+			throw new StorageException("Unable to read object from aws s3 bucket", e);
+		} catch (IOException e) {
+			logger.error("Couldn't get bytes from file [" + e + "]");
+		}
+		return bytes;
 	}
 }

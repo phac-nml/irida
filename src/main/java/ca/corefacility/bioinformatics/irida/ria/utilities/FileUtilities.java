@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,8 +12,8 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,12 +46,9 @@ public class FileUtilities {
 	 * Utility method for download a zip file containing all output files from
 	 * an analysis.
 	 *
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param fileName
-	 *            Name fo the file to create
-	 * @param files
-	 *            Set of {@link AnalysisOutputFile}
+	 * @param response                {@link HttpServletResponse}
+	 * @param fileName                Name fo the file to create
+	 * @param files                   Set of {@link AnalysisOutputFile}
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) {
@@ -74,7 +70,7 @@ public class FileUtilities {
 				ZipOutputStream outputStream = new ZipOutputStream(responseStream)) {
 
 			for (AnalysisOutputFile file : files) {
-				if (!Files.exists(file.getFile())) {
+				if (!file.fileExists()) {
 					response.setStatus(404);
 					throw new FileNotFoundException();
 				}
@@ -87,14 +83,16 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				Files.copy(file.getFile(), outputStream);
-
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
 
-				ObjectMapper objectMapper = new ObjectMapper();
-				byte[] bytes = objectMapper.writeValueAsBytes(file);
+				byte[] bytes = file.getBytesForFile();
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
 				outputStream.write(bytes);
 				outputStream.closeEntry();
@@ -116,12 +114,10 @@ public class FileUtilities {
 	/**
 	 * Utility method for download a zip file containing all output files from
 	 * an analysis.
-	 *  @param response
-	 *            {@link HttpServletResponse}
-	 * @param fileName
-	 *            Name fo the file to create
-	 * @param files
- *            Set of {@link AnalysisOutputFile}
+	 *
+	 * @param response                {@link HttpServletResponse}
+	 * @param fileName                Name fo the file to create
+	 * @param files                   Set of {@link AnalysisOutputFile}
 	 */
 	public static void createBatchAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files) {
@@ -142,9 +138,9 @@ public class FileUtilities {
 			for (Map.Entry<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> entry : files.entrySet()) {
 				final AnalysisOutputFile file = entry.getValue();
 				final ProjectSampleAnalysisOutputInfo outputInfo = entry.getKey();
-				if (!Files.exists(file.getFile())) {
+				if (!file.fileExists()) {
 					response.setStatus(404);
-					throw new FileNotFoundException("File '" + file.getFile().toFile().getAbsolutePath() + "' does not exist!");
+					throw new FileNotFoundException("File '" + file.getFile().toAbsolutePath() + "' does not exist!");
 				}
 				// 1) Build a folder/file name
 				// building similar filename for each analysis output file as:
@@ -159,7 +155,11 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				Files.copy(file.getFile(), outputStream);
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
@@ -182,11 +182,9 @@ public class FileUtilities {
 	/**
 	 * Utility method for download single file from an analysis.
 	 *
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param file
-	 *            Set of {@link AnalysisOutputFile}
-	 * @param fileName Filename
+	 * @param response                {@link HttpServletResponse}
+	 * @param file                    Set of {@link AnalysisOutputFile}
+	 * @param fileName                Filename
 	 */
 	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, String fileName) {
 		fileName = formatName(fileName);
@@ -196,8 +194,8 @@ public class FileUtilities {
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName);
 		response.setContentType(CONTENT_TYPE_TEXT);
 
-		try (ServletOutputStream outputStream = response.getOutputStream()) {
-			Files.copy(file.getFile(), response.getOutputStream());
+		try (InputStream inputStream = file.getFileInputStream()) {
+			IOUtils.copy(inputStream, response.getOutputStream());
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this
@@ -208,14 +206,11 @@ public class FileUtilities {
 		}
 	}
 
-
 	/**
 	 * Utility method for download single file from an analysis.
 	 *
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param file
-	 *            Set of {@link AnalysisOutputFile}
+	 * @param response                {@link HttpServletResponse}
+	 * @param file                    Set of {@link AnalysisOutputFile}
 	 */
 	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {
 		String fileName = file.getLabel();

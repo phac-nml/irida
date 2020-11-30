@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -21,6 +21,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -183,19 +186,37 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	}
 
 	/**
-	 * Read the bytes for an image output file
+	 * Read the bytes for an output file
 	 *
 	 * @return the bytes for the file
 	 */
 	public byte[] getBytesForFile() {
 		byte[] bytes = new byte[0];
 		try{
-			bytes = Files.readAllBytes(getFile());
+			bytes = IridaFiles.getBytesForFile(getFile());
 		} catch (IOException e) {
 			logger.error("Unable to read file.", e);
-		} finally {
-			return bytes;
 		}
+		return bytes;
 	}
 
+	/**
+	 * Gets output file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
+	}
+
+	/**
+	 * Checks if file exists
+	 *
+	 * @return if file exists or not
+	 */
+	@JsonIgnore
+	public boolean fileExists() {
+		return IridaFiles.fileExists(file);
+	}
 }

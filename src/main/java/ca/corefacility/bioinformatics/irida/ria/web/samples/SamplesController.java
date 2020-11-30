@@ -1,8 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -354,10 +353,14 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, assemblyId);
 
-		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition",
 				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
+		try(InputStream inputStream = genomeAssembly.getFileInputStream()) {
+			inputStream.transferTo(response.getOutputStream());
+		} catch (IOException e) {
+			logger.error("Unable to read input stream from file", e);
+		}
+
 		response.flushBuffer();
 	}
 

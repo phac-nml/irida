@@ -77,7 +77,10 @@ public interface IridaFileStorageUtility {
 	public boolean fileExists(Path file);
 
 	/**
-	 * Gets the file inputstream
+	 * Gets the file inputstream.
+	 * ### Note: This method must be called in a
+	 * ### try-with-resources block so that the
+	 * ### underlying inputstream is closed.
 	 *
 	 * @param file The path to the file
 	 * @return file inputstream
@@ -113,4 +116,11 @@ public interface IridaFileStorageUtility {
 	 */
 	public String getFileExtension(List<? extends SequencingObject> sequencingObjects) throws IOException;
 
+	/**
+	 * Read the bytes for a file
+	 *
+	 * @param file The path to the file
+	 * @return the bytes for the file
+	 */
+	public byte[] readAllBytes(Path file);
 }

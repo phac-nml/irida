@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1072,8 +1073,8 @@ public class AnalysisAjaxController {
 		} else {
 			AnalysisOutputFile file = treeOptional.get();
 
-			try {
-				List<String> lines = Files.readAllLines(file.getFile());
+			try(InputStream inputStream = file.getFileInputStream()) {
+				List<String> lines = IOUtils.readLines(inputStream);
 
 				if (lines.size() > 0) {
 					tree = lines.get(0);
@@ -1093,8 +1094,11 @@ public class AnalysisAjaxController {
 					}
 				}
 			} catch (NoSuchFileException e) {
-				logger.debug("File was not found: " + e.toString());
+				logger.error("File was not found: " + e.toString());
+			} catch (IOException e) {
+				logger.error("Unable to read input stream for file", e);
 			}
+
 		}
 		return new AnalysisTreeResponse(tree, message);
 	}

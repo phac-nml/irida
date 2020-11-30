@@ -7,6 +7,7 @@ import {
   getProjectReferenceFiles,
   removeProjectReferenceFile,
 } from "../../../apis/projects/reference-files";
+
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
 import {
@@ -90,15 +91,13 @@ export function ReferenceFiles() {
               notification.success({
                 message: i18n(
                   "ReferenceFile.downloadingFileSuccess",
-                  file.label,
+                  file.name,
                   projectInfo.projectName
                 ),
               });
             }}
             tooltipText={i18n("ReferenceFile.downloadTooltip")}
-            disableDownloadButton={
-              file.size === i18n("server.projects.reference-file.not-found")
-            }
+            disableDownloadButton={file.size === "N/A"}
           />,
           // Only display remove button for reference files if user can manage project
           projectInfo.canManage ? (

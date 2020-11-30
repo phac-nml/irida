@@ -26,6 +26,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.specialized.BlobInputStream;
 
 /**
  * Component implementation of file utitlities for azure storage
@@ -35,11 +36,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityImpl.class);
 
 	private BlobServiceClient blobServiceClient;
-	private BlobContainerClient containerClient ;
+	private BlobContainerClient containerClient;
 
 	@Autowired
-	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName){
-		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl).sasToken(sasToken).buildClient();
+	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
+		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl)
+				.sasToken(sasToken)
+				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
 	}
 
@@ -48,23 +51,23 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file) {
-		// We set the blobClient "path" to which file we want to get
-		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-
 		try {
-			logger.trace("Getting file from azure [" + file.toString() + "]");
-			Path tempDirectory = Files.createTempDirectory("azure-tmp-");
-			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
-			InputStream initialStream = blobClient.openInputStream();
-			org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
-			initialStream.close();
-			return new IridaTemporaryFile(tempFile, tempDirectory);
+			// We set the blobClient "path" to which file we want to get
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			try (InputStream initialStream = blobClient.openInputStream()) {
+				logger.trace("Getting file from azure [" + file.toString() + "]");
+				Path tempDirectory = Files.createTempDirectory("azure-tmp-");
+				Path tempFile = tempDirectory.resolve(file.getFileName()
+						.toString());
+				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
+				return new IridaTemporaryFile(tempFile, tempDirectory);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				throw new StorageException(e.getMessage());
+			}
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't find file on azure [" + e + "]");
 			throw new StorageException("Unable to locate file on azure", e);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			throw new StorageException(e.getMessage());
 		}
 	}
 
@@ -74,8 +77,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		try {
-			if(iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {
-				logger.trace("Cleaning up temporary file downloaded from azure [" + iridaTemporaryFile.getFile().toString() + "]");
+			if (iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {
+				logger.trace("Cleaning up temporary file downloaded from azure [" + iridaTemporaryFile.getFile()
+						.toString() + "]");
 				Files.delete(iridaTemporaryFile.getFile());
 			}
 		} catch (IOException e) {
@@ -84,9 +88,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		}
 
 		try {
-			if(iridaTemporaryFile.getDirectoryPath() != null && Files.isDirectory(iridaTemporaryFile.getDirectoryPath())) {
-				logger.trace("Cleaning up temporary directory created for azure temporary file [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
-				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath().toFile());
+			if (iridaTemporaryFile.getDirectoryPath() != null && Files.isDirectory(
+					iridaTemporaryFile.getDirectoryPath())) {
+				logger.trace("Cleaning up temporary directory created for azure temporary file ["
+						+ iridaTemporaryFile.getDirectoryPath()
+						.toString() + "]");
+				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath()
+						.toFile());
 			}
 		} catch (IOException e) {
 			logger.error("Unable to delete local directory", e);
@@ -103,10 +111,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try {
 			// We set the blobClient "path" to which we want to get a file size for
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties().getBlobSize(), true);
+			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties()
+					.getBlobSize(), true);
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
 		}
+
 		return fileSize;
 	}
 
@@ -139,7 +149,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean storageTypeIsLocal(){
+	public boolean storageTypeIsLocal() {
 		return false;
 	}
 
@@ -167,7 +177,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public boolean fileExists(Path file) {
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-		if(blobClient.exists()) {
+		if (blobClient.exists()) {
 			return true;
 		}
 		return false;
@@ -178,14 +188,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public InputStream getFileInputStream(Path file) {
-		BlobClient blobClient;
+		logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		try {
-			logger.trace("Opening input stream to file on azure [" + file.toString() + "]");
-			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 			return blobClient.openInputStream();
 		} catch (BlobStorageException e) {
-			logger.error("Couldn't read file from azure [" + e + "]");
-			throw new StorageException("Unable to locate file on azure", e);
+			logger.error("Couldn't get file input stream from azure [" + e + "]");
+			throw new StorageException("Couldn't get file input stream from azure", e);
 		}
 	}
 
@@ -197,29 +206,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
-					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC
+					>> 8)));
 		}
 	}
 
 	/**
-	 * Removes the leading "/" from the absolute path
-	 * returns the rest of the path.
-	 *
-	 * @param file
-	 * @return
-	 */
-	private String getAzureFileAbsolutePath(Path file) {
-		String absolutePath = file.toAbsolutePath().toString();
-		if(absolutePath.charAt(0) == '/') {
-			absolutePath = file.toAbsolutePath()
-					.toString()
-					.substring(1);
-		}
-		return absolutePath;
-	}
-	/**
-
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -227,7 +219,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		IridaTemporaryFile iridaTemporaryFile = getTemporaryFile(file.getFile());
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
-			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
+			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile()
+					.toFile()).getChannel()) {
 				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
@@ -267,12 +260,49 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
 					throw new IOException(
-							"Extensions of files do not match " + currentExtension + " vs "
-									+ selectedExtension);
+							"Extensions of files do not match " + currentExtension + " vs " + selectedExtension);
 				}
 			}
 		}
 
 		return selectedExtension;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] readAllBytes(Path file) {
+		BlobClient blobClient;
+		byte[] bytes = new byte[0];
+		try {
+			blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			try (BlobInputStream blobInputStream = blobClient.openInputStream()) {
+				bytes = blobInputStream.readAllBytes();
+			} catch (IOException e) {
+				logger.error("Couldn't get bytes from file [" + e + "]");
+			}
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't read file from azure [" + e + "]");
+		}
+		return bytes;
+	}
+
+	/**
+	 * Removes the leading "/" from the absolute path
+	 * returns the rest of the path.
+	 *
+	 * @param file
+	 * @return
+	 */
+	private String getAzureFileAbsolutePath(Path file) {
+		String absolutePath = file.toAbsolutePath()
+				.toString();
+		if (absolutePath.charAt(0) == '/') {
+			absolutePath = file.toAbsolutePath()
+					.toString()
+					.substring(1);
+		}
+		return absolutePath;
 	}
 }
