@@ -42,8 +42,15 @@ public class Cart extends HashMap<Long, HashSet<Long>> {
 	 * @return Total samples from all project in the cart
 	 */
 	public int removeSample(Long projectId, Long sampleId) {
-		this.get(projectId)
-				.remove(sampleId);
+		if (projectId != null) {
+			this.get(projectId)
+					.remove(sampleId);
+		} else {
+			this.values()
+					.stream()
+					.filter(set -> set.contains(sampleId))
+					.forEach(set -> set.remove(sampleId));
+		}
 		return this.getNumberOfSamplesInCart();
 	}
 
@@ -75,5 +82,12 @@ public class Cart extends HashMap<Long, HashSet<Long>> {
 	 */
 	public Set<Long> getCartSampleIdsForProject(Long projectId) {
 		return this.get(projectId);
+	}
+
+	public boolean isSampleInCart(Long id) {
+		return this.values()
+				.stream()
+				.filter(set -> set.contains(id))
+				.count() > 0;
 	}
 }

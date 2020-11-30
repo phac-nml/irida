@@ -13,11 +13,13 @@ public class SampleDetails {
 	private Sample sample;
 	private Map<MetadataTemplateField, MetadataEntry> metadata;
 	private boolean modifiable;
+	private boolean inCart;
 
-	public SampleDetails(Sample sample, boolean modifiable) {
+	public SampleDetails(Sample sample, boolean modifiable, boolean inCart) {
 		this.sample = sample;
 		this.metadata = sample.getMetadata();
 		this.modifiable = modifiable;
+		this.inCart = inCart;
 	}
 
 	public Sample getSample() {
@@ -30,5 +32,9 @@ public class SampleDetails {
 
 	public boolean isModifiable() {
 		return modifiable;
+	}
+
+	public boolean isInCart() {
+		return inCart;
 	}
 }

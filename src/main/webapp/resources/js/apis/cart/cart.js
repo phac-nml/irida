@@ -67,15 +67,20 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  * @param {number} sampleId - Identifier for a sample
  * @returns {Promise<* | never>}
  */
-export const removeSample = async (projectId, sampleId) =>
-  axios
-    .delete(`${AJAX_URL}/sample`, {
-      data: {
-        projectId,
-        sampleId,
-      },
-    })
-    .then(({ data: count }) => count);
+export const removeSample = async (projectId, sampleId) => {
+  try {
+    const {data} = axios
+      .delete(`${AJAX_URL}/sample`, {
+        data: {
+          projectId,
+          sampleId,
+        },
+      });
+      return {count: data};
+  }catch (e) {
+    return Promise.reject(e.response.data.count);
+  }
+};
 
 /**
  * Remove an entire project from the cart.

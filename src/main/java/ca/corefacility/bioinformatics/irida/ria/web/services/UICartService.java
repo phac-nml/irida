@@ -122,4 +122,8 @@ public class UICartService {
 		});
 		return results;
 	}
+
+	public boolean isSampleInCart(long sampleId) {
+		return cart.isSampleInCart(sampleId);
+	}
 }

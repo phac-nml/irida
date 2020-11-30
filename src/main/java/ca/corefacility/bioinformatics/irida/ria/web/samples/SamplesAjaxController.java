@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -34,14 +35,16 @@ public class SamplesAjaxController {
 	private final SampleService sampleService;
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
+	private final UISampleService uiSampleService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesAjaxController(SampleService sampleService, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource) {
+			GenomeAssemblyService genomeAssemblyService, UISampleService uiSampleService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
+		this.uiSampleService = uiSampleService;
 		this.messageSource = messageSource;
 	}
 
@@ -161,10 +164,8 @@ public class SamplesAjaxController {
 	 */
 	@RequestMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public SampleDetails getSampleDetails(@RequestParam Long id) {
-		Sample sample = sampleService.read(id);
-		boolean modifiable = this.isSampleModifiable(sample);
-		return new SampleDetails(sample, modifiable);
+	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
+		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
 	}
 
 	/**

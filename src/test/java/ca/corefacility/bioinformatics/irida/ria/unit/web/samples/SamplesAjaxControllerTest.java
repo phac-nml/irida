@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -35,6 +36,7 @@ public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
 	private SequencingObjectService sequencingObjectService;
 	private GenomeAssemblyService genomeAssemblyService;
+	private UISampleService uiSampleService;
 
 	/*
 	TEST DATA
@@ -57,8 +59,10 @@ public class SamplesAjaxControllerTest {
 		SampleService sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
+		uiSampleService = mock(UISampleService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService, messageSource);
+		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService,
+				uiSampleService, messageSource);
 
 		// Set up mocks
 		when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);
