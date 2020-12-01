@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.Announcem
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -92,6 +93,27 @@ public class UIAnnouncementsService {
 	 */
 	public void deleteAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
 		announcementService.delete(announcementRequest.getId());
+	}
+
+	/**
+	 * Get user read status for current announcement
+	 * @param announcementID {@link Long} identifier for the {@link Announcement}
+	 * @param tableRequest details about the current page of the table requested
+	 * @return a {@link TableResponse} containing the list of users.
+	 */
+	public @ResponseBody
+	TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(
+			@PathVariable Long announcementID, @RequestBody TableRequest tableRequest) {
+
+		final Announcement currentAnnouncement = announcementService.read(announcementID);
+
+		final Page<User> page = userService.search(
+				UserSpecification.searchUser(tableRequest.getSearch()), PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+		final List<AnnouncementUserTableModel> announcementUsers = page.getContent().stream()
+				.map(user -> new AnnouncementUserTableModel(user, userHasRead(user, currentAnnouncement)))
+				.collect(Collectors.toList());
+
+		return new TableResponse<>(announcementUsers, page.getTotalElements());
 	}
 
 	/**

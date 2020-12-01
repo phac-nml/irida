@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
@@ -73,6 +74,20 @@ public class AnnouncementAjaxController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
 		UIAnnouncementsService.deleteAnnouncement(announcementRequest);
+	}
+
+	/**
+	 * Handles request for getting user read status for current announcement
+	 * @param announcementID {@link Long} identifier for the {@link Announcement}
+	 * @param tableRequest details about the current page of the table requested
+	 * @return a {@link TableResponse} containing the list of users.
+	 */
+	@RequestMapping(value = "/{announcementID}/details/list")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public @ResponseBody
+	TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(
+			@PathVariable Long announcementID, @RequestBody TableRequest tableRequest) {
+		return UIAnnouncementsService.getUserAnnouncementInfoTable(announcementID, tableRequest);
 	}
 
 	/**

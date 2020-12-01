@@ -14,6 +14,7 @@ import {
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
 import { MarkdownViewer } from "../../../../components/markdown/MarkdownViewer";
+import AnnouncementDetails from "./AnnouncementDetails";
 
 /**
  * React component to render the announcements table.
@@ -41,11 +42,14 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       fixed: "left",
       dataIndex: "title",
       className: "t-announcement",
-      render(text, full) {
+      render(text, record) {
         return (
-          <a href={setBaseUrl(`announcements/${full.id}/details`)}>
-            <MarkdownViewer markdown={text} />
-          </a>
+          <>
+            <AnnouncementDetails announcement={record} />
+            <a href={setBaseUrl(`announcements/${record.id}/details`)}>
+              <MarkdownViewer markdown={text} />
+            </a>
+          </>
         );
       },
       sorter: true,
