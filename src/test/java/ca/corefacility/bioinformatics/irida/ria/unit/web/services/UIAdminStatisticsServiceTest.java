@@ -42,20 +42,19 @@ public class UIAdminStatisticsServiceTest {
 		service = new UIAdminStatisticsService(projectService, userService, sampleService, analysisSubmissionService);
 
 		genericStatModelList = mock(List.class);
+
 		minimumCreatedDate = new DateTime(new Date()).minusDays(defaultTimePeriod)
 				.toDate();
 	}
 
 	@Test
 	public void testBasicStats() {
-		Date basicStatsMinimumCreatedDate = new DateTime(new Date()).minusDays(defaultTimePeriod)
-				.toDate();
 		service.getAdminStatistics(defaultTimePeriod);
-		verify(userService, times(1)).getUsersLoggedIn(basicStatsMinimumCreatedDate);
 		when(service.getAdminAnalysesStatistics(defaultTimePeriod).getStatistics()).thenReturn(genericStatModelList);
 		when(service.getAdminProjectStatistics(defaultTimePeriod).getStatistics()).thenReturn(genericStatModelList);
 		when(service.getAdminSampleStatistics(defaultTimePeriod).getStatistics()).thenReturn(genericStatModelList);
 		when(service.getAdminUserStatistics(defaultTimePeriod).getStatistics()).thenReturn(genericStatModelList);
+		when(service.getAdminUserLoggedInStatistics(defaultTimePeriod)).thenReturn(0L);
 	}
 
 	@Test

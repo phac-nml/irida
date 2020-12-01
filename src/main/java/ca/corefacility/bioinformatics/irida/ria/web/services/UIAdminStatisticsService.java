@@ -42,10 +42,7 @@ public class UIAdminStatisticsService {
 	 * @return a {@link BasicStatsResponse} containing the counts for the time period.
 	 */
 	public BasicStatsResponse getAdminStatistics(Integer timePeriod) {
-		Date minimumCreatedDate = new DateTime(new Date()).minusDays(timePeriod)
-				.toDate();
-
-		Long usersLoggedIn = userService.getUsersLoggedIn(minimumCreatedDate);
+		Long usersLoggedIn = getAdminUserLoggedInStatistics(timePeriod);
 
 		// These stats below are used in the UI by tiny charts which require just the values from the objects
 		List<Long> analysesCounts = getAdminAnalysesStatistics(timePeriod).getStatistics()
@@ -125,6 +122,11 @@ public class UIAdminStatisticsService {
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
 		return new StatisticsResponse(userService.getUsersCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
+	}
+
+	public Long getAdminUserLoggedInStatistics(Integer timePeriod) {
+		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
+		return userService.getUsersLoggedIn(minimumCreatedDate);
 	}
 
 	/**
