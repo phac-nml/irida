@@ -83,6 +83,7 @@ In addition to re-linking old data as described above, we've included a small ut
 This script will output a CSV file of the following data:
 
 | `metadata_entry` database id | `metadata_entry` text value | Envers revision number of the entry | User ID of the user that made the change | `sample` database id associated with the metadata | Name of the sample |
+|---|---|---|---|---|---|
 
 You can download this script at <https://github.com/phac-nml/irida/tree/development/src/main/resources/scripts/metadata-mappings>.  This script requires the `Text::CSV` perl package to be installed (available in CPAN and various other package managers).  To run this script:
 
