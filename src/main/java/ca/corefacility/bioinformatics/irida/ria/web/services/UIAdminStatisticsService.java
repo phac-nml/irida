@@ -124,6 +124,12 @@ public class UIAdminStatisticsService {
 		return new StatisticsResponse(userService.getUsersCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
 	}
 
+	/**
+	 * Returns the number of users logged in for the time period
+	 *
+	 * @param timePeriod - The time period for which to get the stats for
+	 * @return {@link Long} number of users logged in during time period
+	 */
 	public Long getAdminUserLoggedInStatistics(Integer timePeriod) {
 		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
 		return userService.getUsersLoggedIn(minimumCreatedDate);
