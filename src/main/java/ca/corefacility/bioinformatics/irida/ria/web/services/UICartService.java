@@ -42,20 +42,48 @@ public class UICartService {
 	 * @param request Information about the project and samples to add to the cart
 	 * @return number of total samples in the cart
 	 */
-	public AddToCartResponse addSamplesToCart(AddToCartRequest request) {
+	public AddToCartResponse addSamplesToCart(AddToCartRequest request, Locale locale) {
 		// Modify the cart here so we can properly return the UI.
 		HashSet<Long> existing = cart.containsKey(request.getProjectId()) ?
 				cart.get(request.getProjectId()) :
 				new HashSet<>();
 
-		int duplicates = 0;
+		List<Long> duplicates = new ArrayList<>();
 		for (Long sampleId : request.getSampleIds()) {
 			if (existing.contains(sampleId)) {
-				duplicates++;
+				duplicates.add(sampleId);
+			} else {
+				existing.add(sampleId);
 			}
 		}
+		// Update the cart
+		cart.put(request.getProjectId(), existing);
 
-		return cart.add(request.getProjectId(), (List<Long>) request.getSampleIds());
+		AddToCartResponse response = new AddToCartResponse();
+		response.setCount(cart.getNumberOfSamplesInCart());
+
+		Project project = projectService.read(request.getProjectId());
+		int samplesAdded = ((Collection<?>) request.getSampleIds()).size() - duplicates.size();
+		if (samplesAdded == 1) {
+			response.setAdded(
+					messageSource.getMessage("server.cart.one-sample-added", new Object[] { project.getLabel() },
+							locale));
+		} else if (samplesAdded > 1) {
+			response.setAdded(messageSource.getMessage("server.cart.many-samples-added",
+					new Object[] { samplesAdded, project.getLabel() }, locale));
+		}
+
+		if (duplicates.size() == 1) {
+			Sample sample = sampleService.read(duplicates.get(0));
+			response.setDuplicate(
+					messageSource.getMessage("server.cart.in-cart", new Object[] { sample.getLabel() }, locale));
+		} else if (duplicates.size() > 1) {
+			response.setDuplicate(
+					messageSource.getMessage("server.cart.in-cart-multiple", new Object[] { duplicates.size() },
+							locale));
+		}
+
+		return response;
 	}
 
 	/**

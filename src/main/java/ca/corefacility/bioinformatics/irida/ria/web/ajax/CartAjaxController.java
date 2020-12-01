@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * AJAX controller for cart functionality
@@ -29,11 +31,12 @@ public class CartAjaxController {
 	 * Add a set of samples to the cart from a particular project
 	 *
 	 * @param request Request to add sample to the cart
-	 * @return the number of samples currrently in the cart
+	 * @param locale Currently logged in users set locale
+	 * @return the number of samples currently in the cart
 	 */
 	@PostMapping("")
-	public ResponseEntity<AddToCartResponse> addSamplesToCart(@RequestBody AddToCartRequest request) {
-		return ResponseEntity.ok(service.addSamplesToCart(request));
+	public ResponseEntity<AddToCartResponse> addSamplesToCart(@RequestBody AddToCartRequest request, Locale locale) {
+		return ResponseEntity.ok(service.addSamplesToCart(request, locale));
 	}
 
 	/**

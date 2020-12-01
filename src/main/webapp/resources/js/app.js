@@ -9,11 +9,11 @@ files have been converted over to wekbpack builds.
  */
 import "./modules/notifications";
 import { CART } from "./utilities/events-utilities";
-import { showNotification } from "./modules/notifications";
 import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";
+import { notification } from "antd";
 
 /*
 This is here since this has been updated to use a standard Event,
@@ -32,22 +32,14 @@ document.addEventListener(CART.UPDATED, (e) => {
 
   // Display notifications
   if (added) {
-    showNotification({
-      text: added,
+    notification.success({
+      message: added,
     });
   }
 
   if (duplicate) {
-    showNotification({
-      text: duplicate,
-      type: "warning",
-    });
-  }
-
-  if (existing) {
-    showNotification({
-      text: existing,
-      type: "info",
+    notification.info({
+      message: duplicate,
     });
   }
 });
