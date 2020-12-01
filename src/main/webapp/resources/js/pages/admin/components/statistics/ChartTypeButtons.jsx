@@ -10,21 +10,16 @@ import { chartTypes } from "../../statistics-constants";
  * @constructor
  */
 export function ChartTypeButtons({ onChange = () => {}, value }) {
-
   const buttonOptions = [
-    { label: 'Bar Chart', value: chartTypes.BAR },
-    { label: 'Column Chart', value: chartTypes.COLUMN },
-    { label: 'Line Chart', value: chartTypes.LINE },
-    { label: 'Pie Chart', value: chartTypes.PIE }
+    { label: i18n("ChartTypeButtons.barChart"), value: chartTypes.BAR },
+    { label: i18n("ChartTypeButtons.columnChart"), value: chartTypes.COLUMN },
+    { label: i18n("ChartTypeButtons.lineChart"), value: chartTypes.LINE },
+    { label: i18n("ChartTypeButtons.pieChart"), value: chartTypes.PIE },
   ];
 
   return (
     <Form.Item
-      label ={
-        <span>
-            Chart Type
-          </span>
-      }
+      label={<span>{i18n("ChartTypeButtons.chartType")}</span>}
       name="chart-type"
     >
       <Radio.Group

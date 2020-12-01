@@ -9,7 +9,6 @@ import { Form, Radio } from "antd";
  * @constructor
  */
 export function TimePeriodSelect({ onChange = () => {} }) {
-
   const options = [
     { label: i18n("TimePeriodSelect.day"), value: 1 },
     { label: i18n("TimePeriodSelect.week"), value: 7 },
@@ -24,17 +23,10 @@ export function TimePeriodSelect({ onChange = () => {} }) {
 
   return (
     <Form.Item
-        label ={
-          <span>
-            Time Period
-          </span>
-        }
+      label={<span>{i18n("TimePeriodSelect.timePeriod")}</span>}
       name="time-period"
     >
-      <Radio.Group
-        options={options}
-        onChange={onChange}
-        optionType="button" />
+      <Radio.Group options={options} onChange={onChange} optionType="button" />
     </Form.Item>
   );
 }
