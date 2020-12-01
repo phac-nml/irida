@@ -25,7 +25,7 @@ export default function AnnouncementUserTable() {
       title: i18n("announcement.control.details.dateRead"),
       dataIndex: "dateRead",
       render(date) {
-        return <time>{formatDate({ date: date })}</time>;
+        return <time>{date ? formatDate({ date: date }) : ""}</time>;
       },
     },
   ];
