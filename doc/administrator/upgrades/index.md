@@ -60,7 +60,7 @@ Note that we have found **no evidence of missing live data**.  It appears that a
 ### The fix
 {:.no_toc}
 
-Solving this issue involved a refactor of the database structure to remove the `sample_metadata_entry` table.
+Solving this issue involved a refactor of the database structure to remove the `sample_metadata_entry` table.  The new database structure is as follows:
 
 * `sample` - A record of a sample which contains its name, creation date, and some fixed metadata (ex: "sample1").
 * `metadata_field` - The header of a line-list column.  This table contains the field's name & datatype (ex: "Organism").
@@ -77,7 +77,8 @@ Since Envers was writing audit records for the `sample_AUD` and `metadata_entry_
 
 #### Metadata linking script
 {:.no_toc}
-We've included a small utility script which can be run before the upgrade to generate a report of all disconnected `sample_metadata_entry_AUD` records and their connections to their parent samples where available.  While we do not expect that these records will be needed in the future, we recommend running this utility and saving the report alongside your 21.01 upgrade database backup to ensure the history of these samples is maintained.  This script **must be run before you perform the 21.01 update**.
+
+In addition to re-linking old data as described above, we've included a small utility script which can be run before the upgrade to generate a report of all disconnected `sample_metadata_entry_AUD` records and their connections to their parent samples where available.  While we do not expect that this report will be needed in the future, we recommend running this utility and saving the report alongside your backups to ensure the history of these samples is maintained.  **This script must be run before you perform the 21.01 update**.
 
 This script will output a CSV file of the following data:
 
