@@ -148,9 +148,7 @@ const cartBtn = new SampleCartButton($(".js-cart-btn"), function () {
 
   // Updated post method
   Object.keys(projects).forEach((id) => {
-    putSampleInCart(+id, projects[id]).then((count) =>
-      cartNotification({ count })
-    );
+    putSampleInCart(+id, projects[id]).then((data) => cartNotification(data));
   });
 });
 SAMPLE_TOOL_BUTTONS.push(cartBtn);
