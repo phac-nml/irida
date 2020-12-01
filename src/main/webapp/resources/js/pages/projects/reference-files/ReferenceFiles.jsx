@@ -1,5 +1,5 @@
 import React from "react";
-import { notification, Progress, Space, Table, Typography } from "antd";
+import { notification, Space, Table, Typography } from "antd";
 import { InfoAlert } from "../../../components/alerts";
 import {
   downloadProjectReferenceFile,
@@ -168,12 +168,18 @@ export function ReferenceFiles() {
           )}`,
         });
         updateReferenceFileTable();
+        document
+          .querySelectorAll(".ant-upload-list-item-done")
+          .forEach((a) => (a.style.display = "none"));
       })
       .catch((error) => {
         onError("Error");
         notification.error({
           message: i18n("ReferenceFile.uploadFileError", file.name, error),
         });
+        document
+          .querySelectorAll(".ant-upload-list-item-error")
+          .forEach((a) => (a.style.display = "none"));
       });
   };
 
