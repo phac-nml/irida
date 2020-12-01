@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -43,44 +45,68 @@ public class UICartService {
 	 * @return number of total samples in the cart
 	 */
 	public AddToCartResponse addSamplesToCart(AddToCartRequest request, Locale locale) {
+		Project project = projectService.read(request.getProjectId());
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
+
 		// Modify the cart here so we can properly return the UI.
-		HashSet<Long> existing = cart.containsKey(request.getProjectId()) ?
-				cart.get(request.getProjectId()) :
+		HashSet<Sample> currentSamples = cart.containsKey(project) ?
+				cart.get(project) :
 				new HashSet<>();
 
-		List<Long> duplicates = new ArrayList<>();
-		for (Long sampleId : request.getSampleIds()) {
-			if (existing.contains(sampleId)) {
-				duplicates.add(sampleId);
+		/*
+		Need to get all the names of the samples in the cart.
+		Pipelines do not like samples with duplicate names.
+		 */
+		Set<String> existingNames = new HashSet<>();
+
+		/*
+		Need to make sure that the same sample is not here already from a different project.
+		 */
+		Set<Sample> allSamples = new HashSet<>();
+		cart.values().forEach(set -> set.forEach(sample -> {
+			existingNames.add(sample.getLabel());
+			allSamples.addAll(set);
+		}));
+
+		List<Sample> duplicateNames = new ArrayList<>();
+		List<Sample> existsInCart = new ArrayList<>();
+		List<Sample> newToCart = new ArrayList<>();
+		for (Sample sample : samples) {
+			// Check to see if sample is already in the cart
+			if (allSamples.contains(sample)) {
+				existsInCart.add(sample);
+			} else if (existingNames.contains(sample.getLabel())) {
+				duplicateNames.add(sample);
 			} else {
-				existing.add(sampleId);
+				newToCart.add(sample);
 			}
 		}
 		// Update the cart
-		cart.put(request.getProjectId(), existing);
+		currentSamples.addAll(newToCart);
+		cart.put(project, currentSamples);
 
 		AddToCartResponse response = new AddToCartResponse();
 		response.setCount(cart.getNumberOfSamplesInCart());
 
-		Project project = projectService.read(request.getProjectId());
-		int samplesAdded = ((Collection<?>) request.getSampleIds()).size() - duplicates.size();
-		if (samplesAdded == 1) {
+		if (newToCart.size() == 1) {
 			response.setAdded(
-					messageSource.getMessage("server.cart.one-sample-added", new Object[] { project.getLabel() },
+					messageSource.getMessage("server.cart.one-sample-added", new Object[] { newToCart.get(0).getLabel() },
 							locale));
-		} else if (samplesAdded > 1) {
+		} else if (newToCart.size() > 1) {
 			response.setAdded(messageSource.getMessage("server.cart.many-samples-added",
-					new Object[] { samplesAdded, project.getLabel() }, locale));
+					new Object[] { newToCart.size(), project.getLabel() }, locale));
 		}
 
-		if (duplicates.size() == 1) {
-			Sample sample = sampleService.read(duplicates.get(0));
+		if (duplicateNames.size() > 0) {
+			String duplicates = duplicateNames.stream().map(Sample::getLabel).collect(Collectors.joining(", "));
 			response.setDuplicate(
-					messageSource.getMessage("server.cart.in-cart", new Object[] { sample.getLabel() }, locale));
-		} else if (duplicates.size() > 1) {
-			response.setDuplicate(
-					messageSource.getMessage("server.cart.in-cart-multiple", new Object[] { duplicates.size() },
-							locale));
+					messageSource.getMessage("server.cart.excluded", new Object[] { duplicates }, locale));
+		}
+
+		if (existsInCart.size() == 1) {
+			response.setExisting(messageSource.getMessage("server.cart.in-cart", new Object[]{existsInCart.get(0).getLabel()}, locale));
+		} else if (existsInCart.size() > 1) {
+			response.setExisting(messageSource.getMessage("server.cart.in-cart-multiple", new Object[]{existsInCart.size()}, locale));
 		}
 
 		return response;
@@ -105,11 +131,13 @@ public class UICartService {
 	/**
 	 * Remove a specific sample from the cart.
 	 *
-	 * @param request Information about the samplet o remove from the cart
+	 * @param request Information about the sample o remove from the cart
 	 * @return number of total samples in the cart
 	 */
 	public int removeSample(RemoveSampleRequest request) {
-		return cart.removeSample(request.getProjectId(), request.getSampleId());
+		Project project = projectService.read(request.getProjectId());
+		Sample sample = sampleService.read(request.getSampleId());
+		return cart.removeSample(project, sample);
 	}
 
 	/**
@@ -119,7 +147,8 @@ public class UICartService {
 	 * @return number of total samples in the cart
 	 */
 	public int removeProject(Long id) {
-		return cart.removeProject(id);
+		Project project = projectService.read(id);
+		return cart.removeProject(project);
 	}
 
 	/**
@@ -143,10 +172,10 @@ public class UICartService {
 		for (Project project : projects) {
 			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
 			List<CartSampleModel> samples = new ArrayList<>();
-			sampleService.readMultiple(cart.getCartSampleIdsForProject(project.getId()))
-					.forEach(sample -> {
-						samples.add(new CartSampleModel(sample));
-					});
+			for (Sample sample : cart.getSamplesForProjectInCart(project)) {
+				CartSampleModel cartSampleModel = new CartSampleModel(sample);
+				samples.add(cartSampleModel);
+			}
 			cartProjectModel.setSamples(samples);
 			cartProjectModels.add(cartProjectModel);
 		}
@@ -156,16 +185,13 @@ public class UICartService {
 	/**
 	 * Get the entire cart flushed out into {@link Project}s with their {@link Sample}s
 	 *
-	 * @return All proejcts and samples in the part
+	 * @return All projects and samples in the part
 	 */
 	public Map<Project, List<Sample>> getFullCart() {
-		Iterable<Project> projects = projectService.readMultiple(cart.getProjectIdsInCart());
-		Map<Project, List<Sample>> results = new HashMap<>();
-		projects.forEach(project -> {
-			List<Sample> samples = (List<Sample>) sampleService.readMultiple(
-					cart.getCartSampleIdsForProject(project.getId()));
-			results.put(project, samples);
-		});
-		return results;
+		Map<Project, List<Sample>> response = new HashMap<>();
+		for (Project project : cart.keySet()) {
+			response.put(project, Lists.newArrayList(cart.get(project)));
+		}
+		return response;
 	}
 }
