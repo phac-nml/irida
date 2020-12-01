@@ -28,7 +28,7 @@ export function ReferenceFiles() {
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [projectInfo, setProjectInfo] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const [progress, setProgress] = React.useState(0);
+  const [, setProgress] = React.useState(0);
 
   const pathRegx = new RegExp(/projects\/(\d+)/);
   const projectId = window.location.pathname.match(pathRegx)[1];
@@ -152,7 +152,7 @@ export function ReferenceFiles() {
         if (percent === 100) {
           setTimeout(() => setProgress(0), 1000);
         }
-        onProgress({ percent: (event.loaded / event.total) * 100 });
+        onProgress({ percent: Math.floor(event.loaded / event.total) * 100 });
       },
     };
     formData.append("file", file);
@@ -181,6 +181,9 @@ export function ReferenceFiles() {
   const referenceFileUploadOptions = {
     multiple: true,
     accept: ".fasta",
+    showUploadList: { showRemoveIcon: false, showPreviewIcon: false },
+    progress: { strokeWidth: 5 },
+    customRequest: uploadFiles,
   };
 
   return (
@@ -189,9 +192,7 @@ export function ReferenceFiles() {
       <Space direction="vertical" style={{ width: `100%` }}>
         {projectInfo && projectInfo.canManage ? (
           <DragUpload
-            {...referenceFileUploadOptions}
-            progress={<Progress percent={progress} />}
-            customRequest={uploadFiles}
+            options={referenceFileUploadOptions}
             uploadText={i18n("ReferenceFile.clickorDrag")}
             uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
           />

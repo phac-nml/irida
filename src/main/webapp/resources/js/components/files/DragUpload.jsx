@@ -1,6 +1,7 @@
 import React from "react";
 import { Upload } from "antd";
 import { IconFileUpload } from "../icons/Icons";
+import { SPACE_SM } from "../../styles/spacing";
 
 const { Dragger } = Upload;
 
@@ -11,21 +12,16 @@ const { Dragger } = Upload;
  * @constructor
  */
 
-export function DragUpload({ uploadText, uploadHint, ...uploadOptions }) {
+export function DragUpload({ uploadText, uploadHint, options }) {
   return (
-    /*
-    Progress needs to be set to a string or number to keep it in the DOM.
-    Otherwise there are warnings in console:
-    'Warning: Invalid value for prop `$$typeof` on <div> tag. Either remove it from the
-    element, or pass a string or number value to keep it in the DOM. For details,
-    see https://reactjs.org/link/attribute-behavior'
-     */
-    <Dragger {...uploadOptions} progress={0}>
-      <p className="ant-upload-drag-icon">
-        <IconFileUpload />
-      </p>
-      <p className="ant-upload-text">{uploadText}</p>
-      <p className="ant-upload-hint">{uploadHint}</p>
-    </Dragger>
+    <div style={{ marginBottom: SPACE_SM }}>
+      <Dragger {...options}>
+        <p className="ant-upload-drag-icon">
+          <IconFileUpload />
+        </p>
+        <p className="ant-upload-text">{uploadText}</p>
+        <p className="ant-upload-hint">{uploadHint}</p>
+      </Dragger>
+    </div>
   );
 }
