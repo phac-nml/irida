@@ -18,10 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 import ca.corefacility.bioinformatics.irida.service.*;
@@ -378,12 +375,19 @@ public class ProjectSynchronizationService {
 		}
 
 		//list the fast5 files from the remote api
-		List<Fast5Object> fast5FilesForSample = fast5ObjectRemoteService.getFast5FilesForSample(sample);
+		List<Fast5Object> fast5FilesForSample;
+		try {
+			fast5FilesForSample = fast5ObjectRemoteService.getFast5FilesForSample(sample);
+		} catch (LinkNotFoundException e) {
+			logger.warn("The sample on the referenced IRIDA doesn't support assemblies: " + sample.getSelfHref());
+			fast5FilesForSample = Lists.newArrayList();
+		}
 
 		//for each fast5 file
 		for (Fast5Object fast5Object : fast5FilesForSample) {
 			//check if we already have it
-			if (!objectsByUrl.contains(fast5Object.getRemoteStatus().getURL())) {
+			if (!objectsByUrl.contains(fast5Object.getRemoteStatus()
+					.getURL())) {
 				fast5Object.setId(null);
 				//if not, get it locally and save it
 				try {
@@ -469,18 +473,7 @@ public class ProjectSynchronizationService {
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			file = singleEndRemoteService.mirrorSequencingObject(file);
-
-			file.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
-			file.setFileProcessor(null);
-
-			file.getSequenceFile().setId(null);
-			file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.createSequencingObjectInSample(file, sample);
-
-			fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.updateRemoteStatus(file.getId(), fileStatus);
+			syncSequencingObject(file, sample);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
@@ -502,18 +495,7 @@ public class ProjectSynchronizationService {
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			fast5Object = fast5ObjectRemoteService.mirrorSequencingObject(fast5Object);
-
-			fast5Object.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
-			fast5Object.setFileProcessor(null);
-
-			fast5Object.getFile().setId(null);
-			fast5Object.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.createSequencingObjectInSample(fast5Object, sample);
-
-			fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.updateRemoteStatus(fast5Object.getId(), fileStatus);
+			syncSequencingObject(fast5Object, sample);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + fast5Object.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + fast5Object.getRemoteStatus().getURL(),
@@ -559,21 +541,7 @@ public class ProjectSynchronizationService {
 		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		try {
 			pair = pairRemoteService.mirrorSequencingObject(pair);
-
-			pair.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
-			pair.setFileProcessor(null);
-
-			pair.getFiles().forEach(s -> {
-				s.setId(null);
-				s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-			});
-
-			objectService.createSequencingObjectInSample(pair, sample);
-
-			RemoteStatus pairStatus = pair.getRemoteStatus();
-			pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.updateRemoteStatus(pair.getId(), pairStatus);
+			syncSequencingObject(pair, sample);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + pair.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize pair " + pair.getRemoteStatus().getURL(),
@@ -624,5 +592,28 @@ public class ProjectSynchronizationService {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(userAuthentication);
 		SecurityContextHolder.setContext(context);
+	}
+
+	/**
+	 *  Synchronize a given {@link SequencingObject} to the local installation.
+	 *
+	 * @param sequencingObject The sequencing object to sync
+	 * @param sample The sample to sync
+	 */
+	private void syncSequencingObject(SequencingObject sequencingObject, Sample sample) {
+		sequencingObject.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
+		sequencingObject.setFileProcessor(null);
+
+		sequencingObject.getFiles().forEach(s -> {
+			s.setId(null);
+			s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+		});
+
+		objectService.createSequencingObjectInSample(sequencingObject, sample);
+
+		RemoteStatus fileStatus = sequencingObject.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+		objectService.updateRemoteStatus(sequencingObject.getId(), fileStatus);
 	}
 }
