@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  */
 public class SequenceFileMessageConverter implements HttpMessageConverter<Path> {
 	public static final List<MediaType> SUPPORTED_TYPES = Lists.newArrayList(new MediaType("application", "fastq"),
-			new MediaType("application", "fasta"));
+			new MediaType("application", "fasta"), new MediaType("application", "fast5"));
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileMessageConverter.class);
 	private final String fileName;
 
