@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Drawer, List, Skeleton, Typography } from "antd";
+import { Button, Drawer, Skeleton, Typography } from "antd";
 import { getSampleDetails } from "../../apis/samples/samples";
 import { connect } from "react-redux";
 import { actions } from "../../redux/reducers/cart";
-import { IconShoppingCart } from "../icons/Icons";
+import { SampleDetails } from "./components/SampleDetails";
 
 const { Text } = Typography;
 
@@ -57,20 +57,7 @@ function SampleDetail({ sampleId, removeSample, children }) {
         {loading ? (
           <Skeleton active title />
         ) : (
-          <div>
-            <List
-              itemLayout="horizontal"
-              dataSource={Object.keys(details.metadata)}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    title={item}
-                    description={details.metadata[item].value}
-                  />
-                </List.Item>
-              )}
-            />
-          </div>
+          <SampleDetails details={details} />
         )}
       </Drawer>
     </>
