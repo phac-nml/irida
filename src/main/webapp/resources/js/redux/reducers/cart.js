@@ -58,7 +58,6 @@ export const reducer = (state = initialState, action = {}) => {
       nothing.  We are going to use a CustomEvent so that we can communicate with
       the current AngularJS controller for the navigation.
        */
-      console.log(action);
       document.dispatchEvent(
         new CustomEvent(CART.UPDATED, {
           detail: action.payload,
@@ -107,7 +106,6 @@ export const actions = {
   initialized: (count) => ({ type: types.INITIALIZED, count }),
   add: (samples) => ({ type: types.ADD, samples }),
   updated: (count) => {
-    console.log(count);
     return {
       type: types.UPDATED,
       payload: count,
