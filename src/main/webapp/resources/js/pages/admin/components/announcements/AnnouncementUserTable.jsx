@@ -3,18 +3,25 @@ import { PagedTable } from "../../../../components/ant.design/PagedTable";
 import { formatDate } from "../../../../utilities/date-utilities";
 import { IconCheckCircle } from "../../../../components/icons/Icons";
 import { blue6, grey2 } from "../../../../styles/colors";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 export default function AnnouncementUserTable() {
   const columns = [
     {
       title: i18n("announcement.control.details.username"),
-      dataIndex: "name",
+      dataIndex: "username",
+      render(text, item) {
+        return (
+          <a href={setBaseUrl(`/users/${item.user.identifier}`)}>
+            {item.user.username}
+          </a>
+        );
+      },
+      sorter: true,
     },
     {
       title: i18n("announcement.control.details.status"),
-      dataIndex: "status",
       align: "center",
-      sorter: true,
       render(text, item) {
         return (
           <IconCheckCircle style={{ color: item.dateRead ? blue6 : grey2 }} />
