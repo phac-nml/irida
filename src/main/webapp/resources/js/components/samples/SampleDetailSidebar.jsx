@@ -1,9 +1,10 @@
 import React from "react";
 import { Button, Drawer, List, Skeleton } from "antd";
 import { getSampleDetails } from "../../apis/samples/samples";
-import { removeSample } from "../../apis/cart/cart";
+import { connect } from "react-redux";
+import { actions } from "../../redux/reducers/cart";
 
-export function SampleDetailSidebar({ sampleId, children }) {
+function SampleDetail({ sampleId, removeSample, children }) {
   const [loading, setLoading] = React.useState(true);
   const [details, setDetails] = React.useState({});
   const [visible, setVisible] = React.useState(false);
@@ -17,7 +18,7 @@ export function SampleDetailSidebar({ sampleId, children }) {
   }, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample(undefined, sampleId);
+    removeSample({ project: { id: details.projectId }, id: sampleId });
   };
 
   return (
@@ -56,3 +57,14 @@ export function SampleDetailSidebar({ sampleId, children }) {
     </>
   );
 }
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  removeSample: (details) => dispatch(actions.removeSample(details)),
+});
+
+export const SampleDetailSidebar = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SampleDetail);

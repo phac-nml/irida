@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { CART } from "../../utilities/events-utilities";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
 
@@ -69,15 +70,18 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  */
 export const removeSample = async (projectId, sampleId) => {
   try {
-    const {data} = axios
-      .delete(`${AJAX_URL}/sample`, {
-        data: {
-          projectId,
-          sampleId,
-        },
-      });
-      return {count: data};
-  }catch (e) {
+    const count = axios.delete(`${AJAX_URL}/sample`, {
+      data: {
+        projectId,
+        sampleId,
+      },
+    });
+
+    // Update the cart
+    const event = new CustomEvent(CART.UPDATED, { detail: { count } });
+    document.dispatchEvent(event);
+    return { count };
+  } catch (e) {
     return Promise.reject(e.response.data.count);
   }
 };

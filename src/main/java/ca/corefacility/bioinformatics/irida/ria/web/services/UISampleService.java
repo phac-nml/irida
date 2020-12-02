@@ -25,7 +25,7 @@ public class UISampleService {
 	}
 
 	/**
-	 * Get full details, includig metadata for a {@link Sample}
+	 * Get full details, including metadata for a {@link Sample}
 	 *
 	 * @param id Identifier for a {@link Sample}
 	 * @return {@link SampleDetails}

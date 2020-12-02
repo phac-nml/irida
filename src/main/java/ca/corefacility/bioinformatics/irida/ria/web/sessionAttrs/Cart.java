@@ -66,4 +66,20 @@ public class Cart extends HashMap<Project, HashSet<Sample>> {
 	public Set<Sample> getSamplesForProjectInCart(Project project) {
 		return this.get(project);
 	}
+
+	/**
+	 * Find if a sample is currently in the cart.  If it is get the project that it belongs to.
+	 *
+	 * @param sample - the sample to check the cart for.
+	 * @return identifier for the project the sample is in if the sample is in the cart
+	 */
+	public Long isSampleInCart(Sample sample) {
+		for (Project project : this.keySet()) {
+			if (this.get(project)
+					.contains(sample)) {
+				return project.getId();
+			}
+		}
+		return null;
+	}
 }

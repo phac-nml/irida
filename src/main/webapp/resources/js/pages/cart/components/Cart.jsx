@@ -20,6 +20,8 @@ function CartComponent({ count = 0, loadCart }) {
     }
   }, [count]);
 
+  useEffect(() => {}, []);
+
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (
@@ -42,16 +44,16 @@ function CartComponent({ count = 0, loadCart }) {
 }
 
 CartComponent.propTypes = {
-  count: PropTypes.number
+  count: PropTypes.number,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   count: state.cart.count,
-  initialized: state.cart.initialized
+  initialized: state.cart.initialized,
 });
 
-const mapDispatchToProps = dispatch => ({
-  loadCart: () => dispatch(actions.loadCart())
+const mapDispatchToProps = (dispatch) => ({
+  loadCart: () => dispatch(actions.loadCart()),
 });
 
 export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);
