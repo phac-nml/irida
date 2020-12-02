@@ -1,4 +1,4 @@
-![Integration Tests](https://github.com/phac-nml/irida/workflows/Integration%20Tests/badge.svg?branch=development&event=schedule)
+[![Integration Tests](https://github.com/phac-nml/irida/workflows/Integration%20Tests/badge.svg?branch=development&event=schedule)](https://github.com/phac-nml/irida/actions?query=branch%3Adevelopment)
 [![GitHub release](https://img.shields.io/github/release/phac-nml/irida.svg)](https://github.com/phac-nml/irida/releases/latest)
 [![Gitter](https://img.shields.io/gitter/room/phac-nml/irida.svg)](https://gitter.im/irida-project/Lobby)
 
