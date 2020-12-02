@@ -379,7 +379,7 @@ public class ProjectSynchronizationService {
 		try {
 			fast5FilesForSample = fast5ObjectRemoteService.getFast5FilesForSample(sample);
 		} catch (LinkNotFoundException e) {
-			logger.warn("The sample on the referenced IRIDA doesn't support assemblies: " + sample.getSelfHref());
+			logger.warn("The sample on the referenced IRIDA doesn't support fast5 data: " + sample.getSelfHref());
 			fast5FilesForSample = Lists.newArrayList();
 		}
 
