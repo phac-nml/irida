@@ -1,8 +1,11 @@
 import React from "react";
-import { Button, Drawer, List, Skeleton } from "antd";
+import { Button, Drawer, List, Skeleton, Typography } from "antd";
 import { getSampleDetails } from "../../apis/samples/samples";
 import { connect } from "react-redux";
 import { actions } from "../../redux/reducers/cart";
+import { IconShoppingCart } from "../icons/Icons";
+
+const { Text } = Typography;
 
 function SampleDetail({ sampleId, removeSample, children }) {
   const [loading, setLoading] = React.useState(true);
@@ -27,7 +30,26 @@ function SampleDetail({ sampleId, removeSample, children }) {
         onClick: () => setVisible(true),
       })}
       <Drawer
-        title={details.sample?.sampleName}
+        title={
+          loading ? null : (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text strong>{details.sample.sampleName}</Text>
+              <Button
+                danger
+                style={{ marginRight: 30 }}
+                onClick={removeSampleFromCart}
+              >
+                {i18n("SampleDetailsSidebar.removeFromCart")}
+              </Button>
+            </div>
+          )
+        }
         visible={visible}
         onClose={() => setVisible(false)}
         width={720}
@@ -36,9 +58,6 @@ function SampleDetail({ sampleId, removeSample, children }) {
           <Skeleton active title />
         ) : (
           <div>
-            <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-              <Button onClick={removeSampleFromCart}>Remove</Button>
-            </div>
             <List
               itemLayout="horizontal"
               dataSource={Object.keys(details.metadata)}
@@ -58,13 +77,11 @@ function SampleDetail({ sampleId, removeSample, children }) {
   );
 }
 
-const mapStateToProps = (state) => ({});
-
 const mapDispatchToProps = (dispatch) => ({
   removeSample: (details) => dispatch(actions.removeSample(details)),
 });
 
 export const SampleDetailSidebar = connect(
-  mapStateToProps,
+  undefined,
   mapDispatchToProps
 )(SampleDetail);
