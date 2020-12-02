@@ -473,7 +473,7 @@ public class ProjectSynchronizationService {
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			file = singleEndRemoteService.mirrorSequencingObject(file);
-			syncSequencingObject(file, sample);
+			syncSequencingObject(file, sample, fileStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
@@ -495,7 +495,7 @@ public class ProjectSynchronizationService {
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			fast5Object = fast5ObjectRemoteService.mirrorSequencingObject(fast5Object);
-			syncSequencingObject(fast5Object, sample);
+			syncSequencingObject(fast5Object, sample, fileStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + fast5Object.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + fast5Object.getRemoteStatus().getURL(),
@@ -538,10 +538,11 @@ public class ProjectSynchronizationService {
 	 *            The {@link Sample} to add the pair to.
 	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
-		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+		RemoteStatus fileStatus = pair.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			pair = pairRemoteService.mirrorSequencingObject(pair);
-			syncSequencingObject(pair, sample);
+			syncSequencingObject(pair, sample, fileStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + pair.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize pair " + pair.getRemoteStatus().getURL(),
@@ -599,21 +600,21 @@ public class ProjectSynchronizationService {
 	 *
 	 * @param sequencingObject The sequencing object to sync
 	 * @param sample The sample to sync
+	 * @param sequencingObjectStatus The remote status of the sequencing object
 	 */
-	private void syncSequencingObject(SequencingObject sequencingObject, Sample sample) {
+	private void syncSequencingObject(SequencingObject sequencingObject, Sample sample, RemoteStatus sequencingObjectStatus) {
 		sequencingObject.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
 		sequencingObject.setFileProcessor(null);
 
 		sequencingObject.getFiles().forEach(s -> {
 			s.setId(null);
-			s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
+			sequencingObjectStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 		});
 
 		objectService.createSequencingObjectInSample(sequencingObject, sample);
 
-		RemoteStatus fileStatus = sequencingObject.getRemoteStatus();
-		fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+		sequencingObjectStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
 
-		objectService.updateRemoteStatus(sequencingObject.getId(), fileStatus);
+		objectService.updateRemoteStatus(sequencingObject.getId(), sequencingObjectStatus);
 	}
 }

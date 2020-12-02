@@ -318,7 +318,6 @@ The following data **will not** be synchronized:
 * Users & groups on a project
 * Analysis automation settings
 * Reference files
-* FAST5 data associated with samples
 
 Some of the above items that are not currently synchronized are expected to be available in future IRIDA versions.
 
