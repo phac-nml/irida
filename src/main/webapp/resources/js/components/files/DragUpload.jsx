@@ -1,6 +1,7 @@
 import React from "react";
 import { Upload } from "antd";
 import { IconFileUpload } from "../icons/Icons";
+import { SPACE_SM } from "../../styles/spacing";
 
 const { Dragger } = Upload;
 
@@ -11,14 +12,16 @@ const { Dragger } = Upload;
  * @constructor
  */
 
-export function DragUpload({ uploadText, uploadHint, ...uploadOptions }) {
+export function DragUpload({ uploadText, uploadHint, options }) {
   return (
-    <Dragger {...uploadOptions}>
-      <p className="ant-upload-drag-icon">
-        <IconFileUpload />
-      </p>
-      <p className="ant-upload-text">{uploadText}</p>
-      <p className="ant-upload-hint">{uploadHint}</p>
-    </Dragger>
+    <div style={{ marginBottom: SPACE_SM }}>
+      <Dragger {...options}>
+        <p className="ant-upload-drag-icon">
+          <IconFileUpload />
+        </p>
+        <p className="ant-upload-text">{uploadText}</p>
+        <p className="ant-upload-hint">{uploadHint}</p>
+      </Dragger>
+    </div>
   );
 }
