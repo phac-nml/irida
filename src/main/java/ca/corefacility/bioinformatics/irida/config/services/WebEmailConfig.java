@@ -39,6 +39,9 @@ public class WebEmailConfig {
 	@Value("${mail.server.host}")
 	String host;
 
+	@Value("${mail.server.port}")
+	int port;
+
 	@Value("${mail.server.protocol}")
 	String protocol;
 
@@ -59,6 +62,7 @@ public class WebEmailConfig {
 		Properties props = new Properties();
 
 		sender.setHost(host);
+		sender.setPort(port);
 		sender.setProtocol(protocol);
 		sender.setUsername(username);
 
