@@ -1,12 +1,14 @@
 import React from "react";
 import { notification, Space, Table, Typography } from "antd";
 import { InfoAlert } from "../../../components/alerts";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
   removeProjectReferenceFile,
+  uploadProjectReferenceFiles,
 } from "../../../apis/projects/reference-files";
+
+import { getProjectInfo } from "../../../apis/projects/projects";
 
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
@@ -16,8 +18,6 @@ import {
 } from "../../../components/Buttons";
 import { DragUpload } from "../../../components/files/DragUpload";
 
-import { getProjectInfo } from "../../../apis/projects/projects";
-
 const { Title } = Typography;
 
 /**
@@ -26,9 +26,10 @@ const { Title } = Typography;
  * @constructor
  */
 export function ReferenceFiles() {
-  const [projectReferenceFiles, setProjectReferenceFiles] = React.useState(0);
+  const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [projectInfo, setProjectInfo] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [, setProgress] = React.useState(0);
 
   const pathRegx = new RegExp(/projects\/(\d+)/);
   const projectId = window.location.pathname.match(pathRegx)[1];
@@ -134,27 +135,60 @@ export function ReferenceFiles() {
       });
   }
 
-  // Options for the Ant Design upload component
-  const referenceFileUploadOptions = {
-    multiple: true,
-    accept: ".fasta",
-    showUploadList: false,
-    action: setBaseUrl(`ajax/reference-files/project/${projectId}`),
-    onChange(info) {
-      const { status } = info.file;
-      if (status === "done") {
+  /* Custom request for drag upload to get progress of uploads
+   * as well as display notifications for reference file upload
+   * success/error
+   */
+  const uploadFiles = async (options) => {
+    const { onSuccess, onError, file, onProgress } = options;
+
+    const formData = new FormData();
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+      onUploadProgress: (event) => {
+        const percent = Math.floor((event.loaded / event.total) * 100);
+        setProgress(percent);
+        if (percent === 100) {
+          setTimeout(() => setProgress(0), 1000);
+        }
+        onProgress({ percent: Math.floor(event.loaded / event.total) * 100 });
+      },
+    };
+    formData.append("file", file);
+
+    uploadProjectReferenceFiles(projectId, formData, config)
+      .then(() => {
+        onSuccess("Ok");
         notification.success({
           message: `${i18n(
             "ReferenceFile.uploadFileSuccess",
-            info.file.name,
+            file.name,
             projectInfo.projectName
           )}`,
         });
         updateReferenceFileTable();
-      } else if (status === "error") {
-        notification.error({ message: info.file.response.error });
-      }
-    },
+        document
+          .querySelectorAll(".ant-upload-list-item-done")
+          .forEach((a) => (a.style.display = "none"));
+      })
+      .catch((error) => {
+        onError("Error");
+        notification.error({
+          message: i18n("ReferenceFile.uploadFileError", file.name, error),
+        });
+        document
+          .querySelectorAll(".ant-upload-list-item-error")
+          .forEach((a) => (a.style.display = "none"));
+      });
+  };
+
+  // Options for the Ant Design upload component
+  const referenceFileUploadOptions = {
+    multiple: true,
+    accept: ".fasta",
+    showUploadList: { showRemoveIcon: false, showPreviewIcon: false },
+    progress: { strokeWidth: 5 },
+    customRequest: uploadFiles,
   };
 
   return (
@@ -163,7 +197,7 @@ export function ReferenceFiles() {
       <Space direction="vertical" style={{ width: `100%` }}>
         {projectInfo && projectInfo.canManage ? (
           <DragUpload
-            {...referenceFileUploadOptions}
+            options={referenceFileUploadOptions}
             uploadText={i18n("ReferenceFile.clickorDrag")}
             uploadHint={uploadHintMessage[referenceFileUploadOptions.multiple]}
           />
@@ -171,7 +205,7 @@ export function ReferenceFiles() {
 
         {loading ? (
           <ContentLoading />
-        ) : projectReferenceFiles.length > 0 ? (
+        ) : projectReferenceFiles.length ? (
           <Table
             columns={referenceFileTableColumns}
             dataSource={projectReferenceFiles}
