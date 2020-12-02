@@ -45,7 +45,11 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       render(text, record) {
         return (
           <>
-            <AnnouncementDetails announcement={record} />
+            <AnnouncementDetails
+              announcement={record}
+              updateAnnouncement={props.updateAnnouncement}
+              deleteAnnouncement={props.deleteAnnouncement}
+            />
             <a href={setBaseUrl(`announcements/${record.id}/details`)}>
               <MarkdownViewer markdown={text} />
             </a>
