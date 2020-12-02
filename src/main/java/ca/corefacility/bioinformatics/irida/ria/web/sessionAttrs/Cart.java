@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,19 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * Session object to hold samples that are currently in the cart.
  */
 public class Cart extends HashMap<Project, HashSet<Sample>> {
-
-	/**
-	 * Add a project and list of samples to the cart.
-	 * @param projectId identifier for a project
-	 * @param sampleIds list of identifiers for samples from the project to add to the cart
-	 * @return Total samples from all projects in the cart.
-	 */
-	public int add(Project project, List<Sample> samples) {
-		HashSet<Sample> existing = this.containsKey(project) ? this.get(project) : new HashSet<>();
-		existing.addAll(samples);
-		this.put(project, existing);
-		return this.getNumberOfSamplesInCart();
-	}
 
 	/**
 	 * Get the total number of samples in the cart

@@ -42,7 +42,8 @@ public class UICartService {
 	 * Add samples from a project to the cart.
 	 *
 	 * @param request Information about the project and samples to add to the cart
-	 * @return number of total samples in the cart
+	 * @param locale  Current users locale
+	 * @return {@link AddToCartResponse} contain information about what was added to the cart
 	 */
 	public AddToCartResponse addSamplesToCart(AddToCartRequest request, Locale locale) {
 		Project project = projectService.read(request.getProjectId());
