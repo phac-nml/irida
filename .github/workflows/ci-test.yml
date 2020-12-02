@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ matrix.suite }}-${{ hashFiles('**/pom.xml') }}
       - name: Cache Node modules #Pull the cache for node_modules.  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
