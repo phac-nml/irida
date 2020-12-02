@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -162,10 +163,15 @@ public class SamplesAjaxController {
 	 * @param id {@link Long} identifier for a sample.
 	 * @return {@link SampleDetails} for the {@link Sample}
 	 */
-	@RequestMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
+	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
 		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	}
+
+	@GetMapping("/{id}/files")
+	public ResponseEntity<AjaxResponse> getFilesForSample(@PathVariable Long id,
+			@RequestParam(required = false) Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
 	/**

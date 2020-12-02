@@ -4,6 +4,7 @@ import { Tabs, Typography } from "antd";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { IconCalendarTwoTone } from "../../icons/Icons";
 import { SPACE_XS } from "../../../styles/spacing";
+import { SampleFiles } from "./SampleFiles";
 
 const { Text } = Typography;
 
@@ -27,6 +28,9 @@ export function SampleDetails({ details }) {
       <Tabs defaultActiveKey="metadata">
         <Tabs.TabPane tab={"METADATA"} key="metadata">
           <SampleMetadata metadata={details.metadata} />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab={"FILES"} key="files">
+          <SampleFiles id={details.sample.identifier} />
         </Tabs.TabPane>
       </Tabs>
     </>
