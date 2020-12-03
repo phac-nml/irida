@@ -18,29 +18,48 @@ public class Cart extends HashMap<Long, Long> {
 	 */
 	private final HashMap<Long, String> sampleNames = new HashMap<>();
 
+	/**
+	 * Add a sample to the cart
+	 *
+	 * @param sample    to add to the cart
+	 * @param projectId identifier for the project from which the sample was added.
+	 * @return the number of samples in the cart
+	 */
 	public int addSample(Sample sample, Long projectId) {
 		this.put(sample.getId(), projectId);
 		this.sampleNames.put(sample.getId(), sample.getLabel());
 		return this.size();
 	}
 
+	/**
+	 * Remove a sample from the cart.
+	 *
+	 * @param id for the sample to remove
+	 * @return the number of samples in the cart
+	 */
 	public int removeSample(Long id) {
 		this.remove(id);
 		sampleNames.remove(id);
 		return this.size();
 	}
 
+	/**
+	 * Remove an entire project from the cart
+	 *
+	 * @param projectId identifier for the project to remove
+	 * @return the number of samples in the cart
+	 */
 	public int removeProject(Long projectId) {
 		Iterator<Entry<Long, Long>> iter = this.entrySet()
 				.iterator();
 		while (iter.hasNext()) {
 			Entry<Long, Long> entry = iter.next();
-			if (entry.getValue().equals(projectId)) {
+			if (entry.getValue()
+					.equals(projectId)) {
 				iter.remove();
 				sampleNames.remove(entry.getKey());
 			}
 		}
-
 
 		this.forEach((key, value) -> {
 			if (value.equals(projectId)) {
@@ -51,10 +70,21 @@ public class Cart extends HashMap<Long, Long> {
 		return this.size();
 	}
 
+	/**
+	 * Get the names of all the samples in the cart.
+	 * This is needed because pipelines cannot have samples with the same name.
+	 *
+	 * @return List of names of samples in the cart
+	 */
 	public Set<String> getSampleNamesInCart() {
 		return Sets.newHashSet(sampleNames.values());
 	}
 
+	/**
+	 * Get all the identifiers for projects that have samples in the cart.
+	 *
+	 * @return List of project identifiers.
+	 */
 	public Set<Long> getProjectsIdsInCart() {
 		return Sets.newHashSet(this.values());
 	}
