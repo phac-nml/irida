@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -48,51 +46,36 @@ public class UICartService {
 	public AddToCartResponse addSamplesToCart(AddToCartRequest request, Locale locale) {
 		Project project = projectService.read(request.getProjectId());
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
+		Set<String> existingSampleNames = cart.getSampleNamesInCart();
 
 		// Modify the cart here so we can properly return the UI.
-		HashSet<Sample> currentSamples = cart.containsKey(project) ?
-				cart.get(project) :
-				new HashSet<>();
-
-		/*
-		Need to get all the names of the samples in the cart.
-		Pipelines do not like samples with duplicate names.
-		 */
-		Set<String> existingNames = new HashSet<>();
-
-		/*
-		Need to make sure that the same sample is not here already from a different project.
-		 */
-		Set<Sample> allSamples = new HashSet<>();
-		cart.values().forEach(set -> set.forEach(sample -> {
-			existingNames.add(sample.getLabel());
-			allSamples.addAll(set);
-		}));
 
 		List<Sample> duplicateNames = new ArrayList<>();
 		List<Sample> existsInCart = new ArrayList<>();
 		List<Sample> newToCart = new ArrayList<>();
 		for (Sample sample : samples) {
 			// Check to see if sample is already in the cart
-			if (allSamples.contains(sample)) {
+			if (cart.containsKey(sample.getId())) {
 				existsInCart.add(sample);
-			} else if (existingNames.contains(sample.getLabel())) {
+			} else if (existingSampleNames.contains(sample.getLabel())) {
 				duplicateNames.add(sample);
 			} else {
 				newToCart.add(sample);
 			}
 		}
+
 		// Update the cart
-		currentSamples.addAll(newToCart);
-		cart.put(project, currentSamples);
+		if (newToCart.size() > 0) {
+			newToCart.forEach(sample -> cart.put(sample.getId(), project.getId()));
+		}
 
 		AddToCartResponse response = new AddToCartResponse();
-		response.setCount(cart.getNumberOfSamplesInCart());
+		response.setCount(cart.size());
 
+		// Set UI messages
 		if (newToCart.size() == 1) {
-			response.setAdded(
-					messageSource.getMessage("server.cart.one-sample-added", new Object[] { newToCart.get(0).getLabel() },
-							locale));
+			response.setAdded(messageSource.getMessage("server.cart.one-sample-added",
+					new Object[] { newToCart.get(0).getLabel() }, locale));
 		} else if (newToCart.size() > 1) {
 			response.setAdded(messageSource.getMessage("server.cart.many-samples-added",
 					new Object[] { newToCart.size(), project.getLabel() }, locale));
@@ -119,7 +102,7 @@ public class UICartService {
 	 * @return number of total samples in the cart
 	 */
 	public int getNumberOfSamplesInCart() {
-		return cart.getNumberOfSamplesInCart();
+		return cart.size();
 	}
 
 	/**
@@ -135,10 +118,9 @@ public class UICartService {
 	 * @param request Information about the sample o remove from the cart
 	 * @return number of total samples in the cart
 	 */
-	public int removeSample(RemoveSampleRequest request) {
-		Project project = projectService.read(request.getProjectId());
-		Sample sample = sampleService.read(request.getSampleId());
-		return cart.removeSample(project, sample);
+	public int removeSample(Long sampleId) {
+		cart.remove(sampleId);
+		return cart.size();
 	}
 
 	/**
@@ -148,8 +130,10 @@ public class UICartService {
 	 * @return number of total samples in the cart
 	 */
 	public int removeProject(Long id) {
-		Project project = projectService.read(id);
-		return cart.removeProject(project);
+		cart.entrySet()
+				.removeIf(entry -> entry.getValue()
+						.equals(id));
+		return cart.size();
 	}
 
 	/**
@@ -158,7 +142,7 @@ public class UICartService {
 	 * @return {@link Set} of {@link Project} identifiers
 	 */
 	public Set<Long> getProjectIdsInCart() {
-		return cart.getProjectIdsInCart();
+		return cart.getProjectsIdsInCart();
 	}
 
 	/**
@@ -170,10 +154,17 @@ public class UICartService {
 	public List<CartProjectModel> getSamplesForProjects(List<Long> ids) {
 		List<Project> projects = (List<Project>) projectService.readMultiple(ids);
 		List<CartProjectModel> cartProjectModels = new ArrayList<>();
+
 		for (Project project : projects) {
 			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
+			List<Long> sampleIds = cart.entrySet()
+					.stream()
+					.filter(entry -> ids.contains(entry.getValue()))
+					.map(Map.Entry::getKey)
+					.collect(Collectors.toList());
+
 			List<CartSampleModel> samples = new ArrayList<>();
-			for (Sample sample : cart.getSamplesForProjectInCart(project)) {
+			for (Sample sample : sampleService.readMultiple(sampleIds)) {
 				CartSampleModel cartSampleModel = new CartSampleModel(sample);
 				samples.add(cartSampleModel);
 			}
@@ -190,9 +181,20 @@ public class UICartService {
 	 */
 	public Map<Project, List<Sample>> getFullCart() {
 		Map<Project, List<Sample>> response = new HashMap<>();
-		for (Project project : cart.keySet()) {
-			response.put(project, Lists.newArrayList(cart.get(project)));
-		}
+
+		// Get unique project ids;
+		cart.values().stream().distinct().forEach(projectId -> {
+			Project project = projectService.read(projectId);
+			List<Long> sampleIds = new ArrayList<>();
+			cart.forEach((key, value) -> {
+				if (value.equals(projectId)) {
+					sampleIds.add(key);
+				}
+			});
+			response.put(project, (List<Sample>) sampleService.readMultiple(sampleIds));
+		});
+
+
 		return response;
 	}
 }

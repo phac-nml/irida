@@ -1,69 +1,32 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+import com.google.common.collect.Sets;
 
 /**
  * Session object to hold samples that are currently in the cart.
+ * HashMap<Sample ID, Project ID>
  */
-public class Cart extends HashMap<Project, HashSet<Sample>> {
-
-	/**
-	 * Get the total number of samples in the cart
-	 *
-	 * @return Total samples from all projects in the cart
+public class Cart extends HashMap<Long, Long> {
+	/*
+	Sample Id --> Sample Name
 	 */
-	public int getNumberOfSamplesInCart() {
-		return this.values()
-				.stream()
-				.reduce(0, (total, samples) -> total + samples.size(), Integer::sum);
+	private final HashMap<Long, String> sampleNames = new HashMap<>();
+
+	public void addSample(Sample sample, Long projectId) {
+		this.put(sample.getId(), projectId);
+		this.sampleNames.put(sample.getId(), sample.getLabel());
 	}
 
-	/**
-	 * Remove a specific sample from the cart.
-	 *
-	 * @param project to remove the sample from
-	 * @param sample the sample to remove.
-	 * @return Total samples from all project in the cart
-	 */
-	public int removeSample(Project project, Sample sample) {
-		this.get(project)
-				.remove(sample);
-		return this.getNumberOfSamplesInCart();
+	public Set<String> getSampleNamesInCart() {
+		return Sets.newHashSet( sampleNames.values());
 	}
 
-	/**
-	 * Remove all samples from a specific project
-	 *
-	 * @param project to remove from cart
-	 * @return Total samples from all projects in the cart
-	 */
-	public int removeProject(Project project) {
-		this.remove(project);
-		return getNumberOfSamplesInCart();
-	}
-
-	/**
-	 * Get all the identifiers for projects in the cart
-	 *
-	 * @return Set of identifiers for projects in the cart
-	 */
-	public Set<Long> getProjectIdsInCart() {
-		return this.keySet().stream().map(Project::getId).collect(Collectors.toUnmodifiableSet());
-	}
-
-	/**
-	 * Get all the identifiers for samples belonging to a specific project in the cart.
-	 *
-	 * @param project to get the samples for
-	 * @return Set of identifiers for samples belonging to a project in the cart
-	 */
-	public Set<Sample> getSamplesForProjectInCart(Project project) {
-		return this.get(project);
+	public Set<Long> getProjectsIdsInCart() {
+		return Sets.newHashSet(this.values());
 	}
 }

@@ -69,12 +69,7 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  */
 export const removeSample = async (projectId, sampleId) =>
   axios
-    .delete(`${AJAX_URL}/sample`, {
-      data: {
-        projectId,
-        sampleId,
-      },
-    })
+    .delete(`${AJAX_URL}/sample/${sampleId}`)
     .then(({ data: count }) => count);
 
 /**
