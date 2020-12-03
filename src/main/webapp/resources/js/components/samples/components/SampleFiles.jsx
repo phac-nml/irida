@@ -1,17 +1,16 @@
 import React from "react";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { List, Typography } from "antd";
-import { IconCalendarTwoTone } from "../../icons/Icons";
+import { List, Space, Typography } from "antd";
+import { IconCalendarTwoTone, IconLoading } from "../../icons/Icons";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
+import { CalendarDate } from "../../CalendarDate";
 
 const { Text } = Typography;
 
 export function SampleFiles({ id, projectId }) {
   const [loading, setLoading] = React.useState(true);
   const [files, setFiles] = React.useState();
-
-  console.log({ projectId });
 
   React.useEffect(() => {
     fetch(
@@ -27,53 +26,38 @@ export function SampleFiles({ id, projectId }) {
   }, [id]);
 
   return loading ? (
-    "LOADING..."
+    <IconLoading />
   ) : (
     <>
-      <List itemLayout="vertical">
-        <List.Item>
-          <List.Item.Meta
-            title={"SINGLES"}
-            description={
-              <List
-                dataSource={files.singles}
-                renderItem={(file) => (
-                  <List.Item key={`single-${file.identifier}`}>
-                    <List.Item.Meta
-                      description={
-                        <div>
-                          <div>
-                            <Text strong>{file.label}</Text>
-                          </div>
-                          <IconCalendarTwoTone
-                            style={{ marginRight: SPACE_XS }}
-                          />
-                          {formatInternationalizedDateTime(file.createdDate)}
-                        </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
-            }
-          />
-        </List.Item>
-        <List.Item>
-          <List.Item.Meta
-            title={"PAIRED"}
-            description={
-              <List
-                dataSource={files.paired}
-                renderItem={(file) => (
-                  <List.Item key={`single-${file.identifier}`}>
-                    <List.Item.Meta description={file.label} />
-                  </List.Item>
-                )}
-              />
-            }
-          />
-        </List.Item>
-      </List>
+      <List
+        itemLayout="vertical"
+        dataSource={Object.keys(files)}
+        renderItem={(type) => (
+          <List.Item>
+            <List.Item.Meta
+              key={type}
+              title={<Text strong>{type} </Text>}
+              description={
+                <List
+                  dataSource={files[type]}
+                  renderItem={(file) => (
+                    <List.Item key={`single-${file.identifier}`}>
+                      <List.Item.Meta
+                        description={
+                          <Space direction="vertical">
+                            <Text>{file.label}</Text>
+                            <CalendarDate date={file.createdDate} />
+                          </Space>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+              }
+            />
+          </List.Item>
+        )}
+      />
     </>
   );
 }

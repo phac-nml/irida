@@ -1,30 +1,18 @@
 import React from "react";
 import { SampleMetadata } from "./SampleMetadata";
-import { Tabs, Typography } from "antd";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { IconCalendarTwoTone } from "../../icons/Icons";
-import { SPACE_XS } from "../../../styles/spacing";
+import { Space, Tabs, Typography } from "antd";
 import { SampleFiles } from "./SampleFiles";
+import { CalendarDate } from "../../CalendarDate";
 
-const { Text } = Typography;
+const { Paragraph } = Typography;
 
 export function SampleDetails({ details }) {
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span>
-          <IconCalendarTwoTone style={{ marginRight: SPACE_XS }} />
-          <Text type="secondary">
-            {formatInternationalizedDateTime(details.sample.createdDate)}
-          </Text>
-        </span>
-      </div>
+      <Space direction="vertical">
+        <CalendarDate date={details.sample.createdDate} />
+        <Paragraph>{details.sample.description}</Paragraph>
+      </Space>
       <Tabs defaultActiveKey="metadata">
         <Tabs.TabPane tab={"METADATA"} key="metadata">
           <SampleMetadata metadata={details.metadata} />
