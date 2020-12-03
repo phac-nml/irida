@@ -5,11 +5,11 @@ const defaults = {
   "primary-color": "#1890ff",
   "info-color": "#1890ff",
   "link-color": "#1890ff",
-  "font-size-base": "14px",
+  "font-size-base": "2px",
   "border-radius-base": "2px",
 };
 const iridaConfig = "/etc/irida/irida.conf";
-const propertiesConfig = "../resources/configuration.properties";
+const propertiesConfig = "../resources/ca/corefacility/bioinformatics/irida/config/styles.properties";
 
 function formatAntStyles() {
   const colourProperties = {};
