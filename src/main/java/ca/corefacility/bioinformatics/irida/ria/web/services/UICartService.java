@@ -115,7 +115,7 @@ public class UICartService {
 	/**
 	 * Remove a specific sample from the cart.
 	 *
-	 * @param request Information about the sample o remove from the cart
+	 * @param sampleId identifier for the sample to remove form the cart
 	 * @return number of total samples in the cart
 	 */
 	public int removeSample(Long sampleId) {
