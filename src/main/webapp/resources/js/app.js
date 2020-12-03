@@ -55,10 +55,7 @@ document.addEventListener(CART.UPDATED, (e) => {
 /**
  * Initialize the cart
  */
-getCartCount().then((count) => {
-  const event = new CustomEvent(CART.UPDATED, { detail: count });
-  document.dispatchEvent(event);
-});
+getCartCount();
 
 /*
 Since IRIDA can be run on a servlet path, we need to make sure that all requests

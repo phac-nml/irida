@@ -55,7 +55,7 @@ public class CartAjaxController {
 	 * @return the number of samples currently in the cart
 	 */
 	@DeleteMapping("/sample/{sampleId}")
-	public ResponseEntity<Integer> removeSample(@RequestParam Long sampleId) {
+	public ResponseEntity<Integer> removeSample(@PathVariable Long sampleId) {
 		return ResponseEntity.ok(service.removeSample(sampleId));
 	}
 

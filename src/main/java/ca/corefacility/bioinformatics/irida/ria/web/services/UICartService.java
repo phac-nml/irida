@@ -66,7 +66,7 @@ public class UICartService {
 
 		// Update the cart
 		if (newToCart.size() > 0) {
-			newToCart.forEach(sample -> cart.put(sample.getId(), project.getId()));
+			newToCart.forEach(sample -> cart.addSample(sample, project.getId()));
 		}
 
 		AddToCartResponse response = new AddToCartResponse();
@@ -119,8 +119,7 @@ public class UICartService {
 	 * @return number of total samples in the cart
 	 */
 	public int removeSample(Long sampleId) {
-		cart.remove(sampleId);
-		return cart.size();
+		return cart.removeSample(sampleId);
 	}
 
 	/**
@@ -130,10 +129,7 @@ public class UICartService {
 	 * @return number of total samples in the cart
 	 */
 	public int removeProject(Long id) {
-		cart.entrySet()
-				.removeIf(entry -> entry.getValue()
-						.equals(id));
-		return cart.size();
+		return cart.removeProject(id);
 	}
 
 	/**
@@ -148,18 +144,18 @@ public class UICartService {
 	/**
 	 * Get a list of sample in the cart belonging to a list of projects
 	 *
-	 * @param ids List of identifiers for project to get the samples for.
+	 * @param projectIds List of identifiers for project to get the samples for.
 	 * @return {@link List} of {@link CartProjectModel}s containing project and sample information for items in the cart.
 	 */
-	public List<CartProjectModel> getSamplesForProjects(List<Long> ids) {
-		List<Project> projects = (List<Project>) projectService.readMultiple(ids);
-		List<CartProjectModel> cartProjectModels = new ArrayList<>();
+	public List<CartProjectModel> getSamplesForProjects(List<Long> projectIds) {
+		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+		List<CartProjectModel> models = new ArrayList<>();
 
 		for (Project project : projects) {
 			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
 			List<Long> sampleIds = cart.entrySet()
 					.stream()
-					.filter(entry -> ids.contains(entry.getValue()))
+					.filter(entry -> project.getId().equals(entry.getValue()))
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toList());
 
@@ -169,9 +165,9 @@ public class UICartService {
 				samples.add(cartSampleModel);
 			}
 			cartProjectModel.setSamples(samples);
-			cartProjectModels.add(cartProjectModel);
+			models.add(cartProjectModel);
 		}
-		return cartProjectModels;
+		return models;
 	}
 
 	/**
