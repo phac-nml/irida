@@ -44,7 +44,6 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
           <AnnouncementDetails
             announcement={record}
             updateAnnouncement={props.updateAnnouncement}
-            deleteAnnouncement={props.deleteAnnouncement}
           />
         );
       },

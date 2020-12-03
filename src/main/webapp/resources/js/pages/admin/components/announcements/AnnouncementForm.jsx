@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Button, Checkbox, Form, Input, notification, Tabs, Space } from "antd";
+import { Button, Checkbox, Form, Input, notification } from "antd";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
 
 /**
@@ -15,11 +15,9 @@ export default function AnnouncementForm({
   announcement,
   createAnnouncement,
   updateAnnouncement,
-  deleteAnnouncement,
 }) {
   const markdownRef = useRef();
   const [form] = Form.useForm();
-  const id = announcement ? announcement.id : null;
 
   function saveAnnouncement() {
     form.validateFields().then(({ title, priority }) => {
@@ -64,25 +62,11 @@ export default function AnnouncementForm({
         <Checkbox>{i18n("AnnouncementForm.form.priority")}</Checkbox>
       </Form.Item>
       <Form.Item>
-        {announcement ? (
-          <Space>
-            <Button type="primary" htmlType="submit" onClick={saveAnnouncement}>
-              {i18n("AnnouncementForm.edit.button")}
-            </Button>
-            <Button
-              htmlType="button"
-              onClick={() => deleteAnnouncement({ id })}
-            >
-              {i18n("AnnouncementForm.delete.button")}
-            </Button>
-          </Space>
-        ) : (
-          <Space>
-            <Button type="primary" htmlType="submit" onClick={saveAnnouncement}>
-              {i18n("AnnouncementForm.create.button")}
-            </Button>
-          </Space>
-        )}
+        <Button type="primary" htmlType="submit" onClick={saveAnnouncement}>
+          {announcement
+            ? i18n("AnnouncementForm.edit.button")
+            : i18n("AnnouncementForm.create.button")}
+        </Button>
       </Form.Item>
     </Form>
   );

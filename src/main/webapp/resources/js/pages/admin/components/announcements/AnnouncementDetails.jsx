@@ -18,7 +18,6 @@ import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 export default function AnnouncementDetails({
   announcement,
   updateAnnouncement,
-  deleteAnnouncement,
 }) {
   const [visible, setVisible] = React.useState(false);
   const { TabPane } = Tabs;
@@ -44,7 +43,6 @@ export default function AnnouncementDetails({
             <AnnouncementForm
               announcement={announcement}
               updateAnnouncement={updateAnnouncement}
-              deleteAnnouncement={deleteAnnouncement}
             />
           </TabPane>
           <TabPane tab={i18n("AnnouncementDetails.view.title")} key="2">
