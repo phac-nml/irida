@@ -201,7 +201,6 @@ public class UICartService {
 	 * @return the project identifier if the sample is in the cart
 	 */
 	public Long isSampleInCart(Long sampleId) {
-		Sample sample = sampleService.read(sampleId);
-		return cart.isSampleInCart(sample);
+		return cart.isSampleInCart(sampleId);
 	}
 }

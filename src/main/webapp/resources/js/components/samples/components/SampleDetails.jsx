@@ -30,7 +30,10 @@ export function SampleDetails({ details }) {
           <SampleMetadata metadata={details.metadata} />
         </Tabs.TabPane>
         <Tabs.TabPane tab={"FILES"} key="files">
-          <SampleFiles id={details.sample.identifier} />
+          <SampleFiles
+            id={details.sample.identifier}
+            projectId={details.projectId}
+          />
         </Tabs.TabPane>
       </Tabs>
     </>

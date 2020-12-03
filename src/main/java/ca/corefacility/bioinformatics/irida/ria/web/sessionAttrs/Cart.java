@@ -95,13 +95,7 @@ public class Cart extends HashMap<Long, Long> {
 	 * @param sample - the sample to check the cart for.
 	 * @return identifier for the project the sample is in if the sample is in the cart
 	 */
-	public Long isSampleInCart(Sample sample) {
-		for (Project project : this.keySet()) {
-			if (this.get(project)
-					.contains(sample)) {
-				return project.getId();
-			}
-		}
-		return null;
+	public Long isSampleInCart(Long sampleId) {
+		return this.getOrDefault(sampleId, null);
 	}
 }
