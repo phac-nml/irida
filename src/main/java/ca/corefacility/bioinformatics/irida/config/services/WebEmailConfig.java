@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +35,6 @@ public class WebEmailConfig {
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
 	private static final String TEMPLATE_SUFFIX = ".html";
 	private static final String CHARACER_ENCODING = "UTF-8";
-	private static final String UNCONFIGURED_PASSWORD_VALUE = "YOUR_MAIL_PASSWORD (the password associated with the provided name)";
 
 	@Value("${mail.server.host}")
 	String host;
@@ -66,7 +66,7 @@ public class WebEmailConfig {
 		sender.setProtocol(protocol);
 		sender.setUsername(username);
 
-		if (!(UNCONFIGURED_PASSWORD_VALUE.equals(password) || password.isBlank())) {
+		if (!password.isBlank()) {
 			props.put("mail.smtp.auth", true);  // https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html
 			sender.setPassword(password);
 		}
@@ -118,22 +118,18 @@ public class WebEmailConfig {
 
 		private static final Logger logger = LoggerFactory.getLogger(ConfigurableJavaMailSenderImpl.class);
 
-		private static final String UNCONFIGURED_HOST_VALUE = "YOUR_MAIL_HOST";
-		private static final String UNCONFIGURED_PROTOCOL_VALUE = "YOUR_MAIL_PROTOCOL (usually SMTP)";
-		private static final String UNCONFIGURED_USERNAME_VALUE = "YOUR_MAIL_NAME (the name that the e-mail is coming from)";
-
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
 		public Boolean isConfigured() {
-			if (UNCONFIGURED_HOST_VALUE.equals(getHost())) {
+			if (Strings.isNullOrEmpty(getHost())) {
 				logger.warn("E-mail host is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
-			} else if (UNCONFIGURED_PROTOCOL_VALUE.equals(getProtocol())) {
+			} else if (Strings.isNullOrEmpty(getProtocol())) {
 				logger.warn("E-mail protocol is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
-			} else if (UNCONFIGURED_USERNAME_VALUE.equals(getUsername())) {
+			} else if (Strings.isNullOrEmpty(getUsername())) {
 				logger.warn("E-mail username is not configured, unable to send e-mails.");
 				return Boolean.FALSE;
 			}
