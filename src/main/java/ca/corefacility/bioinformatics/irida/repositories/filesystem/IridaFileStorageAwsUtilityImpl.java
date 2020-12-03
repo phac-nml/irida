@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;
@@ -338,17 +340,16 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String readChunk(Path file, Long seek, Long chunk) {
-		byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
 		// The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point
 		GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(
 				seek, chunk);
 		try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
-			bytes = s3ObjectInputStream.readAllBytes();
+			return new FileChunkResponse(new String(s3ObjectInputStream.readAllBytes()), seek+chunk);
 		} catch (IOException e) {
 			logger.error("Couldn't get chunk from s3 bucket", e);
 		}
-		return new String(bytes);
+		return null;
 	}
 }

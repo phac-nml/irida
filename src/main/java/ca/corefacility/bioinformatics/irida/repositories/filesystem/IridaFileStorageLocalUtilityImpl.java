@@ -23,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
@@ -245,17 +247,14 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	}
 
 	@Override
-	public String readChunk(Path file, Long seek, Long chunk) {
-		String text = "";
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
 		try {
 			final RandomAccessFile randomAccessFile = new RandomAccessFile(file.toFile(), "r");
 			randomAccessFile.seek(seek);
-			// add aws code here for reading chunk
-			text = FileUtilities.readChunk(randomAccessFile, seek, chunk);
-
+			return new FileChunkResponse(FileUtilities.readChunk(randomAccessFile, seek, chunk), randomAccessFile.getFilePointer());
 		} catch (IOException e ) {
 			logger.error("Could not read output file ", e);
 		}
-		return text;
+		return null;
 	}
 }

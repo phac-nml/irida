@@ -7,6 +7,8 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 
 import com.google.common.collect.Lists;
 
@@ -138,8 +140,8 @@ public interface IridaFileStorageUtility {
 	 * @param file The {@link Path} to the file
 	 * @param seek File pointer to where to start reading from
 	 * @param chunk Size in bytes to read from seek point
-	 * @return {@link String} The text from the file in chunks
+	 * @return {@link FileChunkResponse} Response dto containing the text and file pointer
 	 */
-	public String readChunk(Path file, Long seek, Long chunk);
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk);
 
 }

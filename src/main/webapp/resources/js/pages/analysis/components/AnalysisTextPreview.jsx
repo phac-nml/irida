@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Typography } from "antd";
+import { Divider, Space, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import {
@@ -66,8 +66,9 @@ export default function AnalysisTextPreview({ output }) {
 
     if (
       scollElement.scrollTop + scrollableDivHeight >=
-        scollElement.scrollHeight &&
-      getNewChunkSize(filePointer, output.fileSizeBytes, chunkSize) >= 0
+        scollElement.scrollHeight - 1 &&
+      getNewChunkSize(filePointer, output.fileSizeBytes, chunkSize) >= 0 &&
+      filePointer < output.fileSizeBytes - 1
     ) {
       setLoading(true);
       getDataViaChunks({
@@ -105,13 +106,17 @@ export default function AnalysisTextPreview({ output }) {
           >
             <Text>{fileRows}</Text>
           </TextOutputWrapper>
-          <div id={`${output.filename}-preview-status`}></div>
-          <div id={`${output.filename}-loading`}>
-            {loading ? (
-              <ContentLoading
-                message={i18n("AnalysisOutputs.retrievingFileData")}
-              />
-            ) : null}
+          <div>
+            <Space direction={"horizontal"}>
+              <span id={`${output.filename}-preview-status`}></span>
+              <span id={`${output.filename}-loading`}>
+                {loading ? (
+                  <ContentLoading
+                    message={i18n("AnalysisOutputs.retrievingFileData")}
+                  />
+                ) : null}
+              </span>
+            </Space>
           </div>
           <Divider />
         </div>

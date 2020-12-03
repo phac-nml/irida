@@ -25,6 +25,9 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.azure.storage.blob.BlobClient;
@@ -339,18 +342,17 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String readChunk(Path file, Long seek, Long chunk) {
-		byte[] bytes = new byte[(seek.intValue() + chunk.intValue())];
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 		// The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point
 		BlobRange blobRange = new BlobRange(seek, chunk);
 		try(BlobInputStream blobInputStream = blobClient.openInputStream(blobRange, null)){
-			bytes = blobInputStream.readAllBytes();
+			return new FileChunkResponse(new String(blobInputStream.readAllBytes()), seek+chunk);
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't find file on azure", e);
 		} catch (IOException e) {
-			logger.error("Couldn't read file from azure", e);
+			logger.error("Unable to read chunk from azure", e);
 		}
-		return new String(bytes);
+		return null;
 	}
 }

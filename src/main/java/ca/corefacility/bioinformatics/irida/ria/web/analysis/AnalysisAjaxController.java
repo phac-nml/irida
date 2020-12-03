@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
@@ -510,7 +511,7 @@ public class AnalysisAjaxController {
 			final AnalysisOutputFile aof = analysisOutputFile.get();
 			final Path aofFile = aof.getFile();
 			final ToolExecution tool = aof.getCreatedByTool();
-			final AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
+			AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
 			contents.setId(aof.getId());
 			contents.setAnalysisSubmissionId(submission.getId());
 			contents.setAnalysisId(analysis.getId());
@@ -522,58 +523,25 @@ public class AnalysisAjaxController {
 			contents.setToolName(tool.getToolName());
 			contents.setToolVersion(tool.getToolVersion());
 
-			IridaTemporaryFile iridaTemporaryFile = null;
-			RandomAccessFile randomAccessFile;
-			/*
-			 * Cloud storage doesn't have ability to read files by lines so we need to download the file and access it.
-			 * If reading chunks of a file then we don't download the file but rather just get the bytes from the inputstream
-			 * as a string.
-			 */
-			try {
-				if (seek == 0) {
-					if (chunk != null && chunk > 0) {
-						contents.setText(iridaFileStorageUtility.readChunk(aof.getFile(), seek, chunk));
-						contents.setChunk(chunk);
-						contents.setStartSeek(seek);
-						contents.setFilePointer(seek+chunk);
-					} else {
-						iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(aofFile);
-						randomAccessFile = new RandomAccessFile(iridaTemporaryFile.getFile().toFile(), "r");
-						randomAccessFile.seek(seek);
-						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
-						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
-						contents.setLines(lines);
-						contents.setLimit((long) lines.size());
-						contents.setStart(start);
-						contents.setEnd(start + lines.size());
-					}
-				} else {
-					if (chunk != null && chunk > 0) {
-						contents.setText(iridaFileStorageUtility.readChunk(aof.getFile(), seek, chunk));
-						contents.setChunk(chunk);
-						contents.setStartSeek(seek);
-						contents.setFilePointer(seek+chunk);
-					} else {
-						iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(aofFile);
-						randomAccessFile = new RandomAccessFile(iridaTemporaryFile.getFile().toFile(), "r");
-						randomAccessFile.seek(seek);
-						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
-						contents.setLines(lines);
-						contents.setStartSeek(seek);
-						contents.setStart(start);
-						contents.setLimit((long) lines.size());
-					}
-				}
-
-			} catch (IOException e) {
-				logger.error("Could not read output file '" + aof.getId() + "' " + e);
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				contents.setError("Could not read output file");
-			} finally {
-				if(iridaTemporaryFile != null ) {
-					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+			if (chunk != null && chunk > 0) {
+				FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(aof.getFile(), seek, chunk);
+				contents.setText(fileChunkResponse.getText());
+				contents.setChunk(chunk);
+				contents.setStartSeek(seek);
+				contents.setFilePointer(fileChunkResponse.getFilePointer());
+			} else {
+				try(BufferedReader reader = new BufferedReader(new InputStreamReader(aof.getFileInputStream(), "UTF-8"))) {
+					List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
+					contents.setLines(lines);
+					contents.setLimit((long) lines.size());
+					contents.setStart(start);
+					contents.setEnd(start + lines.size());
+					contents.setFilePointer(start + lines.size());
+				} catch (IOException e) {
+					logger.error("Could not read output file stream'" + aof.getId() + "' " + e);
 				}
 			}
+
 			return contents;
 		} else {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
