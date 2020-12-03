@@ -40,14 +40,14 @@ export default function AnnouncementDetails({
         width={640}
       >
         <Tabs defaultActiveKey="1">
-          <TabPane tab="Edit" key="1">
+          <TabPane tab={i18n("AnnouncementDetails.edit.title")} key="1">
             <AnnouncementForm
               announcement={announcement}
               updateAnnouncement={updateAnnouncement}
               deleteAnnouncement={deleteAnnouncement}
             />
           </TabPane>
-          <TabPane tab="Views" key="2">
+          <TabPane tab={i18n("AnnouncementDetails.view.title")} key="2">
             <PagedTableProvider
               url={setBaseUrl(
                 `ajax/announcements/${announcement.id}/details/list`
