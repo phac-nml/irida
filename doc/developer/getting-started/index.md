@@ -190,7 +190,7 @@ When running IRIDA from the command line, a profile can be set by adding the fol
 
 #### Running IRIDA tests locally
 
-While Travis CI on GitHub runs all IRIDA's testing on every git push, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
+While GitHub Actions runs all IRIDA's testing on every pull request, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
 
 See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are developed.
 
@@ -208,7 +208,7 @@ Maven will download all required dependencies and run the full suite of unit tes
 ##### Integration tests
 {:.no_toc}
 
-IRIDA has 5 integration test profiles which splits the integration test suite into functional groups.  This allows Travis CI to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 profiles are the following:
+IRIDA has 5 integration test profiles which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 profiles are the following:
 
 * `service_testing` - Runs the service layer and repository testing.
 * `ui_testing` - Integration tests for IRIDA's web interface.
