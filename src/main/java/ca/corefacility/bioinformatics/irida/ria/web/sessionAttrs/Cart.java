@@ -1,70 +1,92 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+import com.google.common.collect.Sets;
 
 /**
  * Session object to hold samples that are currently in the cart.
+ * HashMap<Sample ID, Project ID>
  */
-public class Cart extends HashMap<Project, HashSet<Sample>> {
+public class Cart extends HashMap<Long, Long> {
+	/*
+	Sample Id --> Sample Name
+	 */
+	private final HashMap<Long, String> sampleNames = new HashMap<>();
 
 	/**
-	 * Get the total number of samples in the cart
+	 * Add a sample to the cart
 	 *
-	 * @return Total samples from all projects in the cart
+	 * @param sample    to add to the cart
+	 * @param projectId identifier for the project from which the sample was added.
+	 * @return the number of samples in the cart
 	 */
-	public int getNumberOfSamplesInCart() {
-		return this.values()
-				.stream()
-				.reduce(0, (total, samples) -> total + samples.size(), Integer::sum);
+	public int addSample(Sample sample, Long projectId) {
+		this.put(sample.getId(), projectId);
+		this.sampleNames.put(sample.getId(), sample.getLabel());
+		return this.size();
 	}
 
 	/**
-	 * Remove a specific sample from the cart.
+	 * Remove a sample from the cart.
 	 *
-	 * @param project to remove the sample from
-	 * @param sample the sample to remove.
-	 * @return Total samples from all project in the cart
+	 * @param id for the sample to remove
+	 * @return the number of samples in the cart
 	 */
-	public int removeSample(Project project, Sample sample) {
-		this.get(project)
-				.remove(sample);
-		return this.getNumberOfSamplesInCart();
+	public int removeSample(Long id) {
+		this.remove(id);
+		sampleNames.remove(id);
+		return this.size();
 	}
 
 	/**
-	 * Remove all samples from a specific project
+	 * Remove an entire project from the cart
 	 *
-	 * @param project to remove from cart
-	 * @return Total samples from all projects in the cart
+	 * @param projectId identifier for the project to remove
+	 * @return the number of samples in the cart
 	 */
-	public int removeProject(Project project) {
-		this.remove(project);
-		return getNumberOfSamplesInCart();
+	public int removeProject(Long projectId) {
+		Iterator<Entry<Long, Long>> iter = this.entrySet()
+				.iterator();
+		while (iter.hasNext()) {
+			Entry<Long, Long> entry = iter.next();
+			if (entry.getValue()
+					.equals(projectId)) {
+				iter.remove();
+				sampleNames.remove(entry.getKey());
+			}
+		}
+
+		this.forEach((key, value) -> {
+			if (value.equals(projectId)) {
+				this.remove(key);
+				sampleNames.remove(key);
+			}
+		});
+		return this.size();
 	}
 
 	/**
-	 * Get all the identifiers for projects in the cart
+	 * Get the names of all the samples in the cart.
+	 * This is needed because pipelines cannot have samples with the same name.
 	 *
-	 * @return Set of identifiers for projects in the cart
+	 * @return List of names of samples in the cart
 	 */
-	public Set<Long> getProjectIdsInCart() {
-		return this.keySet().stream().map(Project::getId).collect(Collectors.toUnmodifiableSet());
+	public Set<String> getSampleNamesInCart() {
+		return Sets.newHashSet(sampleNames.values());
 	}
 
 	/**
-	 * Get all the identifiers for samples belonging to a specific project in the cart.
+	 * Get all the identifiers for projects that have samples in the cart.
 	 *
-	 * @param project to get the samples for
-	 * @return Set of identifiers for samples belonging to a project in the cart
+	 * @return List of project identifiers.
 	 */
-	public Set<Sample> getSamplesForProjectInCart(Project project) {
-		return this.get(project);
+	public Set<Long> getProjectsIdsInCart() {
+		return Sets.newHashSet(this.values());
 	}
 
 	/**

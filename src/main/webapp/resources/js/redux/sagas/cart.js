@@ -18,7 +18,7 @@ import { FIELDS } from "../../pages/projects/linelist/constants";
  */
 export function* initializeCartPage() {
   yield take(appTypes.INIT_APP);
-  const { count } = yield call(getCartCount);
+  const count = yield call(getCartCount);
   yield put(actions.initialized(count));
 }
 
@@ -74,7 +74,7 @@ export function* removeSampleFromCart() {
 export function* removeProjectFromCart() {
   while (true) {
     const { payload } = yield take(types.REMOVE_PROJECT);
-    const { count } = yield call(removeProject, payload.id);
+    const count = yield call(removeProject, payload.id);
     yield put(actions.updated({ count }));
   }
 }

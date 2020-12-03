@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.RemoveSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 
 /**
@@ -55,9 +54,9 @@ public class CartAjaxController {
 	 * @param request Request to move a sample from the cart
 	 * @return the number of samples currently in the cart
 	 */
-	@DeleteMapping("/sample")
-	public ResponseEntity<Integer> removeSample(@RequestBody RemoveSampleRequest request) {
-		return ResponseEntity.ok(service.removeSample(request));
+	@DeleteMapping("/sample/{sampleId}")
+	public ResponseEntity<Integer> removeSample(@PathVariable Long sampleId) {
+		return ResponseEntity.ok(service.removeSample(sampleId));
 	}
 
 	/**

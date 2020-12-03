@@ -1,6 +1,6 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { CART } from "../../utilities/events-utilities";
+import { cartUpdated } from "../../utilities/events-utilities";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
 
@@ -23,7 +23,9 @@ export const putSampleInCart = async (projectId, samples) =>
  * @returns {Promise<{count: any}>}
  */
 export const getCartCount = async () => {
-  return axios.get(`${AJAX_URL}/count`).then(({ data }) => ({ count: data }));
+  const { data: count } = await axios.get(`${AJAX_URL}/count`);
+  cartUpdated(count);
+  return count;
 };
 
 /**
@@ -69,21 +71,9 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  * @returns {Promise<* | never>}
  */
 export const removeSample = async (projectId, sampleId) => {
-  try {
-    const count = axios.delete(`${AJAX_URL}/sample`, {
-      data: {
-        projectId,
-        sampleId,
-      },
-    });
-
-    // Update the cart
-    const event = new CustomEvent(CART.UPDATED, { detail: { count } });
-    document.dispatchEvent(event);
-    return { count };
-  } catch (e) {
-    return Promise.reject(e.response.data.count);
-  }
+  const { data: count } = await axios.delete(`${AJAX_URL}/sample/${sampleId}`);
+  cartUpdated(count);
+  return count;
 };
 
 /**
@@ -91,5 +81,8 @@ export const removeSample = async (projectId, sampleId) => {
  * @param {number} id - Identifier for a sample
  * @returns {Promise<{count: any}>}
  */
-export const removeProject = async (id) =>
-  axios.delete(`${AJAX_URL}/project?id=${id}`).then(({ data }) => data);
+export const removeProject = async (id) => {
+  const { data: count } = await axios.delete(`${AJAX_URL}/project?id=${id}`);
+  cartUpdated(count);
+  return count;
+};
