@@ -24,6 +24,7 @@ Changes
 * [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
 * [UI]: Updated Project Reference File page to display progress of uploads.
 * [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
+* [Developer]: Added smtp port and password configuration options
 
 20.05 to 20.09
 --------------
