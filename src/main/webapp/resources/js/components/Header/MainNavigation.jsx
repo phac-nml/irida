@@ -5,7 +5,7 @@ import { SPACE_MD } from "../../styles/spacing";
 import { IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
-import { primaryColour, theme } from "../../utilities/style-utilities";
+import { primaryColour, theme } from "../../utilities/theme-utilities";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";

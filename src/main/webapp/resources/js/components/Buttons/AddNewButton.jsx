@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "antd";
 import { IconPlusCircle } from "../icons/Icons";
-import { primaryColour } from "../../utilities/style-utilities";
+import { primaryColour } from "../../utilities/theme-utilities";
 
 /**
  * React component to be used any time a "create new item" button needs

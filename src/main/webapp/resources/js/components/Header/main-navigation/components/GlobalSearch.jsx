@@ -2,9 +2,9 @@ import React from "react";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { Input } from "antd";
 import { IconSearch } from "../../../icons/Icons";
-import { grey3, grey6, grey7 } from "../../../../styles/colors";
+import { grey3, grey6 } from "../../../../styles/colors";
 import styled from "styled-components";
-import { primaryColour, theme } from "../../../../utilities/style-utilities";
+import { primaryColour, theme } from "../../../../utilities/theme-utilities";
 
 /**
  * React component to render a global search input to the main navigation.
@@ -14,7 +14,6 @@ import { primaryColour, theme } from "../../../../utilities/style-utilities";
 export function GlobalSearch() {
   const darkTheme = styled(Input)`
     border: none;
-    background-color: #334454;
     input {
       background-color: transparent;
       color: ${grey3};
