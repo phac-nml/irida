@@ -1,22 +1,17 @@
-import React, { useRef } from "react";
-import {
-  Button,
-  Checkbox,
-  Drawer,
-  Form,
-  Input,
-  notification,
-  Tabs,
-  Space,
-} from "antd";
+import React from "react";
+import { Drawer, Space, Tabs } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import AnnouncementUserTable from "./AnnouncementUserTable";
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
-import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
+import AnnouncementForm from "./AnnouncementForm";
+import { IconEdit } from "../../../../components/icons/Icons";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 
 /**
  * Render React component to show the details of an announcement.
  * @param {object} announcement - the announcement that is to be displayed.
+ * @param {function} updateAnnouncement - the function that updates an announcement.
+ * @param {function} deleteAnnouncement - the function that deletes an announcement.
  * @returns {*}
  * @constructor
  */
@@ -26,29 +21,18 @@ export default function AnnouncementDetails({
   deleteAnnouncement,
 }) {
   const [visible, setVisible] = React.useState(false);
-  const markdownRef = useRef();
-  const [form] = Form.useForm();
   const { TabPane } = Tabs;
-  const id = announcement.id;
-
-  function saveAnnouncement() {
-    form.validateFields().then(({ title, priority }) => {
-      const markdown = markdownRef.current.getMarkdown();
-
-      updateAnnouncement({
-        id: announcement.id,
-        title,
-        message: markdown,
-        priority,
-      }).catch((message) => notification.error({ message }));
-    });
-  }
 
   return (
     <>
       <a onClick={() => setVisible(true)}>{announcement.title}</a>
       <Drawer
-        title={i18n("announcement.control.details.title")}
+        title={
+          <Space>
+            <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
+            {i18n("AnnouncementDetails.title")}
+          </Space>
+        }
         placement="right"
         closable={false}
         onClose={() => setVisible(false)}
@@ -57,49 +41,11 @@ export default function AnnouncementDetails({
       >
         <Tabs defaultActiveKey="1">
           <TabPane tab="Edit" key="1">
-            <Form layout="vertical" form={form} initialValues={announcement}>
-              <Form.Item
-                name="title"
-                label={i18n("AnnouncementModal.form.title")}
-                rules={[
-                  {
-                    required: true,
-                    message: i18n("AnnouncementModal.form.error.title"),
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="message"
-                label={i18n("AnnouncementModal.form.message")}
-              >
-                <MarkdownEditor
-                  ref={markdownRef}
-                  markdown={announcement ? announcement.message : null}
-                />
-              </Form.Item>
-              <Form.Item name="priority" valuePropName="checked">
-                <Checkbox>{i18n("AnnouncementModal.form.priority")}</Checkbox>
-              </Form.Item>
-              <Form.Item>
-                <Space>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    onClick={saveAnnouncement}
-                  >
-                    {i18n("announcement.control.details.save")}
-                  </Button>
-                  <Button
-                    htmlType="button"
-                    onClick={() => deleteAnnouncement({ id })}
-                  >
-                    {i18n("announcement.control.details.delete")}
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Form>
+            <AnnouncementForm
+              announcement={announcement}
+              updateAnnouncement={updateAnnouncement}
+              deleteAnnouncement={deleteAnnouncement}
+            />
           </TabPane>
           <TabPane tab="Views" key="2">
             <PagedTableProvider

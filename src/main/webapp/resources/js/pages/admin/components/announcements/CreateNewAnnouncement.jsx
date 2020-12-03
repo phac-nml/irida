@@ -1,10 +1,13 @@
 import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { AnnouncementModal } from "./AnnouncementModal";
+import { Drawer, Space } from "antd";
+import AnnouncementForm from "./AnnouncementForm";
+import { IconEdit } from "../../../../components/icons/Icons";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
 
 /**
- * Component to add a button which will open a modal to create an announcement.
- * @param {function} createAnnouncement
+ * Component to add a button which will open a drawer to create an announcement.
+ * @param {function} createAnnouncement - the function that creates an announcement.
  * @returns {*}
  * @constructor
  */
@@ -18,11 +21,21 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
         onClick={() => setVisible(true)}
         text={i18n("CreateNewAnnouncement.title")}
       />
-      <AnnouncementModal
+      <Drawer
+        title={
+          <Space>
+            <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
+            {i18n("CreateNewAnnouncement.title")}
+          </Space>
+        }
+        placement="right"
+        closable={false}
+        onClose={() => setVisible(false)}
         visible={visible}
-        closeModal={() => setVisible(false)}
-        createAnnouncement={createAnnouncement}
-      />
+        width={640}
+      >
+        <AnnouncementForm createAnnouncement={createAnnouncement} />
+      </Drawer>
     </>
   );
 }

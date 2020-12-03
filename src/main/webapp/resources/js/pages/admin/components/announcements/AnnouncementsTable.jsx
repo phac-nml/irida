@@ -4,8 +4,6 @@
 import React, { forwardRef, useContext, useImperativeHandle } from "react";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
-import { SPACE_XS } from "../../../../styles/spacing";
-import { EditAnnouncement } from "./EditAnnouncement";
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
 import { IconFlag } from "../../../../components/icons/Icons";
 import { blue6, grey2 } from "../../../../styles/colors";
@@ -13,7 +11,6 @@ import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import { MarkdownViewer } from "../../../../components/markdown/MarkdownViewer";
 import AnnouncementDetails from "./AnnouncementDetails";
 
 /**
@@ -44,16 +41,11 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       className: "t-announcement",
       render(text, record) {
         return (
-          <>
-            <AnnouncementDetails
-              announcement={record}
-              updateAnnouncement={props.updateAnnouncement}
-              deleteAnnouncement={props.deleteAnnouncement}
-            />
-            <a href={setBaseUrl(`announcements/${record.id}/details`)}>
-              <MarkdownViewer markdown={text} />
-            </a>
-          </>
+          <AnnouncementDetails
+            announcement={record}
+            updateAnnouncement={props.updateAnnouncement}
+            deleteAnnouncement={props.deleteAnnouncement}
+          />
         );
       },
       sorter: true,
@@ -83,18 +75,10 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       width: 110,
       render(text, record) {
         return (
-          <span>
-            <span style={{ marginRight: SPACE_XS }}>
-              <EditAnnouncement
-                announcement={record}
-                updateAnnouncement={props.updateAnnouncement}
-              />
-            </span>
-            <DeleteAnnouncement
-              id={record.id}
-              deleteAnnouncement={props.deleteAnnouncement}
-            />
-          </span>
+          <DeleteAnnouncement
+            id={record.id}
+            deleteAnnouncement={props.deleteAnnouncement}
+          />
         );
       },
     },
