@@ -7,11 +7,11 @@ import {
   Input,
   notification,
   Tabs,
+  Space,
 } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import AnnouncementUserTable from "./AnnouncementUserTable";
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
 
 /**
@@ -48,76 +48,69 @@ export default function AnnouncementDetails({
     <>
       <a onClick={() => setVisible(true)}>{announcement.title}</a>
       <Drawer
+        title={i18n("announcement.control.details.title")}
         placement="right"
         closable={false}
         onClose={() => setVisible(false)}
         visible={visible}
         width={640}
       >
-        <PageWrapper title={i18n("announcement.control.details.title")}>
-          <div className="card-container">
-            <Tabs type="card">
-              <TabPane tab="Edit" key="1">
-                <Form
-                  layout="vertical"
-                  form={form}
-                  initialValues={announcement}
-                >
-                  <Form.Item
-                    name="title"
-                    label={i18n("AnnouncementModal.form.title")}
-                    rules={[
-                      {
-                        required: true,
-                        message: i18n("AnnouncementModal.form.error.title"),
-                      },
-                    ]}
+        <Tabs defaultActiveKey="1">
+          <TabPane tab="Edit" key="1">
+            <Form layout="vertical" form={form} initialValues={announcement}>
+              <Form.Item
+                name="title"
+                label={i18n("AnnouncementModal.form.title")}
+                rules={[
+                  {
+                    required: true,
+                    message: i18n("AnnouncementModal.form.error.title"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="message"
+                label={i18n("AnnouncementModal.form.message")}
+              >
+                <MarkdownEditor
+                  ref={markdownRef}
+                  markdown={announcement ? announcement.message : null}
+                />
+              </Form.Item>
+              <Form.Item name="priority" valuePropName="checked">
+                <Checkbox>{i18n("AnnouncementModal.form.priority")}</Checkbox>
+              </Form.Item>
+              <Form.Item>
+                <Space>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={saveAnnouncement}
                   >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    name="message"
-                    label={i18n("AnnouncementModal.form.message")}
+                    {i18n("announcement.control.details.save")}
+                  </Button>
+                  <Button
+                    htmlType="button"
+                    onClick={() => deleteAnnouncement({ id })}
                   >
-                    <MarkdownEditor
-                      ref={markdownRef}
-                      markdown={announcement ? announcement.message : null}
-                    />
-                  </Form.Item>
-                  <Form.Item name="priority" valuePropName="checked">
-                    <Checkbox>
-                      {i18n("AnnouncementModal.form.priority")}
-                    </Checkbox>
-                  </Form.Item>
-                  <Form.Item>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={saveAnnouncement}
-                    >
-                      {i18n("announcement.control.details.save")}
-                    </Button>
-                    <Button
-                      htmlType="button"
-                      onClick={() => deleteAnnouncement({ id })}
-                    >
-                      {i18n("announcement.control.details.delete")}
-                    </Button>
-                  </Form.Item>
-                </Form>
-              </TabPane>
-              <TabPane tab="Views" key="2">
-                <PagedTableProvider
-                  url={setBaseUrl(
-                    `ajax/announcements/${announcement.id}/details/list`
-                  )}
-                >
-                  <AnnouncementUserTable />
-                </PagedTableProvider>
-              </TabPane>
-            </Tabs>
-          </div>
-        </PageWrapper>
+                    {i18n("announcement.control.details.delete")}
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          </TabPane>
+          <TabPane tab="Views" key="2">
+            <PagedTableProvider
+              url={setBaseUrl(
+                `ajax/announcements/${announcement.id}/details/list`
+              )}
+            >
+              <AnnouncementUserTable />
+            </PagedTableProvider>
+          </TabPane>
+        </Tabs>
       </Drawer>
     </>
   );
