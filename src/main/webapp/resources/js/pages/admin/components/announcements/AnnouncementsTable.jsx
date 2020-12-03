@@ -62,7 +62,11 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       title: i18n("announcement.control.createdBy"),
       dataIndex: "user",
       render(text, item) {
-        return <a href={item.user.id}>{item.user.username}</a>;
+        return (
+          <a href={setBaseUrl(`/users/${item.user.identifier}`)}>
+            {item.user.username}
+          </a>
+        );
       },
       sorter: true,
     },
