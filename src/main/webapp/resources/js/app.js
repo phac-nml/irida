@@ -13,14 +13,13 @@ import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";
-import { notification } from "antd";
 
 /*
 This is here since this has been updated to use a standard Event,
 and not handled through angularjs.
  */
 document.addEventListener(CART.UPDATED, (e) => {
-  const { count, added, duplicate, existing } = e.detail;
+  const { count } = e.detail;
 
   const counter = document.querySelector(".js-cart-count");
   if (+count > 0) {
