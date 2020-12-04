@@ -84,7 +84,6 @@ export default function AnalysisTextPreview({ output }) {
           document.getElementById(
             `${output.filename}-preview-status`
           ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
-          setLoading(false);
         }
         setLoading(false);
       });
