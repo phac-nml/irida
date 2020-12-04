@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification;
 
+/**
+ * Different types of notification found in Ant Design
+ */
 public enum NotificationType {
 	SUCCESS("success"),
 	ERROR("error"),
