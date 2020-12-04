@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification;
 
+/**
+ * Consumed by the UI to display a warning notification.
+ */
 public class WarnNotification extends Notification{
 
 	public WarnNotification(String message) {
