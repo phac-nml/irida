@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
@@ -60,8 +59,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -733,14 +730,13 @@ public class AnalysisAjaxController {
 		if (analysisTypesService.getViewerForAnalysisType(analysisType).get().equals("sistr")) {
 			Analysis analysis = submission.getAnalysis();
 
-			Path path = null;
+			Path path;
 			if(analysis.getAnalysisOutputFile(sistrFileKey) != null) {
 				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
-				IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(path);
-				try {
-					String json = new Scanner(new BufferedReader(new FileReader(iridaTemporaryFile.getFile().toFile()))).useDelimiter("\\Z")
-							.next();
 
+				try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(path)) {
+					String json = new Scanner(inputStream).useDelimiter("\\Z")
+							.next();
 					// verify file is proper json file and map to a SistrResult list
 					ObjectMapper mapper = new ObjectMapper();
 					List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
@@ -757,14 +753,11 @@ public class AnalysisAjaxController {
 					} else {
 						logger.error("SISTR results for file [" + path + "] are not correctly formatted");
 					}
-				} catch (FileNotFoundException e) {
-					logger.error("File [" + path + "] not found", e);
 				} catch (JsonParseException | JsonMappingException e) {
 					logger.error("Error attempting to parse file [" + path + "] as JSON", e);
 				} catch (IOException e) {
-					logger.error("Error reading file [" + path + "]", e);
+					logger.error("Error reading file input stream [" + path + "]", e);
 				}
-				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 			} else {
 				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
 						"No output file was found for the default sistrFileKey \""+sistrFileKey + "\". "+
