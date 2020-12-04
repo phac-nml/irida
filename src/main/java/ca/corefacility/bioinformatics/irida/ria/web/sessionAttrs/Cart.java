@@ -10,7 +10,6 @@ import com.google.common.collect.Sets;
 
 /**
  * Session object to hold samples that are currently in the cart.
- * HashMap<Sample ID, Project ID>
  */
 public class Cart extends HashMap<Long, Long> {
 	/*

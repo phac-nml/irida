@@ -12,7 +12,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.ErrorNotification;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.Notification;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.SuccessNotification;
+import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.WarnNotification;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -41,9 +45,9 @@ public class UICartService {
 	 *
 	 * @param request Information about the project and samples to add to the cart
 	 * @param locale  Current users locale
-	 * @return {@link AddToCartResponse} contain information about what was added to the cart
+	 * @return {@link CartUpdateResponse} contain information about what was added to the cart
 	 */
-	public AddToCartResponse addSamplesToCart(AddToCartRequest request, Locale locale) {
+	public CartUpdateResponse addSamplesToCart(AddToCartRequest request, Locale locale) {
 		Project project = projectService.read(request.getProjectId());
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
 		Set<String> existingSampleNames = cart.getSampleNamesInCart();
@@ -69,28 +73,40 @@ public class UICartService {
 			newToCart.forEach(sample -> cart.addSample(sample, project.getId()));
 		}
 
-		AddToCartResponse response = new AddToCartResponse();
+		CartUpdateResponse response = new CartUpdateResponse();
 		response.setCount(cart.size());
 
 		// Set UI messages
 		if (newToCart.size() == 1) {
-			response.setAdded(messageSource.getMessage("server.cart.one-sample-added",
+			Notification notification = new SuccessNotification(messageSource.getMessage("server.cart.one-sample-added",
 					new Object[] { newToCart.get(0).getLabel() }, locale));
+			response.addNotification(notification);
 		} else if (newToCart.size() > 1) {
-			response.setAdded(messageSource.getMessage("server.cart.many-samples-added",
-					new Object[] { newToCart.size(), project.getLabel() }, locale));
+			Notification notification = new SuccessNotification(
+					messageSource.getMessage("server.cart.many-samples-added",
+							new Object[] { newToCart.size(), project.getLabel() }, locale));
+			response.addNotification(notification);
 		}
 
 		if (duplicateNames.size() > 0) {
-			String duplicates = duplicateNames.stream().map(Sample::getLabel).collect(Collectors.joining(", "));
-			response.setDuplicate(
+			String duplicates = duplicateNames.stream()
+					.map(Sample::getLabel)
+					.collect(Collectors.joining(", "));
+			Notification notification = new ErrorNotification(
 					messageSource.getMessage("server.cart.excluded", new Object[] { duplicates }, locale));
+			response.addNotification(notification);
 		}
 
 		if (existsInCart.size() == 1) {
-			response.setExisting(messageSource.getMessage("server.cart.in-cart", new Object[]{existsInCart.get(0).getLabel()}, locale));
+			Notification notification = new WarnNotification(
+					messageSource.getMessage("server.cart.in-cart", new Object[] { existsInCart.get(0).getLabel() },
+							locale));
+			response.addNotification(notification);
 		} else if (existsInCart.size() > 1) {
-			response.setExisting(messageSource.getMessage("server.cart.in-cart-multiple", new Object[]{existsInCart.size()}, locale));
+			Notification notification = new WarnNotification(
+					messageSource.getMessage("server.cart.in-cart-multiple", new Object[] { existsInCart.size() },
+							locale));
+			response.addNotification(notification);
 		}
 
 		return response;
@@ -115,21 +131,43 @@ public class UICartService {
 	/**
 	 * Remove a specific sample from the cart.
 	 *
-	 * @param sampleId identifier for the sample to remove form the cart
+	 * @param sampleId identifier for the sample to remove from the cart
+	 * @param locale   Current users locale
 	 * @return number of total samples in the cart
 	 */
-	public int removeSample(Long sampleId) {
-		return cart.removeSample(sampleId);
+	public CartUpdateResponse removeSample(Long sampleId, Locale locale) {
+		CartUpdateResponse response = new CartUpdateResponse();
+		Sample sample = sampleService.read(sampleId);
+		if (cart.containsKey(sampleId)) {
+			cart.removeSample(sampleId);
+			response.addNotification(new SuccessNotification(
+					messageSource.getMessage("server.cart.remove-sample", new Object[] { sample.getSampleName() },
+							locale)));
+		} else {
+			response.addNotification(new ErrorNotification(
+					messageSource.getMessage("server.cart.remove-sample.exception",
+							new Object[] { sample.getSampleName() }, locale)));
+		}
+		response.setCount(cart.size());
+		return response;
 	}
 
 	/**
 	 * Remove all samples from a specific project from the cart.
 	 *
-	 * @param id identifier for the project to remove from the cart.
+	 * @param id     identifier for the project to remove from the cart.
+	 * @param locale Current users locale
 	 * @return number of total samples in the cart
 	 */
-	public int removeProject(Long id) {
-		return cart.removeProject(id);
+	public CartUpdateResponse removeProject(Long id, Locale locale) {
+		int count = cart.removeProject(id);
+		Project project = projectService.read(id);
+		Notification notification = new SuccessNotification(
+				messageSource.getMessage("server.cart.remove-project", new Object[] {project.getLabel()}, locale));
+		CartUpdateResponse response = new CartUpdateResponse();
+		response.setCount(count);
+		response.addNotification(notification);
+		return response;
 	}
 
 	/**
