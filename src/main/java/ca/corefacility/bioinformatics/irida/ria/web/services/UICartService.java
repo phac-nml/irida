@@ -132,6 +132,7 @@ public class UICartService {
 	 * Remove a specific sample from the cart.
 	 *
 	 * @param sampleId identifier for the sample to remove from the cart
+	 * @param locale   Current users locale
 	 * @return number of total samples in the cart
 	 */
 	public CartUpdateResponse removeSample(Long sampleId, Locale locale) {
@@ -154,7 +155,8 @@ public class UICartService {
 	/**
 	 * Remove all samples from a specific project from the cart.
 	 *
-	 * @param id identifier for the project to remove from the cart.
+	 * @param id     identifier for the project to remove from the cart.
+	 * @param locale Current users locale
 	 * @return number of total samples in the cart
 	 */
 	public CartUpdateResponse removeProject(Long id, Locale locale) {

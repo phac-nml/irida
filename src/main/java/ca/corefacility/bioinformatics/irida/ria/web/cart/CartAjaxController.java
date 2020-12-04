@@ -63,7 +63,8 @@ public class CartAjaxController {
 	/**
 	 * Remove all samples from a specific project from the cart
 	 *
-	 * @param id for a project
+	 * @param id     for a project
+	 * @param locale Current users locale
 	 * @return the number of samples currently in the cart
 	 */
 	@DeleteMapping("/project")
