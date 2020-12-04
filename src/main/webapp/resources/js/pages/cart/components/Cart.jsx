@@ -2,7 +2,6 @@ import React, { lazy, Suspense, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Layout } from "antd";
-import { SampleDetailsLoader } from "../../../components/SampleDetails";
 import { actions } from "../../../redux/reducers/cart";
 
 const CartSamples = lazy(() => import("./CartSider"));
@@ -38,7 +37,6 @@ function CartComponent({ count = 0, loadCart }) {
       <Suspense fallback={<div style={{ width: 400, height: "100%" }} />}>
         <CartSamples count={count} collapsed={collapsed} />
       </Suspense>
-      <SampleDetailsLoader />
     </Content>
   );
 }
