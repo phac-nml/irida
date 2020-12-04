@@ -1,6 +1,6 @@
 import React from "react";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { List, Space, Typography } from "antd";
+import { Empty, List, Space, Typography } from "antd";
 import { IconCalendarTwoTone, IconLoading } from "../../icons/Icons";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
@@ -20,14 +20,24 @@ export function SampleFiles({ id, projectId }) {
     )
       .then((response) => response.json())
       .then((data) => {
+        Object.keys(data).forEach(
+          (key) => !data[key].length && delete data[key]
+        );
         setFiles(data);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, projectId]);
+
+  const labels = {
+    singles: i18n("SampleFiles.singles"),
+    paired: i18n("SampleFiles.paired"),
+    fast5: i18n("SampleFiles.fast5"),
+    assemblies: i18n("SampleFiles.assemblies"),
+  };
 
   return loading ? (
     <IconLoading />
-  ) : (
+  ) : Object.keys(files).length !== 0 ? (
     <>
       <List
         itemLayout="vertical"
@@ -36,7 +46,7 @@ export function SampleFiles({ id, projectId }) {
           <List.Item>
             <List.Item.Meta
               key={type}
-              title={<Text strong>{type} </Text>}
+              title={<Text strong>{labels[type]}</Text>}
               description={
                 <List
                   dataSource={files[type]}
@@ -59,5 +69,7 @@ export function SampleFiles({ id, projectId }) {
         )}
       />
     </>
+  ) : (
+    <Empty description={i18n("SampleFiles.no-files")} />
   );
 }

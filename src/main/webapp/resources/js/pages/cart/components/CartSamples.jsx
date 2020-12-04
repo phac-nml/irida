@@ -124,7 +124,6 @@ function CartSamplesComponent({
 }
 
 CartSamplesComponent.propTypes = {
-  displaySample: PropTypes.func.isRequired,
   removeSample: PropTypes.func.isRequired,
   removeProject: PropTypes.func.isRequired,
 };

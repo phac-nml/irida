@@ -14,10 +14,10 @@ export function SampleDetails({ details }) {
         <Paragraph>{details.sample.description}</Paragraph>
       </Space>
       <Tabs defaultActiveKey="metadata">
-        <Tabs.TabPane tab={"METADATA"} key="metadata">
+        <Tabs.TabPane tab={i18n("SampleDetails.metadata")} key="metadata">
           <SampleMetadata metadata={details.metadata} />
         </Tabs.TabPane>
-        <Tabs.TabPane tab={"FILES"} key="files">
+        <Tabs.TabPane tab={i18n("SampleDetails.files")} key="files">
           <SampleFiles
             id={details.sample.identifier}
             projectId={details.projectId}
