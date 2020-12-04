@@ -310,6 +310,7 @@ The following data will be synchronized:
 * Basic project metadata
 * FASTQ sequencing data associated with samples
 * Assemblies associated with samples (including both assemblies created by pipelines within IRIDA, and uploaded assemblies)
+* FAST5 sequencing data associated with samples
 * Sample metadata
 
 The following data **will not** be synchronized:
@@ -317,7 +318,6 @@ The following data **will not** be synchronized:
 * Users & groups on a project
 * Analysis automation settings
 * Reference files
-* FAST5 data associated with samples
 
 Some of the above items that are not currently synchronized are expected to be available in future IRIDA versions.
 
