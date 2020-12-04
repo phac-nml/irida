@@ -88,7 +88,6 @@ public class FileUtilities {
 				} catch (IOException e) {
 					logger.error("Unable to read input stream from file", e);
 				}
-
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();

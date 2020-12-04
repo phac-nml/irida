@@ -500,7 +500,7 @@ public class AnalysisAjaxController {
 			final AnalysisOutputFile aof = analysisOutputFile.get();
 			final Path aofFile = aof.getFile();
 			final ToolExecution tool = aof.getCreatedByTool();
-			AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
+			final AnalysisOutputFileInfo contents = new AnalysisOutputFileInfo();
 			contents.setId(aof.getId());
 			contents.setAnalysisSubmissionId(submission.getId());
 			contents.setAnalysisId(analysis.getId());
@@ -888,7 +888,7 @@ public class AnalysisAjaxController {
 		if (treeFileForSubmission.isPresent()) {
 
 			AnalysisOutputFile file = treeFileForSubmission.get();
-			List<String> lines = IOUtils.readLines(IridaFiles.getFileInputStream(file.getFile()));
+			List<String> lines = IOUtils.readLines(file.getFileInputStream());
 			return ImmutableMap.of("newick", lines.get(0));
 		} else {
 			throw new IOException("Newick file could not be found for this submission");
