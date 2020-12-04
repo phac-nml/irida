@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification;
 
+/**
+ * Abstract class to represent an Ant Design UI notification.
+ */
 public abstract class Notification {
 	private final NotificationType type;
 	private final String message;

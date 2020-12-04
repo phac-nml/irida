@@ -17,6 +17,10 @@ public class CartUpdateResponse extends AjaxResponse {
 	 */
 	private int count;
 
+	/**
+	 * Add a new notification to the response
+	 * @param notification {@link Notification}
+	 */
 	public void addNotification(Notification notification) {
 		this.notifications.add(notification);
 	}
