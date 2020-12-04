@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web.cart;
 
 import java.util.List;
 import java.util.Locale;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 
 /**
@@ -30,11 +30,11 @@ public class CartAjaxController {
 	 * Add a set of samples to the cart from a particular project
 	 *
 	 * @param request Request to add sample to the cart
-	 * @param locale Currently logged in users set locale
+	 * @param locale  Currently logged in users set locale
 	 * @return the number of samples currently in the cart
 	 */
 	@PostMapping("")
-	public ResponseEntity<AddToCartResponse> addSamplesToCart(@RequestBody AddToCartRequest request, Locale locale) {
+	public ResponseEntity<CartUpdateResponse> addSamplesToCart(@RequestBody AddToCartRequest request, Locale locale) {
 		return ResponseEntity.ok(service.addSamplesToCart(request, locale));
 	}
 
@@ -51,12 +51,13 @@ public class CartAjaxController {
 	/**
 	 * Remove a sample from the cart
 	 *
-	 * @param request Request to move a sample from the cart
+	 * @param sampleId Request to move a sample from the cart
+	 * @param locale   Current users locale
 	 * @return the number of samples currently in the cart
 	 */
 	@DeleteMapping("/sample/{sampleId}")
-	public ResponseEntity<Integer> removeSample(@PathVariable Long sampleId) {
-		return ResponseEntity.ok(service.removeSample(sampleId));
+	public ResponseEntity<CartUpdateResponse> removeSample(@PathVariable Long sampleId, Locale locale) {
+		return ResponseEntity.ok(service.removeSample(sampleId, locale));
 	}
 
 	/**
@@ -66,8 +67,8 @@ public class CartAjaxController {
 	 * @return the number of samples currently in the cart
 	 */
 	@DeleteMapping("/project")
-	public ResponseEntity<Integer> removeProject(@RequestParam Long id) {
-		return ResponseEntity.ok(service.removeProject(id));
+	public ResponseEntity<CartUpdateResponse> removeProject(@RequestParam Long id, Locale locale) {
+		return ResponseEntity.ok(service.removeProject(id, locale));
 	}
 
 	/**

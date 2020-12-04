@@ -11,14 +11,6 @@ export const CART = {
   ADD: "cart:add",
 };
 
-export const samplesAddedToCart = (detail) => {
-  document.dispatchEvent(
-    new CustomEvent(CART.UPDATED, {
-      detail,
-    })
-  );
-};
-
 export const cartUpdated = (count) => {
   document.dispatchEvent(
     new CustomEvent(CART.UPDATED, {

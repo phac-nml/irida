@@ -29,27 +29,6 @@ document.addEventListener(CART.UPDATED, (e) => {
   } else {
     counter.style.cssText = "display: none;";
   }
-
-  // Display notification for how many new samples
-  if (added) {
-    notification.success({
-      message: added,
-    });
-  }
-
-  // Samples that are already in the cart
-  if (existing) {
-    notification.info({
-      message: existing,
-    });
-  }
-
-  // Samples could not be added because their name conflicts
-  if (duplicate) {
-    notification.warn({
-      message: duplicate,
-    });
-  }
 });
 
 /**

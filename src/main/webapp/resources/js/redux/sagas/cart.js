@@ -36,10 +36,10 @@ export function* addToCartSaga() {
         label: s[FIELDS.sampleName],
       }));
 
-      const data = yield call(putSampleInCart, projectId, sampleIds);
+      const count = yield call(putSampleInCart, projectId, sampleIds);
 
-      if (data.count) {
-        yield put(actions.updated(data));
+      if (count) {
+        yield put(actions.updated({ count }));
       }
     }
   }
