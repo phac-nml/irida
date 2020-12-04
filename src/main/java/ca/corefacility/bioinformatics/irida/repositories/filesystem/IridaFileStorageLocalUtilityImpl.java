@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -24,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**

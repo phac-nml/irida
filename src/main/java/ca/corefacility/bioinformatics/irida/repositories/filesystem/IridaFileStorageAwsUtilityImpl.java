@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;

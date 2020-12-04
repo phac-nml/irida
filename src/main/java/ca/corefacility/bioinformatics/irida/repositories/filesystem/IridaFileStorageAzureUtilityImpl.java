@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -25,9 +24,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.azure.storage.blob.BlobClient;
