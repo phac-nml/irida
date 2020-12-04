@@ -24,7 +24,7 @@ Changes
 * [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
 * [UI]: Updated Project Reference File page to display progress of uploads.
 * [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
-* [UI]: Updated analysis results json outputs result page to show a loading skeleton as the data is retrieved.
+* [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
 
 20.05 to 20.09
 --------------
