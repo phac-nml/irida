@@ -344,10 +344,15 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-		// The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point
+		/*
+		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
+		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
+		 */
 		BlobRange blobRange = new BlobRange(seek, chunk);
-		try(BlobInputStream blobInputStream = blobClient.openInputStream(blobRange, null)){
-			return new FileChunkResponse(new String(blobInputStream.readAllBytes()), seek+chunk);
+		try (BlobInputStream blobInputStream = blobClient.openInputStream(blobRange, null)) {
+			// Read the bytes of the retrieved blobInputStream chunk
+			byte[] bytes = blobInputStream.readAllBytes();
+			return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
 		} catch (BlobStorageException e) {
 			logger.error("Couldn't find file on azure", e);
 		} catch (IOException e) {

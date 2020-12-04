@@ -341,12 +341,17 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
-		// The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point
+		/*
+		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
+		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
+		 */
 		GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(
 				seek, chunk);
 		try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
-			return new FileChunkResponse(new String(s3ObjectInputStream.readAllBytes()), seek+chunk);
+			// Read the bytes of the retrieved s3ObjectInputStream chunk
+			byte[] bytes = s3ObjectInputStream.readAllBytes();
+			return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
 		} catch (IOException e) {
 			logger.error("Couldn't get chunk from s3 bucket", e);
 		}

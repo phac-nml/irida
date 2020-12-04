@@ -458,26 +458,15 @@ public class AnalysisAjaxController {
 	 * @param aof  {@link AnalysisOutputFile} to read from
 	 */
 	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
-		RandomAccessFile reader = null;
 		final Path aofFile = aof.getFile();
-		try {
-			IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(aofFile);
-			reader = new RandomAccessFile(iridaTemporaryFile.getFile().toFile(), "r");
-			info.setFirstLine(reader.readLine());
-			info.setFilePointer(reader.getFilePointer());
-			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
-		} catch (FileNotFoundException e) {
-			logger.error("Could not find file '" + aofFile + "' " + e);
+
+		try(BufferedReader reader = new BufferedReader(new InputStreamReader(aof.getFileInputStream(), "UTF-8"))) {
+			String firstLineText = reader.readLine();
+			info.setFirstLine(firstLineText);
+			// Set the pointer to the beginning of the next line.
+			info.setFilePointer(Long.valueOf(firstLineText.getBytes().length) + 1);
 		} catch (IOException e) {
-			logger.error("Could not read file '" + aofFile + "' " + e);
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-			} catch (IOException e) {
-				logger.error("Could not close file handle for '" + aofFile + "' " + e);
-			}
+			logger.error("Could not get file input stream '" + aofFile + "' " + e);
 		}
 	}
 
@@ -524,16 +513,19 @@ public class AnalysisAjaxController {
 			contents.setToolVersion(tool.getToolVersion());
 
 			if (chunk != null && chunk > 0) {
+				// Read the requested chunk from the iridafilestorageutility and set the required fields of the contents object
 				FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(aof.getFile(), seek, chunk);
 				contents.setText(fileChunkResponse.getText());
 				contents.setChunk(chunk);
 				contents.setStartSeek(seek);
 				contents.setFilePointer(fileChunkResponse.getFilePointer());
 			} else {
+				// Read the inputstream and get the lines requested of the output file and set the required fields of the contents object
 				try(BufferedReader reader = new BufferedReader(new InputStreamReader(aof.getFileInputStream(), "UTF-8"))) {
-					List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
+					List<String> lines = new ArrayList<>();
+					lines.addAll(FileUtilities.readLinesLimit(reader, limit, start, end));
 					contents.setLines(lines);
-					contents.setLimit((long) lines.size());
+					contents.setLimit((long) lines.size() - 1);
 					contents.setStart(start);
 					contents.setEnd(start + lines.size());
 					contents.setFilePointer(start + lines.size());
