@@ -31,9 +31,9 @@ export default function AnnouncementForm({
           priority,
         }).catch((message) => notification.error({ message }));
       } else {
-        createAnnouncement(title, markdown, priority).catch((message) =>
-          notification.error({ message })
-        );
+        createAnnouncement(title, markdown, priority)
+          .then(form.resetFields)
+          .catch((message) => notification.error({ message }));
       }
     });
   }
