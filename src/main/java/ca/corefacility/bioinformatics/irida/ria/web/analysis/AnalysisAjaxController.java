@@ -881,8 +881,12 @@ public class AnalysisAjaxController {
 		if (treeFileForSubmission.isPresent()) {
 
 			AnalysisOutputFile file = treeFileForSubmission.get();
-			List<String> lines = IOUtils.readLines(file.getFileInputStream());
-			return ImmutableMap.of("newick", lines.get(0));
+			try(InputStream inputStream = file.getFileInputStream()) {
+				List<String> lines = IOUtils.readLines(inputStream);
+				return ImmutableMap.of("newick", lines.get(0));
+			} catch (IOException e) {
+				throw new IOException("Unable to read file input stream. ", e);
+			}
 		} else {
 			throw new IOException("Newick file could not be found for this submission");
 		}
