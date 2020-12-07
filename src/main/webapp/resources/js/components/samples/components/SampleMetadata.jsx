@@ -1,8 +1,15 @@
 import React from "react";
-import { List } from "antd";
+import { Empty, List } from "antd";
 
+/**
+ * React component to display metadata associated with a sample
+ *
+ * @param {array} metadata
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SampleMetadata({ metadata }) {
-  return (
+  return Object.keys(metadata).length ? (
     <List
       itemLayout="horizontal"
       dataSource={Object.keys(metadata).sort((a, b) => a.localeCompare(b))}
@@ -12,5 +19,7 @@ export function SampleMetadata({ metadata }) {
         </List.Item>
       )}
     />
+  ) : (
+    <Empty description={i18n("SampleDetails.no-metadata")} />
   );
 }

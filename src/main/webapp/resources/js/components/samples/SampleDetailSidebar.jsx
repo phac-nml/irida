@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Drawer, Skeleton, Typography } from "antd";
-import { getSampleDetails } from "../../apis/samples/samples";
+import { fetchSampleDetails } from "../../apis/samples/samples";
 import { connect } from "react-redux";
 import { actions } from "../../redux/reducers/cart";
 import { SampleDetails } from "./components/SampleDetails";
@@ -14,7 +14,7 @@ function SampleDetail({ sampleId, removeSample, children }) {
 
   React.useEffect(() => {
     if (visible) {
-      getSampleDetails(sampleId)
+      fetchSampleDetails(sampleId)
         .then(setDetails)
         .then(() => setLoading(false));
     }

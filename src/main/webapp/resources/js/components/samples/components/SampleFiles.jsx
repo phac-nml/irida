@@ -1,31 +1,30 @@
 import React from "react";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Empty, List, Space, Typography } from "antd";
-import { IconCalendarTwoTone, IconLoading } from "../../icons/Icons";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { SPACE_XS } from "../../../styles/spacing";
+import { IconLoading } from "../../icons/Icons";
 import { CalendarDate } from "../../CalendarDate";
+import { fetchSampleFiles } from "../../../apis/samples/samples";
 
 const { Text } = Typography;
 
+/**
+ * React component to display sample files.
+ *
+ * @param id - sample identifier
+ * @param projectId - project identifier
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SampleFiles({ id, projectId }) {
   const [loading, setLoading] = React.useState(true);
   const [files, setFiles] = React.useState();
 
   React.useEffect(() => {
-    fetch(
-      setBaseUrl(
-        `/ajax/samples/${id}/files${projectId ? `?projectId=${projectId}` : ``}`
-      )
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        Object.keys(data).forEach(
-          (key) => !data[key].length && delete data[key]
-        );
-        setFiles(data);
-        setLoading(false);
-      });
+    fetchSampleFiles({ sampleId: id, projectId }).then((data) => {
+      Object.keys(data).forEach((key) => !data[key].length && delete data[key]);
+      setFiles(data);
+      setLoading(false);
+    });
   }, [id, projectId]);
 
   const labels = {
