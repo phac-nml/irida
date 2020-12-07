@@ -58,8 +58,6 @@ export class SampleRenderer extends React.Component {
 
   displaySample = () => this.props.displaySample(this.props.data);
 
-  removeSample = () => this.props.removeSample(this.props.data);
-
   removeProject = () => this.props.removeProject(this.props.data.project.id);
 
   render() {
@@ -83,7 +81,10 @@ export class SampleRenderer extends React.Component {
           }}
         >
           <div style={{ flexGrow: 1 }}>
-            <SampleDetailSidebar sampleId={sample.id}>
+            <SampleDetailSidebar
+              sampleId={sample.id}
+              removeSample={this.props.removeSample}
+            >
               <Button
                 className="t-sample-name"
                 size="small"
@@ -96,7 +97,9 @@ export class SampleRenderer extends React.Component {
           <Dropdown
             overlay={
               <DeleteMenu
-                removeSample={this.removeSample}
+                removeSample={() =>
+                  this.props.removeSample(sample.project.id, sample.id)
+                }
                 removeProject={this.removeProject}
               />
             }
