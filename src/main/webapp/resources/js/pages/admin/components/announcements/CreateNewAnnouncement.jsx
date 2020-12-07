@@ -4,6 +4,10 @@ import { Drawer, Space } from "antd";
 import AnnouncementForm from "./AnnouncementForm";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../../contexts/visibility-context";
 
 /**
  * Component to add a button which will open a drawer to create an announcement.
@@ -11,14 +15,14 @@ import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
  * @returns {*}
  * @constructor
  */
-export function CreateNewAnnouncement({ createAnnouncement }) {
-  const [visible, setVisible] = React.useState(false);
+function CreateNewAnnouncementButton({ createAnnouncement }) {
+  const [visible, setVisibility] = useVisibility();
 
   return (
     <>
       <AddNewButton
         className="t-create-announcement"
-        onClick={() => setVisible(true)}
+        onClick={() => setVisibility(true)}
         text={i18n("CreateNewAnnouncement.title")}
       />
       <Drawer
@@ -30,12 +34,20 @@ export function CreateNewAnnouncement({ createAnnouncement }) {
         }
         placement="right"
         closable={false}
-        onClose={() => setVisible(false)}
+        onClose={() => setVisibility(false)}
         visible={visible}
         width={640}
       >
         <AnnouncementForm createAnnouncement={createAnnouncement} />
       </Drawer>
     </>
+  );
+}
+
+export default function CreateNewAnnouncement({ createAnnouncement }) {
+  return (
+    <VisibilityProvider>
+      <CreateNewAnnouncementButton createAnnouncement={createAnnouncement} />
+    </VisibilityProvider>
   );
 }

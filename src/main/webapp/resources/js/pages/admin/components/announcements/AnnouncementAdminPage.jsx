@@ -7,7 +7,7 @@ import {
   deleteAnnouncement,
   updateAnnouncement,
 } from "../../../../apis/announcements/announcements";
-import { CreateNewAnnouncement } from "./CreateNewAnnouncement";
+import CreateNewAnnouncement from "./CreateNewAnnouncement";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { AnnouncementsTable } from "./AnnouncementsTable";

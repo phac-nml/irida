@@ -6,6 +6,10 @@ import { PagedTableProvider } from "../../../../components/ant.design/PagedTable
 import AnnouncementForm from "./AnnouncementForm";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../../contexts/visibility-context";
 
 /**
  * Render React component to show the details of an announcement.
@@ -15,16 +19,13 @@ import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
  * @returns {*}
  * @constructor
  */
-export default function AnnouncementDetails({
-  announcement,
-  updateAnnouncement,
-}) {
-  const [visible, setVisible] = React.useState(false);
+function AnnouncementDetailsDrawer({ announcement, updateAnnouncement }) {
+  const [visible, setVisibility] = useVisibility();
   const { TabPane } = Tabs;
 
   return (
     <>
-      <a onClick={() => setVisible(true)}>{announcement.title}</a>
+      <a onClick={() => setVisibility(true)}>{announcement.title}</a>
       <Drawer
         title={
           <Space>
@@ -34,7 +35,7 @@ export default function AnnouncementDetails({
         }
         placement="right"
         closable={false}
-        onClose={() => setVisible(false)}
+        onClose={() => setVisibility(false)}
         visible={visible}
         width={640}
       >
@@ -57,5 +58,19 @@ export default function AnnouncementDetails({
         </Tabs>
       </Drawer>
     </>
+  );
+}
+
+export default function AnnouncementDetails({
+  announcement,
+  updateAnnouncement,
+}) {
+  return (
+    <VisibilityProvider>
+      <AnnouncementDetailsDrawer
+        announcement={announcement}
+        updateAnnouncement={updateAnnouncement}
+      />
+    </VisibilityProvider>
   );
 }

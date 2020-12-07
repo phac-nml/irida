@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Button, Checkbox, Form, Input, notification } from "antd";
 import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
+import { useVisibility } from "../../../../contexts/visibility-context";
 
 /**
  * Render React component to show the form to create or update an announcement.
@@ -16,6 +17,7 @@ export default function AnnouncementForm({
   createAnnouncement,
   updateAnnouncement,
 }) {
+  const [, setVisibility] = useVisibility();
   const markdownRef = useRef();
   const [form] = Form.useForm();
 
@@ -29,10 +31,17 @@ export default function AnnouncementForm({
           title,
           message: markdown,
           priority,
-        }).catch((message) => notification.error({ message }));
+        })
+          .then(() => {
+            setVisibility(false);
+          })
+          .catch((message) => notification.error({ message }));
       } else {
         createAnnouncement(title, markdown, priority)
-          .then(form.resetFields)
+          .then(() => {
+            form.resetFields();
+            setVisibility(false);
+          })
           .catch((message) => notification.error({ message }));
       }
     });
