@@ -60,25 +60,25 @@ public class UIAdminStatisticsServiceTest {
 	@Test
 	public void testAnalysesStats() {
 		service.getAdminAnalysesStatistics(defaultTimePeriod);
-		verify(analysisSubmissionService, times(1)).getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod);
+		when(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod)).thenReturn(genericStatModelList);
 	}
 
 	@Test
 	public void testProjectStats() {
 		service.getAdminProjectStatistics(defaultTimePeriod);
-		verify(projectService, times(1)).getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod);
+		when(projectService.getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod)).thenReturn(genericStatModelList);
 	}
 
 	@Test
 	public void testSampleStats() {
 		service.getAdminSampleStatistics(defaultTimePeriod);
-		verify(sampleService, times(1)).getSamplesCreatedGrouped(minimumCreatedDate, statisticTimePeriod);
+		when(sampleService.getSamplesCreatedGrouped(minimumCreatedDate, statisticTimePeriod)).thenReturn(genericStatModelList);
 	}
 
 	@Test
 	public void testUserStats() {
 		service.getAdminUserStatistics(defaultTimePeriod);
-		verify(userService, times(1)).getUsersCreatedGrouped(minimumCreatedDate, StatisticTimePeriod.DAILY);
+		when(userService.getUsersCreatedGrouped(minimumCreatedDate, StatisticTimePeriod.DAILY)).thenReturn(genericStatModelList);
 	}
 
 }
