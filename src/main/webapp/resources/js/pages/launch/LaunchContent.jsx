@@ -4,6 +4,7 @@ import { Col, Grid, Row } from "antd";
 import { useLaunch } from "./launch-context";
 import { LaunchForm } from "./LaunchForm";
 import { SPACE_LG } from "../../styles/spacing";
+import { LaunchFiles } from "./LaunchFiles";
 
 const { useBreakpoint } = Grid;
 
@@ -22,7 +23,7 @@ export function LaunchContent() {
           <LaunchForm />
         </Col>
         <Col sm={24} md={12} xl={10}>
-          SAMPLES
+          <LaunchFiles />
         </Col>
       </Row>
     </div>

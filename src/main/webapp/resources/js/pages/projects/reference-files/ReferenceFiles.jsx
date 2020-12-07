@@ -6,7 +6,7 @@ import {
   getProjectReferenceFiles,
   removeProjectReferenceFile,
   uploadProjectReferenceFiles,
-} from "../../../apis/projects/reference-files";
+} from "../../../apis/references/reference-files";
 import { getProjectInfo } from "../../../apis/projects/projects";
 
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";

@@ -3,6 +3,7 @@
  */
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { notification } from "antd";
 
 const URL = setBaseUrl(`pipelines/ajax`);
 const AJAX_URL = setBaseUrl(`ajax/pipeline`);
@@ -70,4 +71,13 @@ export function saveNewPipelineParameters({ label, parameters, id }) {
     .catch((error) => {
       throw new Error(error.response.data);
     });
+}
+
+export async function fetchPipelineSamples() {
+  try {
+    const response = await axios.get(`${AJAX_URL}/samples`);
+    return response.data;
+  } catch (e) {
+    notification.error(e.response.data);
+  }
 }

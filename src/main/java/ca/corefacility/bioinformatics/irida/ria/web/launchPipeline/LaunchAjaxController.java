@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -14,6 +15,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorRespo
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
 /**
@@ -23,10 +26,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 @RequestMapping("/ajax/pipeline")
 public class LaunchAjaxController {
     private final UIPipelineService pipelineService;
+    private final UIPipelineSampleService sampleService;
 
     @Autowired
-    public LaunchAjaxController(UIPipelineService pipelineService) {
+    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineSampleService sampleService) {
         this.pipelineService = pipelineService;
+        this.sampleService = sampleService;
     }
 
     /**
@@ -47,8 +52,8 @@ public class LaunchAjaxController {
     }
 
     @GetMapping("/samples")
-    public void getPipelineSamples() {
-
+    public ResponseEntity<List<LaunchSamples>> getPipelineSamples() {
+        return ResponseEntity.ok(sampleService.getPipelineSamples());
     }
 
     /**
