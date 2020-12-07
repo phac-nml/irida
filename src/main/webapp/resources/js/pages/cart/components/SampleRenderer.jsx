@@ -6,6 +6,7 @@ import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { IconDropDown, IconFolder } from "../../../components/icons/Icons";
+import { SampleDetailSidebar } from "../../../components/samples/SampleDetailSidebar";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -82,13 +83,15 @@ export class SampleRenderer extends React.Component {
           }}
         >
           <div style={{ flexGrow: 1 }}>
-            <Button
-              className="t-sample-name"
-              size="small"
-              onClick={this.displaySample}
-            >
-              {sample.label}
-            </Button>
+            <SampleDetailSidebar sampleId={sample.id}>
+              <Button
+                className="t-sample-name"
+                size="small"
+                onClick={this.displaySample}
+              >
+                {sample.label}
+              </Button>
+            </SampleDetailSidebar>
           </div>
           <Dropdown
             overlay={

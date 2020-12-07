@@ -9,7 +9,6 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
 import { actions } from "../../../redux/reducers/cart";
-import { sampleDetailsActions } from "../../../components/SampleDetails";
 import { SampleRenderer } from "./SampleRenderer";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 
@@ -125,7 +124,6 @@ function CartSamplesComponent({
 }
 
 CartSamplesComponent.propTypes = {
-  displaySample: PropTypes.func.isRequired,
   removeSample: PropTypes.func.isRequired,
   removeProject: PropTypes.func.isRequired,
 };
@@ -137,8 +135,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   applyFilter: (filter) => dispatch(actions.applyFilter(filter)),
   emptyCart: () => dispatch(actions.emptyCart()),
-  displaySample: (sample) =>
-    dispatch(sampleDetailsActions.displaySample(sample)),
   removeSample: (sample) => dispatch(actions.removeSample(sample)),
   removeProject: (id) => dispatch(actions.removeProject(id)),
 });

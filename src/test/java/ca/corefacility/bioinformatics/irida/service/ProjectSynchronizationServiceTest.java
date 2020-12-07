@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
-import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -19,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.remote.*;
@@ -59,6 +61,8 @@ public class ProjectSynchronizationServiceTest {
 	private GenomeAssemblyService assemblyService;
 	@Mock
 	private GenomeAssemblyRemoteService assemblyRemoteService;
+	@Mock
+	private Fast5ObjectRemoteService fast5ObjectRemoteService;
 
 	ProjectSynchronizationService syncService;
 
@@ -73,7 +77,7 @@ public class ProjectSynchronizationServiceTest {
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
 				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
-				pairRemoteService, assemblyRemoteService, tokenService, emailController);
+				pairRemoteService, assemblyRemoteService, fast5ObjectRemoteService, tokenService, emailController);
 
 		api = new RemoteAPI();
 		expired = new Project();
@@ -240,6 +244,23 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(assemblyRemoteService).mirrorAssembly(assembly);
 		verify(assemblyService).createAssemblyInSample(sample, assembly);
+	}
+
+	@Test
+	public void testSyncFast5Files() {
+		Sample sample = new Sample();
+		Path p1 = Paths.get("src/test/resources/files/testfast5file.fast5");
+		Fast5Object fast5Object = new Fast5Object(new SequenceFile(p1));
+		RemoteStatus fast5Status = new RemoteStatus("http://fast5", api);
+		fast5Object.setRemoteStatus(fast5Status);
+		fast5Object.setId(1L);
+
+		when(fast5ObjectRemoteService.mirrorSequencingObject(fast5Object)).thenReturn(fast5Object);
+
+		syncService.syncFast5File(fast5Object, sample);
+
+		verify(fast5ObjectRemoteService).mirrorSequencingObject(fast5Object);
+		verify(objectService).createSequencingObjectInSample(fast5Object, sample);
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)
