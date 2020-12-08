@@ -263,24 +263,43 @@ mvn clean package -DskipTests
 This will create the `.war` and `.zip` files for IRIDA release under the `target/` directory.
 
 #### Building IRIDA documentation
+IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs> GitHub project.  IRIDA's documentation is built using [Jekyll][] and [GitHub Pages](https://pages.github.com/).  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML.  We can use Jekyll both for viewing the documentation locally and for publishing to GitHub Pages.  The current documentation can be found at <https://phac-nml.github.io/irida-docs>.
 
-IRIDA documentation can be found in the `doc/` directory in the IRIDA root directory.  IRIDA's documentation is built using [Jekyll][].  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML for releasing to the web.  The documentation at [http://irida.corefacility.ca/documentation](http://irida.corefacility.ca/documentation) is all generated using this tool.
+##### Testing IRIDA documentation locally
+To view the documentation locally or make changes, you can checkou the above GitHub project and make changes.  To run the server locally you can run Jekyll to generate the pages.
 
-To test any documentation changes, you can `cd` into the `doc/` directory and run the following command:
+First you can `cd` into the `docs/` directory and run the following command:
 
+```bash
+bundle exec jekyll serve
 ```
-jekyll serve
-```
+Note that you must have Ruby and Jekyll installed.  See the documentation README.md for info on installing these tools.
 
-This command will read the `_config.yml` file in the directory for configuration settings, then serve the built documentation at http://localhost:4000.  As you make changes to documentation files it will automatically regenerate the documentation and reload its webserver.
+This command will read the `_config.yml` file in the directory for configuration settings, then serve the built documentation at <http://localhost:4000/irida-docs/>.  As you make changes to documentation files it will automatically regenerate the documentation and reload its webserver.
 
-To build the documentation for release, you can run the following:
+##### Updating IRIDA documentation for release
 
+The IRIDA documentation is automatically published from the current state of the `master` branch of the <https://github.com/phac-nml/irida-docs> repository.  Below are the steps you should perform to publish a new version of the IRIDA documentation.
+
+1. Generate new JavaDoc from the main IRIDA repository.  For this you can run the following command:
 ```bash
 mvn clean site
 ```
+  This will compile the Java documentation into `target/docs/apidocs`.  This directory should be moved into the irida-docs repository at `docs/developer/apidocs`.  If there are new files you may need to run `git add docs/developer/apidocs` in that repository to add the new files.  You should then commit the new files to a new branch from `development` and push up to GitHub. 
+2. Create a PR and have another IRIDA developer review the changes.  These changes should only exist within the `docs/developer/apidocs` directory so should not require much manual review.
+3. Once changes are ready in the `development` branch, they must be merged into `master` for release.  Manually update the `master` branch by merging `development`.   You should also create a tag for the IRIDA release version.
+```bash
+git checkout development # checkout the development branch
+git pull # ensure the branch is up to date
+git checkout master # checkout the master branch
+git pull # ensure the branch is up to date
+git merge development # merge development into the master branch
+git tag <the current IRIDA version> # tag the current release for easy retrieval of previous versions
+git push origin master # push the new code to GitHub
+git push --tags # push the newly created tag
+```
 
-This will build the documentation HTML files into `doc/_site`.  That directory can be placed onto a web server for release.
+Shortly after pushing the new changes to GitHub, the updated pages should be reflected on the GitHub Pages site.
 
 IRIDA Codebase
 --------------
