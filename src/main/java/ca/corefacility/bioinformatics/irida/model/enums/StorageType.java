@@ -16,6 +16,10 @@ public enum StorageType {
 		this.storageType = storageType;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String toString() {
 		return storageType;
 	}
