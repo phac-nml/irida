@@ -75,20 +75,21 @@ function CartSamplesComponent({
 }) {
   const filterSamples = (e) => applyFilter(e.target.value);
 
-  const removeOneSample = (sample) => removeSample(sample);
-
   const removeOneProject = (id) => removeProject(id);
 
-  const renderSample = ({ index, data, style }) => (
-    <SampleRenderer
-      rowIndex={index}
-      data={samples[index]}
-      style={style}
-      displaySample={displaySample}
-      removeSample={removeOneSample}
-      removeProject={removeOneProject}
-    />
-  );
+  const renderSample = ({ index, data, style }) => {
+    const sample = samples[index];
+    return (
+      <SampleRenderer
+        rowIndex={index}
+        data={sample}
+        style={style}
+        displaySample={displaySample}
+        removeSample={() => removeSample(sample.project.id, sample.id)}
+        removeProject={removeOneProject}
+      />
+    );
+  };
 
   return (
     <Wrapper>
@@ -135,7 +136,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   applyFilter: (filter) => dispatch(actions.applyFilter(filter)),
   emptyCart: () => dispatch(actions.emptyCart()),
-  removeSample: (sample) => dispatch(actions.removeSample(sample)),
+  removeSample: (projectId, sampleId) =>
+    dispatch(actions.removeSample(projectId, sampleId)),
   removeProject: (id) => dispatch(actions.removeProject(id)),
 });
 

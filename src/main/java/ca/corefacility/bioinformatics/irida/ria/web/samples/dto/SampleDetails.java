@@ -10,10 +10,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
  * Used to return details of a {@link Sample} back to the user interface.
  */
 public class SampleDetails {
-	private Sample sample;
-	private Map<MetadataTemplateField, MetadataEntry> metadata;
-	private boolean modifiable;
-	private Long projectId; // If set, means sample is in the cart
+	private final Sample sample;
+	private final Map<MetadataTemplateField, MetadataEntry> metadata;
+	private final boolean modifiable;
+	private final Long projectId; // If set, means sample is in the cart
 
 	public SampleDetails(Sample sample, boolean modifiable, Long cartProjectId) {
 		this.sample = sample;

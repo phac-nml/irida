@@ -1,13 +1,23 @@
 import React from "react";
 import { Button, Drawer, Skeleton, Typography } from "antd";
 import { fetchSampleDetails } from "../../apis/samples/samples";
-import { connect } from "react-redux";
-import { actions } from "../../redux/reducers/cart";
 import { SampleDetails } from "./components/SampleDetails";
 
 const { Text } = Typography;
 
-function SampleDetail({ sampleId, removeSample, children }) {
+/**
+ * React component to render details (metadata and files) for a sample.
+ * @param sampleId - identifier for a sample
+ * @param removeSample - function to remove the sample from the cart.
+ * @param children
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export function SampleDetailSidebar({
+  sampleId,
+  removeSample = Function.prototype,
+  children,
+}) {
   const [loading, setLoading] = React.useState(true);
   const [details, setDetails] = React.useState({});
   const [visible, setVisible] = React.useState(false);
@@ -21,7 +31,7 @@ function SampleDetail({ sampleId, removeSample, children }) {
   }, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample({ project: { id: details.projectId }, id: sampleId });
+    removeSample({ projectId: details.projectId, sampleId });
   };
 
   return (
@@ -63,12 +73,3 @@ function SampleDetail({ sampleId, removeSample, children }) {
     </>
   );
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  removeSample: (details) => dispatch(actions.removeSample(details)),
-});
-
-export const SampleDetailSidebar = connect(
-  undefined,
-  mapDispatchToProps
-)(SampleDetail);

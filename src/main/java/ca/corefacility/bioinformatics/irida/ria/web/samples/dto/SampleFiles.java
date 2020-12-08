@@ -6,6 +6,9 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
+/**
+ * Collection of different files that can be on a sample
+ */
 public class SampleFiles extends AjaxResponse {
 	private final List<SequencingObject> singles;
 	private final List<SequencingObject> paired;
