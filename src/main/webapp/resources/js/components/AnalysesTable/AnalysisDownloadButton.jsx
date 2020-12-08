@@ -15,21 +15,21 @@ import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
  * @constructor
  */
 export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
-  const [isAnalysisCompleted, setIsAnalysisCompleted] = useState(
-    state.value !== "COMPLETED"
+  const [disableDownloadButton, setDisableDownloadButton] = useState(
+    state !== "COMPLETED"
   );
   const { analysesTableContext } = useContext(AnalysesTableContext);
 
   // Update if an analysis is completed (to enable or disable download results button)
   const intervalId = useInterval(() => {
-    if (state.value !== "COMPLETED" && state.value !== "ERROR") {
+    if (state !== "COMPLETED" && state !== "ERROR") {
       let rowData = analysesTableContext.rows.filter(
         (row) => row.identifier === analysisId
       );
       let currRowData = rowData[rowData.length - 1];
       if (typeof currRowData !== "undefined") {
-        if (isAnalysisCompleted !== currRowData.isCompleted) {
-          setIsAnalysisCompleted(currRowData.isCompleted);
+        if (currRowData.isCompleted) {
+          setDisableDownloadButton(false);
         }
 
         if (currRowData.isCompleted || currRowData.isError) {
@@ -44,7 +44,7 @@ export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
   return (
     <Button
       shape="circle"
-      disabled={!isAnalysisCompleted}
+      disabled={disableDownloadButton}
       href={setBaseUrl(`ajax/analyses/download/${analysisId}`)}
       download
     >
