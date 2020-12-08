@@ -8,13 +8,16 @@ All events related to the cart functionality.
  */
 export const CART = {
   UPDATED: "cart:updated",
-  ADD: "cart:add"
+  ADD: "cart:add",
 };
 
-export const cartNotification = detail => {
+export const cartUpdated = (count) => {
   document.dispatchEvent(
     new CustomEvent(CART.UPDATED, {
-      detail
+      bubbles: true,
+      detail: {
+        count,
+      },
     })
   );
 };
