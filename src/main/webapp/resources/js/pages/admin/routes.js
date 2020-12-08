@@ -10,5 +10,13 @@ export const ADMIN = {
   REMOTEAPI: "remote_api",
   SEQUENCINGRUNS: "sequencing_runs",
   NCBIEXPORTS: "ncbi_exports",
-  ANNOUNCEMENTS: "announcements"
+  ANNOUNCEMENTS: "announcements",
+  STATISTICS: "statistics"
+};
+
+export const ADMINSTATS = {
+  ANALYSES: "analyses",
+  PROJECTS: "projects",
+  SAMPLES: "samples",
+  USERS: "users"
 };
