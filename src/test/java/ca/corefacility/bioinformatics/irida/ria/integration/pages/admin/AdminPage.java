@@ -22,6 +22,9 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className="t-admin-side-menu")
 	private List<WebElement> adminSideMenu;
 
+	@FindBy(className="t-admin-statistics-link")
+	private List<WebElement> adminStatisticsLink;
+
 	@FindBy(className="t-admin-users-submenu")
 	private List<WebElement> adminUsersSubMenu;
 
@@ -141,6 +144,16 @@ public class AdminPage extends AbstractPage {
 	 */
 	public boolean adminClientsLinkVisible() {
 		return adminClientsLink.size() == 1;
+	}
+
+	/**
+	 * Determines if admin statistics link on
+	 * side menu is visible.
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean adminStatisticsLinkVisible() {
+		return adminStatisticsLink.size() == 1;
 	}
 
 	/**

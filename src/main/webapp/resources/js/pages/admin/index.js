@@ -12,7 +12,4 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(
-  <Admin />,
-  document.getElementById("root")
-);
+render(<Admin />, document.getElementById("root"));
