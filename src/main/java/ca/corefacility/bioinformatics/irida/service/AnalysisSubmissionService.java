@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -22,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * A service for AnalysisSubmissions.
@@ -334,6 +336,24 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return An {@link AnalysisServiceStatus} object showing the number of running and queued analyses
 	 */
 	public AnalysisServiceStatus getAnalysisServiceStatus();
+
+	/**
+	 * Get count of analyses run in the time period
+	 *
+	 * @param createdDate the minimum date for submissions ran
+	 * @return An {@link Long} count of analyses ran
+	 */
+	public Long getAnalysesRanInTimePeriod(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of analyses run in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for submissions ran
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 
 	/**
 	 * Class to store the number of running and queued analyses

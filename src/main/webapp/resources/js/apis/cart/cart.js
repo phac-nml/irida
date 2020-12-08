@@ -1,7 +1,15 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { cartUpdated } from "../../utilities/events-utilities";
+import { notification } from "antd";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
+
+const updateCart = (data) => {
+  data.notifications.forEach((n) => notification[n.type](n));
+  cartUpdated(data.count);
+  return data.count;
+};
 
 /**
  * Add samples for a project to the cart.
@@ -9,20 +17,22 @@ const AJAX_URL = setBaseUrl(`/ajax/cart`);
  * @param {array} samples array of sample {ids } to add to cart.
  * @returns {Promise<{count: any}>}
  */
-export const putSampleInCart = async (projectId, samples) =>
-  axios
-    .post(AJAX_URL, {
-      projectId,
-      sampleIds: samples.map((s) => s.id),
-    })
-    .then(({ data }) => data);
+export const putSampleInCart = async (projectId, samples) => {
+  const { data } = await axios.post(AJAX_URL, {
+    projectId,
+    sampleIds: samples.map((s) => s.id),
+  });
+  return updateCart(data);
+};
 
 /**
  * Get the current number of samples in the cart
  * @returns {Promise<{count: any}>}
  */
 export const getCartCount = async () => {
-  return axios.get(`${AJAX_URL}/count`).then(({ data }) => ({ count: data }));
+  const { data: count } = await axios.get(`${AJAX_URL}/count`);
+  cartUpdated(count);
+  return count;
 };
 
 /**
@@ -67,20 +77,17 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  * @param {number} sampleId - Identifier for a sample
  * @returns {Promise<* | never>}
  */
-export const removeSample = async (projectId, sampleId) =>
-  axios
-    .delete(`${AJAX_URL}/sample`, {
-      data: {
-        projectId,
-        sampleId,
-      },
-    })
-    .then(({ data: count }) => count);
+export const removeSample = async (projectId, sampleId) => {
+  const { data } = await axios.delete(`${AJAX_URL}/sample/${sampleId}`);
+  return updateCart(data);
+};
 
 /**
  * Remove an entire project from the cart.
  * @param {number} id - Identifier for a sample
  * @returns {Promise<{count: any}>}
  */
-export const removeProject = async (id) =>
-  axios.delete(`${AJAX_URL}/project?id=${id}`).then(({ data }) => data);
+export const removeProject = async (id) => {
+  const { data } = await axios.delete(`${AJAX_URL}/project?id=${id}`);
+  return updateCart(data);
+};
