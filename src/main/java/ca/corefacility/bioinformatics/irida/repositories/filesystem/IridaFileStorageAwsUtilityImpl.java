@@ -308,4 +308,20 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		}
 		return bytes;
 	}
+
+	@Override
+	public boolean checkConnectivity() throws IllegalStateException {
+		try {
+			if (s3.doesBucketExistV2(bucketName)) {
+				logger.debug("Successfully connected to aws s3 bucket ", bucketName);
+				return true;
+			} else {
+				throw new IllegalStateException(
+						"Unable to connect to aws s3 bucket. Please check that your credentials are valid and that the bucket " + bucketName + " exists.");
+			}
+		} catch (AmazonServiceException e) {
+			throw new IllegalStateException(
+					"Unable to connect to aws s3 bucket. Please check that your credentials are valid and that the bucket " + bucketName + " exists.");
+		}
+	}
 }

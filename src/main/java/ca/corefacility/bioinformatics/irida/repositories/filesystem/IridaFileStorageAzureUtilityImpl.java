@@ -38,12 +38,15 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
 
+	private String containerName;
+
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
 		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl)
 				.sasToken(sasToken)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+		this.containerName = containerName;
 	}
 
 	/**
@@ -304,5 +307,22 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 					.substring(1);
 		}
 		return absolutePath;
+	}
+
+	@Override
+	public boolean checkConnectivity() throws IllegalStateException {
+		try {
+			// Make a api request to get container properties
+			containerClient.getProperties();
+			logger.debug("Successfully connected to azure container ", containerName);
+			return true;
+		} catch (Exception e) {
+			/*
+				Throw an exception which is caught at startup advising the user that the
+				connection was not successful to the azure container
+			 */
+			throw new IllegalStateException(
+					"Unable to connect to azure container. Please check that your credentials are valid and that the container " + containerName + " exists.");
+		}
 	}
 }

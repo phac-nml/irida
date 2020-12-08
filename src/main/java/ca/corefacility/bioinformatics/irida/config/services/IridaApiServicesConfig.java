@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
 import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
@@ -321,13 +322,22 @@ public class IridaApiServicesConfig {
 	@Bean(name = "iridaFileStorageUtility")
 	public IridaFileStorageUtility iridaFileStorageService() {
 		IridaFileStorageUtility iridaFileStorageUtility;
-		if (storageType.equalsIgnoreCase("aws")) {
+		if (storageType.equalsIgnoreCase(StorageType.AWS.toString())) {
 			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
 					awsSecretKey);
-		} else if(storageType.equalsIgnoreCase("azure")) {
+		} else if (storageType.equalsIgnoreCase(StorageType.AZURE.toString())) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		}
+
+		// Check if connection is valid to local file system or cloud provider
+		try {
+			iridaFileStorageUtility.checkConnectivity();
+		} catch (IllegalStateException e) {
+			// Log the error and exit so startup does not continue
+			logger.error("Unable to start up IRIDA! ", e);
+			System.exit(1);
 		}
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		return iridaFileStorageUtility;

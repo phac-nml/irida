@@ -220,4 +220,11 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		}
 		return bytes;
 	}
+
+	@Override
+	public boolean checkConnectivity() {
+		// Since it's the local filesystem we just return true
+		return true;
+	}
+
 }
