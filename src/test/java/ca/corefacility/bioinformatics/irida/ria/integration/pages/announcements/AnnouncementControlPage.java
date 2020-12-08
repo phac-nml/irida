@@ -61,7 +61,7 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public String getAnnouncementTitle(int position) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a span"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a"));
         return messages.get(position).getText();
     }
 
@@ -79,13 +79,22 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void gotoMessageDetails(int index) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement p"));
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a"));
         if (index < messages.size()) {
             messages.get(index).click();
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.urlContains("/details"));
+            waitForElementVisible(By.className("ant-drawer-title"));
         } else {
             throw new IndexOutOfBoundsException();
         }
     }
+
+    public void deleteAnnouncement(int index) {
+        List<WebElement> delete_button = driver.findElements(By.cssSelector("td.t-delete-announcement button"));
+        delete_button.get(index).click();
+        waitForTime(1000);
+        WebElement confirm_delete_button = driver.findElement(By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
+        confirm_delete_button.click();
+        waitForTime(1000);
+    }
+
 }

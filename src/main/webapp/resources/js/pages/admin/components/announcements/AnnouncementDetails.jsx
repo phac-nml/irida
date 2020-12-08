@@ -34,7 +34,6 @@ function AnnouncementDetailsDrawer({ announcement, updateAnnouncement }) {
           </Space>
         }
         placement="right"
-        closable={false}
         onClose={() => setVisibility(false)}
         visible={visible}
         width={640}

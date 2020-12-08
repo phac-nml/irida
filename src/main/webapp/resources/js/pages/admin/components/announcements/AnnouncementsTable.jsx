@@ -72,6 +72,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       align: "right",
       fixed: "right",
       width: 110,
+      className: "t-delete-announcement",
       render(text, record) {
         return (
           <DeleteAnnouncement

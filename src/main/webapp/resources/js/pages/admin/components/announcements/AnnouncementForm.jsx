@@ -71,7 +71,12 @@ export default function AnnouncementForm({
         <Checkbox>{i18n("AnnouncementForm.form.priority")}</Checkbox>
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" onClick={saveAnnouncement}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={saveAnnouncement}
+          className="t-submit-announcement"
+        >
           {announcement
             ? i18n("AnnouncementForm.edit.button")
             : i18n("AnnouncementForm.create.button")}
