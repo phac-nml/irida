@@ -10,7 +10,7 @@ export const types = {
   REMOVE_PROJECT: "CART/REMOVE_PROJECT",
   LOAD_CART: "CART/LOAD_CART",
   CART_LOADED: "CART/CART_LOADED",
-  APPLY_FILTER: "CART/FILTER"
+  APPLY_FILTER: "CART/FILTER",
 };
 
 const initialState = {
@@ -19,32 +19,32 @@ const initialState = {
   loaded: false,
   filter: "",
   samples: [],
-  filteredSamples: []
+  filteredSamples: [],
 };
 
 function filterSamples(samples = [], filter = "") {
   return filter.length > 0
-    ? samples.filter(s => s.label.toLowerCase().includes(filter))
+    ? samples.filter((s) => s.label.toLowerCase().includes(filter))
     : samples;
 }
 
 function removeSample(samples, filter, projectId, sampleId) {
   const updatedSamples = [...samples];
   const index = updatedSamples.findIndex(
-    sample => sample.project.id === projectId && sample.id === sampleId
+    (sample) => sample.project.id === projectId && sample.id === sampleId
   );
   updatedSamples.splice(index, 1);
   return {
     samples: updatedSamples,
-    filteredSamples: filterSamples(updatedSamples, filter)
+    filteredSamples: filterSamples(updatedSamples, filter),
   };
 }
 
 function removeProject(samples, filter, projectId) {
-  const filtered = samples.filter(s => s.project.id !== projectId);
+  const filtered = samples.filter((s) => s.project.id !== projectId);
   return {
     samples: filtered,
-    filteredSamples: filterSamples(filtered, filter)
+    filteredSamples: filterSamples(filtered, filter),
   };
 }
 
@@ -53,23 +53,13 @@ export const reducer = (state = initialState, action = {}) => {
     case types.INITIALIZED:
       return { ...state, ...{ count: action.count, initialized: true } };
     case types.UPDATED:
-      /*
-      Since the cart is not currently a react component, setting the state does
-      nothing.  We are going to use a CustomEvent so that we can communicate with
-      the current AngularJS controller for the navigation.
-       */
-      document.dispatchEvent(
-        new CustomEvent(CART.UPDATED, {
-          detail: action.payload
-        })
-      );
       return { ...state, ...{ count: action.payload.count } };
     case types.CART_LOADED:
       return {
         ...state,
         loaded: true,
         samples: action.payload.samples,
-        filteredSamples: action.payload.samples
+        filteredSamples: action.payload.samples,
       };
     case types.REMOVE_SAMPLE:
       return {
@@ -79,12 +69,12 @@ export const reducer = (state = initialState, action = {}) => {
           state.filter,
           action.payload.projectId,
           action.payload.sampleId
-        )
+        ),
       };
     case types.REMOVE_PROJECT:
       return {
         ...state,
-        ...removeProject(state.samples, state.filter, action.payload.id)
+        ...removeProject(state.samples, state.filter, action.payload.id),
       };
     case types.APPLY_FILTER:
       return {
@@ -93,7 +83,7 @@ export const reducer = (state = initialState, action = {}) => {
         filteredSamples: filterSamples(
           state.samples,
           action.payload.filter.toLowerCase()
-        )
+        ),
       };
     case types.CART_EMPTY_SUCCESS:
       return { ...state, count: 0 };
@@ -103,34 +93,39 @@ export const reducer = (state = initialState, action = {}) => {
 };
 
 export const actions = {
-  initialized: count => ({ type: types.INITIALIZED, count }),
-  add: samples => ({ type: types.ADD, samples }),
-  updated: response => ({ type: types.UPDATED, payload: response }),
+  initialized: (count) => ({ type: types.INITIALIZED, count }),
+  add: (samples) => ({ type: types.ADD, samples }),
+  updated: (count) => {
+    return {
+      type: types.UPDATED,
+      payload: count,
+    };
+  },
   emptyCart: () => ({ type: types.CART_EMPTY }),
-  removeSample: (projectId, sampleId) => ({
+  removeSample: (sample) => ({
     type: types.REMOVE_SAMPLE,
     payload: {
-      projectId,
-      sampleId
-    }
+      projectId: sample.project.id,
+      sampleId: sample.id,
+    },
   }),
-  removeProject: id => ({
+  removeProject: (id) => ({
     type: types.REMOVE_PROJECT,
     payload: {
-      id
-    }
+      id,
+    },
   }),
   loadCart: () => ({
-    type: types.LOAD_CART
+    type: types.LOAD_CART,
   }),
-  cartLoaded: samples => ({
+  cartLoaded: (samples) => ({
     type: types.CART_LOADED,
-    payload: { samples }
+    payload: { samples },
   }),
-  applyFilter: filter => ({
+  applyFilter: (filter) => ({
     type: types.APPLY_FILTER,
     payload: {
-      filter
-    }
-  })
+      filter,
+    },
+  }),
 };

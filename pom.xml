@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>20.09-SNAPSHOT</version>
+	<version>21.01-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -256,11 +256,6 @@
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
 			<version>${commons.net.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.interceptor</groupId>
-			<artifactId>javax.interceptor-api</artifactId>
-			<version>${javax.interceptor-api.version}</version>
 		</dependency>
 
 		<!-- RDF Database -->
@@ -672,22 +667,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.azure</groupId>
-			<artifactId>azure-storage-blob</artifactId>
-			<version>${azure.storage.blob.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>jakarta.xml.bind</groupId>
-					<artifactId>jakarta.xml.bind-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>jakarta.activation</groupId>
-					<artifactId>jakarta.activation-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-s3</artifactId>
 			<version>${aws-java-sdk-s3.version}</version>
@@ -708,6 +687,22 @@
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-storage-blob</artifactId>
+			<version>${azure.storage.blob.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>jakarta.xml.bind</groupId>
+					<artifactId>jakarta.xml.bind-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jakarta.activation</groupId>
+					<artifactId>jakarta.activation-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -1169,7 +1164,7 @@
 		<aspectj.version>1.8.2</aspectj.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.2.0</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>3.12.0</apache.jena.version>
 		<commons-csv.version>1.4</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
@@ -1194,7 +1189,6 @@
 		<selenium-driver.version>3.141.59</selenium-driver.version>
 		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
 		<attoparser.version>2.0.4.RELEASE</attoparser.version>
-		<javax.interceptor-api.version>3.1</javax.interceptor-api.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
 		<jsonpath.version>2.4.0</jsonpath.version>
@@ -1206,7 +1200,7 @@
 		<javax.activation.version>1.2.0</javax.activation.version>
 		<com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
 		<azure.storage.blob.version>12.6.0</azure.storage.blob.version>
-		<aws-java-sdk-s3.version>1.11.376</aws-java-sdk-s3.version>
+		<aws-java-sdk-s3.version>1.11.894</aws-java-sdk-s3.version>
 		<org.apache.httpcomponents.httpclient.version>4.5.12</org.apache.httpcomponents.httpclient.version>
 
 		<!-- plugins -->

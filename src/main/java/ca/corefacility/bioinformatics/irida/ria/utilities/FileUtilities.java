@@ -83,9 +83,11 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				InputStream inputStream = file.getFileInputStream();
-				IOUtils.copy(inputStream,outputStream);
-				inputStream.close();
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
@@ -153,9 +155,11 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				InputStream inputStream = file.getFileInputStream();
-				IOUtils.copy(inputStream,outputStream);
-				inputStream.close();
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
@@ -190,10 +194,8 @@ public class FileUtilities {
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName);
 		response.setContentType(CONTENT_TYPE_TEXT);
 
-		try (ServletOutputStream outputStream = response.getOutputStream()) {
-			InputStream inputStream = file.getFileInputStream();
-			IOUtils.copy(inputStream, outputStream);
-			inputStream.close();
+		try (InputStream inputStream = file.getFileInputStream()) {
+			IOUtils.copy(inputStream, response.getOutputStream());
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this
@@ -420,5 +422,21 @@ public class FileUtilities {
 			sheetNames.add(workbook.getSheetName(i));
 		}
 		return sheetNames;
+	}
+
+	/**
+	 * From (http://stackoverflow.com/questions/3758606/how-to-convert-byte-size- into-human-readable-format-in-java)
+	 *
+	 * @param bytes The {@link Long} size of the file in bytes.
+	 * @param si    {@link Boolean} true to use si units
+	 * @return A human readable {@link String} representation of the file size.
+	 */
+	public static String humanReadableByteCount(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }

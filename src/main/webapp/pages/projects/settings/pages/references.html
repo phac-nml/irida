@@ -1,108 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/settings/_base}">
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{projects/settings/_base}"
+>
 <head>
-    <title th:text="#{project.settings.page.title.references}">Title</title>
-    <script th:inline="javascript">
-      var PAGE = {
-        urls: {
-          get: /*[[@{/projects/{id}/settings/ajax/reference/all(id=${project.identifier})}]]*/ '/projects/1/ajax/reference/all',
-          remove: /*[[@{/referenceFiles/delete}]]*/ '/projects/1/ajax/reference/delete',
-          download: /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/',
-          upload: /*[[@{/referenceFiles/project/{id}/new(id=${project.identifier})}]]*/ 'referenceFiles/project/1/new'
-        },
-        templates: {
-          deleteFile: /*[[@{/projects/templates/referenceFiles/delete}]]*/ '/projects/templates/referenceFiles/delete'
-        }
-      };
-    </script>
+    <meta charset="UTF-8" />
+    <title th:text="#{ReferenceFile.title}">Title</title>
+    <link rel="stylesheet" href="/dist/css/project-reference-files.bundle.css">
 </head>
-<body ng-app="irida.project.reference">
-<div layout:fragment="settings-content" th:with="owner=(${isOwner} or ${isAdmin})">
-    <div class="row">
-        <div class="col-md-12 clearfix">
-				<span class="pull-right" th:if="${owner}" ng-controller="FileUploadCtrl as upload">
-					<button class="btn btn-default uploadRefBtn" ngf-select="upload.onFileSelect($files)">
-						<span class="fa fa-fw fa-upload"></span>
-						<span th:text="#{referenceFile.upload-btn}"></span>
-					</button>
-				</span>
-        </div>
-    </div>
-    <div class="ng-cloak row" ng-controller="FilesCtrl as table">
-        <section class="col-md-12 alert alert-info" ng-show="table.files.length===0">
-            <strong th:text="#{referenceFile.no-files.heading}">__No reference files available for this project.</strong>
-
-            <p id="rf-notice" th:if="${!owner}" class="rf-user" th:text="#{referenceFile.no-files.body-user}">__Ask a project
-                manager to add reference files to this project.</p>
-
-            <p id="rf-notice" th:if="${owner}" class="rf-owner" th:text="#{referenceFile.no-files.body-owner}">__Click the add
-                button to upload a new reference file to this project.</p>
-        </section>
-        <div class="col-md-12" style="margin-top: 1rem;">
-            <upload-error></upload-error>
-            <file-upload-progress></file-upload-progress>
-        </div>
-        <section id="rf-files" class="col-md-12" ng-show="table.files.length > 0">
-            <table id="files-table" class="table table-striped">
-                <thead>
-                <tr>
-                    <th th:text="#{projects.reference-file.name}">Name</th>
-                    <th th:text="#{projects.reference-file.size}">File Size</th>
-                    <th th:text="#{projects.reference-file.createdDate}">Added</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="ref-file-row" ng-repeat="file in table.files | orderBy:file.createdDate" ng-class="table.getRowClass(file)">
-                    <td>{{file.label}}</td>
-                    <td>{{file.size | humanReadableBytes}}</td>
-                    <td>{{file.createdDate | date:'mediumDate'}}</td>
-                    <td>
-                        <div class="btn-toolbar pull-right">
-                            <a ng-show="file.size > 0" class="btn btn-xs btn-default" download="{{file.id}}"
-                               th:with="url=@{/referenceFiles/download/}"
-                               data:ng-href="${url} + '{{file.id}}'"
-                               data:uib-tooltip="#{form.download}">
-                                <span class="fa fa-fw fa-download"></span> <span class="sr-only" th:text="#{form.download}"></span>
-                            </a>
-                            <button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:uib-tooltip="#{form.btn.remove}">
-                                <span class="fa fa-fw fa-trash"></span> <span class="sr-only" th:text="#{form.btn.remove}"></span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </section>
-
-    </div>
+<body>
+<div id="reference-files-root" layout:fragment="settings-content" >
+    <div th:text="#{ReferenceFile.loading}">LOADING ...</div>
 </div>
-<th:block layout:fragment="scripts"  th:inline="javascript">
-    <div th:replace="templates/_file.utils :: upload-progress"></div>
-    <div th:replace="templates/_file.utils :: upload-error"></div>
-    <script type="text/ng-template" id="/delete-modal.html">
-        <div id="delete-modal">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <span class="fa fa-trash fa-fw"></span>
-                    <span th:text="#{referenceFile.delete-modal.title}">Delete FIles</span>
-                </h3>
-            </div>
-            <div class="modal-body">
-                <h4 th:text="#{referenceFile.delete-modal.body}"></h4>
-                <ul>
-                    <li>{{dCtrl.file.label}}</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="dCtrl.close()"></button>
-                <button id="deleteBtn" class="btn btn-primary" th:text="#{form.btn.remove}" ng-click="dCtrl.delete()">
-                    __Remove File
-                </button>
-            </div>
-        </div>
-    </script>
+<th:block layout:fragment="scripts">
     <script th:src="@{/dist/js/project-reference-files.bundle.js}"></script>
 </th:block>
 </body>

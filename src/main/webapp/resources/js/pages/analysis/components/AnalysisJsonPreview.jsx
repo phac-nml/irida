@@ -2,10 +2,10 @@
  * @File component renders a JSON preview of output files.
  */
 
-import React, { useEffect, useState } from "react";
-import { Divider, List, Row } from "antd";
+import React from "react";
+import { Divider, List, Skeleton } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { isAdmin } from "../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 import { grey4 } from "../../../styles/colors";
 import { OutputWrapper } from "../../../components/OutputFiles/OutputWrapper";
@@ -16,18 +16,22 @@ import { FixedSizeList as VList } from "react-window";
 const SCROLLABLE_DIV_HEIGHT = 300;
 
 export default function AnalysisJsonPreview({ output }) {
+  const { analysisContext } = React.useContext(AnalysisContext);
+
   let savedText = "";
-  const [jsonData, setJsonData] = useState(null);
+  const [jsonData, setJsonData] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
   /*
    * Get json file output data and set the jsonData local state to this data.
    */
-  useEffect(() => {
+  React.useEffect(() => {
+    setLoading(true);
     getDataViaChunks({
       submissionId: output.analysisSubmissionId,
       fileId: output.id,
       seek: 0,
-      chunk: output.fileSizeBytes
-    }).then(data => {
+      chunk: output.fileSizeBytes,
+    }).then((data) => {
       savedText = data.text;
       let parsedJson = JSON.parse(savedText);
       let jsonListData = [];
@@ -35,10 +39,10 @@ export default function AnalysisJsonPreview({ output }) {
       if (Array.isArray(parsedJson)) {
         Object.keys(parsedJson).map((key, val) => {
           if (typeof parsedJson[val] !== "undefined") {
-            Object.entries(parsedJson[val]).map(fileRowData => {
+            Object.entries(parsedJson[val]).map((fileRowData) => {
               jsonListData.push({
                 title: fileRowData[0],
-                desc: fileRowData[1] !== null ? fileRowData[1].toString() : ""
+                desc: fileRowData[1] !== null ? fileRowData[1].toString() : "",
               });
             });
           }
@@ -47,6 +51,7 @@ export default function AnalysisJsonPreview({ output }) {
       } else {
         setJsonData(parsedJson);
       }
+      setLoading(false);
     });
   }, []);
 
@@ -62,10 +67,12 @@ export default function AnalysisJsonPreview({ output }) {
     );
   }
 
-  return jsonData !== null ? (
+  return loading ? (
+    <Skeleton loading={loading} active={true} />
+  ) : jsonData !== null ? (
     <div>
-        <OutputFileHeader output={output} />
-      {isAdmin ? (
+      <OutputFileHeader output={output} />
+      {analysisContext.isAdmin ? (
         <div>
           <OutputWrapper overflowRequired={!Array.isArray(jsonData)}>
             {Array.isArray(jsonData) ? (

@@ -6,8 +6,8 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Job
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.CleanupAnalysisSubmissionConditionAge;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
@@ -49,7 +49,7 @@ public class AnalysisScheduledTaskConfig {
 	private EmailController emailController;
 
 	@Autowired
-	private SequencingObjectService sequencingObjectService;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
@@ -129,7 +129,7 @@ public class AnalysisScheduledTaskConfig {
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
 				cleanupAnalysisSubmissionCondition(), galaxyJobErrorsService, jobErrorRepository, emailController,
-				sequencingObjectService, iridaFileStorageUtility);
+				analysisWorkspaceService, iridaFileStorageUtility);
 	}
 
 	/**

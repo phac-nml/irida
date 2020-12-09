@@ -4,18 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A class containing a number of utilities for dealing with files.
  */
 public class FileUtils {
-	private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
 	/**
 	 * Determines if a file is compressed. Adapted from stackoverflow answer:
@@ -52,44 +48,4 @@ public class FileUtils {
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
-
-	/**
-	 * Removes temporarily downloaded files from an object store off the local filesystem
-	 * and the parent directory if it is empty
-	 *
-	 * @param fileToRemove The file to remove
-	 */
-	public static void removeTemporaryFile(Path fileToRemove){
-
-		String parentDirectoryPath = fileToRemove.getParent().toString();
-		Path dirToRemovePath = Paths.get(parentDirectoryPath);
-
-		if(Files.isRegularFile(fileToRemove)) {
-			try {
-				Files.delete(fileToRemove);
-			} catch (IOException e) {
-				logger.debug("Unable to find file to remove " + e);
-			}
-		}
-
-		if(Files.isDirectory(dirToRemovePath)) {
-			boolean directoryIsNumeric = dirToRemovePath.toString()
-					.substring(dirToRemovePath.toString()
-							.length() - 1)
-					.matches("\\d+");
-			// Directory is empty
-			if (directoryIsNumeric && dirToRemovePath.toFile()
-					.listFiles().length == 0) {
-				try {
-					org.apache.commons.io.FileUtils.deleteDirectory(dirToRemovePath.toFile());
-					// Recusrsively call remoteTemporaryFile to remove all
-					// other empty numeric named parent directories
-					removeTemporaryFile(dirToRemovePath);
-				} catch (IOException e) {
-					logger.debug("Unable to remove directory " + e);
-				}
-			}
-		}
-	}
-
 }

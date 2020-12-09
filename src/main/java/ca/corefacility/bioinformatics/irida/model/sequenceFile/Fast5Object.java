@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 import liquibase.util.file.FilenameUtils;
@@ -73,6 +75,7 @@ public class Fast5Object extends SequencingObject {
 		return file;
 	}
 
+
 	public Fast5Type getFast5Type() {
 		return fast5Type;
 	}
@@ -103,7 +106,8 @@ public class Fast5Object extends SequencingObject {
 		try {
 			String extension = FilenameUtils.getExtension(getFile().getFileName());
 
-			if (file.isGzipped()) {
+			// Checks if file is where it should be before it checks if it is gzipped
+			if ((IridaFiles.fileExists(file.getFile()) && file.isGzipped()) || extension.equals("gz")) {
 				type = Fast5Object.Fast5Type.ZIPPED;
 			} else if (extension.equals("fast5")) {
 				type = Fast5Object.Fast5Type.SINGLE;

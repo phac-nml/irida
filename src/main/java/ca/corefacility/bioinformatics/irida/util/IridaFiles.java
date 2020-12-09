@@ -20,6 +20,7 @@ public final class IridaFiles {
 	public static void setIridaFileStorageUtility(IridaFileStorageUtility iridaFileStorageUtility) {
 		IridaFiles.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
+
 	private IridaFiles() {
 	}
 
@@ -94,4 +95,5 @@ public final class IridaFiles {
 	 * @return if file exists or not
 	 */
 	public static boolean fileExists(Path file) { return iridaFileStorageUtility.fileExists(file);}
+
 }

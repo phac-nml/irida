@@ -2,6 +2,7 @@ import React from "react";
 import {
   AppstoreOutlined,
   BoldOutlined,
+  CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
@@ -43,6 +44,7 @@ import {
   TeamOutlined,
   UnorderedListOutlined,
   UserOutlined,
+  UploadOutlined
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -187,4 +189,12 @@ export const IconSortAscending = ({ ...props }) => (
 
 export const IconSortDescending = ({ ...props }) => (
   <SortDescendingOutlined {...props} />
+);
+
+export const IconCheckCircle = ({ ...props }) => (
+  <CheckCircleOutlined {...props} />
+);
+
+export const IconFileUpload = ({ ...props }) => (
+  <UploadOutlined {...props} />
 );

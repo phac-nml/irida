@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,8 +119,7 @@ public class GzipFileProcessor implements FileProcessor {
 				file = addExtensionToFilename(file, GZIP_EXTENSION);
 				sequenceFile.setFile(file);
 
-				InputStream is = sequenceFile.getFileInputStream();
-				try (GZIPInputStream zippedInputStream = new GZIPInputStream(is)) {
+				try (GZIPInputStream zippedInputStream = new GZIPInputStream(sequenceFile.getFileInputStream())) {
 					logger.trace("Handling gzip compressed file.");
 
 					Path targetDirectory = Files.createTempDirectory(null);
@@ -130,7 +128,6 @@ public class GzipFileProcessor implements FileProcessor {
 					logger.debug("Writing uncompressed file to [" + target + "]");
 
 					Files.copy(zippedInputStream, target);
-					is.close();
 					sequenceFile.setFile(target);
 					sequenceFile = sequenceFileRepository.save(sequenceFile);
 

@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,7 +89,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private TestEmailController emailController;
 
 	@Mock
-	private SequencingObjectService sequencingObjectService;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -109,7 +110,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
@@ -252,6 +253,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
 
+		when(analysisWorkspaceService.outputFilesExist(analysisSubmission)).thenReturn(true);
+
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
 		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
@@ -279,6 +282,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		when(analysisWorkspaceService.outputFilesExist(analysisSubmission)).thenReturn(true);
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -310,6 +315,33 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
 		verify(analysisSubmissionRepository, never()).save(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully staying on RUNNING state when
+	 * GalaxyWorkflowState = OK and outputFilesExist = false
+	 * {@link AnalysisState.RUNNING} on success in Galaxy.
+	 *
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesOKStateNoFiles()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.OK,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		when(analysisWorkspaceService.outputFilesExist(analysisSubmission)).thenReturn(false);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
 	}
 
 	/**
@@ -639,7 +671,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedOverOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -666,7 +698,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedCleanupZeroSuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ZERO),
-				galaxyJobErrorsService, jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -693,7 +725,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedUnderOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -720,7 +752,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testCleanupAnalysisSubmissionsCompletedOverUnderOneDaySuccess() throws ExecutionManagerException {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController, sequencingObjectService, iridaFileStorageUtility);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);

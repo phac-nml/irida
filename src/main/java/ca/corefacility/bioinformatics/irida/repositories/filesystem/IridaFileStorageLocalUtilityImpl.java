@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -21,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
@@ -38,10 +40,21 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public File getFile(Path file) {
-		File fileToProcess = null;
-		fileToProcess = file.toFile();
-		return fileToProcess;
+	public IridaTemporaryFile getTemporaryFile(Path file) {
+		return new IridaTemporaryFile(file, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
+		if(iridaTemporaryFile.getFile() != null) {
+			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile().toString() + "]");
+		}
+		if(iridaTemporaryFile.getDirectoryPath() != null) {
+			logger.trace("Directory resides on local filesystem. Not cleaning up directory [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
+		}
 	}
 
 	/**
@@ -136,10 +149,8 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			boolean gzipped = ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
 					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
-			is.close();
-			return gzipped;
 		}
 	}
 
@@ -229,5 +240,17 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 			logger.error("Could not calculate file size: ", e);
 		}
 		return fileSize;
+	}
+
+	@Override
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
+		try {
+			final RandomAccessFile randomAccessFile = new RandomAccessFile(file.toFile(), "r");
+			randomAccessFile.seek(seek);
+			return new FileChunkResponse(FileUtilities.readChunk(randomAccessFile, seek, chunk), randomAccessFile.getFilePointer());
+		} catch (IOException e ) {
+			logger.error("Could not read output file ", e);
+		}
+		return null;
 	}
 }

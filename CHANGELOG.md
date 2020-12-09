@@ -1,9 +1,35 @@
 Changes
 =======
 
+20.09 to 21.01
+--------------
+* [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)
+* [Developer]: Updated the session Cart and provided a service for accessing it.
+* [Developer]: Fixed `SISTR viewer` so plugin and built-in pipelines can use it (20.09.1)
+* [UI]: Added two additional fields to SISTR viewer describing the number of alleles found (20.09.1)
+* [UI]: Fixed bug where users could not see or connect to Remote APIs (20.09.2)
+* [UI]: Fixed bug on project page where incorrect link to Remote API was displayed. (20.09.2)
+* [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without assembly functionality added in 20.09. (20.09.2)
+* [Developer]: Updated deprecated runWorkflow blend4j call to invokeWorkflow and switched to using jar for blend4j
+* [Developer]: Removed `resolve-url-loader` from front end dependencies.
+* [UI]: Fixed bug on users listing page where if a user has never logged into the system there last login date showed `Dec 31 1969`,
+* [Documentation]: Corrected `window.PAGE` to `window.TL` in docs on how to make custom login pages.
+* [Developer]: Removed UI dependency for `bootstrap-sass`.
+* [Developer]: Updated to React v17.0.1, Babel v7.12.1, and Ant Design v4.7.3.
+* [UI]: Updated FastQC page to use Ant Design.
+* [Documentation]: Added documentation for sequence file fastqc page.
+* [UI]: Updated Project Reference File page to use Ant Design.
+* [Developer]: Removed invalid javax.interceptor-api Maven artifact.  It was no longer needed for the project and was causing build failures.  Existing `20.09.2` installations do not need to be upgraded, this change only affects building IRIDA from source.  (20.09.3)
+* [Developer]: Changed to using GitHub Actions for integration tests.
+* [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
+* [UI]: Updated Project Reference File page to display progress of uploads.
+* [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
+* [UI]: Added usage statistics to admin panel.
+* [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
+
 20.05 to 20.09
 --------------
-* [UI] Updated project user groups to use Ant Design.
+* [UI]: Updated project user groups to use Ant Design.
 * [UI/Developer]: Removed most dependency for `momentjs` (only on project samples filters).
 * [Developer]: Removed deprecated Long constructor.
 * [Developer]: Updated `webpack-dev-server` to fix security vulnerability caused by `websocket-extensions` 0.1.3.
@@ -33,6 +59,20 @@ Changes
 * [UI]: Added `Create New Project` button to the Projects listing page.
 * [UI]: Fixed bug where import bulk metadata button was displayed on linelist page for project collaborators. (20.05.04)
 * [UI]: Fixed bug where add member to project button was displayed on project members page for project collaborators. (20.05.04)
+* [Developer]: Added optional method `getAnalysisViewer` for IridaPlugin to allow external applications to use IRIDA's built in analysis visualizations (such as the phylogenetic tree viewer).
+* [REST]: Fixed issue with double slashes sometimes getting added in OAuth2 redirect URI causing auth flow to fail.
+* [Workflow]: Updated the SNVPhyl pipeline to version `1.2.2`.
+* [Developer]: Updated the Galaxy Docker instance to Galaxy `20.05`.
+* [Workflow]: Updated the tools `Shovill`, `Prokka`, and `Quast` in the **Assembly and Annotation** pipeline. These updates mean the issue with out-of-date `tbl2asn` is now fixed and the value of `SHOVILL_RAM` will now be set automatically by Galaxy based on assigned resources to the tool.
+* [Workflow]: Updated the tools `Shovill`, `Prokka`, and `Quast` in the  **Assembly and Annotation Collection** pipeline. Also moved tool **Bundle collections** from the IRIDA Toolshed to the Galaxy Main Toolshed.
+* [Workflow]: Removed dependency of IRIDA on the IRIDA Toolshed (<https://irida.corefacility.ca/galaxy-shed>). This means that all tools for IRIDA pipelines are now available on the main Galaxy toolshed and that IRIDA is compatible with newer versions of Galaxy (`20.XX+`).
+* [UI]: Created admin panel for simplifying administrator tasks (Users, Clients, Remote IRIDA Connections, Sequencing Runs, NCBI Exports, and Announcements).
+* [REST]: Updated REST API to handle errors when copying existing samples more gracefully.
+* [UI]: Updated the analysis results page to auto update the progress of an analysis.
+* [UI]: Updated the analyses table to auto update the progress of the displayed analyses.
+* [UI]: Updated Remote API Connection details page to use full Ant Design and updated Oauth.
+* [UI]: Updated Create Remote Synchronized Project page to use Ant Design and updated Oauth.
+* [UI]: Updated Remote Project Synchronization Settings page to use Ant Design and updated oauth.
 
 20.01 to 20.05
 --------------

@@ -282,7 +282,7 @@ You can view or add reference files by clicking on the "Reference Files" tab in 
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
-You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
+You can upload a new reference file to the project by clicking on the "Upload Reference File" button or by dragging and dropping files onto it:
 
 ![Upload reference file button.](images/upload-reference-file-button.png)
 
@@ -310,6 +310,7 @@ The following data will be synchronized:
 * Basic project metadata
 * FASTQ sequencing data associated with samples
 * Assemblies associated with samples (including both assemblies created by pipelines within IRIDA, and uploaded assemblies)
+* FAST5 sequencing data associated with samples
 * Sample metadata
 
 The following data **will not** be synchronized:
@@ -317,7 +318,6 @@ The following data **will not** be synchronized:
 * Users & groups on a project
 * Analysis automation settings
 * Reference files
-* FAST5 data associated with samples
 
 Some of the above items that are not currently synchronized are expected to be available in future IRIDA versions.
 
@@ -347,7 +347,7 @@ After you have selected your project, you can select a synchronization frequency
 
 ![Synchronize details](images/synchronize-details.png)
 
-The advanced section allows you to manually paste in an IRIDA project's REST URL rather than selecting it from the projects dropdown.  This option should only be used by advanced IRIDA users.
+If you know the URL of the project you want to synchronize, you can directly add the url by checking the `Set URL Manually` and entering it into the input field.
 
 Once your project and an appropriate synchronization frequency have been selected, click the **Synchronize Project** button to create your project.
 

@@ -39,6 +39,9 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${assembly.file.base.directory}")
 	String assemblyFileBaseDirectory;
 
+	private @Value("${irida.storage.type}")
+	String storageType;
+
 	@Autowired
 	private ApplicationContext applicationContext;
 
@@ -88,9 +91,11 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(assemblyFileBaseDirectory);
 	}
 
+	//FIXME Update the code to check if the connection to a cloud provider
+	// is successful or not as well as check if path is writeable for local file storage
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
-		if (!Files.exists(baseDirectory)) {
+		if (!Files.exists(baseDirectory) && storageType.equals("local")) {
 			throw new IllegalStateException(
 					String.format("Cannot continue startup; base directory [%s] does not exist!",
 							baseDirectory.toString()));

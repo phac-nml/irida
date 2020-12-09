@@ -23,13 +23,13 @@ public interface IridaPlugin extends ExtensionPoint {
 
 	/**
 	 * Defines the particular IRIDA Plugin API version.
-	 * 
+	 * <p>
 	 * Please use this version in your plugin's <strong>pom.xml</strong> file as:
-	 * 
+	 *
 	 * <pre>
 	 *     {@code <Plugin-Requires>1.0.0</Plugin-Requires>}
 	 * </pre>
-	 * 
+	 * <p>
 	 * If there are breaking changes to the IRIDA Plugin API this version will
 	 * change, giving you an indication of when to update your plugin.
 	 */
@@ -44,7 +44,7 @@ public interface IridaPlugin extends ExtensionPoint {
 	 * @param iridaWorkflowsService   The {@link IridaWorkflowsService} for getting
 	 *                                information about a workflow.
 	 * @return An {@link Optional} {@link AnalysisSampleUpdater} if one is available
-	 *         for this pipeline
+	 * for this pipeline
 	 * @throws IridaPluginException if an error occurs when loading the
 	 *                              {@link AnalysisSampleUpdater}
 	 */
@@ -55,22 +55,31 @@ public interface IridaPlugin extends ExtensionPoint {
 
 	/**
 	 * Gets the particular {@link AnalysisType} of the workflow to load.
-	 * 
+	 *
 	 * @return The {@link AnalysisType} of the workflow.
 	 */
 	public AnalysisType getAnalysisType();
 
 	/**
 	 * Gets the {@link UUID} of the default implementation of the workflow to use.
-	 * 
+	 *
 	 * @return The {@link UUID} of the workflow.
 	 */
 	public UUID getDefaultWorkflowUUID();
 
 	/**
+	 * Get the name of the viewer to use for this pipeline
+	 *
+	 * @return The name of the viewer if it's available
+	 */
+	public default Optional<String> getAnalysisViewer() {
+		return Optional.empty();
+	}
+
+	/**
 	 * Gets an optional {@link Color} object used to modify the background color in
 	 * the "Select a Pipeline" page.
-	 * 
+	 *
 	 * @return The color for the pipeline in the "Select a Pipeline" page.
 	 */
 	public default Optional<Color> getBackgroundColor() {
@@ -80,7 +89,7 @@ public interface IridaPlugin extends ExtensionPoint {
 	/**
 	 * Gets an optional {@link Color} object used to modify the text color in the
 	 * "Select a Pipeline" page.
-	 * 
+	 *
 	 * @return The text color for the pipeline in the "Select a Pipeline" page.
 	 */
 	public default Optional<Color> getTextColor() {
@@ -89,14 +98,16 @@ public interface IridaPlugin extends ExtensionPoint {
 
 	/**
 	 * Gets a {@link Path} to a directory containing the workflows to load.
-	 * 
+	 *
 	 * @return The workflows path.
 	 * @throws IridaPluginException If there was an exception getting the workflow
 	 *                              paths.
 	 */
 	public default Path getWorkflowsPath() throws IridaPluginException {
 		try {
-			return Paths.get(this.getClass().getResource("/workflows/").toURI());
+			return Paths.get(this.getClass()
+					.getResource("/workflows/")
+					.toURI());
 		} catch (URISyntaxException e) {
 			throw new IridaPluginException("Error converting path to workflows", e);
 		}
