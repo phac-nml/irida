@@ -23,8 +23,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -33,6 +32,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -267,14 +268,18 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *
 	 * @param submissionId The {@link AnalysisSubmission} id
 	 * @param fileId       The {@link AnalysisOutputFile} id
-	 * @return a {@link InputStreamResource} containing the contents of the {@link AnalysisOutputFile}.
+	 * @return a {@link ByteArrayResource} containing the contents of the {@link AnalysisOutputFile}.
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public InputStreamSource getAnalysisOutputFileContents(@PathVariable Long submissionId,
-			@PathVariable Long fileId) {
+	public ByteArrayResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
+			@PathVariable Long fileId) throws IOException {
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
-		return new InputStreamResource(analysisOutputFile.getFileInputStream());
+		try(InputStream inputStream = analysisOutputFile.getFileInputStream()) {
+			return new ByteArrayResource(inputStream.readAllBytes());
+		} catch (IOException e) {
+			throw new IOException("Unable to read input stream ", e);
+		}
 	}
 
 	/**
