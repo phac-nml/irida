@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.repository;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
-import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -41,9 +40,6 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${assembly.file.base.directory}")
 	String assemblyFileBaseDirectory;
-
-	private @Value("${irida.storage.type}")
-	String storageType;
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -100,35 +96,8 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
-		if (!Files.exists(baseDirectory) && storageType.equalsIgnoreCase(StorageType.LOCAL.toString())) {
-			throw new IllegalStateException(
-					String.format("Cannot continue startup; base directory [%s] does not exist!",
-							baseDirectory.toString()));
-		} else {
-			if(storageType.equalsIgnoreCase(StorageType.LOCAL.toString())) {
-				try {
-					// Check if basedirectory path is writeable by creating a temp file and then removing it
-					Path tempFile = Files.createTempFile(baseDirectory, "", "");
-					// Check if directory is writeable
-					boolean directoryWriteable = Files.isWritable(tempFile);
-
-					try {
-						// Cleanup the temp file created in the directory
-						Files.delete(tempFile);
-					} catch (IOException e) {
-						logger.error("An I/O error occurred while attempting to remove temp file ", e);
-					}
-
-					if(!directoryWriteable) {
-						// Log the error and exit so startup does not continue
-						logger.error("Cannot continue startup; base directory " + baseDirectory + " does not have write access! Please check directory permissions.");
-						System.exit(1);
-					}
-				} catch (IOException e) {
-					logger.error("Unable to create temporary file. Please check directory permissions", e);
-					System.exit(1);
-				}
-			}
+		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
+		if(baseDirectoryWritable) {
 			logger.info(String.format(
 					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
 					baseDirectory.toString()));

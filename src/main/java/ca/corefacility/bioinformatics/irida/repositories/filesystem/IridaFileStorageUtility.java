@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
@@ -130,7 +131,16 @@ public interface IridaFileStorageUtility {
 	 * api call to check if containers/buckets exist.
 	 *
 	 * @return Connection valid or not
-	 * @throws IllegalStateException if connection failed
+	 * @throws StorageException if connection failed
 	 */
-	public boolean checkConnectivity() throws IllegalStateException;
+	public boolean checkConnectivity() throws StorageException;
+
+
+	/**
+	 * Check if the given directory is writable
+	 *
+	 * @param baseDirectory The directory to check write access for
+	 * @return if the directory is writable or not
+	 */
+	public boolean checkWriteAccess(Path baseDirectory);
 }

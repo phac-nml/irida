@@ -310,7 +310,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	}
 
 	@Override
-	public boolean checkConnectivity() throws IllegalStateException {
+	public boolean checkConnectivity() throws StorageException {
 		try {
 			// Make a api request to get container properties
 			containerClient.getProperties();
@@ -321,8 +321,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 				Throw an exception which is caught at startup advising the user that the
 				connection was not successful to the azure container
 			 */
-			throw new IllegalStateException(
+			throw new StorageException(
 					"Unable to connect to azure container. Please check that your credentials are valid and that the container " + containerName + " exists.");
 		}
+	}
+
+	@Override
+	public boolean checkWriteAccess(Path baseDirectory) {
+		return true;
 	}
 }

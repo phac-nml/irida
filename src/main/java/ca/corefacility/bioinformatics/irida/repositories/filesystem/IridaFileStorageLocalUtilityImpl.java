@@ -227,4 +227,41 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		return true;
 	}
 
+	@Override
+	public boolean checkWriteAccess(Path baseDirectory) {
+		if (!Files.exists(baseDirectory)) {
+			logger.error("Cannot continue startup; base directory " + baseDirectory + " does not exist!");
+			System.exit(1);
+		} else {
+			try {
+				// Check if basedirectory path is writeable by creating a temp file and then removing it
+				Path tempFile = Files.createTempFile(baseDirectory, "", "");
+				// Check if directory is writeable
+				boolean directoryWriteable = Files.isWritable(tempFile);
+
+				try {
+					// Cleanup the temp file created in the directory
+					Files.delete(tempFile);
+				} catch (IOException e) {
+					logger.error("An I/O error occurred while attempting to remove temp file ", e);
+				}
+
+				if (!directoryWriteable) {
+					// Log the error and exit so startup does not continue
+					logger.error("Cannot continue startup; base directory " + baseDirectory
+							+ " does not have write access! Please check directory permissions.");
+					System.exit(1);
+				}
+			} catch (IOException e) {
+				logger.error("Unable to create temporary file. Please check directory permissions", e);
+				System.exit(1);
+			}
+		}
+		/*
+		 If the basedirectory exists and is writeable we return
+		 true otherwise the system will have exited startup
+		 */
+		return true;
+	}
+
 }

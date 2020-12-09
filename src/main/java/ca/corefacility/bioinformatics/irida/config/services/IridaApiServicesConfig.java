@@ -322,10 +322,11 @@ public class IridaApiServicesConfig {
 	@Bean(name = "iridaFileStorageUtility")
 	public IridaFileStorageUtility iridaFileStorageService() {
 		IridaFileStorageUtility iridaFileStorageUtility;
-		if (storageType.equalsIgnoreCase(StorageType.AWS.toString())) {
+		StorageType st = StorageType.fromString(storageType);
+		if (st.equals(StorageType.AWS)) {
 			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
 					awsSecretKey);
-		} else if (storageType.equalsIgnoreCase(StorageType.AZURE.toString())) {
+		} else if (st.equals(StorageType.AZURE)) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
