@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSamples;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 
 @Component
 public class UIPipelineSampleService {
@@ -23,13 +23,21 @@ public class UIPipelineSampleService {
 		this.cartService = cartService;
 	}
 
-	public List<LaunchSamples> getPipelineSamples() {
+	public List<LaunchSample> getPipelineSamples(boolean paired, boolean singles) {
 		Map<Project, List<Sample>> cart = cartService.getFullCart();
-		List<LaunchSamples> samples = new ArrayList<>();
-		cart.forEach((key, value) -> {
-			for (Sample sample : value) {
-				SampleFiles files = sampleService.getSampleFiles(sample.getId(), key.getId());
-				samples.add(new LaunchSamples((sample), key, files));
+		List<LaunchSample> samples = new ArrayList<>();
+		cart.forEach((project, projectSamples) -> {
+			for (Sample sample : projectSamples) {
+				LaunchSample ls = new LaunchSample(sample, project);
+				List<SequencingObject> files = new ArrayList<>();
+				if (paired) {
+					files.addAll(sampleService.getPairedSequenceFilesForSample(sample, project));
+				}
+				if (singles) {
+					files.addAll(sampleService.getSingleEndSequenceFilesForSample(sample, project));
+				}
+				ls.setFiles(files);
+				samples.add(ls);
 			}
 		});
 		return samples;

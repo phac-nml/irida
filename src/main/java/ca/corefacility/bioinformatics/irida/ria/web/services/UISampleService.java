@@ -67,22 +67,17 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
+		List<SequencingObject> filePairs = getPairedSequenceFilesForSample(sample, project);
+		List<SequencingObject> singles = getSingleEndSequenceFilesForSample(sample, project);
+		List<SequencingObject> fast5 = getFast5FilesForSample(sample);
+		List<GenomeAssembly> genomeAssemblies = getGenomeAssembliesForSample(sample);
+
+		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
+	}
+
+	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
 		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, SequenceFilePair.class);
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
-		List<SequencingObject> fast5 = fast5FileJoins.stream()
-				.map(SampleSequencingObjectJoin::getObject)
-				.collect(Collectors.toList());
-
-		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
-
-		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream()
-				.map(SampleGenomeAssemblyJoin::getObject)
-				.collect(Collectors.toList());
-
 
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
@@ -92,6 +87,13 @@ public class UISampleService {
 			filePairs.add(obj);
 		}
 
+		return filePairs;
+	}
+
+	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
+
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
 			SequencingObject obj = join.getObject();
@@ -99,7 +101,23 @@ public class UISampleService {
 			singles.add(obj);
 		}
 
-		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
+		return singles;
+	}
+
+	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, Fast5Object.class);
+		return fast5FileJoins.stream()
+				.map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
+	}
+
+	public List<GenomeAssembly> getGenomeAssembliesForSample(Sample sample) {
+		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
+
+		return genomeAssemblyJoins.stream()
+				.map(SampleGenomeAssemblyJoin::getObject)
+				.collect(Collectors.toList());
 	}
 
 	/**

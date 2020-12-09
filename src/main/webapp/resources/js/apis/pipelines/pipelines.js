@@ -73,9 +73,11 @@ export function saveNewPipelineParameters({ label, parameters, id }) {
     });
 }
 
-export async function fetchPipelineSamples() {
+export async function fetchPipelineSamples({ paired, singles }) {
   try {
-    const response = await axios.get(`${AJAX_URL}/samples`);
+    const response = await axios.get(
+      `${AJAX_URL}/samples?singles=${singles}&paired=${paired}`
+    );
     return response.data;
   } catch (e) {
     notification.error(e.response.data);

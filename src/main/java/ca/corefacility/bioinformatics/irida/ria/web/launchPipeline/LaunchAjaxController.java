@@ -13,9 +13,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
-import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
@@ -52,8 +52,10 @@ public class LaunchAjaxController {
     }
 
     @GetMapping("/samples")
-    public ResponseEntity<List<LaunchSamples>> getPipelineSamples() {
-        return ResponseEntity.ok(sampleService.getPipelineSamples());
+    public ResponseEntity<List<LaunchSample>> getPipelineSamples(
+            @RequestParam(required = false, defaultValue = "false") boolean paired,
+            @RequestParam(required = false, defaultValue = "false") boolean singles) {
+        return ResponseEntity.ok(sampleService.getPipelineSamples(paired, singles));
     }
 
     /**

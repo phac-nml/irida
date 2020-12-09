@@ -38,4 +38,5 @@ public class SampleFiles extends AjaxResponse {
 	public List<GenomeAssembly> getAssemblies() {
 		return assemblies;
 	}
+
 }

@@ -81,7 +81,6 @@ public class UIPipelineService {
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 		UIPipelineDetailsResponse detailsResponse = new UIPipelineDetailsResponse();
-
         /*
         Prefix for getting messages from IRIDA message properties file
          */
@@ -133,6 +132,12 @@ public class UIPipelineService {
                     .reduce(true, (a, b) -> a && b);
             detailsResponse.setCanUpdateSamples(canUpdateSamples);
         }
+
+        /*
+        Set the acceptable file types
+         */
+		detailsResponse.setAcceptsSingleSequenceFiles(description.acceptsSingleSequenceFiles());
+		detailsResponse.setAcceptsPairedSequenceFiles(description.acceptsPairedSequenceFiles());
 
         return detailsResponse;
     }

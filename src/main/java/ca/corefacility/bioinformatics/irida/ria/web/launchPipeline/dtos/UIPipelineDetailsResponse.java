@@ -20,6 +20,8 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
     private List<UIReferenceFile> referenceFiles;
+    private boolean acceptsSingleSequenceFiles;
+    private boolean acceptsPairedSequenceFiles;
 
     public String getName() {
         return name;
@@ -83,5 +85,21 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setCanUpdateSamples(boolean canUpdateSamples) {
         this.canUpdateSamples = canUpdateSamples;
+    }
+
+    public boolean isAcceptsSingleSequenceFiles() {
+        return acceptsSingleSequenceFiles;
+    }
+
+    public void setAcceptsSingleSequenceFiles(boolean acceptsSingleSequenceFiles) {
+        this.acceptsSingleSequenceFiles = acceptsSingleSequenceFiles;
+    }
+
+    public boolean isAcceptsPairedSequenceFiles() {
+        return acceptsPairedSequenceFiles;
+    }
+
+    public void setAcceptsPairedSequenceFiles(boolean acceptsPairedSequenceFiles) {
+        this.acceptsPairedSequenceFiles = acceptsPairedSequenceFiles;
     }
 }
