@@ -1,5 +1,15 @@
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 
+/*
+IRIDA Workflow identifier can be found as a query parameter within the URL.
+Here we grab it and hold onto it so that we can use it to gather all the
+details about the pipeline.
+ */
+export const PIPELINE_ID = (() => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+})();
+
 /**
  * Format the name of a pipeline to be unique.  The user can modify it at any point.
  *

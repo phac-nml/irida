@@ -4,12 +4,14 @@ import { SharePipelineResults } from "./SharePipelineResults";
 import { ReferenceFiles } from "./references/ReferenceFiles";
 import { SavedParameters } from "./parameters/SavedParameters";
 import { ParameterWithOptions } from "./ParameterWithOptions";
-import { Button, Form } from "antd";
+import { Anchor, Button, Col, Form, Row, Space } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
-import { launchNewPipeline, useLaunch } from "./launch-context";
+import { useLaunch } from "./launch-context";
+import { LaunchFiles } from "./LaunchFiles";
+import { launchNewPipeline } from "./launch-dispatch";
 
 export function LaunchForm() {
-  const [{ initialValues, parameterWithOptions }, launchDispatch] = useLaunch();
+  const [state, launchDispatch] = useLaunch();
   const [form] = Form.useForm();
 
   /**
@@ -20,7 +22,7 @@ export function LaunchForm() {
     // Add any required extra validation here.
     form
       .validateFields()
-      .then((values) => launchNewPipeline(launchDispatch, values));
+      .then((values) => launchNewPipeline(launchDispatch, values, state));
     // Add any required UI updates here.
   };
 
@@ -30,16 +32,56 @@ export function LaunchForm() {
       onFinish={onFinish}
       name="details"
       layout="vertical"
-      initialValues={initialValues}
+      initialValues={state.initialValues}
     >
-      <LaunchDetails />
-      <SharePipelineResults />
-      <ReferenceFiles />
-      <SavedParameters form={form} />
-      <ParameterWithOptions parameters={parameterWithOptions} />
-      <Button type="primary" htmlType="submit" icon={<IconLaunchPipeline />}>
-        {i18n("LaunchContent.submit")}
-      </Button>
+      <Row gutter={[16, 16]}>
+        <Col sm={24} md={19}>
+          <Space direction="vertical" style={{ width: `100%` }}>
+            <LaunchDetails />
+            <SharePipelineResults />
+            <ReferenceFiles />
+            <SavedParameters form={form} />
+            <ParameterWithOptions parameters={state.parameterWithOptions} />
+            <LaunchFiles />
+          </Space>
+        </Col>
+        <Col sm={24} md={5}>
+          <Anchor>
+            <Anchor.Link
+              href="#launch-details"
+              title={i18n("LaunchDetails.label")}
+            />
+            <Anchor.Link
+              href="#launch-sharing"
+              title={i18n("SharePipelineResults.label")}
+            />
+            <Anchor.Link
+              href="#launch-references"
+              title={i18n("ReferenceFiles.label")}
+            />
+            <Anchor.Link
+              href="#launch-parameters"
+              title={i18n("SavedParameters.title")}
+            />
+            <Anchor.Link
+              href="#launch-files"
+              title={i18n("LaunchFiles.heading")}
+            />
+            <Anchor.Link
+              href="#launch-files"
+              title={
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<IconLaunchPipeline />}
+                >
+                  {i18n("LaunchContent.submit")}
+                </Button>
+              }
+            />
+          </Anchor>
+        </Col>
+      </Row>
     </Form>
   );
 }

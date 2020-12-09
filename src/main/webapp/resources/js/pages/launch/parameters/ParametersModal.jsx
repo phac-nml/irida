@@ -3,12 +3,12 @@ import isEqual from "lodash/isEqual";
 import { Form, Input, Modal, Space, Tag } from "antd";
 import { SPACE_SM } from "../../../styles/spacing";
 import { ParametersFooter } from "./ParametersFooter";
+import { useLaunch } from "../launch-context";
+import { deepCopy } from "../launch-utilities";
 import {
   saveModifiedParametersAs,
   setModifiedParameters,
-  useLaunch,
-} from "../launch-context";
-import { deepCopy } from "../launch-utilities";
+} from "../launch-dispatch";
 
 /**
  * React component to render a modal window for modifying and saving pipeline

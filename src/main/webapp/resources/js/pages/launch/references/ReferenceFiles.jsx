@@ -1,10 +1,12 @@
 import React from "react";
-import { Alert, Divider, Form, Radio, Space, Tag } from "antd";
-import { setReferenceFileById, useLaunch } from "../launch-context";
+import { Alert, Form, Radio, Space, Tag } from "antd";
+import { useLaunch } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 import styled from "styled-components";
 import { grey2 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
+import { SectionHeading } from "../SectionHeading";
+import { setReferenceFileById } from "../launch-dispatch";
 
 const RadioItem = styled.button`
   padding: ${SPACE_XS};
@@ -41,6 +43,9 @@ export function ReferenceFiles() {
 
   return requiresReference ? (
     <Space direction="vertical" style={{ width: `100%` }}>
+      <SectionHeading id="launch-references">
+        {i18n("ReferenceFiles.label")}
+      </SectionHeading>
       {referenceFiles.length ? (
         <Form.Item label={i18n("ReferenceFiles.label")}>
           <Radio.Group style={{ width: "100%" }} value={referenceFile}>
@@ -64,7 +69,6 @@ export function ReferenceFiles() {
         />
       )}
       <UploadReferenceFile />
-      <Divider />
     </Space>
   ) : null;
 }

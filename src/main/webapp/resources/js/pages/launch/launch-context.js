@@ -1,13 +1,11 @@
 import React from "react";
-import {
-  getPipelineDetails,
-  saveNewPipelineParameters,
-} from "../../apis/pipelines/pipelines";
+import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 import {
   deepCopy,
   formatDefaultPipelineName,
   formatParametersWithOptions,
   formatSavedParameterSets,
+  PIPELINE_ID,
 } from "./launch-utilities";
 
 /**
@@ -15,16 +13,6 @@ import {
  * IRIDA Workflow launch system.
  * @type {React.Context<unknown>}
  */
-
-/*
-IRIDA Workflow identifier can be found as a query parameter within the URL.
-Here we grab it and hold onto it so that we can use it to gather all the
-details about the pipeline.
- */
-const PIPELINE_ID = (() => {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("id");
-})();
 
 const LaunchContext = React.createContext();
 LaunchContext.displayName = "LaunchContext";
@@ -38,6 +26,7 @@ const TYPES = {
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
   USE_REFERENCE: "launch:use_reference",
+  UPDATE_FILES: "launch:update_files",
 };
 
 const reducer = (state, action) => {
@@ -151,6 +140,11 @@ const reducer = (state, action) => {
         parameterSet: action.payload.set,
         parameterSets: action.payload.sets,
       };
+    case TYPES.UPDATE_FILES:
+      return {
+        ...state,
+        files: action.payload.files,
+      };
     case TYPES.USE_REFERENCE:
       return {
         ...state,
@@ -206,6 +200,7 @@ function LaunchProvider({ children }) {
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
             parameterSets: formattedParameterSets,
+            files: [],
             referenceFile:
               details.requiresReference && details.referenceFiles.length
                 ? details.referenceFiles[0].id
@@ -222,102 +217,6 @@ function LaunchProvider({ children }) {
   );
 }
 
-/**
- * Launch a the pipeline.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {object} parameters - all parameters required to launch the pipe
- * @returns {Promise<void>}
- */
-async function launchNewPipeline(dispatch, parameters) {
-  console.log(parameters);
-  return Promise.resolve();
-}
-
-/**
- * Set the currently selected reference file by its id.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {number} id - identifier for the reference file to use
- */
-function setReferenceFileById(dispatch, id) {
-  dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
-}
-
-/**
- * Called when a reference file has been uploaded to the server.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {string} name - filename
- * @param {number} id - identifier for the reference file
- */
-function referenceFileUploadComplete(dispatch, name, id) {
-  dispatch({ type: TYPES.ADD_REFERENCE, payload: { id, name } });
-}
-
-/**
- * Set the current parameter set by its identifier.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {number} id - identifier for the set of parameters to use.
- */
-function setParameterSetById(dispatch, id) {
-  dispatch({
-    type: TYPES.PARAMETER_SET,
-    payload: { id },
-  });
-}
-
-/**
- * Use a set of modified.  This will store them and add it as a "modified" set
- * the the list of available parameter sets.  NOTE: This will not save them.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {object} set - modified parameter set.
- */
-function setModifiedParameters(dispatch, set) {
-  dispatch({
-    type: TYPES.USE_MODIFIED_PARAMETERS,
-    payload: {
-      set,
-    },
-  });
-}
-
-/**
- * Save a set of modified parameters.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {string} label - new label for the parameter set.
- * @param {array} parameters - list of modified parameters to save.
- * @returns {Promise<*|void>}
- */
-async function saveModifiedParametersAs(dispatch, label, parameters) {
-  try {
-    const data = await saveNewPipelineParameters({
-      label,
-      parameters,
-      id: PIPELINE_ID,
-    });
-
-    const newParameterSet = {
-      id: data.id,
-      label,
-      key: `set-${data.id}`,
-      parameters,
-    };
-
-    // Update the state
-    dispatch({
-      type: TYPES.SAVE_MODIFIED_PARAMETERS,
-      parameterSet: newParameterSet,
-    });
-    return data;
-  } catch (e) {
-    return Promise.reject(e);
-  }
-}
-
 /*
  * Custom React hooks to get access to the contexts, prevents needing to wrap your child
  * components in context consumers.
@@ -332,13 +231,4 @@ function useLaunch() {
   return context;
 }
 
-export {
-  LaunchProvider,
-  useLaunch,
-  launchNewPipeline,
-  setReferenceFileById,
-  referenceFileUploadComplete,
-  setParameterSetById,
-  setModifiedParameters,
-  saveModifiedParametersAs,
-};
+export { TYPES, LaunchProvider, useLaunch };

@@ -1,23 +1,22 @@
 import React from "react";
 import { fetchPipelineSamples } from "../../apis/pipelines/pipelines";
-import { Button, Dropdown, List, Menu, Radio, Space, Tooltip } from "antd";
-import { SampleDetailSidebar } from "../../components/samples/SampleDetailSidebar";
+import { Button, Dropdown, List, Menu, Space, Typography } from "antd";
 import { useLaunch } from "./launch-context";
-import { grey2 } from "../../styles/colors";
 import { IconDropDown } from "../../components/icons/Icons";
-import styled from "styled-components";
 import { removeSample } from "../../apis/cart/cart";
-
-const BlockRadio = styled(Radio)`
-  display: block;
-  height: 30px;
-  line-height: 30px;
-  font-weight: normal;
-`;
+import { SectionHeading } from "./SectionHeading";
+import { SampleFilesListItem } from "./files/SampleFilesListItem";
+import { setSelectedSampleFiles } from "./launch-dispatch";
 
 export function LaunchFiles() {
+  const [selected, setSelected] = React.useState();
   const [
-    { acceptsPairedSequenceFiles: paired, acceptsSingleSequenceFiles: singles },
+    {
+      acceptsPairedSequenceFiles: paired,
+      acceptsSingleSequenceFiles: singles,
+      files = [],
+    },
+    dispatch,
   ] = useLaunch();
   const [hideUnusable, setHideUnusable] = React.useState(true);
   const [visibleSamples, setVisibleSamples] = React.useState();
@@ -27,8 +26,17 @@ export function LaunchFiles() {
     fetchPipelineSamples({
       paired,
       singles,
-    }).then(setSamples);
+    }).then((data) => {
+      setSamples(data);
+      setSelected(
+        data.filter((s) => s.files.length).map((s) => s.files[0].identifier)
+      );
+    });
   }, [paired, singles]);
+
+  React.useEffect(() => {
+    setSelectedSampleFiles(dispatch, selected);
+  }, [selected]);
 
   React.useEffect(() => {
     if (samples) {
@@ -42,68 +50,66 @@ export function LaunchFiles() {
 
   const toggleUsable = () => setHideUnusable(!hideUnusable);
 
-  const removeSampleFromCart = (sample) => {
+  const updateSelectedFiles = (previous, current) => {
+    const ids = new Set(selected);
+    ids.delete(previous);
+    ids.add(current);
+    setSelected(Array.from(ids));
+  };
+
+  const removeSampleFromCart = (sample, selectedId) => {
     removeSample(sample.project.id, sample.id).then(() => {
       setSamples(samples.filter((s) => sample.id !== s.id));
+      const ids = new Set(selected);
+      ids.delete(selectedId);
+      setSelected(Array.from(ids));
     });
   };
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
-      <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item onClick={toggleUsable}>
-                Toggle Usable Samples
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          <Button icon={<IconDropDown />} />
-        </Dropdown>
+      <SectionHeading id="launch-files">
+        {i18n("LaunchFiles.heading")}
+      </SectionHeading>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row-reverse",
+          alignItems: "center",
+        }}
+      >
+        <Space>
+          <Typography.Text type="secondary">
+            {i18n(
+              "LaunchFiles.showing",
+              visibleSamples?.length,
+              samples?.length
+            )}
+          </Typography.Text>
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item onClick={toggleUsable}>
+                  Toggle Usable Samples
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button icon={<IconDropDown />} />
+          </Dropdown>
+        </Space>
       </div>
       <List
+        id="launch-files"
         bordered
         dataSource={visibleSamples}
         renderItem={(sample) => (
-          <List.Item
-            actions={[
-              <Button
-                type="text"
-                key={`remove`}
-                onClick={() => removeSampleFromCart(sample)}
-              >
-                Remove
-              </Button>,
-            ]}
-            style={{
-              backgroundColor: sample.files.length ? "transparent" : grey2,
-            }}
-          >
-            <List.Item.Meta
-              title={
-                <SampleDetailSidebar sampleId={sample.id}>
-                  <Button size="small">{sample.label}</Button>
-                </SampleDetailSidebar>
-              }
-              description={
-                sample.files.length ? (
-                  <div style={{ overflowX: "auto" }}>
-                    <Radio.Group>
-                      {sample.files.map((file) => (
-                        <BlockRadio key={`file-${file.id}`}>
-                          <Tooltip title={file.label}>{file.label}</Tooltip>
-                        </BlockRadio>
-                      ))}
-                    </Radio.Group>
-                  </div>
-                ) : (
-                  <span>YOU NEED SOME FILES YO!</span>
-                )
-              }
-            />
-          </List.Item>
+          <SampleFilesListItem
+            key={`list-${sample.label}`}
+            sample={sample}
+            removeSample={removeSampleFromCart}
+            updateSelectedFiles={updateSelectedFiles}
+          />
         )}
       />
     </Space>

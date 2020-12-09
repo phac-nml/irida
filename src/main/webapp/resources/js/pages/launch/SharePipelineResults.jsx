@@ -1,6 +1,7 @@
 import React from "react";
 import { useLaunch } from "./launch-context";
 import { Checkbox, Divider, Form } from "antd";
+import { SectionHeading } from "./SectionHeading";
 
 /**
  * React component to share results with Project and Samples
@@ -10,7 +11,10 @@ import { Checkbox, Divider, Form } from "antd";
 export function SharePipelineResults() {
   const [{ canUpdateSamples }] = useLaunch();
   return (
-    <>
+    <section>
+      <SectionHeading id="launch-sharing">
+        {i18n("SharePipelineResults.label")}
+      </SectionHeading>
       <Form.Item name="shareResultsWithProjects" valuePropName="checked">
         <Checkbox>{i18n("ShareResultsWithProjects.label")}</Checkbox>
       </Form.Item>
@@ -19,7 +23,6 @@ export function SharePipelineResults() {
           <Checkbox>{i18n("ShareResultsWithSamples.label")}</Checkbox>
         </Form.Item>
       ) : null}
-      <Divider />
-    </>
+    </section>
   );
 }
