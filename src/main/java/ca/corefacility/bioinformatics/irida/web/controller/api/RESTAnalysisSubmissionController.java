@@ -269,6 +269,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * @param submissionId The {@link AnalysisSubmission} id
 	 * @param fileId       The {@link AnalysisOutputFile} id
 	 * @return a {@link ByteArrayResource} containing the contents of the {@link AnalysisOutputFile}.
+	 * @throws IOException if the file input stream cannot be read
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
