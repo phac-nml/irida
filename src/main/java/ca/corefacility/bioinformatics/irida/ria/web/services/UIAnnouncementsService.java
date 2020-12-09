@@ -19,11 +19,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpeci
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
@@ -117,28 +112,6 @@ public class UIAnnouncementsService {
 	}
 
 	/**
-	 * Get user read status for current announcement
-	 * @param announcementID {@link Long} identifier for the {@link Announcement}
-	 * @param params {@link DataTablesParams} parameters for current DataTable
-	 * @return {@link DataTablesResponse} containing the list of users.
-	 */
-	public @ResponseBody
-	DataTablesResponse getUserAnnouncementInfoTable(
-			@PathVariable Long announcementID,
-			final @DataTablesRequest DataTablesParams params) {
-
-		final Announcement currentAnnouncement = announcementService.read(announcementID);
-
-		final Page<User> page = userService.search(
-				UserSpecification.searchUser(params.getSearchValue()), PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-		final List<DataTablesResponseModel> announcementUsers = page.getContent().stream()
-				.map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
-				.collect(Collectors.toList());
-
-		return new DataTablesResponse(params, page, announcementUsers);
-	}
-
-	/**
 	 * Utility method for checking whether the {@link Announcement} has been read by the {@link User}
 	 *
 	 * @param user
@@ -154,4 +127,5 @@ public class UIAnnouncementsService {
 				.filter(j -> j.getObject().equals(user)).findAny();
 		return currentAnnouncement.orElse(null);
 	}
+
 }
