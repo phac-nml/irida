@@ -168,6 +168,12 @@ public class SamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
 	}
 
+	/**
+	 * Get sequencing files associated with a sample
+	 * @param id Identifier for a sample
+	 * @param projectId Identifier for a project
+	 * @return All sequencing files associated with a sample.
+	 */
 	@GetMapping("/{id}/files")
 	public ResponseEntity<AjaxResponse> getFilesForSample(@PathVariable Long id,
 			@RequestParam(required = false) Long projectId) {

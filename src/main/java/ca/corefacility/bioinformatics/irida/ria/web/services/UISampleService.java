@@ -1,31 +1,27 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * UI Service for samples
+ */
 @Component
 public class UISampleService {
 	private final SampleService sampleService;
@@ -54,11 +50,19 @@ public class UISampleService {
 	 */
 	public SampleDetails getSampleDetails(Long id) {
 		Sample sample = sampleService.read(id);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		return new SampleDetails(sample, isModifiable, cartService.isSampleInCart(id));
 	}
 
+	/**
+	 * Get the sequence files associated with a sample
+	 *
+	 * @param sampleId  Identifier for a sample
+	 * @param projectId Identifier for the project the sample belong to
+	 * @return All the sequencing files associated with the sample
+	 */
 	public SampleFiles getSampleFiles(Long sampleId, Long projectId) {
 		Sample sample = sampleService.read(sampleId);
 		// get the project if available
@@ -82,7 +86,6 @@ public class UISampleService {
 		List<GenomeAssembly> genomeAssemblies = genomeAssemblyJoins.stream()
 				.map(SampleGenomeAssemblyJoin::getObject)
 				.collect(Collectors.toList());
-
 
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
