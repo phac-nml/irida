@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * Specialized repository for {@link Project}.
@@ -85,4 +87,25 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 */
 	@Query("FROM Project p WHERE p.remoteStatus != NULL")
 	public List<Project> getRemoteProjects();
+
+	/**
+	 * Get a count of all {@link Project}s created within time period
+	 *
+	 * @param createdDate the minimum created date for projects
+	 * @return a count of {@link Project}s
+	 */
+	@Query("select count(p.id) from Project p where p.createdDate >= ?1")
+	public Long countProjectsCreatedInTimePeriod(Date createdDate);
+
+	/**
+	 * Get a list of {@link GenericStatModel}s for projects created in the past n time period
+	 * and grouped by the format provided.
+	 *
+	 * @param createdDate The minimum created date for projects
+	 * @param groupByFormat The format to use for grouping the results.
+	 * @return A list of {@link GenericStatModel}s
+	 */
+	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', p.createdDate, ?2), count(p.id))"
+			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, ?2)")
+	public List<GenericStatModel> countProjectsCreatedGrouped(Date createdDate, String groupByFormat);
 }

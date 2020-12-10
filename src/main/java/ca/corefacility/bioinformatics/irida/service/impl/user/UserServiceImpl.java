@@ -5,12 +5,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
@@ -423,4 +425,30 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		return new EntityExistsException("Could not create user as a duplicate field exists: " + fieldName, fieldName);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getUsersLoggedIn(Date createdDate) {
+		Long usersCount = userRepository.countUsersLoggedInTimePeriod(createdDate);
+		return usersCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getUsersCreatedInTimePeriod(Date createdDate) {
+		Long usersCount = userRepository.countUsersCreatedInTimePeriod(createdDate);
+		return usersCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getUsersCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return userRepository.countUsersCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
+	}
 }
