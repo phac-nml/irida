@@ -151,4 +151,8 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	public InputStream getFileInputStream() {
 		return IridaFiles.getFileInputStream(getFile());
 	}
+
+	public String getStorageType(){
+		return IridaFiles.getStorageType();
+	}
 }

@@ -357,4 +357,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		}
 		return null;
 	}
+
+	@Override
+	public String getStorageType() {
+		return "azure";
+	}
 }

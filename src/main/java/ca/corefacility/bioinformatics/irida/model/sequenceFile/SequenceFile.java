@@ -323,4 +323,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 		return IridaFiles.getFileSizeBytes(getFile());
 	}
 
+	public String getStorageType(){
+		return IridaFiles.getStorageType();
+	}
+
 }

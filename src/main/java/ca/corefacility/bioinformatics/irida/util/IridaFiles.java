@@ -96,4 +96,8 @@ public final class IridaFiles {
 	 */
 	public static boolean fileExists(Path file) { return iridaFileStorageUtility.fileExists(file);}
 
+	public static String getStorageType() {
+		return iridaFileStorageUtility.getStorageType();
+	}
+
 }

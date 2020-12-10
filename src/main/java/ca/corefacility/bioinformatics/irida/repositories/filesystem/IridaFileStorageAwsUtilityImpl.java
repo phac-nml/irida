@@ -356,4 +356,9 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		}
 		return null;
 	}
+
+	@Override
+	public String getStorageType() {
+		return "aws";
+	}
 }
