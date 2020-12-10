@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Drawer, Skeleton, Typography } from "antd";
+import { Button, Modal, Skeleton, Typography } from "antd";
 import { fetchSampleDetails } from "../../apis/samples/samples";
 import { SampleDetails } from "./components/SampleDetails";
 
@@ -39,7 +39,7 @@ export function SampleDetailSidebar({
       {React.cloneElement(children, {
         onClick: () => setVisible(true),
       })}
-      <Drawer
+      <Modal
         title={
           loading ? null : (
             <div
@@ -61,15 +61,18 @@ export function SampleDetailSidebar({
           )
         }
         visible={visible}
-        onClose={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        footer={null}
         width={720}
       >
-        {loading ? (
-          <Skeleton active title />
-        ) : (
-          <SampleDetails details={details} />
-        )}
-      </Drawer>
+        <div style={{ maxHeight: 500, overflowY: "auto" }}>
+          {loading ? (
+            <Skeleton active title />
+          ) : (
+            <SampleDetails details={details} />
+          )}
+        </div>
+      </Modal>
     </>
   );
 }
