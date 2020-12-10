@@ -1,5 +1,5 @@
 import React from "react";
-import { Drawer, Space, Tabs } from "antd";
+import { Modal, Space, Tabs } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import AnnouncementUserTable from "./AnnouncementUserTable";
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
@@ -26,17 +26,18 @@ function AnnouncementDetailsDrawer({ announcement, updateAnnouncement }) {
   return (
     <>
       <a onClick={() => setVisibility(true)}>{announcement.title}</a>
-      <Drawer
+      <Modal
         title={
           <Space>
             <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
             {i18n("AnnouncementDetails.title")}
           </Space>
         }
-        placement="right"
-        onClose={() => setVisibility(false)}
+        onCancel={() => setVisibility(false)}
         visible={visible}
         width={640}
+        cancelButtonProps={{ style: { display: "none" } }}
+        okButtonProps={{ style: { display: "none" } }}
       >
         <Tabs defaultActiveKey="1">
           <TabPane tab={i18n("AnnouncementDetails.edit.title")} key="1">
@@ -55,7 +56,7 @@ function AnnouncementDetailsDrawer({ announcement, updateAnnouncement }) {
             </PagedTableProvider>
           </TabPane>
         </Tabs>
-      </Drawer>
+      </Modal>
     </>
   );
 }
