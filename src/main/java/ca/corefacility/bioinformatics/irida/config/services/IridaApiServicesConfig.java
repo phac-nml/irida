@@ -345,6 +345,11 @@ public class IridaApiServicesConfig {
 		return iridaFileStorageUtility;
 	}
 
+	@Bean(name= "storageType")
+	public StorageType storageType() {
+		return StorageType.fromString(storageType);
+	}
+
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility, GzipFileProcessor gzipFileProcessor,

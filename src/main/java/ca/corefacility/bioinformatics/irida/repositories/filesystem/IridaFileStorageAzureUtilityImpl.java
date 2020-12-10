@@ -312,11 +312,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public boolean checkConnectivity() throws StorageException {
 		try {
-			// Make a api request to get container properties
-			containerClient.getProperties();
+			// Make an api request to check if we can list the blobs in the container
+			containerClient.listBlobs().forEach(blob ->
+					blob.getName());
 			logger.debug("Successfully connected to azure container ", containerName);
 			return true;
-		} catch (Exception e) {
+
+		} catch (BlobStorageException e) {
 			/*
 				Throw an exception which is caught at startup advising the user that the
 				connection was not successful to the azure container
