@@ -38,15 +38,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
 
-	private String containerName;
-
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
 		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl)
 				.sasToken(sasToken)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
-		this.containerName = containerName;
 	}
 
 	/**
@@ -311,11 +308,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	@Override
 	public boolean checkConnectivity() throws StorageException {
+		String containerName = containerClient.getBlobContainerName();
 		try {
 			// Make an api request to check if we can list the blobs in the container
 			containerClient.listBlobs().forEach(blob ->
 					blob.getName());
-			logger.debug("Successfully connected to azure container ", containerName);
+			logger.debug("Successfully connected to azure container " + containerName);
 			return true;
 
 		} catch (BlobStorageException e) {

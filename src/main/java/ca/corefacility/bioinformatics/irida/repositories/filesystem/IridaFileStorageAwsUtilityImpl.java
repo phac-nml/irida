@@ -313,7 +313,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public boolean checkConnectivity() throws StorageException {
 		try {
 			if (s3.doesBucketExistV2(bucketName)) {
-				logger.debug("Successfully connected to aws s3 bucket ", bucketName);
+				logger.debug("Successfully connected to aws s3 bucket " + bucketName);
 				return true;
 			} else {
 				throw new StorageException(
