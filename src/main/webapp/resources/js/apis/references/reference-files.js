@@ -52,7 +52,9 @@ export async function removeProjectReferenceFile(projectId, fileId) {
 export async function uploadProjectReferenceFiles(projectId, formData, config) {
   try {
     const { data } = await axios.post(
-      setBaseUrl(`ajax/reference-files/project/${projectId}`),
+      setBaseUrl(
+        `ajax/reference-files${projectId ? `?projectId=${projectId}` : ""}`
+      ),
       formData,
       config
     );

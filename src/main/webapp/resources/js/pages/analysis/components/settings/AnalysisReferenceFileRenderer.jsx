@@ -8,9 +8,8 @@ import React, { useContext } from "react";
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
 import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import { Button, Typography } from "antd";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconDownloadFile } from "../../../../components/icons/Icons";
-import { downloadProjectReferenceFile } from "../../../../apis/projects/reference-files";
+import { downloadProjectReferenceFile } from "../../../../apis/references/reference-files";
 
 const { Title } = Typography;
 
