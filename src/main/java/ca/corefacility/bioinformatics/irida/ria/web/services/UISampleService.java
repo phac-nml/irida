@@ -26,6 +26,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+/**
+ * UI Service for samples
+ */
 @Component
 public class UISampleService {
 	private final SampleService sampleService;
@@ -54,11 +57,19 @@ public class UISampleService {
 	 */
 	public SampleDetails getSampleDetails(Long id) {
 		Sample sample = sampleService.read(id);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		return new SampleDetails(sample, isModifiable, cartService.isSampleInCart(id));
 	}
 
+	/**
+	 * Get the sequence files associated with a sample
+	 *
+	 * @param sampleId  Identifier for a sample
+	 * @param projectId Identifier for the project the sample belong to
+	 * @return All the sequencing files associated with the sample
+	 */
 	public SampleFiles getSampleFiles(Long sampleId, Long projectId) {
 		Sample sample = sampleService.read(sampleId);
 		// get the project if available
@@ -78,7 +89,6 @@ public class UISampleService {
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
 		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, SequenceFilePair.class);
-
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {

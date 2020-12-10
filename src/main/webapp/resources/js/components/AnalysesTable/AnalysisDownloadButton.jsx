@@ -15,20 +15,24 @@ import { AnalysesTableContext } from "../../contexts/AnalysesTableContext";
  * @constructor
  */
 export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
-  const [isAnalysisCompleted, setIsAnalysisCompleted] = useState(state.value !== "COMPLETED");
+  const [disableDownloadButton, setDisableDownloadButton] = useState(
+    state !== "COMPLETED"
+  );
   const { analysesTableContext } = useContext(AnalysesTableContext);
 
   // Update if an analysis is completed (to enable or disable download results button)
   const intervalId = useInterval(() => {
-    if(state.value !== "COMPLETED" && state.value !== "ERROR") {
-      let rowData = analysesTableContext.rows.filter(row => row.identifier === analysisId);
+    if (state !== "COMPLETED" && state !== "ERROR") {
+      let rowData = analysesTableContext.rows.filter(
+        (row) => row.identifier === analysisId
+      );
       let currRowData = rowData[rowData.length - 1];
-      if(typeof currRowData !== "undefined") {
-        if(isAnalysisCompleted !== currRowData.isCompleted) {
-          setIsAnalysisCompleted(currRowData.isCompleted);
+      if (typeof currRowData !== "undefined") {
+        if (currRowData.isCompleted) {
+          setDisableDownloadButton(false);
         }
 
-        if(currRowData.isCompleted || currRowData.isError) {
+        if (currRowData.isCompleted || currRowData.isError) {
           clearInterval(intervalId);
         }
       }
@@ -39,13 +43,12 @@ export function AnalysisDownloadButton({ state, analysisId, updateDelay }) {
 
   return (
     <Button
-      shape="circle-outline"
-      disabled={!isAnalysisCompleted}
+      shape="circle"
+      disabled={disableDownloadButton}
       href={setBaseUrl(`ajax/analyses/download/${analysisId}`)}
       download
     >
       <IconDownloadFile />
     </Button>
   );
-
 }
