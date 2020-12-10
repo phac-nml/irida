@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.user;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,10 +12,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -145,4 +148,30 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * @return the user entity with the updated password.
 	 */
 	public User changePassword(Long userId, String password);
+
+	/**
+	 * Get count of users logged on during the time period
+	 *
+	 * @param createdDate the minimum date for users login
+	 * @return An {@link Long} count of users logged in
+	 */
+	public Long getUsersLoggedIn(Date createdDate);
+
+	/**
+	 * Get count of users created during the time period
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @return An {@link Long} count of users created
+	 */
+	public Long getUsersCreatedInTimePeriod(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of users created in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for users created
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getUsersCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 }

@@ -10,6 +10,7 @@ import { SPACE_LG, SPACE_XS } from "../../../../styles/spacing";
 import { Button, Typography } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconDownloadFile } from "../../../../components/icons/Icons";
+import { downloadProjectReferenceFile } from "../../../../apis/projects/reference-files";
 
 const { Title } = Typography;
 
@@ -20,7 +21,6 @@ export function AnalysisReferenceFileRenderer() {
    * the state and methods available to the component
    */
   const { analysisSamplesContext } = useContext(AnalysisSamplesContext);
-  const REFERENCE_FILE_BASE_URL = setBaseUrl("referenceFiles");
   const renderReferenceFile = () => {
     const referenceFile = [];
 
@@ -35,7 +35,7 @@ export function AnalysisReferenceFileRenderer() {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             {analysisSamplesContext.referenceFile.label}
@@ -60,9 +60,8 @@ export function AnalysisReferenceFileRenderer() {
 
   const downloadReferenceFile = () => {
     if (analysisSamplesContext.referenceFile.identifier !== undefined) {
-      window.open(
-        `${REFERENCE_FILE_BASE_URL}/download/${analysisSamplesContext.referenceFile.identifier}`,
-        "_blank"
+      downloadProjectReferenceFile(
+        analysisSamplesContext.referenceFile.identifier
       );
     }
   };
