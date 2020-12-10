@@ -20,10 +20,9 @@ export function SampleFilesListItem({
 
   React.useEffect(() => {
     if (sample.files.length !== 0) {
-      console.log(`Settinge selected to ${sample.files[0].identifier}`);
       setSelected(sample.files[0].identifier);
     }
-  }, []);
+  }, [sample.files]);
 
   const updateSelected = (e) => {
     const id = e.target.value;

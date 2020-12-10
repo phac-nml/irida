@@ -20,7 +20,9 @@ export function DragUpload({ uploadText, uploadHint, options }) {
           <IconFileUpload />
         </p>
         <p className="ant-upload-text">{uploadText}</p>
-        <p className="ant-upload-hint">{uploadHint}</p>
+        <p className="ant-upload-hint" style={{ padding: SPACE_SM }}>
+          {uploadHint}
+        </p>
       </Dragger>
     </div>
   );
