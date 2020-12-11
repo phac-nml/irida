@@ -35,8 +35,7 @@ function CreateNewAnnouncementButton({ createAnnouncement }) {
         onCancel={() => setVisibility(false)}
         visible={visible}
         width={640}
-        cancelButtonProps={{ style: { display: "none" } }}
-        okButtonProps={{ style: { display: "none" } }}
+        footer={null}
       >
         <AnnouncementForm createAnnouncement={createAnnouncement} />
       </Modal>

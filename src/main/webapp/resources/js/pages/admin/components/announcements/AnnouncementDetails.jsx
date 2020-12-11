@@ -36,8 +36,7 @@ function AnnouncementDetailsDrawer({ announcement, updateAnnouncement }) {
         onCancel={() => setVisibility(false)}
         visible={visible}
         width={640}
-        cancelButtonProps={{ style: { display: "none" } }}
-        okButtonProps={{ style: { display: "none" } }}
+        footer={null}
       >
         <Tabs defaultActiveKey="1">
           <TabPane tab={i18n("AnnouncementDetails.edit.title")} key="1">
