@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Drawer, Skeleton, Typography } from "antd";
+import { Button, Modal, Skeleton, Typography } from "antd";
 import { fetchSampleDetails } from "../../apis/samples/samples";
 import { SampleDetails } from "./components/SampleDetails";
 
@@ -39,37 +39,48 @@ export function SampleDetailSidebar({
       {React.cloneElement(children, {
         onClick: () => setVisible(true),
       })}
-      <Drawer
-        title={
-          loading ? null : (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text strong>{details.sample.sampleName}</Text>
-              <Button
-                danger
-                style={{ marginRight: 30 }}
-                onClick={removeSampleFromCart}
+      {visible ? (
+        <Modal
+          bodyStyle={{
+            padding: 0,
+            maxHeight: window.innerHeight - 400,
+            overflowY: "auto",
+          }}
+          title={
+            loading ? null : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                {i18n("SampleDetailsSidebar.removeFromCart")}
-              </Button>
-            </div>
-          )
-        }
-        visible={visible}
-        onClose={() => setVisible(false)}
-        width={720}
-      >
-        {loading ? (
-          <Skeleton active title />
-        ) : (
-          <SampleDetails details={details} />
-        )}
-      </Drawer>
+                <Text strong>{details.sample.sampleName}</Text>
+                <Button
+                  size="small"
+                  danger
+                  style={{ marginRight: 30 }}
+                  onClick={removeSampleFromCart}
+                >
+                  {i18n("SampleDetailsSidebar.removeFromCart")}
+                </Button>
+              </div>
+            )
+          }
+          visible={visible}
+          onCancel={() => setVisible(false)}
+          footer={null}
+          width={720}
+        >
+          <div style={{ margin: 24 }}>
+            {loading ? (
+              <Skeleton active title />
+            ) : (
+              <SampleDetails details={details} />
+            )}
+          </div>
+        </Modal>
+      ) : null}
     </>
   );
 }
