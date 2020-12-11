@@ -1,6 +1,6 @@
 import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { Drawer, Space } from "antd";
+import { Modal, Space } from "antd";
 import AnnouncementForm from "./AnnouncementForm";
 import { IconEdit } from "../../../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
@@ -25,20 +25,20 @@ function CreateNewAnnouncementButton({ createAnnouncement }) {
         onClick={() => setVisibility(true)}
         text={i18n("CreateNewAnnouncement.title")}
       />
-      <Drawer
+      <Modal
         title={
           <Space>
             <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
             {i18n("CreateNewAnnouncement.title")}
           </Space>
         }
-        placement="right"
-        onClose={() => setVisibility(false)}
+        onCancel={() => setVisibility(false)}
         visible={visible}
         width={640}
+        footer={null}
       >
         <AnnouncementForm createAnnouncement={createAnnouncement} />
-      </Drawer>
+      </Modal>
     </>
   );
 }
