@@ -2,16 +2,18 @@
  * @fileOverview React component to render the announcements table.
  */
 import React, { forwardRef, useContext, useImperativeHandle } from "react";
+import { Space } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
+import EditAnnouncement from "./EditAnnouncement";
+import ViewAnnouncement from "./ViewAnnouncement";
 import { IconFlag } from "../../../../components/icons/Icons";
 import { blue6, grey2 } from "../../../../styles/colors";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import AnnouncementDetails from "./AnnouncementDetails";
 
 /**
  * React component to render the announcements table.
@@ -39,14 +41,6 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       fixed: "left",
       dataIndex: "title",
       className: "t-announcement",
-      render(text, record) {
-        return (
-          <AnnouncementDetails
-            announcement={record}
-            updateAnnouncement={props.updateAnnouncement}
-          />
-        );
-      },
       sorter: true,
     },
     {
@@ -75,10 +69,17 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       className: "t-delete-announcement",
       render(text, record) {
         return (
-          <DeleteAnnouncement
-            id={record.id}
-            deleteAnnouncement={props.deleteAnnouncement}
-          />
+          <Space>
+            <ViewAnnouncement announcement={record} />
+            <EditAnnouncement
+              announcement={record}
+              updateAnnouncement={props.updateAnnouncement}
+            />
+            <DeleteAnnouncement
+              id={record.id}
+              deleteAnnouncement={props.deleteAnnouncement}
+            />
+          </Space>
         );
       },
     },
