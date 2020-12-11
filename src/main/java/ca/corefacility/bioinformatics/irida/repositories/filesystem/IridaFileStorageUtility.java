@@ -143,5 +143,10 @@ public interface IridaFileStorageUtility {
 	 */
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk);
 
+	/**
+	 * Get the storage type.
+	 *
+	 * @return {@link String} The storage type
+	 */
 	public String getStorageType();
 }
