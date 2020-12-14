@@ -37,6 +37,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
     },
     {
       title: i18n("announcement.control.title"),
+      className: "t-announcement",
       align: "left",
       fixed: "left",
       dataIndex: "title",
