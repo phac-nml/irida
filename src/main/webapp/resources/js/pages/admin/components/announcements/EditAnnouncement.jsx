@@ -1,29 +1,60 @@
 import React from "react";
-import { Button } from "antd";
+import { Button, Modal, Space } from "antd";
+import AnnouncementForm from "./AnnouncementForm";
 import { IconEdit } from "../../../../components/icons/Icons";
-import { AnnouncementModal } from "./AnnouncementModal";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../../contexts/visibility-context";
 
 /**
- * Render React component to edit an announcement.
+ * Render a modal that displays the announcement form.
  * @param {object} announcement - the announcement that is to be updated.
- * @param {function} updateAnnouncement - function to update the announcement.
+ * @param {function} updateAnnouncement - the function that updates an announcement.
  * @returns {*}
  * @constructor
  */
-export function EditAnnouncement({ announcement, updateAnnouncement }) {
-  const [visible, setVisible] = React.useState(false);
+function EditAnnouncementModal({ announcement, updateAnnouncement }) {
+  const [visible, setVisibility] = useVisibility();
 
   return (
     <>
-      <Button shape={"circle"} onClick={() => setVisible(true)}>
+      <Button
+        shape={"circle"}
+        onClick={() => setVisibility(true)}
+        className={"t-edit-announcement"}
+      >
         <IconEdit />
       </Button>
-      <AnnouncementModal
+      <Modal
+        title={
+          <Space>
+            <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
+            {i18n("EditAnnouncement.title")}
+          </Space>
+        }
+        onCancel={() => setVisibility(false)}
         visible={visible}
-        closeModal={() => setVisible(false)}
+        width={640}
+        footer={null}
+      >
+        <AnnouncementForm
+          announcement={announcement}
+          updateAnnouncement={updateAnnouncement}
+        />
+      </Modal>
+    </>
+  );
+}
+
+export default function EditAnnouncement({ announcement, updateAnnouncement }) {
+  return (
+    <VisibilityProvider>
+      <EditAnnouncementModal
         announcement={announcement}
         updateAnnouncement={updateAnnouncement}
       />
-    </>
+    </VisibilityProvider>
   );
 }

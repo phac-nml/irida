@@ -1,28 +1,52 @@
 import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { AnnouncementModal } from "./AnnouncementModal";
+import { Modal, Space } from "antd";
+import AnnouncementForm from "./AnnouncementForm";
+import { IconEdit } from "../../../../components/icons/Icons";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../../contexts/visibility-context";
 
 /**
- * Component to add a button which will open a modal to create an announcement.
- * @param {function} createAnnouncement
+ * Component to add a button which will open a drawer to create an announcement.
+ * @param {function} createAnnouncement - the function that creates an announcement.
  * @returns {*}
  * @constructor
  */
-export function CreateNewAnnouncement({ createAnnouncement }) {
-  const [visible, setVisible] = React.useState(false);
+function CreateNewAnnouncementButton({ createAnnouncement }) {
+  const [visible, setVisibility] = useVisibility();
 
   return (
     <>
       <AddNewButton
         className="t-create-announcement"
-        onClick={() => setVisible(true)}
+        onClick={() => setVisibility(true)}
         text={i18n("CreateNewAnnouncement.title")}
       />
-      <AnnouncementModal
+      <Modal
+        title={
+          <Space>
+            <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
+            {i18n("CreateNewAnnouncement.title")}
+          </Space>
+        }
+        onCancel={() => setVisibility(false)}
         visible={visible}
-        closeModal={() => setVisible(false)}
-        createAnnouncement={createAnnouncement}
-      />
+        width={640}
+        footer={null}
+      >
+        <AnnouncementForm createAnnouncement={createAnnouncement} />
+      </Modal>
     </>
+  );
+}
+
+export default function CreateNewAnnouncement({ createAnnouncement }) {
+  return (
+    <VisibilityProvider>
+      <CreateNewAnnouncementButton createAnnouncement={createAnnouncement} />
+    </VisibilityProvider>
   );
 }

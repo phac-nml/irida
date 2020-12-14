@@ -2,18 +2,18 @@
  * @fileOverview React component to render the announcements table.
  */
 import React, { forwardRef, useContext, useImperativeHandle } from "react";
+import { Space } from "antd";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
-import { SPACE_XS } from "../../../../styles/spacing";
-import { EditAnnouncement } from "./EditAnnouncement";
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
+import EditAnnouncement from "./EditAnnouncement";
+import ViewAnnouncement from "./ViewAnnouncement";
 import { IconFlag } from "../../../../components/icons/Icons";
 import { blue6, grey2 } from "../../../../styles/colors";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import { MarkdownViewer } from "../../../../components/markdown/MarkdownViewer";
 
 /**
  * React component to render the announcements table.
@@ -37,24 +37,21 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
     },
     {
       title: i18n("announcement.control.title"),
+      className: "t-announcement",
       align: "left",
       fixed: "left",
       dataIndex: "title",
-      className: "t-announcement",
-      render(text, full) {
-        return (
-          <a href={setBaseUrl(`announcements/${full.id}/details`)}>
-            <MarkdownViewer markdown={text} />
-          </a>
-        );
-      },
       sorter: true,
     },
     {
       title: i18n("announcement.control.createdBy"),
       dataIndex: "user",
       render(text, item) {
-        return <a href={item.user.id}>{item.user.username}</a>;
+        return (
+          <a href={setBaseUrl(`/users/${item.user.identifier}`)}>
+            {item.user.username}
+          </a>
+        );
       },
       sorter: true,
     },
@@ -71,18 +68,17 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       width: 110,
       render(text, record) {
         return (
-          <span>
-            <span style={{ marginRight: SPACE_XS }}>
-              <EditAnnouncement
-                announcement={record}
-                updateAnnouncement={props.updateAnnouncement}
-              />
-            </span>
+          <Space>
+            <ViewAnnouncement announcement={record} />
+            <EditAnnouncement
+              announcement={record}
+              updateAnnouncement={props.updateAnnouncement}
+            />
             <DeleteAnnouncement
               id={record.id}
               deleteAnnouncement={props.deleteAnnouncement}
             />
-          </span>
+          </Space>
         );
       },
     },
