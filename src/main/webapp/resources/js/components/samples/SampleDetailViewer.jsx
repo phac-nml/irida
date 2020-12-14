@@ -13,7 +13,7 @@ const { Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetailSidebar({
+export function SampleDetailViewer({
   sampleId,
   removeSample = Function.prototype,
   children,

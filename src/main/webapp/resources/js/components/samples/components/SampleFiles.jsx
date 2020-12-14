@@ -1,11 +1,10 @@
 import React from "react";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Empty, List, Space, Typography } from "antd";
+import { Empty, Space } from "antd";
 import { IconLoading } from "../../icons/Icons";
-import { CalendarDate } from "../../CalendarDate";
 import { fetchSampleFiles } from "../../../apis/samples/samples";
-
-const { Text } = Typography;
+import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
+import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
+import { SingleEndFileRenderer } from "../../sequence-files/SingleEndFileRenderer";
 
 /**
  * React component to display sample files.
@@ -21,53 +20,42 @@ export function SampleFiles({ id, projectId }) {
 
   React.useEffect(() => {
     fetchSampleFiles({ sampleId: id, projectId }).then((data) => {
+      /*
+      Remove any file types that do not have associated files.
+       */
       Object.keys(data).forEach((key) => !data[key].length && delete data[key]);
       setFiles(data);
       setLoading(false);
     });
   }, [id, projectId]);
 
-  const labels = {
-    singles: i18n("SampleFiles.singles"),
-    paired: i18n("SampleFiles.paired"),
-    fast5: i18n("SampleFiles.fast5"),
-    assemblies: i18n("SampleFiles.assemblies"),
-  };
-
   return loading ? (
     <IconLoading />
   ) : Object.keys(files).length !== 0 ? (
-    <>
-      <List
-        itemLayout="vertical"
-        dataSource={Object.keys(files)}
-        renderItem={(type) => (
-          <List.Item>
-            <List.Item.Meta
-              key={type}
-              title={<Text strong>{labels[type]}</Text>}
-              description={
-                <List
-                  dataSource={files[type]}
-                  renderItem={(file) => (
-                    <List.Item key={`single-${file.identifier}`}>
-                      <List.Item.Meta
-                        description={
-                          <Space direction="vertical">
-                            <Text>{file.label}</Text>
-                            <CalendarDate date={file.createdDate} />
-                          </Space>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              }
-            />
-          </List.Item>
-        )}
-      />
-    </>
+    <Space size={`large`} direction={`vertical`} style={{ width: `100%` }}>
+      {files.singles && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
+          <SingleEndFileRenderer files={files.singles} />
+        </SequenceFileTypeRenderer>
+      )}
+      {files.paired && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
+          {files.paired.map((pair) => (
+            <PairedFileRenderer key={`pair-${pair.identifier}`} pair={pair} />
+          ))}
+        </SequenceFileTypeRenderer>
+      )}
+      {files.fast5 && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
+          <SingleEndFileRenderer files={files.fast5} />
+        </SequenceFileTypeRenderer>
+      )}
+      {files.assemblies && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
+          <SingleEndFileRenderer files={files.assemblies} />
+        </SequenceFileTypeRenderer>
+      )}
+    </Space>
   ) : (
     <Empty description={i18n("SampleFiles.no-files")} />
   );
