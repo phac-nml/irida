@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, List, Radio } from "antd";
 import { grey2 } from "../../../styles/colors";
-import { SampleDetailSidebar } from "../../../components/samples/SampleDetailSidebar";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import styled from "styled-components";
 
 const BlockRadio = styled(Radio)`
@@ -11,6 +11,16 @@ const BlockRadio = styled(Radio)`
   font-weight: normal;
 `;
 
+/**
+ * React component to display the list of files that can be run on the current
+ * pipeline for a given sample.
+ *
+ * @param {object} sample - the sample to display files for.
+ * @param {function} removeSample - function to remove the sample from the cart
+ * @param {function} updateSelectedFiles - function to call if user want to run a different set of files
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SampleFilesListItem({
   sample,
   removeSample,
@@ -43,9 +53,9 @@ export function SampleFilesListItem({
     >
       <List.Item.Meta
         title={
-          <SampleDetailSidebar sampleId={sample.id}>
+          <SampleDetailViewer sampleId={sample.id}>
             <Button size="small">{sample.label}</Button>
-          </SampleDetailSidebar>
+          </SampleDetailViewer>
         }
         description={
           selected != undefined ? (
