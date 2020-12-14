@@ -4,6 +4,12 @@ import { notification } from "antd";
 
 const URL = setBaseUrl(`ajax/samples`);
 
+/**
+ * Get details about a particular sample
+ * NOTE: Does not include file information.
+ * @param {number} id - identifier for a sample
+ * @returns {Promise<any>}
+ */
 export const fetchSampleDetails = async (id) => {
   try {
     const { data } = await axios.get(`${URL}/${id}/details`);
@@ -13,6 +19,12 @@ export const fetchSampleDetails = async (id) => {
   }
 };
 
+/**
+ * Get file details for a sample
+ * @param {number} sampleId - identifier for a sample
+ * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.
+ * @returns {Promise<any>}
+ */
 export async function fetchSampleFiles({ sampleId, projectId }) {
   try {
     const response = await axios(
