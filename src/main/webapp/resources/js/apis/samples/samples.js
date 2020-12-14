@@ -1,6 +1,5 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { notification } from "antd";
 
 const URL = setBaseUrl(`ajax/samples`);
 
@@ -32,6 +31,6 @@ export async function fetchSampleFiles({ sampleId, projectId }) {
     );
     return response.data;
   } catch (e) {
-    notification.error({ message: e.response.data.message });
+    return Promise.reject(e.response.data);
   }
 }
