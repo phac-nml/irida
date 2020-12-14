@@ -21,7 +21,11 @@ function ViewAnnouncementModal({ announcement }) {
 
   return (
     <>
-      <Button shape={"circle"} onClick={() => setVisibility(true)}>
+      <Button
+        shape={"circle"}
+        onClick={() => setVisibility(true)}
+        className={"t-view-announcement"}
+      >
         <IconEye />
       </Button>
       <Modal

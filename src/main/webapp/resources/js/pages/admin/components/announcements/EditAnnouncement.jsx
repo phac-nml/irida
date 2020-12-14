@@ -20,7 +20,11 @@ function EditAnnouncementModal({ announcement, updateAnnouncement }) {
 
   return (
     <>
-      <Button shape={"circle"} onClick={() => setVisibility(true)}>
+      <Button
+        shape={"circle"}
+        onClick={() => setVisibility(true)}
+        className={"t-edit-announcement"}
+      >
         <IconEdit />
       </Button>
       <Modal

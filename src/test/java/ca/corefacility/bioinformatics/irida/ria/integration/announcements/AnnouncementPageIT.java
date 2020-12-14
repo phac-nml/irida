@@ -91,21 +91,21 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		String title1 = controlPage.getAnnouncementTitle(1);
 		String title2 = controlPage.getAnnouncementTitle(2);
 
-		AnnouncementDetailsComponent announcementDetailsComponent = AnnouncementDetailsComponent.goTo(driver());
+		EditAnnouncementComponent editAnnouncementComponent = EditAnnouncementComponent.goTo(driver());
 
-		controlPage.gotoMessageDetails(0);
-		compareMessages(announcementDetailsComponent.getTitle(), title0);
-		announcementDetailsComponent.clickCancelButton();
-
-		driver().navigate().refresh();
-		controlPage.gotoMessageDetails(1);
-		compareMessages(announcementDetailsComponent.getTitle(), title1);
-		announcementDetailsComponent.clickCancelButton();
+		controlPage.gotoEditMessage(0);
+		compareMessages(editAnnouncementComponent.getTitle(), title0);
+		editAnnouncementComponent.clickCancelButton();
 
 		driver().navigate().refresh();
-		controlPage.gotoMessageDetails(2);
-		compareMessages(announcementDetailsComponent.getTitle(), title2);
-		announcementDetailsComponent.clickCancelButton();
+		controlPage.gotoEditMessage(1);
+		compareMessages(editAnnouncementComponent.getTitle(), title1);
+		editAnnouncementComponent.clickCancelButton();
+
+		driver().navigate().refresh();
+		controlPage.gotoEditMessage(2);
+		compareMessages(editAnnouncementComponent.getTitle(), title2);
+		editAnnouncementComponent.clickCancelButton();
 	}
 
 	private void compareMessages(String announcement, String preview) {
@@ -119,9 +119,9 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		final boolean newPriority = true;
 
 		controlPage.goTo();
-		AnnouncementDetailsComponent announcementDetailsComponent = AnnouncementDetailsComponent.goTo(driver());
-		controlPage.gotoMessageDetails(4);
-		announcementDetailsComponent.enterAnnouncement(newTitle, newMessage, newPriority);
+		EditAnnouncementComponent editAnnouncementComponent = EditAnnouncementComponent.goTo(driver());
+		controlPage.gotoEditMessage(4);
+		editAnnouncementComponent.enterAnnouncement(newTitle, newMessage, newPriority);
 
 		String announcementTitle = controlPage.getAnnouncementTitle(4);
 		assertTrue("Unexpected message content", newTitle.contains(announcementTitle));
@@ -136,12 +136,11 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
     @Test
-    public void testDetailsTablePopulated() {
+    public void testAnnouncementUserTablePopulated() {
         controlPage.goTo();
-		AnnouncementDetailsComponent announcementDetailsComponent = AnnouncementDetailsComponent.goTo(driver());
-		controlPage.gotoMessageDetails(0);
-		announcementDetailsComponent.clickViewTab();
-		assertEquals("Unexpected number of user information rows in table", 6, announcementDetailsComponent.getTableDataSize());
+		ViewAnnouncementComponent viewAnnouncementComponent = ViewAnnouncementComponent.goTo(driver());
+		controlPage.gotoViewMessage(0);
+		assertEquals("Unexpected number of user information rows in table", 6, viewAnnouncementComponent.getTableDataSize());
     }
 
     @Test

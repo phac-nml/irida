@@ -40,7 +40,6 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       align: "left",
       fixed: "left",
       dataIndex: "title",
-      className: "t-announcement",
       sorter: true,
     },
     {
@@ -66,7 +65,6 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       align: "right",
       fixed: "right",
       width: 110,
-      className: "t-delete-announcement",
       render(text, record) {
         return (
           <Space>

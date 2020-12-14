@@ -22,7 +22,7 @@ export function DeleteAnnouncement({ id, deleteAnnouncement }) {
       okText={i18n("DeleteAnnouncement.ok")}
       icon={<IconQuestionCircle style={{ color: red6 }} />}
     >
-      <Button shape={"circle"}>
+      <Button shape={"circle"} className={"t-delete-announcement"}>
         <IconTrash />
       </Button>
     </Popconfirm>
