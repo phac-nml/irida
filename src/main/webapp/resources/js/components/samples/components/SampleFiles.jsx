@@ -29,36 +29,29 @@ export function SampleFiles({ id, projectId }) {
     });
   }, [id, projectId]);
 
-  const labels = {
-    singles: i18n("SampleFiles.singles"),
-    paired: i18n("SampleFiles.paired"),
-    fast5: i18n("SampleFiles.fast5"),
-    assemblies: i18n("SampleFiles.assemblies"),
-  };
-
   return loading ? (
     <IconLoading />
   ) : Object.keys(files).length !== 0 ? (
     <Space size={`large`} direction={`vertical`} style={{ width: `100%` }}>
       {files.singles && (
-        <SequenceFileTypeRenderer title={`Single End Sequencing Data`}>
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
           <SingleEndFileRenderer files={files.singles} />
         </SequenceFileTypeRenderer>
       )}
       {files.paired && (
-        <SequenceFileTypeRenderer title={`Paired End Sequencing Data`}>
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
           {files.paired.map((pair) => (
             <PairedFileRenderer key={`pair-${pair.identifier}`} pair={pair} />
           ))}
         </SequenceFileTypeRenderer>
       )}
       {files.fast5 && (
-        <SequenceFileTypeRenderer title={`FAST5 Sequencing Data`}>
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
           <SingleEndFileRenderer files={files.fast5} />
         </SequenceFileTypeRenderer>
       )}
       {files.assemblies && (
-        <SequenceFileTypeRenderer title={`Assembly Data`}>
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
           <SingleEndFileRenderer files={files.assemblies} />
         </SequenceFileTypeRenderer>
       )}
