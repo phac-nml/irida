@@ -16,14 +16,17 @@ import { SectionHeading } from "./SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
 import { setSelectedSampleFiles } from "./launch-dispatch";
 
+/**
+ * React component to display sample files that will be used in the launching
+ * of the pipeline
+ *
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function LaunchFiles() {
   const [selected, setSelected] = React.useState();
   const [
-    {
-      acceptsPairedSequenceFiles: paired,
-      acceptsSingleSequenceFiles: singles,
-      files = [],
-    },
+    { acceptsPairedSequenceFiles: paired, acceptsSingleSequenceFiles: singles },
     dispatch,
   ] = useLaunch();
   const [hideUnusable, setHideUnusable] = React.useState(true);
