@@ -1,5 +1,5 @@
 import React from "react";
-import { Empty, Space } from "antd";
+import { Empty, notification, Space } from "antd";
 import { IconLoading } from "../../icons/Icons";
 import { fetchSampleFiles } from "../../../apis/samples/samples";
 import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
@@ -19,14 +19,18 @@ export function SampleFiles({ id, projectId }) {
   const [files, setFiles] = React.useState();
 
   React.useEffect(() => {
-    fetchSampleFiles({ sampleId: id, projectId }).then((data) => {
-      /*
+    fetchSampleFiles({ sampleId: id, projectId })
+      .then((data) => {
+        /*
       Remove any file types that do not have associated files.
        */
-      Object.keys(data).forEach((key) => !data[key].length && delete data[key]);
-      setFiles(data);
-      setLoading(false);
-    });
+        Object.keys(data).forEach(
+          (key) => !data[key].length && delete data[key]
+        );
+        setFiles(data);
+        setLoading(false);
+      })
+      .catch((e) => notification.error({ message: e }));
   }, [id, projectId]);
 
   return loading ? (

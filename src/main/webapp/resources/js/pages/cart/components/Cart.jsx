@@ -19,8 +19,6 @@ function CartComponent({ count = 0, loadCart }) {
     }
   }, [count]);
 
-  useEffect(() => {}, []);
-
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (

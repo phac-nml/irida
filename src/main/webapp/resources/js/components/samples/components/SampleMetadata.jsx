@@ -14,8 +14,17 @@ export function SampleMetadata({ metadata }) {
       itemLayout="horizontal"
       dataSource={Object.keys(metadata).sort((a, b) => a.localeCompare(b))}
       renderItem={(item) => (
-        <List.Item>
-          <List.Item.Meta title={item} description={metadata[item].value} />
+        <List.Item className="t-sample-details-metadata-item">
+          <List.Item.Meta
+            title={
+              <span className="t-sample-details-metadata__field">{item}</span>
+            }
+            description={
+              <span className="t-sample-details-metadata__entry">
+                {metadata[item].value}
+              </span>
+            }
+          />
         </List.Item>
       )}
     />

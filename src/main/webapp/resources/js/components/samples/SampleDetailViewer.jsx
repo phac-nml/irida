@@ -41,6 +41,7 @@ export function SampleDetailViewer({
       })}
       {visible ? (
         <Modal
+          className="t-sample-details-modal"
           bodyStyle={{
             padding: 0,
             maxHeight: window.innerHeight - 400,
@@ -55,7 +56,11 @@ export function SampleDetailViewer({
                   alignItems: "center",
                 }}
               >
-                <Text strong>{details.sample.sampleName}</Text>
+                <Text strong>
+                  <span className="t-sample-details-name">
+                    {details.sample.sampleName}
+                  </span>
+                </Text>
                 <Button
                   size="small"
                   danger
