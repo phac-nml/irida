@@ -86,6 +86,13 @@ public class UISampleService {
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
 
+	/**
+	 * Get a list of paired end sequence files for a sample
+	 *
+	 * @param sample  the {@link Sample} to get the files for.
+	 * @param project the {@link Project} the sample belongs to
+	 * @return list of paired end sequence files
+	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
 		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, SequenceFilePair.class);
@@ -100,6 +107,13 @@ public class UISampleService {
 		return filePairs;
 	}
 
+	/**
+	 * Get a list of single end sequence files for a sample
+	 *
+	 * @param sample  the {@link Sample} to get the files for.
+	 * @param project the {@link Project} the sample belongs to
+	 * @return list of single end sequence files
+	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, SingleEndSequenceFile.class);
@@ -114,6 +128,12 @@ public class UISampleService {
 		return singles;
 	}
 
+	/**
+	 * Get a list of fast5 sequence files for a sample
+	 *
+	 * @param sample the {@link Sample} to get the files for.
+	 * @return list of fast5 sequence files
+	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
 		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, Fast5Object.class);
@@ -122,6 +142,12 @@ public class UISampleService {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Get any genome assemblies that are available for a sample
+	 *
+	 * @param sample the {@link Sample} to get the assemblies for
+	 * @return a list of genome assembly files
+	 */
 	public List<GenomeAssembly> getGenomeAssembliesForSample(Sample sample) {
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 
