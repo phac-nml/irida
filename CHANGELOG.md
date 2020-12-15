@@ -27,6 +27,7 @@ Changes
 * [UI]: Added usage statistics to admin panel.
 * [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
 * [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
+* [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
 * [Documentation]: Moved IRIDA documentation to new repo at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
 
 20.05 to 20.09
@@ -99,7 +100,7 @@ Changes
 * [UI]: Added selection for linker script to get assemblies in project/samples page.
 * [Developer]: `bower` completely removed.
 * [UI/Developer]: Updated analysis results page with Ant Design and React.
-* [UI]: Assemblies can now be uploaded through the sample files page. See more in our upgrade notes at <https://phac-nml.github.io/irida-documentation/administrator/upgrades/#2005>.
+* [UI]: Assemblies can now be uploaded through the sample files page. See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
 * [UI/Developer]: Updated to `Prettier` 2.0.2
 * [UI/Developer]: Updated to `eslint-plugin-react-hooks` to 3.0.0.
 * [UI/Developer]: Removed `angular-ui-bootstrap` as a global dependency (still required on several pages).
@@ -117,7 +118,7 @@ Changes
 * [UI]: Fixed bug preventing display of execution tools for first file if a provenance for another file had been viewed.
 * [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
 * [Developer/UI]: Upgraded to FastQC 0.11.9.
-* [UI]: Added FAST5 format support.  FAST5 support is in beta and is subject to change.  See more in our upgrade notes at <https://phac-nml.github.io/irida-documentation/administrator/upgrades/#2005>.
+* [UI]: Added FAST5 format support.  FAST5 support is in beta and is subject to change.  See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
 * [UI]: Updated user groups to use Ant Design.
 * [UI]: Fixed bug preventing advanced visualization view page load.
 * [UI/Developer]: Updated analysis urls to work with a context path.
@@ -149,14 +150,14 @@ Changes
 * [UI/Developer]: Removed old bootstrap customization files that are not used.
 * [Developer]: Upgraded Spring to 5.2.2.RELEASE, Spring Security to 5.2.1.RELEASE, Spring Security Oauth2 to 2.3.6.RELEASE, Hibernate to 5.4.7.Final, and Spring Data JPA to 2.2.0.RELEASE.
 * [UI/REST]: Removed API login controller, instead web login controller is used.
-* [UI/REST]: Added configurable redirect location to client details.  This must be added to all `authorization_code` clients.  This includes clients set up for synchronizing IRIDA data and Galaxy importer clients.  See upgrade instructions at <https://phac-nml.github.io/irida-documentation/administrator/upgrades/#2001>.
+* [UI/REST]: Added configurable redirect location to client details.  This must be added to all `authorization_code` clients.  This includes clients set up for synchronizing IRIDA data and Galaxy importer clients.  See upgrade instructions at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2001>.
 * [Developer]: Added back minification config to production webpack config.
 * [UI/Developer]: Updated to latest (3.26.0) release of `ant.design`.
 * [Developer]: Fixed url for downloading multiple analysis outputs as well as for viewing the user analysis outputs page.
 * [Documentation]: Removed broken NCBI link and added info to conact NCBI about NCBI SRA exports.
 * [UI/Developer]: Lazy load line list export utilities.
 * [Developer]: Update to Chromedriver 79.0.0 for Travis CI.
-* [UI/Developer]: Standardized JavaScript internationalization through webpack. See [i18n documentation](https://phac-nml.github.io/irida-documentation/developer/interface/i18n/) for more information.
+* [UI/Developer]: Standardized JavaScript internationalization through webpack. See [i18n documentation](https://irida.corefacility.ca/documentation/developer/interface/i18n/) for more information.
 * [UI/Developer]: Update version of `yarn`, `babel` dependencies.
 * [Developer]: Sample filter input has underscores escaped so that proper samples are returned.
 * [UI/Developer]: Updated to the latest release of ag-grid (v22.1.1).
@@ -202,9 +203,9 @@ Changes
 * [UI/Developer]: Updated to lodash v4.17.13 to fix security issue.
 * [Developer]: Updated UI testing to allow using an external selenium webdriver.
 * [Developer]: Update eslint config to use `babel-parser`.
-* [Admin/Documentation]: Added a [Troubleshooting](https://phac-nml.github.io/irida-documentation/user/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
+* [Admin/Documentation]: Added a [Troubleshooting](https://irida.corefacility.ca/documentation/user/administrator/troubleshooting/pipelines/) guide for troubleshooting common problems with IRIDA Pipelines/Galaxy.
 * [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings` subpackage.
-* [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://phac-nml.github.io/irida-documentation/user/user/project/#automated-pipelines> for more details.
+* [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.  See <https://irida.corefacility.ca/documentation/user/user/project/#automated-pipelines> for more details.
 * [Documentation]: Added link to Galaxy Export (Import) tool documentation.
 * [REST API]: Fixed allowing uploading data to non `UPLOADING` state sequencing runs. Now when a sequencing run is in a `COMPLETE` or `ERROR` state, a `BAD_REQUEST` http response will be returned.
 * [Developer]: Internationalization features of Spring now being used properly.  An interceptor was previously set up, but wasn't being taken advantage of in the UI.  Currently only English is available, but could be added by developers as needed.
@@ -238,7 +239,7 @@ Changes
 * [Documentation]: Added information on fixing `ONLY_FULL_GROUP_BY` sql error to the administrator faq docs.
 * [UI]: User on a remote project with a project role of manager has the ability to assign user groups to the project.
 * [UI]: Fixed bug preventing associated projects from being loaded into the project samples table. (19.01.3)
-* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See <https://phac-nml.github.io/irida-documentation/administrator/upgrades/#1905> for more information.
+* [Developer]: Moved FastQC results out of database to filesystem for a big reduction in database size and performance.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#1905> for more information.
 * [UI]: Added hard wrap on sample name on sample details page.
 * [UI]: New dedicated cart page.
 * [UI]: Exporting to Galaxy now runs through the new cart interface.  Export to Galaxy through the Project Samples page has been deprecated.
@@ -265,7 +266,7 @@ Changes
 * [Developer]: Added wait when NCBI Uploader fails before retrying. (0.22.1)
 * [UI]: Users can now download in batch their user-generated, shared with project and automated project single sample analysis output files by selecting the files they wish to download from tables on the `/analysis/user/analysis-outputs`, `/projects/<id>/analyses/shared-outputs`, and `/projects/<id>/analyses/automated-outputs` pages, respectively.
 * [UI]: Added configurable warning for analysis results and metadata pages.  Set the text for this warning with `irida.analysis.warning`.  This can be used to communicate that results of analyses may be preliminary.
-* [Admin]: Added new profiles to allow IRIDA web server to run in a clustered fashion.  See documentation at https://phac-nml.github.io/irida-documentation/administrator/web/#multi-web-server-configuration
+* [Admin]: Added new profiles to allow IRIDA web server to run in a clustered fashion.  See documentation at https://irida.corefacility.ca/documentation/administrator/web/#multi-web-server-configuration
 * [UI]: Fixed bug where all moved samples were locked. (0.22.2)
 * [UI/Developer]: Updated to lodash v4.17.10 to fix security issue. (0.22.2)
 * [UI]: Fixed bug where project samples page would freeze if there where numerous QC Issues. (0.22.3)
@@ -277,7 +278,7 @@ Changes
 * [API]: Fixed REST endpoint mapping for current user and user projects.
 * [Workflow]: Fixed issue where duplicate filenames were found after running Galaxy workflow in newer Galaxy versions. (0.22.4)
 * [Developer]: Added unused import checking to checkstyle config.  The `mvn site` build will throw an error if unused imports are present.
-* [Developer/Workflow]: Added the ability build pipelines into independent JAR files to be loaded in IRIDA as a plugin (after placing in `/etc/irida/plugins`). Please see <https://github.com/phac-nml/irida-plugin-example> and <https://phac-nml.github.io/irida-documentation/developer/tools/pipelines/> for more details.
+* [Developer/Workflow]: Added the ability build pipelines into independent JAR files to be loaded in IRIDA as a plugin (after placing in `/etc/irida/plugins`). Please see <https://github.com/phac-nml/irida-plugin-example> and <https://irida.corefacility.ca/documentation/developer/tools/pipelines/> for more details.
 * [Developer]: Added additional FTP settings for NCBI uploads: `ncbi.upload.controlKeepAliveTimeout`, and `ncbi.upload.controlKeepAliveReplyTimeoutMilliseconds`.
 * [Developer]: Fixed issue with some settings in `/etc/irida/irida.conf` not being detected properly.
 * [Developer]: Added ability to adjust `jdbc.pool.maxWait` through an environment variable `DB_MAX_WAIT_MILLIS` for fixing timeout issues for tests.
@@ -440,7 +441,7 @@ Changes
 0.15.0 to 0.16.0
 ----------------
 * [Developer]: Upgraded to AngularJS 1.6.2 <https://github.com/angular/angular.js/blob/master/CHANGELOG.md>
-* [Developer]: Removed FontAwesome thymeleaf dialect, updated developer documentation <https://phac-nml.github.io/irida-documentation//developer/interface/icons/>.
+* [Developer]: Removed FontAwesome thymeleaf dialect, updated developer documentation <https://irida.corefacility.ca/documentation//developer/interface/icons/>.
 * [Workflow]: Added version 0.1 of a pipeline for Salmonella typing (SISTR) using the [sistr_cmd](https://github.com/peterk87/sistr_cmd).
 * [UI]: Removing commas (`,`) and replacing spaces with underscores (`_`) in download filenames as they confuse browsers. (0.15.1)
 * [Workflow]: The software **SPAdes** has been updated in all workflows to version 3.9.0.  This requires installing an updated `spades` tool in Galaxy.
