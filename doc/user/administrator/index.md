@@ -32,6 +32,19 @@ The panel has a top navbar with a "Return" button to return to the main applicat
 
 ![Admin panel.](images/admin-panel.png)
 
+Viewing Statistics
+==================
+
+When the Administrative Panel is accessed you will be taken to the landing page which is the Statistics Page.
+
+![Admin panel statistics link.](images/admin-panel-stats.png)
+
+This page displays usage statistics for the number of analyses ran, projects created, samples created, users created, and users logged in within the default time period which is set to 7 days.
+
+Clicking on a graph will take you to the full details of the graph. There you can set different time periods to explore the data and select different chart types.
+
+![Admin panel statistics link.](images/admin-panel-adv-stats.png)
+
 Managing User Accounts
 ======================
 
