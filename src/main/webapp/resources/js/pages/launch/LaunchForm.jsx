@@ -10,6 +10,11 @@ import { useLaunch } from "./launch-context";
 import { LaunchFiles } from "./LaunchFiles";
 import { launchNewPipeline } from "./launch-dispatch";
 
+/**
+ * React component to handle all form components for launching a pipeline.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function LaunchForm() {
   const [state, launchDispatch] = useLaunch();
   const [form] = Form.useForm();
