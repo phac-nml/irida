@@ -44,6 +44,9 @@ public class LaunchSample {
 		this.files = files;
 	}
 
+	/**
+	 * Pair down a project to exactly what is needed in the UI.
+	 */
 	private static class Project {
 		private final Long id;
 		private final String label;
