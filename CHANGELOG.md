@@ -26,6 +26,7 @@ Changes
 * [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
 * [UI]: Added usage statistics to admin panel.
 * [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
+* [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
 
 20.05 to 20.09
 --------------
