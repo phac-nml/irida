@@ -24,7 +24,7 @@ export default function GalaxyAlert() {
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href="https://irida.corefacility.ca/documentation/user/user/samples/#galaxy-export"
+        href="https://phac-nml.github.io/irida-documentation/user/user/samples/#galaxy-export"
       >
         {window.GALAXY.DOCUMENTATION} <IconLinkOut />
       </a>
