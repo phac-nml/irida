@@ -41,7 +41,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		page.viewSampleDetailsFor(sampleName);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 		assertEquals("Should be viewing the proper sample", sampleName, sampleDetailsViewer.getSampleName());
-		// TODO: CLOSE THE MODAL!!
+		assertEquals("Should display the correct created date", "Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample());
 		sampleDetailsViewer.closeDetails();
 
 		// Test removing a sample from the project
