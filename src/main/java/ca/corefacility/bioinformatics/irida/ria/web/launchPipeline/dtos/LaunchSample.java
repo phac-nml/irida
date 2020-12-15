@@ -5,10 +5,17 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
+/**
+ * Represents a sample within the cart on the pipeline launch page.
+ */
 public class LaunchSample {
 	private final Long id;
 	private final String label;
 	private final Project project;
+
+	/*
+	This is for the type of files that are allowed in the pipeline.
+	 */
 	private List<SequencingObject> files;
 
 	public LaunchSample(Sample sample, ca.corefacility.bioinformatics.irida.model.project.Project project) {
