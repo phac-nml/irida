@@ -12,7 +12,7 @@ import {
 import { useLaunch } from "./launch-context";
 import { IconDropDown } from "../../components/icons/Icons";
 import { removeSample } from "../../apis/cart/cart";
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
 import { setSelectedSampleFiles } from "./launch-dispatch";
 

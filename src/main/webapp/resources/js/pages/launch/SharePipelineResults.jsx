@@ -1,7 +1,7 @@
 import React from "react";
 import { useLaunch } from "./launch-context";
 import { Checkbox, Divider, Form } from "antd";
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "../../components/ant.design/SectionHeading";
 
 /**
  * React component to share results with Project and Samples

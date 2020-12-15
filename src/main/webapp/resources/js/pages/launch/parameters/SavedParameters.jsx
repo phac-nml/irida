@@ -4,7 +4,7 @@ import { IconEdit } from "../../../components/icons/Icons";
 import { ParametersModal } from "./ParametersModal";
 import { useLaunch } from "../launch-context";
 import { SPACE_XS } from "../../../styles/spacing";
-import { SectionHeading } from "../SectionHeading";
+import { SectionHeading } from "../../../components/ant.design/SectionHeading";
 import { setParameterSetById } from "../launch-dispatch";
 
 /**

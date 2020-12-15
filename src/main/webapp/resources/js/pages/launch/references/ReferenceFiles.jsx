@@ -2,7 +2,7 @@ import React from "react";
 import { Alert, Form, Radio, Space, Tag } from "antd";
 import { useLaunch } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
-import { SectionHeading } from "../SectionHeading";
+import { SectionHeading } from "../../../components/ant.design/SectionHeading";
 import { setReferenceFileById } from "../launch-dispatch";
 import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadioInput";
 

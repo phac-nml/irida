@@ -1,6 +1,6 @@
 import React from "react";
 import { Divider, Form, Input, Typography } from "antd";
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "../../components/ant.design/SectionHeading";
 
 /**
  * React component for editing the basic information for launching an IRIDA Workflow Pipeline.
