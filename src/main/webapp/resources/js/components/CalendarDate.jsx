@@ -14,7 +14,9 @@ export function CalendarDate({ date }) {
     <Space size="small">
       <IconCalendarTwoTone />
       <Typography.Text type="secondary">
-        {formatInternationalizedDateTime(date)}
+        <span className="t-date-text">
+          {formatInternationalizedDateTime(date)}
+        </span>
       </Typography.Text>
     </Space>
   );

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 
 import org.junit.Test;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
@@ -32,6 +33,16 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be 3 samples displayed in navbar", 3, count);
 		assertEquals("Should be 3 samples in the cart", 3, page.getNumberOfSamplesInCart());
 		assertTrue("Should be directed to pipelines view", page.onPipelinesView());
+
+		/*
+		Test the sample details within the cart
+		 */
+		final String sampleName = "sample554sg5";
+		page.viewSampleDetailsFor(sampleName);
+		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
+		assertEquals("Should be viewing the proper sample", sampleName, sampleDetailsViewer.getSampleName());
+		// TODO: CLOSE THE MODAL!!
+		sampleDetailsViewer.closeDetails();
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);

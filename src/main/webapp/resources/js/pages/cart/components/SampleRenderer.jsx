@@ -86,7 +86,7 @@ export class SampleRenderer extends React.Component {
               removeSample={this.props.removeSample}
             >
               <Button
-                className="t-sample-name"
+                className="t-sample-details-btn"
                 size="small"
                 onClick={this.displaySample}
               >
