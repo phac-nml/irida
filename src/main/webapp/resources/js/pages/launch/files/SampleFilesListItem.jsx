@@ -2,24 +2,7 @@ import React from "react";
 import { Button, List, Radio } from "antd";
 import { grey2 } from "../../../styles/colors";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
-import styled from "styled-components";
-import { SPACE_XS } from "../../../styles/spacing";
-
-const RadioItem = styled.button`
-  padding: ${SPACE_XS};
-  transition: all ease-in 0.3s;
-  border: 1px dashed transparent;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  background-color: transparent;
-
-  &:hover {
-    background-color: ${grey2};
-    border: 1px dashed rgb(217, 217, 217);
-    cursor: pointer;
-  }
-`;
+import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadioInput";
 
 /**
  * React component to display the list of files that can be run on the current
@@ -44,8 +27,8 @@ export function SampleFilesListItem({
     }
   }, [sample.files]);
 
-  const updateSelected = (e) => {
-    const id = e.target.value;
+  const updateSelected = (e, id) => {
+    e.preventDefault();
     updateSelectedFiles(selected, id);
     setSelected(id);
   };
@@ -69,24 +52,21 @@ export function SampleFilesListItem({
         }
         description={
           selected !== undefined ? (
-            <div
-              style={{
-                overflowX: "auto",
-              }}
-            >
-              <Radio.Group value={selected} onChange={updateSelected}>
-                {sample.files.map((file) => (
-                  <RadioItem key={`pf-${file.identifier}`}>
-                    <Radio
-                      key={`file-${file.identifier}`}
-                      value={file.identifier}
-                    >
-                      {file.label}
-                    </Radio>
-                  </RadioItem>
-                ))}
-              </Radio.Group>
-            </div>
+            <Radio.Group style={{ width: `100%` }} value={selected}>
+              {sample.files.map((file) => (
+                <BlockRadioInput
+                  key={`pf-${file.identifier}`}
+                  onClick={(e) => updateSelected(e, file.identifier)}
+                >
+                  <Radio
+                    key={`file-${file.identifier}`}
+                    value={file.identifier}
+                  >
+                    {file.label}
+                  </Radio>
+                </BlockRadioInput>
+              ))}
+            </Radio.Group>
           ) : (
             <div>{i18n("SampleFilesListItem.no-files")}</div>
           )

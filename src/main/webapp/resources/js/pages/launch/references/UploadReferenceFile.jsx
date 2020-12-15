@@ -26,7 +26,7 @@ export function UploadReferenceFile() {
         referenceFileUploadComplete(
           launchDispatch,
           info.file.name,
-          info.file.response.id
+          info.file.response.files[0].id
         );
       } else if (status === "error") {
         notification.error({
