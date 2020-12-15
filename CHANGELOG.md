@@ -27,6 +27,7 @@ Changes
 * [UI]: Added usage statistics to admin panel.
 * [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
 * [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
+* [Documentation]: Moved IRIDA documentation to new repo at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
 
 20.05 to 20.09
 --------------
