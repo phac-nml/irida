@@ -64,6 +64,13 @@ export const launchPipeline = (id, parameters) =>
       throw new Error(error.response.data);
     });
 
+/**
+ * Save a set of pipeline parameters for future use.
+ * @param label - the name for the parameter set
+ * @param parameters - set of parameters with their values
+ * @param id - id for the current pipeline
+ * @returns {Promise<AxiosResponse<any> | void>}
+ */
 export function saveNewPipelineParameters({ label, parameters, id }) {
   return axios
     .post(`${AJAX_URL}/${id}/parameters`, { label, parameters })
@@ -73,6 +80,12 @@ export function saveNewPipelineParameters({ label, parameters, id }) {
     });
 }
 
+/**
+ * Get the samples that are currently in the cart.
+ * @param paired
+ * @param singles
+ * @returns {Promise<any>}
+ */
 export async function fetchPipelineSamples({ paired, singles }) {
   try {
     const response = await axios.get(
@@ -80,6 +93,6 @@ export async function fetchPipelineSamples({ paired, singles }) {
     );
     return response.data;
   } catch (e) {
-    notification.error(e.response.data);
+    return Promise.reject(e.response.data);
   }
 }

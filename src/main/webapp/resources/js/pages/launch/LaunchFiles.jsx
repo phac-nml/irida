@@ -1,6 +1,14 @@
 import React from "react";
 import { fetchPipelineSamples } from "../../apis/pipelines/pipelines";
-import { Button, Dropdown, List, Menu, Space, Typography } from "antd";
+import {
+  Button,
+  Dropdown,
+  List,
+  Menu,
+  notification,
+  Space,
+  Typography,
+} from "antd";
 import { useLaunch } from "./launch-context";
 import { IconDropDown } from "../../components/icons/Icons";
 import { removeSample } from "../../apis/cart/cart";
@@ -26,12 +34,14 @@ export function LaunchFiles() {
     fetchPipelineSamples({
       paired,
       singles,
-    }).then((data) => {
-      setSamples(data);
-      setSelected(
-        data.filter((s) => s.files.length).map((s) => s.files[0].identifier)
-      );
-    });
+    })
+      .then((data) => {
+        setSamples(data);
+        setSelected(
+          data.filter((s) => s.files.length).map((s) => s.files[0].identifier)
+        );
+      })
+      .catch((message) => notification.error({ message }));
   }, [paired, singles]);
 
   React.useEffect(() => {
