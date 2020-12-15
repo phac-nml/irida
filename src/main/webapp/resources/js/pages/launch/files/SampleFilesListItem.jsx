@@ -3,12 +3,22 @@ import { Button, List, Radio } from "antd";
 import { grey2 } from "../../../styles/colors";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import styled from "styled-components";
+import { SPACE_XS } from "../../../styles/spacing";
 
-const BlockRadio = styled(Radio)`
-  display: block;
-  height: 30px;
-  line-height: 30px;
-  font-weight: normal;
+const RadioItem = styled.button`
+  padding: ${SPACE_XS};
+  transition: all ease-in 0.3s;
+  border: 1px dashed transparent;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background-color: transparent;
+
+  &:hover {
+    background-color: ${grey2};
+    border: 1px dashed rgb(217, 217, 217);
+    cursor: pointer;
+  }
 `;
 
 /**
@@ -58,7 +68,7 @@ export function SampleFilesListItem({
           </SampleDetailViewer>
         }
         description={
-          selected != undefined ? (
+          selected !== undefined ? (
             <div
               style={{
                 overflowX: "auto",
@@ -66,12 +76,14 @@ export function SampleFilesListItem({
             >
               <Radio.Group value={selected} onChange={updateSelected}>
                 {sample.files.map((file) => (
-                  <BlockRadio
-                    key={`file-${file.identifier}`}
-                    value={file.identifier}
-                  >
-                    {file.label}
-                  </BlockRadio>
+                  <RadioItem key={`pf-${file.identifier}`}>
+                    <Radio
+                      key={`file-${file.identifier}`}
+                      value={file.identifier}
+                    >
+                      {file.label}
+                    </Radio>
+                  </RadioItem>
                 ))}
               </Radio.Group>
             </div>
