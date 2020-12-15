@@ -12,6 +12,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 
+/**
+ * UI Service for all things related to samples within the pipeline
+ */
 @Component
 public class UIPipelineSampleService {
 	private final UISampleService sampleService;
