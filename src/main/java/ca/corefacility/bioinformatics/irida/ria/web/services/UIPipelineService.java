@@ -24,14 +24,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
-import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -161,10 +161,6 @@ public class UIPipelineService {
 		return namedParameters.getId();
 	}
 
-	public void getPipelineSamples() {
-		Map<Project, List<Sample>> cart = cartService.getFullCart();
-	}
-
 	/**
 	 * Get a list of pipeline parameters that have specific options.
 	 *
@@ -277,19 +273,25 @@ public class UIPipelineService {
                             return new PipelineParameter(parameter.getName(), parameter.getLabel(),
                                     inputParameter.get(parameter.getName()));
                         }
-                        return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
-                    })
-							.collect(Collectors.toList());
-            return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
-        })
-                .collect(Collectors.toList()));
+						return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
+					})
+					.collect(Collectors.toList());
+					return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
+				})
+				.collect(Collectors.toList()));
 
 		return savedParameters;
 	}
 
-    private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
-        return projects.stream()
-                .map(project -> {
+	/**
+	 * Get a list of reference files found within project that have sample in the cart.
+	 *
+	 * @param projects List of projects that have samples in the cart
+	 * @return List of reference files for consumption by the UI.
+	 */
+	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
+		return projects.stream()
+				.map(project -> {
 					List<UIReferenceFile> list = new ArrayList<>();
 					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
 							project)) {
@@ -305,7 +307,7 @@ public class UIPipelineService {
 					}
 					return list;
 				})
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-    }
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+	}
 }
