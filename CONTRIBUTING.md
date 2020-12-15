@@ -33,7 +33,7 @@ Note: IRIDA's GitHub issue board is for bug reports or feature requests only.  Y
 
 ### Contributing an analysis pipeline
 
-If you have an analysis tool that you would like to build for IRIDA we'd like to hear about it!  IRIDA has a plug-in style system for analysis workflows.  This helps make it easier for tool developers to get the benefits of IRIDA's data management system and easy to use interface and incorporate their analysis workflows into IRIDA's growing suite of tools.  For an analysis pipeline to be used in IRIDA, it must be developed as a Galaxy workflow and operate on sequencing reads.  Read more about building tools for IRIDA in the [IRIDA Pipeline Development Guide](https://irida.corefacility.ca/documentation/developer/tools/pipelines/).  An example plugin pipeline and additional documentation can be found at [IRIDA Example Pipeline Plugin GitHub repository](https://github.com/phac-nml/irida-plugin-example).
+If you have an analysis tool that you would like to build for IRIDA we'd like to hear about it!  IRIDA has a plug-in style system for analysis workflows.  This helps make it easier for tool developers to get the benefits of IRIDA's data management system and easy to use interface and incorporate their analysis workflows into IRIDA's growing suite of tools.  For an analysis pipeline to be used in IRIDA, it must be developed as a Galaxy workflow and operate on sequencing reads.  Read more about building tools for IRIDA in the [IRIDA Pipeline Development Guide](https://phac-nml.github.io/irida-documentation/developer/tools/pipelines/).  An example plugin pipeline and additional documentation can be found at [IRIDA Example Pipeline Plugin GitHub repository](https://github.com/phac-nml/irida-plugin-example).
 
 ### Suggesting a feature
 
@@ -57,7 +57,7 @@ The IRIDA team works to maintain a uniform style, development standards, and for
 For any changes, a message should be added to our `CHANGELOG.md` file briefly detailing the change.
 
 For Java code submissions, we require the following:
-* Use one of the IDE specific code formatter files.  [Eclipse](https://irida.corefacility.ca/documentation/developer/files/eclipse-code-formatter.xml) or [IntelliJ Idea](https://irida.corefacility.ca/documentation/developer/files/intellij-code-style-schemes.xml) to ensure a consistent code style is applied.
+* Use one of the IDE specific code formatter files.  [Eclipse](https://phac-nml.github.io/irida-documentation/developer/files/eclipse-code-formatter.xml) or [IntelliJ Idea](https://phac-nml.github.io/irida-documentation/developer/files/intellij-code-style-schemes.xml) to ensure a consistent code style is applied.
 * Write JavaDoc for all functions, classes, and files you add or edit.  Our continuous integration suite will fail for missing or invalid JavaDoc.
 * Write inline documentation for any complicated code blocks.
 * Write tests for your bugfix or feature.  If the change is anything user facing, a full integration test should be written to test the change.  See more about our testing environment in the [IRIDA Development Primer].
@@ -75,10 +75,10 @@ When you have completed development on your issue, you can submit it to the proj
 
 ### Contributing Internationalizations
 
-IRIDA needs help supporting non-English language users!  To help internationalize IRIDA, see the [IRIDA internationalization developer guide](https://irida.corefacility.ca/documentation/developer/interface/i18n).  To submit internationalization files back to IRIDA, submit a pull request as outlined above.
+IRIDA needs help supporting non-English language users!  To help internationalize IRIDA, see the [IRIDA internationalization developer guide](https://phac-nml.github.io/irida-documentation/developer/interface/i18n).  To submit internationalization files back to IRIDA, submit a pull request as outlined above.
 
 
 Thank you for your interest in contributing to IRIDA.  For any questions or comments on this guide, or other ways you can help contribute to IRIDA, please contact the development team through one of the options outlined in the [Contacting the IRIDA Team](#contacting-the-irida-team) section.
 
 [GitHub issue board]: https://github.com/phac-nml/irida/issues
-[IRIDA Development Primer]: https://irida.corefacility.ca/documentation/developer/getting-started/
+[IRIDA Development Primer]: https://phac-nml.github.io/irida-documentation/developer/getting-started/
