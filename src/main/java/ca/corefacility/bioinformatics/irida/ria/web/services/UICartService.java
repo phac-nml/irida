@@ -233,16 +233,6 @@ public class UICartService {
 	}
 
 	/**
-	 * Determine if a sample is in the cart.
-	 *
-	 * @param sampleId identifier for a sample
-	 * @return the project identifier if the sample is in the cart
-	 */
-	public Long isSampleInCart(Long sampleId) {
-		return cart.isSampleInCart(sampleId);
-	}
-
-	/**
 	 * Determine if the cart is empty
 	 * @return Boolean if the cart is empty
 	 */
