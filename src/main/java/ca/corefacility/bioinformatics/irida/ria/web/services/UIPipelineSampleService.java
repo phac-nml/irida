@@ -26,6 +26,14 @@ public class UIPipelineSampleService {
 		this.cartService = cartService;
 	}
 
+	/**
+	 * Get a list of the samples that are in the cart and get their associated sequence files that
+	 * can be used on the current pipeline
+	 *
+	 * @param paired  Whether paired end files can be run on the current pipeline
+	 * @param singles Whether single end files can be run on the current pipeline
+	 * @return list of samples containing their associated sequencing data
+	 */
 	public List<LaunchSample> getPipelineSamples(boolean paired, boolean singles) {
 		Map<Project, List<Sample>> cart = cartService.getFullCart();
 		List<LaunchSample> samples = new ArrayList<>();
