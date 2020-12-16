@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * A utility class for formatting responses for the admin announcements page UI.
+ * A utility class for formatting responses for the announcements page UI.
  */
 @Component
 public class UIAnnouncementsService {
@@ -53,6 +53,18 @@ public class UIAnnouncementsService {
 				.map(AnnouncementTableModel::new)
 				.collect(Collectors.toList());
 		return new TableResponse<>(announcements, page.getTotalElements());
+	}
+
+	/**
+	 * Returns a list of unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link AnnouncementUserJoin}s for a user.
+	 */
+	public List<Announcement> getUnreadAnnouncementsUser(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+		return unreadAnnouncements;
 	}
 
 	/**

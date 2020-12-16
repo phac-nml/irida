@@ -19,6 +19,7 @@ module.exports = {
   analysis: "./resources/js/pages/analysis/index.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
+  dashboard2: "./resources/js/pages/Dashboard.jsx",
   "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-events": "./resources/js/pages/projects/project-events.js",
