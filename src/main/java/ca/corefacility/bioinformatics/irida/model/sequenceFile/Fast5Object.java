@@ -76,6 +76,7 @@ public class Fast5Object extends SequencingObject {
 		return file;
 	}
 
+
 	public Fast5Type getFast5Type() {
 		return fast5Type;
 	}
