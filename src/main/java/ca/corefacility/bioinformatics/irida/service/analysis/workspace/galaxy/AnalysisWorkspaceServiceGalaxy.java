@@ -220,7 +220,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelSingle);
 			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy
-					.uploadSequenceFilesSingleEnd(singleFiles, workflowHistory, workflowLibrary);
+					.uploadSequenceFilesSingleEnd(singleFiles, workflowHistory, workflowLibrary, analysisSubmission.getId());
 			inputs.setInput(workflowSequenceFileSingleInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
 					collectionResponseSingle.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}
@@ -230,7 +230,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String workflowSequenceFilePairedInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelPaired);
 			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy
-					.uploadSequenceFilesPaired(pairedFiles, workflowHistory, workflowLibrary);
+					.uploadSequenceFilesPaired(pairedFiles, workflowHistory, workflowLibrary, analysisSubmission.getId());
 			inputs.setInput(workflowSequenceFilePairedInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
 					collectionResponsePaired.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}

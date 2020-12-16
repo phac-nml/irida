@@ -91,7 +91,7 @@ public class GalaxyLibrariesServiceIT {
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 		
 		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
 				"testData1.fastq").toURI());
@@ -211,7 +211,7 @@ public class GalaxyLibrariesServiceIT {
 	 */
 	@Test(expected = UploadTimeoutException.class)
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1, iridaFileStorageUtility);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
 		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,

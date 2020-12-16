@@ -106,6 +106,8 @@ public class GalaxyHistoriesServiceIT {
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
 
+	private static final Long ANALYSIS_SUBMISSION_ID = 1L;
+
 	/**
 	 * Sets up files for history tests.
 	 * @throws URISyntaxException
@@ -123,7 +125,7 @@ public class GalaxyHistoriesServiceIT {
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService, iridaFileStorageUtility);

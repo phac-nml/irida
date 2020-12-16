@@ -7,8 +7,14 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTempFile;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
@@ -37,6 +43,8 @@ public class AnalysisCollectionServiceGalaxy {
 	private static final String REVERSE_NAME = "reverse";
 
 	private GalaxyHistoriesService galaxyHistoriesService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
+	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
 	/**
 	 * Builds a new {@link AnalysisCollectionServiceGalaxy} with the given
@@ -45,26 +53,29 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @param galaxyHistoriesService A GalaxyHistoriesService for interacting with
 	 *                               Galaxy Histories.
 	 */
-	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService) {
+	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService, IridaFileStorageUtility iridaFileStorageUtility, AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
+		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;
 	}
 
 	/**
 	 * Uploads a list of single sequence files belonging to the given samples to
 	 * Galaxy.
-	 * 
+	 *
 	 * @param sampleSequenceFiles A map between {@link Sample} and
 	 *                            {@link SingleEndSequenceFile}.
 	 * @param workflowHistory     The history to upload the sequence files into.
 	 * @param workflowLibrary     A temporary library to upload files into.
+	 * @param submissionId        The {@link AnalysisSubmission} id
 	 * @return A CollectionResponse for the dataset collection constructed from the
-	 *         given files.
+	 * given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
-	 * @throws IOException If there was an error reading the sequence file.
+	 * @throws IOException               If there was an error reading the sequence file.
 	 */
 	public CollectionResponse uploadSequenceFilesSingleEnd(
 			Map<Sample, SingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
-			Library workflowLibrary) throws ExecutionManagerException, IOException {
+			Library workflowLibrary, Long submissionId) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
@@ -73,7 +84,19 @@ public class AnalysisCollectionServiceGalaxy {
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
 			SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
-			samplesMap.put(sequenceFile.getSequenceFile().getFile(), sample);
+			IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(sequenceFile.getSequenceFile().getFile());
+			samplesMap.put(iridaTemporaryFile.getFile(), sample);
+
+			/*
+			 If the storage type is an object store then we create an AnalysisSubmissionTempFile
+			 record to save to the database. The cleanup of these files happens once the final
+			 workflow status is set for an analysis.
+			 */
+			if (!iridaFileStorageUtility.storageTypeIsLocal()) {
+				AnalysisSubmissionTempFile analysisSubmissionTempFile = new AnalysisSubmissionTempFile(submissionId,
+						iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
+				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFile);
+			}
 		}
 
 		// upload files to library and then to a history
@@ -101,20 +124,21 @@ public class AnalysisCollectionServiceGalaxy {
 	/**
 	 * Uploads a list of paired sequence files belonging to the given samples to
 	 * Galaxy.
-	 * 
+	 *
 	 * @param sampleSequenceFilesPaired A map between {@link Sample} and
 	 *                                  {@link SequenceFilePair}.
 	 * @param workflowHistory           The history to upload the sequence files
 	 *                                  into.
 	 * @param workflowLibrary           A temporary library to upload files into.
+	 * @param submissionId              The {@link AnalysisSubmission} id
 	 * @return A CollectionResponse for the dataset collection constructed from the
-	 *         given files.
+	 * given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
-	 * @throws IOException If there was an error reading the sequence file.
+	 * @throws IOException               If there was an error reading the sequence file.
 	 */
 	public CollectionResponse uploadSequenceFilesPaired(
 			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
-			Library workflowLibrary) throws ExecutionManagerException, IOException {
+			Library workflowLibrary, Long submissionId) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
@@ -128,10 +152,29 @@ public class AnalysisCollectionServiceGalaxy {
 			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
 			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
-			samplesMapPairForward.put(sample, fileForward.getFile());
-			samplesMapPairReverse.put(sample, fileReverse.getFile());
-			pathsToUpload.add(fileForward.getFile());
-			pathsToUpload.add(fileReverse.getFile());
+			IridaTemporaryFile iridaTemporaryFileForward = iridaFileStorageUtility.getTemporaryFile(fileForward.getFile());
+			IridaTemporaryFile iridaTemporaryFileReverse = iridaFileStorageUtility.getTemporaryFile(fileReverse.getFile());
+
+			samplesMapPairForward.put(sample, iridaTemporaryFileForward.getFile());
+			samplesMapPairReverse.put(sample, iridaTemporaryFileReverse.getFile());
+			pathsToUpload.add(iridaTemporaryFileForward.getFile());
+			pathsToUpload.add(iridaTemporaryFileReverse.getFile());
+
+			/*
+			 If the storage type is an object store then we create an AnalysisSubmissionTempFile
+			 record to save to the database. The cleanup of these files happens once the final
+			 workflow status is set for an analysis.
+			 */
+			if (!iridaFileStorageUtility.storageTypeIsLocal()) {
+				AnalysisSubmissionTempFile analysisSubmissionTempFileForward = new AnalysisSubmissionTempFile(
+						submissionId, iridaTemporaryFileForward.getFile(),
+						iridaTemporaryFileForward.getDirectoryPath());
+				AnalysisSubmissionTempFile analysisSubmissionTempFileReverse = new AnalysisSubmissionTempFile(
+						submissionId, iridaTemporaryFileReverse.getFile(),
+						iridaTemporaryFileReverse.getDirectoryPath());
+				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFileForward);
+				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFileReverse);
+			}
 		}
 
 		// upload files to library and then to a history

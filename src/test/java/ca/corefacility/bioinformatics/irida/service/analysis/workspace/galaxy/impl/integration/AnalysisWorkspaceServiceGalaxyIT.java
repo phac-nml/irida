@@ -233,7 +233,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1, iridaFileStorageUtility);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 
 		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageUtility);
 

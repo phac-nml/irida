@@ -289,7 +289,7 @@ public class ExecutionManagerConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() throws ExecutionManagerConfigurationException {
-		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads, iridaFileStorageUtility);
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout, libraryUploadThreads);
 	}
 
 	/**
