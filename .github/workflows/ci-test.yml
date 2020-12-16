@@ -76,8 +76,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Install libraries # Install our non-maven backed dependencies, and docs requirements
-        run: pushd lib; ./install-libs.sh; popd; sudo gem install jekyll; sudo gem install pygments.rb
+      - name: Install libraries # Install our non-maven backed dependencies
+        run: pushd lib; ./install-libs.sh; popd;
       - name: Run tests with Maven # Run the test suite
         run: ./run-tests.sh doc_testing
 
