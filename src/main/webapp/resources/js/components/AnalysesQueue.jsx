@@ -17,6 +17,7 @@ const Value = styled.span`
   text-align: right;
   font-family: monospace;
   border-bottom: none;
+  background-color: transparent;
 `;
 
 const UPDATE_QUEUE_COUNT_DELAY = 60000;
