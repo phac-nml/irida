@@ -93,9 +93,9 @@ export function MainNavigation() {
             marginLeft: SPACE_MD,
           }}
         >
-          <Menu.Item icon={<CartLink />} />
+          <Menu.Item icon={<CartLink />} key="cart" />
           {isAdmin && (
-            <Menu.Item>
+            <Menu.Item key="admin:link">
               <a href={setBaseUrl("/admin")}>
                 {i18n("MainNavigation.admin").toUpperCase()}
               </a>
@@ -103,7 +103,7 @@ export function MainNavigation() {
           )}
           <Menu.SubMenu title={<IconQuestionCircle />}>
             <Menu.ItemGroup title="Documentation">
-              <Menu.Item>
+              <Menu.Item key="userguide">
                 <a
                   href="https://irida.corefacility.ca/documentation/user/user"
                   target="_blank"
@@ -112,7 +112,7 @@ export function MainNavigation() {
                 </a>
               </Menu.Item>
               {isAdmin && (
-                <Menu.Item>
+                <Menu.Item key="adminguide">
                   <a href="https://irida.corefacility.ca/documentation/user/administrator">
                     {i18n("nav.main.adminguide")}
                   </a>
@@ -120,7 +120,7 @@ export function MainNavigation() {
               )}
             </Menu.ItemGroup>
             <Menu.Divider />
-            <Menu.Item>
+            <Menu.Item key="website">
               <a
                 href="http://www.irida.ca"
                 target="_blank"
@@ -144,12 +144,12 @@ export function MainNavigation() {
               </Space>
             }
           >
-            <Menu.Item>
+            <Menu.Item key="account">
               <a href={setBaseUrl(`/users/current`)}>
                 {i18n("nav.main.account")}
               </a>
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item key="logout">
               <a href={setBaseUrl("/logout")}>{i18n("nav.main.logout")}</a>
             </Menu.Item>
           </Menu.SubMenu>
