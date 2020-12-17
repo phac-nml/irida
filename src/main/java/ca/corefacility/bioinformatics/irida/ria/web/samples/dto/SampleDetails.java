@@ -1,31 +1,34 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Used to return details of a {@link Sample} back to the user interface.
  */
 public class SampleDetails {
     private Sample sample;
-    private Set<MetadataEntry> metadata;
+    private Map<MetadataTemplateField, MetadataEntry> metadata;
     private boolean modifiable;
     private final Long projectId; // If set, means sample is in the cart
 
     public SampleDetails(Sample sample, boolean modifiable, Set<MetadataEntry> metadata, Long cartProjectId) {
         this.sample = sample;
-        this.metadata = metadata;
         this.modifiable = modifiable;
         this.projectId = cartProjectId;
+        this.metadata = getMapForEntries(metadata);
     }
 
     public Sample getSample() {
         return sample;
     }
 
-    public Set<MetadataEntry> getMetadata() {
+    public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
         return metadata;
     }
 
@@ -35,5 +38,11 @@ public class SampleDetails {
 
     public Long getProjectId() {
         return projectId;
+    }
+
+    public Map<MetadataTemplateField, MetadataEntry> getMapForEntries(Set<MetadataEntry> metadataEntries) {
+        Map<MetadataTemplateField, MetadataEntry> metadata = metadataEntries.stream().collect(Collectors.toMap(MetadataEntry::getField, e -> e));
+
+        return metadata;
     }
 }
