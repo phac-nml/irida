@@ -80,7 +80,7 @@ jobs:
         with:
           java-version: 11
       - name: Install libraries
-        run: pushd docs; bundle install; popd
+        run: pushd doc; bundle install; popd
       - name: Build Javadoc
         run: mvn clean site
       - name: Build Jekyll Site
