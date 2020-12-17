@@ -9,29 +9,31 @@ import java.util.Set;
  * Used to return details of a {@link Sample} back to the user interface.
  */
 public class SampleDetails {
-	private Sample sample;
-	private Set<MetadataEntry> metadata;
-	private boolean modifiable;
+    private Sample sample;
+    private Set<MetadataEntry> metadata;
+    private boolean modifiable;
+    private final Long projectId; // If set, means sample is in the cart
 
-	public SampleDetails(Sample sample, boolean modifiable, Set<MetadataEntry> metadata) {
-		this.sample = sample;
-		this.metadata = metadata;
-		this.modifiable = modifiable;
-	}
+    public SampleDetails(Sample sample, boolean modifiable, Set<MetadataEntry> metadata, Long cartProjectId) {
+        this.sample = sample;
+        this.metadata = metadata;
+        this.modifiable = modifiable;
+        this.projectId = cartProjectId;
+    }
 
-	public Sample getSample() {
-		return sample;
-	}
+    public Sample getSample() {
+        return sample;
+    }
 
-	public Set<MetadataEntry> getMetadata() {
-		return metadata;
-	}
+    public Set<MetadataEntry> getMetadata() {
+        return metadata;
+    }
 
-	public boolean isModifiable() {
-		return modifiable;
-	}
+    public boolean isModifiable() {
+        return modifiable;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 }
