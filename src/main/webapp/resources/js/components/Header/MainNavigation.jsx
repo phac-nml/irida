@@ -2,7 +2,12 @@ import React from "react";
 import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
-import { IconQuestionCircle, IconUser } from "../icons/Icons";
+import {
+  IconCog,
+  IconMenu,
+  IconQuestionCircle,
+  IconUser,
+} from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -17,12 +22,13 @@ export function MainNavigation() {
         display: "flex",
         alignItems: "center",
         borderBottom: `2px solid ${primaryColour}`,
+        height: 55,
       }}
     >
       <Col md={10} sm={24}>
         <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
           <img
-            style={{ height: 28 }}
+            style={{ height: 22 }}
             src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
             alt={i18n("global.title")}
           />
@@ -94,6 +100,17 @@ export function MainNavigation() {
           }}
         >
           <Menu.Item icon={<CartLink />} key="cart" />
+          <Menu.SubMenu title={<IconCog />}>
+            <Menu.Item key="user:groups">
+              <a href={setBaseUrl("/groups")}>{i18n("nav.main.groups-list")}</a>
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item key="remote_api">
+              <a href={setBaseUrl("/remote_api")}>
+                {i18n("nav.main.remoteapis")}
+              </a>
+            </Menu.Item>
+          </Menu.SubMenu>
           {isAdmin && (
             <Menu.Item key="admin:link">
               <a href={setBaseUrl("/admin")}>
