@@ -3,6 +3,13 @@ import sys
 import shutil
 import time
 
+################################################################################
+# This script is used to build documentation for IRIDA for deployment.  It will
+# build the IRIDA javadoc and transfer all the documentation directories to an
+# external documentation repository.  See below for usage.
+################################################################################
+
+# If no args, print usage statement
 if len(sys.argv) == 1:
     print("IRIDA documentation deployment script.")
     print("Usage: build-docs.py TARGET_DIRECTORY")
