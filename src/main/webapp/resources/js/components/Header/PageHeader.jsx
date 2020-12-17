@@ -19,7 +19,7 @@ export function PageHeader() {
   const [inGalaxy, setInGalaxy] = React.useState(false);
 
   React.useEffect(() => {
-    setInGalaxy(true || typeof window.GALAXY !== "undefined");
+    setInGalaxy(typeof window.GALAXY !== "undefined");
   }, []);
 
   return (

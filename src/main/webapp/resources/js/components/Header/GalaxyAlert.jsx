@@ -6,10 +6,10 @@ import { SPACE_XS } from "../../styles/spacing";
 import { IconLinkOut } from "../icons/Icons";
 
 export default function GalaxyAlert() {
-  // const galaxyUrl = window
-  //   .decodeURI(window.GALAXY.URL)
-  //   .split("/tool_runner")[0];
-  const galaxyUrl = `localhost:8080/tool_runner`;
+  const galaxyUrl = window
+    .decodeURI(window.GALAXY.URL)
+    .split("/tool_runner")[0];
+
   const message = (
     <span>
       <span style={{ fontWeight: FONT_WEIGHT_HEAVY, marginRight: SPACE_XS }}>
