@@ -85,11 +85,12 @@ This script will output a CSV file of the following data:
 | `metadata_entry` database id | `metadata_entry` text value | Envers revision number of the entry | User ID of the user that made the change | `sample` database id associated with the metadata | Name of the sample |
 |---|---|---|---|---|---|
 
-You can download this script at <https://github.com/phac-nml/irida/tree/development/src/main/resources/scripts/metadata-mappings>.  This script requires the `Text::CSV` perl package to be installed (available in CPAN and various other package managers).  To run this script:
+You can download this script at <https://github.com/phac-nml/irida/tree/development/src/main/resources/scripts/metadata-mappings>.  This script requires the `Text::CSV`, `DBI`, and `DBD::mysql` perl packages to be installed (available in CPAN and various other package managers).  To run this script:
 
 ```bash
 $ perl metadata-mappings.pl -u [database username] -p [database password] -d [irida database name] -h [database host] > [outputfile.csv]
 ```
+Note if your database is running on `localhost` you may need to specify the host by IP (`127.0.0.1`).
 
 ## Plugin version updates
 
