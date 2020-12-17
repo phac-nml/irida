@@ -321,9 +321,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			 Cleanup any files that were downloaded from an object store to run an analysis and
 			 remove the analysis submission temp file record from the database.
 			 */
-			if (!iridaFileStorageUtility.storageTypeIsLocal()) {
-				List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
-						analysisSubmission.getId());
+			List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
+					analysisSubmission.getId());
+			if(analysisSubmissionTempFiles.size() > 0) {
 				logger.debug("Cleaning up " + analysisSubmissionTempFiles.size() + " temporary files downloaded from object store.");
 				for (AnalysisSubmissionTempFile analysisSubmissionTempFile : analysisSubmissionTempFiles) {
 					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(

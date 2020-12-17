@@ -88,7 +88,7 @@ public class AnalysisCollectionServiceGalaxy {
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
 			SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
-			IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(sequenceFile.getSequenceFile().getFile());
+			IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(sequenceFile.getSequenceFile().getFile(), "analysis");
 			samplesMap.put(iridaTemporaryFile.getFile(), sample);
 
 			/*
@@ -156,8 +156,8 @@ public class AnalysisCollectionServiceGalaxy {
 			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
 			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
-			IridaTemporaryFile iridaTemporaryFileForward = iridaFileStorageUtility.getTemporaryFile(fileForward.getFile());
-			IridaTemporaryFile iridaTemporaryFileReverse = iridaFileStorageUtility.getTemporaryFile(fileReverse.getFile());
+			IridaTemporaryFile iridaTemporaryFileForward = iridaFileStorageUtility.getTemporaryFile(fileForward.getFile(), "analysis");
+			IridaTemporaryFile iridaTemporaryFileReverse = iridaFileStorageUtility.getTemporaryFile(fileReverse.getFile(), "analysis");
 
 			samplesMapPairForward.put(sample, iridaTemporaryFileForward.getFile());
 			samplesMapPairReverse.put(sample, iridaTemporaryFileReverse.getFile());
