@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -306,28 +307,34 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		return absolutePath;
 	}
 
-	@Override
-	public boolean checkConnectivity() throws StorageException {
-		String containerName = containerClient.getBlobContainerName();
-		try {
-			// Make an api request to check if we can list the blobs in the container
-			containerClient.listBlobs().forEach(blob ->
-					blob.getName());
-			logger.debug("Successfully connected to azure container " + containerName);
-			return true;
-
-		} catch (BlobStorageException e) {
-			/*
-				Throw an exception which is caught at startup advising the user that the
-				connection was not successful to the azure container
-			 */
-			throw new StorageException(
-					"Unable to connect to azure container. Please check that your credentials are valid and that the container " + containerName + " exists.");
-		}
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
-		return true;
+		String containerName = containerClient.getBlobContainerName();
+		try {
+			Path tempDirectory = Files.createTempDirectory(null);
+			Path tempFile = tempDirectory.resolve("testAzureContainerReadWrite.txt");
+			// write a line
+			Files.write(tempFile, "Azure check read/write permissions.\n".getBytes(StandardCharsets.UTF_8));
+			try {
+				// Upload and delete file to check if container has read/write access
+				BlobClient blobClient = containerClient.getBlobClient(
+						getAzureFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName());
+				blobClient.uploadFromFile(tempFile.toString(), false);
+				blobClient.delete();
+				return true;
+			} catch (BlobStorageException e) {
+				throw new StorageException("Unable to read and/or write to container " + containerName
+						+ ". Please check container has both read and write permissions.", e);
+			} finally {
+				// Cleanup the temporary file on the server
+				Files.delete(tempFile);
+				org.apache.commons.io.FileUtils.deleteDirectory(tempDirectory.toFile());
+			}
+		} catch (IOException e) {
+			throw new StorageException("Unable to clean up temporary file", e);
+		}
 	}
 }

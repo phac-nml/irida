@@ -26,11 +26,11 @@ import ca.corefacility.bioinformatics.irida.util.FileUtils;
  * Component implementation of file utitlities for local storage
  */
 @Component
-public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility{
+public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 
 	@Autowired
-	public IridaFileStorageLocalUtilityImpl(){
+	public IridaFileStorageLocalUtilityImpl() {
 	}
 
 	/**
@@ -46,11 +46,14 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
-		if(iridaTemporaryFile.getFile() != null) {
-			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile().toString() + "]");
+		if (iridaTemporaryFile.getFile() != null) {
+			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile()
+					.toString() + "]");
 		}
-		if(iridaTemporaryFile.getDirectoryPath() != null) {
-			logger.trace("Directory resides on local filesystem. Not cleaning up directory [" + iridaTemporaryFile.getDirectoryPath().toString() + "]");
+		if (iridaTemporaryFile.getDirectoryPath() != null) {
+			logger.trace("Directory resides on local filesystem. Not cleaning up directory ["
+					+ iridaTemporaryFile.getDirectoryPath()
+					.toString() + "]");
 		}
 	}
 
@@ -61,7 +64,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	public String getFileSize(Path file) {
 		String fileSize = "N/A";
 		try {
-			if(file != null) {
+			if (file != null) {
 				fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
 			}
 		} catch (NoSuchFileException e) {
@@ -105,7 +108,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean storageTypeIsLocal(){
+	public boolean storageTypeIsLocal() {
 		return true;
 	}
 
@@ -114,7 +117,8 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		fileName = file.getFileName().toString();
+		fileName = file.getFileName()
+				.toString();
 		return fileName;
 	}
 
@@ -133,7 +137,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	public InputStream getFileInputStream(Path file) {
 		try {
 			return Files.newInputStream(file, StandardOpenOption.READ);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			throw new FileProcessorException("could not read file", e);
 		}
 	}
@@ -146,8 +150,8 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try (InputStream is = getFileInputStream(file)) {
 			byte[] bytes = new byte[2];
 			is.read(bytes);
-			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC))
-					&& (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
+			return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC
+					>> 8)));
 		}
 	}
 
@@ -197,8 +201,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
 					throw new IOException(
-							"Extensions of files do not match " + currentExtension + " vs "
-									+ selectedExtension);
+							"Extensions of files do not match " + currentExtension + " vs " + selectedExtension);
 				}
 			}
 		}
@@ -214,24 +217,19 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		byte[] bytes = new byte[0];
 		try {
 			bytes = Files.readAllBytes(file);
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			logger.error("Unable to read file");
 		}
 		return bytes;
 	}
 
-	@Override
-	public boolean checkConnectivity() {
-		// Since it's the local filesystem we just return true
-		return true;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
 		if (!Files.exists(baseDirectory)) {
-			logger.error("Cannot continue startup; base directory " + baseDirectory + " does not exist!");
-			System.exit(1);
+			throw new StorageException("Cannot continue startup; base directory " + baseDirectory + " does not exist!");
 		} else {
 			try {
 				// Check if basedirectory path is writeable by creating a temp file and then removing it
@@ -243,18 +241,16 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					// Cleanup the temp file created in the directory
 					Files.delete(tempFile);
 				} catch (IOException e) {
-					logger.error("An I/O error occurred while attempting to remove temp file ", e);
+					throw new StorageException("An I/O error occurred while attempting to remove temp file ", e);
 				}
 
 				if (!directoryWriteable) {
 					// Log the error and exit so startup does not continue
-					logger.error("Cannot continue startup; base directory " + baseDirectory
+					throw new StorageException("Cannot continue startup; base directory " + baseDirectory
 							+ " does not have write access! Please check directory permissions.");
-					System.exit(1);
 				}
 			} catch (IOException e) {
-				logger.error("Unable to create temporary file. Please check directory permissions", e);
-				System.exit(1);
+				throw new StorageException("Unable to create temporary file. Please check directory permissions", e);
 			}
 		}
 		/*

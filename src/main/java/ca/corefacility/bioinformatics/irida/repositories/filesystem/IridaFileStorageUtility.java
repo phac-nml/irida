@@ -126,17 +126,6 @@ public interface IridaFileStorageUtility {
 	public byte[] readAllBytes(Path file);
 
 	/**
-	 * Check the connectivity to the file storage
-	 * mechanism. For cloud services we must make an
-	 * api call to check if containers/buckets exist.
-	 *
-	 * @return Connection valid or not
-	 * @throws StorageException if connection failed
-	 */
-	public boolean checkConnectivity() throws StorageException;
-
-
-	/**
 	 * Check if the given directory is writable
 	 *
 	 * @param baseDirectory The directory to check write access for

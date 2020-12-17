@@ -321,31 +321,22 @@ public class IridaApiServicesConfig {
 	 * @return A new {@link IridaFileStorageUtility} implementation.
 	 */
 	@Bean(name = "iridaFileStorageUtility")
-	public IridaFileStorageUtility iridaFileStorageService() {
+	public IridaFileStorageUtility iridaFileStorageService(StorageType storageType) {
 		IridaFileStorageUtility iridaFileStorageUtility;
-		StorageType st = StorageType.fromString(storageType);
-		if (st.equals(StorageType.AWS)) {
+		if (storageType.equals(StorageType.AWS)) {
 			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
 					awsSecretKey);
-		} else if (st.equals(StorageType.AZURE)) {
+		} else if (storageType.equals(StorageType.AZURE)) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		}
 
-		// Check if connection is valid to local file system or cloud provider
-		try {
-			iridaFileStorageUtility.checkConnectivity();
-		} catch (StorageException e) {
-			// Log the error and exit so startup does not continue
-			logger.error("Unable to start up IRIDA! ", e);
-			System.exit(1);
-		}
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		return iridaFileStorageUtility;
 	}
 
-	@Bean(name= "storageType")
+	@Bean(name = "storageType")
 	public StorageType storageType() {
 		return StorageType.fromString(storageType);
 	}
