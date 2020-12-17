@@ -44,7 +44,8 @@ import {
   TeamOutlined,
   UnorderedListOutlined,
   UserOutlined,
-  UploadOutlined
+  UploadOutlined,
+  CalendarTwoTone,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -165,6 +166,10 @@ export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
 export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 
+export const IconCalendarTwoTone = ({ ...props }) => (
+  <CalendarTwoTone {...props} />
+);
+
 /*
 File Type Icons
  */
@@ -195,6 +200,4 @@ export const IconCheckCircle = ({ ...props }) => (
   <CheckCircleOutlined {...props} />
 );
 
-export const IconFileUpload = ({ ...props }) => (
-  <UploadOutlined {...props} />
-);
+export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;

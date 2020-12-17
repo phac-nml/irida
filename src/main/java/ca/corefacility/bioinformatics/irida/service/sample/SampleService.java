@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -22,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -324,4 +326,22 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
 			final Sort sort);
+
+	/**
+	 * Get count of samples created in the time period
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @return An {@link Long} count of samples created
+	 */
+	public Long getSamplesCreated(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of samples created in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 }

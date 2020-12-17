@@ -30,4 +30,8 @@ public class SampleDetails {
 	public boolean isModifiable() {
 		return modifiable;
 	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
 }

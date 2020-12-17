@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -148,21 +149,6 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
-	}
-
-	/**
-	 * Get {@link Sample} details for a specific sample.
-	 *
-	 * @param id {@link Long} identifier for a sample.
-	 * @return {@link SampleDetails} for the {@link Sample}
-	 */
-	@RequestMapping(value = "/samples", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public SampleDetails getSampleDetails(@RequestParam Long id) {
-		Sample sample = sampleService.read(id);
-		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
-		boolean modifiable = this.isSampleModifiable(sample);
-		return new SampleDetails(sample, modifiable, metadataForSample);
 	}
 
 	/**
@@ -603,6 +589,7 @@ public class SamplesController extends BaseController {
 		final String redirectUrl = url.substring(0, url.indexOf("/concatenate"));
 		return "redirect:" + redirectUrl;
 	}
+
 	/**
 	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the
 	 * given {@link Sample}

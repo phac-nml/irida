@@ -161,5 +161,9 @@
     <metadata_entry id="13" value="WRHA" type="text" sample_id="3" field_id="3"/>
     <metadata_entry id="14" value="bloody stool" type="text" sample_id="3" field_id="4"/>
 
+    <metadata_entry id="16" value="Brown" type="text" sample_id="19" field_id="1"/>
+    <metadata_entry id="17" value="WRHA" type="text" sample_id="19" field_id="2"/>
+    <metadata_entry id="18" value="bloody stool" type="text" sample_id="19" field_id="3"/>
+    <metadata_entry id="19" value="AB-1003" type="text" sample_id="19" field_id="4"/>
 
 </dataset>
