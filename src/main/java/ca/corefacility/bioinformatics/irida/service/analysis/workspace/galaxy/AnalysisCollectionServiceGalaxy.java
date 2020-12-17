@@ -49,11 +49,15 @@ public class AnalysisCollectionServiceGalaxy {
 	/**
 	 * Builds a new {@link AnalysisCollectionServiceGalaxy} with the given
 	 * information.
-	 * 
-	 * @param galaxyHistoriesService A GalaxyHistoriesService for interacting with
-	 *                               Galaxy Histories.
+	 *
+	 * @param galaxyHistoriesService               A GalaxyHistoriesService for interacting with
+	 *                                             Galaxy Histories.
+	 * @param iridaFileStorageUtility              The file storage utility implementation
+	 * @param analysisSubmissionTempFileRepository {@link AnalysisSubmissionTempFileRepository} for {@link AnalysisSubmissionTempFile} objects
 	 */
-	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService, IridaFileStorageUtility iridaFileStorageUtility, AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
+	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
+			IridaFileStorageUtility iridaFileStorageUtility,
+			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;

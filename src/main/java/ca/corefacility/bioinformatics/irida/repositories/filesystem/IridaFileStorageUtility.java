@@ -27,6 +27,16 @@ public interface IridaFileStorageUtility {
 	public IridaTemporaryFile getTemporaryFile(Path file);
 
 	/**
+	 * Overloaded method to get a file from storage and
+	 * add prefix to directory
+	 *
+	 * @param file The {@link Path} to the file
+	 * @param prefix The {@link String} prefix to add to the directory name
+	 * @return {@link IridaTemporaryFile} which includes the file and optional temporary directory
+	 */
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix);
+
+	/**
 	 * Delete temporary downloaded file and/or directory.
 	 *
 	 * @param iridaTemporaryFile The {@link IridaTemporaryFile} object which includes the file path and/or directory path

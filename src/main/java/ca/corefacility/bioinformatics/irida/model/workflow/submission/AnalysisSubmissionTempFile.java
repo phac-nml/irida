@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * A temporary file which required by an {@link AnalysisSubmission} when
