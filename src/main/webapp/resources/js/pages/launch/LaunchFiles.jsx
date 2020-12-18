@@ -74,7 +74,7 @@ export function LaunchFiles() {
 
   const removeSampleFromCart = (sample, selectedId) => {
     removeSample(sample.project.id, sample.id).then(() => {
-      setSamples(samples.filter((s) => sample.id !== s.id));
+      setSamples(samples.filter((sample) => sample.id !== sample.id));
       const ids = new Set(selected);
       ids.delete(selectedId);
       setSelected(Array.from(ids));
