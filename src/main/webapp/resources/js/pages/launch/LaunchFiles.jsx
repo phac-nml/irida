@@ -41,7 +41,9 @@ export function LaunchFiles() {
       .then((data) => {
         setSamples(data);
         setSelected(
-          data.filter((s) => s.files.length).map((s) => s.files[0].identifier)
+          data
+            .filter((sample) => sample.files.length)
+            .map((sample) => sample.files[0].identifier)
         );
       })
       .catch((message) => notification.error({ message }));
