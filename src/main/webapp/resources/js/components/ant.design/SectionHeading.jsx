@@ -1,5 +1,6 @@
 import React from "react";
-import { Divider } from "antd";
+import { Typography } from "antd";
+import { grey7 } from "../../styles/colors";
 
 /**
  * React component to render section headings for forms
@@ -11,8 +12,8 @@ import { Divider } from "antd";
  */
 export function SectionHeading({ children, ...props }) {
   return (
-    <Divider orientation="left" {...props}>
+    <Typography.Title level={3} style={{ color: grey7 }} {...props}>
       {children}
-    </Divider>
+    </Typography.Title>
   );
 }
