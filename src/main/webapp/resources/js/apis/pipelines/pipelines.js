@@ -3,7 +3,6 @@
  */
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { notification } from "antd";
 
 const URL = setBaseUrl(`pipelines/ajax`);
 const AJAX_URL = setBaseUrl(`ajax/pipeline`);
