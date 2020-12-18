@@ -56,7 +56,7 @@ export function LaunchFiles() {
   React.useEffect(() => {
     if (samples) {
       if (hideUnusable) {
-        setVisibleSamples(samples.filter((s) => s.files.length));
+        setVisibleSamples(samples.filter((sample) => sample.files.length));
       } else {
         setVisibleSamples(samples);
       }
