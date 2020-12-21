@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+/**
+ * Configuration for Ant Design theme styles fomr properties file.
+ */
 @Configuration
 @PropertySource(value = {
 		"classpath:/ca/corefacility/bioinformatics/irida/config/styles.properties",
