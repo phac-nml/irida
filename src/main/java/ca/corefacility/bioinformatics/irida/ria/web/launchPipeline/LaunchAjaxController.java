@@ -1,5 +1,6 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -12,8 +13,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.launch.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 
 /**
@@ -23,10 +26,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 @RequestMapping("/ajax/pipeline")
 public class LaunchAjaxController {
     private final UIPipelineService pipelineService;
+    private final UIPipelineSampleService sampleService;
 
     @Autowired
-    public LaunchAjaxController(UIPipelineService pipelineService) {
+    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineSampleService sampleService) {
         this.pipelineService = pipelineService;
+        this.sampleService = sampleService;
     }
 
     /**
@@ -44,6 +49,21 @@ public class LaunchAjaxController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new AjaxErrorResponse("Cannot find this pipeline"));
         }
+    }
+
+    /**
+     * Get a list of the samples that are in the cart and get their associated sequence files that
+     * can be used on the current pipeline
+     *
+     * @param paired  Whether paired end files can be run on the current pipeline
+     * @param singles Whether single end files can be run on the current pipeline
+     * @return list of samples containing their associated sequencing data
+     */
+    @GetMapping("/samples")
+    public ResponseEntity<List<LaunchSample>> getPipelineSamples(
+            @RequestParam(required = false, defaultValue = "false") boolean paired,
+            @RequestParam(required = false, defaultValue = "false") boolean singles) {
+        return ResponseEntity.ok(sampleService.getPipelineSamples(paired, singles));
     }
 
     /**

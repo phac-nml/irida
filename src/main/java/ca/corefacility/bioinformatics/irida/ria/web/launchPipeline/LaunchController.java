@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
+package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

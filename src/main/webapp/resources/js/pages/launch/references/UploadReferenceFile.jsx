@@ -2,7 +2,8 @@ import React from "react";
 import { notification } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { DragUpload } from "../../../components/files/DragUpload.jsx";
-import { referenceFileUploadComplete, useLaunch } from "../launch-context";
+import { useLaunch } from "../launch-context";
+import { referenceFileUploadComplete } from "../launch-dispatch";
 
 /**
  * Component to upload a reference file to the launch pipeline page.
@@ -25,7 +26,7 @@ export function UploadReferenceFile() {
         referenceFileUploadComplete(
           launchDispatch,
           info.file.name,
-          info.file.response.id
+          info.file.response.files[0].id
         );
       } else if (status === "error") {
         notification.error({

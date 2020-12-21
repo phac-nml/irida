@@ -16,12 +16,14 @@ export function LaunchPage() {
 
   return (
     <Row>
-      <Col xl={{ span: 14, offset: 5 }} style={{ marginTop: SPACE_LG }}>
-        <Card>
-          <Spin spinning={loading} delay={500}>
-            {content}
-          </Spin>
-        </Card>
+      <Col
+        xxl={{ span: 16, offset: 4 }}
+        xl={{ span: 20, offset: 2 }}
+        style={{ marginTop: SPACE_LG }}
+      >
+        <Spin spinning={loading} delay={500}>
+          {content}
+        </Spin>
       </Col>
     </Row>
   );
