@@ -22,13 +22,12 @@ export function MainNavigation() {
         display: "flex",
         alignItems: "center",
         borderBottom: `2px solid ${primaryColour}`,
-        height: 55,
       }}
     >
       <Col md={10} sm={24}>
         <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
           <img
-            style={{ height: 22 }}
+            style={{ height: 20 }}
             src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
             alt={i18n("global.title")}
           />
