@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -37,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -144,20 +142,6 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
-	}
-
-	/**
-	 * Get {@link Sample} details for a specific sample.
-	 *
-	 * @param id {@link Long} identifier for a sample.
-	 * @return {@link SampleDetails} for the {@link Sample}
-	 */
-	@RequestMapping(value = "/samples", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public SampleDetails getSampleDetails(@RequestParam Long id) {
-		Sample sample = sampleService.read(id);
-		boolean modifiable = this.isSampleModifiable(sample);
-		return new SampleDetails(sample, modifiable);
 	}
 
 	/**

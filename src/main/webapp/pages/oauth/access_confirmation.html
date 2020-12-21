@@ -49,7 +49,6 @@
         class="button-form"
         name="confirmationForm"
         th:action="@{/api/oauth/authorize}"
-        onsubmit="return handleSubmit()"
         method="post"
       >
         <input
@@ -73,7 +72,6 @@
         class="button-form"
         name="denialForm"
         th:action="@{/api/oauth/authorize}"
-        onsubmit="return handleSubmit()"
         method="post"
       >
         <input
@@ -88,12 +86,5 @@
         </button>
       </form>
     </div>
-    <script>
-      window.onbeforeunload = function () {
-        if (window.opener) {
-          window.opener.handleClosing();
-        }
-      };
-    </script>
   </body>
 </html>

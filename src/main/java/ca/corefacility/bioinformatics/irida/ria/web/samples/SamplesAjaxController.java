@@ -8,11 +8,9 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -22,6 +20,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -35,14 +36,16 @@ public class SamplesAjaxController {
 	private final SampleService sampleService;
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
+	private final UISampleService uiSampleService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesAjaxController(SampleService sampleService, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource) {
+			GenomeAssemblyService genomeAssemblyService, UISampleService uiSampleService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
+		this.uiSampleService = uiSampleService;
 		this.messageSource = messageSource;
 	}
 
@@ -152,6 +155,29 @@ public class SamplesAjaxController {
 					.body(messageSource.getMessage("server.SampleFileUploader.error",
 							new Object[] { sample.getSampleName() }, locale));
 		}
+	}
+
+	/**
+	 * Get {@link Sample} details for a specific sample.
+	 *
+	 * @param id {@link Long} identifier for a sample.
+	 * @return {@link SampleDetails} for the {@link Sample}
+	 */
+	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
+		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	}
+
+	/**
+	 * Get sequencing files associated with a sample
+	 * @param id Identifier for a sample
+	 * @param projectId Identifier for a project
+	 * @return All sequencing files associated with a sample.
+	 */
+	@GetMapping("/{id}/files")
+	public ResponseEntity<AjaxResponse> getFilesForSample(@PathVariable Long id,
+			@RequestParam(required = false) Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
 	/**
