@@ -4,3 +4,5 @@ description: Integrated Rapid Infectious Disease Analysis (IRIDA) - An open-sour
 
 github:
   repository_url: https://github.com/phac-nml/irida
+
+exclude: ['README.md']
