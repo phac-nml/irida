@@ -2,25 +2,19 @@ import React from "react";
 import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
-import {
-  IconCog,
-  IconMenu,
-  IconQuestionCircle,
-  IconUser,
-} from "../icons/Icons";
+import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
+import "./main-navigation/style.css";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 
   return (
     <Row
+      className={`${theme}-theme main-navigation`}
       style={{
-        backgroundColor: theme === "dark" ? "#001529" : "transparent",
-        display: "flex",
-        alignItems: "center",
         borderBottom: `2px solid ${primaryColour}`,
       }}
     >
@@ -32,11 +26,7 @@ export function MainNavigation() {
             alt={i18n("global.title")}
           />
         </a>
-        <Menu
-          mode="horizontal"
-          theme={theme}
-          style={{ display: "inline-block", borderBottom: "none" }}
-        >
+        <Menu mode="horizontal" theme={theme}>
           <Menu.SubMenu key="projects" title={i18n("nav.main.project")}>
             <Menu.Item key="project:list">
               <a href={setBaseUrl("/projects")}>
@@ -89,15 +79,7 @@ export function MainNavigation() {
           width: `100%`,
         }}
       >
-        <Menu
-          mode="horizontal"
-          theme={theme}
-          style={{
-            display: "inline-block",
-            borderBottom: "none",
-            marginLeft: SPACE_MD,
-          }}
-        >
+        <Menu mode="horizontal" theme={theme} className="accessory-menu">
           <Menu.Item icon={<CartLink />} key="cart" />
           <Menu.SubMenu title={<IconCog />}>
             <Menu.Item key="user:groups">
