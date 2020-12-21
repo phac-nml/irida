@@ -6,6 +6,7 @@ import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { IconDropDown, IconFolder } from "../../../components/icons/Icons";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -57,8 +58,6 @@ export class SampleRenderer extends React.Component {
 
   displaySample = () => this.props.displaySample(this.props.data);
 
-  removeSample = () => this.props.removeSample(this.props.data);
-
   removeProject = () => this.props.removeProject(this.props.data.project.id);
 
   render() {
@@ -82,18 +81,25 @@ export class SampleRenderer extends React.Component {
           }}
         >
           <div style={{ flexGrow: 1 }}>
-            <Button
-              className="t-sample-name"
-              size="small"
-              onClick={this.displaySample}
+            <SampleDetailViewer
+              sampleId={sample.id}
+              removeSample={this.props.removeSample}
             >
-              {sample.label}
-            </Button>
+              <Button
+                className="t-sample-details-btn"
+                size="small"
+                onClick={this.displaySample}
+              >
+                {sample.label}
+              </Button>
+            </SampleDetailViewer>
           </div>
           <Dropdown
             overlay={
               <DeleteMenu
-                removeSample={this.removeSample}
+                removeSample={() =>
+                  this.props.removeSample(sample.project.id, sample.id)
+                }
                 removeProject={this.removeProject}
               />
             }
