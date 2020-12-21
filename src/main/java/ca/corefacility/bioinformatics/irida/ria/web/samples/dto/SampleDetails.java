@@ -40,7 +40,13 @@ public class SampleDetails {
         return projectId;
     }
 
-    public Map<MetadataTemplateField, MetadataEntry> getMapForEntries(Set<MetadataEntry> metadataEntries) {
+    /**
+     * Transform the input Set of {@link MetadataEntry}  into a Map of {@link MetadataTemplateField} to {@link MetadataEntry}
+     *
+     * @param metadataEntries the Set of entries
+     * @return the built map
+     */
+    private Map<MetadataTemplateField, MetadataEntry> getMapForEntries(Set<MetadataEntry> metadataEntries) {
         Map<MetadataTemplateField, MetadataEntry> metadata = metadataEntries.stream().collect(Collectors.toMap(MetadataEntry::getField, e -> e));
 
         return metadata;
