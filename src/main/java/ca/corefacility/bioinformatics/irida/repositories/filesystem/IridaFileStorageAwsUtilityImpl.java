@@ -90,6 +90,38 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
+		String perm = "rwxrwxr-x";
+		try {
+			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
+			Path tempDirectory = Files.createTempDirectory(prefix + "-aws-tmp-");
+			Path tempFile = tempDirectory.resolve(file.getFileName()
+					.toString());
+			Set<PosixFilePermission> permissions = PosixFilePermissions.fromString(perm);
+			Files.setPosixFilePermissions(tempDirectory, permissions);
+
+			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
+				org.apache.commons.io.FileUtils.copyInputStreamToFile(s3ObjectInputStream, tempFile.toFile());
+			} catch (AmazonServiceException e) {
+				logger.error(e.getMessage());
+				throw new StorageException("Unable to read object from aws s3 bucket", e);
+			}
+
+			return new IridaTemporaryFile(tempFile, tempDirectory);
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage());
+			throw new StorageException("Unable to resolve temp file in temp directory", e);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			throw new StorageException("Unable to create temp directory", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		try {
 			if (iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {

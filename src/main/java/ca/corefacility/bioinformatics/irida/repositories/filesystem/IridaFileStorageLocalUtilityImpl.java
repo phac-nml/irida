@@ -48,6 +48,18 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
+		/*
+		For the local storage we don't need a temp directory with
+		a prefix so we just call the method above
+		 */
+		return getTemporaryFile(file);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		if(iridaTemporaryFile.getFile() != null) {
 			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile().toString() + "]");

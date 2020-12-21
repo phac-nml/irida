@@ -121,6 +121,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private static final String FORWARD_NAME = "forward";
 	private static final String REVERSE_NAME = "reverse";
 
+	private static final Long ANALYSIS_SUBMISSION_ID = 1L;
+
 	/**
 	 * Sets up variables for testing.
 	 *
@@ -284,7 +286,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample1 = sampleRepository.findById(1L).orElse(null);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
-				.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory, createdLibrary);
+				.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory, createdLibrary, ANALYSIS_SUBMISSION_ID);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -348,7 +350,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory,
-				createdLibrary);
+				createdLibrary, ANALYSIS_SUBMISSION_ID);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -396,7 +398,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample1 = sampleRepository.findById(1L).orElse(null);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
-				.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory, createdLibrary);
+				.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory, createdLibrary, ANALYSIS_SUBMISSION_ID);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -495,7 +497,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
-				createdLibrary);
+				createdLibrary, ANALYSIS_SUBMISSION_ID);
 
 		SequenceFilePair pairedSequenceFile = sequenceFiles.iterator().next();
 		for (SequenceFile file : pairedSequenceFile.getFiles()) {
@@ -551,7 +553,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
-				createdLibrary);
+				createdLibrary, ANALYSIS_SUBMISSION_ID);
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {

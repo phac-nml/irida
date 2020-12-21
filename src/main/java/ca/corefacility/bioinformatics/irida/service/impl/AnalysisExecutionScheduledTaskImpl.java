@@ -19,10 +19,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTempFile;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -56,26 +59,29 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private final EmailController emailController;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisWorkspaceService analysisWorkspaceService;
+	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
 	 * classes.
 	 *
-	 * @param analysisSubmissionRepository   A repository for {@link AnalysisSubmission}s.
-	 * @param analysisExecutionServiceGalaxy A service for executing {@link AnalysisSubmission}s.
-	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission}
-	 *                                       should be cleaned up.
-	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
-	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
-	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
-	 * @param analysisWorkspaceService 	     {@link AnalysisWorkspaceService}
-	 * @param iridaFileStorageUtility        The irida file storage utility implementation
+	 * @param analysisSubmissionRepository         A repository for {@link AnalysisSubmission}s.
+	 * @param analysisExecutionServiceGalaxy       A service for executing {@link AnalysisSubmission}s.
+	 * @param cleanupCondition                     The condition defining when an {@link AnalysisSubmission}
+	 *                                             should be cleaned up.
+	 * @param galaxyJobErrorsService               {@link GalaxyJobErrorsService} for getting {@link JobError} objects
+	 * @param jobErrorRepository                   {@link JobErrorRepository} for {@link JobError} objects
+	 * @param emailController                      {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
+	 * @param analysisWorkspaceService             {@link AnalysisWorkspaceService}
+	 * @param iridaFileStorageUtility              The irida file storage utility implementation
+	 * @param analysisSubmissionTempFileRepository {@link AnalysisSubmissionTempFileRepository} for {@link AnalysisSubmissionTempFile} objects
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository, EmailController emailController, AnalysisWorkspaceService analysisWorkspaceService, IridaFileStorageUtility iridaFileStorageUtility) {
+			JobErrorRepository jobErrorRepository, EmailController emailController, AnalysisWorkspaceService analysisWorkspaceService, IridaFileStorageUtility iridaFileStorageUtility,
+			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
@@ -84,6 +90,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		this.emailController = emailController;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 		this.analysisWorkspaceService = analysisWorkspaceService;
+		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;
 	}
 
 	/**
@@ -306,11 +313,31 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		/*
 		 The variable finalWorkflowStatusSet is set to true when an analysis
 		 has successfully completed or completed with an error and is used in
-		 the logic below. If the analysis has finished with an error or completed successfully
-		 and the user selected to be emailed on completion, then the following code
-		 will be executed.
+		 the logic below.
 		 */
 		if (finalWorkflowStatusSet) {
+
+			/*
+			 Cleanup any files that were downloaded from an object store to run an analysis and
+			 remove the analysis submission temp file record from the database.
+			 */
+			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
+			List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
+					analysisSubmission.getId());
+				logger.debug("Cleaning up " + analysisSubmissionTempFiles.size() + " temporary files downloaded from object store.");
+				for (AnalysisSubmissionTempFile analysisSubmissionTempFile : analysisSubmissionTempFiles) {
+					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(
+							new IridaTemporaryFile(analysisSubmissionTempFile.getFilePath(),
+									analysisSubmissionTempFile.getFileDirectoryPath()));
+					analysisSubmissionTempFileRepository.delete(analysisSubmissionTempFile);
+				}
+			}
+
+			/*
+			 If the analysis has finished with an error or completed successfully
+			 and the user selected to be emailed on completion, then the following code
+			 will be executed.
+			 */
 			if(analysisSubmission.getEmailPipelineResult()) {
 				emailController.sendPipelineStatusEmail(analysisSubmission);
 			}

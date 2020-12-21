@@ -57,7 +57,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-
 	public IridaTemporaryFile getTemporaryFile(Path file) {
 		String perm = "rwxrwxr-x";
 		try {
@@ -66,6 +65,34 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			try (InputStream initialStream = blobClient.openInputStream()) {
 				logger.trace("Getting file from azure [" + file.toString() + "]");
 				Path tempDirectory = Files.createTempDirectory("azure-tmp-");
+				Path tempFile = tempDirectory.resolve(file.getFileName()
+						.toString());
+				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
+				Set<PosixFilePermission> permissions = PosixFilePermissions.fromString(perm);
+				Files.setPosixFilePermissions(tempDirectory, permissions);
+				return new IridaTemporaryFile(tempFile, tempDirectory);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				throw new StorageException(e.getMessage());
+			}
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't find file on azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
+		String perm = "rwxrwxr-x";
+		try {
+			// We set the blobClient "path" to which file we want to get
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			try (InputStream initialStream = blobClient.openInputStream()) {
+				logger.trace("Getting file from azure [" + file.toString() + "]");
+				Path tempDirectory = Files.createTempDirectory(prefix + "-azure-tmp-");
 				Path tempFile = tempDirectory.resolve(file.getFileName()
 						.toString());
 				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());

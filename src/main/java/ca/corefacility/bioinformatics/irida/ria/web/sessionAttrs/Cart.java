@@ -88,4 +88,13 @@ public class Cart extends HashMap<Long, Long> {
 		return Sets.newHashSet(this.values());
 	}
 
+	/**
+	 * Find if a sample is currently in the cart.  If it is get the project that it belongs to.
+	 *
+	 * @param sampleId identifier for a sample to check the cart for.
+	 * @return identifier for the project the sample is in if the sample is in the cart
+	 */
+	public Long isSampleInCart(Long sampleId) {
+		return this.getOrDefault(sampleId, null);
+	}
 }

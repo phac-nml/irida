@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config.services.scheduled;
 
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -53,6 +54,9 @@ public class AnalysisScheduledTaskConfig {
 
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	@Autowired
+	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
 	/**
 	 * Defines the time to clean up in number of days a submission must exist before it is cleaned up.
@@ -129,7 +133,7 @@ public class AnalysisScheduledTaskConfig {
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService,
 				cleanupAnalysisSubmissionCondition(), galaxyJobErrorsService, jobErrorRepository, emailController,
-				analysisWorkspaceService, iridaFileStorageUtility);
+				analysisWorkspaceService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
 	}
 
 	/**
