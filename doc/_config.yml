@@ -1,5 +1,4 @@
-baseurl: /irida-docs
-email: irida-mail@sfu.ca
+baseurl: /irida-documentation
 title: IRIDA Documentation
 description: Integrated Rapid Infectious Disease Analysis (IRIDA) - An open-source platform for public health genomics
 
