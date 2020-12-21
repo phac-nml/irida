@@ -102,11 +102,11 @@ export const actions = {
     };
   },
   emptyCart: () => ({ type: types.CART_EMPTY }),
-  removeSample: (sample) => ({
+  removeSample: (projectId, sampleId) => ({
     type: types.REMOVE_SAMPLE,
     payload: {
-      projectId: sample.project.id,
-      sampleId: sample.id,
+      projectId,
+      sampleId,
     },
   }),
   removeProject: (id) => ({
