@@ -51,7 +51,6 @@ export async function authenticateOauthClient(clientId, redirectUrl) {
     // is granted.
     window.handleGalaxyCode = (code) => resolve(code);
     window.handleGalaxyError = () => reject("ERROR");
-    window.handleClosing = () => reject("CLOSED");
 
     window.open(href, clientId, options);
   });
