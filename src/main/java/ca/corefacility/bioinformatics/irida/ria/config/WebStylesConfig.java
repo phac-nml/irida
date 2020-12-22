@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
- * Configuration for Ant Design theme styles fomr properties file.
+ * Configuration for Ant Design theme styles from properties file.
  */
 @Configuration
 @PropertySource(value = {
