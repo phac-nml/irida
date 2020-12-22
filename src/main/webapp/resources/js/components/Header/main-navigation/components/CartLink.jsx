@@ -26,7 +26,7 @@ export function CartLink() {
 
   // Initialize cart here
   React.useEffect(() => {
-    getCartCount().then(({ count: newCount }) => setCount(newCount));
+    getCartCount().then(setCount);
   }, []);
 
   React.useEffect(() => {
