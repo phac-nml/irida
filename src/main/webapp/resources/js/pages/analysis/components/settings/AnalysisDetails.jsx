@@ -7,7 +7,7 @@
  * all the elements required by the component
  */
 import React, { useContext } from "react";
-import { Checkbox, Select, Typography } from "antd";
+import { Checkbox, Radio, Select, Typography } from "antd";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
@@ -17,7 +17,7 @@ import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
 import {
   formatDate,
-  getHumanizedDuration
+  getHumanizedDuration,
 } from "../../../../utilities/date-utilities";
 
 const { Title, Paragraph } = Typography;
@@ -32,12 +32,14 @@ export default function AnalysisDetails() {
   const {
     analysisDetailsContext,
     analysisDetailsContextUpdateSubmissionPriority,
-    analysisDetailsContextUpdateEmailPipelineResult
+    analysisDetailsContextUpdateEmailPipelineResult,
   } = useContext(AnalysisDetailsContext);
 
-  const { analysisContext, analysisContextUpdateSubmissionName, analysisIdentifier } = useContext(
-    AnalysisContext
-  );
+  const {
+    analysisContext,
+    analysisContextUpdateSubmissionName,
+    analysisIdentifier,
+  } = useContext(AnalysisContext);
 
   // List of analysis details
   const analysisDetails = [
@@ -47,18 +49,18 @@ export default function AnalysisDetails() {
         <Paragraph editable={{ onChange: updateSubmissionName }}>
           {analysisContext.analysisName}
         </Paragraph>
-      )
+      ),
     },
     {
       title: i18n("AnalysisDetails.description"),
       desc:
         analysisDetailsContext.analysisDescription !== ""
           ? analysisDetailsContext.analysisDescription
-          : i18n("AnalysisDetails.notApplicable")
+          : i18n("AnalysisDetails.notApplicable"),
     },
     {
       title: i18n("AnalysisDetails.id"),
-      desc: analysisIdentifier
+      desc: analysisIdentifier,
     },
     {
       title: i18n("AnalysisDetails.pipeline"),
@@ -66,31 +68,43 @@ export default function AnalysisDetails() {
         analysisDetailsContext.version === "unknown"
           ? i18n("AnalysisDetails.unknownVersion")
           : analysisDetailsContext.version
-      })`
+      })`,
     },
     {
       title: i18n("AnalysisDetails.priority"),
       desc:
         analysisContext.isAdmin && analysisContext.analysisState === "NEW"
           ? renderUpdatePrioritySection()
-          : analysisDetailsContext.priority
+          : analysisDetailsContext.priority,
     },
     {
       title: i18n("AnalysisDetails.created"),
-      desc: formatDate({ date: analysisDetailsContext.createdDate })
+      desc: formatDate({ date: analysisDetailsContext.createdDate }),
     },
     {
       title: i18n("AnalysisDetails.duration"),
-      desc: getHumanizedDuration({ date: analysisDetailsContext.duration })
-    }
+      desc: getHumanizedDuration({ date: analysisDetailsContext.duration }),
+    },
   ];
 
   /*
         On change of checkbox to receive/not receive an email upon
-        pipeline completion update emailPipelineResult field
+        pipeline completion, update emailPipelineResult field
     */
-  function updateEmailPipelineResult(e) {
-    analysisDetailsContextUpdateEmailPipelineResult(e.target.checked);
+  function updateEmailPipelineResultCompleted(e) {
+    analysisDetailsContextUpdateEmailPipelineResult({
+      emailPipelineResultCompleted: e.target.value,
+    });
+  }
+
+  /*
+      On change of checkbox to receive/not receive an email upon
+      pipeline error, update emailPipelineResult field
+  */
+  function updateEmailPipelineResultError(e) {
+    analysisDetailsContextUpdateEmailPipelineResult({
+      emailPipelineResultError: e.target.value,
+    });
   }
 
   // Update analysis name
@@ -144,18 +158,40 @@ export default function AnalysisDetails() {
       {analysisContext.mailConfigured &&
       !analysisContext.isCompleted &&
       !analysisContext.isError ? (
-        <section
-          style={{ marginTop: SPACE_MD }}
-          className="t-email-pipeline-result"
-        >
-          <Title level={4}>{i18n("AnalysisDetails.receiveEmail")}</Title>
-          <Checkbox
-            onChange={updateEmailPipelineResult}
-            checked={analysisDetailsContext.emailPipelineResult}
+        <div>
+          <section
+            style={{ marginTop: SPACE_MD }}
+            className="t-email-pipeline-result-completed"
           >
-            {i18n("AnalysisDetails.receiveEmailCheckboxLabel")}
-          </Checkbox>
-        </section>
+            <Title level={4}>
+              {i18n("AnalysisDetails.receiveEmailOnCompletion")}
+            </Title>
+            <Radio.Group
+              defaultValue={analysisDetailsContext.emailPipelineResultCompleted}
+              size="small"
+              onChange={updateEmailPipelineResultCompleted}
+            >
+              <Radio.Button value={false}>No</Radio.Button>
+              <Radio.Button value={true}>Yes</Radio.Button>
+            </Radio.Group>
+          </section>
+          <section
+            style={{ marginTop: SPACE_MD }}
+            className="t-email-pipeline-result-error"
+          >
+            <Title level={4}>
+              {i18n("AnalysisDetails.receiveEmailOnError")}
+            </Title>
+            <Radio.Group
+              defaultValue={analysisDetailsContext.emailPipelineResultError}
+              size="small"
+              onChange={updateEmailPipelineResultError}
+            >
+              <Radio.Button value={false}>No</Radio.Button>
+              <Radio.Button value={true}>Yes</Radio.Button>
+            </Radio.Group>
+          </section>
+        </div>
       ) : null}
     </TabPaneContent>
   );

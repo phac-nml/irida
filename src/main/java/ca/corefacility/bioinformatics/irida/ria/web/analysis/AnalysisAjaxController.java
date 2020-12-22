@@ -191,17 +191,30 @@ public class AnalysisAjaxController {
 
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
-			submission.setEmailPipelineResult(parameters.getEmailPipelineResult());
+			if(parameters.getEmailPipelineResultCompleted() != null) {
+				if (parameters.getEmailPipelineResultCompleted()) {
+					message = messageSource.getMessage("AnalysisDetails.willReceiveEmailOnCompletion", new Object[] {},
+							locale);
+				} else if(!parameters.getEmailPipelineResultCompleted()) {
+					message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmailOnCompletion",
+							new Object[] {}, locale);
+				}
+				submission.setEmailPipelineResultCompleted(parameters.getEmailPipelineResultCompleted());
+			} else if(parameters.getEmailPipelineResultError() != null) {
+				if (parameters.getEmailPipelineResultError()) {
+					message = messageSource.getMessage("AnalysisDetails.willReceiveEmailOnError", new Object[] {},
+							locale);
+				} else if (!parameters.getEmailPipelineResultError()) {
+					message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmailOnError", new Object[] {},
+							locale);
+				}
+				submission.setEmailPipelineResultError(parameters.getEmailPipelineResultError());
+			}
+
 			analysisSubmissionService.update(submission);
 			logger.trace("Email pipeline result updated for: " + submission);
-
-			if (parameters.getEmailPipelineResult()) {
-				message = messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale);
-			} else {
-				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
-			}
 		} else {
-			logger.debug("Email on completion preference not updated due to analysis state");
+			logger.debug("Email on completion or error preference not updated due to analysis state");
 			message = messageSource.getMessage("AnalysisDetails.emailOnPipelineResultNotUpdated", new Object[] {},
 					locale);
 			response.setStatus(422);
@@ -246,7 +259,8 @@ public class AnalysisAjaxController {
 		}
 
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
-		boolean emailPipelineResult = submission.getEmailPipelineResult();
+		boolean emailPipelineResultCompleted = submission.getEmailPipelineResultCompleted();
+		boolean emailPipelineResultError = submission.getEmailPipelineResultError();
 
 		boolean canShareToSamples = false;
 		if (submission.getAnalysis() != null) {
@@ -263,7 +277,7 @@ public class AnalysisAjaxController {
 
 		// details is a DTO (Data Transfer Object)
 		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration,
-				submission.getCreatedDate(), priorities, emailPipelineResult, canShareToSamples,
+				submission.getCreatedDate(), priorities, emailPipelineResultCompleted, emailPipelineResultError, canShareToSamples,
 				updateAnalysisPermission.isAllowed(authentication, submission), submission.getUpdateSamples());
 	}
 

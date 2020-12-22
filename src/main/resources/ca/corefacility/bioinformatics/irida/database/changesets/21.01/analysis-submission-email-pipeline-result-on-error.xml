@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="analysis-submission-email-pipeline-result-on-error.xml" author="deep">
+        <addColumn tableName="analysis_submission">
+            <column name="email_pipeline_result_error" type="bit(1)" valueBoolean="false"
+                    defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+
+        <addColumn tableName="analysis_submission_AUD">
+            <column name="email_pipeline_result_error" type="bit(1)" />
+        </addColumn>
+
+        <sql>
+            ALTER TABLE analysis_submission CHANGE email_pipeline_result email_pipeline_result_completed BIT(1) not null;
+            ALTER TABLE analysis_submission_AUD CHANGE email_pipeline_result email_pipeline_result_completed BIT(1);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

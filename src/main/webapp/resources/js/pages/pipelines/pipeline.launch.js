@@ -158,7 +158,9 @@ function PipelineController(
       // All the selected sample single or pair-end files
       radioBtns = angular.element("input[type='radio']:checked"),
       // Whether or not to email user on pipeline completion
-      emailUponCompletion = $("#email-pipeline-result").is(":checked"),
+      emailUponCompletion = $("#email-pipeline-result-completed").is(":checked"),
+      // Whether or not to email user on pipeline error
+      emailUponError = $("#email-pipeline-result-error").is(":checked"),
       // Holds all the ids for the selected single-end
       single = [],
       // Holds all the ids for the selected paired-end
@@ -243,7 +245,8 @@ function PipelineController(
       params["name"] = name;
       params["description"] = description;
       params["writeResultsToSamples"] = writeResultsToSamples;
-      params["emailPipelineResult"] = emailUponCompletion;
+      params["emailPipelineResultCompleted"] = emailUponCompletion;
+      params["emailPipelineResultError"] = emailUponError;
 
       if (shared.length > 0) {
         params["sharedProjects"] = shared;

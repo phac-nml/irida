@@ -66,14 +66,28 @@ public class BasicPipelinePage extends AbstractPage {
 		}
 	}
 
-	public void clickEmailPipelineResult() {
-		driver.findElement(By.id("email-pipeline-result")).click();
+	public void clickEmailPipelineResultCompleted() {
+		driver.findElement(By.id("email-pipeline-result-completed")).click();
 		waitForTime(500);
 	}
 
-	public boolean existsEmailPipelineResult() {
+	public void clickEmailPipelineResultError() {
+		driver.findElement(By.id("email-pipeline-result-error")).click();
+		waitForTime(500);
+	}
+
+	public boolean existsEmailPipelineResultCompleted() {
 		try {
-			driver.findElement(By.id("email-pipeline-result"));
+			driver.findElement(By.id("email-pipeline-result-completed"));
+			return true;
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	public boolean existsEmailPipelineResultError() {
+		try {
+			driver.findElement(By.id("email-pipeline-result-error"));
 			return true;
 		} catch (NoSuchElementException e) {
 			return false;

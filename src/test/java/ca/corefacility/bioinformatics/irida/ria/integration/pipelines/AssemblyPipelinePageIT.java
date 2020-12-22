@@ -138,8 +138,12 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		String analysisName = AssemblyPipelinePageIT.class.getName() + ".testEmailPipelineResult";
 		page.setNameForAnalysisPipeline(analysisName);
 
-		assertTrue("Email Pipeline Result checkbox should exist", page.existsEmailPipelineResult());
-		page.clickEmailPipelineResult();
+		assertTrue("Email Pipeline Result Completed checkbox should exist", page.existsEmailPipelineResultCompleted());
+		page.clickEmailPipelineResultCompleted();
+
+		assertTrue("Email Pipeline Result Error checkbox should exist", page.existsEmailPipelineResultError());
+		page.clickEmailPipelineResultError();
+
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed once the pipeline finished submitting",
 				page.isPipelineSubmittedSuccessMessageShown());
@@ -147,6 +151,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		AnalysisSubmission submission = findAnalysisSubmissionWithName(analysisName + "_sample1");
 
 		assertNotNull("Analysis Submission is null", submission);
-		assertTrue("emailPipelineResult should be true", submission.getEmailPipelineResult());
+		assertTrue("emailPipelineResultCompleted should be true", submission.getEmailPipelineResultCompleted());
+		assertTrue("emailPipelineResultError should be true", submission.getEmailPipelineResultError());
 	}
 }

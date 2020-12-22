@@ -12,21 +12,22 @@ import {
   getVariablesForDetails,
   saveToRelatedSamples,
   updateAnalysisEmailPipelineResult,
-  updateAnalysis
+  updateAnalysis,
 } from "../apis/analysis/analysis";
 
 import {
   showNotification,
-  showErrorNotification
+  showErrorNotification,
 } from "../modules/notifications";
 import { AnalysisContext } from "../contexts/AnalysisContext";
 
 const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
-  EMAIL_PIPELINE_RESULT: "UPDATED_EMAIL_PIPELINE_RESULT",
+  EMAIL_PIPELINE_RESULT_COMPLETED: "UPDATED_EMAIL_PIPELINE_RESULT_COMPLETED",
+  EMAIL_PIPELINE_RESULT_ERROR: "UPDATED_EMAIL_PIPELINE_RESULT_ERROR",
   PRIORITY: "UPDATED_PRIORITY",
   UPDATE_SAMPLES: "UPDATE_SAMPLES",
-  UPDATE_DURATION: "UPDATE_DURATION"
+  UPDATE_DURATION: "UPDATE_DURATION",
 };
 
 // Updates the state and returns a new copy.
@@ -35,10 +36,18 @@ const reducer = (context, action) => {
     case TYPES.DETAILS:
       return {
         ...context,
-        ...action.payload
+        ...action.payload,
       };
-    case TYPES.EMAIL_PIPELINE_RESULT:
-      return { ...context, emailPipelineResult: action.emailPipelineResult };
+    case TYPES.EMAIL_PIPELINE_RESULT_COMPLETED:
+      return {
+        ...context,
+        emailPipelineResultCompleted: action.emailPipelineResultCompleted,
+      };
+    case TYPES.EMAIL_PIPELINE_RESULT_ERROR:
+      return {
+        ...context,
+        emailPipelineResultError: action.emailPipelineResultError,
+      };
     case TYPES.PRIORITY:
       return { ...context, priority: action.priority };
     case TYPES.UPDATE_SAMPLES:
@@ -52,7 +61,8 @@ const reducer = (context, action) => {
 
 const initialContext = {
   analysisDescription: null,
-  emailPipelineResult: false,
+  emailPipelineResultCompleted: false,
+  emailPipelineResultError: false,
   workflowName: null,
   version: null,
   duration: null,
@@ -61,7 +71,7 @@ const initialContext = {
   priorities: [],
   canShareToSamples: false,
   updatePermission: false,
-  updateSamples: false
+  updateSamples: false,
 };
 
 const AnalysisDetailsContext = React.createContext(initialContext);
@@ -75,13 +85,16 @@ function AnalysisDetailsProvider(props) {
 
   // On page load get the analysis details
   useEffect(() => {
-    getVariablesForDetails(analysisIdentifier).then(data => {
+    getVariablesForDetails(analysisIdentifier).then((data) => {
       dispatch({ type: TYPES.DETAILS, payload: data });
     });
   }, [getVariablesForDetails]);
 
   useEffect(() => {
-    dispatch({ type: TYPES.UPDATE_DURATION, duration: analysisContext.duration });
+    dispatch({
+      type: TYPES.UPDATE_DURATION,
+      duration: analysisContext.duration,
+    });
   }, [analysisContext.duration]);
 
   /*
@@ -89,7 +102,7 @@ function AnalysisDetailsProvider(props) {
    * `updateSamples` state variable.
    */
   function saveResultsToRelatedSamples() {
-    saveToRelatedSamples(analysisIdentifier).then(res => {
+    saveToRelatedSamples(analysisIdentifier).then((res) => {
       if (res.type === "error") {
         showErrorNotification({ text: res.text, type: res.type });
       } else {
@@ -107,8 +120,8 @@ function AnalysisDetailsProvider(props) {
     updateAnalysis({
       submissionId: analysisIdentifier,
       analysisName: null,
-      priority: updatedPriority
-    }).then(res => {
+      priority: updatedPriority,
+    }).then((res) => {
       if (res.type === "error") {
         showErrorNotification({ text: res.text, type: res.type });
       } else {
@@ -123,21 +136,30 @@ function AnalysisDetailsProvider(props) {
    * displays a notification to the user, and updates the
    * emailPipelineResult` state variable.
    */
-  function analysisDetailsContextUpdateEmailPipelineResult(
-    emailPipelineResult
-  ) {
+  function analysisDetailsContextUpdateEmailPipelineResult({
+    emailPipelineResultCompleted,
+    emailPipelineResultError,
+  }) {
     updateAnalysisEmailPipelineResult({
       submissionId: analysisIdentifier,
-      emailPipelineResult: emailPipelineResult
-    }).then(res => {
+      emailPipelineResultCompleted: emailPipelineResultCompleted,
+      emailPipelineResultError: emailPipelineResultError,
+    }).then((res) => {
       if (res.type === "error") {
         showErrorNotification({ text: res.text, type: res.type });
       } else {
         showNotification({ text: res });
-        dispatch({
-          type: TYPES.EMAIL_PIPELINE_RESULT,
-          emailPipelineResult
-        });
+        if (typeof emailPipelineResultCompleted !== "undefined") {
+          dispatch({
+            type: TYPES.EMAIL_PIPELINE_RESULT_COMPLETED,
+            emailPipelineResultCompleted,
+          });
+        } else if (typeof emailPipelineResultError !== "undefined") {
+          dispatch({
+            type: TYPES.EMAIL_PIPELINE_RESULT_ERROR,
+            emailPipelineResultError,
+          });
+        }
       }
     });
   }
@@ -148,7 +170,7 @@ function AnalysisDetailsProvider(props) {
         analysisDetailsContext,
         saveResultsToRelatedSamples,
         analysisDetailsContextUpdateSubmissionPriority,
-        analysisDetailsContextUpdateEmailPipelineResult
+        analysisDetailsContextUpdateEmailPipelineResult,
       }}
     >
       {props.children}
