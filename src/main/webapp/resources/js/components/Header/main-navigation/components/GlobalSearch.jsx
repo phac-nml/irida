@@ -20,6 +20,7 @@ export function GlobalSearch() {
     >
       <Input
         name="query"
+        className="t-global-search"
         prefix={<IconSearch style={{ color: grey6 }} />}
         placeholder={i18n("nav.main.search")}
         style={{

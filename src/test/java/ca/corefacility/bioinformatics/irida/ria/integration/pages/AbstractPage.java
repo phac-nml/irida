@@ -149,15 +149,10 @@ public class AbstractPage {
 	 * 		whether to search as an admin
 	 */
 	public void globalSearch(String query, boolean admin) {
-		WebElement searchBox = driver.findElement(By.id("global-search-input"));
+		WebElement searchBox = driver.findElement(By.cssSelector(".t-global-search input"));
 		searchBox.clear();
 		searchBox.sendKeys(query);
-		if (!admin) {
-			searchBox.sendKeys(Keys.ENTER);
-		} else {
-			driver.findElement(By.id("admin-search-toggle")).click();
-			driver.findElement(By.id("search-admin-link")).click();
-		}
+		searchBox.sendKeys(Keys.ENTER);
 	}
 
 	public void showCart() {
