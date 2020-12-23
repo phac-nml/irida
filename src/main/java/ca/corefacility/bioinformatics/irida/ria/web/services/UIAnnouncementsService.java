@@ -56,10 +56,22 @@ public class UIAnnouncementsService {
 	}
 
 	/**
-	 * Returns a list of unread announcements for a user.
+	 * Returns a list of read announcements for a user.
 	 *
 	 * @param principal the currently logged in user
 	 * @return a {@link List} of unread {@link AnnouncementUserJoin}s for a user.
+	 */
+	public List<AnnouncementUserJoin> getReadAnnouncementsUser(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(user);
+		return readAnnouncements;
+	}
+
+	/**
+	 * Returns a list of unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link Announcement}s for a user.
 	 */
 	public List<Announcement> getUnreadAnnouncementsUser(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
