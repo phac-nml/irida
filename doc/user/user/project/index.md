@@ -282,7 +282,7 @@ You can view or add reference files by clicking on the "Reference Files" tab in 
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
-You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
+You can upload a new reference file to the project by clicking on the "Upload Reference File" button or by dragging and dropping files onto it:
 
 ![Upload reference file button.](images/upload-reference-file-button.png)
 
@@ -310,6 +310,7 @@ The following data will be synchronized:
 * Basic project metadata
 * FASTQ sequencing data associated with samples
 * Assemblies associated with samples (including both assemblies created by pipelines within IRIDA, and uploaded assemblies)
+* FAST5 sequencing data associated with samples
 * Sample metadata
 
 The following data **will not** be synchronized:
@@ -317,7 +318,6 @@ The following data **will not** be synchronized:
 * Users & groups on a project
 * Analysis automation settings
 * Reference files
-* FAST5 data associated with samples
 
 Some of the above items that are not currently synchronized are expected to be available in future IRIDA versions.
 

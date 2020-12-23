@@ -164,6 +164,11 @@
     <metadata_entry id="14" value="bloody stool" type="text"/>
     <metadata_entry id="15" value="AB-1003" type="text"/>
 
+    <metadata_entry id="16" value="Brown" type="text"/>
+    <metadata_entry id="17" value="WRHA" type="text"/>
+    <metadata_entry id="18" value="bloody stool" type="text"/>
+    <metadata_entry id="19" value="AB-1003" type="text"/>
+
     <sample_metadata_entry sample_id="1" metadata_id="1" metadata_KEY="1"/>
     <sample_metadata_entry sample_id="1" metadata_id="2" metadata_KEY="2"/>
     <sample_metadata_entry sample_id="1" metadata_id="3" metadata_KEY="3"/>
@@ -178,5 +183,10 @@
     <sample_metadata_entry sample_id="3" metadata_id="12" metadata_KEY="2"/>
     <sample_metadata_entry sample_id="3" metadata_id="13" metadata_KEY="3"/>
     <sample_metadata_entry sample_id="3" metadata_id="14" metadata_KEY="4"/>
+
+    <sample_metadata_entry sample_id="19" metadata_id="16" metadata_KEY="1"/>
+    <sample_metadata_entry sample_id="19" metadata_id="17" metadata_KEY="2"/>
+    <sample_metadata_entry sample_id="19" metadata_id="18" metadata_KEY="3"/>
+    <sample_metadata_entry sample_id="19" metadata_id="19" metadata_KEY="4"/>
 
 </dataset>

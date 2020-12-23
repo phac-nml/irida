@@ -13,10 +13,21 @@ Changes
 * [Developer]: Updated deprecated runWorkflow blend4j call to invokeWorkflow and switched to using jar for blend4j
 * [Developer]: Removed `resolve-url-loader` from front end dependencies.
 * [UI]: Fixed bug on users listing page where if a user has never logged into the system there last login date showed `Dec 31 1969`,
+* [Documentation]: Corrected `window.PAGE` to `window.TL` in docs on how to make custom login pages.
 * [Developer]: Removed UI dependency for `bootstrap-sass`.
 * [Developer]: Updated to React v17.0.1, Babel v7.12.1, and Ant Design v4.7.3.
 * [UI]: Updated FastQC page to use Ant Design.
 * [Documentation]: Added documentation for sequence file fastqc page.
+* [UI]: Updated Project Reference File page to use Ant Design.
+* [Developer]: Removed invalid javax.interceptor-api Maven artifact.  It was no longer needed for the project and was causing build failures.  Existing `20.09.2` installations do not need to be upgraded, this change only affects building IRIDA from source.  (20.09.3)
+* [Developer]: Changed to using GitHub Actions for integration tests.
+* [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
+* [UI]: Updated Project Reference File page to display progress of uploads.
+* [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
+* [UI]: Added usage statistics to admin panel.
+* [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
+* [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
+* [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
 
 20.05 to 20.09
 --------------

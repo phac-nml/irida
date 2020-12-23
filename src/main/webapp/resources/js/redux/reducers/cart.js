@@ -53,17 +53,6 @@ export const reducer = (state = initialState, action = {}) => {
     case types.INITIALIZED:
       return { ...state, ...{ count: action.count, initialized: true } };
     case types.UPDATED:
-      /*
-      Since the cart is not currently a react component, setting the state does
-      nothing.  We are going to use a CustomEvent so that we can communicate with
-      the current AngularJS controller for the navigation.
-       */
-      console.log(action);
-      document.dispatchEvent(
-        new CustomEvent(CART.UPDATED, {
-          detail: action.payload,
-        })
-      );
       return { ...state, ...{ count: action.payload.count } };
     case types.CART_LOADED:
       return {
@@ -107,18 +96,17 @@ export const actions = {
   initialized: (count) => ({ type: types.INITIALIZED, count }),
   add: (samples) => ({ type: types.ADD, samples }),
   updated: (count) => {
-    console.log(count);
     return {
       type: types.UPDATED,
       payload: count,
     };
   },
   emptyCart: () => ({ type: types.CART_EMPTY }),
-  removeSample: (sample) => ({
+  removeSample: (projectId, sampleId) => ({
     type: types.REMOVE_SAMPLE,
     payload: {
-      projectId: sample.project.id,
-      sampleId: sample.id,
+      projectId,
+      sampleId,
     },
   }),
   removeProject: (id) => ({
