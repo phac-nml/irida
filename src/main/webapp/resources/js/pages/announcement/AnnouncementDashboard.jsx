@@ -1,9 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Card, List } from "antd";
+import { formatDate } from "../../utilities/date-utilities";
 import { getUnreadAnnouncements } from "../../apis/announcements/announcements";
 
 export function AnnouncementDashboard() {
-  getUnreadAnnouncements().then((data) => {
-    console.log(data);
-  });
-  return <h1>Hello, world!</h1>;
+  const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
+
+  useEffect(() => {
+    getUnreadAnnouncements().then((data) => {
+      console.log(data);
+      setUnreadAnnouncements(data.data);
+    });
+  }, []);
+
+  return (
+    <>
+      <Card title="New Announcements">
+        <List
+          dataSource={unreadAnnouncements}
+          renderItem={(item) => (
+            <List.Item>
+              <List.Item.Meta
+                title={item.title}
+                description={formatDate({ date: item.createdDate })}
+              />
+            </List.Item>
+          )}
+        />
+      </Card>
+    </>
+  );
 }
