@@ -5,7 +5,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="analysis-submission-email-pipeline-result-on-error.xml" author="deep">
+    <changeSet id="analysis-submission-email-pipeline-result-on-error" author="deep">
         <addColumn tableName="analysis_submission">
             <column name="email_pipeline_result_error" type="bit(1)" valueBoolean="false"
                     defaultValueBoolean="false">
@@ -17,8 +17,9 @@
             <column name="email_pipeline_result_error" type="bit(1)" />
         </addColumn>
 
+        <!--Updating analysis submission table to change column email_pipeline_result to email_pipeline_result_completed -->
         <sql>
-            ALTER TABLE analysis_submission CHANGE email_pipeline_result email_pipeline_result_completed not null BIT(1) DEFAULT 0;
+            ALTER TABLE analysis_submission CHANGE email_pipeline_result email_pipeline_result_completed BIT(1) not null DEFAULT 0;
             ALTER TABLE analysis_submission_AUD CHANGE email_pipeline_result email_pipeline_result_completed BIT(1);
         </sql>
     </changeSet>
