@@ -7,7 +7,7 @@
  * all the elements required by the component
  */
 import React, { useContext } from "react";
-import { Checkbox, Radio, Select, Typography } from "antd";
+import { Select, Typography } from "antd";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";

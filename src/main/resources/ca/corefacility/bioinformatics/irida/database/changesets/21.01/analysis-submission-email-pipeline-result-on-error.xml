@@ -18,7 +18,7 @@
         </addColumn>
 
         <sql>
-            ALTER TABLE analysis_submission CHANGE email_pipeline_result email_pipeline_result_completed BIT(1) not null;
+            ALTER TABLE analysis_submission CHANGE email_pipeline_result email_pipeline_result_completed not null BIT(1) DEFAULT 0;
             ALTER TABLE analysis_submission_AUD CHANGE email_pipeline_result email_pipeline_result_completed BIT(1);
         </sql>
     </changeSet>
