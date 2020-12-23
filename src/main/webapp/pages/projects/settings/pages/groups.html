@@ -6,10 +6,9 @@
 >
   <head>
     <title th:text="#{project.settings.page.title.groups}">Title</title>
-    <webpacker:css entry="project-users-groups" />
+    <webpacker:css entry="project-user-groups" />
     <script th:inline="javascript">
       window.PAGE = {
-        user: /*[[${session.user.getId()}]]*/ 1,
         canManage: /*[[${manageMembers}]]*/ false,
       };
     </script>
@@ -17,7 +16,7 @@
   <body>
     <div id="groups-root" layout:fragment="settings-content"></div>
     <th:block layout:fragment="scripts">
-        <webpacker:js entry="project-users-groups" />
+        <webpacker:js entry="project-user-groups" />
     </th:block>
   </body>
 </html>

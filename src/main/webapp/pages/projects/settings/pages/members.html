@@ -9,7 +9,6 @@
     <webpacker:css entry="project-users"/>
     <script th:inline="javascript">
       window.PAGE = {
-        user: /*[[${session.user.getId()}]]*/ 1,
         canManage: /*[[${manageMembers}]]*/ false
       };
     </script>
