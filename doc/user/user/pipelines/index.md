@@ -293,7 +293,7 @@ When launching a pipeline you can select the checkbox to receive an email upon p
 
 ![analysis-email-upon-completion](images/analysis-email-upon-completion.png)
 
-The option to receive an email upon analysis completion can also be updated as long as the analysis is not in `COMPLETED` or `ERROR` state. To update the email option click the `Settings` tab. To receive an email select the checkbox in the `Receive an email upon analysis completion` section. If you do not want to receive an email then you can unselect the checkbox in this section.
+The option to receive an email upon analysis completion or upon error can also be updated as long as the analysis is not in `COMPLETED` or `ERROR` state. To update the email option click the `Settings` tab. To receive an email upon completion select the checkbox in the `Receive an email upon analysis completion` section. If you do not want to receive an email then you can unselect the checkbox in this section. To receive an email upon completion select the checkbox in the `Receive an email upon analysis error` section. If you do not want to receive an email then you can unselect the checkbox in this section.
 
 ![analysis-email-upon-completion-running](images/analysis-email-upon-completion-running.png)
 
