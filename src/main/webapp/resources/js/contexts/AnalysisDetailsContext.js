@@ -15,11 +15,8 @@ import {
   updateAnalysis,
 } from "../apis/analysis/analysis";
 
-import {
-  showNotification,
-  showErrorNotification,
-} from "../modules/notifications";
 import { AnalysisContext } from "../contexts/AnalysisContext";
+import { notification } from "antd";
 
 const TYPES = {
   DETAILS: "ANALYSIS_DETAILS",
@@ -104,9 +101,9 @@ function AnalysisDetailsProvider(props) {
   function saveResultsToRelatedSamples() {
     saveToRelatedSamples(analysisIdentifier).then((res) => {
       if (res.type === "error") {
-        showErrorNotification({ text: res.text, type: res.type });
+        notification.error({ message: res.text });
       } else {
-        showNotification({ text: res });
+        notification.success({ messge: res });
         dispatch({ type: TYPES.UPDATE_SAMPLES, updateSamples: true });
       }
     });
@@ -123,9 +120,9 @@ function AnalysisDetailsProvider(props) {
       priority: updatedPriority,
     }).then((res) => {
       if (res.type === "error") {
-        showErrorNotification({ text: res.text, type: res.type });
+        notification.error({ message: res.text });
       } else {
-        showNotification({ text: res });
+        notification.success({ message: res });
         dispatch({ type: TYPES.PRIORITY, priority: updatedPriority });
       }
     });
@@ -146,9 +143,9 @@ function AnalysisDetailsProvider(props) {
       emailPipelineResultError: emailPipelineResultError,
     }).then((res) => {
       if (res.type === "error") {
-        showErrorNotification({ text: res.text, type: res.type });
+        notification.error({ message: res.text });
       } else {
-        showNotification({ text: res });
+        notification.success({ message: res });
         if (typeof emailPipelineResultCompleted !== "undefined") {
           dispatch({
             type: TYPES.EMAIL_PIPELINE_RESULT_COMPLETED,

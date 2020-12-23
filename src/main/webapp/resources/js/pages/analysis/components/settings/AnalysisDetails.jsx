@@ -19,6 +19,7 @@ import {
   formatDate,
   getHumanizedDuration,
 } from "../../../../utilities/date-utilities";
+import { SimpleRadioButtonGroup } from "../../../../components/Buttons/SimpleRadioButtonGroup";
 
 const { Title, Paragraph } = Typography;
 
@@ -166,14 +167,10 @@ export default function AnalysisDetails() {
             <Title level={4}>
               {i18n("AnalysisDetails.receiveEmailOnCompletion")}
             </Title>
-            <Radio.Group
+            <SimpleRadioButtonGroup
               defaultValue={analysisDetailsContext.emailPipelineResultCompleted}
-              size="small"
-              onChange={updateEmailPipelineResultCompleted}
-            >
-              <Radio.Button value={false}>No</Radio.Button>
-              <Radio.Button value={true}>Yes</Radio.Button>
-            </Radio.Group>
+              onchange={updateEmailPipelineResultCompleted}
+            />
           </section>
           <section
             style={{ marginTop: SPACE_MD }}
@@ -182,14 +179,10 @@ export default function AnalysisDetails() {
             <Title level={4}>
               {i18n("AnalysisDetails.receiveEmailOnError")}
             </Title>
-            <Radio.Group
+            <SimpleRadioButtonGroup
               defaultValue={analysisDetailsContext.emailPipelineResultError}
-              size="small"
-              onChange={updateEmailPipelineResultError}
-            >
-              <Radio.Button value={false}>No</Radio.Button>
-              <Radio.Button value={true}>Yes</Radio.Button>
-            </Radio.Group>
+              onchange={updateEmailPipelineResultError}
+            />
           </section>
         </div>
       ) : null}
