@@ -28,6 +28,7 @@ Changes
 * [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
 * [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
 * [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
+* [UI]: Added option for user to only receive an email upon pipeline failure.
 
 20.05 to 20.09
 --------------
