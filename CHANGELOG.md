@@ -30,6 +30,8 @@ Changes
 * [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
 * [Developer]: Update `jest` to version `26.6.3` to fix security vulnerability.
 * [UI]: New main navigation bar using Ant Design.
+* [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
+* [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
 
 20.05 to 20.09
 --------------
