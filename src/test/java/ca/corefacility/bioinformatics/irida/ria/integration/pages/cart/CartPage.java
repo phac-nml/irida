@@ -42,7 +42,7 @@ public class CartPage extends AbstractPage {
 
 	public int getNavBarSamplesCount() {
 		return Integer.parseInt(driver.findElement(By.className("t-cart-count"))
-				.getText());
+				.getAttribute("data-count"));
 	}
 
 	public int getNumberOfSamplesInCart() {
