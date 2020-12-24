@@ -29,6 +29,7 @@ Changes
 * [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
 * [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
 * [Developer]: Update `jest` to version `26.6.3` to fix security vulnerability.
+* [UI]: New main navigation bar using Ant Design.
 
 20.05 to 20.09
 --------------
