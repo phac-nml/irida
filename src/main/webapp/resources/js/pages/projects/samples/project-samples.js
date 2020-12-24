@@ -334,9 +334,7 @@ const config = Object.assign({}, tableConfig, {
     {
       targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
       render(data) {
-        return `<time>${formatInternationalizedDateTime({
-          date: data,
-        })}</time>`;
+        return `<time>${formatInternationalizedDateTime(data)}</time>`;
       },
     },
   ],
