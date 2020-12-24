@@ -9,7 +9,8 @@ const defaults = {
   "border-radius-base": "2px",
 };
 const iridaConfig = "/etc/irida/irida.conf";
-const propertiesConfig = "../resources/ca/corefacility/bioinformatics/irida/config/styles.properties";
+const propertiesConfig =
+  "../resources/ca/corefacility/bioinformatics/irida/config/styles.properties";
 
 function formatAntStyles() {
   const colourProperties = {};
@@ -24,9 +25,7 @@ function formatAntStyles() {
           colourProperties[found[1]] = value;
         }
       });
-    }
-
-    if (fs.existsSync(iridaConfig)) {
+    } else if (fs.existsSync(iridaConfig)) {
       const properties = propertiesReader(iridaConfig);
       properties.each((key, value) => {
         const found = key.match(re);
