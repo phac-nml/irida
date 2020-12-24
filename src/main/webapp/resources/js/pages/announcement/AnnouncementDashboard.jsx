@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, List } from "antd";
+import { Card, List, Tabs } from "antd";
 import { formatDate } from "../../utilities/date-utilities";
 import {
   getReadAnnouncements,
@@ -12,6 +12,7 @@ import { blue6, grey2 } from "../../styles/colors";
 export function AnnouncementDashboard() {
   const [readAnnouncements, setReadAnnouncements] = useState([]);
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
+  const { TabPane } = Tabs;
 
   useEffect(() => {
     getReadAnnouncements().then((data) => {
@@ -27,43 +28,53 @@ export function AnnouncementDashboard() {
   return (
     <>
       <Card
-        title={"Announcements (" + unreadAnnouncements.length + " Unread)"}
+        title="Announcements"
         extra={<a href={setBaseUrl("/announcements/user/read")}>View All</a>}
       >
-        <List
-          dataSource={unreadAnnouncements}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={
-                  <IconFlag style={{ color: item.priority ? blue6 : grey2 }} />
-                }
-                title={<span style={{ fontWeight: "bold" }}>{item.title}</span>}
-                description={formatDate({ date: item.createdDate })}
-              />
-            </List.Item>
-          )}
-        />
-        <List
-          dataSource={readAnnouncements}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={
-                  <IconFlag
-                    style={{ color: item.subject.priority ? blue6 : grey2 }}
+        <Tabs defaultActiveKey="1">
+          <TabPane tab={"Unread (" + unreadAnnouncements.length + ")"} key="1">
+            <List
+              dataSource={unreadAnnouncements}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={
+                      <IconFlag
+                        style={{ color: item.priority ? blue6 : grey2 }}
+                      />
+                    }
+                    title={
+                      <span style={{ fontWeight: "bold" }}>{item.title}</span>
+                    }
+                    description={formatDate({ date: item.createdDate })}
                   />
-                }
-                title={
-                  <span style={{ fontWeight: "normal" }}>
-                    {item.subject.title}
-                  </span>
-                }
-                description={formatDate({ date: item.subject.createdDate })}
-              />
-            </List.Item>
-          )}
-        />
+                </List.Item>
+              )}
+            />
+          </TabPane>
+          <TabPane tab={"Read (" + readAnnouncements.length + ")"} key="2">
+            <List
+              dataSource={readAnnouncements}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={
+                      <IconFlag
+                        style={{ color: item.subject.priority ? blue6 : grey2 }}
+                      />
+                    }
+                    title={
+                      <span style={{ fontWeight: "normal" }}>
+                        {item.subject.title}
+                      </span>
+                    }
+                    description={formatDate({ date: item.subject.createdDate })}
+                  />
+                </List.Item>
+              )}
+            />
+          </TabPane>
+        </Tabs>
       </Card>
     </>
   );
