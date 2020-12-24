@@ -266,9 +266,9 @@ This will create the `.war` and `.zip` files for IRIDA release under the `target
 IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs> GitHub project.  IRIDA's documentation is built using [Jekyll][] and [GitHub Pages](https://pages.github.com/).  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML.  We can use Jekyll both for viewing the documentation locally and for publishing to GitHub Pages.  The current documentation can be found at <https://phac-nml.github.io/irida-docs>.
 
 ##### Testing IRIDA documentation locally
-To view the documentation locally or make changes, you can checkou the above GitHub project and make changes.  To run the server locally you can run Jekyll to generate the pages.
+To view the documentation locally or make changes, you can checkout the above GitHub project and make changes.  To run the server locally you can run Jekyll to generate the pages.
 
-First you can `cd` into the `docs/` directory and run the following command:
+First `cd` into the `docs/` directory and run the following command:
 
 ```bash
 bundle exec jekyll serve

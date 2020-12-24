@@ -31,7 +31,7 @@ if not os.path.isdir(doc_dir):
 
 # check if the argument is the irida-documentation/docs directory
 if not (result_dir.endswith('docs') or result_dir.endswith('docs/')) or not os.path.isdir(result_dir):
-    print("The target directory doesn't appear to be the irida-docuemtation repository's `/docs` directory.")
+    print("The target directory doesn't appear to be the irida-documentation repository's `/docs` directory.")
     exit(1)
 
 # first run mvn site to build the javadoc
@@ -48,7 +48,7 @@ print("========== Documentation built successfully")
 
 # Give the user 5 seconds to chicken out
 print("========== WARNING: this script will now replace the existing docs directory {} with the docs built above".format(result_dir))
-print("========== This process will contine in 5 seconds...")
+print("========== This process will continue in 5 seconds.  Press Ctrl+C to cancel...")
 time.sleep(5)
 
 # Remove the original docs directory
