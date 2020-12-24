@@ -67,7 +67,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		// Add the user into the session
 		session.setAttribute("user", user);
 
-		// Add the site them
+		// Add the site theme
 		session.setAttribute("siteTheme", siteTheme);
 		session.setAttribute("siteColourPrimary", siteColourPrimary);
 
