@@ -80,7 +80,7 @@ jobs:
         with:
           java-version: 11
       - name: Install Java libraries
-          run: pushd lib; ./install-libs.sh; popd;
+        run: pushd lib; ./install-libs.sh; popd;
       - name: Install doc libraries
         run: pushd doc; bundle install; popd
       - name: Build Javadoc
