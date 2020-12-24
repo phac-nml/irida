@@ -56,7 +56,6 @@ export default function Analysis() {
     </>
   );
 
-
   const pathRegx = new RegExp(/\/analysis\/[0-9]+\/+([a-zA-Z_0-9]+)/);
 
   /*
@@ -76,14 +75,12 @@ export default function Analysis() {
       ? ANALYSIS.SISTR
       : analysisContext.analysisViewer === "biohansel"
       ? ANALYSIS.BIOHANSEL
-      : analysisContext.analysisViewer === "tree" &&
-        analysisContext.treeDefault
+      : analysisContext.analysisViewer === "tree" && analysisContext.treeDefault
       ? ANALYSIS.TREE
       : ANALYSIS.OUTPUT
     : analysisContext.isError
     ? ANALYSIS.ERROR
     : ANALYSIS.SETTINGS;
-
 
   /*
    * The functions returns a set of tabs which
@@ -120,7 +117,7 @@ export default function Analysis() {
             </Menu.Item>
           );
         } else if (
-          analysisContext.analysisViewer === "tree"  &&
+          analysisContext.analysisViewer === "tree" &&
           analysisContext.treeDefault
         ) {
           tabLinks.push(
@@ -172,11 +169,12 @@ export default function Analysis() {
       {!analysisContext.isCompleted ? <AnalysisSteps /> : null}
 
       <Location>
-        {props => {
+        {(props) => {
           const keyname = props.location.pathname.match(pathRegx);
 
           return (
             <Menu
+              className="t-analysis-menu"
               mode="horizontal"
               selectedKeys={[keyname ? keyname[1] : defaultKey]}
             >
@@ -208,7 +206,7 @@ export default function Analysis() {
                   <AnalysisPhylogeneticTree
                     path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
                     default={
-                      (analysisContext.analysisViewer === "tree") &&
+                      analysisContext.analysisViewer === "tree" &&
                       analysisContext.treeDefault
                     }
                     key="tree"
@@ -220,12 +218,12 @@ export default function Analysis() {
                   <AnalysisOutputFiles
                     path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
                     default={
-                      (analysisContext.analysisViewer === "none") ||
-                      ((analysisContext.analysisViewer === "tree") &&
+                      analysisContext.analysisViewer === "none" ||
+                      (analysisContext.analysisViewer === "tree" &&
                         !analysisContext.treeDefault)
                     }
                     key="output"
-                  />
+                  />,
                 ]
               : null}
             <AnalysisSettingsContainer

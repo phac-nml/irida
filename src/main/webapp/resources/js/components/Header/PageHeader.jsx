@@ -5,6 +5,7 @@ import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { MainNavigation } from "./MainNavigation";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -14,27 +15,22 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-export class PageHeader extends React.Component {
-  state = {
-    inGalaxy: false,
-  };
+export function PageHeader() {
+  const [inGalaxy, setInGalaxy] = React.useState(false);
 
-  componentDidMount() {
-    if (typeof window.GALAXY !== "undefined") {
-      this.setState({ inGalaxy: true });
-    }
-  }
+  React.useEffect(() => {
+    setInGalaxy(typeof window.GALAXY !== "undefined");
+  }, []);
 
-  render() {
-    return (
-      <div>
-        <Breadcrumbs crumbs={window.breadcrumbs} />
-        <Session />
-        <Notifications />
-        {this.state.inGalaxy ? <GalaxyAlert /> : null}
-      </div>
-    );
-  }
+  return (
+    <>
+      <MainNavigation />
+      <Breadcrumbs crumbs={window.breadcrumbs} />
+      <Session />
+      <Notifications />
+      {inGalaxy ? <GalaxyAlert /> : null}
+    </>
+  );
 }
 
 render(<PageHeader />, document.querySelector(".js-page-header"));
