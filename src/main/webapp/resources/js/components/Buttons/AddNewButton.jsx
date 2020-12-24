@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "antd";
 import { IconPlusCircle } from "../icons/Icons";
+import { primaryColour } from "../../utilities/theme-utilities";
 
 /**
  * React component to be used any time a "create new item" button needs
@@ -14,7 +15,7 @@ import { IconPlusCircle } from "../icons/Icons";
 export function AddNewButton({ text, href, onClick, ...props }) {
   return (
     <Button type={"primary"} href={href} onClick={onClick} {...props}>
-      <IconPlusCircle />
+      <IconPlusCircle twoToneColor={primaryColour} />
       {text}
     </Button>
   );
