@@ -7,10 +7,10 @@ name: Integration Tests
 on:
   pull_request: # Run on all pull requests
   push:
-    branches:   # Run on any push to development or master
+    branches: # Run on any push to development or master
       - development
       - master
-  schedule:     # Run daily on development and weekly on master
+  schedule: # Run daily on development and weekly on master
     - cron: 0 1 * * *
       branches: development
     - cron: 0 2 * * 0
@@ -79,7 +79,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Install libraries
+      - name: Install Java libraries
+          run: pushd lib; ./install-libs.sh; popd;
+      - name: Install doc libraries
         run: pushd doc; bundle install; popd
       - name: Build Javadoc
         run: mvn clean site
