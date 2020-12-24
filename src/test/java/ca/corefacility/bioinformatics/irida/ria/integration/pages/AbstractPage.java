@@ -137,7 +137,7 @@ public class AbstractPage {
 	}
 
 	public int getCartCount() {
-		return Integer.parseInt(driver.findElement(By.className("js-cart-count")).getText());
+		return Integer.parseInt(driver.findElement(By.className("t-cart-count")).getAttribute("data-count"));
 	}
 
 	/**
@@ -149,15 +149,10 @@ public class AbstractPage {
 	 * 		whether to search as an admin
 	 */
 	public void globalSearch(String query, boolean admin) {
-		WebElement searchBox = driver.findElement(By.id("global-search-input"));
+		WebElement searchBox = driver.findElement(By.cssSelector(".t-global-search input"));
 		searchBox.clear();
 		searchBox.sendKeys(query);
-		if (!admin) {
-			searchBox.sendKeys(Keys.ENTER);
-		} else {
-			driver.findElement(By.id("admin-search-toggle")).click();
-			driver.findElement(By.id("search-admin-link")).click();
-		}
+		searchBox.sendKeys(Keys.ENTER);
 	}
 
 	public void showCart() {
