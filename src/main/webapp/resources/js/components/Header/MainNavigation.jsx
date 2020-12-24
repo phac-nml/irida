@@ -100,7 +100,7 @@ export function MainNavigation() {
             </Menu.Item>
           )}
           <Menu.SubMenu title={<IconQuestionCircle />}>
-            <Menu.ItemGroup title="Documentation">
+            <Menu.ItemGroup title={i18n("MainNavigation.docs")}>
               <Menu.Item key="userguide">
                 <a
                   href="https://irida.corefacility.ca/documentation/user/user"
