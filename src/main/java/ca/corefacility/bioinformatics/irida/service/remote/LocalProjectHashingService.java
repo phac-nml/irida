@@ -62,14 +62,12 @@ public class LocalProjectHashingService {
     }
 
     public void getSampleHash(Sample sample, HashCodeBuilder builder) {
-        List<Object> objects = new ArrayList<Object>();
-
         //add the sample itself
         builder.append(sample);
 
         //add all the metadata entries
-        Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-        for (MetadataEntry e : metadata.values()) {
+        Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
+        for (MetadataEntry e : metadataForSample) {
             builder.append(e);
         }
 
