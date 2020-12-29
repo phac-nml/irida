@@ -1,16 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -24,13 +13,22 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.BioHanselSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -76,18 +74,27 @@ public class BioHanselSampleUpdaterTest {
 		final Sample sample = new Sample();
 		sample.setId(1L);
 
+		Set<MetadataEntry> metadataSet = expectedResults.entrySet()
+				.stream()
+				.map(entry -> new MetadataEntry(entry.getValue(), "text",
+						new MetadataTemplateField(entry.getKey(), "text")))
+				.collect(Collectors.toSet());
 
-		final Map<MetadataTemplateField, MetadataEntry> metadataMap = expectedResults.entrySet()
+		/*final Map<MetadataTemplateField, MetadataEntry> metadataMap = expectedResults.entrySet()
 				.stream()
 				.collect(Collectors.toMap(entry -> new MetadataTemplateField(entry.getKey(), "text"),
 						entry -> new MetadataEntry(entry.getValue(), "text")));
-		when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
+		 */
+		//when(metadataTemplateService.getMetadataMap(any(Map.class))).thenReturn(metadataMap);
+
+		when(metadataTemplateService.convertMetadataStringsToSet(anyMap())).thenReturn(metadataSet);
+
 		bioHanselSampleUpdater.update(Lists.newArrayList(sample), submission);
 
 		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
-		verify(metadataTemplateService).getMetadataMap(mapCaptor.capture());
+		verify(metadataTemplateService).convertMetadataStringsToSet(mapCaptor.capture());
 		Map<String, MetadataEntry> metadataEntryMap = mapCaptor.getValue();
 
 		AtomicInteger found = new AtomicInteger();
@@ -99,15 +106,14 @@ public class BioHanselSampleUpdaterTest {
 		});
 		assertEquals("Should have the same number of metadata entries", expectedResults.size(), found.get());
 
+		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
-		verify(sampleService).updateFields(eq(sample.getId()), mapCaptor.capture());
-		Map<MetadataTemplateField, MetadataEntry> value = (Map<MetadataTemplateField, MetadataEntry>) mapCaptor.getValue()
-				.get("metadata");
+		verify(sampleService).mergeSampleMetadata(eq(sample), setCaptor.capture());
 
-		assertEquals(metadataMap.keySet()
-				.iterator()
-				.next(), value.keySet()
-				.iterator()
+		Set<MetadataEntry> value = setCaptor.getValue();
+
+		assertEquals(metadataSet.iterator()
+				.next(), value.iterator()
 				.next());
 	}
 

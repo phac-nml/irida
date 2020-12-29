@@ -1,23 +1,16 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.util.Objects;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Class for storing generic metadata for a {@link Sample}
@@ -39,12 +32,25 @@ public class MetadataEntry {
 	@NotNull
 	private String type;
 
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "field_id", nullable = false)
+	private MetadataTemplateField field;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sample_id", nullable = false)
+	private Sample sample;
+
 	public MetadataEntry() {
 	}
 
 	public MetadataEntry(String value, String type) {
 		this.value = value;
 		this.type = type;
+	}
+
+	public MetadataEntry(String value, String type, MetadataTemplateField field) {
+		this(value, type);
+		this.field = field;
 	}
 
 	public void setType(String type) {
@@ -54,11 +60,12 @@ public class MetadataEntry {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	@JsonIgnore
 	public Long getId() {
 		return id;
 	}
@@ -70,16 +77,16 @@ public class MetadataEntry {
 	public String getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Merges the passed metadata entry into this metadata entry.
-	 * 
+	 *
 	 * @param metadataEntry The new metadata entry.
 	 */
 	public void merge(MetadataEntry metadataEntry) {
 		checkNotNull(metadataEntry, "metadataEntry is null");
-		checkArgument(this.getClass().equals(metadataEntry.getClass()),
-				"Cannot merge " + metadataEntry + " into " + this);
+		checkArgument(this.getClass()
+				.equals(metadataEntry.getClass()), "Cannot merge " + metadataEntry + " into " + this);
 
 		this.type = metadataEntry.getType();
 		this.value = metadataEntry.getValue();
@@ -87,7 +94,7 @@ public class MetadataEntry {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value, type);
+		return Objects.hash(value, type, field);
 	}
 
 	@Override
@@ -97,5 +104,20 @@ public class MetadataEntry {
 			return Objects.equals(entry.getValue(), value) && Objects.equals(entry.getType(), type);
 		}
 		return false;
+	}
+
+	@JsonIgnore
+	public MetadataTemplateField getField() {
+		return field;
+	}
+
+	@JsonIgnore
+	public void setField(MetadataTemplateField field) {
+		this.field = field;
+	}
+
+	@JsonIgnore
+	public void setSample(Sample sample) {
+		this.sample = sample;
 	}
 }
