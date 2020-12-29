@@ -143,8 +143,9 @@ public class ProjectsController {
 		model.addAttribute("isAdmin", true);
 		model.addAttribute("exportTypes", EXPORT_TYPES);
 
+		//TODO: Remove me!  Testing only
 		localProjectHashingService.hashAllProjects();
-		
+
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -164,8 +165,8 @@ public class ProjectsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 
+		//TODO: Remove me!  Testing only
 		Integer projectHash = localProjectHashingService.getProjectHash(project);
-
 		logger.debug("Project Hash " + projectHash);
 
 		return SPECIFIC_PROJECT_PAGE;
