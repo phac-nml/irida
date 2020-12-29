@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.service.remote.LocalProjectHashingService;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.Cell;
@@ -85,6 +86,9 @@ public class ProjectsController {
 	private final UICartService cartService;
 	private final UpdateSamplePermission updateSamplePermission;
 
+	@Autowired
+	private LocalProjectHashingService localProjectHashingService;
+
 	/*
 	 * Converters
 	 */
@@ -138,6 +142,9 @@ public class ProjectsController {
 		model.addAttribute("ajaxURL", "/projects/admin/ajax/list");
 		model.addAttribute("isAdmin", true);
 		model.addAttribute("exportTypes", EXPORT_TYPES);
+
+		localProjectHashingService.hashAllProjects();
+		
 		return LIST_PROJECTS_PAGE;
 	}
 
@@ -156,6 +163,11 @@ public class ProjectsController {
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
+
+		Integer projectHash = localProjectHashingService.getProjectHash(project);
+
+		logger.debug("Project Hash " + projectHash);
+
 		return SPECIFIC_PROJECT_PAGE;
 	}
 
