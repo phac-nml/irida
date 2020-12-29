@@ -8,32 +8,9 @@ This will load notifications into the global namespace.  Remove this once all
 files have been converted over to wekbpack builds.
  */
 import "./modules/notifications";
-import { CART } from "./utilities/events-utilities";
-import { getCartCount } from "./apis/cart/cart";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";
-
-/*
-This is here since this has been updated to use a standard Event,
-and not handled through angularjs.
- */
-document.addEventListener(CART.UPDATED, (e) => {
-  const { count } = e.detail;
-
-  const counter = document.querySelector(".js-cart-count");
-  if (+count > 0) {
-    counter.style.cssText = "display: inline-block;";
-    counter.innerHTML = count;
-  } else {
-    counter.style.cssText = "display: none;";
-  }
-});
-
-/**
- * Initialize the cart
- */
-getCartCount();
 
 /*
 Since IRIDA can be run on a servlet path, we need to make sure that all requests

@@ -28,6 +28,10 @@ Changes
 * [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
 * [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
 * [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
+* [Developer]: Update `jest` to version `26.6.3` to fix security vulnerability.
+* [UI]: New main navigation bar using Ant Design.
+* [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
+* [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 
 20.05 to 20.09
