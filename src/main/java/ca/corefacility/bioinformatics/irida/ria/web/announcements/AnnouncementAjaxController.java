@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
@@ -52,7 +53,9 @@ public class AnnouncementAjaxController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@ResponseBody
 	public ResponseEntity<List<AnnouncementUserJoin>> getReadAnnouncementsUser(Principal principal) {
-		return ResponseEntity.ok(UIAnnouncementsService.getReadAnnouncementsUser(principal));
+		List<AnnouncementUserJoin> readAnnouncements = UIAnnouncementsService.getReadAnnouncementsUser(principal);
+		Collections.sort(readAnnouncements);
+		return ResponseEntity.ok(readAnnouncements);
 	}
 
 	/**
@@ -65,7 +68,9 @@ public class AnnouncementAjaxController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@ResponseBody
 	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
-		return ResponseEntity.ok(UIAnnouncementsService.getUnreadAnnouncementsUser(principal));
+		List<Announcement> unreadAnnouncements = UIAnnouncementsService.getUnreadAnnouncementsUser(principal);
+		Collections.sort(unreadAnnouncements);
+		return ResponseEntity.ok(unreadAnnouncements);
 	}
 
 	/**
