@@ -20,4 +20,6 @@ public interface ProjectRemoteService extends RemoteService<Project> {
 	 * @return A List of {@link Project}s
 	 */
 	public List<Project> listProjectsForAPI(RemoteAPI api);
+
+	public Integer getProjectHash(Project project);
 }
