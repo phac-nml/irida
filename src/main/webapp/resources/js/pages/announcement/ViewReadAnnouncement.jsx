@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, Descriptions, Modal, Space } from "antd";
-import { IconEye } from "../../components/icons/Icons";
+import { Button, Modal, Space, Typography } from "antd";
+import { IconFlag } from "../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 import {
   useVisibility,
@@ -16,6 +16,8 @@ import Markdown from "react-markdown";
  * @constructor
  */
 
+const { Text } = Typography;
+
 function ViewReadAnnouncementModal({ announcement }) {
   const [visible, setVisibility] = useVisibility();
 
@@ -27,8 +29,10 @@ function ViewReadAnnouncementModal({ announcement }) {
       <Modal
         title={
           <Space>
-            <IconEye style={{ color: FONT_COLOR_PRIMARY }} />
-            {i18n("ViewAnnouncement.title")}
+            {announcement.subject.title}
+            {announcement.subject.priority && (
+              <IconFlag style={{ color: FONT_COLOR_PRIMARY }} />
+            )}
           </Space>
         }
         onCancel={() => setVisibility(false)}
@@ -36,23 +40,12 @@ function ViewReadAnnouncementModal({ announcement }) {
         width={640}
         footer={null}
       >
-        <Descriptions column={1} bordered={true}>
-          <Descriptions.Item label="Title">
-            {announcement.subject.title}
-          </Descriptions.Item>
-          <Descriptions.Item label="Priority">
-            {announcement.subject.priority ? "high" : "low"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Created On">
-            {formatDate({ date: announcement.subject.createdDate })}
-          </Descriptions.Item>
-          <Descriptions.Item label="Created By">
-            {announcement.subject.user.username}
-          </Descriptions.Item>
-          <Descriptions.Item label="Message">
-            <Markdown source={announcement.subject.message} />
-          </Descriptions.Item>
-        </Descriptions>
+        <Markdown source={announcement.subject.message} />
+        <br />
+        <Text type="secondary">
+          Created by {announcement.subject.user.username} on{" "}
+          {formatDate({ date: announcement.subject.createdDate })}
+        </Text>
       </Modal>
     </>
   );

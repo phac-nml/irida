@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, Descriptions, Modal, notification, Space } from "antd";
-import { IconEye } from "../../components/icons/Icons";
+import { Button, Modal, notification, Space, Typography } from "antd";
+import { IconFlag } from "../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 import {
   useVisibility,
@@ -17,6 +17,8 @@ import { markAnnouncementRead } from "../../apis/announcements/announcements";
  * @constructor
  */
 
+const { Text } = Typography;
+
 function ViewUnreadAnnouncementModal({ announcement }) {
   const [visible, setVisibility] = useVisibility();
 
@@ -28,41 +30,24 @@ function ViewUnreadAnnouncementModal({ announcement }) {
       <Modal
         title={
           <Space>
-            <IconEye style={{ color: FONT_COLOR_PRIMARY }} />
-            {i18n("ViewAnnouncement.title")}
+            {announcement.title}
+            {announcement.priority && (
+              <IconFlag style={{ color: FONT_COLOR_PRIMARY }} />
+            )}
           </Space>
         }
+        afterClose={() => markAnnouncementAsRead(announcement.identifier)}
         onCancel={() => setVisibility(false)}
         visible={visible}
         width={640}
         footer={null}
       >
-        <Descriptions column={1} bordered={true}>
-          <Descriptions.Item label="Title">
-            {announcement.title}
-          </Descriptions.Item>
-          <Descriptions.Item label="Priority">
-            {announcement.priority ? "high" : "low"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Created On">
-            {formatDate({ date: announcement.createdDate })}
-          </Descriptions.Item>
-          <Descriptions.Item label="Created By">
-            {announcement.user.username}
-          </Descriptions.Item>
-          <Descriptions.Item label="Message">
-            <Markdown source={announcement.message} />
-          </Descriptions.Item>
-        </Descriptions>
+        <Markdown source={announcement.message} />
         <br />
-        <Button
-          type="primary"
-          onClick={() => {
-            markAnnouncementAsRead(announcement.identifier);
-          }}
-        >
-          Mark as Read
-        </Button>
+        <Text type="secondary">
+          Created by {announcement.user.username} on{" "}
+          {formatDate({ date: announcement.createdDate })}
+        </Text>
       </Modal>
     </>
   );
