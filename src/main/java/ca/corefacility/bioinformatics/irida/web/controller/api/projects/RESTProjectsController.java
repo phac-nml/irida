@@ -55,7 +55,7 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	/**
 	 * rel used for the project status hash
 	 */
-	private static final String PROJECT_HASH_REL = "project/hash";
+	public static final String PROJECT_HASH_REL = "project/hash";
 
 	/**
 	 * Default constructor. Should not be used.
