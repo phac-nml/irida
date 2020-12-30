@@ -6,7 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.util.Collection;
 import java.util.HashSet;
 
-import ca.corefacility.bioinformatics.irida.service.remote.LocalProjectHashingService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectHashingService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	private ProjectService projectService;
 
 	@Autowired
-	LocalProjectHashingService projectHashingService;
+	ProjectHashingService projectHashingService;
 
 	/**
 	 * rel used for accessing an individual project.

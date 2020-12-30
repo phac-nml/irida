@@ -18,21 +18,30 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * Component used to compute a deep hashcode of a full project.  Looks at all project details, samples, metadata, and sequencing data within the project to generate a full hashcode.
+ */
 @Component
-public class LocalProjectHashingService {
-    ProjectService projectService;
-    SampleService sampleService;
-    SequencingObjectService sequencingObjectService;
-    GenomeAssemblyService assemblyService;
+public class ProjectHashingService {
+    private ProjectService projectService;
+    private SampleService sampleService;
+    private SequencingObjectService sequencingObjectService;
+    private GenomeAssemblyService assemblyService;
 
     @Autowired
-    public LocalProjectHashingService(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, GenomeAssemblyService assemblyService) {
+    public ProjectHashingService(ProjectService projectService, SampleService sampleService, SequencingObjectService sequencingObjectService, GenomeAssemblyService assemblyService) {
         this.projectService = projectService;
         this.sampleService = sampleService;
         this.sequencingObjectService = sequencingObjectService;
         this.assemblyService = assemblyService;
     }
 
+    /**
+     * Get a deep hashsum for the full project
+     *
+     * @param project the {@link Project} to generate a hashsum for
+     * @return the computed hashsum
+     */
     @PreAuthorize("hasPermission(#project, 'canReadProject')")
     public Integer getProjectHash(Project project) {
 
@@ -52,6 +61,12 @@ public class LocalProjectHashingService {
 
     }
 
+    /**
+     * Add the hash elements for the given sample to the HashCodeBuilder
+     *
+     * @param sample  The {@link Sample} to compute
+     * @param builder a {@link HashCodeBuilder} to add all the included objects
+     */
     private void getSampleHash(Sample sample, HashCodeBuilder builder) {
         //add the sample itself
         builder.append(sample);
