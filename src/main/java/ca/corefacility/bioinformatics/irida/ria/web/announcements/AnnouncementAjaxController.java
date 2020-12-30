@@ -69,6 +69,18 @@ public class AnnouncementAjaxController {
 	}
 
 	/**
+	 * Marks the announcement as read by the current user.
+	 *
+	 * @param aID ID of the {@link Announcement} to be marked
+	 * @param principal the currently logged in user
+	 */
+	@RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public void markAnnouncementRead(@PathVariable Long aID, Principal principal) {
+		UIAnnouncementsService.markAnnouncementAsReadByUser(aID, principal);
+	}
+
+	/**
 	 * Handles request to create a new announcement
 	 *
 	 * @param announcementRequest details about the announcement to create.

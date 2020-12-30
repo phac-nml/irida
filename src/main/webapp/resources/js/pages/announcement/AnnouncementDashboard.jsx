@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, List, Tabs } from "antd";
-import { formatDate } from "../../utilities/date-utilities";
+import { Button, Card, List, Tabs } from "antd";
+import { fromNow } from "../../utilities/date-utilities";
 import {
   getReadAnnouncements,
   getUnreadAnnouncements,
@@ -8,6 +8,8 @@ import {
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconFlag } from "../../components/icons/Icons";
 import { blue6, grey2 } from "../../styles/colors";
+import ViewReadAnnouncement from "./ViewReadAnnouncement";
+import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
 
 export function AnnouncementDashboard() {
   const [readAnnouncements, setReadAnnouncements] = useState([]);
@@ -16,11 +18,9 @@ export function AnnouncementDashboard() {
 
   useEffect(() => {
     getReadAnnouncements().then((data) => {
-      console.log(data);
       setReadAnnouncements(data.data);
     });
     getUnreadAnnouncements().then((data) => {
-      console.log(data);
       setUnreadAnnouncements(data.data);
     });
   }, []);
@@ -29,7 +29,15 @@ export function AnnouncementDashboard() {
     <>
       <Card
         title="Announcements"
-        extra={<a href={setBaseUrl("/announcements/user/read")}>View All</a>}
+        extra={
+          <Button
+            type="primary"
+            ghost
+            href={setBaseUrl("/announcements/user/read")}
+          >
+            View All
+          </Button>
+        }
       >
         <Tabs defaultActiveKey="1">
           <TabPane tab={"Unread (" + unreadAnnouncements.length + ")"} key="1">
@@ -43,10 +51,8 @@ export function AnnouncementDashboard() {
                         style={{ color: item.priority ? blue6 : grey2 }}
                       />
                     }
-                    title={
-                      <span style={{ fontWeight: "bold" }}>{item.title}</span>
-                    }
-                    description={formatDate({ date: item.createdDate })}
+                    title=<ViewUnreadAnnouncement announcement={item} />
+                    description={fromNow({ date: item.createdDate })}
                   />
                 </List.Item>
               )}
@@ -54,6 +60,7 @@ export function AnnouncementDashboard() {
           </TabPane>
           <TabPane tab={"Read (" + readAnnouncements.length + ")"} key="2">
             <List
+              itemLayout="vertical"
               dataSource={readAnnouncements}
               renderItem={(item) => (
                 <List.Item>
@@ -63,12 +70,8 @@ export function AnnouncementDashboard() {
                         style={{ color: item.subject.priority ? blue6 : grey2 }}
                       />
                     }
-                    title={
-                      <span style={{ fontWeight: "normal" }}>
-                        {item.subject.title}
-                      </span>
-                    }
-                    description={formatDate({ date: item.subject.createdDate })}
+                    title=<ViewReadAnnouncement announcement={item} />
+                    description={fromNow({ date: item.subject.createdDate })}
                   />
                 </List.Item>
               )}

@@ -80,6 +80,18 @@ public class UIAnnouncementsService {
 	}
 
 	/**
+	 * Marks an announcement as read.
+	 *
+	 * @param aID ID of the {@link Announcement} to be marked
+	 * @param principal the currently logged in user
+	 */
+	public void markAnnouncementAsReadByUser(Long aID, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		Announcement announcement = announcementService.read(aID);
+		announcementService.markAnnouncementAsReadByUser(announcement, user);
+	}
+
+	/**
 	 * Creates a new announcement
 	 *
 	 * @param announcementRequest details about the announcement to create.

@@ -33,6 +33,18 @@ export function getUnreadAnnouncements() {
 }
 
 /**
+ * Mark announcement as read.
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function markAnnouncementRead({ aID }) {
+  try {
+    return axios.post(`${BASE}/read/${aID}`);
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
+}
+
+/**
  * Create a new announcement.
  * @param {string} title - the title of the new announcement.
  * @param {string} message - the content of the new announcement.
