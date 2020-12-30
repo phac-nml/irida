@@ -8,5 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  *
  */
 public interface ProjectRemoteRepository extends RemoteRepository<Project> {
+    public Integer readProjectHash(Project project);
 
 }
