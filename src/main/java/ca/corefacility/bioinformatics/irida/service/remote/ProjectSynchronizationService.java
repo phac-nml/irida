@@ -143,11 +143,11 @@ public class ProjectSynchronizationService {
 			 * project
 			 */
 			User readBy = project.getRemoteStatus().getReadBy();
-			setAuthentication(readBy);
-
-			logger.trace("Syncing project at " + project.getRemoteStatus().getURL());
-
 			try {
+				setAuthentication(readBy);
+
+				logger.trace("Syncing project at " + project.getRemoteStatus().getURL());
+
 				RemoteAPI api = project.getRemoteStatus().getApi();
 				tokenService.updateTokenFromRefreshToken(api);
 
@@ -189,76 +189,88 @@ public class ProjectSynchronizationService {
 		project.getRemoteStatus().setLastUpdate(new Date());
 		projectService.update(project);
 
+		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
+
 		String projectURL = project.getRemoteStatus().getURL();
 
 		Project readProject = projectRemoteService.read(projectURL);
 
-		// ensure we use the same IDs
-		readProject = updateIds(project, readProject);
+		//get the project hash from the host
+		Integer projectHash = projectRemoteService.getProjectHash(readProject);
 
-		// if project was updated remotely, update it here
-		if (checkForChanges(project.getRemoteStatus(), readProject)) {
-			logger.debug("found changes for project " + readProject.getSelfHref());
+		if (!projectHash.equals(project.getRemoteProjectHash())) {
 
-			// need to keep the status and frequency of the local project
-			RemoteStatus originalStatus = project.getRemoteStatus();
-			readProject.getRemoteStatus().setSyncStatus(originalStatus.getSyncStatus());
-			readProject.setSyncFrequency(project.getSyncFrequency());
+			// ensure we use the same IDs
+			readProject = updateIds(project, readProject);
 
-			project = projectService.update(readProject);
-		}
+			// if project was updated remotely, update it here
+			if (checkForChanges(project.getRemoteStatus(), readProject)) {
+				logger.debug("found changes for project " + readProject.getSelfHref());
 
-		List<Join<Project, Sample>> localSamples = sampleService.getSamplesForProject(project);
+				// need to keep the status and frequency of the local project
+				RemoteStatus originalStatus = project.getRemoteStatus();
+				readProject.getRemoteStatus().setSyncStatus(originalStatus.getSyncStatus());
+				readProject.setSyncFrequency(project.getSyncFrequency());
 
-		// get all the samples by their url
-		Map<String, Sample> samplesByUrl = new HashMap<>();
-		localSamples.forEach(j -> {
-			Sample sample = j.getObject();
-			
-			// If a user has added a sample for some reason, ignore it
-			if (sample.getRemoteStatus() != null) {
-				String url = sample.getRemoteStatus().getURL();
-
-				samplesByUrl.put(url, sample);
-			} else {
-				logger.warn("Sample " + sample.getId() + " is not a remote sample.  It will not be synchronized.");
+				project = projectService.update(readProject);
 			}
-		});
 
-		//read the remote samples from the remote API
-		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
+			List<Join<Project, Sample>> localSamples = sampleService.getSamplesForProject(project);
 
-		//get a list of all remote URLs in the project
-		Set<String> remoteUrls = readSamplesForProject.stream()
-				.map(s -> s.getRemoteStatus()
-						.getURL())
-				.collect(Collectors.toSet());
+			// get all the samples by their url
+			Map<String, Sample> samplesByUrl = new HashMap<>();
+			localSamples.forEach(j -> {
+				Sample sample = j.getObject();
 
-		// Check for local samples which no longer exist by URL
-		Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
-		//remove any URL from the local list that we've seen remotely
-		remoteUrls.forEach(s -> {
-			localUrls.remove(s);
-		});
+				// If a user has added a sample for some reason, ignore it
+				if (sample.getRemoteStatus() != null) {
+					String url = sample.getRemoteStatus().getURL();
 
-		// if any URLs still exist in localUrls, it must have been deleted remotely
-		for (String localUrl : localUrls) {
-			logger.trace("Sample " + localUrl + " has been removed remotely.  Removing from local project.");
+					samplesByUrl.put(url, sample);
+				} else {
+					logger.warn("Sample " + sample.getId() + " is not a remote sample.  It will not be synchronized.");
+				}
+			});
 
-			projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
-			samplesByUrl.remove(localUrl);
+			//read the remote samples from the remote API
+			List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
+
+			//get a list of all remote URLs in the project
+			Set<String> remoteUrls = readSamplesForProject.stream()
+					.map(s -> s.getRemoteStatus()
+							.getURL())
+					.collect(Collectors.toSet());
+
+			// Check for local samples which no longer exist by URL
+			Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
+			//remove any URL from the local list that we've seen remotely
+			remoteUrls.forEach(s -> {
+				localUrls.remove(s);
+			});
+
+			// if any URLs still exist in localUrls, it must have been deleted remotely
+			for (String localUrl : localUrls) {
+				logger.trace("Sample " + localUrl + " has been removed remotely.  Removing from local project.");
+
+				projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
+				samplesByUrl.remove(localUrl);
+			}
+
+			for (Sample s : readSamplesForProject) {
+				s.setId(null);
+				List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
+
+				syncExceptions.addAll(syncExceptionsSample);
+			}
+
 		}
-
-		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
-		for (Sample s : readSamplesForProject) {
-			s.setId(null);
-			List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
-
-			syncExceptions.addAll(syncExceptionsSample);
+		else{
+			logger.debug("No changes to project.  Skipping");
 		}
 
 		// re-read project to ensure any updates are reflected
 		project = projectService.read(project.getId());
+		project.setRemoteProjectHash(projectHash);
 		project.setRemoteStatus(readProject.getRemoteStatus());
 
 		if (syncExceptions.isEmpty()) {
@@ -270,6 +282,7 @@ public class ProjectSynchronizationService {
 		}
 
 		projectService.update(project);
+
 	}
 
 	/**
