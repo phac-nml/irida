@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -32,17 +33,7 @@ public class LocalProjectHashingService {
         this.assemblyService = assemblyService;
     }
 
-    public void hashAllProjects() {
-        Iterable<Project> all = projectService.findAll();
-
-        for (Project p : all) {
-            System.out.println("==========/nID: " + p.getId() + ": " + p.getName());
-            Integer projectHash = getProjectHash(p);
-            System.out.println(projectHash);
-
-        }
-    }
-
+    @PreAuthorize("hasPermission(#project, 'canReadProject')")
     public Integer getProjectHash(Project project) {
 
         HashCodeBuilder builder = new HashCodeBuilder();
@@ -61,7 +52,7 @@ public class LocalProjectHashingService {
 
     }
 
-    public void getSampleHash(Sample sample, HashCodeBuilder builder) {
+    private void getSampleHash(Sample sample, HashCodeBuilder builder) {
         //add the sample itself
         builder.append(sample);
 
