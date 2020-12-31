@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import org.springframework.hateoas.ResourceSupport;
 
 /**
  * Resource class for storing a full project hash for the REST API
