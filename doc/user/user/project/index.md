@@ -359,12 +359,13 @@ After the synchronized project has been created, you can view it's synchronizati
 
 The status section will be one of the following messages:
 
-* `Marked for synchronization` - This project will be synchronized when the next project synchronization job runs.
+* `Marked for synchronization` - This project will check for changes and be synchronized when the next project synchronization job runs.
 * `Updating` - This project is currently being synchronized.
 * `Synchronized` - This project is up to date since the last project synchronization job has been run.
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
 * `Error` - An error occurred during the last project synchronization job.
 * `Unsynchronized` - This project will no longer be synchronized. 
+* `Marked for full project synchronization` - The project will perform a full synchronization on the next synchronization job.  This will check for changes in all samples within the project to ensure it's up to date.
 
 #### Reconnecting after token expiry
 
