@@ -49,6 +49,9 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 		return list(projectsHref, api);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer getProjectHash(Project project) {
 		return repository.readProjectHash(project);

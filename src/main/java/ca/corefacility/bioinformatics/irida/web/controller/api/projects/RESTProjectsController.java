@@ -76,6 +76,12 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * Get the deep project hash for the requested project
+	 *
+	 * @param projectId the ID of the project to read the hash for
+	 * @return a modelmap containing the hash code
+	 */
 	@RequestMapping(value = "/{projectId}/hash", method = RequestMethod.GET)
 	public ModelMap getProjectHash(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
