@@ -34,6 +34,7 @@ Changes
 * [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 * [REST]: Added new REST endpoint that can generate a deep hashcode of a project.  This will be used for speeding up project synchronization when there are no changes to a project.  Instead of checking for changes remotely, the client can check for changes only to the hash.  If there are hash changes, then they can do their full sync.
+* [UI]: Added option for project managers to check for changes using the hash above, or to force a full project sync on the project remote settings page.
 
 20.05 to 20.09
 --------------
