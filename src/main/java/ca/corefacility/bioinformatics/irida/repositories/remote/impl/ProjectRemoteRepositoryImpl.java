@@ -1,7 +1,13 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +17,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-
-import java.util.Map;
 
 /**
  * Remote repository for retrieving {@link Project}s from {@link RemoteAPI}s
