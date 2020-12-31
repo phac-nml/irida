@@ -203,7 +203,7 @@ public class ProjectSynchronizationService {
 			logger.warn("The project on the referenced IRIDA doesn't support project hashing: " + projectURL);
 			projectHash = null;
 		}
-		
+
 		//check if the project hashes are different.  if projectHash is null the other service doesn't support hashing so do a full check
 		if (projectHash == null || !projectHash.equals(project.getRemoteProjectHash())) {
 

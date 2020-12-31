@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
@@ -22,52 +23,54 @@ import java.util.Map;
 
 /**
  * Remote repository for retrieving {@link Project}s from {@link RemoteAPI}s
- *
- *
  */
 @Repository
 public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> implements ProjectRemoteRepository {
 
-	// the type references for this repo
-	private static final ParameterizedTypeReference<ListResourceWrapper<Project>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<Project>>() {
-	};
-	private static final ParameterizedTypeReference<ResourceWrapper<Project>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<Project>>() {
-	};
+    // the type references for this repo
+    private static final ParameterizedTypeReference<ListResourceWrapper<Project>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<Project>>() {
+    };
+    private static final ParameterizedTypeReference<ResourceWrapper<Project>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<Project>>() {
+    };
 
     private static final ParameterizedTypeReference<ResourceWrapper<ProjectHashResource>> projectHashReference = new ParameterizedTypeReference<ResourceWrapper<ProjectHashResource>>() {
     };
 
-	private RemoteAPITokenService tokenService;
+    private RemoteAPITokenService tokenService;
 
-	private static final String HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
+    private static final String HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
 
-	/**
-	 * Create a new {@link ProjectRemoteRepositoryImpl} with the given
-	 * {@link RemoteAPITokenService}
-	 *
-	 * @param tokenService
-	 *            the {@link RemoteAPITokenService}
-	 */
-	@Autowired
-	public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
-		this.tokenService = tokenService;
-	}
+    /**
+     * Create a new {@link ProjectRemoteRepositoryImpl} with the given
+     * {@link RemoteAPITokenService}
+     *
+     * @param tokenService the {@link RemoteAPITokenService}
+     */
+    @Autowired
+    public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
+        super(tokenService, listTypeReference, objectTypeReference);
+        this.tokenService = tokenService;
+    }
 
-	@Override
-	public Integer readProjectHash(Project project) {
-		RemoteAPI remoteAPI = project.getRemoteStatus().getApi();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer readProjectHash(Project project) {
+        if (!project.hasLink(HASH_REL)) {
+            throw new LinkNotFoundException("No link for rel: " + HASH_REL);
+        }
 
-		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-		Link link = project.getLink(HASH_REL);
+        RemoteAPI remoteAPI = project.getRemoteStatus().getApi();
 
-		Map<String, String> response = restTemplate.getForObject(link.getHref(), Map.class);
+        OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
+        Link link = project.getLink(HASH_REL);
 
-		ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(), HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
+        ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(), HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
 
-		Integer projectHash = exchange.getBody().getResource().getProjectHash();
+        Integer projectHash = exchange.getBody().getResource().getProjectHash();
 
-		return projectHash;
-	}
+        return projectHash;
+    }
 
 }
