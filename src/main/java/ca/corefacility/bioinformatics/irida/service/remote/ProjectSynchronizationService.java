@@ -196,9 +196,16 @@ public class ProjectSynchronizationService {
 		Project readProject = projectRemoteService.read(projectURL);
 
 		//get the project hash from the host
-		Integer projectHash = projectRemoteService.getProjectHash(readProject);
-
-		if (!projectHash.equals(project.getRemoteProjectHash())) {
+		Integer projectHash;
+		try {
+			projectHash = projectRemoteService.getProjectHash(readProject);
+		} catch (LinkNotFoundException e) {
+			logger.warn("The project on the referenced IRIDA doesn't support project hashing: " + projectURL);
+			projectHash = null;
+		}
+		
+		//check if the project hashes are different.  if projectHash is null the other service doesn't support hashing so do a full check
+		if (projectHash == null || !projectHash.equals(project.getRemoteProjectHash())) {
 
 			// ensure we use the same IDs
 			readProject = updateIds(project, readProject);
