@@ -86,6 +86,7 @@ public class Project extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
+	//hash for remote synchronized projects.  This will be the result of ProjectHashingService on the remote system
 	@JsonIgnore
 	@Column(name = "remote_project_hash")
 	private Integer remoteProjectHash;
