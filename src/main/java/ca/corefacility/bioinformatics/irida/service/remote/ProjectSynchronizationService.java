@@ -133,11 +133,12 @@ public class ProjectSynchronizationService {
 		// mark any projects which should be synched first
 		findProjectsToMark();
 
-		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
+		List<Project> projectsToSync = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.FORCE);
+		projectsToSync.addAll(projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED));
 
 		logger.trace("Checking for projects to sync");
 
-		for (Project project : markedProjects) {
+		for (Project project : projectsToSync) {
 			/*
 			 * Set the correct authorization for the user who's syncing the
 			 * project
@@ -185,6 +186,8 @@ public class ProjectSynchronizationService {
 	 *            from a remote api.
 	 */
 	private void syncProject(Project project) {
+		SyncStatus syncType = project.getRemoteStatus().getSyncStatus();
+
 		project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		project.getRemoteStatus().setLastUpdate(new Date());
 		projectService.update(project);
@@ -205,7 +208,7 @@ public class ProjectSynchronizationService {
 		}
 
 		//check if the project hashes are different.  if projectHash is null the other service doesn't support hashing so do a full check
-		if (projectHash == null || !projectHash.equals(project.getRemoteProjectHash())) {
+		if (syncType.equals(SyncStatus.FORCE) || projectHash == null || !projectHash.equals(project.getRemoteProjectHash())) {
 
 			// ensure we use the same IDs
 			readProject = updateIds(project, readProject);
