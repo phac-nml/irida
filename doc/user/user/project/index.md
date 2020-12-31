@@ -296,8 +296,10 @@ Settings for remote synchronized projects can also be managed from the project s
 
 ![Remote Project Settings](images/project-settings-sync.png)
 
-* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
-* **Remote Connections** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
+* **Last Synchronization** - The time the project was last synchronized or checked for updates.  
+* **Check For Changes** - Click to get IRIDA to check for changes to the remote project.  If it finds changes, it will synchronize them to the project.
+* **Force Full Project Sync** - Click here to force IRIDA to start a full synchronization of the project.
+* **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
 * **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
 * **Synchronization User** - The account which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA instance in order for synchronization to proceed.  Click **Become Synchronization User** to set this to be your user account.
 
