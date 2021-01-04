@@ -57,6 +57,7 @@ export function AnnouncementDashboard() {
         <Tabs defaultActiveKey="1">
           <TabPane tab={"Unread (" + unreadAnnouncements.length + ")"} key="1">
             <List
+              pagination={unreadTotal > 0 ? true : false}
               dataSource={unreadAnnouncements}
               renderItem={(item) => (
                 <List.Item>
@@ -78,7 +79,7 @@ export function AnnouncementDashboard() {
           </TabPane>
           <TabPane tab={"Read (" + readAnnouncements.length + ")"} key="2">
             <List
-              itemLayout="vertical"
+              pagination={true}
               dataSource={readAnnouncements}
               renderItem={(item) => (
                 <List.Item>
