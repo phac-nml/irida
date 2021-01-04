@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, List, Tabs } from "antd";
+import { Button, Card, List, notification, Tabs, Typography } from "antd";
 import { fromNow } from "../../utilities/date-utilities";
 import {
   getReadAnnouncements,
   getUnreadAnnouncements,
+  markAnnouncementRead,
 } from "../../apis/announcements/announcements";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconFlag } from "../../components/icons/Icons";
 import { blue6, grey2 } from "../../styles/colors";
 import ViewReadAnnouncement from "./ViewReadAnnouncement";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
+import Markdown from "react-markdown";
 
 export function AnnouncementDashboard() {
   const [readAnnouncements, setReadAnnouncements] = useState([]);
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
+  const [unreadTotal, setUnreadTotal] = useState(0);
   const { TabPane } = Tabs;
+  const { Paragraph } = Typography;
 
   useEffect(() => {
     getReadAnnouncements().then((data) => {
@@ -22,8 +26,19 @@ export function AnnouncementDashboard() {
     });
     getUnreadAnnouncements().then((data) => {
       setUnreadAnnouncements(data.data);
+      setUnreadTotal(data.data.length);
     });
-  }, []);
+  }, [unreadTotal]);
+
+  function markAnnouncementAsRead(aID) {
+    return markAnnouncementRead({ aID })
+      .then(() => {
+        setUnreadTotal(unreadTotal - 1);
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
 
   return (
     <>
@@ -51,7 +66,10 @@ export function AnnouncementDashboard() {
                         style={{ color: item.priority ? blue6 : grey2 }}
                       />
                     }
-                    title=<ViewUnreadAnnouncement announcement={item} />
+                    title=<ViewUnreadAnnouncement
+                      announcement={item}
+                      markAnnouncementAsRead={markAnnouncementAsRead}
+                    />
                     description={fromNow({ date: item.createdDate })}
                   />
                 </List.Item>
@@ -73,6 +91,11 @@ export function AnnouncementDashboard() {
                     title=<ViewReadAnnouncement announcement={item} />
                     description={fromNow({ date: item.subject.createdDate })}
                   />
+                  {/*<Paragraph*/}
+                  {/*  ellipsis={{ rows: 2, expandable: true, symbol: "more" }}*/}
+                  {/*>*/}
+                  {/*  <Markdown source={item.subject.message} />*/}
+                  {/*</Paragraph>*/}
                 </List.Item>
               )}
             />

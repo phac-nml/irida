@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Modal, notification, Space, Typography } from "antd";
+import { Button, Modal, Space, Typography } from "antd";
 import { IconFlag } from "../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 import {
@@ -8,7 +8,6 @@ import {
 } from "../../contexts/visibility-context";
 import { formatDate } from "../../utilities/date-utilities";
 import Markdown from "react-markdown";
-import { markAnnouncementRead } from "../../apis/announcements/announcements";
 
 /**
  * Component to add a button which will open a modal to view a unread announcement.
@@ -19,7 +18,7 @@ import { markAnnouncementRead } from "../../apis/announcements/announcements";
 
 const { Text } = Typography;
 
-function ViewUnreadAnnouncementModal({ announcement }) {
+function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
   const [visible, setVisibility] = useVisibility();
 
   return (
@@ -51,23 +50,18 @@ function ViewUnreadAnnouncementModal({ announcement }) {
       </Modal>
     </>
   );
-
-  function markAnnouncementAsRead(aID) {
-    markAnnouncementRead({ aID })
-      .then(() => {
-        setVisibility(false);
-        // TODO: re-render the unread announcement list
-      })
-      .catch(({ message }) => {
-        notification.error({ message });
-      });
-  }
 }
 
-export default function ViewUnreadAnnouncement({ announcement }) {
+export default function ViewUnreadAnnouncement({
+  announcement,
+  markAnnouncementAsRead,
+}) {
   return (
     <VisibilityProvider>
-      <ViewUnreadAnnouncementModal announcement={announcement} />
+      <ViewUnreadAnnouncementModal
+        announcement={announcement}
+        markAnnouncementAsRead={markAnnouncementAsRead}
+      />
     </VisibilityProvider>
   );
 }
