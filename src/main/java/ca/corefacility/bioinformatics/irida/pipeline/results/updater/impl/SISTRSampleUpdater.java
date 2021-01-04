@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
@@ -99,18 +98,16 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 						String value = (valueObject != null ? valueObject.toString() : "");
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
-						stringEntries.put(e.getValue() + " (v"+workflowVersion+")", metadataEntry);
+						stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
 					}
 				});
 
 				// convert string map into metadata fields
-				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
-						.getMetadataMap(stringEntries);
+				Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(stringEntries);
 
 				//save metadata back to sample
 				samples.forEach(s -> {
-					s.mergeMetadata(metadataMap);
-					sampleService.updateFields(s.getId(), ImmutableMap.of("metadata", s.getMetadata()));
+					sampleService.mergeSampleMetadata(s, metadataSet);
 				});
 
 			} else {

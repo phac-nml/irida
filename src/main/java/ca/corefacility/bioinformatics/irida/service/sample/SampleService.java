@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -47,6 +49,33 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             {@link Project}.
 	 */
 	public ProjectSampleJoin getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
+
+	/**
+	 * Set the given set of {@link MetadataEntry} on the given {@link Sample} and save it to the database
+	 *
+	 * @param sample        the {@link Sample} to save metadata for
+	 * @param metadataToSet the metadata to save to the sample
+	 * @return the updated {@link Sample}
+	 */
+	public Sample updateSampleMetadata(Sample sample, Set<MetadataEntry> metadataToSet);
+
+	/**
+	 * Merge the given set of {@link MetadataEntry} into the given {@link Sample}.  This will replace existing metadata
+	 * that matches and add the new data to the sample.
+	 *
+	 * @param sample        the sample to update
+	 * @param metadataToAdd the metadata to add
+	 * @return the updated Sample
+	 */
+	public Sample mergeSampleMetadata(Sample sample, Set<MetadataEntry> metadataToAdd);
+
+	/**
+	 * Get the {@link MetadataEntry} set associated with the given {@link Sample}
+	 *
+	 * @param sample the {@link Sample} to get metadata for
+	 * @return the metadata associated with the given sample
+	 */
+	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
