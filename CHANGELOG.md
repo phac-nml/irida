@@ -33,6 +33,7 @@ Changes
 * [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
 * [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+* [Documentation]: Moved IRIDA documentation to new repository at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
 
 20.05 to 20.09
 --------------
