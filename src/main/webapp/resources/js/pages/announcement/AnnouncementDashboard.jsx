@@ -44,11 +44,22 @@ export function AnnouncementDashboard() {
     <>
       <Card
         title="Announcements"
+        headStyle={{
+          backgroundColor: "#337ab7",
+        }}
+        style={{ borderColor: "#337ab7" }}
         extra={
           <Button
             type="primary"
             ghost
             href={setBaseUrl("/announcements/user/read")}
+            style={{
+              color: "#FFFFFF",
+              borderColor: "#2e6da4",
+              "&:hover": {
+                background: "#286090",
+              },
+            }}
           >
             View All
           </Button>
