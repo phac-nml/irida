@@ -1,7 +1,5 @@
 import React from "react";
 import { Modal, Space, Typography } from "antd";
-import { IconFlag } from "../../components/icons/Icons";
-import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 import {
   useVisibility,
   VisibilityProvider,
@@ -9,6 +7,7 @@ import {
 import { formatDate } from "../../utilities/date-utilities";
 import Markdown from "react-markdown";
 import { LinkButton } from "../../components/Buttons/LinkButton";
+import { PriorityFlag } from "./PriorityFlag";
 
 /**
  * Component to add a button which will open a modal to view a unread announcement.
@@ -31,10 +30,8 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
       <Modal
         title={
           <Space>
+            <PriorityFlag hasPriority={announcement.priority} />
             {announcement.title}
-            {announcement.priority && (
-              <IconFlag style={{ color: FONT_COLOR_PRIMARY }} />
-            )}
           </Space>
         }
         afterClose={() => markAnnouncementAsRead(announcement.identifier)}

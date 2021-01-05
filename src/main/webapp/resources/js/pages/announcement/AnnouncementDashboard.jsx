@@ -5,10 +5,9 @@ import {
   getUnreadAnnouncements,
   markAnnouncementRead,
 } from "../../apis/announcements/announcements";
-import { IconFlag } from "../../components/icons/Icons";
-import { blue6, grey2 } from "../../styles/colors";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
 import Markdown from "react-markdown";
+import { PriorityFlag } from "./PriorityFlag";
 
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
@@ -39,9 +38,7 @@ export function AnnouncementDashboard() {
       renderItem={(item) => (
         <List.Item>
           <List.Item.Meta
-            avatar={
-              <IconFlag style={{ color: item.priority ? blue6 : grey2 }} />
-            }
+            avatar={<PriorityFlag hasPriority={item.priority} />}
             title=<ViewUnreadAnnouncement
               announcement={item}
               markAnnouncementAsRead={markAnnouncementAsRead}
