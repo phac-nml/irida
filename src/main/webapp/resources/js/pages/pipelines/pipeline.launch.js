@@ -158,9 +158,9 @@ function PipelineController(
       // All the selected sample single or pair-end files
       radioBtns = angular.element("input[type='radio']:checked"),
       // Whether or not to email user on pipeline completion
-      emailUponCompletion = $("#email-pipeline-result-completed").is(":checked"),
+      emailUponCompletion = $("#receive-email").val() === "completed",
       // Whether or not to email user on pipeline error
-      emailUponError = $("#email-pipeline-result-error").is(":checked"),
+      emailUponError = $("#receive-email").val() === "error",
       // Holds all the ids for the selected single-end
       single = [],
       // Holds all the ids for the selected paired-end

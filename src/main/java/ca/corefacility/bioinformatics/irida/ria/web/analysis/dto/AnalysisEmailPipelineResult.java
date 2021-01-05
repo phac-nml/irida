@@ -7,13 +7,13 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
 public class AnalysisEmailPipelineResult {
 	private Long analysisSubmissionId;
-	private Boolean emailPipelineResultCompleted;
-	private Boolean emailPipelineResultError;
+	private boolean emailPipelineResultCompleted;
+	private boolean emailPipelineResultError;
 
 	public AnalysisEmailPipelineResult() {
 	}
 
-	public AnalysisEmailPipelineResult(Long submissionId, Boolean emailPipelineResultCompleted, Boolean emailPipelineResultError) {
+	public AnalysisEmailPipelineResult(Long submissionId, boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		this.analysisSubmissionId = submissionId;
 		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
 		this.emailPipelineResultError = emailPipelineResultError;
@@ -27,19 +27,19 @@ public class AnalysisEmailPipelineResult {
 		this.analysisSubmissionId = submissionId;
 	}
 
-	public Boolean getEmailPipelineResultCompleted() {
+	public boolean getEmailPipelineResultCompleted() {
 		return emailPipelineResultCompleted;
 	}
 
-	public void setEmailPipelineResultCompleted(Boolean emailPipelineResultCompleted) {
+	public void setEmailPipelineResultCompleted(boolean emailPipelineResultCompleted) {
 		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
 	}
 
-	public Boolean getEmailPipelineResultError() {
+	public boolean getEmailPipelineResultError() {
 		return emailPipelineResultError;
 	}
 
-	public void setEmailPipelineResultError(Boolean emailPipelineResultError) {
+	public void setEmailPipelineResultError(boolean emailPipelineResultError) {
 		this.emailPipelineResultError = emailPipelineResultError;
 	}
 }

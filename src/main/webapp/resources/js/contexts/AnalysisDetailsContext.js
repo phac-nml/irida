@@ -39,6 +39,7 @@ const reducer = (context, action) => {
       return {
         ...context,
         emailPipelineResultCompleted: action.emailPipelineResultCompleted,
+        emailPipelineResultError: action.emailPipelineResultError,
       };
     case TYPES.EMAIL_PIPELINE_RESULT_ERROR:
       return {
@@ -134,9 +135,17 @@ function AnalysisDetailsProvider(props) {
    * emailPipelineResult` state variable.
    */
   function analysisDetailsContextUpdateEmailPipelineResult({
-    emailPipelineResultCompleted,
-    emailPipelineResultError,
+    emailPreference,
   }) {
+    let emailPipelineResultCompleted = false;
+    let emailPipelineResultError = false;
+
+    if (emailPreference === "error") {
+      emailPipelineResultError = true;
+    } else if (emailPreference === "completed") {
+      emailPipelineResultCompleted = true;
+    }
+
     updateAnalysisEmailPipelineResult({
       submissionId: analysisIdentifier,
       emailPipelineResultCompleted: emailPipelineResultCompleted,
@@ -146,17 +155,11 @@ function AnalysisDetailsProvider(props) {
         notification.error({ message: res.text });
       } else {
         notification.success({ message: res });
-        if (typeof emailPipelineResultCompleted !== "undefined") {
-          dispatch({
-            type: TYPES.EMAIL_PIPELINE_RESULT_COMPLETED,
-            emailPipelineResultCompleted,
-          });
-        } else if (typeof emailPipelineResultError !== "undefined") {
-          dispatch({
-            type: TYPES.EMAIL_PIPELINE_RESULT_ERROR,
-            emailPipelineResultError,
-          });
-        }
+        dispatch({
+          type: TYPES.EMAIL_PIPELINE_RESULT_COMPLETED,
+          emailPipelineResultCompleted,
+          emailPipelineResultError,
+        });
       }
     });
   }

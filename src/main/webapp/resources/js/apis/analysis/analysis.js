@@ -64,23 +64,13 @@ export async function updateAnalysisEmailPipelineResult({
   emailPipelineResultError,
 }) {
   try {
-    let dataObj = {};
-    if (typeof emailPipelineResultError !== "undefined") {
-      dataObj = {
-        analysisSubmissionId: submissionId,
-        emailPipelineResultError: emailPipelineResultError,
-      };
-    }
-    if (typeof emailPipelineResultCompleted !== "undefined") {
-      dataObj = {
-        analysisSubmissionId: submissionId,
-        emailPipelineResultCompleted: emailPipelineResultCompleted,
-      };
-    }
-
     const { data } = await axios.patch(
       `${ANALYSIS_URL}/update-email-pipeline-result`,
-      dataObj
+      {
+        analysisSubmissionId: submissionId,
+        emailPipelineResultCompleted: emailPipelineResultCompleted,
+        emailPipelineResultError: emailPipelineResultError,
+      }
     );
     return data.message;
   } catch (error) {

@@ -88,23 +88,9 @@ export default function AnalysisDetails() {
     },
   ];
 
-  /*
-        On change of checkbox to receive/not receive an email upon
-        pipeline completion, update emailPipelineResult field
-    */
-  function updateEmailPipelineResultCompleted(e) {
+  function updateEmailPipelineStatus(updatedEmailPref) {
     analysisDetailsContextUpdateEmailPipelineResult({
-      emailPipelineResultCompleted: e.target.value,
-    });
-  }
-
-  /*
-      On change of checkbox to receive/not receive an email upon
-      pipeline error, update emailPipelineResult field
-  */
-  function updateEmailPipelineResultError(e) {
-    analysisDetailsContextUpdateEmailPipelineResult({
-      emailPipelineResultError: e.target.value,
+      emailPreference: updatedEmailPref,
     });
   }
 
@@ -151,6 +137,36 @@ export default function AnalysisDetails() {
     );
   }
 
+  function renderUpdateEmailPreferenceSection() {
+    return (
+      <section className="t-email-pref-edit">
+        <Select
+          defaultValue={
+            analysisDetailsContext.emailPipelineResultCompleted &&
+            !analysisDetailsContext.emailPipelineResultError
+              ? "completed"
+              : !analysisDetailsContext.emailPipelineResultCompleted &&
+                analysisDetailsContext.emailPipelineResultError
+              ? "error"
+              : "none"
+          }
+          style={{ width: "100%" }}
+          onChange={updateEmailPipelineStatus}
+        >
+          <Select.Option key="noemail" value="none">
+            {i18n("AnalysisDetailsEmailPref.noEmail")}
+          </Select.Option>
+          <Select.Option key="emailonerror" value="error">
+            {i18n("AnalysisDetailsEmailPref.errorEmail")}
+          </Select.Option>
+          <Select.Option key="emailoncompletion" value="completed">
+            {i18n("AnalysisDetailsEmailPref.completionEmail")}
+          </Select.Option>
+        </Select>
+      </section>
+    );
+  }
+
   // The following renders the Analysis Details component view
   return (
     <TabPaneContent title={i18n("AnalysisDetails.details")}>
@@ -165,24 +181,9 @@ export default function AnalysisDetails() {
             className="t-email-pipeline-result-completed"
           >
             <Title level={4}>
-              {i18n("AnalysisDetails.receiveEmailOnCompletion")}
+              {i18n("AnalysisDetails.receiveStatusEmail")}
             </Title>
-            <SimpleRadioButtonGroup
-              defaultValue={analysisDetailsContext.emailPipelineResultCompleted}
-              onchange={updateEmailPipelineResultCompleted}
-            />
-          </section>
-          <section
-            style={{ marginTop: SPACE_MD }}
-            className="t-email-pipeline-result-error"
-          >
-            <Title level={4}>
-              {i18n("AnalysisDetails.receiveEmailOnError")}
-            </Title>
-            <SimpleRadioButtonGroup
-              defaultValue={analysisDetailsContext.emailPipelineResultError}
-              onchange={updateEmailPipelineResultError}
-            />
+            {renderUpdateEmailPreferenceSection()}
           </section>
         </div>
       ) : null}

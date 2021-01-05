@@ -191,25 +191,20 @@ public class AnalysisAjaxController {
 
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
-			if(parameters.getEmailPipelineResultCompleted() != null) {
-				if (parameters.getEmailPipelineResultCompleted()) {
-					message = messageSource.getMessage("AnalysisDetails.willReceiveEmailOnCompletion", new Object[] {},
-							locale);
-				} else if(!parameters.getEmailPipelineResultCompleted()) {
-					message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmailOnCompletion",
-							new Object[] {}, locale);
-				}
-				submission.setEmailPipelineResultCompleted(parameters.getEmailPipelineResultCompleted());
-			} else if(parameters.getEmailPipelineResultError() != null) {
-				if (parameters.getEmailPipelineResultError()) {
-					message = messageSource.getMessage("AnalysisDetails.willReceiveEmailOnError", new Object[] {},
-							locale);
-				} else if (!parameters.getEmailPipelineResultError()) {
-					message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmailOnError", new Object[] {},
-							locale);
-				}
-				submission.setEmailPipelineResultError(parameters.getEmailPipelineResultError());
+
+			if(parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.receiveCompletionEmail", new Object[] {},
+						locale);
+			} else if(!parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {},
+						locale);
+			} else if (!parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.receiveErrorEmail", new Object[] {},
+						locale);
 			}
+
+			submission.setEmailPipelineResultCompleted(parameters.getEmailPipelineResultCompleted());
+			submission.setEmailPipelineResultError(parameters.getEmailPipelineResultError());
 
 			analysisSubmissionService.update(submission);
 			logger.trace("Email pipeline result updated for: " + submission);

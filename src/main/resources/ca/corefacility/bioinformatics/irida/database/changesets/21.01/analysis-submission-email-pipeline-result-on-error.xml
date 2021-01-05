@@ -17,10 +17,15 @@
             <column name="email_pipeline_result_error" type="bit(1)" />
         </addColumn>
 
-        <!--Updating analysis submission table to change column email_pipeline_result to email_pipeline_result_completed -->
-        <sql>
-            ALTER TABLE analysis_submission CHANGE email_pipeline_result email_pipeline_result_completed BIT(1) not null DEFAULT 0;
-            ALTER TABLE analysis_submission_AUD CHANGE email_pipeline_result email_pipeline_result_completed BIT(1);
-        </sql>
+        <renameColumn tableName="analysis_submission"
+                      columnDataType="bit(1)" oldColumnName="email_pipeline_result"
+                      newColumnName="email_pipeline_result_completed"
+        />
+
+        <renameColumn tableName="analysis_submission_AUD"
+                      columnDataType="bit(1)" oldColumnName="email_pipeline_result"
+                      newColumnName="email_pipeline_result_completed"
+        />
+
     </changeSet>
 </databaseChangeLog>
