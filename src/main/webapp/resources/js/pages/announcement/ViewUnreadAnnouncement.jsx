@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Modal, Space, Typography } from "antd";
+import { Modal, Space, Typography } from "antd";
 import { IconFlag } from "../../components/icons/Icons";
 import { FONT_COLOR_PRIMARY } from "../../styles/fonts";
 import {
@@ -8,6 +8,7 @@ import {
 } from "../../contexts/visibility-context";
 import { formatDate } from "../../utilities/date-utilities";
 import Markdown from "react-markdown";
+import { LinkButton } from "../../components/Buttons/LinkButton";
 
 /**
  * Component to add a button which will open a modal to view a unread announcement.
@@ -23,9 +24,10 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
 
   return (
     <>
-      <Button type="link" onClick={() => setVisibility(true)}>
-        {announcement.title}
-      </Button>
+      <LinkButton
+        text={announcement.title}
+        onClick={() => setVisibility(true)}
+      />
       <Modal
         title={
           <Space>
