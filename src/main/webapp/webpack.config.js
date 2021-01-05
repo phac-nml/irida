@@ -4,6 +4,7 @@ const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
+const { formatAntStyles } = require("./styles");
 
 const dev = require("./webpack.config.dev");
 const prod = require("./webpack.config.prod");
@@ -39,6 +40,26 @@ const config = {
         test: /\.(js|jsx)$/,
         exclude: /(node_modules)/,
         use: "babel-loader?cacheDirectory",
+      },
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader", // translates CSS into CommonJS
+          },
+          {
+            loader: "less-loader", // compiles Less to CSS
+            options: {
+              lessOptions: {
+                modifyVars: { ...formatAntStyles() },
+                javascriptEnabled: true,
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
