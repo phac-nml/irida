@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { List, notification, Tabs, Typography } from "antd";
+import { List, notification, Typography } from "antd";
 import { fromNow } from "../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,
@@ -13,7 +13,6 @@ import Markdown from "react-markdown";
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
   const [unreadTotal, setUnreadTotal] = useState(0);
-  const { TabPane } = Tabs;
   const { Paragraph } = Typography;
 
   useEffect(() => {
