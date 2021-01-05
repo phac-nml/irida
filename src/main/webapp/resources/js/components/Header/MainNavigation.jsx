@@ -81,17 +81,21 @@ export function MainNavigation() {
       >
         <Menu mode="horizontal" theme={theme} className="accessory-menu">
           <Menu.Item icon={<CartLink />} key="cart" />
-          <Menu.SubMenu title={<IconCog />}>
-            <Menu.Item key="user:groups">
-              <a href={setBaseUrl("/groups")}>{i18n("nav.main.groups-list")}</a>
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item key="remote_api">
-              <a href={setBaseUrl("/remote_api")}>
-                {i18n("nav.main.remoteapis")}
-              </a>
-            </Menu.Item>
-          </Menu.SubMenu>
+          {!isAdmin && (
+            <Menu.SubMenu title={<IconCog />}>
+              <Menu.Item key="user:groups">
+                <a href={setBaseUrl("/groups")}>
+                  {i18n("nav.main.groups-list")}
+                </a>
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item key="remote_api">
+                <a href={setBaseUrl("/remote_api")}>
+                  {i18n("nav.main.remoteapis")}
+                </a>
+              </Menu.Item>
+            </Menu.SubMenu>
+          )}
           {isAdmin && (
             <Menu.Item key="admin:link">
               <a className="t-admin-panel-btn" href={setBaseUrl("/admin")}>
