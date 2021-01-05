@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,7 +61,8 @@ public class UISampleService {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
-		return new SampleDetails(sample, isModifiable, cartService.isSampleInCart(id));
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
+		return new SampleDetails(sample, isModifiable, metadataForSample, cartService.isSampleInCart(id));
 	}
 
 	/**

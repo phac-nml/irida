@@ -47,6 +47,7 @@ import {
   UserOutlined,
   UploadOutlined,
   CalendarTwoTone,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -130,6 +131,8 @@ export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
 export const IconMetadataTemplate = ({ ...props }) => (
   <AppstoreOutlined {...props} />
 );
+
+export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
 
 export const IconLaunchPipeline = ({ ...props }) => (
   <RocketOutlined {...props} />

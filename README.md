@@ -12,8 +12,8 @@ Important Links
 
 * Main Site: <http://www.irida.ca/>
 * Documentation
-    * Main: <https://irida.corefacility.ca/documentation/>
-    * Download: <https://irida.corefacility.ca/documentation/downloads/index.html>
+    * Main: <https://phac-nml.github.io/irida-documentation/>
+    * Download: <https://phac-nml.github.io/irida-documentation/downloads/index.html>
 * Available Pipeline Plugins: <https://github.com/phac-nml/irida-pipeline-plugins>
 
 

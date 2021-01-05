@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -18,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -680,8 +678,8 @@ public class ExportUploadService {
 				//build a metadata map entry
 				Map<String, MetadataEntry> metadata = new HashMap<>();
 				metadata.put(NCBI_ACCESSION_METADATA_LABEL, new MetadataEntry(accession, "text"));
-				Map<MetadataTemplateField, MetadataEntry> metadataMap = metadataTemplateService
-						.getMetadataMap(metadata);
+				Set<MetadataEntry> metadataSet = metadataTemplateService
+						.convertMetadataStringsToSet(metadata);
 
 				//get all the sequencing objects involved
 				Set<SequencingObject> objects = new HashSet<>();
@@ -701,9 +699,7 @@ public class ExportUploadService {
 
 				//update the samples with the accession
 				for (Sample s : samples) {
-					s.mergeMetadata(metadataMap);
-
-					sampleService.update(s);
+					sampleService.mergeSampleMetadata(s, metadataSet);
 				}
 			}
 		}

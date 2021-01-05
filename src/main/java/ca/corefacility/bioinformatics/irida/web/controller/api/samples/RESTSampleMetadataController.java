@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +61,9 @@ public class RESTSampleMetadataController {
 		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
-		SampleMetadataResponse response = buildSampleMetadataResponse(s);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+
+		SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
 		return modelMap;
@@ -80,11 +84,9 @@ public class RESTSampleMetadataController {
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
+		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
 
-		s.setMetadata(metadata);
-
-		sampleService.update(s);
+		sampleService.updateSampleMetadata(s,metadata);
 
 		return getSampleMetadata(sampleId);
 	}
@@ -104,11 +106,9 @@ public class RESTSampleMetadataController {
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
-
-		s.mergeMetadata(metadata);
-
-		sampleService.update(s);
+		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
+		
+		sampleService.mergeSampleMetadata(s, metadata);
 
 		return getSampleMetadata(sampleId);
 	}
@@ -120,8 +120,8 @@ public class RESTSampleMetadataController {
 	 *            the {@link Sample} to build the object from
 	 * @return a constructed {@link SampleMetadataResponse}
 	 */
-	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s) {
-		SampleMetadataResponse response = new SampleMetadataResponse(s.getMetadata());
+	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s, Set<MetadataEntry> metadataEntries) {
+		SampleMetadataResponse response = new SampleMetadataResponse(metadataEntries);
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
 		return response;
@@ -133,8 +133,16 @@ public class RESTSampleMetadataController {
 	private class SampleMetadataResponse extends IridaResourceSupport {
 		Map<MetadataTemplateField, MetadataEntry> metadata;
 
+		@Deprecated
 		public SampleMetadataResponse(Map<MetadataTemplateField, MetadataEntry> metadata) {
 			this.metadata = metadata;
+		}
+
+		public SampleMetadataResponse(Set<MetadataEntry> metadataEntrySet) {
+			metadata = new HashMap<>();
+			for (MetadataEntry entry : metadataEntrySet) {
+				metadata.put(entry.getField(), entry);
+			}
 		}
 
 		@JsonProperty
