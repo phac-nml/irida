@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -253,7 +252,6 @@ public class ProjectSynchronizationService {
 		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
 		for (Sample s : readSamplesForProject) {
 			s.setId(null);
-			s = syncSampleMetadata(s);
 			List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
 
 			syncExceptions.addAll(syncExceptionsSample);
@@ -299,6 +297,8 @@ public class ProjectSynchronizationService {
 				sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 
 				localSample = sampleService.update(sample);
+
+				localSample = syncSampleMetadata(sample, localSample);
 			}
 
 		} else {
@@ -306,6 +306,8 @@ public class ProjectSynchronizationService {
 			sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 			localSample = sampleService.create(sample);
 			projectService.addSampleToProject(project, sample, true);
+
+			localSample = syncSampleMetadata(sample, localSample);
 		}
 
 		//get a collection of the files already sync'd.  we don't want to grab them a 2nd time.
@@ -445,18 +447,20 @@ public class ProjectSynchronizationService {
 	/**
 	 * Synchronize the given sample's metadata
 	 *
-	 * @param sample the sample to sync
+	 * @param remoteSample the sample read from the remote api
+	 * @param localSample  the local sample being saved
 	 * @return the synchronized sample
 	 */
-	public Sample syncSampleMetadata(Sample sample){
-		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
-		
-		sampleMetadata.values().forEach(e -> e.setId(null));
-		
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);
-		sample.setMetadata(metadata);
-		
-		return sample;
+	public Sample syncSampleMetadata(Sample remoteSample, Sample localSample) {
+		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(remoteSample);
+
+		sampleMetadata.values()
+				.forEach(e -> e.setId(null));
+
+		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(sampleMetadata);
+		localSample = sampleService.updateSampleMetadata(localSample, metadata);
+
+		return localSample;
 	}
 
 	/**
