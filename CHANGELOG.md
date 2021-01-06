@@ -14,6 +14,7 @@ Changes
 * [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
 * [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
 * [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
+* [UI]: Fixed broken CSS bundle links in project settings pages. (20.09.5)
 
 20.05 to 20.09
 --------------
