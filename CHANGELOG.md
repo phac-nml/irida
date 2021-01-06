@@ -30,6 +30,11 @@ Changes
 * [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
 * [Developer]: Update `jest` to version `26.6.3` to fix security vulnerability.
 * [UI]: New main navigation bar using Ant Design.
+* [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
+* [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
+* [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+* [Documentation]: Moved IRIDA documentation to new repository at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
+* [Developer]: Updated `axios` to version 0.21.1
 * [UI]: Added option for user to only receive an email upon pipeline failure.
 
 20.05 to 20.09
