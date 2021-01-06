@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -27,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry.QCEntryStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -43,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -138,7 +137,9 @@ public class SamplesController extends BaseController {
 	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
 		return SAMPLE_PAGE;
@@ -161,7 +162,9 @@ public class SamplesController extends BaseController {
 			model.addAttribute(MODEL_ERROR_ATTR, new HashMap<>());
 		}
 		Sample sample = sampleService.read(sampleId);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS_EDIT);
 		return SAMPLE_EDIT_PAGE;
 	}
@@ -191,6 +194,8 @@ public class SamplesController extends BaseController {
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
+
+		Sample sample = sampleService.read(sampleId);
 
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
@@ -229,8 +234,12 @@ public class SamplesController extends BaseController {
 		} else {
 			metadataMap = new HashMap<>();
 		}
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(metadataMap);
-		updatedValues.put("metadata", metadata);
+
+		if (!metadataMap.isEmpty()) {
+			Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
+
+			sampleService.updateSampleMetadata(sample, metadataSet);
+		}
 
 		if (updatedValues.size() > 0) {
 			try {
