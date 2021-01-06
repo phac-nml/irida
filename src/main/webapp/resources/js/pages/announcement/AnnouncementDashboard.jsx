@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { List, notification } from "antd";
+import { Avatar, List, notification } from "antd";
 import { fromNow } from "../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,
@@ -36,7 +36,10 @@ export function AnnouncementDashboard() {
       renderItem={(item) => (
         <List.Item className="t-announcement-item">
           <List.Item.Meta
-            avatar={<PriorityFlag hasPriority={item.priority} />}
+            avatar=<Avatar
+              style={{ backgroundColor: "#fff" }}
+              icon={<PriorityFlag hasPriority={item.priority} />}
+            />
             title=<ViewUnreadAnnouncement
               announcement={item}
               markAnnouncementAsRead={markAnnouncementAsRead}
