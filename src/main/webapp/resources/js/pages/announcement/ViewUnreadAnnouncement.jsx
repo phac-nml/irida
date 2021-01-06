@@ -28,8 +28,11 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
           <Text strong>{announcement.title}</Text>
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
-            Created by {announcement.user.username} on{" "}
-            {formatDate({ date: announcement.createdDate })}
+            {i18n(
+              "ViewUnreadAnnouncement.create.details",
+              announcement.user.username,
+              formatDate({ date: announcement.createdDate })
+            )}
           </Text>
         </>
       ),
