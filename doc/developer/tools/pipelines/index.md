@@ -343,7 +343,7 @@ The purpose of each method is as follows:
 
 ### 3.2.5. (Optional) Implement an [Updater][irida-updater] class
 
-An [Updater][irida-updater] class is used to perform post-processing on the resulting files, primarily intended to write back pipeline results into the IRIDA metadata system. Please see the [ExamplePluginUpdater.java][irida-updater] for an example implementation, or the built-in implementations in <https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/pipeline/results/impl>. Implementing this class is optional for your pipeline.
+An [Updater][irida-updater] class is used to perform post-processing on the resulting files, primarily intended to write back pipeline results into the IRIDA metadata system. Please see the [ExamplePluginUpdater.java][irida-updater] for an example implementation, or the built-in implementations in <https://github.com/phac-nml/irida/tree/development/src/main/java/ca/corefacility/bioinformatics/irida/pipeline/results/updater/impl>. Implementing this class is optional for your pipeline.
 
 If you do implement this class, you will also want to make sure to update the `messages_en.properties` file with an entry like:
 
@@ -392,9 +392,9 @@ The `properties` section contains additional information you will have to update
 <plugin.version>0.1.0</plugin.version>
 <plugin.provider>Aaron Petkau</plugin.provider>
 <plugin.dependencies></plugin.dependencies>
-<plugin.requires.runtime>1.0.0</plugin.requires.runtime>
+<plugin.requires.runtime>1.1.0</plugin.requires.runtime>
 
-<irida.version.compiletime>0.23.0-SNAPSHOT</irida.version.compiletime>
+<irida.version.compiletime>21.01</irida.version.compiletime>
 ```
 
 The `<plugin.*>` entries contain information about your particular plugin as defined by [PF4J][pf4j-start].
