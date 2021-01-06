@@ -16,16 +16,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSourceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.DynamicSource;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
@@ -37,6 +41,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+
+import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
 /**
  * UI Service for all things related to workflow pipelines.
@@ -51,21 +57,25 @@ public class UIPipelineService {
     private final ProjectService projectService;
     private final ReferenceFileService referenceFileService;
     private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
-    private final UpdateSamplePermission updateSamplePermission;
+	private final UpdateSamplePermission updateSamplePermission;
+	private final GalaxyToolDataService galaxyToolDataService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public UIPipelineService(UICartService cartService, IridaWorkflowsService workflowsService,
-            WorkflowNamedParametersService namedParametersService, ProjectService projectService,
-            ReferenceFileService referenceFileService,
-            AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
-        this.cartService = cartService;
-        this.workflowsService = workflowsService;
-        this.namedParametersService = namedParametersService;
-        this.projectService = projectService;
-        this.referenceFileService = referenceFileService;
-        this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
-        this.updateSamplePermission = updateSamplePermission;
+			WorkflowNamedParametersService namedParametersService, ProjectService projectService,
+			ReferenceFileService referenceFileService,
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
+			UpdateSamplePermission updateSamplePermission, GalaxyToolDataService galaxyToolDataService,
+			MessageSource messageSource) {
+		this.cartService = cartService;
+		this.workflowsService = workflowsService;
+		this.namedParametersService = namedParametersService;
+		this.projectService = projectService;
+		this.referenceFileService = referenceFileService;
+		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
+		this.updateSamplePermission = updateSamplePermission;
+		this.galaxyToolDataService = galaxyToolDataService;
 		this.messageSource = messageSource;
 	}
 
@@ -128,10 +138,10 @@ public class UIPipelineService {
             // Need to make sure that all samples are allowed to be updated.
             canUpdateSamples = cart.values()
                     .stream()
-                    .map(samples -> updateSamplePermission.isAllowed(authentication, samples))
-                    .reduce(true, (a, b) -> a && b);
-            detailsResponse.setCanUpdateSamples(canUpdateSamples);
-        }
+					.map(samples -> updateSamplePermission.isAllowed(authentication, samples))
+					.reduce(true, (a, b) -> a && b);
+			detailsResponse.setCanUpdateSamples(canUpdateSamples);
+		}
 
         /*
         Set the acceptable file types
@@ -139,8 +149,49 @@ public class UIPipelineService {
 		detailsResponse.setAcceptsSingleSequenceFiles(description.acceptsSingleSequenceFiles());
 		detailsResponse.setAcceptsPairedSequenceFiles(description.acceptsPairedSequenceFiles());
 
-        return detailsResponse;
-    }
+		/*
+		Dynamic Sources
+		 */
+		if (description.requiresDynamicSource()) {
+			List<DynamicSource> dynamicSources = new ArrayList();
+			IridaWorkflowDynamicSourceGalaxy dynamicSource = new IridaWorkflowDynamicSourceGalaxy();
+			for (IridaWorkflowParameter parameter : description.getParameters()) {
+				if (parameter.isRequired() && parameter.hasDynamicSource()) {
+					try {
+						dynamicSource = parameter.getDynamicSource();
+					} catch (IridaWorkflowParameterException e) {
+						logger.debug("Dynamic Source error: ", e);
+					}
+
+					Map<String, Object> toolDataTable = new HashMap<>();
+					try {
+						String name = dynamicSource.getName();
+						String label = messageSource.getMessage("dynamicsource.label." + name, new Object[] {}, locale);
+						List<SelectOption> options = new ArrayList<>();
+
+						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(name);
+						List<String> labels = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getDisplayColumn());
+						Iterator<String> labelsIterator = labels.iterator();
+						List<String> values = galaxyToolDataTable.getFieldsForColumn(
+								dynamicSource.getParameterColumn());
+						Iterator<String> valuesIterator = values.iterator();
+
+						while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
+							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
+							//                                toolDataTableFieldsMap.put("name", parameter.getName()); <----- WHAT IS THIS?
+						}
+
+						dynamicSources.add(new DynamicSource(name, label, options));
+					} catch (Exception e) {
+						logger.debug("Tool Data Table not found: ", e);
+					}
+				}
+			}
+			detailsResponse.setDynamicSources(dynamicSources);
+		}
+
+		return detailsResponse;
+	}
 
 	/**
 	 * Save a new set of {@link IridaWorkflowNamedParameters}

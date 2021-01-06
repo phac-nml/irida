@@ -2,13 +2,12 @@ import React from "react";
 import { LaunchDetails } from "./LaunchDetails";
 import { SharePipelineResults } from "./SharePipelineResults";
 import { ReferenceFiles } from "./references/ReferenceFiles";
-import { SavedParameters } from "./parameters/SavedParameters";
-import { ParameterWithOptions } from "./ParameterWithOptions";
 import { Anchor, Button, Col, Form, Row, Space } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunch } from "./launch-context";
 import { LaunchFiles } from "./LaunchFiles";
 import { launchNewPipeline } from "./launch-dispatch";
+import { LaunchParameters } from "./LaunchParameters";
 
 /**
  * React component to handle all form components for launching a pipeline.
@@ -43,10 +42,9 @@ export function LaunchForm() {
         <Col sm={24} md={19}>
           <Space direction="vertical" style={{ width: `100%` }}>
             <LaunchDetails />
+            <LaunchParameters form={form} />
             <SharePipelineResults />
             <ReferenceFiles />
-            <SavedParameters form={form} />
-            <ParameterWithOptions parameters={state.parameterWithOptions} />
             <LaunchFiles />
           </Space>
         </Col>

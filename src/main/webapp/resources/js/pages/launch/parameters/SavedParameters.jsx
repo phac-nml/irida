@@ -1,10 +1,9 @@
 import React from "react";
-import { Button, Divider, Form, Select, Space, Tag } from "antd";
+import { Button, Form, Select, Space, Tag } from "antd";
 import { IconEdit } from "../../../components/icons/Icons";
 import { ParametersModal } from "./ParametersModal";
 import { useLaunch } from "../launch-context";
 import { SPACE_XS } from "../../../styles/spacing";
-import { SectionHeading } from "../../../components/ant.design/SectionHeading";
 import { setParameterSetById } from "../launch-dispatch";
 
 /**
@@ -29,10 +28,7 @@ export function SavedParameters({ form }) {
   }, [form, parameterSet]);
 
   return (
-    <section>
-      <SectionHeading id="launch-parameters">
-        {i18n("SavedParameters.title")}
-      </SectionHeading>
+    <>
       <Form.Item label={i18n("SavedParameters.title")}>
         <div style={{ display: "flex" }}>
           <div style={{ flexGrow: 1, marginRight: SPACE_XS }}>
@@ -62,6 +58,6 @@ export function SavedParameters({ form }) {
         </div>
       </Form.Item>
       <ParametersModal visible={visible} closeModal={() => setVisible(false)} />
-    </section>
+    </>
   );
 }
