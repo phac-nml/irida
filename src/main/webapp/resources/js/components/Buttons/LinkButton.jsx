@@ -13,8 +13,14 @@ import { Button } from "antd";
 export function LinkButton({ text, href, onClick, ...props }) {
   return (
     <Button
-      type={"link"}
-      style={{ padding: 0 }}
+      type="link"
+      block
+      style={{
+        padding: 0,
+        height: "auto",
+        whiteSpace: "normal",
+        textAlign: "left",
+      }}
       href={href}
       onClick={onClick}
       {...props}
