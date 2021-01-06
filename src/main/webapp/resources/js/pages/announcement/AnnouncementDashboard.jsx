@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { List, notification, Typography } from "antd";
+import { List, notification } from "antd";
 import { fromNow } from "../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,
   markAnnouncementRead,
 } from "../../apis/announcements/announcements";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
-import Markdown from "react-markdown";
 import { PriorityFlag } from "./PriorityFlag";
 
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
   const [unreadTotal, setUnreadTotal] = useState(0);
-  const { Paragraph } = Typography;
 
   useEffect(() => {
     getUnreadAnnouncements().then((data) => {
@@ -45,11 +43,6 @@ export function AnnouncementDashboard() {
             />
             description={fromNow({ date: item.createdDate })}
           />
-          {/*<Paragraph*/}
-          {/*  ellipsis={{ rows: 2, expandable: true, symbol: "more" }}*/}
-          {/*>*/}
-          {/*  <Markdown source={item.message} />*/}
-          {/*</Paragraph>*/}
         </List.Item>
       )}
     />
