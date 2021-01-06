@@ -36,7 +36,7 @@ export function AnnouncementDashboard() {
       pagination={unreadTotal > 5 ? { pageSize: 5 } : false}
       dataSource={unreadAnnouncements}
       renderItem={(item) => (
-        <List.Item>
+        <List.Item className="t-announcement-item">
           <List.Item.Meta
             avatar={<PriorityFlag hasPriority={item.priority} />}
             title=<ViewUnreadAnnouncement
