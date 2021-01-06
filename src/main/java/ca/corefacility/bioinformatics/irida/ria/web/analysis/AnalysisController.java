@@ -1,13 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.google.common.net.HttpHeaders;
 
 /**
  * Controller for Analysis.
@@ -168,19 +173,16 @@ public class AnalysisController {
 	 *
 	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
 	 * @param filename     The html file name
-	 * @param model        {@link Model}
 	 * @param locale       User's locale
-	 * @return {@link String} path to the page template.
 	 */
 	@RequestMapping("/{submissionId}/html-output")
-	public String getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename,
-			Model model, Locale locale) {
+	public void getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename,
+			Locale locale, HttpServletResponse response) throws IOException {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 		String htmlExt = "html";
-		String htmlOutput = "";
 
 		for (AnalysisOutputFile file : files) {
 			if (file.getFile()
@@ -193,16 +195,28 @@ public class AnalysisController {
 			}
 		}
 
-		try {
-			htmlOutput = FileUtils.readFileToString(outputFile.getFile()
-					.toFile(), StandardCharsets.UTF_8.toString());
-		} catch (IOException e) {
-			// We don't want the page to error out so we just log the error and set htmlOutput to the message
-			logger.debug("Html output not found.");
-			htmlOutput = messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
-		}
+		// Set the common Http headers
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline");
+		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
 
-		model.addAttribute("content", htmlOutput);
-		return BASE + "html-output";
+		try (InputStream inputStream = new FileInputStream(outputFile.getFile()
+				.toString()); OutputStream outputStream = response.getOutputStream()) {
+			response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(outputFile.getFile())));
+			// Copy the file contents to the response outputstream
+			IOUtils.copy(inputStream, outputStream);
+		} catch (IOException e) {
+			logger.debug("Html output not found.");
+			response.setHeader(HttpHeaders.CONTENT_LENGTH, "0");
+			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
+			OutputStream outputStream = response.getOutputStream();
+			/*
+			Write the htmlNotFound message to the outputstream. We do this
+			so that the page doesn't error and will instead display the
+			message.
+			 */
+			outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
+			outputStream.flush();
+			outputStream.close();
+		}
 	}
 }

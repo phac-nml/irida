@@ -29,7 +29,7 @@ export default function AnalysisHtmlPreview({ output }) {
           output={output}
           extras={[
             <Button onClick={openPopup} key="open-html" icon={<IconLinkOut />}>
-              Open in new window
+              {i18n("AnalysisOutputs.openInNewWindow")}
             </Button>,
           ]}
         />
