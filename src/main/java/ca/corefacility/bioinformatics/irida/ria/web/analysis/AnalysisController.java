@@ -174,6 +174,8 @@ public class AnalysisController {
 	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
 	 * @param filename     The html file name
 	 * @param locale       User's locale
+	 * @param response     {@link HttpServletResponse}
+	 * @throws IOException if we can't write the file to the response
 	 */
 	@RequestMapping("/{submissionId}/html-output")
 	public void getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename,
@@ -207,7 +209,8 @@ public class AnalysisController {
 		} catch (IOException e) {
 			logger.debug("Html output not found.");
 			response.setHeader(HttpHeaders.CONTENT_LENGTH, "0");
-			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found", new Object[] { filename }, locale);
+			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
+					new Object[] { filename }, locale);
 			OutputStream outputStream = response.getOutputStream();
 			/*
 			Write the htmlNotFound message to the outputstream. We do this
