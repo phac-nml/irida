@@ -289,13 +289,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean emailPipelineResultCompletedVisible() {
-		return !driver.findElements(By.className("t-email-pipeline-result-completed"))
-				.isEmpty();
-	}
-
-	public boolean emailPipelineResultErrorVisible() {
-		return !driver.findElements(By.className("t-email-pipeline-result-error"))
+	public boolean emailPipelineResultStatusSelectVisible() {
+		return !driver.findElements(By.className("t-email-pipeline-result-select"))
 				.isEmpty();
 	}
 

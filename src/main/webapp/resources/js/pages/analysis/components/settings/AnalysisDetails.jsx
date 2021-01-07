@@ -139,7 +139,7 @@ export default function AnalysisDetails() {
 
   function renderUpdateEmailPreferenceSection() {
     return (
-      <section className="t-email-pref-edit">
+      <section className="t-email-pipeline-result-select">
         <Select
           defaultValue={
             analysisDetailsContext.emailPipelineResultCompleted &&
