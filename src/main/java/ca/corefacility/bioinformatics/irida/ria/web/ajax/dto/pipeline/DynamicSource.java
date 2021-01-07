@@ -4,6 +4,9 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
+/**
+ * Used by the UI for displaying dynamic source parameters on the pipeline launch page.
+ */
 public class DynamicSource {
 	private final String id;
 	private final String label;
