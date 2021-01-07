@@ -51,30 +51,11 @@ export function LaunchForm() {
         <Col sm={24} md={5}>
           <Anchor>
             <Anchor.Link
-              href="#launch-details"
-              title={i18n("LaunchDetails.label")}
-            />
-            <Anchor.Link
-              href="#launch-sharing"
-              title={i18n("SharePipelineResults.label")}
-            />
-            <Anchor.Link
-              href="#launch-references"
-              title={i18n("ReferenceFiles.label")}
-            />
-            <Anchor.Link
-              href="#launch-parameters"
-              title={i18n("SavedParameters.title")}
-            />
-            <Anchor.Link
-              href="#launch-files"
-              title={i18n("LaunchFiles.heading")}
-            />
-            <Anchor.Link
               href="#launch-files"
               title={
                 <Button
                   type="primary"
+                  block
                   htmlType="submit"
                   icon={<IconLaunchPipeline />}
                 >
