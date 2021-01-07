@@ -35,6 +35,7 @@ Changes
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
 * [Documentation]: Moved IRIDA documentation to new repository at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
 * [Developer]: Updated `axios` to version 0.21.1
+* [UI]: Fixed broken CSS bundle links in project settings pages. (20.09.5)
 * [UI]: Added option for user to only receive an email upon pipeline failure.
 
 20.05 to 20.09
