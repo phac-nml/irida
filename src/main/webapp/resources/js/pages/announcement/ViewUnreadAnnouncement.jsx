@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOMServer from "react-dom/server";
 import { Modal, Typography } from "antd";
 import { VisibilityProvider } from "../../contexts/visibility-context";
 import { formatDate } from "../../utilities/date-utilities";
@@ -6,6 +7,7 @@ import Markdown from "react-markdown";
 import { LinkButton } from "../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 import { OutputWrapper } from "../../components/OutputFiles/OutputWrapper";
+import { setBaseUrl } from "../../utilities/url-utilities";
 /**
  * Component to add a button which will open a modal to view a unread announcement.
  * @param {function} ViewAnnouncement - the function that displays a unread announcement.
@@ -15,6 +17,20 @@ import { OutputWrapper } from "../../components/OutputFiles/OutputWrapper";
 const { Text } = Typography;
 const { confirm } = Modal;
 function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
+  function createUserLinkHTML() {
+    return {
+      __html: i18n(
+        "ViewUnreadAnnouncement.create.details",
+        ReactDOMServer.renderToString(
+          <a href={setBaseUrl(`/users/${announcement.user.identifier}`)}>
+            {announcement.user.username}
+          </a>
+        ),
+        formatDate({ date: announcement.createdDate })
+      ),
+    };
+  }
+
   const displayAnnouncement = () =>
     confirm({
       type: "info",
@@ -29,11 +45,7 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
           <Text strong>{announcement.title}</Text>
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
-            {i18n(
-              "ViewUnreadAnnouncement.create.details",
-              announcement.user.username,
-              formatDate({ date: announcement.createdDate })
-            )}
+            <div dangerouslySetInnerHTML={createUserLinkHTML()} />
           </Text>
         </>
       ),
