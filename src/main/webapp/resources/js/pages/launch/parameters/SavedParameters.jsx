@@ -27,11 +27,17 @@ export function SavedParameters({ form }) {
     form.setFieldsValue({ parameterSet: parameterSet.id });
   }, [form, parameterSet]);
 
-  return (
+  return parameterSets[0].parameters.length > 0 ? (
     <>
       <Form.Item label={i18n("SavedParameters.title")}>
-        <div style={{ display: "flex" }}>
-          <div style={{ flexGrow: 1, marginRight: SPACE_XS }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `1fr min-content`,
+            columnGap: SPACE_XS,
+          }}
+        >
+          <div>
             <Form.Item name="parameterSet">
               <Select
                 value={parameterSet.id}
@@ -54,10 +60,13 @@ export function SavedParameters({ form }) {
           </div>
           <div>
             <Button icon={<IconEdit />} onClick={() => setVisible(true)} />
+            <ParametersModal
+              visible={visible}
+              closeModal={() => setVisible(false)}
+            />
           </div>
         </div>
       </Form.Item>
-      <ParametersModal visible={visible} closeModal={() => setVisible(false)} />
     </>
-  );
+  ) : null;
 }
