@@ -5,6 +5,7 @@ import { formatDate } from "../../utilities/date-utilities";
 import Markdown from "react-markdown";
 import { LinkButton } from "../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
+import { OutputWrapper } from "../../components/OutputFiles/OutputWrapper";
 /**
  * Component to add a button which will open a modal to view a unread announcement.
  * @param {function} ViewAnnouncement - the function that displays a unread announcement.
@@ -36,7 +37,11 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
           </Text>
         </>
       ),
-      content: <Markdown source={announcement.message} />,
+      content: (
+        <OutputWrapper overflowRequired={true}>
+          <Markdown source={announcement.message} />
+        </OutputWrapper>
+      ),
     });
   return (
     <>
