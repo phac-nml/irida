@@ -74,7 +74,7 @@ export function ProjectSynchronizationSettings() {
                         ? false
                         : true)
                     }
-                    className="t-sync-now-btn"
+                    className="t-sync-force-btn"
                   >
                     {i18n("ProjectRemoteSettings.forceSync")}
                   </Button>
