@@ -229,8 +229,8 @@ public class ProjectSynchronizationService {
 
 			// get all the samples by their url
 			Map<String, Sample> samplesByUrl = new HashMap<>();
-			localSamples.forEach(j -> {
-				Sample sample = j.getObject();
+			localSamples.forEach(sampleJoin -> {
+				Sample sample = sampleJoin.getObject();
 
 				// If a user has added a sample for some reason, ignore it
 				if (sample.getRemoteStatus() != null) {
@@ -247,15 +247,15 @@ public class ProjectSynchronizationService {
 
 			//get a list of all remote URLs in the project
 			Set<String> remoteUrls = readSamplesForProject.stream()
-					.map(s -> s.getRemoteStatus()
+					.map(sample -> sample.getRemoteStatus()
 							.getURL())
 					.collect(Collectors.toSet());
 
 			// Check for local samples which no longer exist by URL
 			Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
 			//remove any URL from the local list that we've seen remotely
-			remoteUrls.forEach(s -> {
-				localUrls.remove(s);
+			remoteUrls.forEach(sample -> {
+				localUrls.remove(sample);
 			});
 
 			// if any URLs still exist in localUrls, it must have been deleted remotely
@@ -336,8 +336,8 @@ public class ProjectSynchronizationService {
 		//get a collection of the files already sync'd.  we don't want to grab them a 2nd time.
 		Collection<SampleSequencingObjectJoin> localObjects = objectService.getSequencingObjectsForSample(localSample);
 		Set<String> objectsByUrl = new HashSet<>();
-		localObjects.forEach(j -> {
-			SequencingObject pair = j.getObject();
+		localObjects.forEach(sequencingObjectJoin -> {
+			SequencingObject pair = sequencingObjectJoin.getObject();
 			
 			// check if the file was actually sync'd. Someone may have
 			// concatenated it
@@ -351,8 +351,8 @@ public class ProjectSynchronizationService {
 		//same with assemblies.  get the ones we've already grabbed and store their URL so we don't double-sync
 		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(localSample);
 		Set<String> localAssemblyUrls = new HashSet<>();
-		assembliesForSample.forEach(j -> {
-			GenomeAssembly genomeAssembly = j.getObject();
+		assembliesForSample.forEach(assemblyJoin -> {
+			GenomeAssembly genomeAssembly = assemblyJoin.getObject();
 
 			if (genomeAssembly.getRemoteStatus() != null) {
 				String url = genomeAssembly.getRemoteStatus()
