@@ -51,7 +51,7 @@ export function LaunchForm() {
         <Col sm={24} md={6}>
           <Button
             style={{ position: "sticky", top: 20 }}
-            type="danger"
+            type="primary"
             size="large"
             block
             htmlType="submit"
