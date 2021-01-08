@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 
+import java.util.List;
+
 /**
  * Information required to launch a IRIDA Workflow Pipeline
  */
@@ -13,6 +15,11 @@ public class LaunchRequest {
 	 * General text to provide more context for the pipeline.  No restrictions.
 	 */
 	private String description;
+
+	/**
+	 * List of file identifiers to run on the pipeline
+	 */
+	private List<Long> fileIds;
 
 	public LaunchRequest() {
 	}
@@ -31,5 +38,13 @@ public class LaunchRequest {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<Long> getFileIds() {
+		return fileIds;
+	}
+
+	public void setFileIds(List<Long> fileIds) {
+		this.fileIds = fileIds;
 	}
 }

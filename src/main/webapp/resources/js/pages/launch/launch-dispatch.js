@@ -1,4 +1,7 @@
-import { saveNewPipelineParameters } from "../../apis/pipelines/pipelines";
+import {
+  launchPipeline,
+  saveNewPipelineParameters,
+} from "../../apis/pipelines/pipelines";
 import { TYPES } from "./launch-context";
 import { PIPELINE_ID } from "./launch-utilities";
 
@@ -40,12 +43,14 @@ export async function saveModifiedParametersAs(dispatch, label, parameters) {
  * Launch a the pipeline.
  *
  * @param {function} dispatch - specific the the launch context
- * @param {object} parameters - all parameters required to launch the pipe
+ * @param {object} formValues - all values found directly on the form
  * @returns {Promise<void>}
  */
-export async function launchNewPipeline(dispatch, parameters, state) {
-  console.log(parameters, state);
-  return Promise.resolve();
+export async function launchNewPipeline(dispatch, formValues, state) {
+  const { name, description, ...parameters } = formValues;
+  const { files: fileIds } = state;
+  const params = { name, description, fileIds };
+  return launchPipeline(PIPELINE_ID, params);
 }
 
 /**
