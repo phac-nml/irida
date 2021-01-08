@@ -8,6 +8,12 @@ import {
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
 import { PriorityFlag } from "./PriorityFlag";
 
+/**
+ * Component to display displays a list of unread announcements.
+ * @returns {*}
+ * @constructor
+ */
+
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
   const [unreadTotal, setUnreadTotal] = useState(0);
