@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Col, Row, Skeleton, Spin } from "antd";
+import { Col, Row, Skeleton, Spin } from "antd";
 import { SPACE_LG } from "../../styles/spacing";
 import { useLaunch } from "./launch-context";
 import { LaunchContent } from "./LaunchContent";
@@ -17,8 +17,9 @@ export function LaunchPage() {
   return (
     <Row>
       <Col
-        xxl={{ span: 16, offset: 4 }}
+        xs={{ span: 24 }}
         xl={{ span: 20, offset: 2 }}
+        xxl={{ span: 16, offset: 4 }}
         style={{ marginTop: SPACE_LG }}
       >
         <Spin spinning={loading} delay={500}>
