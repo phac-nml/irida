@@ -47,10 +47,41 @@ export async function saveModifiedParametersAs(dispatch, label, parameters) {
  * @returns {Promise<void>}
  */
 export async function launchNewPipeline(dispatch, formValues, state) {
-  const { name, description, emailPipelineResult, ...parameters } = formValues;
-  const { files: fileIds } = state;
-  const params = { name, description, fileIds, emailPipelineResult };
+  /*
+  The ...parameters will capture any dynamic parameters added to the page since everything
+  else should be accounted for with their own variable names.  To these parameters we need to
+  add the parameters for the saved ones.
+   */
+  const {
+    name,
+    description,
+    emailPipelineResult,
+    shareResultsWithProjects,
+    updateSamples,
+    parameterSet,
+    ...parameters
+  } = formValues;
+  const { files: fileIds, referenceFile: reference } = state;
+
+  if (state.parameterSet.parameters) {
+    state.parameterSet.parameters.forEach(
+      (parameter) => (parameters[parameter.name] = parameter.value)
+    );
+  }
+
+  const params = {
+    name,
+    description,
+    fileIds,
+    emailPipelineResult,
+    shareResultsWithProjects,
+    updateSamples,
+    reference,
+    parameters,
+  };
   return launchPipeline(PIPELINE_ID, params);
+  // console.log(parameters, state);
+  // return Promise.resolve("NOT YET!!");
 }
 
 /**
