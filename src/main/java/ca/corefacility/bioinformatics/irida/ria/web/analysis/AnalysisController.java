@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Set;
