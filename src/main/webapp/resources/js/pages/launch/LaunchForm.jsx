@@ -2,12 +2,13 @@ import React from "react";
 import { LaunchDetails } from "./LaunchDetails";
 import { SharePipelineResults } from "./SharePipelineResults";
 import { ReferenceFiles } from "./references/ReferenceFiles";
-import { Button, Col, Form, Row, Space } from "antd";
+import { Button, Form, Space } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunch } from "./launch-context";
 import { LaunchFiles } from "./LaunchFiles";
 import { launchNewPipeline } from "./launch-dispatch";
 import { LaunchParameters } from "./LaunchParameters";
+import { SPACE_LG } from "../../styles/spacing";
 
 /**
  * React component to handle all form components for launching a pipeline.
@@ -38,29 +39,22 @@ export function LaunchForm() {
       layout="vertical"
       initialValues={state.initialValues}
     >
-      <Row gutter={[16, 16]}>
-        <Col sm={24} md={18}>
-          <Space direction="vertical" style={{ width: `100%` }}>
-            <LaunchDetails />
-            <LaunchParameters form={form} />
-            <SharePipelineResults />
-            <ReferenceFiles />
-            <LaunchFiles />
-          </Space>
-        </Col>
-        <Col sm={24} md={6}>
-          <Button
-            style={{ position: "sticky", top: 20 }}
-            type="primary"
-            size="large"
-            block
-            htmlType="submit"
-            icon={<IconLaunchPipeline />}
-          >
-            {i18n("LaunchContent.submit")}
-          </Button>
-        </Col>
-      </Row>
+      <Space direction="vertical" style={{ width: `100%` }}>
+        <LaunchDetails />
+        <LaunchParameters form={form} />
+        <SharePipelineResults />
+        <ReferenceFiles />
+        <LaunchFiles />
+        <Button
+          type="primary"
+          size="large"
+          htmlType="submit"
+          icon={<IconLaunchPipeline />}
+          style={{ marginTop: SPACE_LG }}
+        >
+          {i18n("LaunchContent.submit")}
+        </Button>
+      </Space>
     </Form>
   );
 }
