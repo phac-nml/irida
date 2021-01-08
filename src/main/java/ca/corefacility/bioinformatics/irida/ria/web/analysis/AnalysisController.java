@@ -203,12 +203,10 @@ public class AnalysisController {
 
 		try (InputStream inputStream = new FileInputStream(outputFile.getFile()
 				.toString()); OutputStream outputStream = response.getOutputStream()) {
-			response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(outputFile.getFile())));
 			// Copy the file contents to the response outputstream
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
 			logger.debug("Html output not found.");
-			response.setHeader(HttpHeaders.CONTENT_LENGTH, "0");
 			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
 					new Object[] { filename }, locale);
 			OutputStream outputStream = response.getOutputStream();
