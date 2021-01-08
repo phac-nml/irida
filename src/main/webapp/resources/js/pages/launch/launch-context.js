@@ -184,6 +184,7 @@ function LaunchProvider({ children }) {
           parameterSet: 0,
           shareResultsWithProjects: true,
           updateSamples: false,
+          emailPipelineResult: true,
         };
 
         // Get initial values for parameters with options.

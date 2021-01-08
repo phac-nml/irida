@@ -47,9 +47,9 @@ export async function saveModifiedParametersAs(dispatch, label, parameters) {
  * @returns {Promise<void>}
  */
 export async function launchNewPipeline(dispatch, formValues, state) {
-  const { name, description, ...parameters } = formValues;
+  const { name, description, emailPipelineResult, ...parameters } = formValues;
   const { files: fileIds } = state;
-  const params = { name, description, fileIds };
+  const params = { name, description, fileIds, emailPipelineResult };
   return launchPipeline(PIPELINE_ID, params);
 }
 

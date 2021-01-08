@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Form, Input, Typography } from "antd";
+import { Checkbox, Form, Input } from "antd";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 
 /**
@@ -27,6 +27,9 @@ export function LaunchDetails() {
       </Form.Item>
       <Form.Item label={i18n("LaunchDetails.description")} name="description">
         <Input.TextArea />
+      </Form.Item>
+      <Form.Item name="emailPipelineResult" valuePropName="checked">
+        <Checkbox>Email Pipeline Results</Checkbox>
       </Form.Item>
     </section>
   );

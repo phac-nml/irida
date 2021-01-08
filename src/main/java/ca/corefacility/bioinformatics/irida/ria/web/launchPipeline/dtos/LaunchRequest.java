@@ -21,6 +21,11 @@ public class LaunchRequest {
 	 */
 	private List<Long> fileIds;
 
+	/**
+	 * Email the user when the pipeline is completed
+	 */
+	private boolean emailPipelineResult;
+
 	public LaunchRequest() {
 	}
 
@@ -46,5 +51,13 @@ public class LaunchRequest {
 
 	public void setFileIds(List<Long> fileIds) {
 		this.fileIds = fileIds;
+	}
+
+	public boolean isEmailPipelineResult() {
+		return emailPipelineResult;
+	}
+
+	public void setEmailPipelineResult(boolean emailPipelineResult) {
+		this.emailPipelineResult = emailPipelineResult;
 	}
 }
