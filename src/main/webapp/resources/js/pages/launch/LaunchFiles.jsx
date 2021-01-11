@@ -72,6 +72,9 @@ export function LaunchFiles() {
     setSelectedSampleFiles(dispatch, selected);
   }, [dispatch, selected]);
 
+  /**
+   * Toggle whether to display samples that do not have appropriate files.
+   */
   const toggleVisible = () => {
     if (hideUnusable) {
       setVisibleSamples(samples.filter((sample) => sample.files.length));
@@ -83,7 +86,6 @@ export function LaunchFiles() {
   /*
   Called when there are samples or when the toggling the visible samples it triggered
   Sets the samples to display either all or only ones with good files.
-
    */
   React.useEffect(() => {
     if (samples) {
@@ -129,6 +131,12 @@ export function LaunchFiles() {
     });
   };
 
+  /**
+   * Create the react component to render a sample with it's files.
+   * @param index - index of the sample
+   * @param style - passed from VirtualListComponent
+   * @returns {JSX.Element}
+   */
   const generateSample = ({ index, style }) => {
     const sample = visibleSamples[index];
     return (
@@ -141,6 +149,11 @@ export function LaunchFiles() {
     );
   };
 
+  /**
+   * Calculate the height of the sample with its files.
+   * @param index
+   * @returns {number}
+   */
   const getRowHeight = (index) => visibleSamples[index].files.length * 40 + 50;
 
   return (
