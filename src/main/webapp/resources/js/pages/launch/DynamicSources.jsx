@@ -2,6 +2,12 @@ import React from "react";
 import { Form, Select } from "antd";
 import { useLaunch } from "./launch-context";
 
+/**
+ * React component to render all Dynamic Sources - a set of select inputs.
+ * These will get returned with the regular parameters to start the pipeline.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function DynamicSources() {
   const [{ dynamicSources: sources }] = useLaunch();
   return (

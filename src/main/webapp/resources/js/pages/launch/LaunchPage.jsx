@@ -17,9 +17,9 @@ export function LaunchPage() {
   return (
     <Row>
       <Col
-        xs={{ span: 24 }}
+        xs={{ span: 22, offset: 1 }}
         xl={{ span: 20, offset: 2 }}
-        xxl={{ span: 16, offset: 4 }}
+        xxl={{ span: 10, offset: 7 }}
         style={{ marginTop: SPACE_LG }}
       >
         <Spin spinning={loading} delay={500}>

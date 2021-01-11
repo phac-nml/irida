@@ -150,11 +150,14 @@ public class UIPipelineService {
 		detailsResponse.setAcceptsPairedSequenceFiles(description.acceptsPairedSequenceFiles());
 
 		/*
-		Dynamic Sources
+		Dynamic Sources - these are pulled from Galaxy
 		 */
 		if (description.requiresDynamicSource()) {
-			List<DynamicSource> dynamicSources = new ArrayList();
+			List<DynamicSource> dynamicSources = new ArrayList<>();
 			IridaWorkflowDynamicSourceGalaxy dynamicSource = new IridaWorkflowDynamicSourceGalaxy();
+			/*
+			Go through all the pipeline parameters and see which ones require dynamic sources.
+			 */
 			for (IridaWorkflowParameter parameter : description.getParameters()) {
 				if (parameter.isRequired() && parameter.hasDynamicSource()) {
 					try {
@@ -163,7 +166,10 @@ public class UIPipelineService {
 						logger.debug("Dynamic Source error: ", e);
 					}
 
-					Map<String, Object> toolDataTable = new HashMap<>();
+					/*
+					Now that we have the info on the parameter lets get the available options for it, and
+					set up the data in a format the the UI can create a select input.
+					 */
 					try {
 						String name = dynamicSource.getName();
 						String label = messageSource.getMessage("dynamicsource.label." + name, new Object[] {}, locale);
@@ -178,7 +184,6 @@ public class UIPipelineService {
 
 						while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
-							//                                toolDataTableFieldsMap.put("name", parameter.getName()); <----- WHAT IS THIS?
 						}
 
 						dynamicSources.add(new DynamicSource(name, label, options));
