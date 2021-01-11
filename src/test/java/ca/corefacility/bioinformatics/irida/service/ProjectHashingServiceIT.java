@@ -4,15 +4,19 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectHashingService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +31,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -48,6 +53,8 @@ public class ProjectHashingServiceIT {
 	SampleService sampleService;
 	@Autowired
 	SequencingObjectService sequencingObjectService;
+	@Autowired
+	MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	ProjectHashingService hashingService;
@@ -116,6 +123,31 @@ public class ProjectHashingServiceIT {
 				.getObject();
 
 		sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
+
+		Integer newHash = hashingService.getProjectHash(project);
+
+		assertNotEquals(originalHash, newHash);
+	}
+
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	@Test
+	public void hashChangesWithMetadataSequencingObject() {
+		Project project = projectService.read(2L);
+
+		Integer originalHash = hashingService.getProjectHash(project);
+
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
+		Sample sample = samplesForProject.iterator()
+				.next()
+				.getObject();
+
+		MetadataTemplateField field = new MetadataTemplateField("test", "text");
+		field = metadataTemplateService.saveMetadataField(field);
+		MetadataEntry entry = new MetadataEntry("value", "text", field);
+
+		HashSet<MetadataEntry> metadataEntries = Sets.newHashSet(entry);
+
+		sampleService.mergeSampleMetadata(sample, metadataEntries);
 
 		Integer newHash = hashingService.getProjectHash(project);
 
