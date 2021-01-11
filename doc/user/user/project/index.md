@@ -18,7 +18,7 @@ Viewing existing projects
 
 You can access the list of projects that you have permission to view and modify by clicking on the "Projects" menu at the top of the dashboard and selecting "Your Projects":
 
-![Your projects dashboard location.](images/your-projects.png)
+![Your projects dashboard location.]({{ site.baseurl }}/images/tutorials/common/projects/your-projects.png)
 
 The projects list shows all projects that you are permitted to view or modify:
 

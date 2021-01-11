@@ -33,6 +33,9 @@ Changes
 * [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
 * [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
 * [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+* [Documentation]: Moved IRIDA documentation to new repository at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
+* [Developer]: Updated `axios` to version 0.21.1
+* [UI]: Fixed broken CSS bundle links in project settings pages. (20.09.5)
 * [REST]: Added new REST endpoint that can generate a deep hashcode of a project.  This will be used for speeding up project synchronization when there are no changes to a project.  Instead of checking for changes remotely, the client can check for changes only to the hash.  If there are hash changes, then they can do their full sync.
 * [UI]: Added option for project managers to check for changes using the hash above, or to force a full project sync on the project remote settings page.
 
