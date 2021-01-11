@@ -16,7 +16,7 @@ export function LaunchContent() {
   const [validCart, setValidCart] = React.useState(true);
 
   /**
-   * Listen for an empty cart, if empty, DO WHAT???
+   * Listen for an empty cart, if empty, show warning that the pipeline cannot be run
    */
   React.useEffect(() => {
     function handleEmptyCart(e) {
