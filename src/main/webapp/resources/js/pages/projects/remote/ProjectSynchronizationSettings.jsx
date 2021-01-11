@@ -154,7 +154,7 @@ export function ProjectSynchronizationSettings() {
     })
       .then(({ responseMessage }) => {
         notification.success({ message: responseMessage });
-        if (forceSync) {
+        if (forceSync || markSync) {
           setDisableSyncNow(true);
         }
       })
