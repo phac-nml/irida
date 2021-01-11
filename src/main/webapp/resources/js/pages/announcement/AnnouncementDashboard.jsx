@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, List, notification } from "antd";
+import { Avatar, Empty, List, notification } from "antd";
 import { fromNow } from "../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,
@@ -37,6 +37,14 @@ export function AnnouncementDashboard() {
 
   return (
     <List
+      locale={{
+        emptyText: (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={<span>No new announcements</span>}
+          />
+        ),
+      }}
       pagination={unreadTotal > 5 ? { pageSize: 5 } : false}
       dataSource={unreadAnnouncements}
       renderItem={(item) => (
