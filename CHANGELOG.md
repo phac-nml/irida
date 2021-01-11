@@ -36,6 +36,7 @@ Changes
 * [Documentation]: Moved IRIDA documentation to new repository at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
 * [Developer]: Updated `axios` to version 0.21.1
 * [UI]: Fixed broken CSS bundle links in project settings pages. (20.09.5)
+* [UI]: Added html viewer for analysis output files.
 
 20.05 to 20.09
 --------------
