@@ -112,7 +112,7 @@ export function LaunchFiles() {
   const removeSampleFromCart = (sample, selectedId) => {
     removeSample(sample.project.id, sample.id).then(() => {
       // Find the index so that we can update the table heights
-      const index = visibleSamples.findIndex((s) => s.id === sample.id);
+      const index = samples.findIndex((s) => s.id === sample.id);
 
       const updatedSamples = samples.filter((s) => s.id !== sample.id);
       if (updatedSamples.length) {
