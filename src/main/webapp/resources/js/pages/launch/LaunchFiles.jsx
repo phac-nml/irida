@@ -43,7 +43,12 @@ export function LaunchFiles() {
    * @param index
    * @returns {number}
    */
-  const getRowHeight = (index) => visibleSamples[index].files.length * 40 + 50;
+  const getRowHeight = (index) => {
+    if (visibleSamples[index].files.length) {
+      return visibleSamples[index].files.length * 40 + 50;
+    }
+    return 100;
+  };
 
   /*
   Called on initialization.  This gets the samples that are currently in the cart,
