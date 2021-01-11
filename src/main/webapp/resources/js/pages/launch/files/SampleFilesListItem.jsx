@@ -35,6 +35,7 @@ export function SampleFilesListItem({
       ]}
       style={{
         backgroundColor: sample.selected ? grey1 : grey3,
+        boxSizing: `border-box`,
         borderBottom: `1px solid ${grey4}`,
         ...style,
       }}

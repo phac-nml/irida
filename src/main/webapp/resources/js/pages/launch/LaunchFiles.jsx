@@ -21,6 +21,7 @@ import { grey3, grey4 } from "../../styles/colors";
 export function LaunchFiles() {
   const listRef = React.useRef();
   const [selected, setSelected] = React.useState();
+  const [height, setHeight] = React.useState(600);
   const [
     { acceptsPairedSequenceFiles: paired, acceptsSingleSequenceFiles: singles },
     dispatch,
@@ -36,6 +37,13 @@ export function LaunchFiles() {
    */
   const [visibleSamples, setVisibleSamples] = React.useState();
   const [samples, setSamples] = React.useState();
+
+  /**
+   * Calculate the height of the sample with its files.
+   * @param index
+   * @returns {number}
+   */
+  const getRowHeight = (index) => visibleSamples[index].files.length * 40 + 50;
 
   /*
   Called on initialization.  This gets the samples that are currently in the cart,
@@ -71,6 +79,23 @@ export function LaunchFiles() {
   React.useEffect(() => {
     setSelectedSampleFiles(dispatch, selected);
   }, [dispatch, selected]);
+
+  /*
+  Calculate the div size if the number of samples changes
+   */
+  React.useEffect(() => {
+    if (visibleSamples) {
+      let newHeight = 0;
+      for (let i = 0; i < visibleSamples.length; i++) {
+        newHeight += getRowHeight(i);
+        if (newHeight > 600) {
+          newHeight = 600;
+          break;
+        }
+      }
+      setHeight(newHeight + 2);
+    }
+  }, [visibleSamples]);
 
   /**
    * Toggle whether to display samples that do not have appropriate files.
@@ -149,13 +174,6 @@ export function LaunchFiles() {
     );
   };
 
-  /**
-   * Calculate the height of the sample with its files.
-   * @param index
-   * @returns {number}
-   */
-  const getRowHeight = (index) => visibleSamples[index].files.length * 40 + 50;
-
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
       <SectionHeading id="launch-files">
@@ -192,7 +210,7 @@ export function LaunchFiles() {
       {visibleSamples ? (
         <div
           style={{
-            height: 500,
+            height,
             width: "100%",
           }}
         >
