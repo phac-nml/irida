@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, List, Radio } from "antd";
-import { grey2, grey4 } from "../../../styles/colors";
+import { grey1, grey3, grey4 } from "../../../styles/colors";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadioInput";
 import { SPACE_XS } from "../../../styles/spacing";
@@ -34,7 +34,7 @@ export function SampleFilesListItem({
         </Button>,
       ]}
       style={{
-        backgroundColor: sample.selected ? "transparent" : grey2,
+        backgroundColor: sample.selected ? grey1 : grey3,
         borderBottom: `1px solid ${grey4}`,
         ...style,
       }}

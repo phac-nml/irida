@@ -9,8 +9,7 @@ import { removeSample } from "../../apis/cart/cart";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
 import { setSelectedSampleFiles } from "./launch-dispatch";
-import { grey4 } from "../../styles/colors";
-import { CART } from "../../utilities/events-utilities";
+import { grey3, grey4 } from "../../styles/colors";
 
 /**
  * React component to display sample files that will be used in the launching
@@ -37,18 +36,6 @@ export function LaunchFiles() {
    */
   const [visibleSamples, setVisibleSamples] = React.useState();
   const [samples, setSamples] = React.useState();
-
-  /**
-   * Listen for an empty cart, if empty, DO WHAT???
-   */
-  React.useEffect(() => {
-    function handleEmptyCart() {
-      console.log("EMPTY, NOW WHAT");
-    }
-
-    window.addEventListener(CART.UPDATED, handleEmptyCart);
-    return () => window.removeEventListener(CART.UPDATED, handleEmptyCart);
-  }, []);
 
   /*
   Called on initialization.  This gets the samples that are currently in the cart,
@@ -129,13 +116,16 @@ export function LaunchFiles() {
       // Find the index so that we can update the table heights
       const index = visibleSamples.findIndex((s) => s.id === sample.id);
 
-      setSamples(samples.filter((s) => s.id !== sample.id));
-      const ids = new Set(selected);
-      ids.delete(selectedId);
-      setSelected(Array.from(ids));
+      const updatedSamples = samples.filter((s) => s.id !== sample.id);
+      if (updatedSamples.length) {
+        setSamples(updatedSamples);
+        const ids = new Set(selected);
+        ids.delete(selectedId);
+        setSelected(Array.from(ids));
 
-      // Update the virtual list
-      listRef.current.resetAfterIndex(index);
+        // Update the virtual list
+        listRef.current.resetAfterIndex(index);
+      }
     });
   };
 
@@ -198,6 +188,7 @@ export function LaunchFiles() {
               <VList
                 style={{
                   border: `1px solid ${grey4}`,
+                  backgroundColor: grey3,
                 }}
                 ref={listRef}
                 itemKey={(index) => visibleSamples[index].id}
