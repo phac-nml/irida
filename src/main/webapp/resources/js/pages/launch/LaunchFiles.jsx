@@ -10,6 +10,7 @@ import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
 import { setSelectedSampleFiles } from "./launch-dispatch";
 import { grey4 } from "../../styles/colors";
+import { CART } from "../../utilities/events-utilities";
 
 /**
  * React component to display sample files that will be used in the launching
@@ -19,6 +20,7 @@ import { grey4 } from "../../styles/colors";
  * @constructor
  */
 export function LaunchFiles() {
+  const listRef = React.useRef();
   const [selected, setSelected] = React.useState();
   const [
     { acceptsPairedSequenceFiles: paired, acceptsSingleSequenceFiles: singles },
@@ -35,6 +37,18 @@ export function LaunchFiles() {
    */
   const [visibleSamples, setVisibleSamples] = React.useState();
   const [samples, setSamples] = React.useState();
+
+  /**
+   * Listen for an empty cart, if empty, DO WHAT???
+   */
+  React.useEffect(() => {
+    function handleEmptyCart() {
+      console.log("EMPTY, NOW WHAT");
+    }
+
+    window.addEventListener(CART.UPDATED, handleEmptyCart);
+    return () => window.removeEventListener(CART.UPDATED, handleEmptyCart);
+  }, []);
 
   /*
   Called on initialization.  This gets the samples that are currently in the cart,
@@ -71,6 +85,14 @@ export function LaunchFiles() {
     setSelectedSampleFiles(dispatch, selected);
   }, [dispatch, selected]);
 
+  const toggleVisible = () => {
+    if (hideUnusable) {
+      setVisibleSamples(samples.filter((sample) => sample.files.length));
+    } else {
+      setVisibleSamples(samples);
+    }
+  };
+
   /*
   Called when there are samples or when the toggling the visible samples it triggered
   Sets the samples to display either all or only ones with good files.
@@ -78,11 +100,7 @@ export function LaunchFiles() {
    */
   React.useEffect(() => {
     if (samples) {
-      if (hideUnusable) {
-        setVisibleSamples(samples.filter((sample) => sample.files.length));
-      } else {
-        setVisibleSamples(samples);
-      }
+      toggleVisible();
     }
   }, [samples, hideUnusable]);
 
@@ -108,10 +126,16 @@ export function LaunchFiles() {
    */
   const removeSampleFromCart = (sample, selectedId) => {
     removeSample(sample.project.id, sample.id).then(() => {
+      // Find the index so that we can update the table heights
+      const index = visibleSamples.findIndex((s) => s.id === sample.id);
+
       setSamples(samples.filter((s) => s.id !== sample.id));
       const ids = new Set(selected);
       ids.delete(selectedId);
       setSelected(Array.from(ids));
+
+      // Update the virtual list
+      listRef.current.resetAfterIndex(index);
     });
   };
 
@@ -165,7 +189,7 @@ export function LaunchFiles() {
       {visibleSamples ? (
         <div
           style={{
-            height: visibleSamples.length > 4 ? 600 : 300,
+            height: 500,
             width: "100%",
           }}
         >
@@ -175,6 +199,8 @@ export function LaunchFiles() {
                 style={{
                   border: `1px solid ${grey4}`,
                 }}
+                ref={listRef}
+                itemKey={(index) => visibleSamples[index].id}
                 height={height}
                 width={width}
                 itemCount={visibleSamples.length}
