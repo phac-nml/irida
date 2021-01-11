@@ -2,9 +2,8 @@ import React from "react";
 import { fetchPipelineSamples } from "../../apis/pipelines/pipelines";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { VariableSizeList as VList } from "react-window";
-import { Button, Dropdown, Menu, notification, Space, Typography } from "antd";
+import { notification, Space } from "antd";
 import { useLaunch } from "./launch-context";
-import { IconDropDown } from "../../components/icons/Icons";
 import { removeSample } from "../../apis/cart/cart";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
@@ -28,14 +27,8 @@ export function LaunchFiles() {
   ] = useLaunch();
 
   /*
-  State to determine whether to hide samples that do not have any usable files
-  in them.  These sample will not be run on the pipeline either way.
-   */
-  const [hideUnusable, setHideUnusable] = React.useState(true);
-  /*
   State to hold the count of the number of samples currently being displayed by the UI.
    */
-  const [visibleSamples, setVisibleSamples] = React.useState();
   const [samples, setSamples] = React.useState();
 
   /**
@@ -44,8 +37,8 @@ export function LaunchFiles() {
    * @returns {number}
    */
   const getRowHeight = (index) => {
-    if (visibleSamples[index].files.length) {
-      return visibleSamples[index].files.length * 40 + 50;
+    if (samples[index].files.length) {
+      return samples[index].files.length * 40 + 50;
     }
     return 100;
   };
@@ -89,9 +82,9 @@ export function LaunchFiles() {
   Calculate the div size if the number of samples changes
    */
   React.useEffect(() => {
-    if (visibleSamples) {
+    if (samples) {
       let newHeight = 0;
-      for (let i = 0; i < visibleSamples.length; i++) {
+      for (let i = 0; i < samples.length; i++) {
         newHeight += getRowHeight(i);
         if (newHeight > 600) {
           newHeight = 600;
@@ -100,34 +93,7 @@ export function LaunchFiles() {
       }
       setHeight(newHeight + 2);
     }
-  }, [visibleSamples]);
-
-  /**
-   * Toggle whether to display samples that do not have appropriate files.
-   */
-  const toggleVisible = () => {
-    if (hideUnusable) {
-      setVisibleSamples(samples.filter((sample) => sample.files.length));
-    } else {
-      setVisibleSamples(samples);
-    }
-  };
-
-  /*
-  Called when there are samples or when the toggling the visible samples it triggered
-  Sets the samples to display either all or only ones with good files.
-   */
-  React.useEffect(() => {
-    if (samples) {
-      toggleVisible();
-    }
-  }, [samples, hideUnusable]);
-
-  /*
-  Toggle whether or not to show samples that do not have files that
-  can be run on the current pipeline.
-   */
-  const toggleUsable = () => setHideUnusable(!hideUnusable);
+  }, [samples]);
 
   /*
   Called independently for each sample when the selected file set is changed.
@@ -156,7 +122,7 @@ export function LaunchFiles() {
         setSelected(Array.from(ids));
 
         // Update the virtual list
-        listRef.current.resetAfterIndex(index);
+        listRef.current.resetAfterIndex(index, true);
       }
     });
   };
@@ -168,7 +134,7 @@ export function LaunchFiles() {
    * @returns {JSX.Element}
    */
   const generateSample = ({ index, style }) => {
-    const sample = visibleSamples[index];
+    const sample = samples[index];
     return (
       <SampleFilesListItem
         style={style}
@@ -184,35 +150,7 @@ export function LaunchFiles() {
       <SectionHeading id="launch-files">
         {i18n("LaunchFiles.heading")}
       </SectionHeading>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row-reverse",
-          alignItems: "center",
-        }}
-      >
-        <Space>
-          <Typography.Text type="secondary">
-            {i18n(
-              "LaunchFiles.showing",
-              visibleSamples?.length,
-              samples?.length
-            )}
-          </Typography.Text>
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item onClick={toggleUsable}>
-                  Toggle Usable Samples
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button icon={<IconDropDown />} />
-          </Dropdown>
-        </Space>
-      </div>
-      {visibleSamples ? (
+      {samples ? (
         <div
           style={{
             height,
@@ -227,10 +165,10 @@ export function LaunchFiles() {
                   backgroundColor: grey3,
                 }}
                 ref={listRef}
-                itemKey={(index) => visibleSamples[index].id}
+                itemKey={(index) => samples[index].id}
                 height={height}
                 width={width}
-                itemCount={visibleSamples.length}
+                itemCount={samples.length}
                 itemSize={getRowHeight}
               >
                 {generateSample}
