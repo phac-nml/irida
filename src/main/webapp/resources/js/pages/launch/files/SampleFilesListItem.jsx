@@ -41,7 +41,10 @@ export function SampleFilesListItem({
     >
       <List.Item.Meta
         title={
-          <SampleDetailViewer sampleId={sample.id}>
+          <SampleDetailViewer
+            sampleId={sample.id}
+            removeSample={() => removeSample(sample)}
+          >
             <Button size="small" style={{ marginLeft: SPACE_XS }}>
               {sample.label}
             </Button>
