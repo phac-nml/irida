@@ -9,9 +9,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectHashingService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,86 +33,93 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {IridaApiServicesConfig.class,
-        IridaApiJdbcDataSourceConfig.class})
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
+		IridaApiJdbcDataSourceConfig.class })
 @ActiveProfiles("it")
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-        WithSecurityContextTestExecutionListener.class})
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectHashingServiceIT {
 
-    @Autowired
-    ProjectService projectService;
-    @Autowired
-    SampleService sampleService;
-    @Autowired
-    SequencingObjectService sequencingObjectService;
+	@Autowired
+	ProjectService projectService;
+	@Autowired
+	SampleService sampleService;
+	@Autowired
+	SequencingObjectService sequencingObjectService;
 
-    @Autowired
-    ProjectHashingService hashingService;
+	@Autowired
+	ProjectHashingService hashingService;
 
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    @Test
-    public void canGenerateHash() {
-        Project project = projectService.read(2L);
-        Integer expectedHash = 1654242358;
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	@Test
+	public void canGenerateHash() {
+		Project project = projectService.read(2L);
+		Integer expectedHash = 1654242358;
 
-        Integer projectHash = hashingService.getProjectHash(project);
+		Integer projectHash = hashingService.getProjectHash(project);
 
-        assertEquals(expectedHash, projectHash);
-    }
+		assertEquals(expectedHash, projectHash);
+	}
 
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    @Test
-    public void hashChangesWithNewSample() {
-        Project project = projectService.read(2L);
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	@Test
+	public void hashChangesWithNewSample() {
+		Project project = projectService.read(2L);
 
-        Integer originalHash = hashingService.getProjectHash(project);
+		Integer originalHash = hashingService.getProjectHash(project);
 
-        Sample sample = new Sample("testSample");
-        projectService.addSampleToProject(project, sample, true);
+		Sample sample = new Sample("testSample");
+		projectService.addSampleToProject(project, sample, true);
 
-        Integer newHash = hashingService.getProjectHash(project);
+		Integer newHash = hashingService.getProjectHash(project);
 
-        assertNotEquals(originalHash, newHash);
-    }
+		assertNotEquals(originalHash, newHash);
+	}
 
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    @Test
-    public void hashChangesWithRemovedSample() {
-        Project project = projectService.read(2L);
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	@Test
+	public void hashChangesWithRemovedSample() {
+		Project project = projectService.read(2L);
 
-        Integer originalHash = hashingService.getProjectHash(project);
+		Integer originalHash = hashingService.getProjectHash(project);
 
-        List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-        Sample sample = samplesForProject.iterator().next().getObject();
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
+		Sample sample = samplesForProject.iterator()
+				.next()
+				.getObject();
 
-        projectService.removeSampleFromProject(project, sample);
+		projectService.removeSampleFromProject(project, sample);
 
-        Integer newHash = hashingService.getProjectHash(project);
+		Integer newHash = hashingService.getProjectHash(project);
 
-        assertNotEquals(originalHash, newHash);
-    }
+		assertNotEquals(originalHash, newHash);
+	}
 
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    @Test
-    public void hashChangesWithRemovedSequencingObject() {
-        Project project = projectService.read(2L);
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	@Test
+	public void hashChangesWithRemovedSequencingObject() {
+		Project project = projectService.read(2L);
 
-        Integer originalHash = hashingService.getProjectHash(project);
+		Integer originalHash = hashingService.getProjectHash(project);
 
-        List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
-        Sample sample = samplesForProject.iterator().next().getObject();
+		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(project);
+		Sample sample = samplesForProject.iterator()
+				.next()
+				.getObject();
 
-        Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(sample);
-        SequencingObject sequencingObject = sequencingObjectsForSample.iterator().next().getObject();
+		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
+				sample);
+		SequencingObject sequencingObject = sequencingObjectsForSample.iterator()
+				.next()
+				.getObject();
 
-        sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
+		sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 
-        Integer newHash = hashingService.getProjectHash(project);
+		Integer newHash = hashingService.getProjectHash(project);
 
-        assertNotEquals(originalHash, newHash);
-    }
+		assertNotEquals(originalHash, newHash);
+	}
 
 }
