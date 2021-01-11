@@ -168,6 +168,7 @@ function LaunchProvider({ children }) {
         type,
         parameterWithOptions,
         savedPipelineParameters,
+        dynamicSources,
         ...details
       }) => {
         const formattedParameterWithOptions = formatParametersWithOptions(
@@ -191,6 +192,14 @@ function LaunchProvider({ children }) {
             parameter.value || parameter.options[0].value;
         });
 
+        // Check for dynamic sources
+        if (dynamicSources) {
+          initialValues.dynamicSources = {};
+          dynamicSources.forEach((source) => {
+            initialValues[source.id] = source.options[0].value;
+          });
+        }
+
         dispatch({
           type: TYPES.LOADED,
           payload: {
@@ -200,6 +209,7 @@ function LaunchProvider({ children }) {
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
             parameterSets: formattedParameterSets,
+            dynamicSources,
             files: [],
             referenceFile:
               details.requiresReference && details.referenceFiles.length

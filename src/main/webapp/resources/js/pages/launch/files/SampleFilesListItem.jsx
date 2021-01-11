@@ -1,8 +1,9 @@
 import React from "react";
 import { Button, List, Radio } from "antd";
-import { grey2 } from "../../../styles/colors";
+import { grey1, grey3, grey4 } from "../../../styles/colors";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadioInput";
+import { SPACE_XS } from "../../../styles/spacing";
 
 /**
  * React component to display the list of files that can be run on the current
@@ -16,21 +17,13 @@ import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadio
  */
 export function SampleFilesListItem({
   sample,
+  style,
   removeSample,
   updateSelectedFiles,
 }) {
-  const [selected, setSelected] = React.useState(undefined);
-
-  React.useEffect(() => {
-    if (sample.files.length !== 0) {
-      setSelected(sample.files[0].identifier);
-    }
-  }, [sample.files]);
-
   const updateSelected = (e, id) => {
     e.preventDefault();
-    updateSelectedFiles(selected, id);
-    setSelected(id);
+    updateSelectedFiles(sample, id);
   };
 
   return (
@@ -41,18 +34,26 @@ export function SampleFilesListItem({
         </Button>,
       ]}
       style={{
-        backgroundColor: selected ? "transparent" : grey2,
+        backgroundColor: sample.selected ? grey1 : grey3,
+        boxSizing: `border-box`,
+        borderBottom: `1px solid ${grey4}`,
+        ...style,
       }}
     >
       <List.Item.Meta
         title={
-          <SampleDetailViewer sampleId={sample.id}>
-            <Button size="small">{sample.label}</Button>
+          <SampleDetailViewer
+            sampleId={sample.id}
+            removeSample={() => removeSample(sample)}
+          >
+            <Button size="small" style={{ marginLeft: SPACE_XS }}>
+              {sample.label}
+            </Button>
           </SampleDetailViewer>
         }
         description={
-          selected !== undefined ? (
-            <Radio.Group style={{ width: `100%` }} value={selected}>
+          sample.selected !== undefined ? (
+            <Radio.Group style={{ width: `100%` }} value={sample.selected}>
               {sample.files.map((file) => (
                 <BlockRadioInput
                   key={`pf-${file.identifier}`}
@@ -68,7 +69,9 @@ export function SampleFilesListItem({
               ))}
             </Radio.Group>
           ) : (
-            <div>{i18n("SampleFilesListItem.no-files")}</div>
+            <div style={{ marginLeft: SPACE_XS }}>
+              {i18n("SampleFilesListItem.no-files")}
+            </div>
           )
         }
       />

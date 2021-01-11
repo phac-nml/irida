@@ -1,10 +1,9 @@
 import React from "react";
-import { Button, Divider, Form, Select, Space, Tag } from "antd";
+import { Button, Form, Select, Space, Tag } from "antd";
 import { IconEdit } from "../../../components/icons/Icons";
 import { ParametersModal } from "./ParametersModal";
 import { useLaunch } from "../launch-context";
 import { SPACE_XS } from "../../../styles/spacing";
-import { SectionHeading } from "../../../components/ant.design/SectionHeading";
 import { setParameterSetById } from "../launch-dispatch";
 
 /**
@@ -28,14 +27,17 @@ export function SavedParameters({ form }) {
     form.setFieldsValue({ parameterSet: parameterSet.id });
   }, [form, parameterSet]);
 
-  return (
-    <section>
-      <SectionHeading id="launch-parameters">
-        {i18n("SavedParameters.title")}
-      </SectionHeading>
+  return parameterSets[0].parameters.length > 0 ? (
+    <>
       <Form.Item label={i18n("SavedParameters.title")}>
-        <div style={{ display: "flex" }}>
-          <div style={{ flexGrow: 1, marginRight: SPACE_XS }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `1fr min-content`,
+            columnGap: SPACE_XS,
+          }}
+        >
+          <div>
             <Form.Item name="parameterSet">
               <Select
                 value={parameterSet.id}
@@ -58,10 +60,13 @@ export function SavedParameters({ form }) {
           </div>
           <div>
             <Button icon={<IconEdit />} onClick={() => setVisible(true)} />
+            <ParametersModal
+              visible={visible}
+              closeModal={() => setVisible(false)}
+            />
           </div>
         </div>
       </Form.Item>
-      <ParametersModal visible={visible} closeModal={() => setVisible(false)} />
-    </section>
-  );
+    </>
+  ) : null;
 }
