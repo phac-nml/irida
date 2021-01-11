@@ -68,7 +68,9 @@ export function SampleFilesListItem({
               ))}
             </Radio.Group>
           ) : (
-            <div>{i18n("SampleFilesListItem.no-files")}</div>
+            <div style={{ marginLeft: SPACE_XS }}>
+              {i18n("SampleFilesListItem.no-files")}
+            </div>
           )
         }
       />
