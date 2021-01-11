@@ -1,9 +1,9 @@
 import React from "react";
 import { Modal, Typography } from "antd";
-import { VisibilityProvider } from "../../contexts/visibility-context";
-import { formatDate } from "../../utilities/date-utilities";
+import { VisibilityProvider } from "../../../contexts/visibility-context";
+import { formatDate } from "../../../utilities/date-utilities";
 import Markdown from "react-markdown";
-import { LinkButton } from "../../components/Buttons/LinkButton";
+import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 
 /**

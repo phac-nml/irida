@@ -1,6 +1,6 @@
 import React from "react";
-import { IconFlag } from "../../components/icons/Icons";
-import { blue6, grey5 } from "../../styles/colors";
+import { IconFlag } from "../../../components/icons/Icons";
+import { blue6, grey5 } from "../../../styles/colors";
 
 /**
  * React component to be used any time a PriorityFlag is used.

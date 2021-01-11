@@ -12,7 +12,7 @@ import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import { PriorityFlag } from "../../../announcement/PriorityFlag";
+import { PriorityFlag } from "../../../announcement/components/PriorityFlag";
 
 /**
  * React component to render the announcements table.
