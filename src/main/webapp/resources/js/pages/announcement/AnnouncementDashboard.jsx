@@ -41,7 +41,7 @@ export function AnnouncementDashboard() {
         emptyText: (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={<span>No new announcements</span>}
+            description={i18n("AnnouncementDashboard.emptyList")}
           />
         ),
       }}
