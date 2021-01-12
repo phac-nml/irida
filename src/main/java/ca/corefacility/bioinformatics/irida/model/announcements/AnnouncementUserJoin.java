@@ -34,7 +34,7 @@ import java.util.Date;
 @Table(name = "announcement_user", uniqueConstraints = @UniqueConstraint(columnNames = {"announcement_id", "user_id"}))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class AnnouncementUserJoin implements Join<Announcement, User> {
+public class AnnouncementUserJoin implements Join<Announcement, User>, Comparable<AnnouncementUserJoin> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,6 +63,11 @@ public class AnnouncementUserJoin implements Join<Announcement, User> {
         this();
         this.announcement = announcement;
         this.user = user;
+    }
+
+    @Override
+    public int compareTo(AnnouncementUserJoin other) {
+        return announcement.compareTo(other.getSubject());
     }
 
     public Date getCreatedDate() {

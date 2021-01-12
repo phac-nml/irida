@@ -8,12 +8,11 @@ import { dateColumnFormat } from "../../../../components/ant.design/table-render
 import { DeleteAnnouncement } from "./DeleteAnnouncement";
 import EditAnnouncement from "./EditAnnouncement";
 import ViewAnnouncement from "./ViewAnnouncement";
-import { IconFlag } from "../../../../components/icons/Icons";
-import { blue6, grey2 } from "../../../../styles/colors";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
+import { PriorityFlag } from "../../../announcement/components/PriorityFlag";
 
 /**
  * React component to render the announcements table.
@@ -27,10 +26,9 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
     {
       title: i18n("announcement.control.priority"),
       align: "center",
-      fixed: "left",
       dataIndex: "priority",
       render(hasPriority) {
-        return <IconFlag style={{ color: hasPriority ? blue6 : grey2 }} />;
+        return <PriorityFlag hasPriority={hasPriority} />;
       },
       sorter: true,
       width: 50,
@@ -39,7 +37,6 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       title: i18n("announcement.control.title"),
       className: "t-announcement",
       align: "left",
-      fixed: "left",
       dataIndex: "title",
       sorter: true,
     },

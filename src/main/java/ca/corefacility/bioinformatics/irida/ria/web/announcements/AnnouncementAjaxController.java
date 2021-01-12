@@ -1,8 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +41,48 @@ public class AnnouncementAjaxController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
 		return UIAnnouncementsService.getAnnouncementsAdmin(tableRequest);
+	}
+
+	/**
+	 * Handle request for getting a list of read announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link AnnouncementUserJoin}s for a user.
+	 */
+	@RequestMapping(value = "/user/read")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@ResponseBody
+	public ResponseEntity<List<AnnouncementUserJoin>> getReadAnnouncementsUser(Principal principal) {
+		List<AnnouncementUserJoin> readAnnouncements = UIAnnouncementsService.getReadAnnouncementsUser(principal);
+		Collections.sort(readAnnouncements);
+		return ResponseEntity.ok(readAnnouncements);
+	}
+
+	/**
+	 * Handle request for getting a list of unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link Announcement}s for a user.
+	 */
+	@RequestMapping(value = "/user/unread")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@ResponseBody
+	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
+		List<Announcement> unreadAnnouncements = UIAnnouncementsService.getUnreadAnnouncementsUser(principal);
+		Collections.sort(unreadAnnouncements);
+		return ResponseEntity.ok(unreadAnnouncements);
+	}
+
+	/**
+	 * Marks the announcement as read by the current user.
+	 *
+	 * @param aID ID of the {@link Announcement} to be marked
+	 * @param principal the currently logged in user
+	 */
+	@RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public void markAnnouncementRead(@PathVariable Long aID, Principal principal) {
+		UIAnnouncementsService.markAnnouncementAsReadByUser(aID, principal);
 	}
 
 	/**

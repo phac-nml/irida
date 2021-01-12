@@ -55,7 +55,11 @@ export default function AnnouncementForm({
         rules={[
           {
             required: true,
-            message: i18n("AnnouncementForm.form.error.title"),
+            message: i18n("AnnouncementForm.form.error.title.required"),
+          },
+          {
+            max: 255,
+            message: i18n("AnnouncementForm.form.error.title.maximum"),
           },
         ]}
       >

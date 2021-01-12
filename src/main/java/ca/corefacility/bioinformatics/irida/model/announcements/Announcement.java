@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.announcements;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import com.google.common.collect.ComparisonChain;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -110,7 +111,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
 
     @Override
     public int compareTo(Announcement other) {
-        return this.createdDate.compareTo(other.getCreatedDate());
+        return ComparisonChain.start().compareTrueFirst(priority, other.getPriority()).compare(other.getCreatedDate(), createdDate).result();
     }
 
     public Long getId() {
