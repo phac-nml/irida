@@ -31,9 +31,13 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 	 * @param apiRepository
 	 *            Repository storing information about {@link RemoteAPI}s
 	 */
+
+	private ProjectRemoteRepository repository;
+
 	@Autowired
 	public ProjectRemoteServiceImpl(ProjectRemoteRepository repository, RemoteAPIRepository apiRepository) {
 		super(repository, apiRepository);
+		this.repository = repository;
 	}
 
 	/**
@@ -43,5 +47,13 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 		String projectsHref = api.getServiceURI() + PROJECTS_BOOKMARK;
 
 		return list(projectsHref, api);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getProjectHash(Project project) {
+		return repository.readProjectHash(project);
 	}
 }

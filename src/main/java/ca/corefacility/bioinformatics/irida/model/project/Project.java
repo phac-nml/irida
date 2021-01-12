@@ -85,6 +85,11 @@ public class Project extends IridaResourceSupport
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
+
+	//hash for remote synchronized projects.  This will be the result of ProjectHashingService on the remote system
+	@JsonIgnore
+	@Column(name = "remote_project_hash")
+	private Integer remoteProjectHash;
 	
 	@Column(name = "sync_frequency")
 	@Enumerated(EnumType.STRING)
@@ -240,7 +245,15 @@ public class Project extends IridaResourceSupport
 	public void setRemoteStatus(RemoteStatus remoteStatus) {
 		this.remoteStatus = remoteStatus;
 	}
-	
+
+	public Integer getRemoteProjectHash() {
+		return remoteProjectHash;
+	}
+
+	public void setRemoteProjectHash(Integer remoteProjectHash) {
+		this.remoteProjectHash = remoteProjectHash;
+	}
+
 	public ProjectSyncFrequency getSyncFrequency() {
 		return syncFrequency;
 	}

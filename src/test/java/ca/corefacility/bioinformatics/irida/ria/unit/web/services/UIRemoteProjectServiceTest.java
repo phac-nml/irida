@@ -47,7 +47,7 @@ public class UIRemoteProjectServiceTest {
 				userService);
 
 		remoteProjectSettingsUpdateRequest = new RemoteProjectSettingsUpdateRequest(
-				false, false, ProjectSyncFrequency.NEVER);
+				false, false, false, ProjectSyncFrequency.NEVER);
 
 		remoteProject.setId(2L);
 		remoteProject.setRemoteStatus(remoteStatus);
