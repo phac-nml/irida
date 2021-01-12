@@ -35,6 +35,7 @@ export function SampleFilesListItem({
       ]}
       style={{
         backgroundColor: sample.selected ? grey1 : grey3,
+        boxSizing: `border-box`,
         borderBottom: `1px solid ${grey4}`,
         ...style,
       }}
@@ -68,7 +69,9 @@ export function SampleFilesListItem({
               ))}
             </Radio.Group>
           ) : (
-            <div>{i18n("SampleFilesListItem.no-files")}</div>
+            <div style={{ marginLeft: SPACE_XS }}>
+              {i18n("SampleFilesListItem.no-files")}
+            </div>
           )
         }
       />
