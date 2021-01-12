@@ -23,6 +23,7 @@ export function AnalysisTabularPreview({ output }) {
   const [fileRows, setFileRows] = useState([]);
   const [fileCols, setFileCols] = useState([]);
   const MAX_TABLE_ROWS_PER_PAGE = 5;
+  const [loading, setLoading] = useState(false);
 
   /*
    * Get tabular file output data from the start of a file to the end
@@ -31,14 +32,16 @@ export function AnalysisTabularPreview({ output }) {
    * can be changed as such
    */
   useEffect(() => {
+    setLoading(true);
     getDataViaLines({
       start: 0,
       end: null,
       submissionId: output.analysisSubmissionId,
-      fileId: output.id
-    }).then(data => {
+      fileId: output.id,
+    }).then((data) => {
       setFileRows(parseRows(data.lines, data.start, fileExtCSV));
       setFileCols(parseHeader(firstLine, fileExtCSV));
+      setLoading(false);
     });
   }, []);
 
@@ -49,6 +52,7 @@ export function AnalysisTabularPreview({ output }) {
         <Table
           layout="auto"
           columns={fileCols}
+          loading={loading}
           dataSource={fileRows}
           scroll={{ x: "max-content" }}
           pagination={

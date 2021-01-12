@@ -3,12 +3,12 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Divider, Row, Typography } from "antd";
+import { Divider, Space, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import {
   getNewChunkSize,
-  fileSizeLoaded
+  fileSizeLoaded,
 } from "../../../utilities/file-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
@@ -31,24 +31,27 @@ export default function AnalysisTextPreview({ output }) {
   const [filePointer, setFilePointer] = useState(0);
   const [savedText, setSavedText] = useState("");
   const chunkSize = 8192;
+  const [loading, setLoading] = useState(false);
 
   /*
    * Get n bytes of text file output data on load and set
    * the fileRows local state to this data.
    */
   useEffect(() => {
+    setLoading(true);
     getDataViaChunks({
       submissionId: output.analysisSubmissionId,
       fileId: output.id,
       seek: 0,
-      chunk: getNewChunkSize(0, output.fileSizeBytes, chunkSize)
-    }).then(data => {
+      chunk: getNewChunkSize(0, output.fileSizeBytes, chunkSize),
+    }).then((data) => {
       setSavedText(data.text);
       setFilePointer(data.filePointer);
       setFileRows(data.text);
       document.getElementById(
         `${output.filename}-preview-status`
       ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
+      setLoading(false);
     });
   }, []);
 
@@ -63,15 +66,17 @@ export default function AnalysisTextPreview({ output }) {
 
     if (
       scollElement.scrollTop + scrollableDivHeight >=
-        scollElement.scrollHeight &&
-      getNewChunkSize(filePointer, output.fileSizeBytes, chunkSize) >= 0
+        scollElement.scrollHeight - 1 &&
+      getNewChunkSize(filePointer, output.fileSizeBytes, chunkSize) >= 0 &&
+      filePointer < output.fileSizeBytes - 1
     ) {
+      setLoading(true);
       getDataViaChunks({
         submissionId: output.analysisSubmissionId,
         fileId: output.id,
         seek: filePointer,
-        chunk: getNewChunkSize(filePointer, output.fileSizeBytes, chunkSize)
-      }).then(data => {
+        chunk: getNewChunkSize(filePointer, output.fileSizeBytes, chunkSize),
+      }).then((data) => {
         if (data.text !== null) {
           setSavedText(savedText + data.text);
           setFilePointer(data.filePointer);
@@ -80,6 +85,7 @@ export default function AnalysisTextPreview({ output }) {
             `${output.filename}-preview-status`
           ).innerText = fileSizeLoaded(data.filePointer, output.fileSizeBytes);
         }
+        setLoading(false);
       });
     }
   }
@@ -100,7 +106,18 @@ export default function AnalysisTextPreview({ output }) {
           >
             <Text>{fileRows}</Text>
           </TextOutputWrapper>
-          <div id={`${output.filename}-preview-status`}></div>
+          <div>
+            <Space direction={"horizontal"}>
+              <span id={`${output.filename}-preview-status`}></span>
+              <span id={`${output.filename}-loading`}>
+                {loading ? (
+                  <ContentLoading
+                    message={i18n("AnalysisOutputs.retrievingFileData")}
+                  />
+                ) : null}
+              </span>
+            </Space>
+          </div>
           <Divider />
         </div>
       );

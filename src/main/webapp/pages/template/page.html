@@ -16,13 +16,22 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-  <nav th:replace="template/main-navigation.html :: #topnav"></nav>
   <header class="js-page-header"></header>
   <div class="container-fluid body-content" style="display: flex; flex-direction: column;">
     <div class="row" layout:fragment="page"></div>
   </div>
 
+
   <script th:inline="javascript">
+    window.IRIDA = window.IRIDA || {};
+    window.IRIDA.site = {
+      theme: /*[[${session.siteTheme}]]*/ "light",
+      colours: {
+        primary: /*[[${session.siteColourPrimary}]]*/ "#006d75",
+        links: /*[[${session.siteColourLinks}]]*/ "#1890ff",
+      }
+    };
+
     window.TL = {
       _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
       _BASE_URL      : /*[[@{/}]]*/ '/',

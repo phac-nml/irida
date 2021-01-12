@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -58,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import com.google.common.collect.ImmutableList;
@@ -941,4 +943,23 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		};
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getProjectsCreated(Date createdDate) {
+		Long projectsCount = projectRepository.countProjectsCreatedInTimePeriod(createdDate);
+		return projectsCount;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return projectRepository.countProjectsCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
+	}
+
 }

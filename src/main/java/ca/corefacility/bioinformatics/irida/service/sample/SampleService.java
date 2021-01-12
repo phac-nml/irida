@@ -3,13 +3,16 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -20,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -45,6 +49,33 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             {@link Project}.
 	 */
 	public ProjectSampleJoin getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
+
+	/**
+	 * Set the given set of {@link MetadataEntry} on the given {@link Sample} and save it to the database
+	 *
+	 * @param sample        the {@link Sample} to save metadata for
+	 * @param metadataToSet the metadata to save to the sample
+	 * @return the updated {@link Sample}
+	 */
+	public Sample updateSampleMetadata(Sample sample, Set<MetadataEntry> metadataToSet);
+
+	/**
+	 * Merge the given set of {@link MetadataEntry} into the given {@link Sample}.  This will replace existing metadata
+	 * that matches and add the new data to the sample.
+	 *
+	 * @param sample        the sample to update
+	 * @param metadataToAdd the metadata to add
+	 * @return the updated Sample
+	 */
+	public Sample mergeSampleMetadata(Sample sample, Set<MetadataEntry> metadataToAdd);
+
+	/**
+	 * Get the {@link MetadataEntry} set associated with the given {@link Sample}
+	 *
+	 * @param sample the {@link Sample} to get metadata for
+	 * @return the metadata associated with the given sample
+	 */
+	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
@@ -295,4 +326,22 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> searchAllSamples(String query, final Integer page, final Integer count,
 			final Sort sort);
+
+	/**
+	 * Get count of samples created in the time period
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @return An {@link Long} count of samples created
+	 */
+	public Long getSamplesCreated(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of samples created in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for samples created
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 }

@@ -47,6 +47,8 @@ import {
   UnorderedListOutlined,
   UserOutlined,
   UploadOutlined,
+  CalendarTwoTone,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -135,6 +137,8 @@ export const IconMetadataTemplate = ({ ...props }) => (
   <AppstoreOutlined {...props} />
 );
 
+export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
+
 /*
 Editor Icons
  */
@@ -170,6 +174,10 @@ export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
 export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
 export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
+
+export const IconCalendarTwoTone = ({ ...props }) => (
+  <CalendarTwoTone {...props} />
+);
 
 /*
 File Type Icons

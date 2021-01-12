@@ -917,12 +917,11 @@ public class AnalysisAjaxController {
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
 	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
-	 * @param locale       locale of the logged in user
 	 * @return {@link String} containing the image file contents as a base64 encoded string.
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale) {
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
@@ -953,15 +952,22 @@ public class AnalysisAjaxController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 
+		//grab the metadata once and put it in a map
+		Map<Sample, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
+		samples.stream()
+				.forEach(s -> {
+					Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+					sampleMetadata.put(s, metadataForSample);
+				});
+
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			if (!sample.getMetadata()
-					.isEmpty()) {
-				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				terms.addAll(metadata.keySet()
-						.stream()
-						.map(MetadataTemplateField::getLabel)
+			Set<MetadataEntry> metadataEntries = sampleMetadata.get(sample);
+			if (!metadataEntries.isEmpty()) {
+				terms.addAll(metadataEntries.stream()
+						.map(e -> e.getField()
+								.getLabel())
 						.collect(Collectors.toSet()));
 			}
 		}
@@ -969,13 +975,11 @@ public class AnalysisAjaxController {
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Set<MetadataEntry> metadataEntries = sampleMetadata.get(sample);
 			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
-			sampleMetadata.entrySet()
-					.forEach(e -> {
-						stringMetadata.put(e.getKey()
-								.getLabel(), e.getValue());
-					});
+			metadataEntries.forEach(e -> {
+				stringMetadata.put(e.getField().getLabel(), e);
+			});
 
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
@@ -992,7 +996,10 @@ public class AnalysisAjaxController {
 			metadata.put(sample.getLabel(), valuesMap);
 		}
 
-		return ImmutableMap.of("terms", terms, "metadata", metadata);
+		return ImmutableMap.of(
+				"terms", terms,
+				"metadata", metadata
+		);
 	}
 
 	/**
