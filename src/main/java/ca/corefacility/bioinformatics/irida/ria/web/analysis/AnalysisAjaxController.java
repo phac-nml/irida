@@ -918,12 +918,11 @@ public class AnalysisAjaxController {
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
 	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
-	 * @param locale       locale of the logged in user
 	 * @return {@link String} containing the image file contents as a base64 encoded string.
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale) {
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
