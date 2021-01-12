@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -51,6 +52,7 @@ public class AnalysisControllerTest {
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 	private UserService userServiceMock;
 	private AnalysisTypesService analysisTypesService;
+	private MessageSource messageSource;
 
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
@@ -64,9 +66,10 @@ public class AnalysisControllerTest {
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		userServiceMock = mock(UserService.class);
 		analysisTypesService = mock(AnalysisTypesService.class);
+		messageSource = mock(MessageSource.class);
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock);
+				userServiceMock, messageSource);
 
 	}
 
