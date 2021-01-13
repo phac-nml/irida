@@ -25,7 +25,6 @@ const TYPES = {
   SAVE_MODIFIED_PARAMETERS: "launch:save_modified_params",
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
-  USE_REFERENCE: "launch:use_reference",
   UPDATE_FILES: "launch:update_files",
 };
 
@@ -145,11 +144,6 @@ const reducer = (state, action) => {
         ...state,
         files: action.payload.files,
       };
-    case TYPES.USE_REFERENCE:
-      return {
-        ...state,
-        referenceFile: action.payload.id,
-      };
   }
 };
 
@@ -185,7 +179,14 @@ function LaunchProvider({ children }) {
           shareResultsWithProjects: true,
           updateSamples: false,
           emailPipelineResult: true,
+          ["projects"]: details.projects.map((project) => project.value),
         };
+
+        if (details.requiresReference) {
+          initialValues.reference = details.referenceFiles.length
+            ? details.referenceFiles[0].id
+            : null;
+        }
 
         // Get initial values for parameters with options.
         formattedParameterWithOptions.forEach((parameter) => {
@@ -212,10 +213,6 @@ function LaunchProvider({ children }) {
             parameterSets: formattedParameterSets,
             dynamicSources,
             files: [],
-            referenceFile:
-              details.requiresReference && details.referenceFiles.length
-                ? details.referenceFiles[0].id
-                : null,
           },
         });
       }

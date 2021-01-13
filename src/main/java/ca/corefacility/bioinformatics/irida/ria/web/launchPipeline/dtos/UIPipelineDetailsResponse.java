@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.DynamicSou
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
 /**
  * Model class to send details about a workflow pipeline to the UI
@@ -16,7 +17,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
-    private boolean canUpdateSamples;
+    private String updateSamples;
     private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
     private List<PipelineParameterWithOptions> parameterWithOptions;
@@ -24,6 +25,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private boolean acceptsSingleSequenceFiles;
     private boolean acceptsPairedSequenceFiles;
     private List<DynamicSource> dynamicSources;
+    private List<SelectOption> projects;
 
     public String getName() {
         return name;
@@ -81,12 +83,12 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.referenceFiles = referenceFiles;
     }
 
-    public boolean isCanUpdateSamples() {
-        return canUpdateSamples;
+    public String getUpdateSamples() {
+        return updateSamples;
     }
 
-    public void setCanUpdateSamples(boolean canUpdateSamples) {
-        this.canUpdateSamples = canUpdateSamples;
+    public void setUpdateSamples(String updateSamples) {
+        this.updateSamples = updateSamples;
     }
 
     public boolean isAcceptsSingleSequenceFiles() {
@@ -111,5 +113,13 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setDynamicSources(List<DynamicSource> dynamicSources) {
         this.dynamicSources = dynamicSources;
+    }
+
+    public List<SelectOption> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<SelectOption> projects) {
+        this.projects = projects;
     }
 }

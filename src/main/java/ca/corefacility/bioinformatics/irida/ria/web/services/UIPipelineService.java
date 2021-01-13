@@ -104,6 +104,15 @@ public class UIPipelineService {
 		detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[] {}, locale));
 		detailsResponse.setType(description.getName());
 
+		/*
+		Add what projects are in the cart for sharing afterwards
+		 */
+		List<Project> projects = (List<Project>) projectService.readMultiple(cartService.getProjectIdsInCart());
+		List<SelectOption> projectsToShareWith = projects.stream()
+				.map(p -> new SelectOption(String.valueOf(p.getId()), p.getLabel()))
+				.collect(Collectors.toList());
+		detailsResponse.setProjects(projectsToShareWith);
+
         /*
         Add all pipeline parameters
          */
@@ -118,11 +127,6 @@ public class UIPipelineService {
         Check / add reference files
          */
         if (description.requiresReference()) {
-            /*
-            Need to get a list of all the projects in the cart
-             */
-            List<Project> projects = (List<Project>) projectService.readMultiple(cartService.getProjectIdsInCart());
-
             detailsResponse.setRequiresReference(true);
             detailsResponse.setReferenceFiles(getReferenceFilesForPipeline(projects));
         }
@@ -133,14 +137,16 @@ public class UIPipelineService {
         Map<Project, List<Sample>> cart = cartService.getFullCart();
         boolean canUpdateSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(description.getAnalysisType());
         if (canUpdateSamples) {
-            Authentication authentication = SecurityContextHolder.getContext()
-                    .getAuthentication();
-            // Need to make sure that all samples are allowed to be updated.
-            canUpdateSamples = cart.values()
-                    .stream()
+			Authentication authentication = SecurityContextHolder.getContext()
+					.getAuthentication();
+			// Need to make sure that all samples are allowed to be updated.
+			canUpdateSamples = cart.values()
+					.stream()
 					.map(samples -> updateSamplePermission.isAllowed(authentication, samples))
 					.reduce(true, (a, b) -> a && b);
-			detailsResponse.setCanUpdateSamples(canUpdateSamples);
+			detailsResponse.setUpdateSamples(messageSource.getMessage(
+					"workflow.label.share-analysis-samples." + description.getAnalysisType()
+							.getType(), new Object[] {}, locale));
 		}
 
         /*

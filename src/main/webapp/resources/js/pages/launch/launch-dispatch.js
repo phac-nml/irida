@@ -56,12 +56,12 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     name,
     description,
     emailPipelineResult,
-    shareResultsWithProjects,
+    projects,
     updateSamples,
-    parameterSet,
+    reference,
     ...parameters
   } = formValues;
-  const { files: fileIds, referenceFile: reference } = state;
+  const { files: fileIds } = state;
 
   if (state.parameterSet.parameters) {
     state.parameterSet.parameters.forEach(
@@ -74,7 +74,7 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     description,
     fileIds,
     emailPipelineResult,
-    shareResultsWithProjects,
+    projects,
     updateSamples,
     reference,
     parameters,
@@ -82,16 +82,6 @@ export async function launchNewPipeline(dispatch, formValues, state) {
   return launchPipeline(PIPELINE_ID, params);
   // console.log(parameters, state);
   // return Promise.resolve("NOT YET!!");
-}
-
-/**
- * Set the currently selected reference file by its id.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {number} id - identifier for the reference file to use
- */
-export function setReferenceFileById(dispatch, id) {
-  dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
 }
 
 /**

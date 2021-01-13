@@ -30,7 +30,7 @@ public class LaunchRequest {
 	/**
 	 * Write results back to the project the samples came from
 	 */
-	private boolean shareResultsWithProjects;
+	private List<Long> projects;
 
 	/**
 	 * Update the samples run on the pipeline with the pipeline results
@@ -86,12 +86,12 @@ public class LaunchRequest {
 		this.emailPipelineResult = emailPipelineResult;
 	}
 
-	public boolean isShareResultsWithProjects() {
-		return shareResultsWithProjects;
+	public List<Long> getProjects() {
+		return projects;
 	}
 
-	public void setShareResultsWithProjects(boolean shareResultsWithProjects) {
-		this.shareResultsWithProjects = shareResultsWithProjects;
+	public void setProjects(List<Long> projects) {
+		this.projects = projects;
 	}
 
 	public boolean isUpdateSamples() {
