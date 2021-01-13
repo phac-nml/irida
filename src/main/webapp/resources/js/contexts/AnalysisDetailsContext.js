@@ -144,6 +144,7 @@ function AnalysisDetailsProvider(props) {
       emailPipelineResultError = true;
     } else if (emailPreference === "completed") {
       emailPipelineResultCompleted = true;
+      emailPipelineResultError = true;
     }
 
     updateAnalysisEmailPipelineResult({

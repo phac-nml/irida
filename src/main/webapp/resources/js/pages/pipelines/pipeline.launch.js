@@ -160,7 +160,9 @@ function PipelineController(
       // Whether or not to email user on pipeline completion
       emailUponCompletion = $("#receive-email").val() === "completed",
       // Whether or not to email user on pipeline error
-      emailUponError = $("#receive-email").val() === "error",
+      emailUponError =
+        $("#receive-email").val() === "error" ||
+        $("#receive-email").val() === "completed",
       // Holds all the ids for the selected single-end
       single = [],
       // Holds all the ids for the selected paired-end

@@ -143,7 +143,7 @@ export default function AnalysisDetails() {
         <Select
           defaultValue={
             analysisDetailsContext.emailPipelineResultCompleted &&
-            !analysisDetailsContext.emailPipelineResultError
+            analysisDetailsContext.emailPipelineResultError
               ? "completed"
               : !analysisDetailsContext.emailPipelineResultCompleted &&
                 analysisDetailsContext.emailPipelineResultError

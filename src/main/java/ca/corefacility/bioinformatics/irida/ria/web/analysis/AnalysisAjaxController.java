@@ -192,7 +192,7 @@ public class AnalysisAjaxController {
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
 
-			if(parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
+			if(parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
 				message = messageSource.getMessage("AnalysisDetails.receiveCompletionEmail", new Object[] {},
 						locale);
 			} else if(!parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
