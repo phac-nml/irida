@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -160,6 +161,15 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> getUnreadUsersForAnnouncement(Announcement announcement) throws EntityNotFoundException {
         return announcementUserJoinRepository.getUsersByAnnouncementUnread(announcement);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user) {
+        return announcementUserJoinRepository.getAnnouncementsForUser(user);
     }
 
     /**

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +42,20 @@ public class AnnouncementAjaxController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
 		return UIAnnouncementsService.getAnnouncementsAdmin(tableRequest);
+	}
+
+	/**
+	 * Handle request for getting a list of read and unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of {@link AnnouncementUserReadDetails} objects representing the read and unread announcements for a user.
+	 */
+	@RequestMapping(value = "/user/list")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@ResponseBody
+	public ResponseEntity<List<AnnouncementUserReadDetails>> getAnnouncementsUser(Principal principal) {
+		List<AnnouncementUserReadDetails> announcements = UIAnnouncementsService.getAnnouncementsUser(principal);
+		return ResponseEntity.ok(announcements);
 	}
 
 	/**

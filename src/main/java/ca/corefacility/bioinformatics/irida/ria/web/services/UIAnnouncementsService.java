@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,18 @@ public class UIAnnouncementsService {
 				.map(AnnouncementTableModel::new)
 				.collect(Collectors.toList());
 		return new TableResponse<>(announcements, page.getTotalElements());
+	}
+
+	/**
+	 * Returns a list of read and unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of {@link AnnouncementUserReadDetails} objects representing read and unread announcements for a user.
+	 */
+	public List<AnnouncementUserReadDetails> getAnnouncementsUser(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		List<AnnouncementUserReadDetails> announcements = announcementService.getAnnouncementsForUser(user);
+		return announcements;
 	}
 
 	/**
