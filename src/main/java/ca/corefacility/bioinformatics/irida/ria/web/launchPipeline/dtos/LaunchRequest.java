@@ -49,7 +49,7 @@ public class LaunchRequest {
 	 * Should be: key: name, value: value
 	 * The value needs to be an object because it can be boolean, string, number, etc...
 	 */
-	private Map<String, Object> parameters;
+	private Map<String, String> parameters;
 
 	public LaunchRequest() {
 	}
@@ -110,11 +110,11 @@ public class LaunchRequest {
 		this.reference = reference;
 	}
 
-	public Map<String, Object> getParameters() {
+	public Map<String, String> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(Map<String, Object> parameters) {
+	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
 }

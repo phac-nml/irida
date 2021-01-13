@@ -7,7 +7,6 @@ import React from "react";
 import { render } from "react-dom";
 import { AnalysesQueue } from "../../components/AnalysesQueue";
 import { emptyCart, removeSample } from "../../apis/cart/cart";
-import { CART } from "../../utilities/events-utilities";
 
 render(<AnalysesQueue />, document.querySelector("#queue-root"));
 
@@ -248,56 +247,58 @@ function PipelineController(
       if (shared.length > 0) {
         params["sharedProjects"] = shared;
       }
+
+      console.log(params);
       // AJAX POST with jQuery instead of Angular $http object so that
       // JSON request body is encoded properly
-      $.ajax({
-        type: "POST",
-        url: window.PAGE.urls.startUrl,
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(params),
-        success: function (response, status, request) {
-          if (response.success) {
-            vm.success = true;
-          } else {
-            vm.loading = false;
-            if (response.error) {
-              vm.error = response.error;
-            } else if (response.parameterError) {
-              vm.paramError = response.parameters;
-            } else if (response.pipelineError) {
-              window.notifications.show({
-                type: "error",
-                text: response.pipelineError,
-                timeout: false,
-                progressBar: false,
-                closeWith: ["button"],
-              });
-            }
-          }
-          // trigger Angular digest with the following call
-          $scope.$apply();
-        },
-        error: function (response, status, request) {
-          const errorMsg =
-            request +
-            "- HTTP " +
-            response.status +
-            " - " +
-            JSON.stringify(response.responseJSON);
-          vm.success = false;
-          vm.loading = false;
-          vm.error = errorMsg;
-          window.notifications.show({
-            type: "error",
-            text: errorMsg,
-            timeout: false,
-            progressBar: false,
-            closeWith: ["button"],
-          });
-          // trigger Angular digest with the following call
-          $scope.$apply();
-        },
-      });
+      // $.ajax({
+      //   type: "POST",
+      //   url: window.PAGE.urls.startUrl,
+      //   contentType: "application/json; charset=utf-8",
+      //   data: JSON.stringify(params),
+      //   success: function (response, status, request) {
+      //     if (response.success) {
+      //       vm.success = true;
+      //     } else {
+      //       vm.loading = false;
+      //       if (response.error) {
+      //         vm.error = response.error;
+      //       } else if (response.parameterError) {
+      //         vm.paramError = response.parameters;
+      //       } else if (response.pipelineError) {
+      //         window.notifications.show({
+      //           type: "error",
+      //           text: response.pipelineError,
+      //           timeout: false,
+      //           progressBar: false,
+      //           closeWith: ["button"],
+      //         });
+      //       }
+      //     }
+      //     // trigger Angular digest with the following call
+      //     $scope.$apply();
+      //   },
+      //   error: function (response, status, request) {
+      //     const errorMsg =
+      //       request +
+      //       "- HTTP " +
+      //       response.status +
+      //       " - " +
+      //       JSON.stringify(response.responseJSON);
+      //     vm.success = false;
+      //     vm.loading = false;
+      //     vm.error = errorMsg;
+      //     window.notifications.show({
+      //       type: "error",
+      //       text: errorMsg,
+      //       timeout: false,
+      //       progressBar: false,
+      //       closeWith: ["button"],
+      //     });
+      //     // trigger Angular digest with the following call
+      //     $scope.$apply();
+      //   },
+      // });
     }
   };
 

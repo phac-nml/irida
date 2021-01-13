@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -18,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRe
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineStartService;
 
 /**
  * Controller to handle AJAX requests from the UI for Workflow Pipelines
@@ -26,11 +28,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 @RequestMapping("/ajax/pipeline")
 public class LaunchAjaxController {
     private final UIPipelineService pipelineService;
+    private final UIPipelineStartService startService;
     private final UIPipelineSampleService sampleService;
 
     @Autowired
-    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineSampleService sampleService) {
+    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineStartService startService,
+            UIPipelineSampleService sampleService) {
         this.pipelineService = pipelineService;
+        this.startService = startService;
         this.sampleService = sampleService;
     }
 
@@ -73,7 +78,14 @@ public class LaunchAjaxController {
      * @return A response to let the UI know the pipeline was launched successfully
      */
     @PostMapping("/{id}")
-    public ResponseEntity<String> launchPipeline(@RequestBody LaunchRequest request) {
+    public ResponseEntity<String> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request) {
+        try {
+            startService.start(id, request);
+        } catch (IridaWorkflowNotFoundException e) {
+
+            // TODO: Return notification that pipeline cannot be found
+            e.printStackTrace();
+        }
         return ResponseEntity.ok("YAY!!!!");
     }
 
