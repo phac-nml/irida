@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -102,12 +101,12 @@ public class UIPipelineStartService {
 
 		IridaWorkflowInput inputs = description.getInputs();
 		if (inputs.requiresSingleSample()) {
-			List<AnalysisSubmission> submissions = (List<AnalysisSubmission>) submissionService.createSingleSampleSubmission(
+			submissionService.createSingleSampleSubmission(
 					workflow, request.getReference(), singles, pairs, request.getParameters(), namedParameters,
 					request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
 					request.isEmailPipelineResult());
 		} else {
-			AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
+			submissionService.createMultipleSampleSubmission(workflow,
 					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
 					request.getDescription(), projects, request.isUpdateSamples(), request.isEmailPipelineResult());
 		}
