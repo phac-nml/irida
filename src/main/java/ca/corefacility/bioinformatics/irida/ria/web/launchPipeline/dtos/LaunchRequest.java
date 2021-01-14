@@ -51,6 +51,11 @@ public class LaunchRequest {
 	 */
 	private Map<String, String> parameters;
 
+	/**
+	 * Identifier for a set of IridaWorkflowNamedParameters
+	 */
+	private Long savedParameters;
+
 	public LaunchRequest() {
 	}
 
@@ -116,5 +121,13 @@ public class LaunchRequest {
 
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+
+	public Long getSavedParameters() {
+		return savedParameters;
+	}
+
+	public void setSavedParameters(Long savedParameters) {
+		this.savedParameters = savedParameters;
 	}
 }
