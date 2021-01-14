@@ -140,7 +140,7 @@ public class AnnouncementsController extends BaseController {
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String submitUpdatedAnnouncement(@PathVariable long announcementID,
-                                            @RequestParam(defaultValue = "title placeholder") String title,
+                                            @RequestParam String title,
                                             @RequestParam(required = false) String message,
                                             @RequestParam(defaultValue = "false") boolean priority,
                                             Model model) {
