@@ -97,4 +97,9 @@ public class Cart extends HashMap<Long, Long> {
 	public Long isSampleInCart(Long sampleId) {
 		return this.getOrDefault(sampleId, null);
 	}
+
+	public void empty() {
+		this.sampleNames.clear();
+		this.clear();
+	}
 }
