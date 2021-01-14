@@ -92,8 +92,6 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     savedParameters,
   };
   return launchPipeline(PIPELINE_ID, params);
-  // console.log(parameters, state);
-  // return Promise.resolve("NOT YET!!");
 }
 
 /**
