@@ -103,6 +103,7 @@ public class AnnouncementControlPage extends AbstractPage {
         waitForElementVisible(By.className("ant-popover-message"));
         WebElement confirm_delete_button = driver.findElement(By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
         confirm_delete_button.click();
+        waitForElementInvisible(By.className("ant-popover-message"));
     }
 
 }
