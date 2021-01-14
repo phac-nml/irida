@@ -98,6 +98,9 @@ public class Cart extends HashMap<Long, Long> {
 		return this.getOrDefault(sampleId, null);
 	}
 
+	/**
+	 * Empty the cart and remove all sample names
+	 */
 	public void empty() {
 		this.sampleNames.clear();
 		this.clear();
