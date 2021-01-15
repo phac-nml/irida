@@ -75,7 +75,9 @@ public class LaunchAjaxController {
     /**
      * Launch a new IRIDA Workflow Pipeline
      *
+     * @param id The UUID for a workflow
      * @param request required parameters to launch the pipeline
+     * @param locale the Locale of the currently logged in user.
      * @return A response to let the UI know the pipeline was launched successfully
      */
     @PostMapping("/{id}")
