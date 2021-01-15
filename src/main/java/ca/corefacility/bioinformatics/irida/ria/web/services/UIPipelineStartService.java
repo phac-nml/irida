@@ -36,17 +36,20 @@ public class UIPipelineStartService {
 	private final SequencingObjectService sequencingObjectService;
 	private final AnalysisSubmissionService submissionService;
 	private final ProjectService projectService;
+	private final UICartService cartService;
 	private final WorkflowNamedParametersService namedParametersService;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public UIPipelineStartService(IridaWorkflowsService workflowsService, SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
-			ProjectService projectService, WorkflowNamedParametersService namedParametersService,
-			MessageSource messageSource) {
+	public UIPipelineStartService(IridaWorkflowsService workflowsService,
+			SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
+			ProjectService projectService, UICartService cartService,
+			WorkflowNamedParametersService namedParametersService, MessageSource messageSource) {
 		this.workflowsService = workflowsService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.submissionService = submissionService;
 		this.projectService = projectService;
+		this.cartService = cartService;
 		this.namedParametersService = namedParametersService;
 		this.messageSource = messageSource;
 	}
@@ -127,6 +130,7 @@ public class UIPipelineStartService {
 					request.getDescription(), projects, request.isUpdateSamples(), request.isEmailPipelineResult());
 			submissionId = submission.getId();
 		}
+		cartService.emptyCart();
 		return submissionId;
 	}
 }
