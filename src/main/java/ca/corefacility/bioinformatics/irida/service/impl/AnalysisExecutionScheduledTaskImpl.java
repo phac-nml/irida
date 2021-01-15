@@ -191,7 +191,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
-					if (analysisSubmission.getEmailPipelineResult()) {
+					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
 					}
 				}
@@ -335,10 +335,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 			/*
 			 If the analysis has finished with an error or completed successfully
-			 and the user selected to be emailed on completion, then the following code
+			 and the user selected to be emailed on completion or error, then the following code
 			 will be executed.
 			 */
-			if(analysisSubmission.getEmailPipelineResult()) {
+			if (analysisSubmission.getEmailPipelineResultCompleted()
+					|| analysisSubmission.getEmailPipelineResultError()) {
 				emailController.sendPipelineStatusEmail(analysisSubmission);
 			}
 		}
