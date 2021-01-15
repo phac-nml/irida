@@ -69,8 +69,14 @@ public class UIRemoteProjectService {
 						new Object[] { remoteProjectSettingsUpdateRequest.getProjectSyncFrequency() }, locale);
 			}
 
-			if (remoteProjectSettingsUpdateRequest.getForceSync()) {
+			if (remoteProjectSettingsUpdateRequest.getMarkSync()) {
 				remoteStatus.setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+				updates.put("remoteStatus", remoteStatus);
+				message = messageSource.getMessage("server.ProjectRemote.marked.for.sync", new Object[] {}, locale);
+			}
+
+			if (remoteProjectSettingsUpdateRequest.getForceSync()) {
+				remoteStatus.setSyncStatus(RemoteStatus.SyncStatus.FORCE);
 				updates.put("remoteStatus", remoteStatus);
 				message = messageSource.getMessage("server.ProjectRemote.marked.for.sync", new Object[] {}, locale);
 			}
