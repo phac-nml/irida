@@ -60,14 +60,16 @@ export async function getAnalysisInputFiles(submissionId) {
  */
 export async function updateAnalysisEmailPipelineResult({
   submissionId,
-  emailPipelineResult,
+  emailPipelineResultCompleted,
+  emailPipelineResultError,
 }) {
   try {
     const { data } = await axios.patch(
       `${ANALYSIS_URL}/update-email-pipeline-result`,
       {
         analysisSubmissionId: submissionId,
-        emailPipelineResult: emailPipelineResult,
+        emailPipelineResultCompleted: emailPipelineResultCompleted,
+        emailPipelineResultError: emailPipelineResultError,
       }
     );
     return data.message;
