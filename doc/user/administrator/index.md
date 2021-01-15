@@ -373,7 +373,7 @@ The documentation for using the IRIDA Uploader is included in the package, but c
 
 Displaying IRIDA Platform Updates/Announcements
 ===============================================
-Announcements and updates can be displayed to users after they log in:
+Announcements and updates can be displayed to users after they log in.
 
 ![Announcements home page display](images/announcements-home-page.png)
 
@@ -381,21 +381,37 @@ Administrators can create new announcements or view existing ones by clicking on
 
 ![Announcements side menu link](images/announcements-side-menu.png)
 
-New Announcements can be created by clicking on the "Create New Announcement" button at the top-left. 
+New Announcements can be created by clicking on the "Add Announcement" button:
 
 ![Announcements create button](images/add-announcement-button.png)
 
-These announcements are rendered as markdown. Saving the new announcement will allow users to see this on the front page of IRIDA.
+Complete the form and hit the "Create Announcement" button. Note, the announcement content is rendered as markdown to the user.
 
 ![Announcements create modal](images/add-announcement.png)
 
-To edit an announcement, or to see who has read the announcement, you can click on the announcement's title: 
+To edit an announcement, click the edit button: 
 
-![Announcements details link](images/announcement-details-link.png)
+![Announcements edit link](images/edit-announcement-button.png)
 
-The announcement can be edited and saved, or deleted from this page. You can also view a list of users who have marked this particular announcement as read, as well as see when they did so:
+After editing the announcement, you can save your changes by hitting the "Update Announcement" button:
 
-![Announcements edit or view details page](images/announcement-details.png)
+![Announcements edit modal](images/edit-announcement.png)
+
+To see the details of an announcement, click the details button: 
+
+![Announcements details link](images/announcement-details-button.png)
+
+The announcement details displays a list of users who have marked this particular announcement as read, as well as see when they did so.
+
+![Announcements details modal](images/announcement-details.png)
+
+To delete an announcement, click the delete button: 
+
+![Announcements delete button](images/delete-announcement-button.png)
+
+To confirm the deletion of the announcement, click the "Delete" button: 
+
+![Announcements delete confirmation](images/delete-announcement-confirmation.png)
 
 Viewing All Project Exports
 ===========================
