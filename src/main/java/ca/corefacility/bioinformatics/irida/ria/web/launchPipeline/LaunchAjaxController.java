@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -78,13 +79,16 @@ public class LaunchAjaxController {
      * @return A response to let the UI know the pipeline was launched successfully
      */
     @PostMapping("/{id}")
-    public ResponseEntity<String> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request) {
+    public ResponseEntity<String> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request, Locale locale) {
         try {
-            startService.start(id, request);
+            startService.start(id, request, locale);
         } catch (IridaWorkflowNotFoundException e) {
 
             // TODO: Return notification that pipeline cannot be found
             e.printStackTrace();
+        } catch (ReferenceFileRequiredException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
         return ResponseEntity.ok("YAY!!!!");
     }

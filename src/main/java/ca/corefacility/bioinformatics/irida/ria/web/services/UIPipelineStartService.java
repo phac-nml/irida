@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -30,6 +33,7 @@ public class UIPipelineStartService {
 	private final AnalysisSubmissionService submissionService;
 	private final ProjectService projectService;
 	private final WorkflowNamedParametersService namedParametersService;
+	private final MessageSource messageSource;
 
 	/*
 	 * CONSTANTS
@@ -40,15 +44,18 @@ public class UIPipelineStartService {
 	@Autowired
 	public UIPipelineStartService(IridaWorkflowsService workflowsService,
 			SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
-			ProjectService projectService, WorkflowNamedParametersService namedParametersService) {
+			ProjectService projectService, WorkflowNamedParametersService namedParametersService,
+			MessageSource messageSource) {
 		this.workflowsService = workflowsService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.submissionService = submissionService;
 		this.projectService = projectService;
 		this.namedParametersService = namedParametersService;
+		this.messageSource = messageSource;
 	}
 
-	public void start(UUID id, LaunchRequest request) throws IridaWorkflowNotFoundException {
+	public void start(UUID id, LaunchRequest request, Locale locale)
+			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
@@ -96,7 +103,8 @@ public class UIPipelineStartService {
 		// Make sure there is a reference files if one is required.
 
 		if (description.requiresReference()) {
-			// TODO: Throw reference needed error
+			throw new ReferenceFileRequiredException(
+					messageSource.getMessage("server.ReferenceFiles.notFound", new Object[] {}, locale));
 		}
 
 		IridaWorkflowInput inputs = description.getInputs();
