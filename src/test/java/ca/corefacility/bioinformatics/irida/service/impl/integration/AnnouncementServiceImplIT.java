@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,6 +262,19 @@ public class AnnouncementServiceImplIT {
     public void testGetUnreadUsersForAnnouncement() {
         List<User> list = announcementService.getUnreadUsersForAnnouncement(announcementService.read(1L));
         assertEquals("Number of unread users was unexpected", 2, list.size());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    public void testAnnouncementsForUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+
+        List<AnnouncementUserReadDetails> list = announcementService.getAnnouncementsForUser(user);
+        assertEquals("Number of read and unread announcements doesn't match expected value", 6, list.size());
+
+        Long readListCount = list.stream().filter(a -> a.getAnnouncementUserJoin() != null).count();
+        assertEquals("Number of unread announcements doesn't match expected value", 5L, (long) readListCount);
     }
 
     @Test
