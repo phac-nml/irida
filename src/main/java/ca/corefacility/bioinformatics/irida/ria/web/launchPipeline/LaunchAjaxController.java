@@ -79,18 +79,14 @@ public class LaunchAjaxController {
      * @return A response to let the UI know the pipeline was launched successfully
      */
     @PostMapping("/{id}")
-    public ResponseEntity<String> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request, Locale locale) {
+    public ResponseEntity<AjaxResponse> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request, Locale locale) {
         try {
-            startService.start(id, request, locale);
-        } catch (IridaWorkflowNotFoundException e) {
-
-            // TODO: Return notification that pipeline cannot be found
-            e.printStackTrace();
-        } catch (ReferenceFileRequiredException e) {
+            return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(startService.start(id, request, locale)));
+        } catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
+                    .body(new AjaxErrorResponse(e.getMessage()));
+
         }
-        return ResponseEntity.ok("YAY!!!!");
     }
 
     /**

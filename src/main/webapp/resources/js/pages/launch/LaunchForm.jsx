@@ -2,13 +2,14 @@ import React from "react";
 import { LaunchDetails } from "./LaunchDetails";
 import { SharePipelineResults } from "./SharePipelineResults";
 import { ReferenceFiles } from "./references/ReferenceFiles";
-import { Button, Form, Space } from "antd";
+import { Button, Form, notification, Space } from "antd";
 import { IconLaunchPipeline } from "../../components/icons/Icons";
 import { useLaunch } from "./launch-context";
 import { LaunchFiles } from "./LaunchFiles";
 import { launchNewPipeline } from "./launch-dispatch";
 import { LaunchParameters } from "./LaunchParameters";
 import { SPACE_LG } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * React component to handle all form components for launching a pipeline.
@@ -16,7 +17,14 @@ import { SPACE_LG } from "../../styles/spacing";
  * @constructor
  */
 export function LaunchForm() {
+  const LAUNCH_STATES = {
+    WAITING: "WAITING",
+    LOADING: "LOADING",
+    SUCCESS: "SUCCESS",
+  };
+
   const [state, launchDispatch] = useLaunch();
+  const [launchState, setLaunchState] = React.useState(LAUNCH_STATES.WAITING);
   const [form] = Form.useForm();
 
   /**
@@ -25,10 +33,23 @@ export function LaunchForm() {
    */
   const onFinish = () => {
     // Add any required extra validation here.
-    form
-      .validateFields()
-      .then((values) => launchNewPipeline(launchDispatch, values, state));
-    // Add any required UI updates here.
+    form.validateFields().then((values) => {
+      setLaunchState(LAUNCH_STATES.LOADING);
+      launchNewPipeline(launchDispatch, values, state)
+        .then(({ id }) => {
+          // Redirect to analysis page
+          setLaunchState(LAUNCH_STATES.SUCCESS);
+          window.setTimeout(() => {
+            window.location.href = setBaseUrl(`analysis/${id}`);
+          }, 350);
+        })
+        .catch(({ error }) => {
+          setLaunchState(LAUNCH_STATES.WAITING);
+          notification.error({
+            message: error,
+          });
+        });
+    });
   };
 
   return (
@@ -50,7 +71,12 @@ export function LaunchForm() {
           size="large"
           htmlType="submit"
           icon={<IconLaunchPipeline />}
+          loading={launchState === LAUNCH_STATES.LOADING}
           style={{ marginTop: SPACE_LG }}
+          disabled={
+            launchState === LAUNCH_STATES.LOADING ||
+            launchState === LAUNCH_STATES.SUCCESS
+          }
         >
           {i18n("LaunchContent.submit")}
         </Button>

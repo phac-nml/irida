@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -26,6 +27,9 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
+/**
+ * Service to handle starting of {@link IridaWorkflow}s through the UI.
+ */
 @Component
 public class UIPipelineStartService {
 	private final IridaWorkflowsService workflowsService;
@@ -35,15 +39,8 @@ public class UIPipelineStartService {
 	private final WorkflowNamedParametersService namedParametersService;
 	private final MessageSource messageSource;
 
-	/*
-	 * CONSTANTS
-	 */
-	private static final String DEFAULT_WORKFLOW_PARAMETERS_ID = "default";
-	private static final String CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID = "custom";
-
 	@Autowired
-	public UIPipelineStartService(IridaWorkflowsService workflowsService,
-			SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
+	public UIPipelineStartService(IridaWorkflowsService workflowsService, SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
 			ProjectService projectService, WorkflowNamedParametersService namedParametersService,
 			MessageSource messageSource) {
 		this.workflowsService = workflowsService;
@@ -54,7 +51,17 @@ public class UIPipelineStartService {
 		this.messageSource = messageSource;
 	}
 
-	public void start(UUID id, LaunchRequest request, Locale locale)
+	/**
+	 * Start a new pipeline
+	 *
+	 * @param id      - pipeline identifier
+	 * @param request - details about the request to start the pipeline
+	 * @param locale  - currently logged in users locale
+	 * @return The id of the new {@link AnalysisSubmission}, if more than one are kicked off, then the first id is returned.
+	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
+	 * @throws ReferenceFileRequiredException thrown if a reference file is required and not sent (should not happen).
+	 */
+	public Long start(UUID id, LaunchRequest request, Locale locale)
 			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -89,35 +96,37 @@ public class UIPipelineStartService {
 				if (sequencingObject instanceof SingleEndSequenceFile) {
 					singles.add((SingleEndSequenceFile) sequencingObject);
 				}
-				// TODO: throw bad files exception
 			});
 		} else if (description.acceptsPairedSequenceFiles()) {
 			sequencingObjects.forEach(sequencingObject -> {
 				if (sequencingObject instanceof SequenceFilePair) {
 					pairs.add((SequenceFilePair) sequencingObject);
 				}
-				// TODO: throw bad files exception
 			});
 		}
 
 		// Make sure there is a reference files if one is required.
 
-		if (description.requiresReference()) {
+		if (description.requiresReference() && request.getReference() == null) {
 			throw new ReferenceFileRequiredException(
 					messageSource.getMessage("server.ReferenceFiles.notFound", new Object[] {}, locale));
 		}
 
 		IridaWorkflowInput inputs = description.getInputs();
+		Long submissionId;
 		if (inputs.requiresSingleSample()) {
-			submissionService.createSingleSampleSubmission(
+			List<AnalysisSubmission> submissions = (List<AnalysisSubmission>) submissionService.createSingleSampleSubmission(
 					workflow, request.getReference(), singles, pairs, request.getParameters(), namedParameters,
 					request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
 					request.isEmailPipelineResult());
+			submissionId = submissions.get(0)
+					.getId();
 		} else {
-			submissionService.createMultipleSampleSubmission(workflow,
+			AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
 					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
 					request.getDescription(), projects, request.isUpdateSamples(), request.isEmailPipelineResult());
+			submissionId = submission.getId();
 		}
-
+		return submissionId;
 	}
 }
