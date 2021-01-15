@@ -140,6 +140,10 @@ public class RemoteStatus {
 		 */
 		MARKED,
 		/**
+		 * Marked to have a full resync of all elements regardless of project hash
+		 */
+		FORCE,
+		/**
 		 * Currently being copied
 		 */
 		UPDATING,
@@ -150,7 +154,7 @@ public class RemoteStatus {
 		/**
 		 * No active OAuth2 token to synchronize this project
 		 */
-		UNAUTHORIZED, 
+		UNAUTHORIZED,
 		/**
 		 * An error occurred while synchronizing.
 		 */

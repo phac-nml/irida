@@ -12,16 +12,17 @@ import { getOutputInfo } from "../apis/analysis/analysis";
 const initialContext = {
   outputs: null,
   fileTypes: [
-    { hasJsonFile: false, hasTabularFile: false, hasTextFile: false },
+    { hasJsonFile: false, hasTabularFile: false, hasTextFile: false, hasHtmlFile: false },
   ],
 };
 
 const AnalysisOutputsContext = React.createContext(initialContext);
-const blocklistExtSet = new Set(["zip", "pdf", "html", "xls"]);
+const blocklistExtSet = new Set(["zip", "pdf", "xls"]);
 const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 const excelFileExtSet = new Set(["xlsx"]);
 const imageFileExtSet = new Set(["png", "jpeg", "jpg"]);
+const htmlFileExtSet = new Set(["html"]);
 
 function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
@@ -36,7 +37,8 @@ function AnalysisOutputsProvider(props) {
         !jsonExtSet.has(fileExt) &&
         !blocklistExtSet.has(fileExt) &&
         !excelFileExtSet.has(fileExt) &&
-        !imageFileExtSet.has(fileExt)
+        !imageFileExtSet.has(fileExt) &&
+        !htmlFileExtSet.has(fileExt)
       );
     } else if (type === "excel") {
       return excelFileExtSet.has(fileExt);
@@ -46,6 +48,8 @@ function AnalysisOutputsProvider(props) {
       return jsonExtSet.has(fileExt);
     } else if (type === "tab") {
       return tabExtSet.has(fileExt);
+    } else if (type === "html") {
+      return htmlFileExtSet.has(fileExt);
     }
   }
 
@@ -55,6 +59,7 @@ function AnalysisOutputsProvider(props) {
     let hasTextFile = false;
     let hasExcelFile = false;
     let hasImageFile = false;
+    let hasHtmlFile = false;
 
     getOutputInfo(analysisIdentifier).then((data) => {
       // Check if json, tab, and/or text files exist
@@ -82,6 +87,10 @@ function AnalysisOutputsProvider(props) {
           if (!hasImageFile) {
             hasImageFile = getPreviewForFileType(el.fileExt, "image");
           }
+
+          if (!hasHtmlFile) {
+            hasHtmlFile = getPreviewForFileType(el.fileExt, "html");
+          }
         });
       }
 
@@ -96,6 +105,7 @@ function AnalysisOutputsProvider(props) {
               hasTextFile,
               hasExcelFile,
               hasImageFile,
+              hasHtmlFile
             },
           ],
         };
