@@ -471,7 +471,8 @@ public class PipelineController extends BaseController {
 
             String analysisDescription = parameters.getDescription();
             Boolean writeResultsToSamples = parameters.getWriteResultsToSamples();
-            Boolean emailPipelineResult = parameters.getEmailPipelineResult();
+            Boolean emailPipelineResultCompleted = parameters.getEmailPipelineResultCompleted();
+            Boolean emailPipelineResultError = parameters.getEmailPipelineResultError();
 
             //if we have an automated project set, create the new template
             if (parameters.getAutomatedProject() != null) {
@@ -480,7 +481,7 @@ public class PipelineController extends BaseController {
                 String statusMessage = messageSource.getMessage("analysis.template.status.new", null, locale);
 
                 analysisSubmissionService.createSingleSampleSubmissionTemplate(flow, ref, params, namedParameters, name,
-                        statusMessage, analysisDescription, readProject, writeResultsToSamples, emailPipelineResult);
+                        statusMessage, analysisDescription, readProject, writeResultsToSamples, emailPipelineResultCompleted, emailPipelineResultError);
             } else {
                 //otherwise get the project shares and sequence files
                 List<Project> projectsToShare = new ArrayList<>();
@@ -527,11 +528,11 @@ public class PipelineController extends BaseController {
                         .requiresSingleSample()) {
                     analysisSubmissionService.createSingleSampleSubmission(flow, ref, singleEndFiles, sequenceFilePairs,
                             params, namedParameters, name, analysisDescription, projectsToShare, writeResultsToSamples,
-                            emailPipelineResult);
+                            emailPipelineResultCompleted, emailPipelineResultError);
                 } else {
                     analysisSubmissionService.createMultipleSampleSubmission(flow, ref, singleEndFiles,
                             sequenceFilePairs, params, namedParameters, name, analysisDescription, projectsToShare,
-                            writeResultsToSamples, emailPipelineResult);
+                            writeResultsToSamples, emailPipelineResultCompleted, emailPipelineResultError);
                 }
             }
 

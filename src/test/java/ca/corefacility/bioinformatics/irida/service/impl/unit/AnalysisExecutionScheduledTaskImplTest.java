@@ -119,7 +119,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				.name("my analysis")
 				.inputFiles(sequenceFiles)
 				.referenceFile(referenceFile)
-				.emailPipelineResult(false)
+				.emailPipelineResultCompleted(false)
+				.emailPipelineResultError(false)
 				.build();
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
@@ -277,7 +278,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testMonitorRunningAnalysesSuccessFinishedWithEmail()
 			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-		analysisSubmission.setEmailPipelineResult(true);
+		analysisSubmission.setEmailPipelineResultCompleted(true);
+		analysisSubmission.setEmailPipelineResultError(true);
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.OK,
 				Sets.newHashSet("1"));
 		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, stateIds);
@@ -412,7 +414,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testMonitorRunningAnalysesSuccessErrorWithEmail()
 			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-		analysisSubmission.setEmailPipelineResult(true);
+		analysisSubmission.setEmailPipelineResultCompleted(true);
+		analysisSubmission.setEmailPipelineResultError(true);
 		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.ERROR,
 				Sets.newHashSet("1"));
 		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, stateIds);
@@ -464,7 +467,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testMonitorRunningAnalysesErrorWorkflowStatusWithEmail()
 			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-		analysisSubmission.setEmailPipelineResult(true);
+		analysisSubmission.setEmailPipelineResultCompleted(true);
+		analysisSubmission.setEmailPipelineResultError(true);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
