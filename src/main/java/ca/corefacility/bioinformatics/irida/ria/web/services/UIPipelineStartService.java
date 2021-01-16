@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -118,11 +115,12 @@ public class UIPipelineStartService {
 		IridaWorkflowInput inputs = description.getInputs();
 		Long submissionId;
 		if (inputs.requiresSingleSample()) {
-			List<AnalysisSubmission> submissions = (List<AnalysisSubmission>) submissionService.createSingleSampleSubmission(
-					workflow, request.getReference(), singles, pairs, request.getParameters(), namedParameters,
-					request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
-					request.isEmailPipelineResult());
-			submissionId = submissions.get(0)
+			Collection<AnalysisSubmission> submissions = submissionService.createSingleSampleSubmission(workflow,
+					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
+					request.getDescription(), projects, request.isUpdateSamples(), request.isEmailPipelineResult());
+			submissionId = submissions.stream()
+					.findFirst()
+					.orElseThrow()
 					.getId();
 		} else {
 			AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
