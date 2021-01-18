@@ -34,7 +34,7 @@ export function LaunchDetails() {
         <Input.TextArea />
       </Form.Item>
       <Form.Item name="emailPipelineResult" valuePropName="checked">
-        <Checkbox>Email Pipeline Results</Checkbox>
+        <Checkbox>{i18n("LaunchDetails.email")}</Checkbox>
       </Form.Item>
     </section>
   );
