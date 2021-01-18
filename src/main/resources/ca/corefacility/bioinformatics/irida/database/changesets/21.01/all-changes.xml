@@ -8,4 +8,6 @@
              relativeToChangelogFile="true"/>
     <include file="metadata-entry-refactor.xml" relativeToChangelogFile="true"/>
     <include file="full-project-hash.xml" relativeToChangelogFile="true"/>
+    <include file="analysis-submission-email-pipeline-result-on-error.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>

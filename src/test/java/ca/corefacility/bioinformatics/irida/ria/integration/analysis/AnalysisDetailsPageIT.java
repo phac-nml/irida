@@ -426,15 +426,17 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
+		// and Receive Email Upon Pipeline Error section
 		// should not be visible
-		assertFalse("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
+		assertFalse("email pipeline result status should be visible", page.emailPipelineResultStatusSelectVisible());
 
 		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/details");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is not in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
+		// and Receive Email Upon Pipeline Completion section
 		// should be visible
-		assertTrue("email pipeline result upon completion should be visible", page.emailPipelineResultVisible());
+		assertTrue("email pipeline result status should be visible", page.emailPipelineResultStatusSelectVisible());
 	}
 
 	@Test
