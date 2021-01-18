@@ -15,7 +15,11 @@ export function ReferenceFiles() {
   const [{ requiresReference, referenceFiles }] = useLaunch();
 
   return requiresReference ? (
-    <Space direction="vertical" style={{ width: `100%` }}>
+    <Space
+      className="t-reference-files"
+      direction="vertical"
+      style={{ width: `100%` }}
+    >
       <SectionHeading id="launch-references">
         {i18n("ReferenceFiles.label")}
       </SectionHeading>

@@ -17,14 +17,18 @@ export function SharePipelineResults() {
         {i18n("SharePipelineResults.label")}
       </SectionHeading>
       {updateSamples ? (
-        <Form.Item name="updateSamples" valuePropName="checked">
+        <Form.Item
+          className="t-share-samples"
+          name="updateSamples"
+          valuePropName="checked"
+        >
           <Checkbox checked>{updateSamples}</Checkbox>
         </Form.Item>
       ) : null}
       <Typography.Text strong>
         {i18n("ShareResultsWithProjects.label")}
       </Typography.Text>
-      <Form.Item name="projects">
+      <Form.Item className="t-share-projects" name="projects">
         <Checkbox.Group style={{ width: `100%` }}>
           <Row>
             {projects.map((project) => (

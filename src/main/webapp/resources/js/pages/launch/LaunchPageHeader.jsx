@@ -10,7 +10,9 @@ import { SPACE_LG } from "../../styles/spacing";
 export function LaunchPageHeader({ pipeline }) {
   return (
     <div style={{ marginBottom: SPACE_LG }}>
-      <Typography.Title>{pipeline.name}</Typography.Title>
+      <Typography.Title className="t-pipeline-name">
+        {pipeline.name}
+      </Typography.Title>
       <Typography.Paragraph type="secondary">
         {pipeline.description}
       </Typography.Paragraph>

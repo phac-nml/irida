@@ -96,10 +96,10 @@
 		sequencingobject_id="2" />
 
 	<reference_file id="1" createdDate="2013-06-16 11:15:36.2"
-		filePath="/tmp/path/to/nowhere/02-222.fastq" fileRevisionNumber="1"
+		filePath="src/test/resources/files/references/testref1.fasta" fileRevisionNumber="1"
 		modifiedDate="2013-06-16 11:15:36.2" />
 	<reference_file id="2" createdDate="2013-07-16 11:15:36.2"
-		filePath="/tmp/path/to/nowhere/03-333.fastq" fileRevisionNumber="1"
+		filePath="src/test/resources/files/references/testref2.fasta" fileRevisionNumber="1"
 		modifiedDate="2013-07-17 11:15:36.2" />
 
 	<project_referencefile id="1" createdDate="2013-08-16 15:15:36.2"

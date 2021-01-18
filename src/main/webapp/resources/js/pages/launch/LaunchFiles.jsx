@@ -146,7 +146,11 @@ export function LaunchFiles() {
   };
 
   return (
-    <Space direction="vertical" style={{ width: `100%` }}>
+    <Space
+      className="t-launch-files"
+      direction="vertical"
+      style={{ width: `100%` }}
+    >
       <SectionHeading id="launch-files">
         {i18n("LaunchFiles.heading")}
       </SectionHeading>

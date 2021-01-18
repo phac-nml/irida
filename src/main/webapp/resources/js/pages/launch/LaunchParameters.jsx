@@ -12,7 +12,7 @@ import { DynamicSources } from "./DynamicSources";
  */
 export function LaunchParameters({ form }) {
   return (
-    <section>
+    <section className="t-launch-parameters">
       <SectionHeading id="launch-parameters">
         {i18n("LaunchParameters.title")}
       </SectionHeading>
