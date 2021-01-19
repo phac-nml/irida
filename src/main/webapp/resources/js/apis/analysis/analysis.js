@@ -16,9 +16,11 @@ const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
  */
 export async function getAnalysisInfo(submissionId) {
   try {
-    const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/analysis-details`);
+    const { data } = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/analysis-details`
+    );
     return data;
-  }  catch (error) {
+  } catch (error) {
     return { error };
   }
 }
@@ -58,14 +60,16 @@ export async function getAnalysisInputFiles(submissionId) {
  */
 export async function updateAnalysisEmailPipelineResult({
   submissionId,
-  emailPipelineResult
+  emailPipelineResultCompleted,
+  emailPipelineResultError,
 }) {
   try {
     const { data } = await axios.patch(
       `${ANALYSIS_URL}/update-email-pipeline-result`,
       {
         analysisSubmissionId: submissionId,
-        emailPipelineResult: emailPipelineResult
+        emailPipelineResultCompleted: emailPipelineResultCompleted,
+        emailPipelineResultError: emailPipelineResultError,
       }
     );
     return data.message;
@@ -86,7 +90,7 @@ export async function updateAnalysis({ submissionId, analysisName, priority }) {
     const { data } = await axios.patch(`${ANALYSIS_URL}/update-analysis/`, {
       analysisSubmissionId: submissionId,
       analysisName: analysisName,
-      priority: priority
+      priority: priority,
     });
     return data.message;
   } catch (error) {
@@ -124,11 +128,11 @@ export async function getSharedProjects(submissionId) {
 export async function updateSharedProject({
   submissionId,
   projectId,
-  shareStatus
+  shareStatus,
 }) {
   const { data } = await axios.post(`${ANALYSIS_URL}/${submissionId}/share`, {
     projectId: projectId,
-    shareStatus: shareStatus
+    shareStatus: shareStatus,
   });
   return data;
 }
@@ -200,7 +204,9 @@ export async function getOutputInfo(submissionId) {
  */
 export async function getUpdatedDetails(submissionId) {
   try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/updated-progress`);
+    const res = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/updated-progress`
+    );
     return res.data;
   } catch (error) {
     return { error };
@@ -219,8 +225,8 @@ export async function getDataViaChunks({ submissionId, fileId, seek, chunk }) {
       {
         params: {
           seek,
-          chunk
-        }
+          chunk,
+        },
       }
     );
     return res.data;
@@ -241,8 +247,8 @@ export async function getDataViaLines({ submissionId, fileId, start, end }) {
       {
         params: {
           start,
-          end
-        }
+          end,
+        },
       }
     );
     return res.data;
@@ -299,8 +305,8 @@ export async function getAnalysisProvenanceByFile(submissionId, filename) {
       `${ANALYSIS_URL}/${submissionId}/provenance`,
       {
         params: {
-          filename
-        }
+          filename,
+        },
       }
     );
     return { data };
@@ -320,8 +326,8 @@ export async function parseExcel(submissionId, filename, sheetIndex) {
       {
         params: {
           filename,
-          sheetIndex
-        }
+          sheetIndex,
+        },
       }
     );
     return { data };
@@ -336,14 +342,11 @@ export async function parseExcel(submissionId, filename, sheetIndex) {
  */
 export async function getImageFile(submissionId, filename) {
   try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/image`,
-      {
-        params: {
-          filename
-        }
-      }
-    );
+    const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/image`, {
+      params: {
+        filename,
+      },
+    });
     return { data };
   } catch (error) {
     return { error };
@@ -407,7 +410,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
     const { data } = await axios({
       method: "post",
       url: `${ANALYSIS_URL}/download/prepare`,
-      data: outputs
+      data: outputs,
     });
     return { data };
   } catch (error) {
@@ -416,11 +419,11 @@ export async function prepareAnalysisOutputsDownload(outputs) {
 }
 
 export async function fetchAllPipelinesStates() {
-  return axios.get(`${ANALYSES_URL}/states`).then(response => response.data);
+  return axios.get(`${ANALYSES_URL}/states`).then((response) => response.data);
 }
 
 export async function fetchAllPipelinesTypes() {
-  return axios.get(`${ANALYSES_URL}/types`).then(response => response.data);
+  return axios.get(`${ANALYSES_URL}/types`).then((response) => response.data);
 }
 
 export async function deleteAnalysisSubmissions({ ids }) {
@@ -442,7 +445,9 @@ export async function fetchAnalysesQueueCounts() {
  */
 export async function getUpdatedTableDetails(submissionId) {
   try {
-    const res = await axios.get(`${ANALYSES_URL}/${submissionId}/updated-table-progress`);
+    const res = await axios.get(
+      `${ANALYSES_URL}/${submissionId}/updated-table-progress`
+    );
     return res.data;
   } catch (error) {
     return { error };

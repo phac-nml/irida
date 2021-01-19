@@ -1,27 +1,40 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Locale;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
+import com.google.common.net.HttpHeaders;
 
 /**
  * Controller for Analysis.
@@ -43,14 +56,16 @@ public class AnalysisController {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
+	private MessageSource messageSource;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	// ************************************************************************************************
@@ -150,5 +165,58 @@ public class AnalysisController {
 		model.addAttribute("submissionId", submissionId);
 		model.addAttribute("submission", submission);
 		return BASE + "visualizations/phylocanvas-metadata";
+	}
+
+	/**
+	 * Get the html page from the file name provided.
+	 *
+	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
+	 * @param filename     The html file name
+	 * @param locale       User's locale
+	 * @param response     {@link HttpServletResponse}
+	 * @throws IOException if we can't write the file to the response
+	 */
+	@RequestMapping("/{submissionId}/html-output")
+	public void getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename,
+			Locale locale, HttpServletResponse response) throws IOException {
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		Set<AnalysisOutputFile> files = submission.getAnalysis()
+				.getAnalysisOutputFiles();
+		AnalysisOutputFile outputFile = null;
+		String htmlExt = "html";
+
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename) && FilenameUtils.getExtension(filename)
+					.equals(htmlExt)) {
+				outputFile = file;
+				break;
+			}
+		}
+
+		// Set the common Http headers
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline");
+		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
+
+		try (InputStream inputStream = new FileInputStream(outputFile.getFile()
+				.toString()); OutputStream outputStream = response.getOutputStream()) {
+			// Copy the file contents to the response outputstream
+			IOUtils.copy(inputStream, outputStream);
+		} catch (IOException e) {
+			logger.debug("Html output not found.");
+			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
+					new Object[] { filename }, locale);
+			OutputStream outputStream = response.getOutputStream();
+			/*
+			Write the htmlNotFound message to the outputstream. We do this
+			so that the page doesn't error and will instead display the
+			message.
+			 */
+			outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
+			outputStream.flush();
+			outputStream.close();
+		}
 	}
 }

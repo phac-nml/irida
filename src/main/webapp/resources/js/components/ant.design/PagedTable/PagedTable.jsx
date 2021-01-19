@@ -3,7 +3,8 @@ import { PagedTableContext } from "./PagedTableContext";
 import { SPACE_XS } from "../../../styles/spacing";
 import { Input, Table } from "antd";
 import styled from "styled-components";
-import { grey7 } from "../../../styles/colors";
+import { grey5, grey7 } from "../../../styles/colors";
+import { IconSearch } from "../../icons/Icons";
 
 const StyledTable = styled(Table)`
   tr.disabled,
@@ -28,15 +29,15 @@ export function PagedTable({ search = true, buttons, ...props }) {
       <div
         style={{
           display: "flex",
-          marginBottom: SPACE_XS
+          marginBottom: SPACE_XS,
         }}
       >
         <div style={{ flex: 1 }}>{buttons}</div>
         {search ? (
           <div>
-            <Input.Search
-              style={{ width: 250 }}
-              onChange={e => onSearch(e.target.value)}
+            <Input
+              prefix={<IconSearch style={{ color: grey5 }} />}
+              onChange={(e) => onSearch(e.target.value)}
             />
           </div>
         ) : null}

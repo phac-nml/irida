@@ -9,6 +9,9 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -46,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
+import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -55,6 +60,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -97,6 +103,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private final UserRepository userRepository;
 
+	private final MetadataEntryRepository metadataEntryRepository;
+
 	/**
 	 * Constructor.
 	 *
@@ -108,6 +116,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
 	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
 	 * @param userRepository                     A {@link UserRepository}
+	 * @param metadataEntryRepository            A {@link MetadataEntryRepository}
 	 * @param assemblyRepository                 a repository for retreving {@link GenomeAssembly}
 	 * @param validator                          validator.
 	 */
@@ -116,7 +125,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
-			GenomeAssemblyRepository assemblyRepository, Validator validator) {
+			MetadataEntryRepository metadataEntryRepository, GenomeAssemblyRepository assemblyRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -127,6 +136,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.userRepository = userRepository;
 		this.assemblyRepository = assemblyRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
+		this.metadataEntryRepository = metadataEntryRepository;
 	}
 
 	/**
@@ -176,6 +186,78 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Sample update(Sample object) {
 		object.setModifiedDate(new Date());
 		return super.update(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@Override
+	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
+		return metadataEntryRepository.getMetadataForSample(sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
+	@Transactional
+	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {
+		Set<MetadataEntry> currentMetadata = getMetadataForSample(s);
+
+		metadataEntryRepository.deleteAll(currentMetadata);
+
+		for(MetadataEntry e : metadataToSet){
+			e.setSample(s);
+		}
+
+		metadataEntryRepository.saveAll(metadataToSet);
+
+		s = read(s.getId());
+
+		return s;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
+	@Transactional
+	public Sample mergeSampleMetadata(Sample s, Set<MetadataEntry> metadataToAdd) {
+		Set<MetadataEntry> currentMetadata = getMetadataForSample(s);
+
+		// loop through entry set and see if it already exists
+		for (MetadataEntry newMetadataEntry : metadataToAdd) {
+			MetadataTemplateField field = newMetadataEntry.getField();
+			newMetadataEntry.setSample(s);
+
+			Optional<MetadataEntry> metadataEntryForField = currentMetadata.stream()
+					.filter(e -> e.getField()
+							.equals(field))
+					.findFirst();
+
+			if (metadataEntryForField.isPresent()) {
+				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
+
+				// if the metadata entries are of the same type, I can directly merge
+				if (originalMetadataEntry.getClass()
+						.equals(newMetadataEntry.getClass())) {
+					originalMetadataEntry.merge(newMetadataEntry);
+				} else {
+					// if they are different types, I need to replace the metadata entry instead of merging
+					currentMetadata.remove(originalMetadataEntry);
+					metadataEntryRepository.delete(originalMetadataEntry);
+
+					currentMetadata.add(newMetadataEntry);
+				}
+			} else {
+				currentMetadata.add(newMetadataEntry);
+			}
+		}
+
+		metadataEntryRepository.saveAll(currentMetadata);
+
+		return read(s.getId());
 	}
 
 	/**
@@ -629,5 +711,22 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 
 		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getSamplesCreated(Date createdDate) {
+		Long samplesCount = sampleRepository.countSamplesCreatedInTimePeriod(createdDate);
+		return samplesCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return sampleRepository.countSamplesCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 }

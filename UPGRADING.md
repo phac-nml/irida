@@ -4,6 +4,11 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+20.09 to 21.01
+--------------
+* This upgrade includes changes to the sample-metadata database system.  While implementing this change we encountered issues with the metadata auditing system, so we recommend additional backup steps before performing this upgrade.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+* A couple new columns have been added to the announcements table in the database. The new announcement title column cannot be empty and will be given a default value. There is a script available to populate the new title from the header of the existing announcements content, which can be found under the `src/main/resources/scripts/announcements` folder in the IRIDA repo. 
+
 20.05 to 20.09
 --------------
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.

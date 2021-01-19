@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -27,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Pro
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
@@ -443,7 +445,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
 			String statusMessage, String analysisDescription, Project projectsToShare, boolean writeResultsToSamples,
-			boolean emailPipelineResults) {
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -461,13 +463,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			if (namedParameters != null) {
 				template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(),
 						namedParameters, referenceFile, writeResultsToSamples, analysisDescription,
-						emailPipelineResults, projectsToShare);
+						emailPipelineResultCompleted, emailPipelineResultError, projectsToShare);
 
 			} else {
 				if (!params.isEmpty()) {
 					template = new AnalysisSubmissionTemplate(submissionName, workflow.getWorkflowIdentifier(), params,
-							referenceFile, writeResultsToSamples, analysisDescription, emailPipelineResults,
-							projectsToShare);
+							referenceFile, writeResultsToSamples, analysisDescription, emailPipelineResultCompleted,
+							emailPipelineResultError, projectsToShare);
 				}
 			}
 		}
@@ -522,7 +524,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult) {
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 
 		// Single end reads
@@ -541,7 +544,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.updateSamples(writeResultsToSamples);
 				builder.priority(AnalysisSubmission.Priority.MEDIUM);
 				// Add if user should be emailed on pipeline completion/error
-				builder.emailPipelineResult(emailPipelineResult);
+				builder.emailPipelineResultCompleted(emailPipelineResultCompleted);
+				builder.emailPipelineResultError(emailPipelineResultError);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
 					// Note: This cannot be empty if through the UI if the
@@ -583,7 +587,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				builder.inputFiles(ImmutableSet.of(filePair));
 				builder.updateSamples(writeResultsToSamples);
 				// Add if user should be emailed on pipeline completion/error
-				builder.emailPipelineResult(emailPipelineResult);
+				builder.emailPipelineResultCompleted(emailPipelineResultCompleted);
+				builder.emailPipelineResultError(emailPipelineResultError);
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
 					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
@@ -628,7 +633,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult) {
+			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		builder.priority(AnalysisSubmission.Priority.MEDIUM);
@@ -672,7 +678,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		builder.analysisDescription(newAnalysisDescription);
 
 		// Add if user should be emailed on pipeline completion/error
-		builder.emailPipelineResult(emailPipelineResult);
+		builder.emailPipelineResultCompleted(emailPipelineResultCompleted);
+		builder.emailPipelineResultError(emailPipelineResultError);
+
 		// Create the submission
 		AnalysisSubmission submission = create(builder.build());
 
@@ -804,6 +812,23 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		Long queued = analysisSubmissionRepository.countByAnalysisState(Lists.newArrayList(AnalysisState.NEW));
 
 		return new AnalysisServiceStatus(running, queued);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Long getAnalysesRanInTimePeriod(Date createdDate) {
+		Long analysesCount = analysisSubmissionRepository.countAnalysesRanInTimePeriod(createdDate);
+		return analysesCount;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
+		return analysisSubmissionRepository.countAnalysesRanGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 
 }

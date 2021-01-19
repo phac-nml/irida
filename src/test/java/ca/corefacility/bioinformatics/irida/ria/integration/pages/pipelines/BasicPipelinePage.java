@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,17 +67,19 @@ public class BasicPipelinePage extends AbstractPage {
 		}
 	}
 
-	public void clickEmailPipelineResult() {
-		driver.findElement(By.id("email-pipeline-result")).click();
+	public void selectErrorFromEmailDropdown() {
+		Select select = new Select(driver.findElement(By.id("receive-email")));
+		select.selectByValue("error");
 		waitForTime(500);
 	}
 
-	public boolean existsEmailPipelineResult() {
+
+	public boolean existsEmailPipelineResultSelect() {
 		try {
-			driver.findElement(By.id("email-pipeline-result"));
-			return true;
+			return driver.findElement(By.id("receive-email")).isDisplayed();
 		} catch (NoSuchElementException e) {
 			return false;
 		}
 	}
+
 }

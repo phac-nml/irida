@@ -2,13 +2,12 @@
  * @fileOverview Announcements administration page.
  */
 import React, { useRef } from "react";
-import { render } from "react-dom";
 import {
   createNewAnnouncement,
   deleteAnnouncement,
-  updateAnnouncement
+  updateAnnouncement,
 } from "../../../../apis/announcements/announcements";
-import { CreateNewAnnouncement } from "./CreateNewAnnouncement";
+import CreateNewAnnouncement from "./CreateNewAnnouncement";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { AnnouncementsTable } from "./AnnouncementsTable";
@@ -22,16 +21,18 @@ import { PagedTableProvider } from "../../../../components/ant.design/PagedTable
 export default function AnnouncementAdminPage({}) {
   const tableRef = useRef(null);
 
-  function addNewAnnouncement(message) {
-    createNewAnnouncement({ message }).then(() =>
+  function addNewAnnouncement(title, message, priority) {
+    return createNewAnnouncement({ title, message, priority }).then(() =>
       tableRef.current.updateTable()
     );
   }
 
-  function updateTableAnnouncement({ id, message }) {
-    updateAnnouncement({
+  function updateTableAnnouncement({ id, title, message, priority }) {
+    return updateAnnouncement({
       id,
-      message
+      title,
+      message,
+      priority,
     }).then(() => tableRef.current.updateTable());
   }
 

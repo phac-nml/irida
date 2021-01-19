@@ -15,9 +15,11 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
   ExperimentOutlined,
+  EyeOutlined,
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
+  FlagFilled,
   FolderOutlined,
   HomeOutlined,
   InfoCircleOutlined,
@@ -44,7 +46,9 @@ import {
   TeamOutlined,
   UnorderedListOutlined,
   UserOutlined,
-  UploadOutlined
+  UploadOutlined,
+  CalendarTwoTone,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -107,6 +111,8 @@ export const IconExclamationCircle = ({ ...props }) => (
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
 
+export const IconFlag = ({ ...props }) => <FlagFilled {...props} />;
+
 export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
 
 export const IconTable = ({ ...props }) => <TableOutlined {...props} />;
@@ -121,6 +127,8 @@ export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
 
 export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
 
+export const IconEye = ({ ...props }) => <EyeOutlined {...props} />;
+
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
@@ -128,6 +136,8 @@ export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
 export const IconMetadataTemplate = ({ ...props }) => (
   <AppstoreOutlined {...props} />
 );
+
+export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
 
 /*
 Editor Icons
@@ -165,6 +175,10 @@ export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
 export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
 
+export const IconCalendarTwoTone = ({ ...props }) => (
+  <CalendarTwoTone {...props} />
+);
+
 /*
 File Type Icons
  */
@@ -195,6 +209,4 @@ export const IconCheckCircle = ({ ...props }) => (
   <CheckCircleOutlined {...props} />
 );
 
-export const IconFileUpload = ({ ...props }) => (
-  <UploadOutlined {...props} />
-);
+export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;

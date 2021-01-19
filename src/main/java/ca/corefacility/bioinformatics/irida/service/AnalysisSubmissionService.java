@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -22,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * A service for AnalysisSubmissions.
@@ -82,52 +84,56 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
-	 * @param workflow              {@link IridaWorkflow} that the files will be run on
-	 * @param ref                   {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles         {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs     {@link List} of {@link SequenceFilePair} to run on the
-	 *                              workflow
-	 * @param unnamedParameters     {@link Map} of parameters specific for the pipeline
-	 * @param namedParameters       the named parameters to use for the workflow.
-	 * @param name                  {@link String} the name for the analysis
-	 * @param analysisDescription   {@link String} the description of the analysis being submitted
-	 * @param projectsToShare       A list of {@link Project}s to share analysis results with
-	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the
-	 *                              samples on successful completion.
-	 * @param emailPipelineResult   If true, user will be emailed if a pipelines successfully
-	 *                              completes or if it errors
+	 * @param workflow                     {@link IridaWorkflow} that the files will be run on
+	 * @param ref                          {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles                {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs            {@link List} of {@link SequenceFilePair} to run on the
+	 *                                     workflow
+	 * @param unnamedParameters            {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters              the named parameters to use for the workflow.
+	 * @param name                         {@link String} the name for the analysis
+	 * @param analysisDescription          {@link String} the description of the analysis being submitted
+	 * @param projectsToShare              A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples        If true, results of this pipeline will be saved back to the
+	 *                                     samples on successful completion.
+	 * @param emailPipelineResultCompleted If true, user will be emailed if a pipeline successfully
+	 *                                     completes
+	 * @param emailPipelineResultError     If true, user will be emailed if a pipeline errors
 	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError);
 
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
 	 *
-	 * @param workflow              {@link IridaWorkflow} that the files will be run on
-	 * @param ref                   {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles         {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs     {@link List} of {@link SequenceFilePair} to run on the
-	 *                              workflow
-	 * @param unnamedParameters     {@link Map} of parameters specific for the pipeline
-	 * @param namedParameters       the named parameters to use for the workflow.
-	 * @param name                  {@link String} the name for the analysis
-	 * @param analysisDescription   {@link String} the description of the analysis being submitted
-	 * @param projectsToShare       A list of {@link Project}s to share analysis results with
-	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the
-	 *                              samples on successful completion.
-	 * @param emailPipelineResult   If true, user will be emailed if a pipelines successfully
-	 *                              completes or if it errors
+	 * @param workflow                     {@link IridaWorkflow} that the files will be run on
+	 * @param ref                          {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles                {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs            {@link List} of {@link SequenceFilePair} to run on the
+	 *                                     workflow
+	 * @param unnamedParameters            {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters              the named parameters to use for the workflow.
+	 * @param name                         {@link String} the name for the analysis
+	 * @param analysisDescription          {@link String} the description of the analysis being submitted
+	 * @param projectsToShare              A list of {@link Project}s to share analysis results with
+	 * @param writeResultsToSamples        If true, results of this pipeline will be saved back to the
+	 *                                     samples on successful completion.
+	 * @param emailPipelineResultCompleted If true, user will be emailed if a pipelines successfully
+	 *                                     completes
+	 * @param emailPipelineResultError     If true, user will be emailed if a pipeline errors
 	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
 	 * the supplied files.
 	 */
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples, boolean emailPipelineResult);
+			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError);
 
 	/**
 	 * Create a new {@link AnalysisSubmissionTemplate} for a project with the given settings
@@ -142,13 +148,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param projectsToShare       The {@link Project} to save the analysis to
 	 * @param writeResultsToSamples If true, results of this pipeline will be saved back to the samples on successful
 	 *                              completion.
-	 * @param emailPipelineResults  Whether or not to email the pipeline results to the user
+	 * @param emailPipelineResultCompleted Whether or not to email the pipeline results that completed to the user
+	 * @param emailPipelineResultError Whether or not to email the pipeline results that errored to the user
 	 * @return the newly created {@link AnalysisSubmissionTemplate}
 	 */
 	public AnalysisSubmissionTemplate createSingleSampleSubmissionTemplate(IridaWorkflow workflow, Long referenceFileId,
 			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String submissionName,
 			String statusMessage, String analysisDescription, Project projectsToShare, boolean writeResultsToSamples,
-			boolean emailPipelineResults);
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError);
 
 	/**
 	 * Get all the {@link AnalysisSubmissionTemplate}s for a given {@link Project}
@@ -334,6 +341,24 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @return An {@link AnalysisServiceStatus} object showing the number of running and queued analyses
 	 */
 	public AnalysisServiceStatus getAnalysisServiceStatus();
+
+	/**
+	 * Get count of analyses run in the time period
+	 *
+	 * @param createdDate the minimum date for submissions ran
+	 * @return An {@link Long} count of analyses ran
+	 */
+	public Long getAnalysesRanInTimePeriod(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of analyses run in the past n time period
+	 * grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for submissions ran
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 
 	/**
 	 * Class to store the number of running and queued analyses

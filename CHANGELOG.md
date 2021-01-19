@@ -25,6 +25,23 @@ Changes
 * [UI]: Updated Project Reference File page to display progress of uploads.
 * [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
 * [Developer]: Added smtp port and password configuration options
+* [UI]: Added usage statistics to admin panel.
+* [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
+* [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
+* [Developer]: Updated `ini` to version `1.3.7` to fix security vulnerability.
+* [Developer]: Update `jest` to version `26.6.3` to fix security vulnerability.
+* [UI]: New main navigation bar using Ant Design.
+* [UI]: Fixed bug where a user could not click the `Sync Now` button for a remote project if the status was set to `Unauthorized`. (20.09.4)
+* [UI]: Fixed issue with project samples table not displaying `Created Date` and `Modified Date` for samples. (20.09.4)
+* [Developer]: Updated database structure for sample metadata to improve performance and auditability.  See <https://irida.corefacility.ca/documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
+* [Documentation]: Moved IRIDA documentation to new repository at <https://github.com/phac-nml/irida-documentation/>.  Pages can be viewed at <https://phac-nml.github.io/irida-documentation/>.
+* [Developer]: Updated `axios` to version 0.21.1
+* [UI]: Fixed broken CSS bundle links in project settings pages. (20.09.5)
+* [UI]: Added html viewer for analysis output files.
+* [REST]: Added new REST endpoint that can generate a deep hashcode of a project.  This will be used for speeding up project synchronization when there are no changes to a project.  Instead of checking for changes remotely, the client can check for changes only to the hash.  If there are hash changes, then they can do their full sync.
+* [UI]: Added option for project managers to check for changes using the hash above, or to force a full project sync on the project remote settings page.
+* [Developer/REST/UI]: Updated announcements with a new title and priority fields.
+* [UI]: Added option for user to only receive an email upon pipeline failure.
 
 20.05 to 20.09
 --------------

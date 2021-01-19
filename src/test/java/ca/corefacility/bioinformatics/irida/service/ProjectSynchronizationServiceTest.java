@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
@@ -82,6 +83,7 @@ public class ProjectSynchronizationServiceTest {
 		api = new RemoteAPI();
 		expired = new Project();
 		expired.setId(1L);
+		expired.setRemoteProjectHash(1);
 		RemoteStatus expStatus = new RemoteStatus("http://expired", api);
 		expStatus.setId(1L);
 		expStatus.setLastUpdate(new Date(1));
@@ -131,11 +133,39 @@ public class ProjectSynchronizationServiceTest {
 				.thenReturn(Lists.newArrayList(expired));
 		when(projectRemoteService.read(expired.getRemoteStatus().getURL())).thenReturn(remoteProject);
 
+		when(projectRemoteService.getProjectHash(remoteProject)).thenReturn(2);
+
 		when(projectService.update(remoteProject)).thenReturn(remoteProject);
 
 		syncService.findMarkedProjectsToSync();
 
 		verify(projectService, times(3)).update(any(Project.class));
+		verify(projectRemoteService).getProjectHash(remoteProject);
+
+		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
+	}
+
+	@Test
+	public void testSyncProjectsSameHash() {
+		expired.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
+		Project remoteProject = new Project();
+		remoteProject.setRemoteStatus(expired.getRemoteStatus());
+		User readBy = new User();
+		expired.getRemoteStatus().setReadBy(readBy);
+		when(projectService.getProjectsWithRemoteSyncStatus(RemoteStatus.SyncStatus.MARKED))
+				.thenReturn(Lists.newArrayList(expired));
+		when(projectRemoteService.read(expired.getRemoteStatus().getURL())).thenReturn(remoteProject);
+
+		when(projectRemoteService.getProjectHash(remoteProject)).thenReturn(expired.getRemoteProjectHash());
+
+		when(projectService.update(remoteProject)).thenReturn(remoteProject);
+
+		syncService.findMarkedProjectsToSync();
+
+		verify(projectService, times(2)).update(any(Project.class));
+		verify(projectRemoteService).getProjectHash(remoteProject);
+		verifyZeroInteractions(sampleRemoteService);
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
@@ -170,6 +200,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 		
 		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), anySet())).thenReturn(sample);
 		
 		syncService.syncSample(sample, expired, Maps.newHashMap());
 		
@@ -188,7 +219,9 @@ public class ProjectSynchronizationServiceTest {
 		existingSample.setRemoteStatus(sampleStatus);
 		
 		when(sampleService.update(any(Sample.class))).thenReturn(sample);
-		
+		when(sampleService.updateSampleMetadata(eq(sample),anySet() )).thenReturn(sample);
+
+
 		syncService.syncSample(sample, expired, ImmutableMap.of("http://sample",existingSample));
 		
 		verify(projectService,times(0)).addSampleToProject(expired, sample, true);
@@ -198,10 +231,11 @@ public class ProjectSynchronizationServiceTest {
 	@Test
 	public void testSyncSampleNoAssemblies() {
 		Sample sample = new Sample();
-		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
 		when(assemblyRemoteService.getGenomeAssembliesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());
@@ -209,7 +243,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(projectService).addSampleToProject(expired, sample, true);
 		verify(assemblyRemoteService, times(0)).mirrorAssembly(any(UploadedAssembly.class));
 
-		assertEquals(SyncStatus.SYNCHRONIZED,sample.getRemoteStatus().getSyncStatus());
+		assertEquals(SyncStatus.SYNCHRONIZED, sample.getRemoteStatus().getSyncStatus());
 	}
 	
 	@Test
