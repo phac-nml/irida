@@ -27,10 +27,10 @@ export function AnnouncementsPage({}) {
         dataSource={announcements}
         renderItem={(item) => (
           <List.Item className="t-announcement-item">
-            <List.Item.Meta>
+            <List.Item.Meta
               title={item.announcement.title}
               description={fromNow({ date: item.announcement.createdDate })}
-            </List.Item.Meta>
+            />
             {item.announcement.message}
           </List.Item>
         )}
