@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
+
+<head>
+    <title th:text="#{announcement.read}">_Viewing read announcements_</title>
+    <link rel="stylesheet" th:href="@{/dist/css/announcements.bundle.css}" />
+    <script th:inline="javascript">
+        window.PAGE = {
+            announcements: /*[[${announcements}]]*/ false
+        };
+    </script>
+</head>
+
+<body>
+<div layout:fragment="page" id="announcements-root" style="height: 100%;">
+    <!-- Contents rendered from AnnouncementsPage.jsx -->
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/announcements.bundle.js}"></script>
+</th:block>
+</body>
+</html>
