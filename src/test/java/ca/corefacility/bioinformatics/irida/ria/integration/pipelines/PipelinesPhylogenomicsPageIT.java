@@ -54,6 +54,14 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertTrue("There should be an error displayed that a name is required", page.isNameErrorDisplayed());
 		page.updateName("TEST_NAME");
 		assertFalse("Name required warning should be cleared", page.isNameErrorDisplayed());
+
+		// Test email checkbox
+		assertTrue("Should be automatically enabled to email pipeline results", page.isEmailResultsChecked());
+		page.clickEmailResultsCheckbox();
+		assertFalse("Should now be not emailing pipeline results", page.isEmailResultsChecked());
+
+		// Test modifying parameters
+		page.showEditParameters();
 	}
 
 	private void addSamplesToCart() {

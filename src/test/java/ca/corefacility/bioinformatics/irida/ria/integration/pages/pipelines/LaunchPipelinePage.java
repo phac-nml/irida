@@ -7,8 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -45,6 +43,12 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	@FindBy(className = "t-launch-files")
 	private List<WebElement> launchFiles;
+
+	@FindBy(css = ".t-email-results input")
+	private WebElement emailResultsCheckBox;
+
+	@FindBy(className = "t-edit-params-btn")
+	private WebElement editParamsButton;
 
 	public LaunchPipelinePage(WebDriver driver) {
 		super(driver);
@@ -93,14 +97,24 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void clearName() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
 		nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		nameInput.sendKeys(Keys.BACK_SPACE);
-		wait.until(ExpectedConditions.invisibilityOf(nameInputError.get(0)));
 	}
 
 	public boolean isNameErrorDisplayed() {
 		return nameInputError.size() == 1;
+	}
+
+	public boolean isEmailResultsChecked() {
+		return emailResultsCheckBox.isSelected();
+	}
+
+	public void clickEmailResultsCheckbox() {
+		emailResultsCheckBox.click();
+	}
+
+	public void showEditParameters() {
+		editParamsButton.click();
 	}
 
 	public void submit() {

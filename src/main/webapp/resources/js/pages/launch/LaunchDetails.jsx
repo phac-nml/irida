@@ -33,7 +33,11 @@ export function LaunchDetails() {
       <Form.Item label={i18n("LaunchDetails.description")} name="description">
         <Input.TextArea />
       </Form.Item>
-      <Form.Item name="emailPipelineResult" valuePropName="checked">
+      <Form.Item
+        className="t-email-results"
+        name="emailPipelineResult"
+        valuePropName="checked"
+      >
         <Checkbox>{i18n("LaunchDetails.email")}</Checkbox>
       </Form.Item>
     </section>

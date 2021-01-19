@@ -59,7 +59,11 @@ export function SavedParameters({ form }) {
             </Form.Item>
           </div>
           <div>
-            <Button icon={<IconEdit />} onClick={() => setVisible(true)} />
+            <Button
+              className="t-edit-params-btn"
+              icon={<IconEdit />}
+              onClick={() => setVisible(true)}
+            />
             <ParametersModal
               visible={visible}
               closeModal={() => setVisible(false)}
