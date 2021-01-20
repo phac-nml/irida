@@ -1,7 +1,7 @@
 import React from "react";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SavedParameters } from "./parameters/SavedParameters";
-import { ParameterWithOptions } from "./ParameterWithOptions";
+import { LaunchParametersWithOptions } from "./LaunchParametersWithOptions";
 import { useLaunch } from "./launch-context";
 
 /**
@@ -12,7 +12,7 @@ import { useLaunch } from "./launch-context";
  */
 export function LaunchParameters({ form }) {
   const [{ dynamicSources, parameterWithOptions }] = useLaunch();
-  console.log({ dynamicSources, parameterWithOptions });
+
   return (
     <section>
       <SectionHeading id="launch-parameters">
@@ -20,9 +20,11 @@ export function LaunchParameters({ form }) {
       </SectionHeading>
       <SavedParameters form={form} />
       {parameterWithOptions && (
-        <ParameterWithOptions parameters={parameterWithOptions} />
+        <LaunchParametersWithOptions parameters={parameterWithOptions} />
       )}
-      {dynamicSources && <ParameterWithOptions parameters={dynamicSources} />}
+      {dynamicSources && (
+        <LaunchParametersWithOptions parameters={dynamicSources} />
+      )}
     </section>
   );
 }

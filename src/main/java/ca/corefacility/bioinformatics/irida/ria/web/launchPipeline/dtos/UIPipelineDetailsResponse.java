@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
 /**
@@ -19,11 +19,11 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String updateSamples;
     private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
-    private List<PipelineParameterWithOptions> parameterWithOptions;
+    private List<InputWithOptions> parameterWithOptions;
     private List<UIReferenceFile> referenceFiles;
     private boolean acceptsSingleSequenceFiles;
     private boolean acceptsPairedSequenceFiles;
-    private List<PipelineParameterWithOptions> dynamicSources;
+    private List<InputWithOptions> dynamicSources;
     private List<SelectOption> projects;
 
     public String getName() {
@@ -50,11 +50,11 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.type = type;
     }
 
-    public List<PipelineParameterWithOptions> getParameterWithOptions() {
+    public List<InputWithOptions> getParameterWithOptions() {
         return parameterWithOptions;
     }
 
-    public void setParameterWithOptions(List<PipelineParameterWithOptions> parameterWithOptions) {
+    public void setParameterWithOptions(List<InputWithOptions> parameterWithOptions) {
         this.parameterWithOptions = parameterWithOptions;
     }
 
@@ -106,11 +106,11 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.acceptsPairedSequenceFiles = acceptsPairedSequenceFiles;
     }
 
-    public List<PipelineParameterWithOptions> getDynamicSources() {
+    public List<InputWithOptions> getDynamicSources() {
         return dynamicSources;
     }
 
-    public void setDynamicSources(List<PipelineParameterWithOptions> dynamicSources) {
+    public void setDynamicSources(List<InputWithOptions> dynamicSources) {
         this.dynamicSources = dynamicSources;
     }
 

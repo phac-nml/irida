@@ -2,18 +2,20 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
+
 /**
  * Used by the UI for displaying a named pipeline parameter set.
  */
 public class SavedPipelineParameters {
     private  Long id;
     private  String label;
-    private  List<PipelineParameter> parameters;
+    private  List<Input> parameters;
 
     public SavedPipelineParameters() {
     }
 
-    public SavedPipelineParameters(Long id, String label, List<PipelineParameter> parameters) {
+    public SavedPipelineParameters(Long id, String label, List<Input> parameters) {
         this.id = id;
         this.label = label;
         this.parameters = parameters;
@@ -27,7 +29,7 @@ public class SavedPipelineParameters {
         return label;
     }
 
-    public List<PipelineParameter> getParameters() {
+    public List<Input> getParameters() {
         return parameters;
     }
 
@@ -35,7 +37,7 @@ public class SavedPipelineParameters {
         this.label = label;
     }
 
-    public void setParameters(List<PipelineParameter> parameters) {
+    public void setParameters(List<Input> parameters) {
         this.parameters = parameters;
     }
 }

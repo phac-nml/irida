@@ -1,17 +1,17 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui;
 
 /**
  * Used in the UI to render a Irida Workflow Pipeline Parameter option
  */
-public class PipelineParameter {
+public class Input {
     private String label;
     private String name;
     private String value;
 
-    public PipelineParameter() {
+    public Input() {
     }
 
-    public PipelineParameter(String name, String label, String value) {
+    public Input(String name, String label, String value) {
         this.label = label;
         this.name = name;
         this.value = value;

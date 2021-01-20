@@ -3,7 +3,6 @@ import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 import {
   deepCopy,
   formatDefaultPipelineName,
-  formatParametersWithOptions,
   formatSavedParameterSets,
   PIPELINE_ID,
 } from "./launch-utilities";
@@ -165,10 +164,6 @@ function LaunchProvider({ children }) {
         dynamicSources,
         ...details
       }) => {
-        const formattedParameterWithOptions = formatParametersWithOptions(
-          parameterWithOptions
-        );
-
         const formattedParameterSets = formatSavedParameterSets(
           savedPipelineParameters
         );
@@ -189,21 +184,19 @@ function LaunchProvider({ children }) {
         }
 
         // Get initial values for parameters with options.
-        formattedParameterWithOptions.forEach((parameter) => {
+        parameterWithOptions.forEach((parameter) => {
           initialValues[parameter.name] =
             parameter.value || parameter.options[0].value;
         });
 
         // Check for dynamic sources
-        let sources;
         if (dynamicSources) {
           initialValues.dynamicSources = {};
           dynamicSources.forEach((source) => {
             initialValues[source.id] = source.options[0].value;
           });
 
-          sources = formatParametersWithOptions(dynamicSources);
-          sources.forEach((parameter) => {
+          dynamicSources.forEach((parameter) => {
             initialValues[parameter.name] =
               parameter.value || parameter.options[0].value;
           });
@@ -216,9 +209,9 @@ function LaunchProvider({ children }) {
             initialValues,
             pipeline: { name, description },
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
-            parameterWithOptions: formattedParameterWithOptions,
+            parameterWithOptions,
             parameterSets: formattedParameterSets,
-            dynamicSources: sources,
+            dynamicSources,
             files: [],
           },
         });
