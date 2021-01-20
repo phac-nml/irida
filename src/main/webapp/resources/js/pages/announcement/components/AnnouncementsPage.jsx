@@ -20,6 +20,7 @@ const { Text } = Typography;
  */
 export function AnnouncementsPage({}) {
   const [announcements, setAnnouncements] = useState([]);
+  const [readToggle, setReadToggle] = useState(false);
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
@@ -38,12 +39,12 @@ export function AnnouncementsPage({}) {
           return setAnnouncements(data.data);
       }
     });
-  }, [filter]);
+  }, [filter, readToggle]);
 
   function markAnnouncementAsRead(aID) {
     return markAnnouncementRead({ aID })
       .then(() => {
-        setFilter("read");
+        setReadToggle(!readToggle);
       })
       .catch(({ message }) => {
         notification.error({ message });
