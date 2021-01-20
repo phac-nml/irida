@@ -1,5 +1,15 @@
 import React from "react";
-import { Button, Divider, Form, Input, Select, Space, Tag } from "antd";
+import {
+  Alert,
+  Button,
+  Divider,
+  Form,
+  Input,
+  Popover,
+  Select,
+  Space,
+  Tag,
+} from "antd";
 import { IconEdit } from "../../../components/icons/Icons";
 import { ParametersModal } from "./ParametersModal";
 import { useLaunch } from "../launch-context";
@@ -16,24 +26,24 @@ import { setParameterSetById } from "../launch-dispatch";
  */
 export function SavedParameters({ form }) {
   const [{ parameterSets, parameterSet }, launchDispatch] = useLaunch(); // TODO remove parameterSet
-  const [current, setCurrent] = React.useState(parameterSets[0].parameters);
+  const [current, setCurrent] = React.useState(parameterSets[0].id);
   const [modified, setModified] = React.useState({});
+  const [saveVisible, setSaveVisible] = React.useState(false);
 
   React.useEffect(() => {}, []);
 
   const [visible, setVisible] = React.useState(false);
 
-  function useParameterSet(id) {
-    const newSet = parameterSets.find((set) => set.id === id);
-    setCurrent(newSet);
-    newSet.parameters.forEach((parameter) =>
-      form.setFieldsValue({ [parameter.name]: parameter.value })
+  function updateSelectedSet(id) {
+    const index = parameterSets.findIndex((set) => set.id === id);
+    setCurrent(id);
+    setModified({});
+    const parameters = parameterSets[index].parameters.reduce(
+      (acc, curr) => ({ ...acc, [curr.name]: curr.value }),
+      {}
     );
+    form.setFieldsValue(parameters);
   }
-
-  React.useEffect(() => {
-    console.log(modified);
-  }, [modified]);
 
   function onValueUpdated(field, original, newValue) {
     if (original === newValue) {
@@ -43,6 +53,12 @@ export function SavedParameters({ form }) {
     } else {
       setModified({ ...modified, [field]: newValue });
     }
+  }
+
+  function getParameterValues() {
+    const valueMap = form.getFieldsValue(
+      parameterSets[0].parameters.map((parameter) => parameter.name)
+    );
   }
 
   /**
@@ -59,37 +75,61 @@ export function SavedParameters({ form }) {
       <Divider orientation="left" plain>
         Saved Pipeline Parameters
       </Divider>
-      <div>
-        <Form.Item label={"Saved Parameter Sets"}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: SPACE_XS,
+        }}
+      >
+        <Form.Item label={"Select a pre-defined parameter set"}>
           <Select
-            value={parameterSet.id}
-            onChange={(id) => useParameterSet(id)}
+            style={{ width: 300 }}
+            value={current}
+            onChange={(id) => updateSelectedSet(id)}
+            disabled={parameterSets.length < 2}
           >
             {parameterSets.map((set) => (
               <Select.Option key={set.key} value={set.id}>
-                <Space>
-                  {set.label}
-                  {set.key.endsWith("MODIFIED") ? (
-                    <Tag>{i18n("ParametersModal.modified")}</Tag>
-                  ) : (
-                    ""
-                  )}
-                </Space>
+                {set.label}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
+        {Object.keys(modified).length ? (
+          <Alert
+            type={"warning"}
+            message={
+              "This template had been modified. You can save it as a custom template"
+            }
+            action={
+              <Popover
+                placement="bottomRight"
+                trigger="click"
+                title={"Save modified parameters as"}
+                content={<div>FOOBAR</div>}
+              >
+                <Button size="small">Save</Button>
+              </Popover>
+            }
+          />
+        ) : null}
       </div>
       {parameterSet.parameters.map((parameter) => (
         <Form.Item
           key={parameter.name}
           label={parameter.label}
           name={parameter.name}
-          rules={[]}
+          rules={[
+            {
+              required: true,
+              message: "All values are required",
+            },
+          ]}
           initialValue={parameter.value}
-          hasFeedback={modified[parameter.name]}
-          validateStatus={modified[parameter.name] ? "warning" : null}
-          help={modified[parameter.name] ? "MODIFIED" : null}
+          help={
+            modified[parameter.name] ? i18n("ParametersModal.modified") : null
+          }
         >
           <Input
             onChange={(e) =>
