@@ -16,19 +16,19 @@ import { PriorityFlag } from "./PriorityFlag";
 
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
-  const [unreadTotal, setUnreadTotal] = useState(0);
+  const [readToggle, setReadToggle] = useState(false);
 
   useEffect(() => {
     getUnreadAnnouncements().then((data) => {
+      console.log(data.data);
       setUnreadAnnouncements(data.data);
-      setUnreadTotal(data.data.length);
     });
-  }, [unreadTotal]);
+  }, [readToggle]);
 
   function markAnnouncementAsRead(aID) {
     return markAnnouncementRead({ aID })
       .then(() => {
-        setUnreadTotal(unreadTotal - 1);
+        setReadToggle(!readToggle);
       })
       .catch(({ message }) => {
         notification.error({ message });
@@ -45,7 +45,7 @@ export function AnnouncementDashboard() {
           />
         ),
       }}
-      pagination={unreadTotal > 5 ? { pageSize: 5 } : false}
+      pagination={unreadAnnouncements.length > 5 ? { pageSize: 5 } : false}
       dataSource={unreadAnnouncements}
       renderItem={(item) => (
         <List.Item className="t-announcement-item">

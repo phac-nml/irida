@@ -25,7 +25,6 @@ export function AnnouncementsPage({}) {
 
   useEffect(() => {
     getAnnouncements().then((data) => {
-      console.log(data.data);
       switch (filter) {
         case "read":
           return setAnnouncements(
@@ -76,7 +75,6 @@ export function AnnouncementsPage({}) {
           >
             <List.Item.Meta
               avatar=<Avatar
-                gap={10}
                 style={
                   item.read
                     ? { backgroundColor: blue1 }
