@@ -52,7 +52,6 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/user/list")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@ResponseBody
 	public ResponseEntity<List<AnnouncementUserReadDetails>> getAnnouncementsUser(Principal principal) {
 		List<AnnouncementUserReadDetails> announcements = UIAnnouncementsService.getAnnouncementsUser(principal);
 		Collections.sort(announcements);
@@ -67,7 +66,6 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/user/read")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@ResponseBody
 	public ResponseEntity<List<AnnouncementUserJoin>> getReadAnnouncementsUser(Principal principal) {
 		List<AnnouncementUserJoin> readAnnouncements = UIAnnouncementsService.getReadAnnouncementsUser(principal);
 		Collections.sort(readAnnouncements);
@@ -82,7 +80,6 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/user/unread")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@ResponseBody
 	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
 		List<Announcement> unreadAnnouncements = UIAnnouncementsService.getUnreadAnnouncementsUser(principal);
 		Collections.sort(unreadAnnouncements);
@@ -143,9 +140,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/{announcementID}/details/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public @ResponseBody
-	TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(
-			@PathVariable Long announcementID, @RequestBody TableRequest tableRequest) {
+	public TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(@PathVariable Long announcementID, @RequestBody TableRequest tableRequest) {
 		return UIAnnouncementsService.getUserAnnouncementInfoTable(announcementID, tableRequest);
 	}
 }
