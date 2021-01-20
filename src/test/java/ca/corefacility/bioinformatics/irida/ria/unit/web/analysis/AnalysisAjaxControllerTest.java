@@ -261,12 +261,14 @@ public class AnalysisAjaxControllerTest {
 	@Test
 	public void testUpdateAnalysisEmailPipelineResult() throws IridaWorkflowNotFoundException {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
-		AnalysisEmailPipelineResult res = new AnalysisEmailPipelineResult(submission.getId(), true);
+		AnalysisEmailPipelineResult res = new AnalysisEmailPipelineResult(submission.getId(), true, true);
 		submission.setAnalysisState(AnalysisState.RUNNING);
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
-		assertFalse("Email result on pipeline completion", submission.getEmailPipelineResult());
+		assertFalse("Email result on pipeline completion", submission.getEmailPipelineResultCompleted());
+		assertFalse("Email result on pipeline error", submission.getEmailPipelineResultError());
 		analysisAjaxController.ajaxUpdateEmailPipelineResult(res, Locale.getDefault(), httpServletResponseMock);
-		submission.setEmailPipelineResult(res.getEmailPipelineResult());
+		submission.setEmailPipelineResultCompleted(res.getEmailPipelineResultCompleted());
+		submission.setEmailPipelineResultError(res.getEmailPipelineResultError());
 		verify(analysisSubmissionServiceMock, times(1)).update(submission);
 	}
 

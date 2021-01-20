@@ -86,8 +86,12 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	protected String analysisDescription;
 
 	@NotNull
-	@Column(name = "email_pipeline_result")
-	protected boolean emailPipelineResult;
+	@Column(name = "email_pipeline_result_completed")
+	protected boolean emailPipelineResultCompleted;
+
+	@NotNull
+	@Column(name = "email_pipeline_result_error")
+	protected boolean emailPipelineResultError;
 
 	protected AbstractAnalysisSubmission() {
 		this.createdDate = new Date();
@@ -256,20 +260,37 @@ public abstract class AbstractAnalysisSubmission extends IridaResourceSupport im
 	}
 
 	/**
-	 * Sets flag to indicate whether or not user should be emailed upon pipeline completion or error.
-	 * @param emailPipelineResult If true, email pipeline result to user.
+	 * Sets flag to indicate whether or not user should be emailed upon pipeline completion.
+	 * @param emailPipelineResultCompleted If true, email pipeline result to user.
 	 */
-	public void setEmailPipelineResult(boolean emailPipelineResult) {
-		this.emailPipelineResult = emailPipelineResult;
+	public void setEmailPipelineResultCompleted(boolean emailPipelineResultCompleted) {
+		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
 	}
 
 	/**
-	 * Whether or not to send an email upon pipeline completion or error.
+	 * Whether or not to send an email upon pipeline completion.
 	 * @return Email pipeline result on completion or error.
 	 */
-	public boolean getEmailPipelineResult() {
-		return emailPipelineResult;
+	public boolean getEmailPipelineResultCompleted() {
+		return emailPipelineResultCompleted;
 	}
+
+	/**
+	 * Sets flag to indicate whether or not user should be emailed upon pipeline error.
+	 * @param emailPipelineResultError If true, email pipeline result to user.
+	 */
+	public void setEmailPipelineResultError(boolean emailPipelineResultError) {
+		this.emailPipelineResultError = emailPipelineResultError;
+	}
+
+	/**
+	 * Whether or not to send an email upon pipeline error.
+	 * @return Email pipeline result on completion or error.
+	 */
+	public boolean getEmailPipelineResultError() {
+		return emailPipelineResultError;
+	}
+
 
 	@Override
 	public int hashCode() {

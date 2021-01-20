@@ -37,8 +37,8 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 	}
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, IridaWorkflowNamedParameters namedParameters,
-			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, boolean emailPipelineResult,
-			Project submittedProject) {
+			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription,
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError, Project submittedProject) {
 		this();
 		this.name = name;
 		this.workflowId = workflowId;
@@ -46,13 +46,14 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 		this.namedParameters = namedParameters;
 		this.updateSamples = updateSamples;
 		this.analysisDescription = analysisDescription;
-		this.emailPipelineResult = emailPipelineResult;
+		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
+		this.emailPipelineResultError = emailPipelineResultError;
 		this.submittedProject = submittedProject;
 	}
 
 	public AnalysisSubmissionTemplate(String name, UUID workflowId, Map<String, String> inputParameters,
-			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription, boolean emailPipelineResult,
-			Project submittedProject) {
+			ReferenceFile referenceFile, boolean updateSamples, String analysisDescription,
+			boolean emailPipelineResultCompleted, boolean emailPipelineResultError, Project submittedProject) {
 		this();
 		this.name = name;
 		this.workflowId = workflowId;
@@ -60,7 +61,8 @@ public class AnalysisSubmissionTemplate extends AbstractAnalysisSubmission
 		this.referenceFile = referenceFile;
 		this.updateSamples = updateSamples;
 		this.analysisDescription = analysisDescription;
-		this.emailPipelineResult = emailPipelineResult;
+		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
+		this.emailPipelineResultError = emailPipelineResultError;
 		this.submittedProject = submittedProject;
 	}
 
