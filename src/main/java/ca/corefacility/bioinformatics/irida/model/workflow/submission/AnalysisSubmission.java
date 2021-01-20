@@ -112,7 +112,8 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this.workflowId = builder.workflowId;
 		this.namedParameters = builder.namedParameters;
 		this.analysisDescription = (builder.analysisDescription);
-		this.emailPipelineResult = builder.emailPipelineResult;
+		this.emailPipelineResultCompleted = builder.emailPipelineResultCompleted;
+		this.emailPipelineResultError = builder.emailPipelineResultError;
 		this.updateSamples = builder.updateSamples;
 		this.priority = builder.priority;
 		this.automated = builder.automated;
@@ -273,7 +274,8 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		private boolean automated;
 		private Priority priority = Priority.MEDIUM;
 		private User submitter;
-		private boolean emailPipelineResult = false;
+		private boolean emailPipelineResultCompleted = false;
+		private boolean emailPipelineResultError = false;
 
 		/**
 		 * Creates a new {@link Builder} with a workflow id.
@@ -299,7 +301,8 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			updateSamples(template.getUpdateSamples());
 			automated(true);
 			submitter(template.getSubmitter());
-			emailPipelineResult(template.getEmailPipelineResult());
+			emailPipelineResultCompleted(template.getEmailPipelineResultCompleted());
+			emailPipelineResultError(template.getEmailPipelineResultError());
 
 			if (template.getReferenceFile()
 					.isPresent()) {
@@ -454,13 +457,25 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		}
 
 		/**
-		 * Sets if user should be emailed on pipeline completion or error
+		 * Sets if user should be emailed on pipeline completion
 		 *
-		 * @param emailPipelineResult If user should be emailed or not
+		 * @param emailPipelineResultCompleted If user should be emailed or not
 		 * @return A {@link Builder}
 		 */
-		public Builder emailPipelineResult(boolean emailPipelineResult) {
-			this.emailPipelineResult = emailPipelineResult;
+		public Builder emailPipelineResultCompleted(boolean emailPipelineResultCompleted) {
+			this.emailPipelineResultCompleted = emailPipelineResultCompleted;
+
+			return this;
+		}
+
+		/**
+		 * Sets if user should be emailed on pipeline error
+		 *
+		 * @param emailPipelineResultError If user should be emailed or not
+		 * @return A {@link Builder}
+		 */
+		public Builder emailPipelineResultError(boolean emailPipelineResultError) {
+			this.emailPipelineResultError = emailPipelineResultError;
 
 			return this;
 		}

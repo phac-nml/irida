@@ -22,7 +22,8 @@ public class PipelineStartParameters {
 	private Long automatedProject;
 	private Map<String, Object> selectedParameters;
 	private Boolean writeResultsToSamples;
-	private Boolean emailPipelineResult;
+	private Boolean emailPipelineResultCompleted;
+	private Boolean emailPipelineResultError;
 
 	public PipelineStartParameters() {
 		workflowId = null;
@@ -34,7 +35,8 @@ public class PipelineStartParameters {
 		ref = null;
 		selectedParameters = null;
 		writeResultsToSamples = null;
-		emailPipelineResult = null;
+		emailPipelineResultCompleted = null;
+		emailPipelineResultError = null;
 	}
 
 	public UUID getWorkflowId() {
@@ -117,14 +119,21 @@ public class PipelineStartParameters {
 		return automatedProject;
 	}
 
-	public Boolean getEmailPipelineResult() {
-		return emailPipelineResult;
+	public Boolean getEmailPipelineResultCompleted() {
+		return emailPipelineResultCompleted;
 	}
 
-	public void setEmailPipelineResult(Boolean emailPipelineResult) {
-		this.emailPipelineResult = emailPipelineResult;
+	public void setEmailPipelineResultCompleted(Boolean emailPipelineResultCompleted) {
+		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
 	}
 
+	public Boolean getEmailPipelineResultError() {
+		return emailPipelineResultError;
+	}
+
+	public void setEmailPipelineResultError(Boolean emailPipelineResultError) {
+		this.emailPipelineResultError = emailPipelineResultError;
+	}
 
 	@Override
 	public String toString() {
@@ -132,6 +141,8 @@ public class PipelineStartParameters {
 				+ description + '\'' + ", single=" + single + ", paired=" + paired + ", sharedProjects="
 				+ sharedProjects + ", ref=" + ref + ", selectedParameters=" + selectedParameters
 				+ ", writeResultsToSamples=" + writeResultsToSamples
-				+ ", emailPipelineResult=" + emailPipelineResult + '}';		
+				+ ", emailPipelineResultCompleted=" + emailPipelineResultCompleted
+				+ ", emailPipelineResultError=" + emailPipelineResultError
+				+ '}';
 	}
 }

@@ -65,7 +65,7 @@ public class AnnouncementServiceImplIT {
     public void testCreateAnnouncementAsAdmin() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        Announcement an = new Announcement("This is a message", user);
+        Announcement an = new Announcement("This is a message title", "This is a message", false, user);
         try {
             announcementService.create(an);
         } catch (AccessDeniedException e) {
@@ -82,7 +82,7 @@ public class AnnouncementServiceImplIT {
     public void testCreateAnnouncementNotAdmin() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        announcementService.create(new Announcement("This is a message", user));
+        announcementService.create(new Announcement("This is a message title", "This is a message", false, user));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class AnnouncementServiceImplIT {
     public void testUpdateAnnouncementNotExists() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        final Announcement a = new Announcement("Doesn't exist", user);
+        final Announcement a = new Announcement("Doesn't exist", "Doesn't exist", false, user);
         announcementService.update(a);
     }
 
@@ -310,8 +310,8 @@ public class AnnouncementServiceImplIT {
 
         int beforeSize = announcements.size();
 
-        announcementService.create(new Announcement("The newest announcement", user));
-        announcementService.create(new Announcement("No, this is the newest one!", user));
+        announcementService.create(new Announcement("First message", "The newest announcement", false, user));
+        announcementService.create(new Announcement("Second message", "No, this is the newest one!", false, user));
 
         assertEquals("Number of announcements doesn't match", beforeSize + 2,
                 announcementService.getAnnouncementsCreatedByUser(user).size());
@@ -321,7 +321,7 @@ public class AnnouncementServiceImplIT {
         assertEquals("Number of announcements doesn't match", beforeSize + 1,
                 announcementService.getAnnouncementsCreatedByUser(user).size());
 
-        announcementService.create(new Announcement("Someone else made me do it!",
+        announcementService.create(new Announcement("Third message", "Someone else made me do it!", false,
                 userService.getUserByUsername("admin2")));
 
         announcements = announcementService.getAnnouncementsCreatedByUser(user);

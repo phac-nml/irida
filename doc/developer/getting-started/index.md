@@ -179,8 +179,8 @@ The advanced profiles allow you to configure your server to run specific compone
 
 ##### Testing profiles
 * `it` - Integration test.
-  * Liquibase used for database setup, but should only be used for integration testing.
-* `test` - This profile is generally used when testing connecting to Galaxy.
+  * Liquibase is used for database setup, but should only be used for integration testing.
+* `test` - This profile is generally used when testing connection to Galaxy.
 
 When running IRIDA from the command line, a profile can be set by adding the following parameter:
 

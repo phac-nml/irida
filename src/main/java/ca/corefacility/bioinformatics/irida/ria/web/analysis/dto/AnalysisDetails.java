@@ -16,7 +16,8 @@ public class AnalysisDetails {
 	private Long duration;
 	private Date createdDate;
 	private AnalysisSubmission.Priority[] priorities;
-	private boolean emailPipelineResult;
+	private boolean emailPipelineResultCompleted;
+	private boolean emailPipelineResultError;
 	private boolean canShareToSamples;
 	private boolean updatePermission;
 	private boolean updateSamples;
@@ -25,7 +26,7 @@ public class AnalysisDetails {
 	}
 
 	public AnalysisDetails(String analysisDescription, String workflowName, String version, String priority, Long duration,
-			Date createdDate, AnalysisSubmission.Priority[] priorities, boolean emailPipelineResult,
+			Date createdDate, AnalysisSubmission.Priority[] priorities, boolean emailPipelineResultCompleted, boolean emailPipelineResultError,
 			boolean canShareToSamples, boolean updatePermission, boolean updateSamples) {
 		this.analysisDescription=analysisDescription;
 		this.workflowName = workflowName;
@@ -34,7 +35,8 @@ public class AnalysisDetails {
 		this.duration = duration;
 		this.createdDate = createdDate;
 		this.priorities = priorities;
-		this.emailPipelineResult = emailPipelineResult;
+		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
+		this.emailPipelineResultError = emailPipelineResultError;
 		this.canShareToSamples = canShareToSamples;
 		this.updatePermission = updatePermission;
 		this.updateSamples = updateSamples;
@@ -96,12 +98,20 @@ public class AnalysisDetails {
 		this.priorities = priorities;
 	}
 
-	public boolean isEmailPipelineResult() {
-		return emailPipelineResult;
+	public boolean isEmailPipelineResultCompleted() {
+		return emailPipelineResultCompleted;
 	}
 
-	public void setEmailPipelineResult(boolean emailPipelineResult) {
-		this.emailPipelineResult = emailPipelineResult;
+	public void setEmailPipelineResultCompleted(boolean emailPipelineResultCompleted) {
+		this.emailPipelineResultCompleted = emailPipelineResultCompleted;
+	}
+
+	public boolean isEmailPipelineResultError() {
+		return emailPipelineResultError;
+	}
+
+	public void setEmailPipelineResultError(boolean emailPipelineResultError) {
+		this.emailPipelineResultError = emailPipelineResultError;
 	}
 
 	public boolean isCanShareToSamples() {
