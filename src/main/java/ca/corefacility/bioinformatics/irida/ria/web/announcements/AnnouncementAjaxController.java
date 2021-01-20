@@ -55,6 +55,7 @@ public class AnnouncementAjaxController {
 	@ResponseBody
 	public ResponseEntity<List<AnnouncementUserReadDetails>> getAnnouncementsUser(Principal principal) {
 		List<AnnouncementUserReadDetails> announcements = UIAnnouncementsService.getAnnouncementsUser(principal);
+		Collections.sort(announcements);
 		return ResponseEntity.ok(announcements);
 	}
 
