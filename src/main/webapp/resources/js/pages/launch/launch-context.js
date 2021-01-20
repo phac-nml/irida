@@ -195,10 +195,17 @@ function LaunchProvider({ children }) {
         });
 
         // Check for dynamic sources
+        let sources;
         if (dynamicSources) {
           initialValues.dynamicSources = {};
           dynamicSources.forEach((source) => {
             initialValues[source.id] = source.options[0].value;
+          });
+
+          sources = formatParametersWithOptions(dynamicSources);
+          sources.forEach((parameter) => {
+            initialValues[parameter.name] =
+              parameter.value || parameter.options[0].value;
           });
         }
 
@@ -211,7 +218,7 @@ function LaunchProvider({ children }) {
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions: formattedParameterWithOptions,
             parameterSets: formattedParameterSets,
-            dynamicSources,
+            dynamicSources: sources,
             files: [],
           },
         });

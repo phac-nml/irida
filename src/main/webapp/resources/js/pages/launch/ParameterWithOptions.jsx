@@ -1,6 +1,5 @@
 import React from "react";
 import { Checkbox, Form, Radio, Select } from "antd";
-import { useLaunch } from "./launch-context";
 
 /**
  * React Component to display workflow "parameters with options", this would include
@@ -16,9 +15,7 @@ import { useLaunch } from "./launch-context";
  * @returns {*}
  * @constructor
  */
-export function ParameterWithOptions() {
-  const [{ parameterWithOptions: parameters }] = useLaunch();
-
+export function ParameterWithOptions({ parameters }) {
   const content = parameters.map((parameter) => {
     switch (parameter.type) {
       case "checkbox":

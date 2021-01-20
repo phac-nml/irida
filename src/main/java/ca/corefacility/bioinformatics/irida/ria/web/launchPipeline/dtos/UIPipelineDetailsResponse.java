@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.DynamicSource;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
@@ -24,7 +23,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private List<UIReferenceFile> referenceFiles;
     private boolean acceptsSingleSequenceFiles;
     private boolean acceptsPairedSequenceFiles;
-    private List<DynamicSource> dynamicSources;
+    private List<PipelineParameterWithOptions> dynamicSources;
     private List<SelectOption> projects;
 
     public String getName() {
@@ -107,11 +106,11 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.acceptsPairedSequenceFiles = acceptsPairedSequenceFiles;
     }
 
-    public List<DynamicSource> getDynamicSources() {
+    public List<PipelineParameterWithOptions> getDynamicSources() {
         return dynamicSources;
     }
 
-    public void setDynamicSources(List<DynamicSource> dynamicSources) {
+    public void setDynamicSources(List<PipelineParameterWithOptions> dynamicSources) {
         this.dynamicSources = dynamicSources;
     }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Select } from "antd";
+import { Checkbox, Form, Radio, Select } from "antd";
 import { useLaunch } from "./launch-context";
 
 /**
@@ -10,21 +10,48 @@ import { useLaunch } from "./launch-context";
  */
 export function DynamicSources() {
   const [{ dynamicSources: sources }] = useLaunch();
-  return (
-    sources && (
-      <section>
-        {sources.map((source) => (
-          <Form.Item key={source.label} label={source.label} name={source.id}>
+  console.log(sources);
+
+  const content = sources.map((parameter) => {
+    switch (parameter.type) {
+      case "checkbox":
+        return (
+          <Form.Item
+            key={parameter.name}
+            name={parameter.name}
+            valuePropName="checked"
+          >
+            <Checkbox>{parameter.label}</Checkbox>
+          </Form.Item>
+        );
+      case "radio":
+        return (
+          <Form.Item
+            key={parameter.name}
+            name={parameter.name}
+            label={parameter.label}
+          >
+            <Radio.Group options={parameter.options} />
+          </Form.Item>
+        );
+      default:
+        return (
+          <Form.Item
+            key={parameter.name}
+            name={parameter.name}
+            label={parameter.label}
+          >
             <Select>
-              {source.options.map((option) => (
+              {parameter.options.map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
-        ))}
-      </section>
-    )
-  );
+        );
+    }
+  });
+
+  return <section>{content}</section>;
 }

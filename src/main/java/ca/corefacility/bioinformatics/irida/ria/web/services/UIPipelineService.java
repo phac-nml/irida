@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.DynamicSource;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
@@ -159,7 +158,7 @@ public class UIPipelineService {
 		Dynamic Sources - these are pulled from Galaxy
 		 */
 		if (description.requiresDynamicSource()) {
-			List<DynamicSource> dynamicSources = new ArrayList<>();
+			List<PipelineParameterWithOptions> dynamicSources = new ArrayList<>();
 			IridaWorkflowDynamicSourceGalaxy dynamicSource = new IridaWorkflowDynamicSourceGalaxy();
 			/*
 			Go through all the pipeline parameters and see which ones require dynamic sources.
@@ -192,7 +191,7 @@ public class UIPipelineService {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 						}
 
-						dynamicSources.add(new DynamicSource(name, label, options));
+						dynamicSources.add(new PipelineParameterWithOptions(name, label, null, options));
 					} catch (Exception e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
