@@ -6,7 +6,7 @@ import {
 } from "../../../apis/announcements/announcements";
 import { Avatar, Form, List, notification, Radio, Typography } from "antd";
 import { PriorityFlag } from "./PriorityFlag";
-import { formatDate } from "../../../utilities/date-utilities";
+import { fromNow } from "../../../utilities/date-utilities";
 import ViewReadAnnouncement from "./ViewReadAnnouncement";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
 import { blue1 } from "../../../styles/colors";
@@ -93,7 +93,7 @@ export function AnnouncementsPage({}) {
                   <ViewReadAnnouncement announcement={item.announcement} />
                 )
               }
-              description={formatDate({ date: item.announcement.createdDate })}
+              description={fromNow({ date: item.announcement.createdDate })}
             />
           </List.Item>
         )}
