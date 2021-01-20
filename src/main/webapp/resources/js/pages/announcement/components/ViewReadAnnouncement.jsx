@@ -6,33 +6,35 @@ import Markdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 
+const { Text } = Typography;
+const { info } = Modal;
+
 /**
  * Component to add a button which will open a modal to view a unread announcement.
- * @param {function} ViewAnnouncement - the function that displays a unread announcement.
+ * @param {object} announcement - the announcement that is to be displayed.
+ * @param {boolean} isRead - whether the announcement has been read.
+ * @param {function} markAnnouncementAsRead - the function that marks the announcement as read.
  * @returns {*}
  * @constructor
  */
-const { Text } = Typography;
-const { confirm } = Modal;
-function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
+
+function ViewReadAnnouncementModal({ announcement }) {
   const displayAnnouncement = () =>
-    confirm({
+    info({
       type: "info",
       width: `60%`,
       icon: <PriorityFlag hasPriority={announcement.priority} />,
-      okText: `Read`,
-      onOk() {
-        markAnnouncementAsRead(announcement.identifier);
-      },
       title: (
         <>
-          <Text strong>{announcement.title}</Text>
+          <Text>{announcement.title}</Text>
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
             {i18n(
               "ViewUnreadAnnouncement.create.details",
               announcement.user.username,
-              formatDate({ date: announcement.createdDate })
+              formatDate({
+                date: announcement.createdDate,
+              })
             )}
           </Text>
         </>
@@ -43,25 +45,17 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
         </div>
       ),
     });
+
   return (
     <>
-      <LinkButton
-        text=<Text strong>{announcement.title}</Text>
-        onClick={displayAnnouncement}
-      />
+      <LinkButton text={announcement.title} onClick={displayAnnouncement} />
     </>
   );
 }
-export default function ViewUnreadAnnouncement({
-  announcement,
-  markAnnouncementAsRead,
-}) {
+export default function ViewReadAnnouncement({ announcement }) {
   return (
     <VisibilityProvider>
-      <ViewUnreadAnnouncementModal
-        announcement={announcement}
-        markAnnouncementAsRead={markAnnouncementAsRead}
-      />
+      <ViewReadAnnouncementModal announcement={announcement} />
     </VisibilityProvider>
   );
 }

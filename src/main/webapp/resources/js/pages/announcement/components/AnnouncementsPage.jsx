@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
-import { getAnnouncements } from "../../../apis/announcements/announcements";
-import { Avatar, Form, List, Radio, Typography } from "antd";
+import {
+  getAnnouncements,
+  markAnnouncementRead,
+} from "../../../apis/announcements/announcements";
+import { Avatar, Form, List, notification, Radio, Typography } from "antd";
 import { PriorityFlag } from "./PriorityFlag";
 import { formatDate } from "../../../utilities/date-utilities";
+import ViewReadAnnouncement from "./ViewReadAnnouncement";
+import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
+import { blue1 } from "../../../styles/colors";
 
 const { Text } = Typography;
 
@@ -18,6 +24,7 @@ export function AnnouncementsPage({}) {
 
   useEffect(() => {
     getAnnouncements().then((data) => {
+      console.log(data.data);
       switch (filter) {
         case "read":
           return setAnnouncements(
@@ -32,6 +39,16 @@ export function AnnouncementsPage({}) {
       }
     });
   }, [filter]);
+
+  function markAnnouncementAsRead(aID) {
+    return markAnnouncementRead({ aID })
+      .then(() => {
+        setFilter("read");
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
 
   return (
     <PageWrapper title="Announcements">
@@ -50,15 +67,32 @@ export function AnnouncementsPage({}) {
       <List
         dataSource={announcements}
         renderItem={(item) => (
-          <List.Item className="t-announcement-item">
+          <List.Item
+            className="t-announcement-item"
+            style={
+              item.read ? { backgroundColor: blue1, fontWeight: "bold" } : {}
+            }
+          >
             <List.Item.Meta
               avatar=<Avatar
-                style={{ backgroundColor: "#fff" }}
+                gap={10}
+                style={
+                  item.read
+                    ? { backgroundColor: blue1 }
+                    : { backgroundColor: "#fff" }
+                }
                 icon={<PriorityFlag hasPriority={item.announcement.priority} />}
               />
-              title=<Text strong={item.announcementUserJoin ? false : true}>
-                {item.announcement.title}
-              </Text>
+              title={
+                item.read ? (
+                  <ViewUnreadAnnouncement
+                    announcement={item.announcement}
+                    markAnnouncementAsRead={markAnnouncementAsRead}
+                  />
+                ) : (
+                  <ViewReadAnnouncement announcement={item.announcement} />
+                )
+              }
               description={formatDate({ date: item.announcement.createdDate })}
             />
           </List.Item>
