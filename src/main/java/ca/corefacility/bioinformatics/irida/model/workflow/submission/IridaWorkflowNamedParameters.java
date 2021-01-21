@@ -123,6 +123,6 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, workflowId, namedParameters.values());
+		return Objects.hash(name, workflowId, namedParameters);
 	}
 }

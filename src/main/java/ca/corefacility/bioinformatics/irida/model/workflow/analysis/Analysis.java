@@ -156,7 +156,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(createdDate, description, executionManagerAnalysisId, analysisOutputFilesMap.values());
+		return Objects.hash(createdDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
 	@Override
