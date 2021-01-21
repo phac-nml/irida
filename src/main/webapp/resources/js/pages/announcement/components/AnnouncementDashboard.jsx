@@ -16,19 +16,19 @@ import { PriorityFlag } from "./PriorityFlag";
 
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
-  const [readToggle, setReadToggle] = useState(false);
 
   useEffect(() => {
     getUnreadAnnouncements().then((data) => {
-      console.log(data.data);
       setUnreadAnnouncements(data.data);
     });
-  }, [readToggle]);
+  }, []);
 
   function markAnnouncementAsRead(aID) {
     return markAnnouncementRead({ aID })
       .then(() => {
-        setReadToggle(!readToggle);
+        setUnreadAnnouncements(
+          unreadAnnouncements.filter((item) => item.identifier !== aID)
+        );
       })
       .catch(({ message }) => {
         notification.error({ message });
