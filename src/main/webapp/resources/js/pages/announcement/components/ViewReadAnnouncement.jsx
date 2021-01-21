@@ -26,7 +26,7 @@ function ViewReadAnnouncementModal({ announcement }) {
       icon: <PriorityFlag hasPriority={announcement.priority} />,
       title: (
         <>
-          <Text>{announcement.title}</Text>
+          <Text strong>{announcement.title}</Text>
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
             {i18n(
