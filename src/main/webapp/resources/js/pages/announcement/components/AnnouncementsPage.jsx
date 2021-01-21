@@ -4,23 +4,12 @@ import {
   getAnnouncements,
   markAnnouncementRead,
 } from "../../../apis/announcements/announcements";
-import {
-  Avatar,
-  Col,
-  Form,
-  List,
-  notification,
-  Radio,
-  Row,
-  Typography,
-} from "antd";
+import { Avatar, Col, Form, List, notification, Radio, Row } from "antd";
 import { PriorityFlag } from "./PriorityFlag";
 import { fromNow } from "../../../utilities/date-utilities";
 import ViewReadAnnouncement from "./ViewReadAnnouncement";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
 import { grey2 } from "../../../styles/colors";
-
-const { Text } = Typography;
 
 /**
  * React component to display the page for administration of users.
