@@ -58,9 +58,15 @@ export function AnnouncementsPage({}) {
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               >
-                <Radio.Button value="all">All</Radio.Button>
-                <Radio.Button value="unread">Unread</Radio.Button>
-                <Radio.Button value="read">Read</Radio.Button>
+                <Radio.Button value="all">
+                  {i18n("AnnouncementsPage.filter.all")}
+                </Radio.Button>
+                <Radio.Button value="unread">
+                  {i18n("AnnouncementsPage.filter.unread")}
+                </Radio.Button>
+                <Radio.Button value="read">
+                  {i18n("AnnouncementsPage.filter.read")}
+                </Radio.Button>
               </Radio.Group>
             </Form.Item>
           </Form>

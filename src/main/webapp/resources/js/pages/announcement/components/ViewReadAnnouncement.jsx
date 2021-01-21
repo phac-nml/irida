@@ -30,7 +30,7 @@ function ViewReadAnnouncementModal({ announcement }) {
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
             {i18n(
-              "ViewUnreadAnnouncement.create.details",
+              "ViewReadAnnouncement.details",
               announcement.user.username,
               formatDate({
                 date: announcement.createdDate,
