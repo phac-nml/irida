@@ -4,12 +4,21 @@ import {
   getAnnouncements,
   markAnnouncementRead,
 } from "../../../apis/announcements/announcements";
-import { Avatar, Form, List, notification, Radio, Typography } from "antd";
+import {
+  Avatar,
+  Col,
+  Form,
+  List,
+  notification,
+  Radio,
+  Row,
+  Typography,
+} from "antd";
 import { PriorityFlag } from "./PriorityFlag";
 import { fromNow } from "../../../utilities/date-utilities";
 import ViewReadAnnouncement from "./ViewReadAnnouncement";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
-import { blue1 } from "../../../styles/colors";
+import { grey2 } from "../../../styles/colors";
 
 const { Text } = Typography;
 
@@ -52,51 +61,61 @@ export function AnnouncementsPage({}) {
 
   return (
     <PageWrapper title="Announcements">
-      <Form>
-        <Form.Item>
-          <Radio.Group
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <Radio.Button value="all">All</Radio.Button>
-            <Radio.Button value="unread">Unread</Radio.Button>
-            <Radio.Button value="read">Read</Radio.Button>
-          </Radio.Group>
-        </Form.Item>
-      </Form>
-      <List
-        dataSource={announcements}
-        renderItem={(item) => (
-          <List.Item
-            className="t-announcement-item"
-            style={
-              item.read ? { backgroundColor: blue1, fontWeight: "bold" } : {}
-            }
-          >
-            <List.Item.Meta
-              avatar=<Avatar
-                style={
-                  item.read
-                    ? { backgroundColor: blue1 }
-                    : { backgroundColor: "#fff" }
-                }
-                icon={<PriorityFlag hasPriority={item.announcement.priority} />}
-              />
-              title={
-                item.read ? (
-                  <ViewUnreadAnnouncement
-                    announcement={item.announcement}
-                    markAnnouncementAsRead={markAnnouncementAsRead}
+      <Row justify="center">
+        <Col xs={24} sm={20} md={16} lg={12} xl={8}>
+          <Form>
+            <Form.Item>
+              <Radio.Group
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+              >
+                <Radio.Button value="all">All</Radio.Button>
+                <Radio.Button value="unread">Unread</Radio.Button>
+                <Radio.Button value="read">Read</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
+      <Row justify="center">
+        <Col xs={24} sm={20} md={16} lg={12} xl={8}>
+          <List
+            dataSource={announcements}
+            pagination={true}
+            renderItem={(item) => (
+              <List.Item
+                className="t-announcement-item"
+                style={item.read ? { backgroundColor: grey2 } : {}}
+              >
+                <List.Item.Meta
+                  avatar=<Avatar
+                    size="small"
+                    style={
+                      item.read
+                        ? { backgroundColor: grey2 }
+                        : { backgroundColor: "#fff" }
+                    }
+                    icon={
+                      <PriorityFlag hasPriority={item.announcement.priority} />
+                    }
                   />
-                ) : (
-                  <ViewReadAnnouncement announcement={item.announcement} />
-                )
-              }
-              description={fromNow({ date: item.announcement.createdDate })}
-            />
-          </List.Item>
-        )}
-      />
+                  title={
+                    item.read ? (
+                      <ViewUnreadAnnouncement
+                        announcement={item.announcement}
+                        markAnnouncementAsRead={markAnnouncementAsRead}
+                      />
+                    ) : (
+                      <ViewReadAnnouncement announcement={item.announcement} />
+                    )
+                  }
+                  description={fromNow({ date: item.announcement.createdDate })}
+                />
+              </List.Item>
+            )}
+          />
+        </Col>
+      </Row>
     </PageWrapper>
   );
 }

@@ -45,10 +45,7 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
     });
   return (
     <>
-      <LinkButton
-        text=<Text strong>{announcement.title}</Text>
-        onClick={displayAnnouncement}
-      />
+      <LinkButton text={announcement.title} onClick={displayAnnouncement} />
     </>
   );
 }
