@@ -17,31 +17,41 @@ import { grey2 } from "../../../styles/colors";
  * @constructor
  */
 export function AnnouncementsPage({}) {
-  const [announcements, setAnnouncements] = useState([]);
-  const [readToggle, setReadToggle] = useState(false);
+  const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
+  const [allAnnouncements, setAllAnnouncements] = useState([]);
+  const [readAnnouncements, setReadAnnouncements] = useState([]);
+  const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [toggleRead, setToggleRead] = useState("all");
 
   useEffect(() => {
     getAnnouncements().then((data) => {
-      switch (filter) {
-        case "read":
-          return setAnnouncements(
-            data.data.filter((item) => item.announcementUserJoin !== null)
-          );
-        case "unread":
-          return setAnnouncements(
-            data.data.filter((item) => item.announcementUserJoin === null)
-          );
-        default:
-          return setAnnouncements(data.data);
-      }
+      setFilteredAnnouncements(data.data);
+      setAllAnnouncements(data.data);
+      setReadAnnouncements(
+        data.data.filter((item) => item.announcementUserJoin !== null)
+      );
+      setUnreadAnnouncements(
+        data.data.filter((item) => item.announcementUserJoin === null)
+      );
     });
-  }, [filter, readToggle]);
+  }, [toggleRead]);
+
+  useEffect(() => {
+    switch (filter) {
+      case "read":
+        return setFilteredAnnouncements(readAnnouncements);
+      case "unread":
+        return setFilteredAnnouncements(unreadAnnouncements);
+      default:
+        return setFilteredAnnouncements(allAnnouncements);
+    }
+  }, [filter]);
 
   function markAnnouncementAsRead(aID) {
     return markAnnouncementRead({ aID })
       .then(() => {
-        setReadToggle(!readToggle);
+        setToggleRead(!toggleRead);
       })
       .catch(({ message }) => {
         notification.error({ message });
@@ -76,7 +86,7 @@ export function AnnouncementsPage({}) {
         <Col xs={24} sm={20} md={16} lg={12} xl={8}>
           <List
             bordered
-            dataSource={announcements}
+            dataSource={filteredAnnouncements}
             pagination={true}
             renderItem={(item) => (
               <List.Item
