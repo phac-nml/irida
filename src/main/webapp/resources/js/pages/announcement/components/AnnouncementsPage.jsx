@@ -17,34 +17,30 @@ import { grey2 } from "../../../styles/colors";
  * @constructor
  */
 export function AnnouncementsPage({}) {
+  const [announcements, setAnnouncements] = useState([]);
   const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
-  const [allAnnouncements, setAllAnnouncements] = useState([]);
-  const [readAnnouncements, setReadAnnouncements] = useState([]);
-  const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
   const [filter, setFilter] = useState("all");
   const [toggleRead, setToggleRead] = useState("all");
 
   useEffect(() => {
     getAnnouncements().then((data) => {
+      setAnnouncements(data.data);
       setFilteredAnnouncements(data.data);
-      setAllAnnouncements(data.data);
-      setReadAnnouncements(
-        data.data.filter((item) => item.announcementUserJoin !== null)
-      );
-      setUnreadAnnouncements(
-        data.data.filter((item) => item.announcementUserJoin === null)
-      );
     });
   }, [toggleRead]);
 
   useEffect(() => {
     switch (filter) {
       case "read":
-        return setFilteredAnnouncements(readAnnouncements);
+        return setFilteredAnnouncements(
+          announcements.filter((item) => item.announcementUserJoin !== null)
+        );
       case "unread":
-        return setFilteredAnnouncements(unreadAnnouncements);
+        return setFilteredAnnouncements(
+          announcements.filter((item) => item.announcementUserJoin === null)
+        );
       default:
-        return setFilteredAnnouncements(allAnnouncements);
+        return setFilteredAnnouncements(announcements);
     }
   }, [filter]);
 
