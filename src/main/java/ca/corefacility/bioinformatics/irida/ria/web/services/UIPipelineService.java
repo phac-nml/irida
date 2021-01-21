@@ -29,11 +29,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.DynamicSource;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameter;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -159,7 +158,7 @@ public class UIPipelineService {
 		Dynamic Sources - these are pulled from Galaxy
 		 */
 		if (description.requiresDynamicSource()) {
-			List<DynamicSource> dynamicSources = new ArrayList<>();
+			List<InputWithOptions> dynamicSources = new ArrayList<>();
 			IridaWorkflowDynamicSourceGalaxy dynamicSource = new IridaWorkflowDynamicSourceGalaxy();
 			/*
 			Go through all the pipeline parameters and see which ones require dynamic sources.
@@ -192,7 +191,7 @@ public class UIPipelineService {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 						}
 
-						dynamicSources.add(new DynamicSource(name, label, options));
+						dynamicSources.add(new InputWithOptions(name, label, null, options));
 					} catch (Exception e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
@@ -214,7 +213,7 @@ public class UIPipelineService {
 	public Long saveNewPipelineParameters(UUID id, SavedPipelineParameters savedPipelineParameters) {
 		Map<String, String> parameters = new HashMap<>();
 
-		for (PipelineParameter parameter : savedPipelineParameters.getParameters()) {
+		for (Input parameter : savedPipelineParameters.getParameters()) {
 			parameters.put(parameter.getName(), parameter.getValue());
 		}
 		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(
@@ -230,7 +229,7 @@ public class UIPipelineService {
 	 * @param locale      {@link Locale} current users locale
 	 * @return List of pipeline parameters with options
 	 */
-	private List<PipelineParameterWithOptions> getPipelineSpecificParametersWithOptions(
+	private List<InputWithOptions> getPipelineSpecificParametersWithOptions(
 			IridaWorkflowDescription description, Locale locale) {
 		return description.getParameters()
 				.stream()
@@ -245,7 +244,7 @@ public class UIPipelineService {
 							.map(option -> new SelectOption(option.getValue(),
 									localizedParamOptionLabel(locale, name, parameter.getName(), option.getName())))
 							.collect(Collectors.toUnmodifiableList());
-					return new PipelineParameterWithOptions(parameter.getName(), label, defaultValue, options);
+					return new InputWithOptions(parameter.getName(), label, defaultValue, options);
 				})
 				.collect(Collectors.toUnmodifiableList());
 	}
@@ -309,9 +308,9 @@ public class UIPipelineService {
         /*
         Get the default parameter set
          */
-		List<PipelineParameter> defaultParameters = workflowParameters.stream()
+		List<Input> defaultParameters = workflowParameters.stream()
 				.filter(p -> !p.isRequired())
-				.map(p -> new PipelineParameter(p.getName(),
+				.map(p -> new Input(p.getName(),
 						messageSource.getMessage("pipeline.parameters." + pipelineName + "." + p.getName(),
 								new Object[] {}, locale), p.getDefaultValue()))
 				.collect(Collectors.toList());
@@ -329,13 +328,13 @@ public class UIPipelineService {
 					Map<String, String> inputParameter = wp.getInputParameters();
 
             // Go through the parameters and see which ones are getting overwritten.
-            List<PipelineParameter> parameters = defaultParameters.stream()
+            List<Input> parameters = defaultParameters.stream()
                     .map(parameter -> {
                         if (inputParameter.containsKey(parameter.getName())) {
-                            return new PipelineParameter(parameter.getName(), parameter.getLabel(),
+                            return new Input(parameter.getName(), parameter.getLabel(),
                                     inputParameter.get(parameter.getName()));
                         }
-						return new PipelineParameter(parameter.getName(), parameter.getLabel(), parameter.getValue());
+						return new Input(parameter.getName(), parameter.getLabel(), parameter.getValue());
 					})
 					.collect(Collectors.toList());
 					return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);

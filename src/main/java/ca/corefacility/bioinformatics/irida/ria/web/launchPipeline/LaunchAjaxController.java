@@ -33,10 +33,10 @@ public class LaunchAjaxController {
     private final UIPipelineSampleService sampleService;
 
     @Autowired
-    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineStartService startService,
+    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineStartService pipelineStartService,
             UIPipelineSampleService sampleService) {
         this.pipelineService = pipelineService;
-        this.startService = startService;
+        this.startService = pipelineStartService;
         this.sampleService = sampleService;
     }
 

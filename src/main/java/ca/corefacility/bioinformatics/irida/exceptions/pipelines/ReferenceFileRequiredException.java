@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.exceptions.pipelines;
 
 /**
  * This exception is thrown if a pipeline is attempted to be launched that
- * required a reference file, but does not have one.
+ * requires a reference file, but does not have one.
  */
 public class ReferenceFileRequiredException extends Exception {
 

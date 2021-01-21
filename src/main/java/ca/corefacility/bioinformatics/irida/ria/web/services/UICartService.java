@@ -125,7 +125,7 @@ public class UICartService {
 	 * Remove all samples from the cart
 	 */
 	public void emptyCart() {
-		cart.clear();
+		cart.empty();
 	}
 
 	/**

@@ -3,7 +3,6 @@ import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 import {
   deepCopy,
   formatDefaultPipelineName,
-  formatParametersWithOptions,
   formatSavedParameterSets,
   PIPELINE_ID,
 } from "./launch-utilities";
@@ -165,10 +164,6 @@ function LaunchProvider({ children }) {
         dynamicSources,
         ...details
       }) => {
-        const formattedParameterWithOptions = formatParametersWithOptions(
-          parameterWithOptions
-        );
-
         const formattedParameterSets = formatSavedParameterSets(
           savedPipelineParameters
         );
@@ -178,7 +173,7 @@ function LaunchProvider({ children }) {
           parameterSet: 0,
           shareResultsWithProjects: true,
           updateSamples: false,
-          emailPipelineResult: true,
+          emailPipelineResult: "completion", // Email on everything
           ["projects"]: details.projects.map((project) => project.value),
         };
 
@@ -189,7 +184,7 @@ function LaunchProvider({ children }) {
         }
 
         // Get initial values for parameters with options.
-        formattedParameterWithOptions.forEach((parameter) => {
+        parameterWithOptions.forEach((parameter) => {
           initialValues[parameter.name] =
             parameter.value || parameter.options[0].value;
         });
@@ -200,6 +195,11 @@ function LaunchProvider({ children }) {
           dynamicSources.forEach((source) => {
             initialValues[source.id] = source.options[0].value;
           });
+
+          dynamicSources.forEach((parameter) => {
+            initialValues[parameter.name] =
+              parameter.value || parameter.options[0].value;
+          });
         }
 
         dispatch({
@@ -209,7 +209,7 @@ function LaunchProvider({ children }) {
             initialValues,
             pipeline: { name, description },
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
-            parameterWithOptions: formattedParameterWithOptions,
+            parameterWithOptions,
             parameterSets: formattedParameterSets,
             dynamicSources,
             files: [],
