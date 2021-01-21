@@ -128,7 +128,7 @@ public class LaunchRequest {
 	}
 
 	public boolean sendEmailOnError() {
-		return emailPipelineResult.equals("error");
+		return emailPipelineResult.equals("error") || emailPipelineResult.equals("completion");
 	}
 
 	public boolean sendEmailOnCompletion() {
