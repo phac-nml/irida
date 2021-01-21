@@ -173,7 +173,7 @@ function LaunchProvider({ children }) {
           parameterSet: 0,
           shareResultsWithProjects: true,
           updateSamples: false,
-          emailPipelineResult: true,
+          emailPipelineResult: "completion", // Email on everything
           ["projects"]: details.projects.map((project) => project.value),
         };
 

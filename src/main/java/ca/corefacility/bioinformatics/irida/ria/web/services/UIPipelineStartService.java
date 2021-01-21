@@ -117,7 +117,7 @@ public class UIPipelineStartService {
 		if (inputs.requiresSingleSample()) {
 			Collection<AnalysisSubmission> submissions = submissionService.createSingleSampleSubmission(workflow,
 					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
-					request.getDescription(), projects, request.isUpdateSamples(), true, request.isEmailPipelineResult());
+					request.getDescription(), projects, request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
 			submissionId = submissions.stream()
 					.findFirst()
 					.orElseThrow()
@@ -125,7 +125,7 @@ public class UIPipelineStartService {
 		} else {
 			AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
 					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
-					request.getDescription(), projects, request.isUpdateSamples(), true, request.isEmailPipelineResult());
+					request.getDescription(), projects, request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnCompletion());
 			submissionId = submission.getId();
 		}
 		cartService.emptyCart();

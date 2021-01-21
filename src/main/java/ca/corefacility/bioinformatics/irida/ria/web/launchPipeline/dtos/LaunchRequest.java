@@ -23,9 +23,9 @@ public class LaunchRequest {
 	private List<Long> fileIds;
 
 	/**
-	 * Email the user when the pipeline is completed
+	 * When to send an email on pipeline error or completion
 	 */
-	private boolean emailPipelineResult;
+	private String emailPipelineResult;
 
 	/**
 	 * Write results back to the project the samples came from
@@ -83,14 +83,6 @@ public class LaunchRequest {
 		this.fileIds = fileIds;
 	}
 
-	public boolean isEmailPipelineResult() {
-		return emailPipelineResult;
-	}
-
-	public void setEmailPipelineResult(boolean emailPipelineResult) {
-		this.emailPipelineResult = emailPipelineResult;
-	}
-
 	public List<Long> getProjects() {
 		return projects;
 	}
@@ -129,5 +121,17 @@ public class LaunchRequest {
 
 	public void setSavedParameters(Long savedParameters) {
 		this.savedParameters = savedParameters;
+	}
+
+	public void setEmailPipelineResult(String emailPipelineResult) {
+		this.emailPipelineResult = emailPipelineResult;
+	}
+
+	public boolean sendEmailOnError() {
+		return emailPipelineResult.equals("error");
+	}
+
+	public boolean sendEmailOnCompletion() {
+		return emailPipelineResult.equals("completion");
 	}
 }
