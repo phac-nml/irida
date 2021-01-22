@@ -1,6 +1,8 @@
 import React from "react";
 import { Alert, Button, Form, Input, Popover, Select, Space } from "antd";
-import { SPACE_LG } from "../../../styles/spacing";
+import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
+import { ArrowRightOutlined } from "@ant-design/icons";
+import { grey5 } from "../../../styles/colors";
 
 /**
  * React component to render a select input and modifying button for
@@ -92,23 +94,39 @@ export function SavedParameters({ form, sets }) {
         </Form.Item>
       </div>
       {sets[currentSetId].parameters.map(({ name, label, value }) => (
-        <Form.Item
-          style={{ marginLeft: SPACE_LG }}
+        <div
           key={name}
-          label={label}
-          name={name}
-          rules={[
-            {
-              required: true,
-              message: "All values are required",
-            },
-          ]}
-          help={modified[name] ? i18n("ParametersModal.modified") : null}
+          style={{
+            display: "grid",
+            gridTemplateColumns: `8px auto`,
+            columnGap: 0,
+          }}
         >
-          <Input
-            onChange={(e) => onValueUpdated(name, value, e.target.value)}
+          <ArrowRightOutlined
+            style={{
+              fontSize: 14,
+              marginLeft: SPACE_XS,
+              color: grey5,
+              marginTop: 2,
+            }}
           />
-        </Form.Item>
+          <Form.Item
+            style={{ marginLeft: SPACE_LG }}
+            label={label}
+            name={name}
+            rules={[
+              {
+                required: true,
+                message: "All values are required",
+              },
+            ]}
+            help={modified[name] ? i18n("ParametersModal.modified") : null}
+          >
+            <Input
+              onChange={(e) => onValueUpdated(name, value, e.target.value)}
+            />
+          </Form.Item>
+        </div>
       ))}
     </>
   );
