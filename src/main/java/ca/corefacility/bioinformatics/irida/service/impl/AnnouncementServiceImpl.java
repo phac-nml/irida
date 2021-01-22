@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
  *
  */
 @Service
-
 public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement> implements AnnouncementService {
 
     private AnnouncementRepository announcementRepository;
@@ -167,7 +166,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsForUser(user);
     }
@@ -176,7 +175,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserJoin> getReadAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsReadByUser(user);
     }
@@ -186,7 +185,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<Announcement> getUnreadAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
     }
