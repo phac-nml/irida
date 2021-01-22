@@ -127,10 +127,18 @@ public class LaunchRequest {
 		this.emailPipelineResult = emailPipelineResult;
 	}
 
+	/**
+	 * Check to see if an email should be sent on pipeline errors.
+	 * @return true if either email on error or completion selected
+	 */
 	public boolean sendEmailOnError() {
 		return emailPipelineResult.equals("error") || emailPipelineResult.equals("completion");
 	}
 
+	/**
+	 * Check to see if an email should be sent on pipeline completion
+	 * @return true if an email should be sent on pipeline completion
+	 */
 	public boolean sendEmailOnCompletion() {
 		return emailPipelineResult.equals("completion");
 	}
