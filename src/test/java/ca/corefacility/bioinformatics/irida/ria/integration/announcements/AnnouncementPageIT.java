@@ -153,8 +153,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
         announcements = dashboardPage.getCurrentUnreadAnnouncements();
         assertEquals("Unexpected number of announcements", 4, announcements.size());
 
-        dashboardPage.viewReadAnnouncements();
-
+		readPage.goTo();
         List<WebElement> readAnnouncements = readPage.getAllReadAnnouncements();
         assertEquals("Unexpected number of announcements displayed as read", 2, readAnnouncements.size());
     }

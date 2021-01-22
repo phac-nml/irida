@@ -64,13 +64,13 @@ export function AnnouncementsPage({}) {
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               >
-                <Radio.Button value="all">
+                <Radio.Button value="all" className="t-all-announcements">
                   {i18n("AnnouncementsPage.filter.all")}
                 </Radio.Button>
-                <Radio.Button value="unread">
+                <Radio.Button value="unread" className="t-unread-announcements">
                   {i18n("AnnouncementsPage.filter.unread")}
                 </Radio.Button>
-                <Radio.Button value="read">
+                <Radio.Button value="read" className="t-read-announcements">
                   {i18n("AnnouncementsPage.filter.read")}
                 </Radio.Button>
               </Radio.Group>
