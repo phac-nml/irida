@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -18,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRe
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineStartService;
 
 /**
  * Controller to handle AJAX requests from the UI for Workflow Pipelines
@@ -26,11 +29,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 @RequestMapping("/ajax/pipeline")
 public class LaunchAjaxController {
     private final UIPipelineService pipelineService;
+    private final UIPipelineStartService startService;
     private final UIPipelineSampleService sampleService;
 
     @Autowired
-    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineSampleService sampleService) {
+    public LaunchAjaxController(UIPipelineService pipelineService, UIPipelineStartService pipelineStartService,
+            UIPipelineSampleService sampleService) {
         this.pipelineService = pipelineService;
+        this.startService = pipelineStartService;
         this.sampleService = sampleService;
     }
 
@@ -69,12 +75,20 @@ public class LaunchAjaxController {
     /**
      * Launch a new IRIDA Workflow Pipeline
      *
+     * @param id The UUID for a workflow
      * @param request required parameters to launch the pipeline
+     * @param locale the Locale of the currently logged in user.
      * @return A response to let the UI know the pipeline was launched successfully
      */
     @PostMapping("/{id}")
-    public ResponseEntity<String> launchPipeline(@RequestBody LaunchRequest request) {
-        return ResponseEntity.ok("YAY!!!!");
+    public ResponseEntity<AjaxResponse> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request, Locale locale) {
+        try {
+            return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(startService.start(id, request, locale)));
+        } catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new AjaxErrorResponse(e.getMessage()));
+
+        }
     }
 
     /**

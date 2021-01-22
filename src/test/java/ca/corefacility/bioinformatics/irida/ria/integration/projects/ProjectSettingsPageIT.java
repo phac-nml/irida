@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -22,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
+	@Ignore
 	public void testCreateAutomatedPipeline() {
 		Long projectId = 1L;
 
@@ -49,6 +51,7 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveAutomatedPipeline() {
 		Long projectId = 1L;
 

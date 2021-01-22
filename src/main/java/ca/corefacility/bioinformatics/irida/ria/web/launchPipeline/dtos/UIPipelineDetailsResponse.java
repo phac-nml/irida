@@ -3,10 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.DynamicSource;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.PipelineParameterWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
 /**
  * Model class to send details about a workflow pipeline to the UI
@@ -16,14 +16,15 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
     private String description;
     private String type;
-    private boolean canUpdateSamples;
+    private String updateSamples;
     private boolean requiresReference;
     private List<SavedPipelineParameters> savedPipelineParameters;
-    private List<PipelineParameterWithOptions> parameterWithOptions;
+    private List<InputWithOptions> parameterWithOptions;
     private List<UIReferenceFile> referenceFiles;
     private boolean acceptsSingleSequenceFiles;
     private boolean acceptsPairedSequenceFiles;
-    private List<DynamicSource> dynamicSources;
+    private List<InputWithOptions> dynamicSources;
+    private List<SelectOption> projects;
 
     public String getName() {
         return name;
@@ -49,11 +50,11 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.type = type;
     }
 
-    public List<PipelineParameterWithOptions> getParameterWithOptions() {
+    public List<InputWithOptions> getParameterWithOptions() {
         return parameterWithOptions;
     }
 
-    public void setParameterWithOptions(List<PipelineParameterWithOptions> parameterWithOptions) {
+    public void setParameterWithOptions(List<InputWithOptions> parameterWithOptions) {
         this.parameterWithOptions = parameterWithOptions;
     }
 
@@ -81,12 +82,12 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.referenceFiles = referenceFiles;
     }
 
-    public boolean isCanUpdateSamples() {
-        return canUpdateSamples;
+    public String getUpdateSamples() {
+        return updateSamples;
     }
 
-    public void setCanUpdateSamples(boolean canUpdateSamples) {
-        this.canUpdateSamples = canUpdateSamples;
+    public void setUpdateSamples(String updateSamples) {
+        this.updateSamples = updateSamples;
     }
 
     public boolean isAcceptsSingleSequenceFiles() {
@@ -105,11 +106,19 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
         this.acceptsPairedSequenceFiles = acceptsPairedSequenceFiles;
     }
 
-    public List<DynamicSource> getDynamicSources() {
+    public List<InputWithOptions> getDynamicSources() {
         return dynamicSources;
     }
 
-    public void setDynamicSources(List<DynamicSource> dynamicSources) {
+    public void setDynamicSources(List<InputWithOptions> dynamicSources) {
         this.dynamicSources = dynamicSources;
+    }
+
+    public List<SelectOption> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<SelectOption> projects) {
+        this.projects = projects;
     }
 }

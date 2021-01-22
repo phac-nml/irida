@@ -3,8 +3,6 @@ import { Alert, Form, Radio, Space, Tag } from "antd";
 import { useLaunch } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 import { SectionHeading } from "../../../components/ant.design/SectionHeading";
-import { setReferenceFileById } from "../launch-dispatch";
-import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadioInput";
 
 /**
  * React component for selecting and uploading reference files for a pipeline
@@ -14,43 +12,36 @@ import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadio
  * @constructor
  */
 export function ReferenceFiles() {
-  const [
-    { requiresReference, referenceFiles, referenceFile },
-    launchDispatch,
-  ] = useLaunch();
-
-  const setReferenceFile = (e, file) => {
-    e.preventDefault();
-    setReferenceFileById(launchDispatch, file.id);
-  };
+  const [{ requiresReference, referenceFiles }] = useLaunch();
 
   return requiresReference ? (
     <Space direction="vertical" style={{ width: `100%` }}>
       <SectionHeading id="launch-references">
         {i18n("ReferenceFiles.label")}
       </SectionHeading>
-      {referenceFiles.length ? (
-        <Form.Item label={i18n("ReferenceFiles.label")}>
-          <Radio.Group style={{ width: "100%" }} value={referenceFile}>
+      <Form.Item
+        label={i18n("ReferenceFiles.label")}
+        name="reference"
+        rules={[{ required: true, message: i18n("ReferenceFiles.required") }]}
+      >
+        {referenceFiles.length ? (
+          <Radio.Group style={{ width: "100%" }}>
             {referenceFiles.map((file) => (
-              <BlockRadioInput
-                key={`file-${file.id}`}
-                onClick={(e) => setReferenceFile(e, file)}
-              >
-                <Radio value={file.id}>{file.name}</Radio>
+              <Radio key={`ref-${file.id}`} value={file.id}>
+                {file.name}
                 {file.projectName ? <Tag>{file.projectName}</Tag> : null}
-              </BlockRadioInput>
+              </Radio>
             ))}
           </Radio.Group>
-        </Form.Item>
-      ) : (
-        <Alert
-          type="info"
-          showIcon
-          message={i18n("ReferenceFiles.not-found.title")}
-          description={i18n("ReferenceFiles.not-found.subTitle")}
-        />
-      )}
+        ) : (
+          <Alert
+            type="info"
+            showIcon
+            message={i18n("ReferenceFiles.not-found.title")}
+            description={i18n("ReferenceFiles.not-found.subTitle")}
+          />
+        )}
+      </Form.Item>
       <UploadReferenceFile />
     </Space>
   ) : null;

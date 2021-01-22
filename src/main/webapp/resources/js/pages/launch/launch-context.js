@@ -3,7 +3,6 @@ import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 import {
   deepCopy,
   formatDefaultPipelineName,
-  formatParametersWithOptions,
   formatSavedParameterSets,
   PIPELINE_ID,
 } from "./launch-utilities";
@@ -25,7 +24,6 @@ const TYPES = {
   SAVE_MODIFIED_PARAMETERS: "launch:save_modified_params",
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
-  USE_REFERENCE: "launch:use_reference",
   UPDATE_FILES: "launch:update_files",
 };
 
@@ -145,11 +143,6 @@ const reducer = (state, action) => {
         ...state,
         files: action.payload.files,
       };
-    case TYPES.USE_REFERENCE:
-      return {
-        ...state,
-        referenceFile: action.payload.id,
-      };
   }
 };
 
@@ -171,10 +164,6 @@ function LaunchProvider({ children }) {
         dynamicSources,
         ...details
       }) => {
-        const formattedParameterWithOptions = formatParametersWithOptions(
-          parameterWithOptions
-        );
-
         const formattedParameterSets = formatSavedParameterSets(
           savedPipelineParameters
         );
@@ -184,10 +173,18 @@ function LaunchProvider({ children }) {
           parameterSet: 0,
           shareResultsWithProjects: true,
           updateSamples: false,
+          emailPipelineResult: "none", // default to not sending emails
+          ["projects"]: details.projects.map((project) => project.value),
         };
 
+        if (details.requiresReference) {
+          initialValues.reference = details.referenceFiles.length
+            ? details.referenceFiles[0].id
+            : null;
+        }
+
         // Get initial values for parameters with options.
-        formattedParameterWithOptions.forEach((parameter) => {
+        parameterWithOptions.forEach((parameter) => {
           initialValues[parameter.name] =
             parameter.value || parameter.options[0].value;
         });
@@ -198,6 +195,11 @@ function LaunchProvider({ children }) {
           dynamicSources.forEach((source) => {
             initialValues[source.id] = source.options[0].value;
           });
+
+          dynamicSources.forEach((parameter) => {
+            initialValues[parameter.name] =
+              parameter.value || parameter.options[0].value;
+          });
         }
 
         dispatch({
@@ -207,14 +209,10 @@ function LaunchProvider({ children }) {
             initialValues,
             pipeline: { name, description },
             parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
-            parameterWithOptions: formattedParameterWithOptions,
+            parameterWithOptions,
             parameterSets: formattedParameterSets,
             dynamicSources,
             files: [],
-            referenceFile:
-              details.requiresReference && details.referenceFiles.length
-                ? details.referenceFiles[0].id
-                : null,
           },
         });
       }

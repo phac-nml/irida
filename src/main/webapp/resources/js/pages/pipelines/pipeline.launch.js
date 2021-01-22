@@ -7,7 +7,6 @@ import React from "react";
 import { render } from "react-dom";
 import { AnalysesQueue } from "../../components/AnalysesQueue";
 import { emptyCart, removeSample } from "../../apis/cart/cart";
-import { CART } from "../../utilities/events-utilities";
 
 render(<AnalysesQueue />, document.querySelector("#queue-root"));
 
@@ -253,6 +252,7 @@ function PipelineController(
       if (shared.length > 0) {
         params["sharedProjects"] = shared;
       }
+
       // AJAX POST with jQuery instead of Angular $http object so that
       // JSON request body is encoded properly
       $.ajax({

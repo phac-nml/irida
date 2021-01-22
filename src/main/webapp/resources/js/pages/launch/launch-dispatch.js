@@ -1,4 +1,7 @@
-import { saveNewPipelineParameters } from "../../apis/pipelines/pipelines";
+import {
+  launchPipeline,
+  saveNewPipelineParameters,
+} from "../../apis/pipelines/pipelines";
 import { TYPES } from "./launch-context";
 import { PIPELINE_ID } from "./launch-utilities";
 
@@ -40,22 +43,55 @@ export async function saveModifiedParametersAs(dispatch, label, parameters) {
  * Launch a the pipeline.
  *
  * @param {function} dispatch - specific the the launch context
- * @param {object} parameters - all parameters required to launch the pipe
+ * @param {object} formValues - all values found directly on the form
  * @returns {Promise<void>}
  */
-export async function launchNewPipeline(dispatch, parameters, state) {
-  console.log(parameters, state);
-  return Promise.resolve();
-}
+export async function launchNewPipeline(dispatch, formValues, state) {
+  /*
+  The ...parameters will capture any dynamic parameters added to the page since everything
+  else should be accounted for with their own variable names.  To these parameters we need to
+  add the parameters for the saved ones.
+   */
+  const {
+    name,
+    description,
+    emailPipelineResult,
+    projects,
+    updateSamples,
+    reference,
+    ...parameters
+  } = formValues;
+  const { files: fileIds } = state;
 
-/**
- * Set the currently selected reference file by its id.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {number} id - identifier for the reference file to use
- */
-export function setReferenceFileById(dispatch, id) {
-  dispatch({ type: TYPES.USE_REFERENCE, payload: { id } });
+  let savedParameters = undefined;
+  if (state.parameterSet.parameters) {
+    if (
+      state.parameterSet.id === 0 ||
+      `${state.parameterSet.id}`.endsWith("-MODIFIED")
+    ) {
+      // If default or modified unsaved just get sent with the regular "other" parameters
+      state.parameterSet.parameters.forEach(
+        (parameter) => (parameters[parameter.name] = parameter.value)
+      );
+    } else {
+      // If the parameters have not been modified then we will get the true set on the server
+      // Just need to send the id of the selected set ....
+      savedParameters = state.parameterSet.id;
+    }
+  }
+
+  const params = {
+    name,
+    description,
+    fileIds,
+    emailPipelineResult,
+    projects,
+    updateSamples,
+    reference,
+    parameters,
+    savedParameters,
+  };
+  return launchPipeline(PIPELINE_ID, params);
 }
 
 /**

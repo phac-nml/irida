@@ -38,7 +38,7 @@ export function SavedParameters({ form }) {
           }}
         >
           <div>
-            <Form.Item name="parameterSet">
+            <Form.Item>
               <Select
                 value={parameterSet.id}
                 onChange={(id) => setParameterSetById(launchDispatch, id)}

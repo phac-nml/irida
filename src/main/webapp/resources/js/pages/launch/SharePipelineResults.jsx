@@ -1,6 +1,6 @@
 import React from "react";
 import { useLaunch } from "./launch-context";
-import { Checkbox, Divider, Form } from "antd";
+import { Checkbox, Col, Form, Row, Typography } from "antd";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 
 /**
@@ -9,20 +9,34 @@ import { SectionHeading } from "../../components/ant.design/SectionHeading";
  * @constructor
  */
 export function SharePipelineResults() {
-  const [{ canUpdateSamples }] = useLaunch();
+  const [{ updateSamples, projects }] = useLaunch();
+
   return (
     <section>
       <SectionHeading id="launch-sharing">
         {i18n("SharePipelineResults.label")}
       </SectionHeading>
-      <Form.Item name="shareResultsWithProjects" valuePropName="checked">
-        <Checkbox>{i18n("ShareResultsWithProjects.label")}</Checkbox>
-      </Form.Item>
-      {canUpdateSamples ? (
+      {updateSamples ? (
         <Form.Item name="updateSamples" valuePropName="checked">
-          <Checkbox>{i18n("ShareResultsWithSamples.label")}</Checkbox>
+          <Checkbox checked>{updateSamples}</Checkbox>
         </Form.Item>
       ) : null}
+      <Typography.Text strong>
+        {i18n("ShareResultsWithProjects.label")}
+      </Typography.Text>
+      <Form.Item name="projects">
+        <Checkbox.Group style={{ width: `100%` }}>
+          <Row>
+            {projects.map((project) => (
+              <Col key={`project-${project.value}`} span={8}>
+                <Checkbox style={{ lineHeight: `32px` }} value={project.value}>
+                  {project.label}
+                </Checkbox>
+              </Col>
+            ))}
+          </Row>
+        </Checkbox.Group>
+      </Form.Item>
     </section>
   );
 }

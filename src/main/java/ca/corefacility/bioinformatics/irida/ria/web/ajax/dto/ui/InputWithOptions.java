@@ -1,8 +1,6 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui;
 
 import java.util.List;
-
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
 import com.google.common.base.Strings;
 
@@ -10,10 +8,10 @@ import com.google.common.base.Strings;
  * Represents a IRIDA Workflow Pipeline Parameter that has specific options to be render
  * within the UI.
  */
-public class PipelineParameterWithOptions extends PipelineParameter {
-	private List<SelectOption> options;
+public class InputWithOptions extends Input {
+	private final List<SelectOption> options;
 
-	public PipelineParameterWithOptions(String name, String label, String defaultValue, List<SelectOption> options) {
+	public InputWithOptions(String name, String label, String defaultValue, List<SelectOption> options) {
 		super(name, label, defaultValue);
 		this.options = options;
 	}
