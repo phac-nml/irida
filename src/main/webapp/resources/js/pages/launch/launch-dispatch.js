@@ -87,35 +87,6 @@ export function referenceFileUploadComplete(dispatch, name, id) {
   dispatch({ type: TYPES.ADD_REFERENCE, payload: { id, name } });
 }
 
-/**
- * Set the current parameter set by its identifier.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {number} id - identifier for the set of parameters to use.
- */
-export function setParameterSetById(dispatch, id) {
-  dispatch({
-    type: TYPES.PARAMETER_SET,
-    payload: { id },
-  });
-}
-
-/**
- * Use a set of modified.  This will store them and add it as a "modified" set
- * the the list of available parameter sets.  NOTE: This will not save them.
- *
- * @param {function} dispatch - specific the the launch context
- * @param {object} set - modified parameter set.
- */
-export function setModifiedParameters(dispatch, set) {
-  dispatch({
-    type: TYPES.USE_MODIFIED_PARAMETERS,
-    payload: {
-      set,
-    },
-  });
-}
-
 export function setSelectedSampleFiles(dispatch, files) {
   dispatch({
     type: TYPES.UPDATE_FILES,

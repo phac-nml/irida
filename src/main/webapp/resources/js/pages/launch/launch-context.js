@@ -1,7 +1,6 @@
 import React from "react";
 import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 import {
-  deepCopy,
   formatDefaultPipelineName,
   formatSavedParameterSets,
   PIPELINE_ID,
@@ -18,9 +17,6 @@ LaunchContext.displayName = "LaunchContext";
 
 const TYPES = {
   LOADED: "launch:loaded",
-  PARAMETER_SET: "launch:parameters",
-  MODIFIED_PARAMETERS: "launch:modified_params",
-  USE_MODIFIED_PARAMETERS: "launch:use_modified_params",
   SAVE_MODIFIED_PARAMETERS: "launch:save_modified_params",
   REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
@@ -34,72 +30,6 @@ const reducer = (state, action) => {
     return files;
   }
 
-  function setParameterSetById(id) {
-    const set = state.parameterSets.find((p) => p.id === id);
-    return deepCopy(set);
-  }
-
-  function updateModifiedParameters(currentSet) {
-    /*
-    Suffix to be added to the identifier to identify when it is modified
-     */
-    const SUFFIX = `-MODIFIED`;
-
-    /*
-    Get a copy of all the sets
-     */
-    const sets = deepCopy(state.parameterSets);
-
-    /*
-    Three different states:
-      1. Set that has not been modified before
-      2. Set that has been modified before and currently selected
-      3. Set that has been modified before but the original is selected
-     */
-
-    if (`${currentSet.key}`.endsWith(SUFFIX)) {
-      // Previously modified and selected.
-      // Remove the modified one from the list and add the updated one
-      const updatedSets = sets.filter((a) => a.id !== currentSet.id);
-      updatedSets.push(currentSet);
-
-      return {
-        parameterSets: updatedSets,
-        parameterSet: currentSet,
-      };
-    } else if (!currentSet.modified) {
-      // First time modified
-      currentSet.modified = true;
-
-      // Set modified to the original set
-      sets.find((s) => s.id === currentSet.id).modified = true;
-
-      // Update the id to show that it has been modified
-      currentSet.id = `${currentSet.id}${SUFFIX}`;
-      currentSet.key = `set-${currentSet.id}`;
-
-      // Add the current set to the list
-      sets.push(currentSet);
-
-      // Update the data model
-      return {
-        parameterSets: sets,
-        parameterSet: currentSet,
-      };
-    } else {
-      // Need to find the actual modified set
-      const index = sets.findIndex((s) => s.id === `${currentSet.id}${SUFFIX}`);
-      // Remove the current set.
-      const [set] = sets.splice(index, 1);
-
-      // Use the new modified parameters
-      set.parameters = currentSet.parameters;
-      sets.push(set);
-
-      return { parameterSets: sets, parameterSet: set };
-    }
-  }
-
   switch (action.type) {
     case TYPES.LOADED:
       return {
@@ -107,16 +37,6 @@ const reducer = (state, action) => {
         shareResultsWithProjects: true,
         loading: false,
         ...action.payload,
-      };
-    case TYPES.PARAMETER_SET:
-      return {
-        ...state,
-        parameterSet: setParameterSetById(action.payload.id),
-      };
-    case TYPES.USE_MODIFIED_PARAMETERS:
-      return {
-        ...state,
-        ...updateModifiedParameters(action.payload.set),
       };
     case TYPES.SAVE_MODIFIED_PARAMETERS:
       return {
@@ -186,12 +106,6 @@ function LaunchProvider({ children }) {
             : null;
         }
 
-        // Get initial values for parameters with options.
-        parameterWithOptions.forEach((parameter) => {
-          initialValues[parameter.name] =
-            parameter.value || parameter.options[0].value;
-        });
-
         // Check for dynamic sources
         if (dynamicSources) {
           initialValues.dynamicSources = {};
@@ -213,9 +127,6 @@ function LaunchProvider({ children }) {
             pipeline: { name, description },
             parameterWithOptions,
             parameterSets: formattedParameterSets,
-            parameterFields: formattedParameterSets[0].parameters.map(
-              ({ name, label }) => ({ key: name, name, label })
-            ),
             dynamicSources,
             files: [],
           },
