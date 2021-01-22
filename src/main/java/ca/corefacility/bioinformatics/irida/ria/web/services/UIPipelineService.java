@@ -176,11 +176,11 @@ public class UIPipelineService {
 					set up the data in a format the the UI can create a select input.
 					 */
 					try {
-						String name = dynamicSource.getName();
-						String label = messageSource.getMessage("dynamicsource.label." + name, new Object[] {}, locale);
+						String dynamicSourceName = dynamicSource.getName();
+						String label = messageSource.getMessage("dynamicsource.label." + dynamicSourceName, new Object[] {}, locale);
 						List<SelectOption> options = new ArrayList<>();
 
-						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(name);
+						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(dynamicSourceName);
 						List<String> labels = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getDisplayColumn());
 						Iterator<String> labelsIterator = labels.iterator();
 						List<String> values = galaxyToolDataTable.getFieldsForColumn(
@@ -191,7 +191,7 @@ public class UIPipelineService {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 						}
 
-						dynamicSources.add(new InputWithOptions(name, label, null, options));
+						dynamicSources.add(new InputWithOptions(parameter.getName(), label, options.get(0).getValue(), options));
 					} catch (Exception e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
