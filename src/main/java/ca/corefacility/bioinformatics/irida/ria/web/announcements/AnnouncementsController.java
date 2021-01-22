@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +12,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 @RequestMapping(value = "/announcements")
 public class AnnouncementsController extends BaseController {
 
-    private static final String ANNOUNCEMENT_LIST = "announcements/list";
-
-    @Autowired
-    public AnnouncementsController() {
-    }
-
     /**
      * Request for the page to display a list of read and unread announcements for user.
      *
@@ -26,6 +19,6 @@ public class AnnouncementsController extends BaseController {
      */
     @RequestMapping(value = "/user/list", method = RequestMethod.GET)
     public String getAnnouncementsPage() {
-        return ANNOUNCEMENT_LIST;
+        return "announcements/list";
     }
 }
