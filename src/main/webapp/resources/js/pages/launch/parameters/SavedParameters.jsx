@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button, Form, Input, Popover, Select, } from "antd";
+import { Alert, Button, Form, Input, Popover, Select } from "antd";
 import { useLaunch } from "../launch-context";
 import { SPACE_XS } from "../../../styles/spacing";
 
