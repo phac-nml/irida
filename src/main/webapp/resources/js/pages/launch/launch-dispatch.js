@@ -63,23 +63,6 @@ export async function launchNewPipeline(dispatch, formValues, state) {
   } = formValues;
   const { files: fileIds } = state;
 
-  let savedParameters = undefined;
-  if (state.parameterSet.parameters) {
-    if (
-      state.parameterSet.id === 0 ||
-      `${state.parameterSet.id}`.endsWith("-MODIFIED")
-    ) {
-      // If default or modified unsaved just get sent with the regular "other" parameters
-      state.parameterSet.parameters.forEach(
-        (parameter) => (parameters[parameter.name] = parameter.value)
-      );
-    } else {
-      // If the parameters have not been modified then we will get the true set on the server
-      // Just need to send the id of the selected set ....
-      savedParameters = state.parameterSet.id;
-    }
-  }
-
   const params = {
     name,
     description,
@@ -89,7 +72,6 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     updateSamples,
     reference,
     parameters,
-    savedParameters,
   };
   return launchPipeline(PIPELINE_ID, params);
 }

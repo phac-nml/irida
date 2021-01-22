@@ -170,12 +170,15 @@ function LaunchProvider({ children }) {
 
         const initialValues = {
           name: formatDefaultPipelineName(type, Date.now()),
-          parameterSet: 0,
           shareResultsWithProjects: true,
           updateSamples: false,
           emailPipelineResult: "none", // default to not sending emails
           ["projects"]: details.projects.map((project) => project.value),
         };
+
+        formattedParameterSets[0].parameters.forEach(
+          ({ name, value }) => (initialValues[name] = value)
+        );
 
         if (details.requiresReference) {
           initialValues.reference = details.referenceFiles.length
@@ -208,9 +211,11 @@ function LaunchProvider({ children }) {
             ...details,
             initialValues,
             pipeline: { name, description },
-            parameterSet: deepCopy(formattedParameterSets[0]), // This will be the default set of saved parameters
             parameterWithOptions,
             parameterSets: formattedParameterSets,
+            parameterFields: formattedParameterSets[0].parameters.map(
+              ({ name, label }) => ({ key: name, name, label })
+            ),
             dynamicSources,
             files: [],
           },
