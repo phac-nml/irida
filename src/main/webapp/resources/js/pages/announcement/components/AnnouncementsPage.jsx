@@ -4,7 +4,7 @@ import {
   getAnnouncements,
   markAnnouncementRead,
 } from "../../../apis/announcements/announcements";
-import { Avatar, Col, Form, List, notification, Radio, Row } from "antd";
+import { Avatar, Col, Empty, Form, List, notification, Radio, Row } from "antd";
 import { PriorityFlag } from "./PriorityFlag";
 import { fromNow } from "../../../utilities/date-utilities";
 import ViewReadAnnouncement from "./ViewReadAnnouncement";
@@ -20,28 +20,17 @@ export function AnnouncementsPage({}) {
   const [announcements, setAnnouncements] = useState([]);
   const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [toggleRead, setToggleRead] = useState("all");
+  const [toggleRead, setToggleRead] = useState(false);
 
   useEffect(() => {
     getAnnouncements().then((data) => {
       setAnnouncements(data.data);
-      setFilteredAnnouncements(data.data);
+      setFilteredAnnouncementsOnToggle(filter, data.data);
     });
   }, [toggleRead]);
 
   useEffect(() => {
-    switch (filter) {
-      case "read":
-        return setFilteredAnnouncements(
-          announcements.filter((item) => item.announcementUserJoin !== null)
-        );
-      case "unread":
-        return setFilteredAnnouncements(
-          announcements.filter((item) => item.announcementUserJoin === null)
-        );
-      default:
-        return setFilteredAnnouncements(announcements);
-    }
+    setFilteredAnnouncementsOnToggle(filter, announcements);
   }, [filter]);
 
   function markAnnouncementAsRead(aID) {
@@ -52,6 +41,21 @@ export function AnnouncementsPage({}) {
       .catch(({ message }) => {
         notification.error({ message });
       });
+  }
+
+  function setFilteredAnnouncementsOnToggle(filterOption, announcementsList) {
+    switch (filterOption) {
+      case "read":
+        return setFilteredAnnouncements(
+          announcementsList.filter((item) => item.announcementUserJoin !== null)
+        );
+      case "unread":
+        return setFilteredAnnouncements(
+          announcementsList.filter((item) => item.announcementUserJoin === null)
+        );
+      default:
+        return setFilteredAnnouncements(announcementsList);
+    }
   }
 
   return (
@@ -82,6 +86,14 @@ export function AnnouncementsPage({}) {
         <Col xs={24} sm={20} md={16} lg={12} xl={8}>
           <List
             bordered
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={i18n("AnnouncementsPage.emptyList")}
+                />
+              ),
+            }}
             dataSource={filteredAnnouncements}
             pagination={true}
             renderItem={(item) => (
