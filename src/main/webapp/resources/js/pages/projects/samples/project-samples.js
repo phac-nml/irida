@@ -20,7 +20,6 @@ import { FILTERS, SAMPLE_EVENTS } from "./constants";
 import { download } from "../../../utilities/file-utilities";
 import "../../../../css/pages/project-samples.css";
 import { putSampleInCart } from "../../../apis/cart/cart";
-import { samplesAddedToCart } from "../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import "./linker/Linker";
