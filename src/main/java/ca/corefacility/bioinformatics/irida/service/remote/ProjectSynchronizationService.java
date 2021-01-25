@@ -472,7 +472,6 @@ public class ProjectSynchronizationService {
 	 *
 	 * @param remoteSample the sample read from the remote api
 	 * @param localSample  the local sample being saved
-	 * @return the synchronized sample
 	 */
 	public void syncSampleMetadata(Sample remoteSample, Sample localSample) {
 		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(remoteSample);
