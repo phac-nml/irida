@@ -95,7 +95,9 @@ export function AnnouncementsPage({}) {
               ),
             }}
             dataSource={filteredAnnouncements}
-            pagination={true}
+            pagination={
+              filteredAnnouncements.length > 10 ? { pageSize: 10 } : false
+            }
             renderItem={(item) => (
               <List.Item
                 className="t-announcement-item"
