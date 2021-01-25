@@ -54,8 +54,8 @@ public class AnnouncementsControllerTest {
 
         user = new User("testme", "test@me.com", "aaa", "John", "Curatcha", "2222222");
 
-        Announcement a1 = new Announcement("First message", user);
-        Announcement a2 = new Announcement("Second message", user);
+        Announcement a1 = new Announcement("First", "First message", true, user);
+        Announcement a2 = new Announcement("Second", "Second message", false, user);
 
         announcementList = Lists.newArrayList(a1, a2);
 
@@ -120,15 +120,17 @@ public class AnnouncementsControllerTest {
     @Test
     public void testSubmitUpdatedAnnouncement() {
         long id = 1L;
+        String title = "Updated Announcement";
         String message = "Updated message and announcement.";
+        boolean priority = false;
         ExtendedModelMap model = new ExtendedModelMap();
 
-        Announcement a = new Announcement(message, user);
+        Announcement a = new Announcement(title, message, priority, user);
 
         when(announcementService.read(any(Long.class))).thenReturn(a);
         when(announcementService.update(any(Announcement.class))).thenReturn(a);
 
-        String page = announcementsController.submitUpdatedAnnouncement(id, message, model);
+        String page = announcementsController.submitUpdatedAnnouncement(id, title, message, priority, model);
 
         assertTrue("Unexpected redirect to page", page.equals("redirect:/admin/announcements"));
         verify(announcementService, times(1)).update(any(Announcement.class));
@@ -152,10 +154,12 @@ public class AnnouncementsControllerTest {
     public void testGetAnnouncementDetailsPage() {
         long id = 1L;
         ExtendedModelMap model = new ExtendedModelMap();
+        String title = "New Announcement";
         String message = "A new announcement";
+        boolean priority = false;
         String page = null;
 
-        Announcement a = new Announcement(message, user);
+        Announcement a = new Announcement(title, message, priority, user);
 
         when(announcementService.read(id)).thenReturn(a);
         when(announcementService.countReadsForOneAnnouncement(any(Announcement.class))).thenReturn(0L);
@@ -166,7 +170,9 @@ public class AnnouncementsControllerTest {
         assertTrue("Unexpected redirect to a page", page.equals(ANNOUNCEMENT_DETAILS));
         assertEquals("Unexpected number of users", 1L, (model.get("numTotal")));
         assertEquals("Unexpected number of reads", 0L, (model.get("numReads")));
-        assertTrue("Unexpected announcement", message.equals(((Announcement) model.get("announcement")).getMessage()));
+        assertTrue("Unexpected announcement title", title.equals(((Announcement) model.get("announcement")).getTitle()));
+        assertTrue("Unexpected announcement content", message.equals(((Announcement) model.get("announcement")).getMessage()));
+        assertEquals("Unexpected announcment priority", priority, ((Announcement) model.get("announcement")).getPriority());
 
         verify(announcementService, times(1)).read(id);
         verify(announcementService).countReadsForOneAnnouncement(a);

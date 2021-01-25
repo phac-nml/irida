@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
+	@Ignore
 	public void testCreateAutomatedPipeline() {
 		Long projectId = 1L;
 

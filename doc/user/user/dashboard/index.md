@@ -163,9 +163,13 @@ The platform announcements section will show you things like:
 * Recently added features or bug fixes.
 * Other platform announcements.
 
-To dismiss an announcements/mark it as read, click the check mark button to the right of the announcement:
+To dismiss an announcement/mark it as read, click the announcement title link:
 
-![Mark As Read button](images/announcements-mark-as-read-user.png)
+![Mark As Read button](images/announcements-mark-as-read-user_1.png)
+
+This will open a modal window and then you may hit the `Read` button:
+
+![Mark As Read button](images/announcements-mark-as-read-user_2.png)
 
 If you accidentally marked an announcement as read and want to see it again, or if you would like to view *all* announcements you have marked, click the `View Read Announcements` button:
 

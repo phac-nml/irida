@@ -1,5 +1,4 @@
 import {
-  deepCopy,
   formatDefaultPipelineName,
   formatParametersWithOptions,
   isTruthy,
@@ -64,30 +63,4 @@ test("Should format parameters with options with proper values and their UI type
   response[2].options.forEach((option) =>
     expect(typeof option.value).not.toBe("boolean")
   );
-});
-
-test("Should be able to deep copy an array of object", () => {
-  const original = [{ a: 1 }, { b: 2 }];
-  const copy = original;
-  const deeplyCopied = deepCopy(original);
-  deeplyCopied[0].a = 1000;
-  expect(original);
-  expect(original[0].a).toBe(1);
-  expect(deeplyCopied[0].a).toBe(1000);
-  copy[1].b = 50;
-  expect(original[1].b).toBe(50);
-  expect(deeplyCopied[1].b).not.toBe(50);
-});
-
-test("Should be able to deep copy an object", () => {
-  const original = { a: 1, b: { c: 1 }, d: [1, 2, 3, 4] };
-  const copy = original;
-  const deeplyCopied = deepCopy(original);
-
-  original.a = 1000;
-  expect(copy.a).toBe(1000);
-  expect(deeplyCopied.a).not.toBe(1000);
-  original.d[0] = "jelly";
-  expect(copy.d[0]).toBe("jelly");
-  expect(deeplyCopied.d[0]).not.toBe("jelly");
 });

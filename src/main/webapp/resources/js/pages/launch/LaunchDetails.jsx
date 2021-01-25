@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, Form, Input } from "antd";
+import { Form, Input, Select } from "antd";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 
 /**
@@ -34,11 +34,20 @@ export function LaunchDetails() {
         <Input.TextArea />
       </Form.Item>
       <Form.Item
-        className="t-email-results"
         name="emailPipelineResult"
-        valuePropName="checked"
+        label={i18n("LaunchDetails.emailResults")}
       >
-        <Checkbox>{i18n("LaunchDetails.email")}</Checkbox>
+        <Select>
+          <Select.Option value="none">
+            {i18n("AnalysisDetailsEmailPref.noEmail")}
+          </Select.Option>
+          <Select.Option value="error">
+            {i18n("AnalysisDetailsEmailPref.errorEmail")}
+          </Select.Option>
+          <Select.Option value="completion">
+            {i18n("AnalysisDetailsEmailPref.completionEmail")}
+          </Select.Option>
+        </Select>
       </Form.Item>
     </section>
   );

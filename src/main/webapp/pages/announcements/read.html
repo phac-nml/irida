@@ -20,10 +20,12 @@
                     <div class="list-group-item"
                          th:each="ann : ${readAnnouncements}">
                         <div class="row announcement-item" style="display: none;"
+                             data:title="${ann.getSubject().getTitle()}"
                              data:message="${ann.getSubject().getMessage()}"
                              data:createdDate="${ann.getSubject().getCreatedDate()}"
                              data:readon="${ann.createdDate}">
                             <div class="col-md-9 announcement-content">
+                                <h4 class="title"></h4>
                                 <div class="markdown"></div>
                             </div>
                             <div class="col-md-3" th:with="dateFormat=#{locale.date.long}">
