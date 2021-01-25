@@ -18,7 +18,9 @@ export function LaunchParameters({ form }) {
       <SectionHeading id="launch-parameters">
         {i18n("LaunchParameters.title")}
       </SectionHeading>
-      {parameterSets && <SavedParameters form={form} sets={parameterSets} />}
+      {parameterSets[0]?.parameters.length ? (
+        <SavedParameters form={form} sets={parameterSets} />
+      ) : null}
       {parameterWithOptions && (
         <LaunchParametersWithOptions parameters={parameterWithOptions} />
       )}
