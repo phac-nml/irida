@@ -43,6 +43,7 @@ Changes
 * [Developer/REST/UI]: Updated announcements with a new title and priority fields.
 * [UI]: Added option for user to only receive an email upon pipeline failure.
 * [Developer]: Updated `frontend-maven-plugin`.
+* [UI]: Fixed issue with trying to copy a large number of samples between projects.
 
 20.05 to 20.09
 --------------
