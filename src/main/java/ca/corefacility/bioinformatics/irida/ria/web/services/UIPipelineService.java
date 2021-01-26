@@ -207,16 +207,27 @@ public class UIPipelineService {
 	/**
 	 * Save a new set of {@link IridaWorkflowNamedParameters}
 	 *
-	 * @param id                      UUID identifier for w {@link IridaWorkflow}
+	 * @param id      UUID identifier for w {@link IridaWorkflow}
 	 * @param request details about the new set of saved pipeline parameters
 	 * @return the identifier for the new set
 	 */
-	public Long saveNewPipelineParameters(UUID id, SavePipelineParametersRequest request) {
-		Map<String, String> parameters = new HashMap<>();
-		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(
-				request.getLabel(), id, request.getParameters());
+	public SavedPipelineParameters saveNewPipelineParameters(UUID id, SavePipelineParametersRequest request,
+			Locale locale) throws IridaWorkflowNotFoundException {
+		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
+		final String pipelineName = workflow.getWorkflowDescription()
+				.getName()
+				.toLowerCase();
+		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(request.getLabel(), id,
+				request.getParameters());
 		namedParameters = namedParametersService.create(namedParameters);
-		return namedParameters.getId();
+		Map<String, String> updatedParams = namedParameters.getInputParameters();
+		List<Input> params = updatedParams.entrySet()
+				.stream()
+				.map(entry -> new Input(entry.getKey(), messageSource.getMessage(
+						"pipeline.parameters." + pipelineName + "." + entry.getKey(), new Object[] {}, locale), entry.getValue()))
+				.collect(Collectors.toList());
+
+		return new SavedPipelineParameters(namedParameters.getId(), namedParameters.getLabel(), params);
 	}
 
 	/**

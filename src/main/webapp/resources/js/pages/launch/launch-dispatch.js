@@ -3,7 +3,7 @@ import {
   saveNewPipelineParameters,
 } from "../../apis/pipelines/pipelines";
 import { TYPES } from "./launch-context";
-import { PIPELINE_ID } from "./launch-utilities";
+import { formatSavedParameterSets, PIPELINE_ID } from "./launch-utilities";
 
 /**
  * Save a set of modified parameters.
@@ -15,18 +15,13 @@ import { PIPELINE_ID } from "./launch-utilities";
  */
 export async function saveModifiedParametersAs(dispatch, label, parameters) {
   try {
-    const data = await saveNewPipelineParameters({
+    const { pipelineParameters: data } = await saveNewPipelineParameters({
       label,
       parameters,
       id: PIPELINE_ID,
     });
 
-    const newParameterSet = {
-      id: data.id,
-      label,
-      key: `set-${data.id}`,
-      parameters,
-    };
+    const [newParameterSet] = formatSavedParameterSets([data]);
 
     // Update the state
     dispatch({

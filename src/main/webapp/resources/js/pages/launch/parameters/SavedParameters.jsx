@@ -1,5 +1,14 @@
 import React from "react";
-import { Alert, Button, Form, Input, Popover, Select, Space } from "antd";
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  Popover,
+  Select,
+  Space,
+  Typography,
+} from "antd";
 import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { grey5 } from "../../../styles/colors";
@@ -47,12 +56,15 @@ export function SavedParameters({ form, sets }) {
     const fieldsValue = form.getFieldsValue(
       sets[0].parameters.map((parameter) => parameter.name)
     );
-    const id = await saveModifiedParametersAs(
-      dispatch,
-      saveParamsForm.getFieldValue("name"),
-      fieldsValue
-    );
-    setCurrentSetId(id);
+    try {
+      const id = await saveModifiedParametersAs(
+        dispatch,
+        saveParamsForm.getFieldValue("name"),
+        fieldsValue
+      );
+      setCurrentSetId(id);
+      setModified(false);
+    } catch (e) {}
   }
 
   return (
@@ -64,34 +76,45 @@ export function SavedParameters({ form, sets }) {
           help={
             Object.keys(modified).length ? (
               <Alert
+                showIcon
+                style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
                 type={"warning"}
-                message={
-                  "This template had been modified. You can save it as a custom template"
-                }
+                message={i18n("SavedParameters.modified")}
+                description={i18n("SavedParameters.modified.description")}
                 action={
                   <Space>
                     <Popover
                       placement="bottomRight"
                       trigger="click"
                       content={
-                        <Form
-                          form={saveParamsForm}
-                          layout="inline"
-                          style={{
-                            width: 305,
-                          }}
-                        >
-                          <Form.Item name="name">
-                            <Input />
-                          </Form.Item>
-                          <Form.Item>
-                            <Button onClick={saveParameters}>SAVE</Button>
-                          </Form.Item>
-                        </Form>
+                        <>
+                          <Typography.Text>
+                            {i18n("SavedParameters.modified.name")}
+                          </Typography.Text>
+                          <Form
+                            form={saveParamsForm}
+                            layout="inline"
+                            style={{
+                              width: 305,
+                            }}
+                          >
+                            <Form.Item name="name" required>
+                              <Input />
+                            </Form.Item>
+                            <Form.Item>
+                              <Button
+                                onClick={saveParameters}
+                                htmlType="submit"
+                              >
+                                {i18n("SavedParameters.modified.save")}
+                              </Button>
+                            </Form.Item>
+                          </Form>
+                        </>
                       }
                     >
                       <Button size="small" type="ghost">
-                        Save As
+                        {i18n("SavedParameters.modified.saveAs")}
                       </Button>
                     </Popover>
                   </Space>
@@ -135,12 +158,6 @@ export function SavedParameters({ form, sets }) {
             style={{ marginLeft: SPACE_LG }}
             label={label}
             name={name}
-            rules={[
-              {
-                required: true,
-                message: "All values are required",
-              },
-            ]}
             help={modified[name] ? i18n("ParametersModal.modified") : null}
           >
             <Input
