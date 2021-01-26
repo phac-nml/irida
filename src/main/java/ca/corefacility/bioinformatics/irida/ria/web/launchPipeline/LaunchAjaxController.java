@@ -97,6 +97,7 @@ public class LaunchAjaxController {
      *
      * @param id         identifier for a irida workflow
      * @param parameters details about the new set of parameters
+     * @param locale     Current users locale
      * @return The identifier for the newly created named parameter set, wrapped in a ajax response
      */
     @PostMapping("/{id}/parameters")
