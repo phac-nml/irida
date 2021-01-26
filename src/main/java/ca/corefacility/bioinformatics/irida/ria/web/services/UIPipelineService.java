@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
@@ -207,17 +208,13 @@ public class UIPipelineService {
 	 * Save a new set of {@link IridaWorkflowNamedParameters}
 	 *
 	 * @param id                      UUID identifier for w {@link IridaWorkflow}
-	 * @param savedPipelineParameters details about the new set of saved pipeline parameters
+	 * @param request details about the new set of saved pipeline parameters
 	 * @return the identifier for the new set
 	 */
-	public Long saveNewPipelineParameters(UUID id, SavedPipelineParameters savedPipelineParameters) {
+	public Long saveNewPipelineParameters(UUID id, SavePipelineParametersRequest request) {
 		Map<String, String> parameters = new HashMap<>();
-
-		for (Input parameter : savedPipelineParameters.getParameters()) {
-			parameters.put(parameter.getName(), parameter.getValue());
-		}
 		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(
-				savedPipelineParameters.getLabel(), id, parameters);
+				request.getLabel(), id, request.getParameters());
 		namedParameters = namedParametersService.create(namedParameters);
 		return namedParameters.getId();
 	}

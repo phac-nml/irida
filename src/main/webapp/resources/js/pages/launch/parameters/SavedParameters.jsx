@@ -3,6 +3,8 @@ import { Alert, Button, Form, Input, Popover, Select, Space } from "antd";
 import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { grey5 } from "../../../styles/colors";
+import { useLaunch } from "../launch-context";
+import { saveModifiedParametersAs } from "../launch-dispatch";
 
 /**
  * React component to render a select input and modifying button for
@@ -14,6 +16,9 @@ import { grey5 } from "../../../styles/colors";
  * @constructor
  */
 export function SavedParameters({ form, sets }) {
+  const [, dispatch] = useLaunch();
+  const [saveParamsForm] = Form.useForm();
+
   const [currentSetId, setCurrentSetId] = React.useState(sets[0].id);
   const [modified, setModified] = React.useState({});
 
@@ -38,6 +43,18 @@ export function SavedParameters({ form, sets }) {
     }
   }
 
+  async function saveParameters() {
+    const fieldsValue = form.getFieldsValue(
+      sets[0].parameters.map((parameter) => parameter.name)
+    );
+    const id = await saveModifiedParametersAs(
+      dispatch,
+      saveParamsForm.getFieldValue("name"),
+      fieldsValue
+    );
+    setCurrentSetId(id);
+  }
+
   return (
     <>
       <div>
@@ -57,20 +74,24 @@ export function SavedParameters({ form, sets }) {
                       placement="bottomRight"
                       trigger="click"
                       content={
-                        <div style={{ width: 300 }}>
-                          <Form layout="inline">
-                            <Form.Item>
-                              <Input />
-                            </Form.Item>
-                            <Form.Item>
-                              <Button>SAVE</Button>
-                            </Form.Item>
-                          </Form>
-                        </div>
+                        <Form
+                          form={saveParamsForm}
+                          layout="inline"
+                          style={{
+                            width: 305,
+                          }}
+                        >
+                          <Form.Item name="name">
+                            <Input />
+                          </Form.Item>
+                          <Form.Item>
+                            <Button onClick={saveParameters}>SAVE</Button>
+                          </Form.Item>
+                        </Form>
                       }
                     >
                       <Button size="small" type="ghost">
-                        Save
+                        Save As
                       </Button>
                     </Popover>
                   </Space>

@@ -33,7 +33,7 @@ export async function saveModifiedParametersAs(dispatch, label, parameters) {
       type: TYPES.SAVE_MODIFIED_PARAMETERS,
       parameterSet: newParameterSet,
     });
-    return data;
+    return Promise.resolve(data.id);
   } catch (e) {
     return Promise.reject(e);
   }
@@ -87,6 +87,12 @@ export function referenceFileUploadComplete(dispatch, name, id) {
   dispatch({ type: TYPES.ADD_REFERENCE, payload: { id, name } });
 }
 
+/**
+ * Update which sample files are selected
+ *
+ * @param {function} dispatch - specific the the launch context
+ * @param {array} files - list of sample files to run on the pipeline
+ */
 export function setSelectedSampleFiles(dispatch, files) {
   dispatch({
     type: TYPES.UPDATE_FILES,
