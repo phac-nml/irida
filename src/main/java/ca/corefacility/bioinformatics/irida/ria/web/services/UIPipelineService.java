@@ -209,7 +209,9 @@ public class UIPipelineService {
 	 *
 	 * @param id      UUID identifier for w {@link IridaWorkflow}
 	 * @param request details about the new set of saved pipeline parameters
+	 * @param locale  current users Locale
 	 * @return the identifier for the new set
+	 * @throws IridaWorkflowNotFoundException exception thrown if the workflow cannot be found.
 	 */
 	public SavedPipelineParameters saveNewPipelineParameters(UUID id, SavePipelineParametersRequest request,
 			Locale locale) throws IridaWorkflowNotFoundException {
