@@ -105,7 +105,6 @@ export function SavedParameters({ form, sets }) {
                             <Form.Item>
                               <Button
                                 onClick={saveParameters}
-                                htmlType="submit"
                                 className="t-saveas-submit"
                               >
                                 {i18n("SavedParameters.modified.save")}
