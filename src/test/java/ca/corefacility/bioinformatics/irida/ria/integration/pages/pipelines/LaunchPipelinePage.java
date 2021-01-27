@@ -1,17 +1,23 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
+/**
+ * This page holds all the form controls that are available on any pipeline launch page.
+ */
 public class LaunchPipelinePage extends AbstractPage {
-	@FindBy(className = "t-pipeline-name")
+	@FindBy(className = "ant-page-header-heading-title")
 	private WebElement pipelineName;
 
 	@FindBy(className = "t-submit-btn")
@@ -44,11 +50,26 @@ public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(className = "t-launch-files")
 	private List<WebElement> launchFiles;
 
-	@FindBy(css = ".t-email-results input")
-	private WebElement emailResultsCheckBox;
+	@FindBy(css = ".t-email-results .ant-select-selection-item")
+	private WebElement emailSelectedValue;
 
-	@FindBy(className = "t-edit-params-btn")
-	private WebElement editParamsButton;
+	@FindBy(css = ".t-saved-input")
+	private List<WebElement> savedParametersInput;
+
+	@FindBy(className = "t-modified-alert")
+	private List<WebElement> modifiedAlert;
+
+	@FindBy(className = "t-modified-saveas")
+	private WebElement modifiedSaveAsButton;
+
+	@FindBy(className = "t-saveas-submit")
+	private WebElement modifiedSubmit;
+
+	@FindBy(className = "t-modified-name")
+	private WebElement modifiedNameInput;
+
+	@FindBy(css = ".t-saved-select .ant-select-selection-item")
+	private WebElement savedParametersSelectedValue;
 
 	public LaunchPipelinePage(WebDriver driver) {
 		super(driver);
@@ -96,6 +117,9 @@ public class LaunchPipelinePage extends AbstractPage {
 		waitForTime(300);
 	}
 
+	/**
+	 * Clear the pipeline name input
+	 */
 	public void clearName() {
 		nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		nameInput.sendKeys(Keys.BACK_SPACE);
@@ -105,16 +129,50 @@ public class LaunchPipelinePage extends AbstractPage {
 		return nameInputError.size() == 1;
 	}
 
-	public boolean isEmailResultsChecked() {
-		return emailResultsCheckBox.isSelected();
+	public String getEmailValue() {
+		return emailSelectedValue.getText();
 	}
 
-	public void clickEmailResultsCheckbox() {
-		emailResultsCheckBox.click();
+	public int getNumberOfSavedPipelineParameters() {
+		return savedParametersInput.size();
 	}
 
-	public void showEditParameters() {
-		editParamsButton.click();
+	public String getSavedParameterValue(String name) {
+		Optional<WebElement> input = savedParametersInput.stream()
+				.filter(elm -> elm.getAttribute("id")
+						.equals("details_" + name))
+				.findFirst();
+		return input.map(webElement -> webElement.getAttribute("value"))
+				.orElse(null);
+	}
+
+	public void updateSavedParameterValue(String name, String value) {
+		Optional<WebElement> input = savedParametersInput.stream()
+				.filter(elm -> elm.getAttribute("id")
+						.equals("details_" + name))
+				.findFirst();
+		if(input.isPresent()) {
+			WebElement elm = input.get();
+			elm.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+			elm.sendKeys(value);
+		}
+	}
+
+	public boolean isModifiedAlertVisible() {
+		return modifiedAlert.size() > 0;
+	}
+
+	public void saveModifiedTemplateAs(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 1);
+		modifiedSaveAsButton.click();
+		wait.until(ExpectedConditions.elementToBeClickable(modifiedSubmit));
+		modifiedNameInput.sendKeys(name);
+		modifiedSubmit.click();
+		wait.until(ExpectedConditions.invisibilityOf(modifiedAlert.get(0)));
+	}
+
+	public String getSelectedParametersTemplateName() {
+		return savedParametersSelectedValue.getText();
 	}
 
 	public void submit() {

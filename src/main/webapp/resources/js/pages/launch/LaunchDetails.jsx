@@ -37,7 +37,7 @@ export function LaunchDetails() {
         name="emailPipelineResult"
         label={i18n("LaunchDetails.emailResults")}
       >
-        <Select>
+        <Select className="t-email-results">
           <Select.Option value="none">
             {i18n("AnalysisDetailsEmailPref.noEmail")}
           </Select.Option>

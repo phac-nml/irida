@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -25,7 +23,8 @@ import static org.junit.Assert.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
-	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
+	private final String MIMINUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
+	private final String REPEAT_MINIMUM_LENGTH_PARAMETER = "repeat-minimum-length";
 	private CartPage cartPage;
 
 	private LaunchPipelinePage page;
@@ -56,12 +55,26 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertFalse("Name required warning should be cleared", page.isNameErrorDisplayed());
 
 		// Test email checkbox
-		assertTrue("Should be automatically enabled to email pipeline results", page.isEmailResultsChecked());
-		page.clickEmailResultsCheckbox();
-		assertFalse("Should now be not emailing pipeline results", page.isEmailResultsChecked());
+		assertEquals("No Email", page.getEmailValue());
 
-		// Test modifying parameters
-		page.showEditParameters();
+		// Make sure the saved pipeline parameter inputs are set up correctly
+		assertEquals("Phylogenomics Pipeline should have 8 inputs", 8, page.getNumberOfSavedPipelineParameters());
+		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
+		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MIMINUM_COVERAGE_PARAMETER);
+		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER,"123456");
+		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
+		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
+		assertTrue("Modified alert should go way once the value is the same as the original", page.isModifiedAlertVisible());
+
+		// Test saving modified parameters
+		String newCoverage = "123";
+		String newRepeat = "456";
+		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER, newCoverage);
+		page.updateSavedParameterValue(REPEAT_MINIMUM_LENGTH_PARAMETER, newRepeat);
+		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
+		final String newModifiedTemplateName = "FOOBAR";
+		page.saveModifiedTemplateAs(newModifiedTemplateName);
+		assertEquals("Then newly template should be selected", newModifiedTemplateName, page.getSelectedParametersTemplateName());
 	}
 
 	private void addSamplesToCart() {

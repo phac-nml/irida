@@ -76,6 +76,7 @@ export function SavedParameters({ form, sets }) {
           help={
             Object.keys(modified).length ? (
               <Alert
+                className="t-modified-alert"
                 showIcon
                 style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
                 type={"warning"}
@@ -99,12 +100,13 @@ export function SavedParameters({ form, sets }) {
                             }}
                           >
                             <Form.Item name="name" required>
-                              <Input />
+                              <Input className="t-modified-name" />
                             </Form.Item>
                             <Form.Item>
                               <Button
                                 onClick={saveParameters}
                                 htmlType="submit"
+                                className="t-saveas-submit"
                               >
                                 {i18n("SavedParameters.modified.save")}
                               </Button>
@@ -113,7 +115,11 @@ export function SavedParameters({ form, sets }) {
                         </>
                       }
                     >
-                      <Button size="small" type="ghost">
+                      <Button
+                        size="small"
+                        type="ghost"
+                        className="t-modified-saveas"
+                      >
                         {i18n("SavedParameters.modified.saveAs")}
                       </Button>
                     </Popover>
@@ -128,6 +134,7 @@ export function SavedParameters({ form, sets }) {
             value={currentSetId}
             onChange={(id) => updateSelectedSet(id)}
             disabled={sets.length < 2}
+            className="t-saved-select"
           >
             {sets.map((set) => (
               <Select.Option key={set.key} value={set.id}>
@@ -161,6 +168,7 @@ export function SavedParameters({ form, sets }) {
             help={modified[name] ? i18n("ParametersModal.modified") : null}
           >
             <Input
+              className="t-saved-input"
               onChange={(e) => onValueUpdated(name, value, e.target.value)}
             />
           </Form.Item>
