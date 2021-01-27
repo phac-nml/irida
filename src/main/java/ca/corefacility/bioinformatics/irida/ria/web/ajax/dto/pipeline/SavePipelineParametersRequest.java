@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline;
 
 import java.util.Map;
 
+/**
+ * Used to save new values for Saved Pipeline Parameters on the Pipeline Launch Page
+ */
 public class SavePipelineParametersRequest {
 	private String label;
 	private Map<String, String> parameters;
