@@ -1,8 +1,19 @@
 import React from "react";
-import { Alert, Button, Form, Input, Popover, Select, Space } from "antd";
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  Popover,
+  Select,
+  Space,
+  Typography,
+} from "antd";
 import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { grey5 } from "../../../styles/colors";
+import { useLaunch } from "../launch-context";
+import { saveModifiedParametersAs } from "../launch-dispatch";
 
 /**
  * React component to render a select input and modifying button for
@@ -14,6 +25,9 @@ import { grey5 } from "../../../styles/colors";
  * @constructor
  */
 export function SavedParameters({ form, sets }) {
+  const [, dispatch] = useLaunch();
+  const [saveParamsForm] = Form.useForm();
+
   const [currentSetId, setCurrentSetId] = React.useState(sets[0].id);
   const [modified, setModified] = React.useState({});
 
@@ -38,6 +52,21 @@ export function SavedParameters({ form, sets }) {
     }
   }
 
+  async function saveParameters() {
+    const fieldsValue = form.getFieldsValue(
+      sets[0].parameters.map((parameter) => parameter.name)
+    );
+    try {
+      const id = await saveModifiedParametersAs(
+        dispatch,
+        saveParamsForm.getFieldValue("name"),
+        fieldsValue
+      );
+      setCurrentSetId(id);
+      setModified(false);
+    } catch (e) {}
+  }
+
   return (
     <>
       <div>
@@ -47,30 +76,45 @@ export function SavedParameters({ form, sets }) {
           help={
             Object.keys(modified).length ? (
               <Alert
+                showIcon
+                style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
                 type={"warning"}
-                message={
-                  "This template had been modified. You can save it as a custom template"
-                }
+                message={i18n("SavedParameters.modified")}
+                description={i18n("SavedParameters.modified.description")}
                 action={
                   <Space>
                     <Popover
                       placement="bottomRight"
                       trigger="click"
                       content={
-                        <div style={{ width: 300 }}>
-                          <Form layout="inline">
-                            <Form.Item>
+                        <>
+                          <Typography.Text>
+                            {i18n("SavedParameters.modified.name")}
+                          </Typography.Text>
+                          <Form
+                            form={saveParamsForm}
+                            layout="inline"
+                            style={{
+                              width: 305,
+                            }}
+                          >
+                            <Form.Item name="name" required>
                               <Input />
                             </Form.Item>
                             <Form.Item>
-                              <Button>SAVE</Button>
+                              <Button
+                                onClick={saveParameters}
+                                htmlType="submit"
+                              >
+                                {i18n("SavedParameters.modified.save")}
+                              </Button>
                             </Form.Item>
                           </Form>
-                        </div>
+                        </>
                       }
                     >
                       <Button size="small" type="ghost">
-                        Save
+                        {i18n("SavedParameters.modified.saveAs")}
                       </Button>
                     </Popover>
                   </Space>
@@ -114,12 +158,6 @@ export function SavedParameters({ form, sets }) {
             style={{ marginLeft: SPACE_LG }}
             label={label}
             name={name}
-            rules={[
-              {
-                required: true,
-                message: "All values are required",
-              },
-            ]}
             help={modified[name] ? i18n("ParametersModal.modified") : null}
           >
             <Input

@@ -3,7 +3,7 @@ import {
   saveNewPipelineParameters,
 } from "../../apis/pipelines/pipelines";
 import { TYPES } from "./launch-context";
-import { PIPELINE_ID } from "./launch-utilities";
+import { formatSavedParameterSets, PIPELINE_ID } from "./launch-utilities";
 
 /**
  * Save a set of modified parameters.
@@ -15,25 +15,20 @@ import { PIPELINE_ID } from "./launch-utilities";
  */
 export async function saveModifiedParametersAs(dispatch, label, parameters) {
   try {
-    const data = await saveNewPipelineParameters({
+    const { pipelineParameters: data } = await saveNewPipelineParameters({
       label,
       parameters,
       id: PIPELINE_ID,
     });
 
-    const newParameterSet = {
-      id: data.id,
-      label,
-      key: `set-${data.id}`,
-      parameters,
-    };
+    const [newParameterSet] = formatSavedParameterSets([data]);
 
     // Update the state
     dispatch({
       type: TYPES.SAVE_MODIFIED_PARAMETERS,
       parameterSet: newParameterSet,
     });
-    return data;
+    return Promise.resolve(data.id);
   } catch (e) {
     return Promise.reject(e);
   }
@@ -87,6 +82,12 @@ export function referenceFileUploadComplete(dispatch, name, id) {
   dispatch({ type: TYPES.ADD_REFERENCE, payload: { id, name } });
 }
 
+/**
+ * Update which sample files are selected
+ *
+ * @param {function} dispatch - specific the the launch context
+ * @param {array} files - list of sample files to run on the pipeline
+ */
 export function setSelectedSampleFiles(dispatch, files) {
   dispatch({
     type: TYPES.UPDATE_FILES,

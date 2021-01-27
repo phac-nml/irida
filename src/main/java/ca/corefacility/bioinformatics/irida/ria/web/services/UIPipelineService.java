@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
@@ -206,20 +207,29 @@ public class UIPipelineService {
 	/**
 	 * Save a new set of {@link IridaWorkflowNamedParameters}
 	 *
-	 * @param id                      UUID identifier for w {@link IridaWorkflow}
-	 * @param savedPipelineParameters details about the new set of saved pipeline parameters
+	 * @param id      UUID identifier for w {@link IridaWorkflow}
+	 * @param request details about the new set of saved pipeline parameters
+	 * @param locale  current users Locale
 	 * @return the identifier for the new set
+	 * @throws IridaWorkflowNotFoundException exception thrown if the workflow cannot be found.
 	 */
-	public Long saveNewPipelineParameters(UUID id, SavedPipelineParameters savedPipelineParameters) {
-		Map<String, String> parameters = new HashMap<>();
-
-		for (Input parameter : savedPipelineParameters.getParameters()) {
-			parameters.put(parameter.getName(), parameter.getValue());
-		}
-		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(
-				savedPipelineParameters.getLabel(), id, parameters);
+	public SavedPipelineParameters saveNewPipelineParameters(UUID id, SavePipelineParametersRequest request,
+			Locale locale) throws IridaWorkflowNotFoundException {
+		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
+		final String pipelineName = workflow.getWorkflowDescription()
+				.getName()
+				.toLowerCase();
+		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(request.getLabel(), id,
+				request.getParameters());
 		namedParameters = namedParametersService.create(namedParameters);
-		return namedParameters.getId();
+		Map<String, String> updatedParams = namedParameters.getInputParameters();
+		List<Input> params = updatedParams.entrySet()
+				.stream()
+				.map(entry -> new Input(entry.getKey(), messageSource.getMessage(
+						"pipeline.parameters." + pipelineName + "." + entry.getKey(), new Object[] {}, locale), entry.getValue()))
+				.collect(Collectors.toList());
+
+		return new SavedPipelineParameters(namedParameters.getId(), namedParameters.getLabel(), params);
 	}
 
 	/**

@@ -38,12 +38,6 @@ const reducer = (state, action) => {
         loading: false,
         ...action.payload,
       };
-    case TYPES.SAVE_MODIFIED_PARAMETERS:
-      return {
-        ...state,
-        parameterSets: [...state.parameterSets, action.parameterSet],
-        parameterSet: action.parameterSet,
-      };
     case TYPES.REFERENCE_FILE:
       return { ...state, referenceFile: action.payload.referenceFile };
     case TYPES.ADD_REFERENCE:
@@ -52,11 +46,10 @@ const reducer = (state, action) => {
         referenceFile: action.payload.id,
         referenceFiles: addReference(action.payload),
       };
-    case TYPES.MODIFIED_PARAMETERS:
+    case TYPES.SAVE_MODIFIED_PARAMETERS:
       return {
         ...state,
-        parameterSet: action.payload.set,
-        parameterSets: action.payload.sets,
+        parameterSets: [...state.parameterSets, action.parameterSet],
       };
     case TYPES.UPDATE_FILES:
       return {
