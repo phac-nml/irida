@@ -102,10 +102,7 @@ export function SavedParameters({ form, sets }) {
                               <Input />
                             </Form.Item>
                             <Form.Item>
-                              <Button
-                                onClick={saveParameters}
-                                htmlType="submit"
-                              >
+                              <Button onClick={saveParameters}>
                                 {i18n("SavedParameters.modified.save")}
                               </Button>
                             </Form.Item>
