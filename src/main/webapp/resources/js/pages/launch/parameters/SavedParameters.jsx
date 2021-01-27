@@ -72,7 +72,7 @@ export function SavedParameters({ form, sets }) {
       <div>
         <Form.Item
           label={i18n("SavedParameters.title")}
-          tooltip={i18n("Default Parameters are pipeline defaults")}
+          tooltip={i18n("SavedParameters.tooltip")}
           help={
             Object.keys(modified).length ? (
               <Alert
