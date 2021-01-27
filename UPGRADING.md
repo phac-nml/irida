@@ -120,14 +120,14 @@ security.password.expiry=90
 
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.  Note this upgrade removes a number of deprecated database tables such as `remote_related_proejct` and `remote_sequence_file`.  While these tables were likely empty it is **strongly** recommended you back up your database before this upgrade.
 * Remove `snapshot.file.base.directory` entry from `/etc/irida/irida.conf`.  This directory is no longer used.  If the directory pointed to by this config entry is empty it may be safely removed.
-* The SISTR pipeline has been upgraded to use `sistr_cmd` 1.0.2.  This new version must be installed in Galaxy.  Please see <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/>.
+* The SISTR pipeline has been upgraded to use `sistr_cmd` 1.0.2.  This new version must be installed in Galaxy.  Please see <https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/sistr/>.
 
 0.15.0 to 0.16.0
 ----------------
 
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
-* A new pipeline (SISTR) has been added and requires installation of additional tools and dependencies in Galaxy.  Please see <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/sistr/>.
-* The **SPAdes** tool has been updated to <https://toolshed.g2.bx.psu.edu/view/nml/spades/35cb17bd8bf9>, please update this tool in Galaxy. See <http://irida.corefacility.ca/documentation/administrator/galaxy/pipelines/assembly-annotation/> for more details on upgrading.
+* A new pipeline (SISTR) has been added and requires installation of additional tools and dependencies in Galaxy.  Please see <https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/sistr/>.
+* The **SPAdes** tool has been updated to <https://toolshed.g2.bx.psu.edu/view/nml/spades/35cb17bd8bf9>, please update this tool in Galaxy. See <https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/assembly-annotation/> for more details on upgrading.
 
 0.14.0 to 0.15.0
 ----------------
