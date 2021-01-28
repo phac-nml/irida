@@ -9,26 +9,24 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
+        test: /\.(js|jsx)$/i,
+        use: 'babel-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.less$/i,
         use: [
-          "style-loader",
-          "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [
-                  [
-                    "postcss-preset-env",
-                    {
-                      // Options
-                    },
-                  ],
-                ],
-              },
-            },
-          },
+            "style-loader",
+            "css-loader",
+            "less-loader",
         ],
       },
-    ]}
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+    ]},
+  resolve: {
+    extensions: [ '.js', '.jsx' ],
+  },
 };
