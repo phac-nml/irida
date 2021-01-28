@@ -63,7 +63,7 @@ export function SavedParameters({ form, sets }) {
         fieldsValue
       );
       setCurrentSetId(id);
-      setModified(false);
+      setModified({});
     } catch (e) {}
   }
 
