@@ -30,20 +30,24 @@ export function SavedParameters({ form, sets }) {
 
   const [currentSetId, setCurrentSetId] = React.useState(sets[0].id);
   const [modified, setModified] = React.useState({});
+  const [fields] = React.useState(() => sets[0]?.parameters);
 
   function updateSelectedSet(id) {
-    const index = sets.findIndex((set) => set.id === id);
+    const set = sets.find((set) => set.id === id);
     setCurrentSetId(id);
     setModified({});
-    const parameters = sets[index].parameters.reduce(
+    const parameters = set.parameters.reduce(
       (acc, curr) => ({ ...acc, [curr.name]: curr.value }),
       {}
     );
     form.setFieldsValue(parameters);
   }
 
-  function onValueUpdated(field, original, newValue) {
-    if (original === newValue) {
+  function onValueUpdated(field, newValue) {
+    const original = sets
+      .find((set) => set.id === currentSetId)
+      .parameters.find((parameter) => field === parameter.name);
+    if (original.value === newValue) {
       const newMod = { ...modified };
       delete newMod[field];
       setModified(newMod);
@@ -143,7 +147,7 @@ export function SavedParameters({ form, sets }) {
           </Select>
         </Form.Item>
       </div>
-      {sets[currentSetId].parameters.map(({ name, label, value }) => (
+      {fields.map(({ name, label }) => (
         <div
           key={name}
           style={{
@@ -168,7 +172,7 @@ export function SavedParameters({ form, sets }) {
           >
             <Input
               className="t-saved-input"
-              onChange={(e) => onValueUpdated(name, value, e.target.value)}
+              onChange={(e) => onValueUpdated(name, e.target.value)}
             />
           </Form.Item>
         </div>
