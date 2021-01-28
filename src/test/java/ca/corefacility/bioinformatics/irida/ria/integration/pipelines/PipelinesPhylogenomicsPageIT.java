@@ -23,8 +23,6 @@ import static org.junit.Assert.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
-	private final String MIMINUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
-	private final String REPEAT_MINIMUM_LENGTH_PARAMETER = "repeat-minimum-length";
 	private CartPage cartPage;
 
 	private LaunchPipelinePage page;
@@ -60,6 +58,8 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		// Make sure the saved pipeline parameter inputs are set up correctly
 		assertEquals("Phylogenomics Pipeline should have 8 inputs", 8, page.getNumberOfSavedPipelineParameters());
 		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
+
+		String MIMINUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
 		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MIMINUM_COVERAGE_PARAMETER);
 		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER,"123456");
 		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
@@ -70,6 +70,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		String newCoverage = "123";
 		String newRepeat = "456";
 		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER, newCoverage);
+		String REPEAT_MINIMUM_LENGTH_PARAMETER = "repeat-minimum-length";
 		page.updateSavedParameterValue(REPEAT_MINIMUM_LENGTH_PARAMETER, newRepeat);
 		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
 		final String newModifiedTemplateName = "FOOBAR";
