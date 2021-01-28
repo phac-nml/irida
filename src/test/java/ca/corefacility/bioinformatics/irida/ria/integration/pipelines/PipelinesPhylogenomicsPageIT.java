@@ -59,17 +59,17 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertEquals("Phylogenomics Pipeline should have 8 inputs", 8, page.getNumberOfSavedPipelineParameters());
 		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
 
-		String MIMINUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
-		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MIMINUM_COVERAGE_PARAMETER);
-		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER,"123456");
+		String MINIMUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
+		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MINIMUM_COVERAGE_PARAMETER);
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER,"123456");
 		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
-		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
 		assertTrue("Modified alert should go way once the value is the same as the original", page.isModifiedAlertVisible());
 
 		// Test saving modified parameters
 		String newCoverage = "123";
 		String newRepeat = "456";
-		page.updateSavedParameterValue(MIMINUM_COVERAGE_PARAMETER, newCoverage);
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, newCoverage);
 		String REPEAT_MINIMUM_LENGTH_PARAMETER = "repeat-minimum-length";
 		page.updateSavedParameterValue(REPEAT_MINIMUM_LENGTH_PARAMETER, newRepeat);
 		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
