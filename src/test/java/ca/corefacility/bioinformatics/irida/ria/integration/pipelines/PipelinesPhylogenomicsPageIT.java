@@ -1,15 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
-import java.io.IOException;
-
-import org.junit.Before;
 import org.junit.Test;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -22,21 +15,12 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
-public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
-	private CartPage cartPage;
-
-	private LaunchPipelinePage page;
-
-	@Before
-	public void setUpTest() throws IOException {
-		cartPage = new CartPage(driver());
-
-		page = LaunchPipelinePage.init(driver());
-		addSamplesToCart();
-	}
+public class PipelinesPhylogenomicsPageIT extends BasePipelineLaunchPageIT {
 
 	@Test
 	public void testPageSetup() {
+		CartPage cartPage = new CartPage(driver());
+		cartPage.selectPhylogenomicsPipeline();
 		assertEquals("Launch Page should display  the pipeline name", "SNVPhyl Phylogenomics Pipeline", page.getPipelineName());
 		assertTrue("Launch form should be displayed", page.isLaunchFormDisplayed());
 		assertTrue("Launch details should be displayed", page.isLaunchDetailsDisplayed());
@@ -76,14 +60,5 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		final String newModifiedTemplateName = "FOOBAR";
 		page.saveModifiedTemplateAs(newModifiedTemplateName);
 		assertEquals("Then newly template should be selected", newModifiedTemplateName, page.getSelectedParametersTemplateName());
-	}
-
-	private void addSamplesToCart() {
-		LoginPage.loginAsUser(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-		samplesPage.selectSample(0);
-		samplesPage.selectSample(1);
-		samplesPage.addSelectedSamplesToCart();
-		cartPage.selectPhylogenomicsPipeline();
 	}
 }
