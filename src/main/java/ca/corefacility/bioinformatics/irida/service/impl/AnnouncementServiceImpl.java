@@ -186,6 +186,15 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public Long getUnreadAnnouncementsForUserCount(User user) {
+        return announcementUserJoinRepository.getAnnouncementsUnreadByUserCount(user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public List<Announcement> getAllAnnouncements() {
         return Lists.newArrayList(announcementRepository.findAll());
     }

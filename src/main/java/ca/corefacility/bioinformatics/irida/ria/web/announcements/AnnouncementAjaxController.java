@@ -74,6 +74,20 @@ public class AnnouncementAjaxController {
 	}
 
 	/**
+	 * Handle request for getting the count of unread announcements list for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return the count of unread {@link Announcement}s for a user.
+	 */
+	@RequestMapping(value = "/user/unread/count")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@ResponseBody
+	public ResponseEntity<Long> getUnreadAnnouncementsUserCount(Principal principal) {
+		Long unreadAnnouncementsCount = UIAnnouncementsService.getUnreadAnnouncementsUserCount(principal);
+		return ResponseEntity.ok(unreadAnnouncementsCount);
+	}
+
+	/**
 	 * Marks the announcement as read by the current user.
 	 *
 	 * @param aID ID of the {@link Announcement} to be marked

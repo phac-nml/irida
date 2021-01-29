@@ -33,6 +33,18 @@ export function getUnreadAnnouncements() {
 }
 
 /**
+ * Get the count of all the unread announcements.
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function getUnreadAnnouncementsCount() {
+  try {
+    return axios.get(`${BASE}/user/unread/count`);
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
+}
+
+/**
  * Mark announcement as read.
  * @returns {Promise<AxiosResponse<T>>}
  */

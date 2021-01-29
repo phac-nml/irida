@@ -61,6 +61,14 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
 	 * Get a list of {@link Announcement}s that have not been read by {@link User}
 	 *
 	 * @param user {@link User} for whom we want to get unread announcements
+	 * @return the count of {@link Announcement}s that have not been read by the user
+	 */
+	public Long getUnreadAnnouncementsForUserCount(User user);
+
+	/**
+	 * Get a list of {@link Announcement}s that have not been read by {@link User}
+	 *
+	 * @param user {@link User} for whom we want to get unread announcements
 	 * @return List of {@link Announcement}s that have not been read by the user
 	 */
 	public List<Announcement> getUnreadAnnouncementsForUser(User user);

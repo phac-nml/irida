@@ -90,6 +90,17 @@ public class UIAnnouncementsService {
 		Announcement announcement = announcementService.read(aID);
 		announcementService.markAnnouncementAsReadByUser(announcement, user);
 	}
+	/**
+	 * Returns the count of unread announcements list for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return the count of unread {@link Announcement}s for a user.
+	 */
+	public Long getUnreadAnnouncementsUserCount(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		Long unreadAnnouncementsCount = announcementService.getUnreadAnnouncementsForUserCount(user);
+		return unreadAnnouncementsCount;
+	}
 
 	/**
 	 * Creates a new announcement
