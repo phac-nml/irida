@@ -6,6 +6,7 @@ import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { MainNavigation } from "./MainNavigation";
+import { Announcements } from "../announcements/Announcements";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -29,6 +30,7 @@ export function PageHeader() {
       <Session />
       <Notifications />
       {inGalaxy ? <GalaxyAlert /> : null}
+      <Announcements />
     </>
   );
 }
