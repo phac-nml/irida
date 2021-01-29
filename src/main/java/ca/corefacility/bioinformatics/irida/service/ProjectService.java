@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -11,6 +8,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -24,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 
 /**
  * A specialized service layer for projects.
@@ -427,4 +426,23 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return the created {@link Project}
 	 */
 	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner);
+
+	/**
+	 * Get count of projects created in the time period
+	 *
+	 * @param createdDate the minimum date for projects created
+	 * @return An {@link Long} count of projects created
+	 */
+	public Long getProjectsCreated(Date createdDate);
+
+	/**
+	 * Get list of {@link GenericStatModel} of projects created in the past n time period
+	 * and grouped by the format provided.
+	 *
+	 * @param createdDate the minimum date for projects created
+	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @return An {@link GenericStatModel} list
+	 */
+	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
+
 }

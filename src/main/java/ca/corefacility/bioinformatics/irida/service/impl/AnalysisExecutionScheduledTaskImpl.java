@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
@@ -51,6 +52,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
 	private final EmailController emailController;
+	private AnalysisWorkspaceService analysisWorkspaceService;
+
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -63,18 +66,21 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
 	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
+	 * @param analysisWorkspaceService 	     {@link AnalysisWorkspaceService}
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository, EmailController emailController) {
+			JobErrorRepository jobErrorRepository, EmailController emailController,
+		    AnalysisWorkspaceService analysisWorkspaceService) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 		this.galaxyJobErrorsService = galaxyJobErrorsService;
 		this.jobErrorRepository = jobErrorRepository;
 		this.emailController = emailController;
+		this.analysisWorkspaceService = analysisWorkspaceService;
 	}
 
 	/**
@@ -171,11 +177,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					GalaxyWorkflowStatus workflowStatus = analysisExecutionService.getWorkflowStatus(
 							analysisSubmission);
 					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
-				} catch (ExecutionManagerException | RuntimeException e) {
+				} catch (ExecutionManagerException | RuntimeException | IridaWorkflowNotFoundException e) {
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
-					if (analysisSubmission.getEmailPipelineResult()) {
+					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
 					}
 				}
@@ -259,7 +265,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * submission.
 	 */
 	private Future<AnalysisSubmission> handleWorkflowStatus(GalaxyWorkflowStatus workflowStatus,
-			AnalysisSubmission analysisSubmission) {
+			AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Future<AnalysisSubmission> returnedSubmission;
 
 		boolean finalWorkflowStatusSet = false;
@@ -271,16 +278,18 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
 			finalWorkflowStatusSet = true;
+		} else if (
+				workflowStatus.isRunning() ||
+				(workflowStatus.completedSuccessfully() && !analysisWorkspaceService.outputFilesExist(analysisSubmission))) {
+			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
+					+ workflowStatus.getProportionComplete());
+			returnedSubmission = new AsyncResult<>(analysisSubmission);
 		} else if (workflowStatus.completedSuccessfully()) {
 			logger.debug("Analysis finished " + analysisSubmission);
 
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			finalWorkflowStatusSet = true;
-		} else if (workflowStatus.isRunning()) {
-			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
-					+ workflowStatus.getProportionComplete());
-			returnedSubmission = new AsyncResult<>(analysisSubmission);
 		} else {
 			// If one of the above combinations did not match, assume an error occurred.
 			logger.error("Workflow for analysis " + analysisSubmission
@@ -295,10 +304,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 The variable finalWorkflowStatusSet is set to true when an analysis
 		 has successfully completed or completed with an error and is used in
 		 the logic below. If the analysis has finished with an error or completed successfully
-		 and the user selected to be emailed on completion, then the following code
+		 and the user selected to be emailed on completion or on error, then the following code
 		 will be executed.
 		 */
-		if (finalWorkflowStatusSet && analysisSubmission.getEmailPipelineResult()) {
+		if (finalWorkflowStatusSet && (analysisSubmission.getEmailPipelineResultCompleted()
+				|| analysisSubmission.getEmailPipelineResultError())) {
 			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 

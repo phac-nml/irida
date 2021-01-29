@@ -28,7 +28,6 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	//Page objects
 	private AnnouncementControlPage controlPage;
 	private AnnouncementReadPage readPage;
-	private AnnouncementDetailPage detailPage;
 	private AnnouncementDashboardPage dashboardPage;
 
 	@Override
@@ -37,7 +36,6 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 		controlPage = new AnnouncementControlPage(driver());
 		readPage = new AnnouncementReadPage(driver());
-		detailPage = new AnnouncementDetailPage(driver());
 		dashboardPage = new AnnouncementDashboardPage(driver());
 	}
 
@@ -66,19 +64,20 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
     @Test
     public void testSubmitNewAnnouncement() {
-		final String message = "This is a great announcement";
+		final String title = "Announcement Title";
+		final String message = "This is a the announcement message content.";
+		final Boolean priority = true;
 		controlPage.goTo();
 
-		int numAnnouncementsBefore = controlPage.getCreatedDates()
-				.size();
+		int numAnnouncementsBefore = controlPage.getCreatedDates().size();
 		CreateAnnouncementComponent createAnnouncementComponent = CreateAnnouncementComponent.goTo(driver());
 		controlPage.clickCreateNewAnnouncementButton();
-		createAnnouncementComponent.enterMessage(message);
+		createAnnouncementComponent.enterAnnouncement(title, message, priority);
 
 		// New messages should appear first in the table
-		String newMessage = controlPage.getAnnouncement(0);
+		String newTitle = controlPage.getAnnouncementTitle(0);
 
-		assertTrue("Unexpected announcement content.", newMessage.equals(message));
+		assertTrue("Unexpected announcement content.", newTitle.equals(title));
 		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
 				controlPage.getCreatedDates()
 						.size());
@@ -88,21 +87,25 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
     public void testCheckDetailsPage() {
         controlPage.goTo();
 
-		String preview0 = controlPage.getAnnouncement(0);
-		String preview1 = controlPage.getAnnouncement(1);
-		String preview2 = controlPage.getAnnouncement(2);
+		String title0 = controlPage.getAnnouncementTitle(0);
+		String title1 = controlPage.getAnnouncementTitle(1);
+		String title2 = controlPage.getAnnouncementTitle(2);
 
-		controlPage.gotoMessageDetails(0);
-		compareMessages(detailPage.getInputText(), preview0);
-		detailPage.clickCancelButton();
+		EditAnnouncementComponent editAnnouncementComponent = EditAnnouncementComponent.goTo(driver());
 
-		controlPage.gotoMessageDetails(1);
-		compareMessages(detailPage.getInputText(), preview1);
-		detailPage.clickCancelButton();
+		controlPage.gotoEditMessage(0);
+		compareMessages(editAnnouncementComponent.getTitle(), title0);
+		editAnnouncementComponent.clickCancelButton();
 
-		controlPage.gotoMessageDetails(2);
-		compareMessages(detailPage.getInputText(), preview2);
-		detailPage.clickCancelButton();
+		driver().navigate().refresh();
+		controlPage.gotoEditMessage(1);
+		compareMessages(editAnnouncementComponent.getTitle(), title1);
+		editAnnouncementComponent.clickCancelButton();
+
+		driver().navigate().refresh();
+		controlPage.gotoEditMessage(2);
+		compareMessages(editAnnouncementComponent.getTitle(), title2);
+		editAnnouncementComponent.clickCancelButton();
 	}
 
 	private void compareMessages(String announcement, String preview) {
@@ -111,36 +114,33 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
     @Test
     public void testUpdateAnnouncement() {
-		final String newMessage = "Updated!!!";
+		final String newTitle = "Updated Title!!!";
+		final String newMessage = "Updated Message Content!!!";
+		final boolean newPriority = true;
 
 		controlPage.goTo();
-		controlPage.gotoMessageDetails(4);
-		detailPage.enterMessage(newMessage);
+		EditAnnouncementComponent editAnnouncementComponent = EditAnnouncementComponent.goTo(driver());
+		controlPage.gotoEditMessage(4);
+		editAnnouncementComponent.enterAnnouncement(newTitle, newMessage, newPriority);
 
-		String announcementMessage = controlPage.getAnnouncement(4);
-		assertTrue("Unexpected message content", newMessage.contains(announcementMessage));
+		String announcementTitle = controlPage.getAnnouncementTitle(4);
+		assertTrue("Unexpected message content", newTitle.contains(announcementTitle));
 	}
 
     @Test
     public void testDeleteAnnouncement() {
         controlPage.goTo();
 		List<Date> dates = controlPage.getCreatedDates();
-
-		String messagePreview = controlPage.getAnnouncement(2);
-
-		controlPage.gotoMessageDetails(2);
-		assertTrue("Announcement content doesn't match expected", detailPage.getInputText().contains(messagePreview));
-
-        detailPage.clickDeleteButton();
-
+		controlPage.deleteAnnouncement(2);
 		assertEquals("Unexpected number of announcements", dates.size() - 1, controlPage.getCreatedDates().size());
 	}
 
     @Test
-    public void testDetailsTablePopulated() {
+    public void testAnnouncementUserTablePopulated() {
         controlPage.goTo();
-		controlPage.gotoMessageDetails(0);
-		assertEquals("Unexpected number of user information rows in table", 6, detailPage.getTableDataSize());
+		ViewAnnouncementComponent viewAnnouncementComponent = ViewAnnouncementComponent.goTo(driver());
+		controlPage.gotoViewMessage(0);
+		assertEquals("Unexpected number of user information rows in table", 6, viewAnnouncementComponent.getTableDataSize());
     }
 
     @Test

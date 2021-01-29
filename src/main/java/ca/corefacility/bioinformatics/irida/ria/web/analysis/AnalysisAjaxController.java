@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -192,17 +191,25 @@ public class AnalysisAjaxController {
 
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
-			submission.setEmailPipelineResult(parameters.getEmailPipelineResult());
+
+			if(parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.receiveCompletionEmail", new Object[] {},
+						locale);
+			} else if(!parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {},
+						locale);
+			} else if (!parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.receiveErrorEmail", new Object[] {},
+						locale);
+			}
+
+			submission.setEmailPipelineResultCompleted(parameters.getEmailPipelineResultCompleted());
+			submission.setEmailPipelineResultError(parameters.getEmailPipelineResultError());
+
 			analysisSubmissionService.update(submission);
 			logger.trace("Email pipeline result updated for: " + submission);
-
-			if (parameters.getEmailPipelineResult()) {
-				message = messageSource.getMessage("AnalysisDetails.willReceiveEmail", new Object[] {}, locale);
-			} else {
-				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
-			}
 		} else {
-			logger.debug("Email on completion preference not updated due to analysis state");
+			logger.debug("Email on completion or error preference not updated due to analysis state");
 			message = messageSource.getMessage("AnalysisDetails.emailOnPipelineResultNotUpdated", new Object[] {},
 					locale);
 			response.setStatus(422);
@@ -247,7 +254,8 @@ public class AnalysisAjaxController {
 		}
 
 		AnalysisSubmission.Priority[] priorities = AnalysisSubmission.Priority.values();
-		boolean emailPipelineResult = submission.getEmailPipelineResult();
+		boolean emailPipelineResultCompleted = submission.getEmailPipelineResultCompleted();
+		boolean emailPipelineResultError = submission.getEmailPipelineResultError();
 
 		boolean canShareToSamples = false;
 		if (submission.getAnalysis() != null) {
@@ -264,7 +272,7 @@ public class AnalysisAjaxController {
 
 		// details is a DTO (Data Transfer Object)
 		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration,
-				submission.getCreatedDate(), priorities, emailPipelineResult, canShareToSamples,
+				submission.getCreatedDate(), priorities, emailPipelineResultCompleted, emailPipelineResultError, canShareToSamples,
 				updateAnalysisPermission.isAllowed(authentication, submission), submission.getUpdateSamples());
 	}
 
@@ -918,34 +926,27 @@ public class AnalysisAjaxController {
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
 	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
-	 * @param locale       locale of the logged in user
 	 * @return {@link String} containing the image file contents as a base64 encoded string.
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
-	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename, Locale locale) {
+	public ResponseEntity<String> getImageFile(@PathVariable Long submissionId, String filename) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Set<AnalysisOutputFile> files = submission.getAnalysis()
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 
-		try {
-			for (AnalysisOutputFile file : files) {
-				if (file.getFile()
-						.toFile()
-						.getName()
-						.contains(filename)) {
-					outputFile = file;
-					break;
-				}
+		for (AnalysisOutputFile file : files) {
+			if (file.getFile()
+					.toFile()
+					.getName()
+					.contains(filename)) {
+				outputFile = file;
+				break;
 			}
-			return ResponseEntity.ok(Base64.getEncoder()
-					.encodeToString(outputFile.getBytesForFile()));
-		} catch (IOException e) {
-			logger.error("Unable to open image file");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(messageSource.getMessage("AnalysisOutputs.unableToReadImageFile", null, locale));
 		}
+		return ResponseEntity.ok(Base64.getEncoder()
+				.encodeToString(outputFile.getBytesForFile()));
 	}
 
 	/**
@@ -960,15 +961,22 @@ public class AnalysisAjaxController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 
+		//grab the metadata once and put it in a map
+		Map<Sample, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
+		samples.stream()
+				.forEach(s -> {
+					Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+					sampleMetadata.put(s, metadataForSample);
+				});
+
 		// Let's get a list of all the metadata available that is unique.
 		Set<String> terms = new HashSet<>();
 		for (Sample sample : samples) {
-			if (!sample.getMetadata()
-					.isEmpty()) {
-				Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
-				terms.addAll(metadata.keySet()
-						.stream()
-						.map(MetadataTemplateField::getLabel)
+			Set<MetadataEntry> metadataEntries = sampleMetadata.get(sample);
+			if (!metadataEntries.isEmpty()) {
+				terms.addAll(metadataEntries.stream()
+						.map(e -> e.getField()
+								.getLabel())
 						.collect(Collectors.toSet()));
 			}
 		}
@@ -976,13 +984,11 @@ public class AnalysisAjaxController {
 		// Get the metadata for the samples;
 		Map<String, Object> metadata = new HashMap<>();
 		for (Sample sample : samples) {
-			Map<MetadataTemplateField, MetadataEntry> sampleMetadata = sample.getMetadata();
+			Set<MetadataEntry> metadataEntries = sampleMetadata.get(sample);
 			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
-			sampleMetadata.entrySet()
-					.forEach(e -> {
-						stringMetadata.put(e.getKey()
-								.getLabel(), e.getValue());
-					});
+			metadataEntries.forEach(e -> {
+				stringMetadata.put(e.getField().getLabel(), e);
+			});
 
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
 			for (String term : terms) {
@@ -999,7 +1005,10 @@ public class AnalysisAjaxController {
 			metadata.put(sample.getLabel(), valuesMap);
 		}
 
-		return ImmutableMap.of("terms", terms, "metadata", metadata);
+		return ImmutableMap.of(
+				"terms", terms,
+				"metadata", metadata
+		);
 	}
 
 	/**

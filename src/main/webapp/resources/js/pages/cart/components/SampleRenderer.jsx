@@ -6,6 +6,7 @@ import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { IconDropDown, IconFolder } from "../../../components/icons/Icons";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -13,7 +14,7 @@ const DeleteMenu = ({ removeSample, removeProject }) => (
     style={{
       border: `1px solid ${grey4}`,
       borderRadius: 2,
-      boxShadow: `0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`
+      boxShadow: `0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`,
     }}
   >
     <Menu.Item>
@@ -41,7 +42,7 @@ export class SampleRenderer extends React.Component {
       /** Function to remove a sample from the cart */
       removeSample: PropTypes.func.isRequired,
       /** Function to remove an entire project from the cart */
-      removeProject: PropTypes.func.isRequired
+      removeProject: PropTypes.func.isRequired,
     }),
     /** Index in the ag-grid table of the current row */
     rowIndex: PropTypes.number.isRequired,
@@ -50,14 +51,12 @@ export class SampleRenderer extends React.Component {
       label: PropTypes.string.isRequired,
       project: PropTypes.shape({
         label: PropTypes.string.isRequired,
-        id: PropTypes.number.isRequired
-      }).isRequired
-    })
+        id: PropTypes.number.isRequired,
+      }).isRequired,
+    }),
   };
 
   displaySample = () => this.props.displaySample(this.props.data);
-
-  removeSample = () => this.props.removeSample(this.props.data);
 
   removeProject = () => this.props.removeProject(this.props.data.project.id);
 
@@ -69,7 +68,7 @@ export class SampleRenderer extends React.Component {
           ...this.props.style,
           padding: SPACE_SM,
           backgroundColor: grey1,
-          borderBottom: `1px solid ${grey4}`
+          borderBottom: `1px solid ${grey4}`,
         }}
       >
         <div
@@ -78,22 +77,29 @@ export class SampleRenderer extends React.Component {
           style={{
             display: "flex",
             alignItems: "center",
-            marginBottom: SPACE_XS
+            marginBottom: SPACE_XS,
           }}
         >
           <div style={{ flexGrow: 1 }}>
-            <Button
-              className="t-sample-name"
-              size="small"
-              onClick={this.displaySample}
+            <SampleDetailViewer
+              sampleId={sample.id}
+              removeSample={this.props.removeSample}
             >
-              {sample.label}
-            </Button>
+              <Button
+                className="t-sample-details-btn"
+                size="small"
+                onClick={this.displaySample}
+              >
+                {sample.label}
+              </Button>
+            </SampleDetailViewer>
           </div>
           <Dropdown
             overlay={
               <DeleteMenu
-                removeSample={this.removeSample}
+                removeSample={() =>
+                  this.props.removeSample(sample.project.id, sample.id)
+                }
                 removeProject={this.removeProject}
               />
             }

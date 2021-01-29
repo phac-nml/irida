@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -81,7 +82,8 @@ public class LineListController {
 		return projectSamples.stream()
 				.map(join -> {
 					ProjectSampleJoin psj = (ProjectSampleJoin)join;
-					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()));
+					Set<MetadataEntry> metadata = sampleService.getMetadataForSample(psj.getObject());
+					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()), metadata);
 				})
 				.collect(Collectors.toList());
 	}
@@ -102,25 +104,18 @@ public class LineListController {
 		Sample sample = sampleService.read(sampleId);
 
 		try {
-			Map<MetadataTemplateField, MetadataEntry> metadata = sample.getMetadata();
+			//find the field
 			MetadataTemplateField templateField = metadataTemplateService.readMetadataFieldByLabel(label);
 			if (templateField == null) {
 				templateField = new MetadataTemplateField(label, "text");
 				metadataTemplateService.saveMetadataField(templateField);
 			}
-			MetadataEntry entry;
-			/*
-			 Check to see if the field exists already.  If it does, then just update it.
-			 If not create a new entry and carry on.
-			 */
-			if (metadata.containsKey(templateField)) {
-				entry = metadata.get(templateField);
-				entry.setValue(value);
-			} else {
-				entry = new MetadataEntry(value, "text");
-			}
-			metadata.put(templateField, entry);
-			sampleService.update(sample);
+
+			//create and merge the new entry in
+			MetadataEntry entry = new MetadataEntry(value, "text", templateField);
+
+			//update the sample
+			sampleService.mergeSampleMetadata(sample,Sets.newHashSet(entry));
 			response.setStatus(HttpServletResponse.SC_OK);
 			return "SUCCESS";
 		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {

@@ -15,11 +15,11 @@ const MenuWrapper = styled.div`
   align-items: center;
   height: 65px;
   border-bottom: ${BORDERED_LIGHT};
-  background-color: ${grey1};
   width: 100%;
 
   .ant-menu {
     line-height: 65px;
+    background-color: transparent;
   }
 `;
 
@@ -37,7 +37,7 @@ export function CartToolsMenu({ pathname, paths, toggleSidebar, collapsed }) {
         selectedKeys={[pathname]}
         style={{ borderBottom: BORDERED_LIGHT }}
       >
-        {paths.map(path => (
+        {paths.map((path) => (
           <Menu.Item key={path.link}>
             <Link to={path.link}>{path.text}</Link>
           </Menu.Item>
@@ -59,5 +59,5 @@ CartToolsMenu.propTypes = {
   /** The current visible path */
   pathname: PropTypes.string.isRequired,
   /** List of paths */
-  paths: PropTypes.array.isRequired
+  paths: PropTypes.array.isRequired,
 };

@@ -66,7 +66,7 @@ Running a pipeline
 
 If you have the ![](images/manager-icon.png) **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
 
-If you do not have the ![](images/manager-icon.png) **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "{% icon fa-upload %} Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
+If you do not have the ![](images/manager-icon.png) **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
 
 When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#reference-files)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
 
@@ -293,7 +293,7 @@ When launching a pipeline you can select the checkbox to receive an email upon p
 
 ![analysis-email-upon-completion](images/analysis-email-upon-completion.png)
 
-The option to receive an email upon analysis completion can also be updated as long as the analysis is not in `COMPLETED` or `ERROR` state. To update the email option click the `Settings` tab. To receive an email select the checkbox in the `Receive an email upon analysis completion` section. If you do not want to receive an email then you can unselect the checkbox in this section.
+The option to receive an email upon analysis completion (success or error) or upon error can also be updated as long as the analysis is not in `COMPLETED` or `ERROR` state. To update the email option click the `Settings` tab and select the dropdown in the `Receive analysis status email` section to set your preference. 
 
 ![analysis-email-upon-completion-running](images/analysis-email-upon-completion-running.png)
 

@@ -10,10 +10,10 @@ const BASE_URL = setBaseUrl(`ajax/remote-projects`);
  * forceSync, and/or changeUser values to update
  * @returns {Promise<{error: *}>}
  */
-export async function updateRemoteProjectSyncSettings(projectId, {forceSync, changeUser, projectSyncFrequency}) {
+export async function updateRemoteProjectSyncSettings(projectId, {forceSync, markSync, changeUser, projectSyncFrequency}) {
     return await axios.post(
       `${BASE_URL}/${projectId}/settings/sync`,
-      {forceSync, changeUser, projectSyncFrequency}
+      {forceSync, markSync, changeUser, projectSyncFrequency}
     ).then(({ data }) => data
     ).catch(error => {
       throw new Error(error.response.data.error);

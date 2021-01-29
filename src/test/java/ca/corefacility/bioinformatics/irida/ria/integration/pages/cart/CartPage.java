@@ -42,7 +42,7 @@ public class CartPage extends AbstractPage {
 
 	public int getNavBarSamplesCount() {
 		return Integer.parseInt(driver.findElement(By.className("t-cart-count"))
-				.getText());
+				.getAttribute("data-count"));
 	}
 
 	public int getNumberOfSamplesInCart() {
@@ -50,7 +50,7 @@ public class CartPage extends AbstractPage {
 				By.className("t-Assembly_and_Annotation_Pipeline_btn")));
 		new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.className("t-samples-list")));
 		new WebDriverWait(driver, 10).until(
-				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-sample-name")));
+				ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-sample-details-btn")));
 		return driver.findElements(By.className("t-cart-sample"))
 				.size();
 	}
@@ -87,6 +87,19 @@ public class CartPage extends AbstractPage {
 		deleteMenu.findElement(By.className("t-delete-project"))
 				.click();
 		waitForTime(500);
+	}
+
+	public void viewSampleDetailsFor(String sampleName) {
+		for (WebElement cartSample : cartSamples) {
+			final WebElement button = cartSample.findElement(By.className("t-sample-details-btn"));
+			if (button.getText()
+					.equals(sampleName)) {
+				button.click();
+				WebDriverWait wait = new WebDriverWait(driver, 10);
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-sample-details-modal")));
+				break;
+			}
+		}
 	}
 
 	public void selectPhylogenomicsPipeline() {

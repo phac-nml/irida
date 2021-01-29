@@ -1,12 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
-import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -19,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.remote.*;
@@ -59,6 +62,8 @@ public class ProjectSynchronizationServiceTest {
 	private GenomeAssemblyService assemblyService;
 	@Mock
 	private GenomeAssemblyRemoteService assemblyRemoteService;
+	@Mock
+	private Fast5ObjectRemoteService fast5ObjectRemoteService;
 
 	ProjectSynchronizationService syncService;
 
@@ -73,11 +78,12 @@ public class ProjectSynchronizationServiceTest {
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
 				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
-				pairRemoteService, assemblyRemoteService, tokenService, emailController);
+				pairRemoteService, assemblyRemoteService, fast5ObjectRemoteService, tokenService, emailController);
 
 		api = new RemoteAPI();
 		expired = new Project();
 		expired.setId(1L);
+		expired.setRemoteProjectHash(1);
 		RemoteStatus expStatus = new RemoteStatus("http://expired", api);
 		expStatus.setId(1L);
 		expStatus.setLastUpdate(new Date(1));
@@ -127,11 +133,39 @@ public class ProjectSynchronizationServiceTest {
 				.thenReturn(Lists.newArrayList(expired));
 		when(projectRemoteService.read(expired.getRemoteStatus().getURL())).thenReturn(remoteProject);
 
+		when(projectRemoteService.getProjectHash(remoteProject)).thenReturn(2);
+
 		when(projectService.update(remoteProject)).thenReturn(remoteProject);
 
 		syncService.findMarkedProjectsToSync();
 
 		verify(projectService, times(3)).update(any(Project.class));
+		verify(projectRemoteService).getProjectHash(remoteProject);
+
+		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
+	}
+
+	@Test
+	public void testSyncProjectsSameHash() {
+		expired.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
+		Project remoteProject = new Project();
+		remoteProject.setRemoteStatus(expired.getRemoteStatus());
+		User readBy = new User();
+		expired.getRemoteStatus().setReadBy(readBy);
+		when(projectService.getProjectsWithRemoteSyncStatus(RemoteStatus.SyncStatus.MARKED))
+				.thenReturn(Lists.newArrayList(expired));
+		when(projectRemoteService.read(expired.getRemoteStatus().getURL())).thenReturn(remoteProject);
+
+		when(projectRemoteService.getProjectHash(remoteProject)).thenReturn(expired.getRemoteProjectHash());
+
+		when(projectService.update(remoteProject)).thenReturn(remoteProject);
+
+		syncService.findMarkedProjectsToSync();
+
+		verify(projectService, times(2)).update(any(Project.class));
+		verify(projectRemoteService).getProjectHash(remoteProject);
+		verifyZeroInteractions(sampleRemoteService);
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
@@ -166,6 +200,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 		
 		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), anySet())).thenReturn(sample);
 		
 		syncService.syncSample(sample, expired, Maps.newHashMap());
 		
@@ -184,7 +219,9 @@ public class ProjectSynchronizationServiceTest {
 		existingSample.setRemoteStatus(sampleStatus);
 		
 		when(sampleService.update(any(Sample.class))).thenReturn(sample);
-		
+		when(sampleService.updateSampleMetadata(eq(sample),anySet() )).thenReturn(sample);
+
+
 		syncService.syncSample(sample, expired, ImmutableMap.of("http://sample",existingSample));
 		
 		verify(projectService,times(0)).addSampleToProject(expired, sample, true);
@@ -194,10 +231,11 @@ public class ProjectSynchronizationServiceTest {
 	@Test
 	public void testSyncSampleNoAssemblies() {
 		Sample sample = new Sample();
-		RemoteStatus sampleStatus = new RemoteStatus("http://sample",api);
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
 		when(assemblyRemoteService.getGenomeAssembliesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());
@@ -205,7 +243,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(projectService).addSampleToProject(expired, sample, true);
 		verify(assemblyRemoteService, times(0)).mirrorAssembly(any(UploadedAssembly.class));
 
-		assertEquals(SyncStatus.SYNCHRONIZED,sample.getRemoteStatus().getSyncStatus());
+		assertEquals(SyncStatus.SYNCHRONIZED, sample.getRemoteStatus().getSyncStatus());
 	}
 	
 	@Test
@@ -240,6 +278,23 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(assemblyRemoteService).mirrorAssembly(assembly);
 		verify(assemblyService).createAssemblyInSample(sample, assembly);
+	}
+
+	@Test
+	public void testSyncFast5Files() {
+		Sample sample = new Sample();
+		Path p1 = Paths.get("src/test/resources/files/testfast5file.fast5");
+		Fast5Object fast5Object = new Fast5Object(new SequenceFile(p1));
+		RemoteStatus fast5Status = new RemoteStatus("http://fast5", api);
+		fast5Object.setRemoteStatus(fast5Status);
+		fast5Object.setId(1L);
+
+		when(fast5ObjectRemoteService.mirrorSequencingObject(fast5Object)).thenReturn(fast5Object);
+
+		syncService.syncFast5File(fast5Object, sample);
+
+		verify(fast5ObjectRemoteService).mirrorSequencingObject(fast5Object);
+		verify(objectService).createSequencingObjectInSample(fast5Object, sample);
 	}
 	
 	@Test(expected = ProjectSynchronizationException.class)

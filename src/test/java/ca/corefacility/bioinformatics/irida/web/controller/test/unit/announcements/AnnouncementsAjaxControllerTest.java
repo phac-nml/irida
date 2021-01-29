@@ -37,10 +37,14 @@ public class AnnouncementsAjaxControllerTest {
 			"Penner", "4567");
 	private final User ANNOUNCEMENT_USER_02 = new User(1L, "BOB", "bob@nowhere.ca", "DkD(LD_##@", "Fred", "Penner",
 			"4567");
+	private final String ANNOUNCEMENT_TITLE_01 = "First Announcement";
+	private final String ANNOUNCEMENT_TITLE_02 = "Second Announcment";
 	private final String ANNOUNCEMENT_TEXT_01 = "This is the **first** announcement";
 	private final String ANNOUNCEMENT_TEXT_02 = "This is the **second** announcement";
-	private final Announcement ANNOUNCEMENT_01 = new Announcement(ANNOUNCEMENT_TEXT_01, ANNOUNCEMENT_USER_01);
-	private final Announcement ANNOUNCEMENT_02 = new Announcement(ANNOUNCEMENT_TEXT_02, ANNOUNCEMENT_USER_02);
+	private final Boolean ANNOUNCEMENT_PRIORITY_01 = false;
+	private final Boolean ANNOUNCEMENT_PRIORITY_02 = true;
+	private final Announcement ANNOUNCEMENT_01 = new Announcement(ANNOUNCEMENT_TITLE_01, ANNOUNCEMENT_TEXT_01, ANNOUNCEMENT_PRIORITY_01, ANNOUNCEMENT_USER_01);
+	private final Announcement ANNOUNCEMENT_02 = new Announcement(ANNOUNCEMENT_TITLE_02, ANNOUNCEMENT_TEXT_02, ANNOUNCEMENT_PRIORITY_02, ANNOUNCEMENT_USER_02);
 
 	@Before
 	public void setUp() {

@@ -67,7 +67,7 @@ public class AnalysisExecutionServiceAspect {
 				exception);
 		analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 		analysisSubmissionRepository.save(analysisSubmission);
-		if (analysisSubmission.getEmailPipelineResult()) {
+		if (analysisSubmission.getEmailPipelineResultError()) {
 			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 	}

@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 
-import java.util.Set;
+import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
- * Request sent from the UI to add {@link Sample} from a {@link Project} to the cart.
+ * Request sent from the UI to add {@link Sample}s from a {@link Project} to the cart.
  */
 public class AddToCartRequest {
 	/**
@@ -15,31 +15,31 @@ public class AddToCartRequest {
 	private Long projectId;
 
 	/**
-	 * Set of {@link CartSampleRequest} that mapping to a {@link Sample} to add to the cart.
+	 * List of {@link Sample} identifiers for samples to add to the cart.
 	 */
-	private Set<CartSampleRequest> samples;
+	private List<Long> sampleIds;
 
 	public AddToCartRequest() {
 	}
 
-	public AddToCartRequest(Long projectId, Set<CartSampleRequest> samples) {
+	public AddToCartRequest(Long projectId, List<Long> samples) {
 		this.projectId = projectId;
-		this.samples = samples;
+		this.sampleIds = samples;
 	}
 
 	public Long getProjectId() {
 		return projectId;
 	}
 
-	public Set<CartSampleRequest> getSamples() {
-		return samples;
+	public Iterable<Long> getSampleIds() {
+		return sampleIds;
 	}
 
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
 	}
 
-	public void setSamples(Set<CartSampleRequest> samples) {
-		this.samples = samples;
+	public void setSampleIds(List<Long> sampleIds) {
+		this.sampleIds = sampleIds;
 	}
 }

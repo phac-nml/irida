@@ -109,12 +109,10 @@ public class AnnouncementsController extends BaseController {
     /**
      * Get the admin-accessible announcement control page
      *
-     * @param model
-     *              The model for the returned view
+     * @param model The model for the returned view
      * @return The announcement control page
      */
-    @RequestMapping(value = "/admin")
-    public String getControlCentreAdminPage(final Model model) {
+    @RequestMapping(value = "/admin") public String getControlCentreAdminPage(final Model model) {
         List<Announcement> announcements = announcementService.getAllAnnouncements();
 
         logger.trace("Announcements list size: " + announcements.size());
@@ -129,8 +127,12 @@ public class AnnouncementsController extends BaseController {
      *
      * @param announcementID
      *                  The ID of the announcement to be updated
+     * @param title
+     *                  The title of the updated announcement
      * @param message
      *                  The content of the updated announcement
+     * @param priority
+     *                  The priority of the updated announcement
      * @param model
      *                  The model for the view
      * @return A redirect to the announcement control center page
@@ -138,10 +140,14 @@ public class AnnouncementsController extends BaseController {
     @RequestMapping(value = "/{announcementID}/details", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String submitUpdatedAnnouncement(@PathVariable long announcementID,
+                                            @RequestParam String title,
                                             @RequestParam(required = false) String message,
+                                            @RequestParam(defaultValue = "false") boolean priority,
                                             Model model) {
         Announcement announcement = announcementService.read(announcementID);
+        announcement.setTitle(title);
         announcement.setMessage(message);
+        announcement.setPriority(priority);
 
         try {
             announcementService.update(announcement);

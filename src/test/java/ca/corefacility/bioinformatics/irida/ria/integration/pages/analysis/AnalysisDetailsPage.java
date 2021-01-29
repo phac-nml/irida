@@ -69,7 +69,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className="ant-descriptions-view")
 	private List<WebElement> descriptionViewDivs;
 
-	@FindBy(className="ant-menu-horizontal")
+	@FindBy(className="t-analysis-menu")
 	private List<WebElement> horizontalTabMenus;
 
 	@FindBy(className="ant-layout-has-sider")
@@ -289,8 +289,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean emailPipelineResultVisible() {
-		return !driver.findElements(By.className("t-email-pipeline-result"))
+	public boolean emailPipelineResultStatusSelectVisible() {
+		return !driver.findElements(By.className("t-email-pipeline-result-select"))
 				.isEmpty();
 	}
 

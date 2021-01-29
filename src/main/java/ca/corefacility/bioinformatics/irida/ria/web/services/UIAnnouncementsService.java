@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
@@ -18,18 +17,14 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.Announcem
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTAnnouncementUser;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * A utility class for formatting responses for the admin announcements page UI.
+ * A utility class for formatting responses for the announcements page UI.
  */
 @Component
 public class UIAnnouncementsService {
@@ -48,7 +43,7 @@ public class UIAnnouncementsService {
 	 * @param tableRequest details about the current page of the table requested
 	 * @return a {@link TableResponse} containing the list of announcements.
 	 */
-	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
+	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(TableRequest tableRequest) {
 		final Page<Announcement> page = announcementService.search(
 				AnnouncementSpecification.searchAnnouncement(tableRequest.getSearch()),
 				PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
@@ -61,14 +56,50 @@ public class UIAnnouncementsService {
 	}
 
 	/**
+	 * Returns a list of read announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link AnnouncementUserJoin}s for a user.
+	 */
+	public List<AnnouncementUserJoin> getReadAnnouncementsUser(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(user);
+		return readAnnouncements;
+	}
+
+	/**
+	 * Returns a list of unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link Announcement}s for a user.
+	 */
+	public List<Announcement> getUnreadAnnouncementsUser(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+		return unreadAnnouncements;
+	}
+
+	/**
+	 * Marks an announcement as read.
+	 *
+	 * @param aID ID of the {@link Announcement} to be marked
+	 * @param principal the currently logged in user
+	 */
+	public void markAnnouncementAsReadByUser(Long aID, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		Announcement announcement = announcementService.read(aID);
+		announcementService.markAnnouncementAsReadByUser(announcement, user);
+	}
+
+	/**
 	 * Creates a new announcement
 	 *
 	 * @param announcementRequest details about the announcement to create.
 	 * @param principal           the currently logged in user
 	 */
-	public void createNewAnnouncement(@RequestBody AnnouncementRequest announcementRequest, Principal principal) {
+	public void createNewAnnouncement(AnnouncementRequest announcementRequest, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
-		Announcement announcement = new Announcement(announcementRequest.getMessage(), user);
+		Announcement announcement = new Announcement(announcementRequest.getTitle(), announcementRequest.getMessage(), announcementRequest.getPriority(), user);
 		announcementService.create(announcement);
 	}
 
@@ -77,9 +108,11 @@ public class UIAnnouncementsService {
 	 *
 	 * @param announcementRequest - the details of the announcement to update.
 	 */
-	public void updateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
+	public void updateAnnouncement(AnnouncementRequest announcementRequest) {
 		Announcement announcement = announcementService.read(announcementRequest.getId());
+		announcement.setTitle(announcementRequest.getTitle());
 		announcement.setMessage(announcementRequest.getMessage());
+		announcement.setPriority(announcementRequest.getPriority());
 		announcementService.update(announcement);
 	}
 
@@ -88,30 +121,27 @@ public class UIAnnouncementsService {
 	 *
 	 * @param announcementRequest - the announcement to delete
 	 */
-	public void deleteAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
+	public void deleteAnnouncement(AnnouncementRequest announcementRequest) {
 		announcementService.delete(announcementRequest.getId());
 	}
 
 	/**
 	 * Get user read status for current announcement
 	 * @param announcementID {@link Long} identifier for the {@link Announcement}
-	 * @param params {@link DataTablesParams} parameters for current DataTable
-	 * @return {@link DataTablesResponse} containing the list of users.
+	 * @param tableRequest details about the current page of the table requested
+	 * @return a {@link TableResponse} containing the list of users.
 	 */
-	public @ResponseBody
-	DataTablesResponse getUserAnnouncementInfoTable(
-			@PathVariable Long announcementID,
-			final @DataTablesRequest DataTablesParams params) {
+	public TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(Long announcementID, TableRequest tableRequest) {
 
 		final Announcement currentAnnouncement = announcementService.read(announcementID);
 
 		final Page<User> page = userService.search(
-				UserSpecification.searchUser(params.getSearchValue()), PageRequest.of(params.getCurrentPage(), params.getLength(), params.getSort()));
-		final List<DataTablesResponseModel> announcementUsers = page.getContent().stream()
-				.map(user -> new DTAnnouncementUser(user, userHasRead(user, currentAnnouncement)))
+				UserSpecification.searchUser(tableRequest.getSearch()), PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
+		final List<AnnouncementUserTableModel> announcementUsers = page.getContent().stream()
+				.map(user -> new AnnouncementUserTableModel(user, userHasRead(user, currentAnnouncement)))
 				.collect(Collectors.toList());
 
-		return new DataTablesResponse(params, page, announcementUsers);
+		return new TableResponse<>(announcementUsers, page.getTotalElements());
 	}
 
 	/**
@@ -130,4 +160,5 @@ public class UIAnnouncementsService {
 				.filter(j -> j.getObject().equals(user)).findAny();
 		return currentAnnouncement.orElse(null);
 	}
+
 }

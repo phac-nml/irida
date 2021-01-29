@@ -18,7 +18,7 @@ Viewing existing projects
 
 You can access the list of projects that you have permission to view and modify by clicking on the "Projects" menu at the top of the dashboard and selecting "Your Projects":
 
-![Your projects dashboard location.](images/your-projects.png)
+![Your projects dashboard location.]({{ site.baseurl }}/images/tutorials/common/projects/your-projects.png)
 
 The projects list shows all projects that you are permitted to view or modify:
 
@@ -282,7 +282,7 @@ You can view or add reference files by clicking on the "Reference Files" tab in 
 
 ![Project details reference files tab.](images/project-details-reference-files-tab.png)
 
-You can upload a new reference file to the project by clicking on the "Upload Reference File" button:
+You can upload a new reference file to the project by clicking on the "Upload Reference File" button or by dragging and dropping files onto it:
 
 ![Upload reference file button.](images/upload-reference-file-button.png)
 
@@ -296,8 +296,10 @@ Settings for remote synchronized projects can also be managed from the project s
 
 ![Remote Project Settings](images/project-settings-sync.png)
 
-* **Last Synchronization** - The time the project was last synchronized or checked for updates.  Click the **Sync Now** button to mark the project for synchronization before it's scheduled sync time. 
-* **Remote Connections** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
+* **Last Synchronization** - The time the project was last synchronized or checked for updates.  
+* **Check For Changes** - Click to get IRIDA to check for changes to the remote project.  If it finds changes, it will synchronize them to the project.
+* **Force Full Project Sync** - Click here to force IRIDA to start a full synchronization of the project.
+* **Remote API** - Displays the remote IRIDA installation the project is hosted on and your connection status with that API.
 * **Synchronization Frequency** - How often the project will be synchronized.  You can update this setting here.
 * **Synchronization User** - The account which will be used to request project updates from the remote IRIDA installation.  This user account must have access to the project on the remote IRIDA instance in order for synchronization to proceed.  Click **Become Synchronization User** to set this to be your user account.
 
@@ -310,6 +312,7 @@ The following data will be synchronized:
 * Basic project metadata
 * FASTQ sequencing data associated with samples
 * Assemblies associated with samples (including both assemblies created by pipelines within IRIDA, and uploaded assemblies)
+* FAST5 sequencing data associated with samples
 * Sample metadata
 
 The following data **will not** be synchronized:
@@ -317,7 +320,6 @@ The following data **will not** be synchronized:
 * Users & groups on a project
 * Analysis automation settings
 * Reference files
-* FAST5 data associated with samples
 
 Some of the above items that are not currently synchronized are expected to be available in future IRIDA versions.
 
@@ -357,12 +359,13 @@ After the synchronized project has been created, you can view it's synchronizati
 
 The status section will be one of the following messages:
 
-* `Marked for synchronization` - This project will be synchronized when the next project synchronization job runs.
+* `Marked for synchronization` - This project will check for changes and be synchronized when the next project synchronization job runs.
 * `Updating` - This project is currently being synchronized.
 * `Synchronized` - This project is up to date since the last project synchronization job has been run.
 * `Unauthorized` - The user who has created the synchronized project can no longer read the project on the host IRIDA installation.
 * `Error` - An error occurred during the last project synchronization job.
 * `Unsynchronized` - This project will no longer be synchronized. 
+* `Marked for full project synchronization` - The project will perform a full synchronization on the next synchronization job.  This will check for changes in all samples within the project to ensure it's up to date.
 
 #### Reconnecting after token expiry
 

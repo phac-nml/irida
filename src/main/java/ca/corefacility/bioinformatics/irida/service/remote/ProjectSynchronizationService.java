@@ -14,13 +14,10 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 import ca.corefacility.bioinformatics.irida.service.*;
@@ -59,6 +56,7 @@ public class ProjectSynchronizationService {
 	private SingleEndSequenceFileRemoteService singleEndRemoteService;
 	private SequenceFilePairRemoteService pairRemoteService;
 	private GenomeAssemblyRemoteService assemblyRemoteService;
+	private Fast5ObjectRemoteService fast5ObjectRemoteService;
 	private RemoteAPITokenService tokenService;
 	private EmailController emailController;
 
@@ -68,7 +66,7 @@ public class ProjectSynchronizationService {
 			GenomeAssemblyService assemblyService, ProjectRemoteService projectRemoteService,
 			SampleRemoteService sampleRemoteService, SingleEndSequenceFileRemoteService singleEndRemoteService,
 			SequenceFilePairRemoteService pairRemoteService, GenomeAssemblyRemoteService assemblyRemoteService,
-			RemoteAPITokenService tokenService, EmailController emailController) {
+			Fast5ObjectRemoteService fast5ObjectRemoteService, RemoteAPITokenService tokenService, EmailController emailController) {
 
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -80,6 +78,7 @@ public class ProjectSynchronizationService {
 		this.singleEndRemoteService = singleEndRemoteService;
 		this.pairRemoteService = pairRemoteService;
 		this.assemblyRemoteService = assemblyRemoteService;
+		this.fast5ObjectRemoteService = fast5ObjectRemoteService;
 		this.tokenService = tokenService;
 		this.emailController = emailController;
 	}
@@ -134,21 +133,22 @@ public class ProjectSynchronizationService {
 		// mark any projects which should be synched first
 		findProjectsToMark();
 
-		List<Project> markedProjects = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED);
+		List<Project> projectsToSync = projectService.getProjectsWithRemoteSyncStatus(SyncStatus.FORCE);
+		projectsToSync.addAll(projectService.getProjectsWithRemoteSyncStatus(SyncStatus.MARKED));
 
 		logger.trace("Checking for projects to sync");
 
-		for (Project project : markedProjects) {
+		for (Project project : projectsToSync) {
 			/*
 			 * Set the correct authorization for the user who's syncing the
 			 * project
 			 */
 			User readBy = project.getRemoteStatus().getReadBy();
-			setAuthentication(readBy);
-
-			logger.trace("Syncing project at " + project.getRemoteStatus().getURL());
-
 			try {
+				setAuthentication(readBy);
+
+				logger.trace("Syncing project at " + project.getRemoteStatus().getURL());
+
 				RemoteAPI api = project.getRemoteStatus().getApi();
 				tokenService.updateTokenFromRefreshToken(api);
 
@@ -186,81 +186,101 @@ public class ProjectSynchronizationService {
 	 *            from a remote api.
 	 */
 	private void syncProject(Project project) {
+		SyncStatus syncType = project.getRemoteStatus().getSyncStatus();
+
 		project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 		project.getRemoteStatus().setLastUpdate(new Date());
 		projectService.update(project);
+
+		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
 
 		String projectURL = project.getRemoteStatus().getURL();
 
 		Project readProject = projectRemoteService.read(projectURL);
 
-		// ensure we use the same IDs
-		readProject = updateIds(project, readProject);
-
-		// if project was updated remotely, update it here
-		if (checkForChanges(project.getRemoteStatus(), readProject)) {
-			logger.debug("found changes for project " + readProject.getSelfHref());
-
-			// need to keep the status and frequency of the local project
-			RemoteStatus originalStatus = project.getRemoteStatus();
-			readProject.getRemoteStatus().setSyncStatus(originalStatus.getSyncStatus());
-			readProject.setSyncFrequency(project.getSyncFrequency());
-
-			project = projectService.update(readProject);
+		//get the project hash from the host
+		Integer projectHash;
+		try {
+			projectHash = projectRemoteService.getProjectHash(readProject);
+		} catch (LinkNotFoundException e) {
+			logger.warn("The project on the referenced IRIDA doesn't support project hashing: " + projectURL);
+			projectHash = null;
 		}
 
-		List<Join<Project, Sample>> localSamples = sampleService.getSamplesForProject(project);
+		//check if the project hashes are different.  if projectHash is null the other service doesn't support hashing so do a full check
+		if (syncType.equals(SyncStatus.FORCE) || projectHash == null || !projectHash.equals(project.getRemoteProjectHash())) {
 
-		// get all the samples by their url
-		Map<String, Sample> samplesByUrl = new HashMap<>();
-		localSamples.forEach(j -> {
-			Sample sample = j.getObject();
-			
-			// If a user has added a sample for some reason, ignore it
-			if (sample.getRemoteStatus() != null) {
-				String url = sample.getRemoteStatus().getURL();
+			// ensure we use the same IDs
+			readProject = updateIds(project, readProject);
 
-				samplesByUrl.put(url, sample);
-			} else {
-				logger.warn("Sample " + sample.getId() + " is not a remote sample.  It will not be synchronized.");
+			// if project was updated remotely, update it here
+			if (checkForChanges(project.getRemoteStatus(), readProject)) {
+				logger.debug("found changes for project " + readProject.getSelfHref());
+
+				// need to keep the status and frequency of the local project
+				RemoteStatus originalStatus = project.getRemoteStatus();
+				readProject.getRemoteStatus().setSyncStatus(originalStatus.getSyncStatus());
+				readProject.setSyncFrequency(project.getSyncFrequency());
+
+				project = projectService.update(readProject);
 			}
-		});
 
-		//read the remote samples from the remote API
-		List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
+			List<Join<Project, Sample>> localSamples = sampleService.getSamplesForProject(project);
 
-		//get a list of all remote URLs in the project
-		Set<String> remoteUrls = readSamplesForProject.stream()
-				.map(s -> s.getRemoteStatus()
-						.getURL())
-				.collect(Collectors.toSet());
+			// get all the samples by their url
+			Map<String, Sample> samplesByUrl = new HashMap<>();
+			localSamples.forEach(sampleJoin -> {
+				Sample sample = sampleJoin.getObject();
 
-		// Check for local samples which no longer exist by URL
-		Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
-		//remove any URL from the local list that we've seen remotely
-		remoteUrls.forEach(s -> {
-			localUrls.remove(s);
-		});
+				// If a user has added a sample for some reason, ignore it
+				if (sample.getRemoteStatus() != null) {
+					String url = sample.getRemoteStatus().getURL();
 
-		// if any URLs still exist in localUrls, it must have been deleted remotely
-		for (String localUrl : localUrls) {
-			logger.trace("Sample " + localUrl + " has been removed remotely.  Removing from local project.");
+					samplesByUrl.put(url, sample);
+				} else {
+					logger.warn("Sample " + sample.getId() + " is not a remote sample.  It will not be synchronized.");
+				}
+			});
 
-			projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
-			samplesByUrl.remove(localUrl);
+			//read the remote samples from the remote API
+			List<Sample> readSamplesForProject = sampleRemoteService.getSamplesForProject(readProject);
+
+			//get a list of all remote URLs in the project
+			Set<String> remoteUrls = readSamplesForProject.stream()
+					.map(sample -> sample.getRemoteStatus()
+							.getURL())
+					.collect(Collectors.toSet());
+
+			// Check for local samples which no longer exist by URL
+			Set<String> localUrls = new HashSet<>(samplesByUrl.keySet());
+			//remove any URL from the local list that we've seen remotely
+			remoteUrls.forEach(sample -> {
+				localUrls.remove(sample);
+			});
+
+			// if any URLs still exist in localUrls, it must have been deleted remotely
+			for (String localUrl : localUrls) {
+				logger.trace("Sample " + localUrl + " has been removed remotely.  Removing from local project.");
+
+				projectService.removeSampleFromProject(project, samplesByUrl.get(localUrl));
+				samplesByUrl.remove(localUrl);
+			}
+
+			for (Sample s : readSamplesForProject) {
+				s.setId(null);
+				List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
+
+				syncExceptions.addAll(syncExceptionsSample);
+			}
+
 		}
-
-		List<ProjectSynchronizationException> syncExceptions = new ArrayList<>();
-		for (Sample s : readSamplesForProject) {
-			s.setId(null);
-			s = syncSampleMetadata(s);
-			List<ProjectSynchronizationException> syncExceptionsSample = syncSample(s, project, samplesByUrl);
-
-			syncExceptions.addAll(syncExceptionsSample);
+		else{
+			logger.debug("No changes to project.  Skipping");
 		}
 
 		// re-read project to ensure any updates are reflected
 		project = projectService.read(project.getId());
+		project.setRemoteProjectHash(projectHash);
 		project.setRemoteStatus(readProject.getRemoteStatus());
 
 		if (syncExceptions.isEmpty()) {
@@ -272,6 +292,7 @@ public class ProjectSynchronizationService {
 		}
 
 		projectService.update(project);
+
 	}
 
 	/**
@@ -299,6 +320,8 @@ public class ProjectSynchronizationService {
 				sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 
 				localSample = sampleService.update(sample);
+
+				syncSampleMetadata(sample, localSample);
 			}
 
 		} else {
@@ -306,13 +329,15 @@ public class ProjectSynchronizationService {
 			sample.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
 			localSample = sampleService.create(sample);
 			projectService.addSampleToProject(project, sample, true);
+
+			syncSampleMetadata(sample, localSample);
 		}
 
 		//get a collection of the files already sync'd.  we don't want to grab them a 2nd time.
 		Collection<SampleSequencingObjectJoin> localObjects = objectService.getSequencingObjectsForSample(localSample);
 		Set<String> objectsByUrl = new HashSet<>();
-		localObjects.forEach(j -> {
-			SequencingObject pair = j.getObject();
+		localObjects.forEach(sequencingObjectJoin -> {
+			SequencingObject pair = sequencingObjectJoin.getObject();
 			
 			// check if the file was actually sync'd. Someone may have
 			// concatenated it
@@ -326,8 +351,8 @@ public class ProjectSynchronizationService {
 		//same with assemblies.  get the ones we've already grabbed and store their URL so we don't double-sync
 		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(localSample);
 		Set<String> localAssemblyUrls = new HashSet<>();
-		assembliesForSample.forEach(j -> {
-			GenomeAssembly genomeAssembly = j.getObject();
+		assembliesForSample.forEach(assemblyJoin -> {
+			GenomeAssembly genomeAssembly = assemblyJoin.getObject();
 
 			if (genomeAssembly.getRemoteStatus() != null) {
 				String url = genomeAssembly.getRemoteStatus()
@@ -374,6 +399,31 @@ public class ProjectSynchronizationService {
 			}
 		}
 
+		//list the fast5 files from the remote api
+		List<Fast5Object> fast5FilesForSample;
+		try {
+			fast5FilesForSample = fast5ObjectRemoteService.getFast5FilesForSample(sample);
+		} catch (LinkNotFoundException e) {
+			logger.warn("The sample on the referenced IRIDA doesn't support fast5 data: " + sample.getSelfHref());
+			fast5FilesForSample = Lists.newArrayList();
+		}
+
+		//for each fast5 file
+		for (Fast5Object fast5Object : fast5FilesForSample) {
+			//check if we already have it
+			if (!objectsByUrl.contains(fast5Object.getRemoteStatus()
+					.getURL())) {
+				fast5Object.setId(null);
+				//if not, get it locally and save it
+				try {
+					syncFast5File(fast5Object, localSample);
+				} catch (ProjectSynchronizationException e) {
+					syncErrors.add(e);
+				}
+			}
+		}
+
+
 		//list the remote assemblies for the sample.
 		List<UploadedAssembly> genomeAssembliesForSample;
 		try {
@@ -399,6 +449,8 @@ public class ProjectSynchronizationService {
 		}
 
 
+
+
 		//if we have no errors, report that the sample is sync'd
 		if (syncErrors.isEmpty()) {
 			localSample.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
@@ -418,18 +470,17 @@ public class ProjectSynchronizationService {
 	/**
 	 * Synchronize the given sample's metadata
 	 *
-	 * @param sample the sample to sync
-	 * @return the synchronized sample
+	 * @param remoteSample the sample read from the remote api
+	 * @param localSample  the local sample being saved
 	 */
-	public Sample syncSampleMetadata(Sample sample){
-		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(sample);
-		
-		sampleMetadata.values().forEach(e -> e.setId(null));
-		
-		Map<MetadataTemplateField, MetadataEntry> metadata = metadataTemplateService.getMetadataMap(sampleMetadata);
-		sample.setMetadata(metadata);
-		
-		return sample;
+	public void syncSampleMetadata(Sample remoteSample, Sample localSample) {
+		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(remoteSample);
+
+		sampleMetadata.values()
+				.forEach(e -> e.setId(null));
+
+		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(sampleMetadata);
+		sampleService.updateSampleMetadata(localSample, metadata);
 	}
 
 	/**
@@ -446,21 +497,32 @@ public class ProjectSynchronizationService {
 		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			file = singleEndRemoteService.mirrorSequencingObject(file);
-
-			file.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
-			file.setFileProcessor(null);
-
-			file.getSequenceFile().setId(null);
-			file.getSequenceFile().getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.createSequencingObjectInSample(file, sample);
-
-			fileStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.updateRemoteStatus(file.getId(), fileStatus);
+			syncSequencingObject(file, sample, fileStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + file.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize file " + file.getRemoteStatus().getURL(),
+					e);
+		}
+	}
+
+	/**
+	 * Synchronize a given {@link Fast5Object} to the local
+	 * installation
+	 *
+	 * @param fast5Object
+	 *            the {@link Fast5Object} to sync
+	 * @param sample
+	 *            the {@link Sample} to add the file to
+	 */
+	public void syncFast5File(Fast5Object fast5Object, Sample sample) {
+		RemoteStatus fileStatus = fast5Object.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
+		try {
+			fast5Object = fast5ObjectRemoteService.mirrorSequencingObject(fast5Object);
+			syncSequencingObject(fast5Object, sample, fileStatus);
+		} catch (Exception e) {
+			logger.error("Error transferring file: " + fast5Object.getRemoteStatus().getURL(), e);
+			throw new ProjectSynchronizationException("Could not synchronize file " + fast5Object.getRemoteStatus().getURL(),
 					e);
 		}
 	}
@@ -500,24 +562,11 @@ public class ProjectSynchronizationService {
 	 *            The {@link Sample} to add the pair to.
 	 */
 	public void syncSequenceFilePair(SequenceFilePair pair, Sample sample) {
-		pair.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
+		RemoteStatus fileStatus = pair.getRemoteStatus();
+		fileStatus.setSyncStatus(SyncStatus.UPDATING);
 		try {
 			pair = pairRemoteService.mirrorSequencingObject(pair);
-
-			pair.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
-			pair.setFileProcessor(null);
-
-			pair.getFiles().forEach(s -> {
-				s.setId(null);
-				s.getRemoteStatus().setSyncStatus(SyncStatus.SYNCHRONIZED);
-			});
-
-			objectService.createSequencingObjectInSample(pair, sample);
-
-			RemoteStatus pairStatus = pair.getRemoteStatus();
-			pairStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
-
-			objectService.updateRemoteStatus(pair.getId(), pairStatus);
+			syncSequencingObject(pair, sample, fileStatus);
 		} catch (Exception e) {
 			logger.error("Error transferring file: " + pair.getRemoteStatus().getURL(), e);
 			throw new ProjectSynchronizationException("Could not synchronize pair " + pair.getRemoteStatus().getURL(),
@@ -568,5 +617,28 @@ public class ProjectSynchronizationService {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(userAuthentication);
 		SecurityContextHolder.setContext(context);
+	}
+
+	/**
+	 *  Synchronize a given {@link SequencingObject} to the local installation.
+	 *
+	 * @param sequencingObject The sequencing object to sync
+	 * @param sample The sample to sync
+	 * @param sequencingObjectStatus The remote status of the sequencing object
+	 */
+	private void syncSequencingObject(SequencingObject sequencingObject, Sample sample, RemoteStatus sequencingObjectStatus) {
+		sequencingObject.setProcessingState(SequencingObject.ProcessingState.UNPROCESSED);
+		sequencingObject.setFileProcessor(null);
+
+		sequencingObject.getFiles().forEach(s -> {
+			s.setId(null);
+			sequencingObjectStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+		});
+
+		objectService.createSequencingObjectInSample(sequencingObject, sample);
+
+		sequencingObjectStatus.setSyncStatus(SyncStatus.SYNCHRONIZED);
+
+		objectService.updateRemoteStatus(sequencingObject.getId(), sequencingObjectStatus);
 	}
 }

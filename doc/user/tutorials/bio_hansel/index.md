@@ -69,7 +69,7 @@ This will bring you to a page where you can monitor the status of each launched 
 
 ![monitor-analyses]
 
-Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a while for the bio_hansel analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
+Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a while for the bio_hansel analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion or error. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
 ![analysis-in-progress]
 

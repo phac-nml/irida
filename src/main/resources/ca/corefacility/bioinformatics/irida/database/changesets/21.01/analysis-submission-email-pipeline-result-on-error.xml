@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="analysis-submission-email-pipeline-result-on-error" author="deep">
+        <addColumn tableName="analysis_submission">
+            <column name="email_pipeline_result_error" type="bit(1)" valueBoolean="false"
+                    defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+
+        <addColumn tableName="analysis_submission_AUD">
+            <column name="email_pipeline_result_error" type="bit(1)" />
+        </addColumn>
+
+        <renameColumn tableName="analysis_submission"
+                      columnDataType="bit(1)" oldColumnName="email_pipeline_result"
+                      newColumnName="email_pipeline_result_completed"
+        />
+
+        <!-- After renaming column the not null constraint and default value need to be set again -->
+        <addNotNullConstraint columnDataType="bit(1)"
+                              columnName="email_pipeline_result_completed"
+                              defaultNullValue="false"
+                              tableName="analysis_submission"/>
+        <addDefaultValue tableName="analysis_submission" columnName="email_pipeline_result_completed" defaultValueBoolean="false" />
+
+        <renameColumn tableName="analysis_submission_AUD"
+                      columnDataType="bit(1)" oldColumnName="email_pipeline_result"
+                      newColumnName="email_pipeline_result_completed"
+        />
+
+    </changeSet>
+</databaseChangeLog>

@@ -1,5 +1,21 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
@@ -14,22 +30,10 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleNa
 import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
 import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -153,17 +157,13 @@ public class Sample extends IridaResourceSupport
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(joinColumns = @JoinColumn(name = "sample_id"))
-	@MapKeyColumn(name = "metadata_KEY")
-	private Map<MetadataTemplateField, MetadataEntry> metadata;
-	
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
+	private Set<MetadataEntry> metadataEntries;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleGenomeAssemblyJoin> genomeAssemblies;
 
 	public Sample() {
 		createdDate = new Date();
-		metadata = new HashMap<>();
 	}
 
 	/**
@@ -189,8 +189,7 @@ public class Sample extends IridaResourceSupport
 					&& Objects.equals(collectionDate, sample.collectionDate)
 					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
 					&& Objects.equals(isolationSource, sample.isolationSource)
-					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude)
-					&& Objects.equals(metadata, sample.metadata);
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
 		}
 
 		return false;
@@ -199,7 +198,7 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
-				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude, metadata);
+				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude);
 	}
 
 	@Override
@@ -347,52 +346,5 @@ public class Sample extends IridaResourceSupport
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
-	}
-
-	@JsonIgnore
-	public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
-		return metadata;
-	}
-
-	
-	/**
-	 * Set the {@link MetadataEntry} collection for the sample. Note duplicate
-	 * keys cannot be used (ignoring case)
-	 * 
-	 * @param inputMetadata
-	 *            the collection of {@link MetadataEntry}s
-	 */
-	@JsonIgnore
-	public void setMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
-		this.metadata = inputMetadata;
-	}
-	
-	/**
-	 * Merge {@link MetadataEntry} into the sample's existing metadata collection.
-	 * Duplicate keys will be overwritten.
-	 * 
-	 * @param inputMetadata the metadata to merge into the sample
-	 */
-	public void mergeMetadata(Map<MetadataTemplateField, MetadataEntry> inputMetadata) {
-		// loop through entry set and see if it already exists
-		for (Entry<MetadataTemplateField, MetadataEntry> entry : inputMetadata.entrySet()) {
-			MetadataEntry newMetadataEntry = entry.getValue();
-
-			// if the key is found, replace the entry
-			if (metadata.containsKey(entry.getKey())) {
-				MetadataEntry originalMetadataEntry = metadata.get(entry.getKey());
-
-				// if the metadata entries are of the same type, I can directly merge
-				if (originalMetadataEntry.getClass().equals(newMetadataEntry.getClass())) {
-					originalMetadataEntry.merge(newMetadataEntry);
-				} else {
-					// if they are different types, I need to replace the metadata entry instead of merging
-					metadata.put(entry.getKey(), newMetadataEntry);
-				}
-			} else {
-				// otherwise add the new entry
-				metadata.put(entry.getKey(), newMetadataEntry);
-			}
-		}
 	}
 }

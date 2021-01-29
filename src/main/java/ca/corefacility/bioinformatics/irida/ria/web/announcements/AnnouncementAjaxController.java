@@ -1,17 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsService;
@@ -39,6 +41,48 @@ public class AnnouncementAjaxController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
 		return UIAnnouncementsService.getAnnouncementsAdmin(tableRequest);
+	}
+
+	/**
+	 * Handle request for getting a list of read announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link AnnouncementUserJoin}s for a user.
+	 */
+	@RequestMapping(value = "/user/read")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@ResponseBody
+	public ResponseEntity<List<AnnouncementUserJoin>> getReadAnnouncementsUser(Principal principal) {
+		List<AnnouncementUserJoin> readAnnouncements = UIAnnouncementsService.getReadAnnouncementsUser(principal);
+		Collections.sort(readAnnouncements);
+		return ResponseEntity.ok(readAnnouncements);
+	}
+
+	/**
+	 * Handle request for getting a list of unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of unread {@link Announcement}s for a user.
+	 */
+	@RequestMapping(value = "/user/unread")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@ResponseBody
+	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
+		List<Announcement> unreadAnnouncements = UIAnnouncementsService.getUnreadAnnouncementsUser(principal);
+		Collections.sort(unreadAnnouncements);
+		return ResponseEntity.ok(unreadAnnouncements);
+	}
+
+	/**
+	 * Marks the announcement as read by the current user.
+	 *
+	 * @param aID ID of the {@link Announcement} to be marked
+	 * @param principal the currently logged in user
+	 */
+	@RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public void markAnnouncementRead(@PathVariable Long aID, Principal principal) {
+		UIAnnouncementsService.markAnnouncementAsReadByUser(aID, principal);
 	}
 
 	/**
@@ -78,16 +122,15 @@ public class AnnouncementAjaxController {
 	/**
 	 * Handles request for getting user read status for current announcement
 	 * @param announcementID {@link Long} identifier for the {@link Announcement}
-	 * @param params {@link DataTablesParams} parameters for current DataTable
-	 * @return {@link DataTablesResponse} containing the list of users.
+	 * @param tableRequest details about the current page of the table requested
+	 * @return a {@link TableResponse} containing the list of users.
 	 */
-	@RequestMapping(value = "/{announcementID}/details/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/{announcementID}/details/list")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public @ResponseBody
-	DataTablesResponse getUserAnnouncementInfoTable(
-			@PathVariable Long announcementID,
-			final @DataTablesRequest DataTablesParams params) {
-		return UIAnnouncementsService.getUserAnnouncementInfoTable(announcementID, params);
+	TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(
+			@PathVariable Long announcementID, @RequestBody TableRequest tableRequest) {
+		return UIAnnouncementsService.getUserAnnouncementInfoTable(announcementID, tableRequest);
 	}
 }
 

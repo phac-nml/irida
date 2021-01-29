@@ -56,8 +56,7 @@ module.exports = {
     "./resources/js/pages/projects/associated-projects/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-reference-files":
-    "./resources/js/pages/projects/project-reference-files.js",
+  "project-reference-files": "./resources/js/pages/projects/reference-files/",
   "project-analyses":
     "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
@@ -65,8 +64,6 @@ module.exports = {
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
-  "announcement-users":
-    "./resources/js/pages/announcement/announcement-users.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
@@ -79,4 +76,5 @@ module.exports = {
   "project-metadata-templates":
     "./resources/js/pages/projects/metadata-templates",
   admin: "./resources/js/pages/admin/index.js",
+  "sequence-files": "./resources/js/pages/sequence-files/",
 };
