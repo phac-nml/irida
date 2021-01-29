@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -41,5 +43,22 @@ public class StaticMetadataTemplateField extends MetadataTemplateField {
 
 	public String getStaticId() {
 		return staticId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		if (!super.equals(o))
+			return false;
+		StaticMetadataTemplateField that = (StaticMetadataTemplateField) o;
+		return Objects.equals(staticId, that.staticId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), staticId);
 	}
 }
