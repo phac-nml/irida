@@ -29,6 +29,8 @@ public class PipelinesPhylogenomicsPageIT extends BasePipelineLaunchPageIT {
 		assertTrue("Share with projects should be displayed", page.isShareWithProjectsDisplayed());
 		assertTrue("Should be able to select a reference file", page.isReferenceFilesDisplayed());
 		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
+		assertTrue("Should have an alert showing that reference files were not found", page.isReferenceFilesRequiredDisplayed());
+		assertFalse("Reference file error should only be shown after trying to submit", page.isReferenceFilesRequiredErrorDisplayed());
 
 		// Test the name input
 		page.clearName();
@@ -60,5 +62,9 @@ public class PipelinesPhylogenomicsPageIT extends BasePipelineLaunchPageIT {
 		final String newModifiedTemplateName = "FOOBAR";
 		page.saveModifiedTemplateAs(newModifiedTemplateName);
 		assertEquals("Then newly template should be selected", newModifiedTemplateName, page.getSelectedParametersTemplateName());
+
+		// Test submitting
+		page.submit();
+		assertTrue("Should display warning that a reference file is required", page.isReferenceFilesRequiredErrorDisplayed());
 	}
 }

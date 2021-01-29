@@ -71,6 +71,12 @@ public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(css = ".t-saved-select .ant-select-selection-item")
 	private WebElement savedParametersSelectedValue;
 
+	@FindBy(className = "t-ref-alert")
+	private List<WebElement> referencesNotFountAlert;
+
+	@FindBy(className = "t-ref-error")
+	private List<WebElement> referencesNotFoundError;
+
 	public LaunchPipelinePage(WebDriver driver) {
 		super(driver);
 	}
@@ -109,6 +115,14 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	public boolean isLaunchFilesDisplayed() {
 		return launchFiles.size() == 1;
+	}
+
+	public boolean isReferenceFilesRequiredDisplayed() {
+		return referencesNotFountAlert.size() > 0;
+	}
+
+	public boolean isReferenceFilesRequiredErrorDisplayed() {
+		return referencesNotFoundError.size() > 0;
 	}
 
 	public void updateName(String name) {

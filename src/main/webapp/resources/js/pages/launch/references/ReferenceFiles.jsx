@@ -26,7 +26,16 @@ export function ReferenceFiles() {
       <Form.Item
         label={i18n("ReferenceFiles.label")}
         name="reference"
-        rules={[{ required: true, message: i18n("ReferenceFiles.required") }]}
+        rules={[
+          {
+            required: true,
+            message: (
+              <span className="t-ref-error">
+                {i18n("ReferenceFiles.required")}
+              </span>
+            ),
+          },
+        ]}
       >
         {referenceFiles.length ? (
           <Radio.Group style={{ width: "100%" }}>
@@ -39,6 +48,7 @@ export function ReferenceFiles() {
           </Radio.Group>
         ) : (
           <Alert
+            className="t-ref-alert"
             type="info"
             showIcon
             message={i18n("ReferenceFiles.not-found.title")}
