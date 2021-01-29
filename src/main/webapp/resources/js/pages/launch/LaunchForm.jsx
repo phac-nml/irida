@@ -65,7 +65,7 @@ export function LaunchForm() {
         <LaunchDetails />
         <LaunchParameters form={form} />
         <SharePipelineResults />
-        <ReferenceFiles />
+        <ReferenceFiles form={form} />
         <LaunchFiles />
         <Button
           type="primary"

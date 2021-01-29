@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import org.junit.Test;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 
@@ -66,5 +68,11 @@ public class PipelinesPhylogenomicsPageIT extends BasePipelineLaunchPageIT {
 		// Test submitting
 		page.submit();
 		assertTrue("Should display warning that a reference file is required", page.isReferenceFilesRequiredErrorDisplayed());
+
+		page.uploadReferenceFile();
+		assertFalse("Now a reference file should exist", page.isReferenceFilesRequiredErrorDisplayed());
+		page.submit();
+		WebDriverWait wait = new WebDriverWait(driver(), 5);
+		wait.until(ExpectedConditions.urlMatches("/analysis/"));
 	}
 }

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +78,9 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	@FindBy(className = "t-ref-error")
 	private List<WebElement> referencesNotFoundError;
+
+	@FindBy(css = ".t-upload-reference input")
+	private WebElement uploadReferenceButton;
 
 	public LaunchPipelinePage(WebDriver driver) {
 		super(driver);
@@ -187,6 +192,13 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	public String getSelectedParametersTemplateName() {
 		return savedParametersSelectedValue.getText();
+	}
+
+	public void uploadReferenceFile() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		Path path = Paths.get("src/test/resources/files/test_file.fasta");
+		uploadReferenceButton.sendKeys(path.toAbsolutePath().toString());
+		wait.until(ExpectedConditions.stalenessOf(referencesNotFountAlert.get(0)));
 	}
 
 	public void submit() {

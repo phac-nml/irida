@@ -11,7 +11,7 @@ import { SectionHeading } from "../../../components/ant.design/SectionHeading";
  * @returns {JSX.Element|null}
  * @constructor
  */
-export function ReferenceFiles() {
+export function ReferenceFiles({ form }) {
   const [{ requiresReference, referenceFiles }] = useLaunch();
 
   return requiresReference ? (
@@ -38,7 +38,7 @@ export function ReferenceFiles() {
         ]}
       >
         {referenceFiles.length ? (
-          <Radio.Group style={{ width: "100%" }}>
+          <Radio.Group style={{ width: "100%" }} name="reference">
             {referenceFiles.map((file) => (
               <Radio key={`ref-${file.id}`} value={file.id}>
                 {file.name}
@@ -56,7 +56,7 @@ export function ReferenceFiles() {
           />
         )}
       </Form.Item>
-      <UploadReferenceFile />
+      <UploadReferenceFile form={form} />
     </Space>
   ) : null;
 }

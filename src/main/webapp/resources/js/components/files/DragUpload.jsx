@@ -12,9 +12,9 @@ const { Dragger } = Upload;
  * @constructor
  */
 
-export function DragUpload({ uploadText, uploadHint, options }) {
+export function DragUpload({ uploadText, uploadHint, options, ...props }) {
   return (
-    <div style={{ marginBottom: SPACE_SM }}>
+    <div style={{ marginBottom: SPACE_SM }} {...props}>
       <Dragger {...options}>
         <p className="ant-upload-drag-icon">
           <IconFileUpload />

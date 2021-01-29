@@ -18,7 +18,6 @@ LaunchContext.displayName = "LaunchContext";
 const TYPES = {
   LOADED: "launch:loaded",
   SAVE_MODIFIED_PARAMETERS: "launch:save_modified_params",
-  REFERENCE_FILE: "launch:reference_file",
   ADD_REFERENCE: "launch:add_reference",
   UPDATE_FILES: "launch:update_files",
 };
@@ -38,12 +37,10 @@ const reducer = (state, action) => {
         loading: false,
         ...action.payload,
       };
-    case TYPES.REFERENCE_FILE:
-      return { ...state, referenceFile: action.payload.referenceFile };
     case TYPES.ADD_REFERENCE:
       return {
         ...state,
-        referenceFile: action.payload.id,
+        reference: action.payload.id,
         referenceFiles: addReference(action.payload),
       };
     case TYPES.SAVE_MODIFIED_PARAMETERS:
