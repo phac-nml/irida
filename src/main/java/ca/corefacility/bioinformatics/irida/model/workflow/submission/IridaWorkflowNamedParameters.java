@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.CollectionTable;
@@ -107,5 +108,21 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 
 	public final Map<String, String> getInputParameters() {
 		return namedParameters;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		IridaWorkflowNamedParameters that = (IridaWorkflowNamedParameters) o;
+		return Objects.equals(name, that.name) && Objects.equals(workflowId, that.workflowId) && Objects.equals(
+				namedParameters, that.namedParameters);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, workflowId, namedParameters);
 	}
 }
