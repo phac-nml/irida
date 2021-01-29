@@ -1,13 +1,8 @@
-import React, { useEffect } from "react";
-import { Avatar, Badge, Col, Menu, Row, Space } from "antd";
+import React from "react";
+import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
-import {
-  IconBell,
-  IconCog,
-  IconQuestionCircle,
-  IconUser,
-} from "../icons/Icons";
+import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -85,14 +80,6 @@ export function MainNavigation() {
         }}
       >
         <Menu mode="horizontal" theme={theme} className="accessory-menu">
-          <Menu.Item
-            key="bell"
-            icon={
-              <Badge size="small" count={5}>
-                <IconBell />
-              </Badge>
-            }
-          ></Menu.Item>
           <Menu.Item icon={<CartLink />} key="cart" />
           {!isAdmin && (
             <Menu.SubMenu title={<IconCog />}>

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AppstoreOutlined,
-  BellOutlined,
   BoldOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -139,8 +138,6 @@ export const IconMetadataTemplate = ({ ...props }) => (
 );
 
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
-
-export const IconBell = ({ ...props }) => <BellOutlined {...props} />;
 
 /*
 Editor Icons
