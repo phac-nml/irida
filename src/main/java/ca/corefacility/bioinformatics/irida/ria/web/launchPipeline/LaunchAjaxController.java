@@ -15,7 +15,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRe
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.CreateNamedParameterSetAjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
@@ -96,12 +97,17 @@ public class LaunchAjaxController {
      *
      * @param id         identifier for a irida workflow
      * @param parameters details about the new set of parameters
+     * @param locale     Current users locale
      * @return The identifier for the newly created named parameter set, wrapped in a ajax response
      */
     @PostMapping("/{id}/parameters")
     public ResponseEntity<AjaxResponse> saveNewPipelineParameters(@PathVariable UUID id,
-            @RequestBody SavedPipelineParameters parameters) {
-        return ResponseEntity.ok(
-                new AjaxCreateItemSuccessResponse(pipelineService.saveNewPipelineParameters(id, parameters)));
+            @RequestBody SavePipelineParametersRequest parameters, Locale locale) {
+        try {
+            return ResponseEntity.ok(new CreateNamedParameterSetAjaxResponse(pipelineService.saveNewPipelineParameters(id, parameters, locale)));
+        } catch (IridaWorkflowNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new AjaxErrorResponse("Pipeline cannot be found"));
+        }
     }
 }

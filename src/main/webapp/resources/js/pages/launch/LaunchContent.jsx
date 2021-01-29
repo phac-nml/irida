@@ -1,10 +1,10 @@
 import React from "react";
-import { LaunchPageHeader } from "./LaunchPageHeader";
 import { useLaunch } from "./launch-context";
 import { LaunchForm } from "./LaunchForm";
-import { Alert, Space } from "antd";
-import { SPACE_LG } from "../../styles/spacing";
+import { Alert, Typography } from "antd";
 import { CART } from "../../utilities/events-utilities";
+import { PageWrapper } from "../../components/page/PageWrapper";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * React component to layout the content of the pipeline launch.
@@ -28,10 +28,19 @@ export function LaunchContent() {
   }, []);
 
   return (
-    <Space direction="vertical" style={{ width: `100%`, padding: SPACE_LG }}>
-      <LaunchPageHeader pipeline={pipeline} />
+    <>
       {validCart ? (
-        <LaunchForm />
+        <PageWrapper
+          title={pipeline.name}
+          onBack={() => (window.location.href = setBaseUrl(`cart/pipelines`))}
+        >
+          <>
+            <Typography.Paragraph type="secondary">
+              {pipeline.description}
+            </Typography.Paragraph>
+            <LaunchForm />
+          </>
+        </PageWrapper>
       ) : (
         <Alert
           type="error"
@@ -40,6 +49,6 @@ export function LaunchContent() {
           description={i18n("LaunchContent.noSamples.description")}
         />
       )}
-    </Space>
+    </>
   );
 }

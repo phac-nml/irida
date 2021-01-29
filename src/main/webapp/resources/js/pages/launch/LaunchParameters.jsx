@@ -11,14 +11,16 @@ import { useLaunch } from "./launch-context";
  * @constructor
  */
 export function LaunchParameters({ form }) {
-  const [{ dynamicSources, parameterWithOptions }] = useLaunch();
+  const [{ dynamicSources, parameterWithOptions, parameterSets }] = useLaunch();
 
   return (
     <section>
       <SectionHeading id="launch-parameters">
         {i18n("LaunchParameters.title")}
       </SectionHeading>
-      <SavedParameters form={form} />
+      {parameterSets[0]?.parameters.length ? (
+        <SavedParameters form={form} sets={parameterSets} />
+      ) : null}
       {parameterWithOptions && (
         <LaunchParametersWithOptions parameters={parameterWithOptions} />
       )}

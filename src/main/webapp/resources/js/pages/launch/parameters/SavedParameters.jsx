@@ -1,72 +1,168 @@
 import React from "react";
-import { Button, Form, Select, Space, Tag } from "antd";
-import { IconEdit } from "../../../components/icons/Icons";
-import { ParametersModal } from "./ParametersModal";
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  Popover,
+  Select,
+  Space,
+  Typography,
+} from "antd";
+import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
+import { ArrowRightOutlined } from "@ant-design/icons";
+import { grey5 } from "../../../styles/colors";
 import { useLaunch } from "../launch-context";
-import { SPACE_XS } from "../../../styles/spacing";
-import { setParameterSetById } from "../launch-dispatch";
+import { saveModifiedParametersAs } from "../launch-dispatch";
 
 /**
  * React component to render a select input and modifying button for
  * selecting saved pipeline parameters.
  *
  * @param {object} form - Ant Design form api.
+ * @param {array} sets - list of different parameter sets available to this pipeline
  * @returns {JSX.Element}
  * @constructor
  */
-export function SavedParameters({ form }) {
-  const [{ parameterSets, parameterSet }, launchDispatch] = useLaunch();
-  const [visible, setVisible] = React.useState(false);
+export function SavedParameters({ form, sets }) {
+  const [, dispatch] = useLaunch();
+  const [saveParamsForm] = Form.useForm();
 
-  /**
-   * If the parameters are updated in the modal window, the selected template
-   * will change.  This watches for this and updates the select value to
-   * make sure the appropriate template is selected.
-   */
-  React.useEffect(() => {
-    form.setFieldsValue({ parameterSet: parameterSet.id });
-  }, [form, parameterSet]);
+  const [currentSetId, setCurrentSetId] = React.useState(sets[0].id);
+  const [modified, setModified] = React.useState({});
 
-  return parameterSets[0].parameters.length > 0 ? (
+  function updateSelectedSet(id) {
+    const index = sets.findIndex((set) => set.id === id);
+    setCurrentSetId(id);
+    setModified({});
+    const parameters = sets[index].parameters.reduce(
+      (params, curr) => ({ ...params, [curr.name]: curr.value }),
+      {}
+    );
+    form.setFieldsValue(parameters);
+  }
+
+  function onValueUpdated(field, original, newValue) {
+    if (original === newValue) {
+      const newMod = { ...modified };
+      delete newMod[field];
+      setModified(newMod);
+    } else {
+      setModified({ ...modified, [field]: newValue });
+    }
+  }
+
+  async function saveParameters() {
+    const fieldsValue = form.getFieldsValue(
+      sets[0].parameters.map((parameter) => parameter.name)
+    );
+    try {
+      const id = await saveModifiedParametersAs(
+        dispatch,
+        saveParamsForm.getFieldValue("name"),
+        fieldsValue
+      );
+      setCurrentSetId(id);
+      setModified(false);
+    } catch (e) {}
+  }
+
+  return (
     <>
-      <Form.Item label={i18n("SavedParameters.title")}>
+      <div>
+        <Form.Item
+          label={i18n("SavedParameters.title")}
+          tooltip={i18n("SavedParameters.tooltip")}
+          help={
+            Object.keys(modified).length ? (
+              <Alert
+                showIcon
+                style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
+                type={"warning"}
+                message={i18n("SavedParameters.modified")}
+                description={i18n("SavedParameters.modified.description")}
+                action={
+                  <Space>
+                    <Popover
+                      placement="bottomRight"
+                      trigger="click"
+                      content={
+                        <>
+                          <Typography.Text>
+                            {i18n("SavedParameters.modified.name")}
+                          </Typography.Text>
+                          <Form
+                            form={saveParamsForm}
+                            layout="inline"
+                            style={{
+                              width: 305,
+                            }}
+                          >
+                            <Form.Item name="name" required>
+                              <Input />
+                            </Form.Item>
+                            <Form.Item>
+                              <Button onClick={saveParameters}>
+                                {i18n("SavedParameters.modified.save")}
+                              </Button>
+                            </Form.Item>
+                          </Form>
+                        </>
+                      }
+                    >
+                      <Button size="small" type="ghost">
+                        {i18n("SavedParameters.modified.saveAs")}
+                      </Button>
+                    </Popover>
+                  </Space>
+                }
+              />
+            ) : null
+          }
+        >
+          <Select
+            style={{ width: `100%` }}
+            value={currentSetId}
+            onChange={(id) => updateSelectedSet(id)}
+            disabled={sets.length < 2}
+          >
+            {sets.map((set) => (
+              <Select.Option key={set.key} value={set.id}>
+                {set.label}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </div>
+      {sets[currentSetId].parameters.map(({ name, label, value }) => (
         <div
+          key={name}
           style={{
             display: "grid",
-            gridTemplateColumns: `1fr min-content`,
-            columnGap: SPACE_XS,
+            gridTemplateColumns: `8px auto`,
+            columnGap: 0,
           }}
         >
-          <div>
-            <Form.Item>
-              <Select
-                value={parameterSet.id}
-                onChange={(id) => setParameterSetById(launchDispatch, id)}
-              >
-                {parameterSets.map((set) => (
-                  <Select.Option key={set.key} value={set.id}>
-                    <Space>
-                      {set.label}
-                      {set.key.endsWith("MODIFIED") ? (
-                        <Tag>{i18n("ParametersModal.modified")}</Tag>
-                      ) : (
-                        ""
-                      )}
-                    </Space>
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </div>
-          <div>
-            <Button icon={<IconEdit />} onClick={() => setVisible(true)} />
-            <ParametersModal
-              visible={visible}
-              closeModal={() => setVisible(false)}
+          <ArrowRightOutlined
+            style={{
+              fontSize: 14,
+              marginLeft: SPACE_XS,
+              color: grey5,
+              marginTop: 2,
+            }}
+          />
+          <Form.Item
+            style={{ marginLeft: SPACE_LG }}
+            label={label}
+            name={name}
+            help={modified[name] ? i18n("ParametersModal.modified") : null}
+          >
+            <Input
+              onChange={(e) => onValueUpdated(name, value, e.target.value)}
             />
-          </div>
+          </Form.Item>
         </div>
-      </Form.Item>
+      ))}
     </>
-  ) : null;
+  );
 }

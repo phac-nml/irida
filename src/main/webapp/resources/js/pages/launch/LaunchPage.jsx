@@ -1,6 +1,5 @@
 import React from "react";
-import { Col, Row, Skeleton, Spin } from "antd";
-import { SPACE_LG } from "../../styles/spacing";
+import { Col, Layout, Row, Skeleton, Spin } from "antd";
 import { useLaunch } from "./launch-context";
 import { LaunchContent } from "./LaunchContent";
 
@@ -15,17 +14,18 @@ export function LaunchPage() {
   const content = loading ? <Skeleton /> : <LaunchContent />;
 
   return (
-    <Row>
-      <Col
-        xs={{ span: 22, offset: 1 }}
-        xl={{ span: 20, offset: 2 }}
-        xxl={{ span: 10, offset: 7 }}
-        style={{ marginTop: SPACE_LG }}
-      >
-        <Spin spinning={loading} delay={500}>
-          {content}
-        </Spin>
-      </Col>
-    </Row>
+    <Layout style={{ height: `100%`, width: `100%` }}>
+      <Row>
+        <Col
+          xs={{ span: 22, offset: 1 }}
+          xl={{ span: 20, offset: 2 }}
+          xxl={{ span: 10, offset: 7 }}
+        >
+          <Spin spinning={loading} delay={500}>
+            {content}
+          </Spin>
+        </Col>
+      </Row>
+    </Layout>
   );
 }
