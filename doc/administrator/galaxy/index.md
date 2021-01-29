@@ -31,7 +31,7 @@ The easiest way to get Galaxy up and running for use with IRIDA is to use a cust
 docker run -d -p 48888:80 -v /path/to/irida/data:/path/to/irida/data phacnml/galaxy-irida-20.05
 ```
 
-Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (i.e., the parent directory of `{sequence,reference,output}.file.base.directory` in [/etc/irida/irida.conf][irida-conf]).
+Where `48888` is the port on your local system where Galaxy should be accessible, and `/path/to/irida/data` should point to the location where the sequencing data for IRIDA is stored (i.e., the parent directory of `{sequence,reference,output,assembly}.file.base.directory` in [/etc/irida/irida.conf][irida-conf]). Note: You may have to create these directories manually the first time you set up IRIDA.
 
 Now proceed to installing the [IRIDA web interface][irida-web], making sure to set the following Galaxy connection parameters in `/etc/irida/irida.conf`.
 
