@@ -30,6 +30,7 @@ public class AssemblyPipelinePageIT extends BasePipelineLaunchPageIT {
 		assertTrue("Share with projects should be displayed", page.isShareWithProjectsDisplayed());
 		assertFalse("Should be able to select a reference file", page.isReferenceFilesDisplayed());
 		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
+		assertFalse("This pipeline does not need a reference file, so there should be none requested", page.isReferenceFilesRequiredDisplayed());
 
 	}
 
