@@ -37,7 +37,7 @@ export function SavedParameters({ form, sets }) {
     setCurrentSetId(id);
     setModified({});
     const parameters = set.parameters.reduce(
-      (acc, curr) => ({ ...acc, [curr.name]: curr.value }),
+      (params, curr) => ({ ...params, [curr.name]: curr.value }),
       {}
     );
     form.setFieldsValue(parameters);
