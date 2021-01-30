@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Carousel, Modal } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Carousel, Col, Modal, Row } from "antd";
 import { getUnreadAnnouncements } from "../../apis/announcements/announcements";
-import { IconLeftCircle, IconRightCircle } from "../icons/Icons";
+import { IconLeft, IconRight } from "../icons/Icons";
 
 export function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
   const [visible, setVisibility] = useState(true);
+  const slider = useRef(null);
 
   useEffect(() => {
     getUnreadAnnouncements().then((data) => {
@@ -22,61 +23,48 @@ export function Announcements() {
     background: "#364d79",
   };
 
-  function SampleNextArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <div
-        className={className}
-        style={{
-          ...style,
-          display: "block",
-        }}
-        onClick={onClick}
-      />
-    );
-  }
-
-  function SamplePrevArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <div
-        className={className}
-        style={{
-          ...style,
-          display: "block",
-        }}
-        onClick={onClick}
-      />
-    );
-  }
-
-  const settings = {
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
-
   return (
     <>
       <Modal
-        title="testing!!!"
+        title="High Priority Announcements"
         onCancel={() => setVisibility(false)}
         visible={visible}
         footer={null}
       >
-        <Carousel {...settings} arrows={true} dots={false}>
-          <div>
-            <h3 style={contentStyle}>1</h3>
-          </div>
-          <div>
-            <h3 style={contentStyle}>2</h3>
-          </div>
-          <div>
-            <h3 style={contentStyle}>3</h3>
-          </div>
-          <div>
-            <h3 style={contentStyle}>4</h3>
-          </div>
-        </Carousel>
+        <Row justify="space-between" align="middle">
+          <Col span={2} style={{ textAlign: "right" }}>
+            <Button
+              icon={<IconLeft />}
+              shape="circle"
+              onClick={() => slider.current.prev()}
+              style={{ border: "none" }}
+            />
+          </Col>
+          <Col span={20}>
+            <Carousel ref={slider} effect="fade" dots={false}>
+              <div>
+                <h3 style={contentStyle}>1</h3>
+              </div>
+              <div>
+                <h3 style={contentStyle}>2</h3>
+              </div>
+              <div>
+                <h3 style={contentStyle}>3</h3>
+              </div>
+              <div>
+                <h3 style={contentStyle}>4</h3>
+              </div>
+            </Carousel>
+          </Col>
+          <Col span={2} style={{ textAlign: "left" }}>
+            <Button
+              icon={<IconRight />}
+              shape="circle"
+              onClick={() => slider.current.next()}
+              style={{ border: "none" }}
+            />
+          </Col>
+        </Row>
       </Modal>
     </>
   );
