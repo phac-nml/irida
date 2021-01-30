@@ -32,13 +32,8 @@ export function Announcements() {
         footer={null}
       >
         <Row justify="space-between" align="middle">
-          <Col span={2} style={{ textAlign: "right" }}>
-            <Button
-              icon={<IconLeft />}
-              shape="circle"
-              onClick={() => slider.current.prev()}
-              style={{ border: "none" }}
-            />
+          <Col span={2} style={{ textAlign: "center" }}>
+            <IconLeft onClick={() => slider.current.prev()} />
           </Col>
           <Col span={20}>
             <Carousel ref={slider} effect="fade" dots={false}>
@@ -56,13 +51,8 @@ export function Announcements() {
               </div>
             </Carousel>
           </Col>
-          <Col span={2} style={{ textAlign: "left" }}>
-            <Button
-              icon={<IconRight />}
-              shape="circle"
-              onClick={() => slider.current.next()}
-              style={{ border: "none" }}
-            />
+          <Col span={2} style={{ textAlign: "center" }}>
+            <IconRight onClick={() => slider.current.next()} />
           </Col>
         </Row>
       </Modal>
