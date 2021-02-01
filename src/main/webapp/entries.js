@@ -46,6 +46,7 @@ module.exports = {
   "project-remote": "./resources/js/pages/projects/remote/",
   "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
+  "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "create-metadata-template":
     "./resources/js/pages/projects/metadata-template/create-metadata-template.js",

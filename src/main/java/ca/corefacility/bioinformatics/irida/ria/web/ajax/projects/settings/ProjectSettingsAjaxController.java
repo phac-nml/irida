@@ -1,27 +1,34 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Priorities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSettingsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -29,19 +36,21 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 /**
  * Controller to handle all asynchronous call from the project settings UI.
  */
-@Controller
+@RestController
 @RequestMapping("/ajax/projects/{projectId}/settings")
 public class ProjectSettingsAjaxController {
 	private final ProjectService projectService;
 	private final UserService userService;
 	private final ProjectOwnerPermission projectOwnerPermission;
+	private final UIProjectSettingsService settingsService;
 
 	@Autowired
 	public ProjectSettingsAjaxController(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
-			UserService userService) {
+			UserService userService, UIProjectSettingsService settingsService) {
 		this.projectService = projectService;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.userService = userService;
+		this.settingsService = settingsService;
 	}
 
 	/**
@@ -52,7 +61,7 @@ public class ProjectSettingsAjaxController {
 	 * @param principal currently logged in user
 	 * @return list of projects
 	 */
-	@RequestMapping("/associated")
+	@GetMapping("/associated")
 	public List<AssociatedProject> getProjectAssociatedProjects(@PathVariable long projectId, Principal principal) {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
@@ -91,7 +100,7 @@ public class ProjectSettingsAjaxController {
 	 * @param projectId    project identifier for the currently active project
 	 * @param associatedId project identifier for the associated project to remove
 	 */
-	@RequestMapping(value = "/associated/remove", method = RequestMethod.POST)
+	@PostMapping("/associated/remove")
 	public void removeAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedId);
@@ -104,10 +113,44 @@ public class ProjectSettingsAjaxController {
 	 * @param projectId    project identifier for the currently active project
 	 * @param associatedId project identifier for the  project to add association
 	 */
-	@RequestMapping(value = "/associated/add", method = RequestMethod.POST)
+	@PostMapping("/associated/add")
 	public void addAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedId);
 		projectService.addRelatedProject(project, associatedProject);
+	}
+
+	@GetMapping("/priorities")
+	public Priorities getProcessingInformation(@PathVariable Long projectId) {
+		return settingsService.getProcessingInformation(projectId);
+	}
+
+	@PutMapping("/priority")
+	public ResponseEntity<AjaxResponse> updateProcessingPriority(@PathVariable long projectId,
+			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(settingsService.updateProcessingPriority(projectId, priority, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	@GetMapping("/coverage")
+	public Coverage getProcessingCoverage(@PathVariable Long projectId) {
+		return settingsService.getProcessingCoverageForProject(projectId);
+	}
+
+	@PutMapping("/coverage")
+	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@PathVariable long projectId,
+			@RequestBody Coverage coverage, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(settingsService.updateProcessingCoverage(coverage, projectId, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 }

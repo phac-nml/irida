@@ -12,10 +12,10 @@
         }
       };
     </script>
-    <link rel="stylesheet" th:href="@{/dist/css/project-settings-basic.bundle.css}">
 </head>
 <body>
 <th:block layout:fragment="settings-content">
+    <div id="process-root"></div>
     <div class="row">
         <div class="col-md-6">
             <h2 class="h2-muted" th:text="#{project.settings.automated-pipelines}">_Automated Pipelines_</h2>
@@ -151,6 +151,7 @@
 
 <th:block layout:fragment="scripts">
     <script th:src="@{/dist/js/project-settings-basic.bundle.js}"></script>
+    <script th:src="@{/dist/js/project-processing.bundle.js}"></script>
 </th:block>
 
 </body>

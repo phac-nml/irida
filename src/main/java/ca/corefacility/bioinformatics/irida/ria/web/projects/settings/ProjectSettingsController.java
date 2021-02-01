@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -12,17 +23,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Templa
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Handles basic settings pages for a project
@@ -33,8 +35,8 @@ public class ProjectSettingsController {
 	private final MessageSource messageSource;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ProjectService projectService;
-	private AnalysisSubmissionService analysisSubmissionService;
-	private IridaWorkflowsService workflowsService;
+	private final AnalysisSubmissionService analysisSubmissionService;
+	private final IridaWorkflowsService workflowsService;
 
 	public static final String ACTIVE_NAV_SETTINGS = "settings";
 
@@ -78,7 +80,7 @@ public class ProjectSettingsController {
 	 * @param locale    Locale of the logged in user
 	 * @return name of the project settings page
 	 */
-	@RequestMapping("/processing")
+	@RequestMapping(value = { "/processing", "/processing/*" })
 	public String getProjectSettingsProcessingPage(@PathVariable Long projectId, final Model model,
 			final Principal principal, Locale locale) {
 		Project project = projectService.read(projectId);
@@ -200,6 +202,7 @@ public class ProjectSettingsController {
 	}
 
 	/**
+	 * TODO: REMOVE THIS
 	 * Set the priority of a given analysis submission
 	 *
 	 * @param projectId The ID of the project to set priority
@@ -224,6 +227,7 @@ public class ProjectSettingsController {
 	}
 
 	/**
+	 * TODO: REMOVE THIS
 	 * Update the coverage QC setting of a {@link Project}
 	 *
 	 * @param projectId       the ID of a {@link Project}
