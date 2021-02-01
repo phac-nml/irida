@@ -42,11 +42,16 @@ export function ProcessingCoverage({ projectId }) {
 
   const update = () =>
     form.validateFields().then((values) => {
-      updateProcessingCoverage(projectId, values).then((message) => {
-        setVisible(false);
-        setCoverage(values);
-        notification.success({ message });
-      });
+      updateProcessingCoverage(projectId, values)
+        .then((message) => {
+          setVisible(false);
+          setCoverage(values);
+          notification.success({ message });
+        })
+        .catch((message) => {
+          setVisible(false);
+          notification.info({ message });
+        });
     });
 
   return (
@@ -58,19 +63,21 @@ export function ProcessingCoverage({ projectId }) {
           alignItems: "center",
         }}
       >
-        <Typography.Title level={3}>__COVERAGE__</Typography.Title>
+        <Typography.Title level={3}>
+          {i18n("ProcessingCoverage.title")}
+        </Typography.Title>
         <Button size="small" onClick={() => setVisible(true)}>
           {i18n("form.btn.edit")}
         </Button>
         <Modal
-          title={"_Edit COverage_"}
+          title={i18n("ProcessingCoverage.modal.title")}
           visible={visible}
           onCancel={() => setVisible(false)}
           onOk={update}
         >
           <Form layout="vertical" initialValues={coverage} form={form}>
             <Form.Item
-              label={i18n("project.settings.coverage.minimum_coverage")}
+              label={i18n("ProcessingCoverage.minimum")}
               name="minimum"
               precision={0}
               rules={[numericValidator]}
@@ -78,14 +85,14 @@ export function ProcessingCoverage({ projectId }) {
               <InputNumber style={{ width: `100%` }} step={100} min={0} />
             </Form.Item>
             <Form.Item
-              label={i18n("project.settings.coverage.maximum_coverage")}
+              label={i18n("ProcessingCoverage.maximum")}
               name="maximum"
               rules={[numericValidator]}
             >
               <InputNumber style={{ width: `100%` }} step={100} min={0} />
             </Form.Item>
             <Form.Item
-              label={i18n("project.settings.coverage.genome_size")}
+              label={i18n("ProcessingCoverage.genomeSize")}
               name="genomeSize"
               rules={[numericValidator]}
             >
@@ -98,7 +105,7 @@ export function ProcessingCoverage({ projectId }) {
         <Col span={8}>
           <Card>
             <Statistic
-              title={i18n("project.settings.coverage.minimum_coverage")}
+              title={i18n("ProcessingCoverage.minimum")}
               value={coverage?.minimum}
               suffix="X"
             />
@@ -107,7 +114,7 @@ export function ProcessingCoverage({ projectId }) {
         <Col span={8}>
           <Card>
             <Statistic
-              title={i18n("project.settings.coverage.maximum_coverage")}
+              title={i18n("ProcessingCoverage.maximum")}
               value={coverage?.maximum}
               suffix="X"
             />
@@ -116,7 +123,7 @@ export function ProcessingCoverage({ projectId }) {
         <Col span={8}>
           <Card>
             <Statistic
-              title={i18n("project.settings.coverage.genome_size")}
+              title={i18n("ProcessingCoverage.genomeSize")}
               value={coverage?.genomeSize}
               suffix="BP"
             />

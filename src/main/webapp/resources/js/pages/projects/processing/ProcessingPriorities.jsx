@@ -28,7 +28,7 @@ export function ProcessingPriorities({ projectId }) {
 
   return (
     <Form layout="vertical">
-      <Form.Item label={"Analysis Priority"}>
+      <Form.Item label={i18n("ProcessingPriorities.title")}>
         <Select options={priorities} value={priority} onChange={update} />
       </Form.Item>
     </Form>

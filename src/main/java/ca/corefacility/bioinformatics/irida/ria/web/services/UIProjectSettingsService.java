@@ -67,12 +67,11 @@ public class UIProjectSettingsService {
 			throws UpdateException {
 		Project project = projectService.read(projectId);
 		if (priority.equals(project.getAnalysisPriority())) {
-			throw new UpdateException(
-					"__INTERNATIONALIZE: Analysis prioirity was not changes ---- THIS SHOULD BE AN EXCEPTION TO RETURN AJAX ERROR");
+			throw new UpdateException("server.ProcessingPriorities.updated");
 		}
 		Map<String, Object> updates = ImmutableMap.of("analysisPriority", priority);
 		projectService.updateProjectSettings(project, updates);
-		return messageSource.getMessage("project.settings.notifications.priority.updated", null, locale);
+		return messageSource.getMessage("server.ProcessingPriorities.updated", null, locale);
 
 	}
 
@@ -98,10 +97,10 @@ public class UIProjectSettingsService {
 
 		if (updates.keySet()
 				.size() == 0) {
-			throw new UpdateException("TODO: NOTHINGI UPTDATED");
+			throw new UpdateException(messageSource.getMessage("server.ProcessingCoverage.error", new Object[]{}, locale));
 		}
 
 		projectService.updateProjectSettings(project, updates);
-		return messageSource.getMessage("project.settings.notifications.coverage.updated", new Object[] {}, locale);
+		return messageSource.getMessage("server.ProcessingCoverage.updated", new Object[] {}, locale);
 	}
 }

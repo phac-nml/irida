@@ -1,3 +1,4 @@
+import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 export const fetchProcessingInformation = async (projectId) =>
@@ -22,13 +23,14 @@ export const fetchProcessingCoverage = async (projectId) =>
     .then((response) => response.json())
     .then((data) => data);
 
-export const updateProcessingCoverage = async (projectId, coverage) =>
-  fetch(setBaseUrl(`ajax/projects/${projectId}/settings/coverage`), {
-    method: `PUT`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(coverage),
-  })
-    .then((response) => response.json())
-    .then((data) => data.message);
+export const updateProcessingCoverage = async (projectId, coverage) => {
+  try {
+    const { data } = await axios.put(
+      setBaseUrl(`ajax/projects/${projectId}/settings/coverage`),
+      coverage
+    );
+    return data.message;
+  } catch (e) {
+    return Promise.reject(e.response.data.error);
+  }
+};
