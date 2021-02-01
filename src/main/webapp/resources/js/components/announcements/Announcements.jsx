@@ -1,61 +1,92 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Carousel, Col, Modal, Row } from "antd";
-import { getUnreadAnnouncements } from "../../apis/announcements/announcements";
+import React, { useEffect, useState } from "react";
+import { Col, Modal, Row, Space, Typography } from "antd";
+import {
+  getUnreadAnnouncements,
+  markAnnouncementRead,
+} from "../../apis/announcements/announcements";
 import { IconLeft, IconRight } from "../icons/Icons";
+import { PriorityFlag } from "../../pages/announcement/components/PriorityFlag";
+import Markdown from "react-markdown";
+import { formatDate } from "../../utilities/date-utilities";
+
+const { Text } = Typography;
 
 export function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
+  const [announcement, setAnnouncement] = useState({});
+  const [index, setIndex] = useState(0);
   const [visible, setVisibility] = useState(true);
-  const slider = useRef(null);
 
   useEffect(() => {
     getUnreadAnnouncements().then((data) => {
-      console.log(data.data);
       setAnnouncements(data.data);
+      setAnnouncement(data.data[index]);
     });
   }, []);
 
-  const contentStyle = {
-    height: "160px",
-    color: "#fff",
-    lineHeight: "160px",
-    textAlign: "center",
-    background: "#364d79",
-  };
+  useEffect(() => {
+    setAnnouncement(announcements[index]);
+    console.log(announcement);
+  }, [index]);
+
+  function incrementIndex() {
+    if (index == announcements.length - 1) {
+      setIndex(0);
+    } else {
+      setIndex(index + 1);
+    }
+  }
+
+  function decrementIndex() {
+    if (index == 0) {
+      setIndex(announcements.length - 1);
+    } else {
+      setIndex(index - 1);
+    }
+  }
 
   return (
     <>
-      <Modal
-        title="High Priority Announcements"
-        onCancel={() => setVisibility(false)}
-        visible={visible}
-        footer={null}
-      >
-        <Row justify="space-between" align="middle">
-          <Col span={2} style={{ textAlign: "center" }}>
-            <IconLeft onClick={() => slider.current.prev()} />
-          </Col>
-          <Col span={20}>
-            <Carousel ref={slider} effect="fade" dots={false}>
-              <div>
-                <h3 style={contentStyle}>1</h3>
+      {announcement && announcement.user && (
+        <Modal
+          title={
+            <>
+              <Space>
+                <PriorityFlag hasPriority={announcement.priority} />
+                <Text strong>{announcement.title}</Text>
+              </Space>
+              <br />
+              <Text type="secondary" style={{ fontSize: `.8em` }}>
+                {i18n(
+                  "ViewUnreadAnnouncement.create.details",
+                  announcement.user.username,
+                  formatDate({ date: announcement.createdDate })
+                )}
+              </Text>
+            </>
+          }
+          onCancel={() => setVisibility(false)}
+          visible={visible}
+          width="60%"
+          footer={null}
+        >
+          <Row justify="space-between" align="middle">
+            <Col span={2} style={{ textAlign: "left" }}>
+              <IconLeft onClick={() => decrementIndex()} />
+            </Col>
+            <Col span={20}>
+              <div key={announcement.identifier}>
+                <div style={{ overflowY: "auto", maxHeight: 600 }}>
+                  <Markdown source={announcement.message} />
+                </div>
               </div>
-              <div>
-                <h3 style={contentStyle}>2</h3>
-              </div>
-              <div>
-                <h3 style={contentStyle}>3</h3>
-              </div>
-              <div>
-                <h3 style={contentStyle}>4</h3>
-              </div>
-            </Carousel>
-          </Col>
-          <Col span={2} style={{ textAlign: "center" }}>
-            <IconRight onClick={() => slider.current.next()} />
-          </Col>
-        </Row>
-      </Modal>
+            </Col>
+            <Col span={2} style={{ textAlign: "right" }}>
+              <IconRight onClick={() => incrementIndex()} />
+            </Col>
+          </Row>
+        </Modal>
+      )}
     </>
   );
 }
