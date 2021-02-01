@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.CreateName
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
+import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineStartService;
@@ -109,5 +110,15 @@ public class LaunchAjaxController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new AjaxErrorResponse("Pipeline cannot be found"));
         }
+    }
+
+    @GetMapping("")
+    public List<Pipeline> getAllPipelines(Locale locale) {
+        return pipelineService.getWorkflowTypes(false, locale);
+    }
+
+    @GetMapping("/automated")
+    public List<Pipeline> getAutomatedPipelines(Locale locale) {
+        return pipelineService.getWorkflowTypes(true, locale);
     }
 }

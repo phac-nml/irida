@@ -29,11 +29,11 @@ export async function getIridaWorkflowDescription(workflowUUID) {
  * @returns {Promise<AxiosResponse<any> | never>}
  */
 export const fetchIridaAnalysisWorkflows = async function () {
-  var ajaxUrl = URL;
-  if (window.PAGE.automatedProject !== null) {
-    ajaxUrl = `${ajaxUrl}?automatedProject=${window.PAGE.automatedProject}`;
-  }
-  return axios.get(ajaxUrl).then((response) => response.data);
+  return axios.get(AJAX_URL).then((response) => response.data);
+};
+
+export const fetchAutomatedIridaAnalysisWorkflows = async function () {
+  return axios.get(`${AJAX_URL}/automated`).then((response) => response.data);
 };
 
 /**

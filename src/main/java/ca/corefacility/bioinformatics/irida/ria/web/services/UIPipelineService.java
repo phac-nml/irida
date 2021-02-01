@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSourceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
@@ -36,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -225,11 +227,35 @@ public class UIPipelineService {
 		Map<String, String> updatedParams = namedParameters.getInputParameters();
 		List<Input> params = updatedParams.entrySet()
 				.stream()
-				.map(entry -> new Input(entry.getKey(), messageSource.getMessage(
-						"pipeline.parameters." + pipelineName + "." + entry.getKey(), new Object[] {}, locale), entry.getValue()))
+				.map(entry -> new Input(entry.getKey(),
+						messageSource.getMessage("pipeline.parameters." + pipelineName + "." + entry.getKey(),
+								new Object[] {}, locale), entry.getValue()))
 				.collect(Collectors.toList());
 
 		return new SavedPipelineParameters(namedParameters.getId(), namedParameters.getLabel(), params);
+	}
+
+	public List<Pipeline> getWorkflowTypes(Boolean automated, Locale locale) {
+		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
+		List<Pipeline> pipelines = new ArrayList<>();
+
+		for (AnalysisType type : analysisTypes) {
+			try {
+				IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);
+				IridaWorkflowDescription description = flow.getWorkflowDescription();
+
+				// if we're setting up an automated project, strip out all the multi-sample pipelines
+				if (!automated || description.getInputs().requiresSingleSample()) {
+					Pipeline workflow = createPipeline(type, locale);
+					pipelines.add(workflow);
+				}
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
+			}
+		}
+		return pipelines.stream()
+				.sorted(Comparator.comparing(Pipeline::getName))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -239,8 +265,8 @@ public class UIPipelineService {
 	 * @param locale      {@link Locale} current users locale
 	 * @return List of pipeline parameters with options
 	 */
-	private List<InputWithOptions> getPipelineSpecificParametersWithOptions(
-			IridaWorkflowDescription description, Locale locale) {
+	private List<InputWithOptions> getPipelineSpecificParametersWithOptions(IridaWorkflowDescription description,
+			Locale locale) {
 		return description.getParameters()
 				.stream()
 				.filter(IridaWorkflowParameter::hasChoices)
@@ -381,4 +407,23 @@ public class UIPipelineService {
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
 	}
+
+    /**
+     * Create a Pipeline for consumption by the UI
+     *
+     * @param analysisType {@link AnalysisType} type of analysis pipeline
+     * @param locale       {@link Locale}
+     * @return {@link Pipeline}
+     * @throws IridaWorkflowNotFoundException thrown if {@link IridaWorkflowDescription} is not found
+     */
+    private Pipeline createPipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
+        IridaWorkflowDescription workflowDescription = workflowsService.getDefaultWorkflowByType(analysisType)
+                .getWorkflowDescription();
+        String prefix = "workflow." + analysisType.getType();
+        String name = messageSource.getMessage(prefix + ".title", new Object[]{}, locale);
+        String description = messageSource.getMessage(prefix + ".description", new Object[]{}, locale);
+        UUID id = workflowDescription.getId();
+        String styleName = analysisType.getType();
+        return new Pipeline(name, description, id, styleName);
+    }
 }
