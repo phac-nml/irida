@@ -29,21 +29,21 @@ export function Announcements() {
     console.log(announcement);
   }, [index]);
 
-  function incrementIndex() {
+  const incrementIndex = () => {
     if (index == announcements.length - 1) {
       setIndex(0);
     } else {
       setIndex(index + 1);
     }
-  }
+  };
 
-  function decrementIndex() {
+  const decrementIndex = () => {
     if (index == 0) {
       setIndex(announcements.length - 1);
     } else {
       setIndex(index - 1);
     }
-  }
+  };
 
   return (
     <>
@@ -72,7 +72,7 @@ export function Announcements() {
         >
           <Row justify="space-between" align="middle">
             <Col span={2} style={{ textAlign: "left" }}>
-              <IconLeft onClick={() => decrementIndex()} />
+              <IconLeft onClick={decrementIndex} />
             </Col>
             <Col span={20}>
               <div key={announcement.identifier}>
@@ -82,7 +82,7 @@ export function Announcements() {
               </div>
             </Col>
             <Col span={2} style={{ textAlign: "right" }}>
-              <IconRight onClick={() => incrementIndex()} />
+              <IconRight onClick={incrementIndex} />
             </Col>
           </Row>
         </Modal>
