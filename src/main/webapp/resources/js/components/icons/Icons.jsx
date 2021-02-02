@@ -24,7 +24,6 @@ import {
   HomeOutlined,
   InfoCircleOutlined,
   ItalicOutlined,
-  LeftOutlined,
   LinkOutlined,
   LoadingOutlined,
   LockOutlined,
@@ -35,7 +34,6 @@ import {
   PlusCircleTwoTone,
   QuestionCircleOutlined,
   QuestionOutlined,
-  RightOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
@@ -140,10 +138,6 @@ export const IconMetadataTemplate = ({ ...props }) => (
 );
 
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
-
-export const IconLeft = ({ ...props }) => <LeftOutlined {...props} />;
-
-export const IconRight = ({ ...props }) => <RightOutlined {...props} />;
 
 /*
 Editor Icons
