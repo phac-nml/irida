@@ -56,6 +56,11 @@ public class LaunchRequest {
 	 */
 	private Long savedParameters;
 
+	/**
+	 * Identifier for a project if this pipeline is used for automated analyses
+	 */
+	private Long automatedProjectId;
+
 	public LaunchRequest() {
 	}
 
@@ -141,5 +146,13 @@ public class LaunchRequest {
 	 */
 	public boolean sendEmailOnCompletion() {
 		return emailPipelineResult.equals("completion");
+	}
+
+	public Long getAutomatedProjectId() {
+		return automatedProjectId;
+	}
+
+	public void setAutomatedProjectId(Long automatedProjectId) {
+		this.automatedProjectId = automatedProjectId;
 	}
 }

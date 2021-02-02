@@ -85,10 +85,10 @@ public class UIProjectSettingsService {
 		Map<String, Object> updates = new HashMap<>();
 
 		if (coverage.getMinimum() != project.getMinimumCoverage()) {
-			updates.put("minimumCoverage", coverage.getMinimum());
+			updates.put("minimumCoverage", coverage.getMinimum() == 0 ? null : coverage.getMinimum());
 		}
 		if (coverage.getMaximum() != project.getMaximumCoverage()) {
-			updates.put("maximumCoverage", coverage.getMaximum());
+			updates.put("maximumCoverage", coverage.getMaximum() == 0 ? null : coverage.getMaximum());
 		}
 		if (!coverage.getGenomeSize()
 				.equals(project.getGenomeSize())) {
