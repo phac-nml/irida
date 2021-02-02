@@ -123,4 +123,12 @@ public interface IridaFileStorageUtility {
 	 * @return the bytes for the file
 	 */
 	public byte[] readAllBytes(Path file);
+
+	/**
+	 * Check if the given directory is writable
+	 *
+	 * @param baseDirectory The directory to check write access for
+	 * @return if the directory is writable or not
+	 */
+	public boolean checkWriteAccess(Path baseDirectory);
 }
