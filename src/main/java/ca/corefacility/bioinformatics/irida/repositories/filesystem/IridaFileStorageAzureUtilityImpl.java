@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -381,8 +382,38 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			logger.error("Couldn't find file on azure", e);
 		} catch (IOException e) {
 			logger.error("Unable to read chunk from azure", e);
+		} return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkWriteAccess(Path baseDirectory) {
+		String containerName = containerClient.getBlobContainerName();
+		try {
+			Path tempDirectory = Files.createTempDirectory(null);
+			Path tempFile = tempDirectory.resolve("testAzureContainerReadWrite.txt");
+			// write a line
+			Files.write(tempFile, "Azure check read/write permissions.\n".getBytes(StandardCharsets.UTF_8));
+			try {
+				// Upload and delete file to check if container has read/write access
+				BlobClient blobClient = containerClient.getBlobClient(
+						getAzureFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName());
+				blobClient.uploadFromFile(tempFile.toString(), false);
+				blobClient.delete();
+				return true;
+			} catch (BlobStorageException e) {
+				throw new StorageException("Unable to read and/or write to container " + containerName
+						+ ". Please check container has both read and write permissions.", e);
+			} finally {
+				// Cleanup the temporary file on the server
+				Files.delete(tempFile);
+				org.apache.commons.io.FileUtils.deleteDirectory(tempDirectory.toFile());
+			}
+		} catch (IOException e) {
+			throw new StorageException("Unable to clean up temporary file", e);
 		}
-		return null;
 	}
 
 	@Override

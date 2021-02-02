@@ -8,6 +8,7 @@ import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConf
 import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
 import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
@@ -319,18 +320,24 @@ public class IridaApiServicesConfig {
 	 * @return A new {@link IridaFileStorageUtility} implementation.
 	 */
 	@Bean(name = "iridaFileStorageUtility")
-	public IridaFileStorageUtility iridaFileStorageService() {
+	public IridaFileStorageUtility iridaFileStorageService(StorageType storageType) {
 		IridaFileStorageUtility iridaFileStorageUtility;
-		if (storageType.equalsIgnoreCase("aws")) {
+		if (storageType.equals(StorageType.AWS)) {
 			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
 					awsSecretKey);
-		} else if(storageType.equalsIgnoreCase("azure")) {
+		} else if (storageType.equals(StorageType.AZURE)) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {
 			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		}
+
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 		return iridaFileStorageUtility;
+	}
+
+	@Bean(name = "storageType")
+	public StorageType storageType() {
+		return StorageType.fromString(storageType);
 	}
 
 	@Bean(name = "uploadFileProcessingChain")

@@ -24,6 +24,7 @@ Changes
 * [Developer]: Switched to Chromedriver 86 to match Github Actions chrome version.
 * [UI]: Updated Project Reference File page to display progress of uploads.
 * [UI]: Added functionality for users to synchronize fast5 data from remote APIs.
+* [Developer]: Added smtp port and password configuration options
 * [UI]: Added usage statistics to admin panel.
 * [UI]: Updated analysis results page to show loading indicator when retrieving output file data.
 * [UI]: Updated sample details sidebar with sample files and simpler API for use on more pages, and moved it out into a modal.
@@ -39,7 +40,11 @@ Changes
 * [UI]: Added html viewer for analysis output files.
 * [REST]: Added new REST endpoint that can generate a deep hashcode of a project.  This will be used for speeding up project synchronization when there are no changes to a project.  Instead of checking for changes remotely, the client can check for changes only to the hash.  If there are hash changes, then they can do their full sync.
 * [UI]: Added option for project managers to check for changes using the hash above, or to force a full project sync on the project remote settings page.
+* [Developer/REST/UI]: Updated announcements with a new title and priority fields.
 * [UI]: Added option for user to only receive an email upon pipeline failure.
+* [Developer]: Updated `frontend-maven-plugin`.
+* [UI]: Fixed issue with trying to copy a large number of samples between projects.
+* [Developer]: Chromedriver updated to 88
 
 20.05 to 20.09
 --------------

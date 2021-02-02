@@ -10,6 +10,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
@@ -389,6 +390,38 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkWriteAccess(Path baseDirectory) {
+		// get list of bucket permission
+		List<String> bucketPermissions = s3.getBucketAcl(bucketName)
+				.getGrantsAsList()
+				.stream()
+				.distinct()
+				.map(t -> t.getPermission()
+						.toString())
+				.collect(Collectors.toList());
+
+		if (bucketPermissions.size() > 0) {
+			// check read/write or full control permission
+			if (!((bucketPermissions.contains("READ") && bucketPermissions.contains("WRITE"))
+					|| (bucketPermissions.contains("FULL_CONTROL")))) {
+				throw new StorageException("Unable to read and/or write to bucket " + bucketName
+						+ ". Please check bucket has both read and write permissions.");
+			}
+			return true;
+		} else {
+			throw new StorageException(
+					"Unable to locate bucket " + bucketName + ". Please check your credentials and that the bucket "
+							+ bucketName + " exists.");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getStorageType() {
 		return "aws";
