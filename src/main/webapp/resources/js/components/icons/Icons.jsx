@@ -15,9 +15,11 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
   ExperimentOutlined,
+  EyeOutlined,
   FileExcelOutlined,
   FileOutlined,
   FilterOutlined,
+  FlagFilled,
   FolderOutlined,
   HomeOutlined,
   InfoCircleOutlined,
@@ -109,6 +111,8 @@ export const IconExclamationCircle = ({ ...props }) => (
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
 
+export const IconFlag = ({ ...props }) => <FlagFilled {...props} />;
+
 export const IconFolder = ({ ...props }) => <FolderOutlined {...props} />;
 
 export const IconTable = ({ ...props }) => <TableOutlined {...props} />;
@@ -122,6 +126,8 @@ export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
 export const IconRemove = ({ ...props }) => <CloseOutlined {...props} />;
 
 export const IconEdit = ({ ...props }) => <EditOutlined {...props} />;
+
+export const IconEye = ({ ...props }) => <EyeOutlined {...props} />;
 
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 

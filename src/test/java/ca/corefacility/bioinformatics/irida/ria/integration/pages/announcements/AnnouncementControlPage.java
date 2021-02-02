@@ -29,7 +29,6 @@ public class AnnouncementControlPage extends AbstractPage {
 
     public void goTo() {
         get(driver, "admin/announcements");
-		waitForTime(1000);
 	}
 
     /**
@@ -60,8 +59,8 @@ public class AnnouncementControlPage extends AbstractPage {
         return dates;
     }
 
-    public String getAnnouncement(int position) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement a span"));
+    public String getAnnouncementTitle(int position) {
+        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement"));
         return messages.get(position).getText();
     }
 
@@ -73,19 +72,38 @@ public class AnnouncementControlPage extends AbstractPage {
     }
 
     public void clickCreateNewAnnouncementButton() {
-        waitForTime(2000);
+        waitForElementVisible(By.className("t-create-announcement"));
         WebElement createButton = driver.findElement(By.className("t-create-announcement"));
         createButton.click();
     }
 
-    public void gotoMessageDetails(int index) {
-        List<WebElement> messages = driver.findElements(By.cssSelector("td.t-announcement p"));
+    public void gotoViewMessage(int index) {
+        List<WebElement> messages = driver.findElements(By.cssSelector("button.t-view-announcement"));
         if (index < messages.size()) {
             messages.get(index).click();
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.urlContains("/details"));
+            waitForElementVisible(By.className("ant-modal-content"));
         } else {
             throw new IndexOutOfBoundsException();
         }
     }
+
+    public void gotoEditMessage(int index) {
+        List<WebElement> messages = driver.findElements(By.cssSelector("button.t-edit-announcement"));
+        if (index < messages.size()) {
+            messages.get(index).click();
+            waitForElementVisible(By.className("ant-modal-content"));
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public void deleteAnnouncement(int index) {
+        List<WebElement> delete_button = driver.findElements(By.cssSelector("button.t-delete-announcement"));
+        delete_button.get(index).click();
+        waitForElementVisible(By.className("ant-popover-message"));
+        WebElement confirm_delete_button = driver.findElement(By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
+        confirm_delete_button.click();
+        waitForElementInvisible(By.className("ant-popover-message"));
+    }
+
 }
