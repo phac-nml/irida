@@ -19,7 +19,7 @@ export function AnnouncementDashboard() {
   const [unreadTotal, setUnreadTotal] = useState(0);
 
   useEffect(() => {
-    getUnreadAnnouncements().then((data) => {
+    getUnreadAnnouncements({}).then((data) => {
       setUnreadAnnouncements(data.data);
       setUnreadTotal(data.data.length);
     });

@@ -24,9 +24,9 @@ export function getReadAnnouncements() {
  * Get all the unread announcements.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function getUnreadAnnouncements() {
+export function getUnreadAnnouncements({ params }) {
   try {
-    return axios.get(`${BASE}/user/unread`);
+    return axios.get(`${BASE}/user/unread`, { params });
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }

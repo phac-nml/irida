@@ -78,7 +78,7 @@ public class AnnouncementsController extends BaseController {
     public String getUnreadAnnouncementsForUser(final Model model, Principal principal) {
         User user = userService.getUserByUsername(principal.getName());
 
-        List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+        List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user, null);
 
         Collections.sort(unreadAnnouncements,Collections.reverseOrder());
 

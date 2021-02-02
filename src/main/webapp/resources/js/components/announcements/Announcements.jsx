@@ -15,7 +15,7 @@ export function Announcements() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    getUnreadAnnouncements().then(({ data }) => {
+    getUnreadAnnouncements({ params: { priority: true } }).then(({ data }) => {
       if (data.length) {
         setAnnouncements(data);
         setVisible(true);
