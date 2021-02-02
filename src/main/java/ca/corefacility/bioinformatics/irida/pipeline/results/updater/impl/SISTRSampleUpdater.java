@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
@@ -11,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -36,6 +39,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private MetadataTemplateService metadataTemplateService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private SampleService sampleService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	// @formatter:off
 	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String,String>builder()
@@ -53,10 +57,11 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-							  IridaWorkflowsService iridaWorkflowsService) {
+							  IridaWorkflowsService iridaWorkflowsService, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -77,45 +82,46 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
 
-			//Read the JSON file from SISTR output
-			@SuppressWarnings("resource")
-			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
-					.next();
+			try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(filePath)) {
 
-			// map the results into a Map
-			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> sistrResults = mapper
-					.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+				//Read the JSON file from SISTR output
+				@SuppressWarnings("resource")
+				String jsonFile = new Scanner(inputStream).useDelimiter("\\Z")
+						.next();
+				// map the results into a Map
+				ObjectMapper mapper = new ObjectMapper();
+				List<Map<String, Object>> sistrResults = mapper
+						.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+						});
+
+				if (sistrResults.size() > 0) {
+					Map<String, Object> result = sistrResults.get(0);
+
+					//loop through each of the requested fields and save the entries
+					SISTR_FIELDS.entrySet().forEach(e -> {
+						if (result.containsKey(e.getKey())) {
+							Object valueObject = result.get(e.getKey());
+							String value = (valueObject != null ? valueObject.toString() : "");
+							PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
+									analysis);
+							stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
+						}
 					});
 
-			if (sistrResults.size() > 0) {
-				Map<String, Object> result = sistrResults.get(0);
+					// convert string map into metadata fields
+					Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(stringEntries);
 
-				//loop through each of the requested fields and save the entries
-				SISTR_FIELDS.entrySet().forEach(e -> {
-					if (result.containsKey(e.getKey())) {
-						Object valueObject = result.get(e.getKey());
-						String value = (valueObject != null ? valueObject.toString() : "");
-						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
-								analysis);
-						stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
-					}
-				});
+					//save metadata back to sample
+					samples.forEach(s -> {
+						sampleService.mergeSampleMetadata(s, metadataSet);
+					});
 
-				// convert string map into metadata fields
-				Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(stringEntries);
-
-				//save metadata back to sample
-				samples.forEach(s -> {
-					sampleService.mergeSampleMetadata(s, metadataSet);
-				});
-
-			} else {
-				throw new PostProcessingException("SISTR results for file are not correctly formatted");
+				} else {
+					throw new PostProcessingException("SISTR results for file are not correctly formatted");
+				}
+			} catch (IOException e) {
+				throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 			}
-
-		} catch (IOException e) {
-			throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 		} catch (IridaWorkflowNotFoundException e) {
 			throw new PostProcessingException("Workflow is not found", e);
 		}

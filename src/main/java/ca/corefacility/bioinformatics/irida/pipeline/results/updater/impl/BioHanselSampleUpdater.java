@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -47,11 +49,13 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	// @formatter:on
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
+	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -78,9 +82,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 		Path filePath = aof.getFile();
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
-		try {
-			@SuppressWarnings("resource") String jsonText = new Scanner(
-					new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
+
+		try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(filePath)) {
+			@SuppressWarnings("resource") String jsonText = new Scanner(inputStream).useDelimiter("\\Z")
 					.next();
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> maps = mapper.readValue(jsonText, new TypeReference<List<Map<String, Object>>>() {
@@ -113,10 +117,10 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 			} else {
 				throw new PostProcessingException(filePath + " not correctly formatted. Expected valid JSON.");
 			}
-
 		} catch (IOException e) {
 			throw new PostProcessingException("Error parsing JSON from " + filePath, e);
 		}
+
 	}
 
 	/**
