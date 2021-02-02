@@ -1,45 +1,52 @@
-import React, { useRef } from "react";
-import { Modal } from "antd";
+import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
-import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import { Modal, Space } from "antd";
+import AnnouncementForm from "./AnnouncementForm";
 import { IconEdit } from "../../../../components/icons/Icons";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../../contexts/visibility-context";
 
 /**
- * Component to add a button which will open a modal to create an announcement.
- * @param {function} createAnnouncement
+ * Component to add a button which will open a drawer to create an announcement.
+ * @param {function} createAnnouncement - the function that creates an announcement.
  * @returns {*}
  * @constructor
  */
-export function CreateNewAnnouncement({ createAnnouncement }) {
-  const markdownRef = useRef();
-
-  function saveMarkdown() {
-    const md = markdownRef.current.getMarkdown();
-    createAnnouncement(md);
-  }
-
-  function displayModal() {
-    Modal.confirm({
-      title: i18n("CreateNewAnnouncement.title"),
-      icon: <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />,
-      width: "80%",
-      content: <MarkdownEditor ref={markdownRef} />,
-      okText: i18n("CreateNewAnnouncement.okBtn"),
-      okButtonProps: {
-        className: "t-submit-announcement"
-      },
-      onOk() {
-        saveMarkdown();
-      }
-    });
-  }
+function CreateNewAnnouncementButton({ createAnnouncement }) {
+  const [visible, setVisibility] = useVisibility();
 
   return (
-    <AddNewButton
-      className="t-create-announcement"
-      onClick={displayModal}
-      text={i18n("CreateNewAnnouncement.title")}
-    />
+    <>
+      <AddNewButton
+        className="t-create-announcement"
+        onClick={() => setVisibility(true)}
+        text={i18n("CreateNewAnnouncement.title")}
+      />
+      <Modal
+        title={
+          <Space>
+            <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
+            {i18n("CreateNewAnnouncement.title")}
+          </Space>
+        }
+        onCancel={() => setVisibility(false)}
+        visible={visible}
+        width={640}
+        footer={null}
+      >
+        <AnnouncementForm createAnnouncement={createAnnouncement} />
+      </Modal>
+    </>
+  );
+}
+
+export default function CreateNewAnnouncement({ createAnnouncement }) {
+  return (
+    <VisibilityProvider>
+      <CreateNewAnnouncementButton createAnnouncement={createAnnouncement} />
+    </VisibilityProvider>
   );
 }

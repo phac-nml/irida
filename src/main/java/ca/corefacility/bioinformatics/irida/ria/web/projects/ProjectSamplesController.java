@@ -136,7 +136,7 @@ public class ProjectSamplesController {
 	 * @param model     UI model
 	 * @return path to remove modal template
 	 */
-	@RequestMapping(value = "/projects/{projectId}/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
+	@PostMapping(value = "/projects/{projectId}/templates/remove-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getRemoveSamplesFromProjectModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId, Model model) {
 		List<Sample> samplesThatAreInMultiple = new ArrayList<>();
 		List<Sample> samplesThatAreInOne = new ArrayList<>();
@@ -166,7 +166,7 @@ public class ProjectSamplesController {
 	 * @param model     UI Model
 	 * @return Path to merge modal template
 	 */
-	@RequestMapping(value = "/projects/{projectId}/templates/merge-modal", produces = MediaType.TEXT_HTML_VALUE)
+	@PostMapping(value = "/projects/{projectId}/templates/merge-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getMergeSamplesInProjectModal(@PathVariable Long projectId, @RequestParam(name = "sampleIds[]") List<Long> ids, Model model) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = new ArrayList<>();
@@ -198,7 +198,7 @@ public class ProjectSamplesController {
 	 * @param move      Whether or not to display share or move wording.
 	 * @return Path to share or move modal template.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
+	@PostMapping(value = "/projects/{projectId}/templates/copy-move-modal", produces = MediaType.TEXT_HTML_VALUE)
 	public String getShareSamplesModal(@RequestParam(name = "sampleIds[]") List<Long> ids, @PathVariable Long projectId,
 			Model model, @RequestParam(required = false) boolean move) {
 		Project project = projectService.read(projectId);

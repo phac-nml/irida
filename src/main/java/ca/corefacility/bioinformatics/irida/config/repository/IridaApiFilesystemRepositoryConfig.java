@@ -5,6 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +41,12 @@ public class IridaApiFilesystemRepositoryConfig {
 	private @Value("${assembly.file.base.directory}")
 	String assemblyFileBaseDirectory;
 
-	private @Value("${irida.storage.type}")
-	String storageType;
-
 	@Autowired
 	private ApplicationContext applicationContext;
+
+	@Autowired
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(
@@ -91,15 +94,10 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(assemblyFileBaseDirectory);
 	}
 
-	//FIXME Update the code to check if the connection to a cloud provider
-	// is successful or not as well as check if path is writeable for local file storage
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
-		if (!Files.exists(baseDirectory) && storageType.equals("local")) {
-			throw new IllegalStateException(
-					String.format("Cannot continue startup; base directory [%s] does not exist!",
-							baseDirectory.toString()));
-		} else {
+		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
+		if(baseDirectoryWritable) {
 			logger.info(String.format(
 					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
 					baseDirectory.toString()));

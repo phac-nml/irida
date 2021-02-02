@@ -1,22 +1,24 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
-
-import java.util.Date;
+package ca.corefacility.bioinformatics.irida.ria.web.announcements.dto;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
+
+import java.util.Date;
 
 /**
- * User interface model for DataTables for viewing {@link Announcement} User interface model for DataTables for viewing
- * {@link Announcement}
+ * User interface model for viewing {@link Announcement}
  */
-public class DTAnnouncementUser implements DataTablesResponseModel {
+
+public class AnnouncementUserTableModel extends TableModel {
 	private Long id;
-	private User user;
+	private final User user;
 	private Date dateRead;
 
-	public DTAnnouncementUser(User user, AnnouncementUserJoin join) {
+	public AnnouncementUserTableModel(User user, AnnouncementUserJoin join) {
+		super(user.getId(), user.getUsername(), user.getCreatedDate(), user.getModifiedDate());
+
 		this.id = user.getId();
 		this.user = user;
 		if (join != null) {
@@ -37,3 +39,6 @@ public class DTAnnouncementUser implements DataTablesResponseModel {
 		return dateRead;
 	}
 }
+
+
+

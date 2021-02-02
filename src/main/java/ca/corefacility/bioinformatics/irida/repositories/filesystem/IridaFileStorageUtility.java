@@ -136,6 +136,7 @@ public interface IridaFileStorageUtility {
 	public byte[] readAllBytes(Path file);
 
 	/**
+
 	 * Get file size in bytes
 	 *
 	 * @param file The {@link Path} to the file
@@ -153,4 +154,11 @@ public interface IridaFileStorageUtility {
 	 */
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk);
 
+	/**
+	 * Check if the given directory is writable
+	 *
+	 * @param baseDirectory The directory to check write access for
+	 * @return if the directory is writable or not
+	 */
+	public boolean checkWriteAccess(Path baseDirectory);
 }
