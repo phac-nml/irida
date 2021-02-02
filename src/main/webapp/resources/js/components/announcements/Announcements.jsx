@@ -54,7 +54,7 @@ export function Announcements() {
       }
       visible={visible}
       width="60%"
-      okText="Read"
+      okText={i18n("Announcements.ok")}
       onOk={onOk}
       onCancel={() => setVisible(false)}
     >
