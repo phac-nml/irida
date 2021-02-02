@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 
@@ -25,11 +26,11 @@ public class LaunchController {
      * @return The path to the launch page html file.
      */
     @GetMapping("")
-    public String getPipelineLaunchPage() {
-        if(cartService.isCartEmpty()) {
-            // User cannot launch a pipeline if the cart is empty.
-            return "redirect:/cart/pipelines";
+    public String getPipelineLaunchPage(@RequestParam(required = false, defaultValue = "-1L") Long projectId) {
+        if(projectId != -1L || !cartService.isCartEmpty()) {
+            return "launch";
         }
-        return "launch";
+        // User cannot launch a pipeline if the cart is empty.
+        return "redirect:/cart/pipelines";
     }
 }

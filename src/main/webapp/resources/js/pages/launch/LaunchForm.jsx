@@ -37,10 +37,13 @@ export function LaunchForm() {
       setLaunchState(LAUNCH_STATES.LOADING);
       launchNewPipeline(launchDispatch, values, state)
         .then(({ id }) => {
-          // Redirect to analysis page
+          // Redirect to analysis page or project settings processing page for automated pipelines
           setLaunchState(LAUNCH_STATES.SUCCESS);
+          const url = state.automatedId
+            ? `project/${state.automatedId}/settings/processing`
+            : `analysis/${id}`;
           window.setTimeout(() => {
-            window.location.href = setBaseUrl(`analysis/${id}`);
+            window.location.href = setBaseUrl(url);
           }, 350);
         })
         .catch(({ error }) => {
@@ -66,7 +69,7 @@ export function LaunchForm() {
         <LaunchParameters form={form} />
         <SharePipelineResults />
         <ReferenceFiles form={form} />
-        <LaunchFiles />
+        {state.automatedId ? null : <LaunchFiles />}
         <Button
           type="primary"
           className="t-submit-btn"

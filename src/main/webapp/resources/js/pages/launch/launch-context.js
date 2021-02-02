@@ -1,6 +1,7 @@
 import React from "react";
 import { getPipelineDetails } from "../../apis/pipelines/pipelines";
 import {
+  AUTOMATED_ID,
   formatDefaultPipelineName,
   formatSavedParameterSets,
   PIPELINE_ID,
@@ -119,6 +120,7 @@ function LaunchProvider({ children }) {
             parameterSets: formattedParameterSets,
             dynamicSources,
             files: [],
+            automatedId: AUTOMATED_ID,
           },
         });
       }

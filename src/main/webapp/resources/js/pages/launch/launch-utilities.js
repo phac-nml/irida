@@ -10,6 +10,11 @@ export const PIPELINE_ID = (() => {
   return params.get("id");
 })();
 
+export const AUTOMATED_ID = (() => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("projectId");
+})();
+
 /**
  * Format the name of a pipeline to be unique.  The user can modify it at any point.
  *

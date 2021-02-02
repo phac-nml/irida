@@ -2,11 +2,14 @@ import React from "react";
 import { render } from "react-dom";
 import { Router, useMatch } from "@reach/router";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Button, Divider, List, Space, Typography } from "antd";
+import { Divider, Space, Typography } from "antd";
 import { ProcessingCoverage } from "./ProcessingCoverage";
 import { ProcessingPriorities } from "./ProcessingPriorities";
-import { fetchAutomatedIridaAnalysisWorkflows } from "../../../apis/pipelines/pipelines";
-import { useVisibility } from "../../../contexts/visibility-context";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../contexts/visibility-context";
+import { AddPipelineModal } from "./AddPipelineModal";
 
 const ProcessingLayout = ({ children }) => (
   <div>
@@ -20,13 +23,9 @@ const ProcessingLayout = ({ children }) => (
 const Info = () => {
   const [addPipelineVisible] = useVisibility();
   const match = useMatch("/projects/:projectId/settings/processing");
-  const [pipelines, setPipelines] = React.useState([]);
 
   React.useEffect(() => {
-    fetchAutomatedIridaAnalysisWorkflows().then(setPipelines);
-  }, []);
-
-  React.useEffect(() => {
+    console.log("VISIBILITY CHANGED");
     // TODO: Come back here please
   }, [addPipelineVisible]);
 
@@ -36,16 +35,7 @@ const Info = () => {
       <Divider />
       <ProcessingCoverage projectId={match.projectId} />
       <Divider />
-      <List
-        bordered
-        dataSource={pipelines}
-        renderItem={(item) => (
-          <List.Item key={item.id}>
-            <List.Item.Meta title={item.name} description={item.description} />
-            <Button>Add Pipelien</Button>
-          </List.Item>
-        )}
-      />
+      <AddPipelineModal projectId={match.projectId} />
     </Space>
   );
 };
@@ -53,11 +43,13 @@ const Info = () => {
 const Pipelines = () => <div>Pipelines</div>;
 
 render(
-  <Router>
-    <ProcessingLayout path={setBaseUrl(`/projects/1/settings/processing`)}>
-      <Info path={`/`} />
-      <Pipelines path={`pipelines`} />
-    </ProcessingLayout>
-  </Router>,
+  <VisibilityProvider>
+    <Router>
+      <ProcessingLayout path={setBaseUrl(`/projects/1/settings/processing`)}>
+        <Info path={`/`} />
+        <Pipelines path={`pipelines`} />
+      </ProcessingLayout>
+    </Router>
+  </VisibilityProvider>,
   document.querySelector("#process-root")
 );
