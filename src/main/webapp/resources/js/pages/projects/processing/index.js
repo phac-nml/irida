@@ -2,7 +2,6 @@ import React from "react";
 import { render } from "react-dom";
 import { Col, Divider, Row, Space, Typography } from "antd";
 import { ProcessingCoverage } from "./ProcessingCoverage";
-import { ProcessingPriorities } from "./ProcessingPriorities";
 import { ProcessingAutomatedPipelines } from "./ProcessingAutomatedPipelines";
 
 const ProcessingLayout = () => {
@@ -17,8 +16,6 @@ const ProcessingLayout = () => {
           {i18n("Processing.title")}
         </Typography.Title>
         <Space style={{ width: `100%` }} direction="vertical">
-          <ProcessingPriorities projectId={projectId} />
-          <Divider />
           <ProcessingCoverage projectId={projectId} />
           <Divider />
           <ProcessingAutomatedPipelines projectId={projectId} />
