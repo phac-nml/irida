@@ -24,10 +24,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Priorities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSettingsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -42,14 +44,16 @@ public class ProjectSettingsAjaxController {
 	private final ProjectService projectService;
 	private final UserService userService;
 	private final ProjectOwnerPermission projectOwnerPermission;
+	private final UIPipelineService pipelineService;
 	private final UIProjectSettingsService settingsService;
 
 	@Autowired
 	public ProjectSettingsAjaxController(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
-			UserService userService, UIProjectSettingsService settingsService) {
+			UserService userService, UIPipelineService pipelineService, UIProjectSettingsService settingsService) {
 		this.projectService = projectService;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.userService = userService;
+		this.pipelineService = pipelineService;
 		this.settingsService = settingsService;
 	}
 
@@ -152,5 +156,17 @@ public class ProjectSettingsAjaxController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));
 		}
+	}
+
+	@GetMapping("/analysis-templates")
+	public List<AnalysisTemplate> getProjectAnalysisTemplates(@PathVariable long projectId, Locale locale) {
+		return pipelineService.getProjectAnalysisTemplates(projectId, locale);
+	}
+
+	@DeleteMapping("/analysis-templates")
+	public ResponseEntity<AjaxResponse> removeProjectAnalysisTemplates(@RequestParam long templateId,
+			@PathVariable long projectId, Locale locale) {
+		return ResponseEntity.ok(
+				new AjaxSuccessResponse(pipelineService.removeProjectAutomatedPipeline(templateId, projectId, locale)));
 	}
 }

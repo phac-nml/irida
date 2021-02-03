@@ -9,7 +9,7 @@ import { SectionHeading } from "../../components/ant.design/SectionHeading";
  * @constructor
  */
 export function SharePipelineResults() {
-  const [{ updateSamples, projects }] = useLaunch();
+  const [{ updateSamples, projects, automatedId }] = useLaunch();
 
   return (
     <section>
@@ -25,22 +25,29 @@ export function SharePipelineResults() {
           <Checkbox checked>{updateSamples}</Checkbox>
         </Form.Item>
       ) : null}
-      <Typography.Text strong>
-        {i18n("ShareResultsWithProjects.label")}
-      </Typography.Text>
-      <Form.Item className="t-share-projects" name="projects">
-        <Checkbox.Group style={{ width: `100%` }}>
-          <Row>
-            {projects.map((project) => (
-              <Col key={`project-${project.value}`} span={8}>
-                <Checkbox style={{ lineHeight: `32px` }} value={project.value}>
-                  {project.label}
-                </Checkbox>
-              </Col>
-            ))}
-          </Row>
-        </Checkbox.Group>
-      </Form.Item>
+      {!automatedId && (
+        <>
+          <Typography.Text strong>
+            {i18n("ShareResultsWithProjects.label")}
+          </Typography.Text>
+          <Form.Item className="t-share-projects" name="projects">
+            <Checkbox.Group style={{ width: `100%` }}>
+              <Row>
+                {projects.map((project) => (
+                  <Col key={`project-${project.value}`} span={8}>
+                    <Checkbox
+                      style={{ lineHeight: `32px` }}
+                      value={project.value}
+                    >
+                      {project.label}
+                    </Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </Checkbox.Group>
+          </Form.Item>
+        </>
+      )}
     </section>
   );
 }

@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSourceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
@@ -36,9 +37,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIRefere
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -54,13 +57,14 @@ public class UIPipelineService {
 	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
 
 	private final UICartService cartService;
-    private final IridaWorkflowsService workflowsService;
-    private final WorkflowNamedParametersService namedParametersService;
-    private final ProjectService projectService;
-    private final ReferenceFileService referenceFileService;
-    private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private final IridaWorkflowsService workflowsService;
+	private final WorkflowNamedParametersService namedParametersService;
+	private final ProjectService projectService;
+	private final ReferenceFileService referenceFileService;
+	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private final UpdateSamplePermission updateSamplePermission;
 	private final GalaxyToolDataService galaxyToolDataService;
+	private final AnalysisSubmissionService analysisSubmissionService;
 	private final MessageSource messageSource;
 
 	@Autowired
@@ -69,7 +73,7 @@ public class UIPipelineService {
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
 			UpdateSamplePermission updateSamplePermission, GalaxyToolDataService galaxyToolDataService,
-			MessageSource messageSource) {
+			AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
 		this.cartService = cartService;
 		this.workflowsService = workflowsService;
 		this.namedParametersService = namedParametersService;
@@ -78,6 +82,7 @@ public class UIPipelineService {
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.updateSamplePermission = updateSamplePermission;
 		this.galaxyToolDataService = galaxyToolDataService;
+		this.analysisSubmissionService = analysisSubmissionService;
 		this.messageSource = messageSource;
 	}
 
@@ -256,6 +261,36 @@ public class UIPipelineService {
 		return pipelines.stream()
 				.sorted(Comparator.comparing(Pipeline::getName))
 				.collect(Collectors.toList());
+	}
+
+	public List<AnalysisTemplate> getProjectAnalysisTemplates(Long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
+		return templates.stream()
+				.map(template -> {
+					UUID id = template.getWorkflowId();
+					String type;
+					try {
+						IridaWorkflow flow = workflowsService.getIridaWorkflow(id);
+						AnalysisType analysisType = flow.getWorkflowDescription()
+								.getAnalysisType();
+						type = messageSource.getMessage("workflow." + analysisType.getType() + ".title",
+								new Object[] {}, locale);
+					} catch (IridaWorkflowNotFoundException e) {
+						type = messageSource.getMessage("workflow.UNKNOWN.title", new Object[] {}, locale);
+					}
+					return new AnalysisTemplate(template.getId(), template.getName(), type, template.isEnabled(),
+							template.getStatusMessage());
+				})
+				.collect(Collectors.toList());
+	}
+
+	public String removeProjectAutomatedPipeline(Long templateId, Long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
+				templateId, project);
+		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
+		return messageSource.getMessage("server.AnalysisTemplates.remove", new Object[] {template.getName()}, locale);
 	}
 
 	/**

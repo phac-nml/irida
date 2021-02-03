@@ -17,9 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.TemplateResponse;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -86,26 +86,26 @@ public class ProjectSettingsController {
 		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
 
-		List<TemplateResponse> templateResponseTypes = templates.stream()
+		List<AnalysisTemplate> analysisTemplateTypes = templates.stream()
 				.map(t -> templatesToResponse(t, locale))
 				.collect(Collectors.toList());
 
 		model.addAttribute("project", project);
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "processing");
-		model.addAttribute("analysisTemplates", templateResponseTypes);
+		model.addAttribute("analysisTemplates", analysisTemplateTypes);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/processing";
 	}
 
 	/**
-	 * Convert a analysis template to {@link TemplateResponse}
+	 * Convert a analysis template to {@link AnalysisTemplate}
 	 *
 	 * @param template the {@link AnalysisSubmissionTemplate}
 	 * @param locale   User's logged in locale
-	 * @return a list of {@link TemplateResponse}
+	 * @return a list of {@link AnalysisTemplate}
 	 */
-	private TemplateResponse templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
+	private AnalysisTemplate templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
 		UUID workflowId = template.getWorkflowId();
 		String typeString;
 
@@ -119,47 +119,8 @@ public class ProjectSettingsController {
 			typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
 		}
 
-		return new TemplateResponse(template.getId(), template.getName(), typeString, template.isEnabled(),
+		return new AnalysisTemplate(template.getId(), template.getName(), typeString, template.isEnabled(),
 				template.getStatusMessage());
-	}
-
-	/**
-	 * Load the modal to confirm removal of the given analysis template from the project
-	 *
-	 * @param templateId the {@link AnalysisSubmissionTemplate} id
-	 * @param projectId  the {@link Project} id to delete from
-	 * @param model      Model for the view
-	 * @param locale     User's locale
-	 * @return template id
-	 */
-	@RequestMapping(path = "/template/removeTemplateModal", method = RequestMethod.POST)
-	public String removeAnalysisTemplateModal(final @RequestParam Long templateId, final @PathVariable Long projectId,
-			final Model model, Locale locale) {
-		Project project = projectService.read(projectId);
-		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
-				templateId, project);
-
-		TemplateResponse templateResponseType = templatesToResponse(template, locale);
-
-		model.addAttribute("template", templateResponseType);
-		model.addAttribute("project", project);
-		return "projects/templates/remove-analysis-template-modal";
-	}
-
-	/**
-	 * Delete the given {@link AnalysisSubmissionTemplate} from the given {@link Project}
-	 *
-	 * @param templateId The {@link AnalysisSubmissionTemplate} id
-	 * @param projectId  the {@link Project} id
-	 * @return Redirect to the project settings page after completion
-	 */
-	@RequestMapping(path = "/template/remove", method = RequestMethod.POST)
-	public String removeAnalysisTemplateConfirm(final @RequestParam Long templateId,
-			final @PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-
-		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
-		return "redirect:/projects/" + projectId + "/settings";
 	}
 
 	/**

@@ -84,13 +84,13 @@ public class UIProjectSettingsService {
 		Project project = projectService.read(projectId);
 		Map<String, Object> updates = new HashMap<>();
 
-		if (coverage.getMinimum() != project.getMinimumCoverage()) {
+		if (project.getMinimumCoverage() == null || coverage.getMinimum() != project.getMinimumCoverage()) {
 			updates.put("minimumCoverage", coverage.getMinimum() == 0 ? null : coverage.getMinimum());
 		}
-		if (coverage.getMaximum() != project.getMaximumCoverage()) {
+		if (project.getMaximumCoverage() == null || coverage.getMaximum() != project.getMaximumCoverage()) {
 			updates.put("maximumCoverage", coverage.getMaximum() == 0 ? null : coverage.getMaximum());
 		}
-		if (!coverage.getGenomeSize()
+		if (project.getGenomeSize() == null || !coverage.getGenomeSize()
 				.equals(project.getGenomeSize())) {
 			updates.put("genomeSize", coverage.getGenomeSize());
 		}
@@ -103,4 +103,6 @@ public class UIProjectSettingsService {
 		projectService.updateProjectSettings(project, updates);
 		return messageSource.getMessage("server.ProcessingCoverage.updated", new Object[] {}, locale);
 	}
+
+
 }

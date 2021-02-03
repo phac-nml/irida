@@ -66,7 +66,7 @@ export function ProcessingCoverage({ projectId }) {
         <Typography.Title level={3}>
           {i18n("ProcessingCoverage.title")}
         </Typography.Title>
-        <Button size="small" onClick={() => setVisible(true)}>
+        <Button onClick={() => setVisible(true)}>
           {i18n("form.btn.edit")}
         </Button>
         <Modal

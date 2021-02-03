@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.ProjectSettingsAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSettingsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -31,6 +32,7 @@ public class ProjectSettingsAjaxControllerTest {
 	private ProjectOwnerPermission projectOwnerPermission;
 	private ProjectSettingsAjaxController controller;
 	private UIProjectSettingsService settingsService;
+	private UIPipelineService pipelineService;
 
 	@Before
 	public void setUp() {
@@ -38,8 +40,9 @@ public class ProjectSettingsAjaxControllerTest {
 		userService = mock(UserService.class);
 		projectOwnerPermission = mock(ProjectOwnerPermission.class);
 		settingsService = mock(UIProjectSettingsService.class);
+		pipelineService = mock(UIPipelineService.class);
 		controller = new ProjectSettingsAjaxController(projectService, projectOwnerPermission, userService,
-				settingsService);
+				pipelineService, settingsService);
 	}
 
 	@Test

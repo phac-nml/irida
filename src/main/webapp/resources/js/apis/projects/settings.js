@@ -34,3 +34,27 @@ export const updateProcessingCoverage = async (projectId, coverage) => {
     return Promise.reject(e.response.data.error);
   }
 };
+
+export async function fetchAnalysisTemplatesForProject(projectId) {
+  try {
+    const { data } = await axios.get(
+      setBaseUrl(`ajax/projects/${projectId}/settings/analysis-templates`)
+    );
+    return data;
+  } catch (e) {
+    return Promise.reject();
+  }
+}
+
+export async function deleteAnalysisTemplateForProject(templateId, projectId) {
+  try {
+    const { data } = await axios.delete(
+      setBaseUrl(
+        `ajax/projects/${projectId}/settings/analysis-templates?templateId=${templateId}`
+      )
+    );
+    return data.message;
+  } catch (e) {
+    return Promise.reject();
+  }
+}
