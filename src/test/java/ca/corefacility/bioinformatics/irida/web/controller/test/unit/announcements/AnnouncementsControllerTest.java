@@ -89,7 +89,7 @@ public class AnnouncementsControllerTest {
         Principal principal = () -> USER_NAME;
         ExtendedModelMap model = new ExtendedModelMap();
 
-        when(announcementService.getUnreadAnnouncementsForUser(user)).thenReturn(announcementList);
+        when(announcementService.getUnreadAnnouncementsForUser(user, null)).thenReturn(announcementList);
         when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
         String page = announcementsController.getUnreadAnnouncementsForUser(model, principal);

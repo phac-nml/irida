@@ -278,13 +278,13 @@ public class AnnouncementServiceImplIT {
     public void testGetUnreadAnnouncementsForUser() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final User user = userService.getUserByUsername(auth.getName());
-        List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user);
+        List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user, null);
 
         assertEquals("Number of unread announcements doesn't match expected value", 6, announcementList.size());
 
         Announcement ann = announcementService.read(6L);
         announcementService.markAnnouncementAsReadByUser(ann, user);
-        announcementList = announcementService.getUnreadAnnouncementsForUser(user);
+        announcementList = announcementService.getUnreadAnnouncementsForUser(user, null);
 
         assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
 

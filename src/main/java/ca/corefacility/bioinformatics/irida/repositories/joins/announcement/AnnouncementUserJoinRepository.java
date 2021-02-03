@@ -53,7 +53,7 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      */
     @Query ("select a from Announcement a where a not in " +
             "(select j.announcement from AnnouncementUserJoin j where j.user = ?1)" +
-            "and a.priority =  ?2")
+            "and a.priority = ?2")
     public List<Announcement> getPriorityAnnouncementsUnreadByUser(User user, Boolean priority);
 
     /**
