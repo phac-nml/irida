@@ -26,7 +26,7 @@ public class LaunchController {
      * @return The path to the launch page html file.
      */
     @GetMapping("")
-    public String getPipelineLaunchPage(@RequestParam(required = false, defaultValue = "-1L") Long projectId) {
+    public String getPipelineLaunchPage(@RequestParam(required = false) Long projectId) {
         if(projectId != -1L || !cartService.isCartEmpty()) {
             return "launch";
         }
