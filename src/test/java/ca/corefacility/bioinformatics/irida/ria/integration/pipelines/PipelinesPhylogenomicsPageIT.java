@@ -1,10 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
+import java.io.IOException;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -17,7 +24,22 @@ import static org.junit.Assert.*;
  *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
-public class PipelinesPhylogenomicsPageIT extends BasePipelineLaunchPageIT {
+public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
+	protected LaunchPipelinePage page;
+
+	@Before
+	public void setUpTest() throws IOException {
+		page = LaunchPipelinePage.init(driver());
+		addSamplesToCart();
+	}
+
+	private void addSamplesToCart() {
+		LoginPage.loginAsUser(driver());
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSample(0);
+		samplesPage.selectSample(1);
+		samplesPage.addSelectedSamplesToCart();
+	}
 
 	@Test
 	public void testPageSetup() {

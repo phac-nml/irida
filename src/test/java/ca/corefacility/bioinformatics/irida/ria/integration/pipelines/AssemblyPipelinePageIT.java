@@ -1,10 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
+import java.io.IOException;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -14,7 +21,22 @@ import static org.junit.Assert.*;
  * Testing for launching an assembly pipeline.
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/AssemblyPipelinePageIT.xml")
-public class AssemblyPipelinePageIT extends BasePipelineLaunchPageIT {
+public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
+	protected LaunchPipelinePage page;
+
+	@Before
+	public void setUpTest() throws IOException {
+		page = LaunchPipelinePage.init(driver());
+		addSamplesToCart();
+	}
+
+	private void addSamplesToCart() {
+		LoginPage.loginAsUser(driver());
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSample(0);
+		samplesPage.selectSample(1);
+		samplesPage.addSelectedSamplesToCart();
+	}
 
 	@Test
 	public void testPageSetup() {
@@ -29,6 +51,9 @@ public class AssemblyPipelinePageIT extends BasePipelineLaunchPageIT {
 		assertFalse("Should be able to select a reference file", page.isReferenceFilesDisplayed());
 		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
 		assertFalse("This pipeline does not need a reference file, so there should be none requested", page.isReferenceFilesRequiredDisplayed());
+
+		// Test email checkbox
+		assertEquals("No Email", page.getEmailValue());
 
 		// Test the name input
 		page.clearName();
