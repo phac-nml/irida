@@ -59,6 +59,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse("Name required warning should be cleared", page.isNameErrorDisplayed());
 
 		// Make sure the saved pipeline parameter inputs are set up correctly
+		page.showSavedParameters();
 		assertEquals("Assembly Pipeline should have 20 inputs", 20, page.getNumberOfSavedPipelineParameters());
 		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
 
