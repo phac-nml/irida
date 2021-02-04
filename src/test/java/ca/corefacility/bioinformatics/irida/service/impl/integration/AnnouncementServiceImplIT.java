@@ -287,7 +287,26 @@ public class AnnouncementServiceImplIT {
         announcementList = announcementService.getUnreadAnnouncementsForUser(user, null);
 
         assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
+    }
 
+    @Test
+    @WithMockUser(username = "user3", roles = "USER")
+    public void testGetLowPriorityUnreadAnnouncementsForUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user, false);
+
+        assertEquals("Number of low priority unread announcements doesn't match expected value", 4, announcementList.size());
+    }
+
+    @Test
+    @WithMockUser(username = "user3", roles = "USER")
+    public void testGetHighPriorityUnreadAnnouncementsForUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final User user = userService.getUserByUsername(auth.getName());
+        List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user, true);
+
+        assertEquals("Number of high priority unread announcements doesn't match expected value", 2, announcementList.size());
     }
 
     @Test
