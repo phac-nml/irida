@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.announcements;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +48,8 @@ public class AnnouncementsAjaxControllerTest {
 	private final Boolean ANNOUNCEMENT_PRIORITY_02 = true;
 	private final Announcement ANNOUNCEMENT_01 = new Announcement(ANNOUNCEMENT_TITLE_01, ANNOUNCEMENT_TEXT_01, ANNOUNCEMENT_PRIORITY_01, ANNOUNCEMENT_USER_01);
 	private final Announcement ANNOUNCEMENT_02 = new Announcement(ANNOUNCEMENT_TITLE_02, ANNOUNCEMENT_TEXT_02, ANNOUNCEMENT_PRIORITY_02, ANNOUNCEMENT_USER_02);
+	private final AnnouncementUserJoin ANNOUNCEMENT_READ_01 = new AnnouncementUserJoin(ANNOUNCEMENT_01, ANNOUNCEMENT_USER_01);
+	private final AnnouncementUserJoin ANNOUNCEMENT_READ_02 = new AnnouncementUserJoin(ANNOUNCEMENT_01, ANNOUNCEMENT_USER_02);
 
 	@Before
 	public void setUp() {
@@ -220,10 +224,15 @@ public class AnnouncementsAjaxControllerTest {
 			}
 		};
 
+		List<AnnouncementUserJoin> announcement_read_list = new ArrayList<>();
+		announcement_read_list.add(ANNOUNCEMENT_READ_01);
+		announcement_read_list.add(ANNOUNCEMENT_READ_02);
+
 		when(announcementService.search(any(), any())).thenReturn(announcementPage);
 		when(userService.search(any(), any())).thenReturn(announcementUserPage);
 		when(userService.getUserByUsername(anyString())).thenReturn(ANNOUNCEMENT_USER_01);
 		when(announcementService.read(anyLong())).thenReturn(ANNOUNCEMENT_01);
+		when(announcementService.getReadUsersForAnnouncement(any())).thenReturn(announcement_read_list);
 	}
 
 	@Test
@@ -322,8 +331,10 @@ public class AnnouncementsAjaxControllerTest {
 
 		AnnouncementUserTableModel announcement_user_1 = response.getDataSource().get(0);
 		assertEquals("Should have the correct user data", ANNOUNCEMENT_USER_01, announcement_user_1.getUser());
+		assertEquals("The user have the expected read date", ANNOUNCEMENT_READ_01.getCreatedDate(), announcement_user_1.getDateRead());
 
 		AnnouncementUserTableModel announcement_user_2 = response.getDataSource().get(1);
 		assertEquals("The second announcement should have the correct user", ANNOUNCEMENT_USER_02, announcement_user_2.getUser());
+		assertEquals("The user have the expected read date", ANNOUNCEMENT_READ_02.getCreatedDate(), announcement_user_2.getDateRead());
 	}
 }
