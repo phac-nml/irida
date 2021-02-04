@@ -10,7 +10,7 @@ import { referenceFileUploadComplete } from "../launch-dispatch";
  * @returns {JSX.Element}
  * @constructor
  */
-export function UploadReferenceFile() {
+export function UploadReferenceFile({ form }) {
   const [, launchDispatch] = useLaunch();
 
   const options = {
@@ -28,6 +28,7 @@ export function UploadReferenceFile() {
           info.file.name,
           info.file.response.files[0].id
         );
+        form.setFieldsValue({ reference: info.file.response.files[0].id });
       } else if (status === "error") {
         notification.error({
           message: i18n("UploadReferenceFile.error", info.file.name),
@@ -38,6 +39,7 @@ export function UploadReferenceFile() {
 
   return (
     <DragUpload
+      className="t-upload-reference"
       uploadText={i18n("UploadReferenceFile.upload-text")}
       uploadHint={i18n("UploadReferenceFile.hint")}
       options={options}

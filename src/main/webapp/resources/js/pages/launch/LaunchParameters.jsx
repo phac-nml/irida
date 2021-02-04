@@ -14,7 +14,7 @@ export function LaunchParameters({ form }) {
   const [{ dynamicSources, parameterWithOptions, parameterSets }] = useLaunch();
 
   return (
-    <section>
+    <section className="t-launch-parameters">
       <SectionHeading id="launch-parameters">
         {i18n("LaunchParameters.title")}
       </SectionHeading>

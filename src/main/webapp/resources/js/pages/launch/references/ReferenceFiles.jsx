@@ -11,21 +11,34 @@ import { SectionHeading } from "../../../components/ant.design/SectionHeading";
  * @returns {JSX.Element|null}
  * @constructor
  */
-export function ReferenceFiles() {
+export function ReferenceFiles({ form }) {
   const [{ requiresReference, referenceFiles }] = useLaunch();
 
   return requiresReference ? (
-    <Space direction="vertical" style={{ width: `100%` }}>
+    <Space
+      className="t-reference-files"
+      direction="vertical"
+      style={{ width: `100%` }}
+    >
       <SectionHeading id="launch-references">
         {i18n("ReferenceFiles.label")}
       </SectionHeading>
       <Form.Item
         label={i18n("ReferenceFiles.label")}
         name="reference"
-        rules={[{ required: true, message: i18n("ReferenceFiles.required") }]}
+        rules={[
+          {
+            required: true,
+            message: (
+              <span className="t-ref-error">
+                {i18n("ReferenceFiles.required")}
+              </span>
+            ),
+          },
+        ]}
       >
         {referenceFiles.length ? (
-          <Radio.Group style={{ width: "100%" }}>
+          <Radio.Group style={{ width: "100%" }} name="reference">
             {referenceFiles.map((file) => (
               <Radio key={`ref-${file.id}`} value={file.id}>
                 {file.name}
@@ -35,6 +48,7 @@ export function ReferenceFiles() {
           </Radio.Group>
         ) : (
           <Alert
+            className="t-ref-alert"
             type="info"
             showIcon
             message={i18n("ReferenceFiles.not-found.title")}
@@ -42,7 +56,7 @@ export function ReferenceFiles() {
           />
         )}
       </Form.Item>
-      <UploadReferenceFile />
+      <UploadReferenceFile form={form} />
     </Space>
   ) : null;
 }

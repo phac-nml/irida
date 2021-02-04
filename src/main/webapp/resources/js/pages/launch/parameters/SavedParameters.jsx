@@ -30,20 +30,24 @@ export function SavedParameters({ form, sets }) {
 
   const [currentSetId, setCurrentSetId] = React.useState(sets[0].id);
   const [modified, setModified] = React.useState({});
+  const [fields] = React.useState(() => sets[0]?.parameters);
 
   function updateSelectedSet(id) {
-    const index = sets.findIndex((set) => set.id === id);
+    const set = sets.find((set) => set.id === id);
     setCurrentSetId(id);
     setModified({});
-    const parameters = sets[index].parameters.reduce(
+    const parameters = set.parameters.reduce(
       (params, curr) => ({ ...params, [curr.name]: curr.value }),
       {}
     );
     form.setFieldsValue(parameters);
   }
 
-  function onValueUpdated(field, original, newValue) {
-    if (original === newValue) {
+  function onValueUpdated(field, newValue) {
+    const original = sets
+      .find((set) => set.id === currentSetId)
+      .parameters.find((parameter) => field === parameter.name);
+    if (original.value === newValue) {
       const newMod = { ...modified };
       delete newMod[field];
       setModified(newMod);
@@ -56,14 +60,12 @@ export function SavedParameters({ form, sets }) {
     const fieldsValue = form.getFieldsValue(
       sets[0].parameters.map((parameter) => parameter.name)
     );
+    const name = saveParamsForm.getFieldValue("name");
+    // TODO: make sure this is unique
     try {
-      const id = await saveModifiedParametersAs(
-        dispatch,
-        saveParamsForm.getFieldValue("name"),
-        fieldsValue
-      );
+      const id = await saveModifiedParametersAs(dispatch, name, fieldsValue);
       setCurrentSetId(id);
-      setModified(false);
+      setModified({});
     } catch (e) {}
   }
 
@@ -76,45 +78,55 @@ export function SavedParameters({ form, sets }) {
           help={
             Object.keys(modified).length ? (
               <Alert
+                className="t-modified-alert"
                 showIcon
                 style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
                 type={"warning"}
                 message={i18n("SavedParameters.modified")}
-                description={i18n("SavedParameters.modified.description")}
-                action={
-                  <Space>
-                    <Popover
-                      placement="bottomRight"
-                      trigger="click"
-                      content={
-                        <>
-                          <Typography.Text>
-                            {i18n("SavedParameters.modified.name")}
-                          </Typography.Text>
-                          <Form
-                            form={saveParamsForm}
-                            layout="inline"
-                            style={{
-                              width: 305,
-                            }}
-                          >
-                            <Form.Item name="name" required>
-                              <Input />
-                            </Form.Item>
-                            <Form.Item>
-                              <Button onClick={saveParameters}>
-                                {i18n("SavedParameters.modified.save")}
-                              </Button>
-                            </Form.Item>
-                          </Form>
-                        </>
-                      }
-                    >
-                      <Button size="small" type="ghost">
-                        {i18n("SavedParameters.modified.saveAs")}
-                      </Button>
-                    </Popover>
-                  </Space>
+                description={
+                  <div>
+                    {i18n("SavedParameters.modified.description")}{" "}
+                    <Space>
+                      <Popover
+                        placement="bottomRight"
+                        trigger="click"
+                        content={
+                          <>
+                            <Typography.Text>
+                              {i18n("SavedParameters.modified.name")}
+                            </Typography.Text>
+                            <Form
+                              form={saveParamsForm}
+                              layout="inline"
+                              style={{
+                                width: 305,
+                              }}
+                            >
+                              <Form.Item name="name" required>
+                                <Input className="t-modified-name" />
+                              </Form.Item>
+                              <Form.Item>
+                                <Button
+                                  onClick={saveParameters}
+                                  className="t-saveas-submit"
+                                >
+                                  {i18n("SavedParameters.modified.save")}
+                                </Button>
+                              </Form.Item>
+                            </Form>
+                          </>
+                        }
+                      >
+                        <Button
+                          size="small"
+                          type="ghost"
+                          className="t-modified-saveas"
+                        >
+                          {i18n("SavedParameters.modified.saveAs")}
+                        </Button>
+                      </Popover>
+                    </Space>
+                  </div>
                 }
               />
             ) : null
@@ -125,6 +137,7 @@ export function SavedParameters({ form, sets }) {
             value={currentSetId}
             onChange={(id) => updateSelectedSet(id)}
             disabled={sets.length < 2}
+            className="t-saved-select"
           >
             {sets.map((set) => (
               <Select.Option key={set.key} value={set.id}>
@@ -134,7 +147,7 @@ export function SavedParameters({ form, sets }) {
           </Select>
         </Form.Item>
       </div>
-      {sets[currentSetId].parameters.map(({ name, label, value }) => (
+      {fields.map(({ name, label }) => (
         <div
           key={name}
           style={{
@@ -158,7 +171,8 @@ export function SavedParameters({ form, sets }) {
             help={modified[name] ? i18n("ParametersModal.modified") : null}
           >
             <Input
-              onChange={(e) => onValueUpdated(name, value, e.target.value)}
+              className="t-saved-input"
+              onChange={(e) => onValueUpdated(name, e.target.value)}
             />
           </Form.Item>
         </div>

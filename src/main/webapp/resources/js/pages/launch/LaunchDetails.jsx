@@ -9,17 +9,22 @@ import { SectionHeading } from "../../components/ant.design/SectionHeading";
  */
 export function LaunchDetails() {
   return (
-    <section>
+    <section className="t-launch-details">
       <SectionHeading id="launch-details">
         {i18n("LaunchDetails.label")}
       </SectionHeading>
       <Form.Item
+        className="t-name-control"
         label={i18n("LaunchDetails.name")}
         name="name"
         rules={[
           {
             required: true,
-            message: i18n("LaunchDetails.name.required"),
+            message: (
+              <div className="t-name-required">
+                {i18n("LaunchDetails.name.required")}
+              </div>
+            ),
           },
         ]}
       >
@@ -32,7 +37,7 @@ export function LaunchDetails() {
         name="emailPipelineResult"
         label={i18n("LaunchDetails.emailResults")}
       >
-        <Select>
+        <Select className="t-email-results">
           <Select.Option value="none">
             {i18n("AnalysisDetailsEmailPref.noEmail")}
           </Select.Option>

@@ -59,15 +59,17 @@ export function LaunchForm() {
       name="details"
       layout="vertical"
       initialValues={state.initialValues}
+      className="t-launch-form"
     >
       <Space direction="vertical" style={{ width: `100%` }}>
         <LaunchDetails />
         <LaunchParameters form={form} />
         <SharePipelineResults />
-        <ReferenceFiles />
+        <ReferenceFiles form={form} />
         <LaunchFiles />
         <Button
           type="primary"
+          className="t-submit-btn"
           size="large"
           htmlType="submit"
           icon={<IconLaunchPipeline />}
