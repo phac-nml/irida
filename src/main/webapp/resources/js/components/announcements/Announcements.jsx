@@ -43,13 +43,14 @@ export function Announcements() {
 
   return announcements && visible ? (
     <Modal
+      className="t-modal"
       closable={false}
       title={
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           {announcements.length > 1
             ? i18n("Announcements.title.multiple", announcements.length)
             : i18n("Announcements.title.single")}
-          <Tag color="red">
+          <Tag className="t-read-over-unread-ratio" color="red">
             {index + 1} / {announcements.length}
           </Tag>
         </div>
