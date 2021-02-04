@@ -109,7 +109,9 @@ export function SavedParameters({ form, sets }) {
                   </Select.Option>
                 ))}
               </Select>
-              <Button>MODIFY</Button>
+              <Button className="t-show-parameters">
+                {i18n("SavedParameters.modify")}
+              </Button>
             </div>
           }
         >

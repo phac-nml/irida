@@ -66,6 +66,8 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertEquals("No Email", page.getEmailValue());
 
 		// Make sure the saved pipeline parameter inputs are set up correctly
+		assertEquals("No saved parameters should be initially displayed", 0, page.getNumberOfSavedPipelineParameters());
+		page.showSavedParameters();
 		assertEquals("Phylogenomics Pipeline should have 8 inputs", 8, page.getNumberOfSavedPipelineParameters());
 		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
 
@@ -74,7 +76,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER,"123456");
 		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
 		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
-		assertTrue("Modified alert should go way once the value is the same as the original", page.isModifiedAlertVisible());
+		assertFalse("Modified alert should go way once the value is the same as the original", page.isModifiedAlertVisible());
 
 		// Test saving modified parameters
 		String newCoverage = "123";

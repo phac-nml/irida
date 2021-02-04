@@ -37,6 +37,9 @@ public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(className = "t-name-required")
 	private List<WebElement> nameInputError;
 
+	@FindBy(className = "t-show-parameters")
+	private WebElement showSavedParameters;
+
 	@FindBy(className = "t-launch-parameters")
 	private List<WebElement> launchParameters;
 
@@ -174,6 +177,7 @@ public class LaunchPipelinePage extends AbstractPage {
 			WebElement elm = input.get();
 			elm.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 			elm.sendKeys(value);
+			elm.sendKeys(Keys.TAB);
 		}
 	}
 
@@ -203,5 +207,9 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	public void submit() {
 		submitBtn.click();
+	}
+
+	public void showSavedParameters() {
+		showSavedParameters.click();
 	}
 }

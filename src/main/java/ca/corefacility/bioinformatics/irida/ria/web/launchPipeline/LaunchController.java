@@ -26,8 +26,8 @@ public class LaunchController {
      * @return The path to the launch page html file.
      */
     @GetMapping("")
-    public String getPipelineLaunchPage(@RequestParam(required = false, defaultValue = "-1L") Long projectId) {
-        if(projectId != -1L || !cartService.isCartEmpty()) {
+    public String getPipelineLaunchPage(@RequestParam(required = false) Long projectId) {
+        if(projectId != null || !cartService.isCartEmpty()) {
             return "launch";
         }
         // User cannot launch a pipeline if the cart is empty.
