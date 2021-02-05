@@ -137,6 +137,14 @@ public class ProjectSettingsAjaxController {
 		return settingsService.getProcessingInformation(projectId);
 	}
 
+	/**
+	 * Update the priority for analyses for a project.
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @param priority  the new priority for analyses
+	 * @param locale    current users locale
+	 * @return message to user about the update ot the priority
+	 */
 	@PutMapping("/priority")
 	public ResponseEntity<AjaxResponse> updateProcessingPriority(@PathVariable long projectId,
 			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
