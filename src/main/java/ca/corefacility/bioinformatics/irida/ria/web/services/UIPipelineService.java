@@ -240,6 +240,14 @@ public class UIPipelineService {
 		return new SavedPipelineParameters(namedParameters.getId(), namedParameters.getLabel(), params);
 	}
 
+	/**
+	 * Get a list of pipeline workflows, if the automated flag is set then only those pipelines that can be run
+	 * automated will be returned
+	 *
+	 * @param automated if true, then this is from a project for creating automated pipelines
+	 * @param locale    currently logged in users locale
+	 * @return list of pipelines
+	 */
 	public List<Pipeline> getWorkflowTypes(Boolean automated, Locale locale) {
 		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
 		List<Pipeline> pipelines = new ArrayList<>();
@@ -263,6 +271,13 @@ public class UIPipelineService {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * List of existing automated workflows on a project
+	 *
+	 * @param projectId identifier for a project
+	 * @param locale    currently logged in users local
+	 * @return list of existing automated workflows ({@link AnalysisTemplate}) for a project.
+	 */
 	public List<AnalysisTemplate> getProjectAnalysisTemplates(Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
@@ -285,12 +300,20 @@ public class UIPipelineService {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Remove an automated workflow from a project
+	 *
+	 * @param templateId identifier for the automated workflow ({@link AnalysisTemplate})
+	 * @param projectId  identifier for the project
+	 * @param locale     currently logged in users locale
+	 * @return message to the user about the status of the removal
+	 */
 	public String removeProjectAutomatedPipeline(Long templateId, Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
 				templateId, project);
 		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
-		return messageSource.getMessage("server.AnalysisTemplates.remove", new Object[] {template.getName()}, locale);
+		return messageSource.getMessage("server.AnalysisTemplates.remove", new Object[] { template.getName() }, locale);
 	}
 
 	/**
