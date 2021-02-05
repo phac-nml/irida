@@ -30,12 +30,4 @@ public class AnnouncementDashboardPage extends AbstractPage {
         return driver.findElements(By.cssSelector(".t-announcement-item"));
     }
 
-    public void markTopAnnouncementAsRead() {
-		WebElement markReadButton = driver.findElement(By.cssSelector(".t-announcement-item button"));
-        markReadButton.click();
-        waitForElementVisible(By.className("ant-modal-content"));
-        WebElement read_button = driver.findElement(By.cssSelector("button.ant-btn-primary"));
-        read_button.click();
-        waitForTime(DEFAULT_WAIT);
-    }
 }
