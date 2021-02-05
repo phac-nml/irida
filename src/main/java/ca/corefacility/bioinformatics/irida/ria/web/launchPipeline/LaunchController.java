@@ -23,6 +23,8 @@ public class LaunchController {
 
     /**
      * Mapping for the pipeline launch page.
+     *
+     * @param projectId used to indicate if this was set for an automated pipeline
      * @return The path to the launch page html file.
      */
     @GetMapping("")
