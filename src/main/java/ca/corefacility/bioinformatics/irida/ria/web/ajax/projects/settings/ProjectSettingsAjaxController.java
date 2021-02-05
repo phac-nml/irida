@@ -124,6 +124,14 @@ public class ProjectSettingsAjaxController {
 		projectService.addRelatedProject(project, associatedProject);
 	}
 
+	/**
+	 * Get information about the current {@link AnalysisSubmission.Priority} for the project as well as available
+	 * priorities to update to
+	 *
+	 * @param projectId identifier for the project
+	 * @return information about the current {@link AnalysisSubmission.Priority} for the project as well as available
+	 * priorities to update to
+	 */
 	@GetMapping("/priorities")
 	public Priorities getProcessingInformation(@PathVariable Long projectId) {
 		return settingsService.getProcessingInformation(projectId);
@@ -141,11 +149,25 @@ public class ProjectSettingsAjaxController {
 		}
 	}
 
+	/**
+	 * Get the minimum/maximum coverage and genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @return {@link Coverage}
+	 */
 	@GetMapping("/coverage")
 	public Coverage getProcessingCoverage(@PathVariable Long projectId) {
 		return settingsService.getProcessingCoverageForProject(projectId);
 	}
 
+	/**
+	 * Updated the minimum/maximum coverage or genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @param coverage  minimum/maximum coverage or genome size for the project
+	 * @param locale    current users locale
+	 * @return Message to user about the update
+	 */
 	@PutMapping("/coverage")
 	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@PathVariable long projectId,
 			@RequestBody Coverage coverage, Locale locale) {
@@ -158,11 +180,26 @@ public class ProjectSettingsAjaxController {
 		}
 	}
 
+	/**
+	 * Get all the automated workflow (analysis templates) for the current project
+	 *
+	 * @param projectId project identifier
+	 * @param locale    current users locale
+	 * @return list of automated templates on the current project
+	 */
 	@GetMapping("/analysis-templates")
 	public List<AnalysisTemplate> getProjectAnalysisTemplates(@PathVariable long projectId, Locale locale) {
 		return pipelineService.getProjectAnalysisTemplates(projectId, locale);
 	}
 
+	/**
+	 * Remove an automated workflow (analysis templates) for the current project
+	 *
+	 * @param templateId identifier for an automated workflow
+	 * @param projectId  identifier for a project
+	 * @param locale     current users locale
+	 * @return message to user about the outcome of the removal
+	 */
 	@DeleteMapping("/analysis-templates")
 	public ResponseEntity<AjaxResponse> removeProjectAnalysisTemplates(@RequestParam long templateId,
 			@PathVariable long projectId, Locale locale) {
