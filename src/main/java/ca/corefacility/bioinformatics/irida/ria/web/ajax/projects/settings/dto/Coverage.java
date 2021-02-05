@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto;
 
+/**
+ * UI Model for the minimum and maximum coverage and genome size for a project
+ */
 public class Coverage {
 	private int minimum;
 	private int maximum;
