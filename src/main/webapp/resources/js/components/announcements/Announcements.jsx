@@ -45,6 +45,7 @@ export function Announcements() {
     <Modal
       className="t-modal"
       closable={false}
+      maskClosable={false}
       title={
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           {announcements.length > 1
