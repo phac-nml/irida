@@ -54,8 +54,7 @@ module.exports = {
     "./resources/js/pages/projects/associated-projects/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-reference-files":
-    "./resources/js/pages/projects/reference-files/",
+  "project-reference-files": "./resources/js/pages/projects/reference-files/",
   "project-analyses":
     "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
@@ -63,8 +62,6 @@ module.exports = {
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
-  "announcement-users":
-    "./resources/js/pages/announcement/announcement-users.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sample-files-concatenate":
     "./resources/js/pages/samples/sample-files-concatenate.js",

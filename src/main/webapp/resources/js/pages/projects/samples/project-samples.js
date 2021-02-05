@@ -462,10 +462,10 @@ $("#js-modal-wrapper").on("show.bs.modal", function (event) {
   /*
   Find the ids for the currently selected samples.
    */
-  params["sampleIds"] = getSelectedIds();
+  const sampleIds = getSelectedIds();
 
   let script;
-  modal.load(`${url}?${$.param(params)}`, function () {
+  modal.load(`${url}`, { sampleIds, ...params }, function () {
     if (typeof window.IRIDA.modals[scriptId] === "function") {
       window.IRIDA.modals[scriptId]();
     } else if (typeof script_src !== "undefined") {

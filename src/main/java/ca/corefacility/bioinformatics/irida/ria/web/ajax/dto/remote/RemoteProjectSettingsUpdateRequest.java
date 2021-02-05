@@ -9,12 +9,14 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 
 public class RemoteProjectSettingsUpdateRequest {
 	private boolean forceSync;
+	private boolean markSync;
 	private boolean changeUser;
 	private ProjectSyncFrequency projectSyncFrequency;
 
-	public RemoteProjectSettingsUpdateRequest(boolean forceSync, boolean changeUser,
+	public RemoteProjectSettingsUpdateRequest(boolean forceSync, boolean markSync, boolean changeUser,
 			ProjectSyncFrequency projectSyncFrequency) {
 		this.forceSync = forceSync;
+		this.markSync = markSync;
 		this.changeUser = changeUser;
 		this.projectSyncFrequency = projectSyncFrequency;
 	}
@@ -30,7 +32,15 @@ public class RemoteProjectSettingsUpdateRequest {
 		this.forceSync = forceSync;
 	}
 
-	public boolean getChangeUser() {
+    public boolean getMarkSync() {
+        return markSync;
+    }
+
+    public void setMarkSync(boolean markSync) {
+        this.markSync = markSync;
+    }
+
+    public boolean getChangeUser() {
 		return changeUser;
 	}
 

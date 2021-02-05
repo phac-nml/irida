@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, notification, Typography } from "antd";
+import { Button, Space, Form, notification, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { RemoteApiStatus } from "../../admin/components/remote-connections/RemoteApiStatus";
 import {
@@ -46,21 +46,39 @@ export function ProjectSynchronizationSettings() {
             desc: (
               <div>
                 <div>{formatDate({ date: remoteProjectData.lastUpdate })}</div>
-                <Button
-                  type="primary"
-                  onClick={() => updateSyncSettings({ forceSync: true })}
-                  disabled={
-                    (disableSyncNow ? true : false) ||
-                    (syncNowEnabledStates.includes(
-                      remoteProjectData.remoteStatus.syncStatus
-                    )
-                      ? false
-                      : true)
-                  }
-                  className="t-sync-now-btn"
-                >
-                  {i18n("ProjectRemoteSettings.syncNow")}
-                </Button>
+                <Space>
+                  <Button
+                    type="primary"
+                    onClick={() => updateSyncSettings({ markSync: true })}
+                    disabled={
+                      (disableSyncNow ? true : false) ||
+                      (syncNowEnabledStates.includes(
+                        remoteProjectData.remoteStatus.syncStatus
+                      )
+                        ? false
+                        : true)
+                    }
+                    className="t-sync-now-btn"
+                  >
+                    {i18n("ProjectRemoteSettings.syncNow")}
+                  </Button>
+
+                  <Button
+                    type="primary"
+                    onClick={() => updateSyncSettings({ forceSync: true })}
+                    disabled={
+                      (disableSyncNow ? true : false) ||
+                      (syncNowEnabledStates.includes(
+                        remoteProjectData.remoteStatus.syncStatus
+                      )
+                        ? false
+                        : true)
+                    }
+                    className="t-sync-force-btn"
+                  >
+                    {i18n("ProjectRemoteSettings.forceSync")}
+                  </Button>
+                </Space>
               </div>
             ),
           },
@@ -127,15 +145,16 @@ export function ProjectSynchronizationSettings() {
         ];
 
   // Used to update sync user, sync frequency, and force to sync now
-  function updateSyncSettings({ forceSync, changeUser, projectSyncFrequency }) {
+  function updateSyncSettings({ forceSync, markSync, changeUser, projectSyncFrequency }) {
     updateRemoteProjectSyncSettings(projectId, {
       forceSync,
+      markSync,
       changeUser,
       projectSyncFrequency,
     })
       .then(({ responseMessage }) => {
         notification.success({ message: responseMessage });
-        if (forceSync) {
+        if (forceSync || markSync) {
           setDisableSyncNow(true);
         }
       })

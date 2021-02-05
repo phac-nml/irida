@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import java.util.Objects;
 
 /**
@@ -36,6 +39,12 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 		this.submission = submission;
 	}
 
+	public PipelineProvidedMetadataEntry(String value, String type, MetadataTemplateField field,
+			AnalysisSubmission submission) {
+		super(value, type, field);
+		this.submission = submission;
+	}
+
 	/**
 	 * Get the {@link AnalysisSubmission} that created this metadata
 	 *
@@ -44,7 +53,7 @@ public class PipelineProvidedMetadataEntry extends MetadataEntry {
 	public AnalysisSubmission getSubmission() {
 		return submission;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

@@ -8,14 +8,14 @@
   <head>
     <meta charset="UTF-8" />
     <title th:text="#{ProjectRemoteSettings.title}">Title</title>
-    <webpacker:css entry="project-settings-remote"/>
+    <webpacker:css entry="project-remote"/>
   </head>
   <body>
     <div id="project-remote-root" layout:fragment="settings-content" >
       <div th:text="#{ProjectRemote.loading}">LOADING ...</div>
     </div>
     <th:block layout:fragment="scripts">
-        <webpacker:js entry="project-settings-remote"/>
+        <webpacker:js entry="project-remote"/>
     </th:block>
   </body>
 </html>

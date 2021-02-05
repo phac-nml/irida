@@ -1,42 +1,60 @@
-import React, { useRef } from "react";
-import { Button, Modal } from "antd";
-import { MarkdownEditor } from "../../../../components/markdown/MarkdownEditor";
-import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import React from "react";
+import { Button, Modal, Space } from "antd";
+import AnnouncementForm from "./AnnouncementForm";
 import { IconEdit } from "../../../../components/icons/Icons";
+import { FONT_COLOR_PRIMARY } from "../../../../styles/fonts";
+import {
+  useVisibility,
+  VisibilityProvider,
+} from "../../../../contexts/visibility-context";
 
 /**
- * Render React component to edit an announcement.
- * @param {string} announcement - announcement to edit.
- * @param {function} updateAnnouncement - function to update the announcement.
+ * Render a modal that displays the announcement form.
+ * @param {object} announcement - the announcement that is to be updated.
+ * @param {function} updateAnnouncement - the function that updates an announcement.
  * @returns {*}
  * @constructor
  */
-export function EditAnnouncement({ announcement, updateAnnouncement }) {
-  const markdownRef = useRef();
-
-  function saveMarkdown() {
-    const md = markdownRef.current.getMarkdown();
-    updateAnnouncement({ message: md, id: announcement.id });
-  }
-
-  function displayModal() {
-    Modal.confirm({
-      title: i18n("EditAnnouncement.title"),
-      icon: <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />,
-      width: "80%",
-      content: (
-        <MarkdownEditor ref={markdownRef} markdown={announcement.message} />
-      ),
-      okText: i18n("EditAnnouncement.okBtn"),
-      onOk() {
-        saveMarkdown();
-      }
-    });
-  }
+function EditAnnouncementModal({ announcement, updateAnnouncement }) {
+  const [visible, setVisibility] = useVisibility();
 
   return (
-    <Button shape={"circle"} onClick={displayModal}>
-      <IconEdit />
-    </Button>
+    <>
+      <Button
+        shape={"circle"}
+        onClick={() => setVisibility(true)}
+        className={"t-edit-announcement"}
+      >
+        <IconEdit />
+      </Button>
+      <Modal
+        title={
+          <Space>
+            <IconEdit style={{ color: FONT_COLOR_PRIMARY }} />
+            {i18n("EditAnnouncement.title")}
+          </Space>
+        }
+        onCancel={() => setVisibility(false)}
+        visible={visible}
+        width={640}
+        footer={null}
+      >
+        <AnnouncementForm
+          announcement={announcement}
+          updateAnnouncement={updateAnnouncement}
+        />
+      </Modal>
+    </>
+  );
+}
+
+export default function EditAnnouncement({ announcement, updateAnnouncement }) {
+  return (
+    <VisibilityProvider>
+      <EditAnnouncementModal
+        announcement={announcement}
+        updateAnnouncement={updateAnnouncement}
+      />
+    </VisibilityProvider>
   );
 }

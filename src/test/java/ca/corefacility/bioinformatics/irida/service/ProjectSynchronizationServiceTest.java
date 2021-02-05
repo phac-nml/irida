@@ -83,6 +83,7 @@ public class ProjectSynchronizationServiceTest {
 		api = new RemoteAPI();
 		expired = new Project();
 		expired.setId(1L);
+		expired.setRemoteProjectHash(1);
 		RemoteStatus expStatus = new RemoteStatus("http://expired", api);
 		expStatus.setId(1L);
 		expStatus.setLastUpdate(new Date(1));
@@ -132,11 +133,39 @@ public class ProjectSynchronizationServiceTest {
 				.thenReturn(Lists.newArrayList(expired));
 		when(projectRemoteService.read(expired.getRemoteStatus().getURL())).thenReturn(remoteProject);
 
+		when(projectRemoteService.getProjectHash(remoteProject)).thenReturn(2);
+
 		when(projectService.update(remoteProject)).thenReturn(remoteProject);
 
 		syncService.findMarkedProjectsToSync();
 
 		verify(projectService, times(3)).update(any(Project.class));
+		verify(projectRemoteService).getProjectHash(remoteProject);
+
+		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
+	}
+
+	@Test
+	public void testSyncProjectsSameHash() {
+		expired.getRemoteStatus().setSyncStatus(SyncStatus.MARKED);
+		when(projectService.read(expired.getId())).thenReturn(expired);
+		Project remoteProject = new Project();
+		remoteProject.setRemoteStatus(expired.getRemoteStatus());
+		User readBy = new User();
+		expired.getRemoteStatus().setReadBy(readBy);
+		when(projectService.getProjectsWithRemoteSyncStatus(RemoteStatus.SyncStatus.MARKED))
+				.thenReturn(Lists.newArrayList(expired));
+		when(projectRemoteService.read(expired.getRemoteStatus().getURL())).thenReturn(remoteProject);
+
+		when(projectRemoteService.getProjectHash(remoteProject)).thenReturn(expired.getRemoteProjectHash());
+
+		when(projectService.update(remoteProject)).thenReturn(remoteProject);
+
+		syncService.findMarkedProjectsToSync();
+
+		verify(projectService, times(2)).update(any(Project.class));
+		verify(projectRemoteService).getProjectHash(remoteProject);
+		verifyZeroInteractions(sampleRemoteService);
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}

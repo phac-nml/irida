@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.announcements;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import com.google.common.collect.ComparisonChain;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -48,9 +49,17 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     @Column(name = "created_date", updatable = false)
     private Date createdDate;
 
+    @Column(name = "title")
+    @NotNull
+    private String title;
+
     @Column(name = "message")
     @Lob
     private String message;
+
+    @Column(name = "priority")
+    @NotNull
+    private boolean priority;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "created_by_id")
@@ -64,24 +73,30 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
      */
     private Announcement() {
         createdDate = new Date();
+        this.title = null;
         this.message = null;
+        this.priority = false;
         this.user = null;
     }
 
     /**
      *      Create a new {@link Announcement} object, for display on the front page.
+     * @param title of the announcement
      * @param message Content of the announcement
+     * @param priority of the announcement
      * @param user The {@link User} that created the announcement
      */
-    public Announcement(String message, User user) {
+    public Announcement(String title, String message, boolean priority, User user) {
         this();
+        this.title = title;
         this.message = message;
+        this.priority = priority;
         this.user = user;
     }
 
     @Override
     public int compareTo(Announcement other) {
-        return this.createdDate.compareTo(other.getCreatedDate());
+        return ComparisonChain.start().compareTrueFirst(priority, other.getPriority()).compare(other.getCreatedDate(), createdDate).result();
     }
 
     public Long getId() {
@@ -92,8 +107,16 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         return createdDate;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public String getMessage() {
         return message;
+    }
+
+    public boolean getPriority() {
+        return priority;
     }
 
     public User getUser() {
@@ -104,8 +127,16 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         return getMessage();
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setPriority(boolean priority) {
+        this.priority = priority;
     }
 
     public void setUser(User user) {
