@@ -4,6 +4,9 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
+/**
+ * UI model for the priority and available priorities for a projects automated pipelines
+ */
 public class Priorities {
 	private String priority;
 	private List<SelectOption> priorities;
