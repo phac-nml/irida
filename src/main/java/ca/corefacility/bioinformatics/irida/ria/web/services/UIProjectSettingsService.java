@@ -39,6 +39,12 @@ public class UIProjectSettingsService {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get the current analysis priority for a project as well as the available priorities.
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @return {@link Priorities}
+	 */
 	public Priorities getProcessingInformation(Long projectId) {
 		Priorities response = new Priorities();
 
