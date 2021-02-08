@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +66,7 @@ public class UIAnnouncementsService {
 	public List<AnnouncementUserReadDetails> getAnnouncementsUser(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 		List<AnnouncementUserReadDetails> announcements = announcementService.getAnnouncementsForUser(user);
+		Collections.sort(announcements);
 		return announcements;
 	}
 
@@ -77,6 +79,7 @@ public class UIAnnouncementsService {
 	public List<AnnouncementUserJoin> getReadAnnouncementsUser(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 		List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(user);
+		Collections.sort(readAnnouncements);
 		return readAnnouncements;
 	}
 
@@ -89,6 +92,7 @@ public class UIAnnouncementsService {
 	public List<Announcement> getUnreadAnnouncementsUser(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 		List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+		Collections.sort(unreadAnnouncements);
 		return unreadAnnouncements;
 	}
 
