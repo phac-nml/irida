@@ -101,15 +101,15 @@ export function AnnouncementsPage({}) {
             renderItem={(item) => (
               <List.Item
                 className="t-announcement-item"
-                style={item.read ? { backgroundColor: grey2 } : {}}
+                style={item.read ? {} : { backgroundColor: grey2 }}
               >
                 <List.Item.Meta
                   avatar=<Avatar
                     size="small"
                     style={
                       item.read
-                        ? { backgroundColor: grey2 }
-                        : { backgroundColor: "#fff" }
+                        ? { backgroundColor: "#fff" }
+                        : { backgroundColor: grey2 }
                     }
                     icon={
                       <PriorityFlag hasPriority={item.announcement.priority} />

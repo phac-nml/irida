@@ -20,7 +20,7 @@ public class AnnouncementUserReadDetails implements Comparable<AnnouncementUserR
 
 	@Override
 	public int compareTo(AnnouncementUserReadDetails other) {
-		return ComparisonChain.start().compareTrueFirst(isRead(), other.isRead()).compareTrueFirst(announcement.getPriority(), other.getAnnouncement().getPriority()).compare(other.getAnnouncement().getCreatedDate(), announcement.getCreatedDate()).result();
+		return ComparisonChain.start().compareFalseFirst(isRead(), other.isRead()).compareTrueFirst(announcement.getPriority(), other.getAnnouncement().getPriority()).compare(other.getAnnouncement().getCreatedDate(), announcement.getCreatedDate()).result();
 	}
 
 	public Announcement getAnnouncement() {
