@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user) {
-        return announcementUserJoinRepository.getAnnouncementsForUser(user);
+        List<AnnouncementUserReadDetails> announcements = announcementUserJoinRepository.getAnnouncementsForUser(user);
+        Collections.sort(announcements);
+        return announcements;
     }
 
     /**
@@ -177,7 +180,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserJoin> getReadAnnouncementsForUser(User user) {
-        return announcementUserJoinRepository.getAnnouncementsReadByUser(user);
+        List<AnnouncementUserJoin> readAnnouncements = announcementUserJoinRepository.getAnnouncementsReadByUser(user);
+        Collections.sort(readAnnouncements);
+        return readAnnouncements;
     }
 
 
@@ -187,7 +192,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<Announcement> getUnreadAnnouncementsForUser(User user) {
-        return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
+        List<Announcement> unreadAnnouncements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
+        Collections.sort(unreadAnnouncements);
+        return unreadAnnouncements;
     }
 
     /**

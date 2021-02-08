@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
@@ -51,7 +50,6 @@ public class AnnouncementAjaxController {
 	@RequestMapping(value = "/user/list")
 	public ResponseEntity<List<AnnouncementUserReadDetails>> getAnnouncementsUser(Principal principal) {
 		List<AnnouncementUserReadDetails> announcements = service.getAnnouncementsUser(principal);
-		Collections.sort(announcements);
 		return ResponseEntity.ok(announcements);
 	}
 
@@ -64,7 +62,6 @@ public class AnnouncementAjaxController {
 	@RequestMapping(value = "/user/read")
 	public ResponseEntity<List<AnnouncementUserJoin>> getReadAnnouncementsUser(Principal principal) {
 		List<AnnouncementUserJoin> readAnnouncements = service.getReadAnnouncementsUser(principal);
-		Collections.sort(readAnnouncements);
 		return ResponseEntity.ok(readAnnouncements);
 	}
 
@@ -77,7 +74,6 @@ public class AnnouncementAjaxController {
 	@RequestMapping(value = "/user/unread")
 	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
 		List<Announcement> unreadAnnouncements = service.getUnreadAnnouncementsUser(principal);
-		Collections.sort(unreadAnnouncements);
 		return ResponseEntity.ok(unreadAnnouncements);
 	}
 
