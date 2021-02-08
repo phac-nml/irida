@@ -1,28 +1,37 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import org.openqa.selenium.By;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Page class for the project settings processing page
  */
 public class ProjectSettingsProcessingPage extends AbstractPage {
+	@FindBy(className = "t-analysis-template")
+	private List<WebElement> existingTemplates;
 
-	private static final String CREATE_BUTTON_ID = "create-auto-analysis";
-	@FindBy(id = CREATE_BUTTON_ID)
-	private WebElement createAnalysisButton;
+	@FindBy(className = "t-create-template")
+	private List<WebElement> createAnalysisButton;
 
-	@FindBy(className = "auto-analysis-status")
-	private List<WebElement> automatedAnalyses;
-
-	@FindBy(className = "t-remove-auto-analysis")
+	@FindBy(className = "t-remove-template")
 	private List<WebElement> removeAnalysisButtons;
+
+	@FindBy(className = "t-confirm-remove")
+	private WebElement confirmRemoveButton;
+
+	@FindBy(className = "t-template-modal")
+	private WebElement templateModal;
+
+	@FindBy(className = "t-select-template")
+	private List<WebElement> selectTemplateButtons;
 
 	public ProjectSettingsProcessingPage(WebDriver driver) {
 		super(driver);
@@ -39,26 +48,28 @@ public class ProjectSettingsProcessingPage extends AbstractPage {
 	}
 
 	public boolean isCreateAnalysisButtonVisible() {
-		return driver.findElements(By.id(CREATE_BUTTON_ID))
-				.size() > 0;
+		return createAnalysisButton.size() > 0;
 	}
 
 	public void clickCreateAnalysis() {
-		this.createAnalysisButton.click();
+		this.createAnalysisButton.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOf(templateModal));
 	}
 
 	public void removeFirstAnalysis() {
-		removeAnalysisButtons.iterator()
-				.next()
-				.click();
+		removeAnalysisButtons.get(0).click();
 
-		waitForElementsVisible(By.id("remove-template-button"));
-
-		driver.findElement(By.id("remove-template-button"))
-				.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementToBeClickable(confirmRemoveButton));
+		confirmRemoveButton.click();
 	}
 
 	public int countAutomatedAnalyses() {
-		return automatedAnalyses.size();
+		return existingTemplates.size();
+	}
+
+	public void selectAutomatedTemplateByIndex(int index) {
+		selectTemplateButtons.get(index).click();
 	}
 }

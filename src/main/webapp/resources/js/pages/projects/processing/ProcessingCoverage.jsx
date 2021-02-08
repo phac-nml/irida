@@ -17,7 +17,7 @@ import {
   updateProcessingCoverage,
 } from "../../../apis/projects/settings";
 
-export function ProcessingCoverage({ projectId }) {
+export function ProcessingCoverage({ projectId, canManage }) {
   const [visible, setVisible] = React.useState(false);
   const [coverage, setCoverage] = React.useState({});
   const [form] = Form.useForm();
@@ -66,40 +66,44 @@ export function ProcessingCoverage({ projectId }) {
         <Typography.Title level={3}>
           {i18n("ProcessingCoverage.title")}
         </Typography.Title>
-        <Button onClick={() => setVisible(true)}>
-          {i18n("form.btn.edit")}
-        </Button>
-        <Modal
-          title={i18n("ProcessingCoverage.modal.title")}
-          visible={visible}
-          onCancel={() => setVisible(false)}
-          onOk={update}
-        >
-          <Form layout="vertical" initialValues={coverage} form={form}>
-            <Form.Item
-              label={i18n("ProcessingCoverage.minimum")}
-              name="minimum"
-              precision={0}
-              rules={[numericValidator]}
+        {canManage && (
+          <span>
+            <Button onClick={() => setVisible(true)}>
+              {i18n("form.btn.edit")}
+            </Button>
+            <Modal
+              title={i18n("ProcessingCoverage.modal.title")}
+              visible={visible}
+              onCancel={() => setVisible(false)}
+              onOk={update}
             >
-              <InputNumber style={{ width: `100%` }} step={100} min={0} />
-            </Form.Item>
-            <Form.Item
-              label={i18n("ProcessingCoverage.maximum")}
-              name="maximum"
-              rules={[numericValidator]}
-            >
-              <InputNumber style={{ width: `100%` }} step={100} min={0} />
-            </Form.Item>
-            <Form.Item
-              label={i18n("ProcessingCoverage.genomeSize")}
-              name="genomeSize"
-              rules={[numericValidator]}
-            >
-              <InputNumber style={{ width: `100%` }} step={100} min={0} />
-            </Form.Item>
-          </Form>
-        </Modal>
+              <Form layout="vertical" initialValues={coverage} form={form}>
+                <Form.Item
+                  label={i18n("ProcessingCoverage.minimum")}
+                  name="minimum"
+                  precision={0}
+                  rules={[numericValidator]}
+                >
+                  <InputNumber style={{ width: `100%` }} step={100} min={0} />
+                </Form.Item>
+                <Form.Item
+                  label={i18n("ProcessingCoverage.maximum")}
+                  name="maximum"
+                  rules={[numericValidator]}
+                >
+                  <InputNumber style={{ width: `100%` }} step={100} min={0} />
+                </Form.Item>
+                <Form.Item
+                  label={i18n("ProcessingCoverage.genomeSize")}
+                  name="genomeSize"
+                  rules={[numericValidator]}
+                >
+                  <InputNumber style={{ width: `100%` }} step={100} min={0} />
+                </Form.Item>
+              </Form>
+            </Modal>
+          </span>
+        )}
       </div>
       <Row gutter={16}>
         <Col span={8}>
