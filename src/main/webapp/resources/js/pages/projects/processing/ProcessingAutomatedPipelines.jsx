@@ -3,12 +3,12 @@ import { AutomatedPipelineHeader } from "./AutomatedPipelineHeader";
 import { AnalysisTemplates } from "./AnalysisTemplates";
 import { ProcessingPriorities } from "./ProcessingPriorities";
 
-export function ProcessingAutomatedPipelines({ projectId }) {
+export function ProcessingAutomatedPipelines({ projectId, canManage }) {
   return (
     <section>
-      <AutomatedPipelineHeader projectId={projectId} />
-      <ProcessingPriorities projectId={projectId} />
-      <AnalysisTemplates projectId={projectId} />
+      <AutomatedPipelineHeader canMange={canManage} projectId={projectId} />
+      {canManage && <ProcessingPriorities projectId={projectId} />}
+      <AnalysisTemplates canManage={canManage} projectId={projectId} />
     </section>
   );
 }

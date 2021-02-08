@@ -9,6 +9,8 @@ const ProcessingLayout = () => {
     () => window.location.href.match(/projects\/(\d+)\/settings/i)[1]
   );
 
+  const { canManage } = window.project;
+
   return (
     <Row>
       <Col lg={24} xl={16} xxl={12}>
@@ -16,9 +18,12 @@ const ProcessingLayout = () => {
           {i18n("Processing.title")}
         </Typography.Title>
         <Space style={{ width: `100%` }} direction="vertical">
-          <ProcessingCoverage projectId={projectId} />
+          <ProcessingCoverage projectId={projectId} canManage={canManage} />
           <Divider />
-          <ProcessingAutomatedPipelines projectId={projectId} />
+          <ProcessingAutomatedPipelines
+            projectId={projectId}
+            canManage={canManage}
+          />
         </Space>
       </Col>
     </Row>
