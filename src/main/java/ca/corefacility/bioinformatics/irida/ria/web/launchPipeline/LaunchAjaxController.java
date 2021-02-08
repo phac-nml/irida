@@ -105,18 +105,31 @@ public class LaunchAjaxController {
     public ResponseEntity<AjaxResponse> saveNewPipelineParameters(@PathVariable UUID id,
             @RequestBody SavePipelineParametersRequest parameters, Locale locale) {
         try {
-            return ResponseEntity.ok(new CreateNamedParameterSetAjaxResponse(pipelineService.saveNewPipelineParameters(id, parameters, locale)));
+            return ResponseEntity.ok(new CreateNamedParameterSetAjaxResponse(
+                    pipelineService.saveNewPipelineParameters(id, parameters, locale)));
         } catch (IridaWorkflowNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new AjaxErrorResponse("Pipeline cannot be found"));
         }
     }
 
+    /**
+     * Get a list of all pipeline in the IRIDA instance
+     *
+     * @param locale currently logged in users locale
+     * @return list of pipelines
+     */
     @GetMapping("")
     public List<Pipeline> getAllPipelines(Locale locale) {
         return pipelineService.getWorkflowTypes(false, locale);
     }
 
+    /**
+     * Get a list of available automated pipelines within the IRIDA instance
+     *
+     * @param locale currently logged in users locale
+     * @return List of automated pipelines available
+     */
     @GetMapping("/automated")
     public List<Pipeline> getAutomatedPipelines(Locale locale) {
         return pipelineService.getWorkflowTypes(true, locale);

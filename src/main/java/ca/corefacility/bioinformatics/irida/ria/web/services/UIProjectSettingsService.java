@@ -39,6 +39,12 @@ public class UIProjectSettingsService {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get the current analysis priority for a project as well as the available priorities.
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @return {@link Priorities}
+	 */
 	public Priorities getProcessingInformation(Long projectId) {
 		Priorities response = new Priorities();
 
@@ -63,6 +69,15 @@ public class UIProjectSettingsService {
 		return response;
 	}
 
+	/**
+	 * Update the priority for a projects automated pipelines.
+	 *
+	 * @param projectId Identifier for a project
+	 * @param priority  updated {@link AnalysisSubmission.Priority} for running automated workflows
+	 * @param locale    currently logged in users locale
+	 * @return Message to user about the status of the priority update
+	 * @throws UpdateException thrown if the update cannot be performed
+	 */
 	public String updateProcessingPriority(Long projectId, AnalysisSubmission.Priority priority, Locale locale)
 			throws UpdateException {
 		Project project = projectService.read(projectId);
@@ -72,14 +87,28 @@ public class UIProjectSettingsService {
 		Map<String, Object> updates = ImmutableMap.of("analysisPriority", priority);
 		projectService.updateProjectSettings(project, updates);
 		return messageSource.getMessage("server.ProcessingPriorities.updated", null, locale);
-
 	}
 
+	/**
+	 * Get the coverage and genome size for a project
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @return The minimum and maximum coverage as well as the genome size.
+	 */
 	public Coverage getProcessingCoverageForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		return new Coverage(project.getMinimumCoverage(), project.getMaximumCoverage(), project.getGenomeSize());
 	}
 
+	/**
+	 * Update the minimum, maximum coverage or genome size for a project.
+	 *
+	 * @param coverage  Details about the update to either the minimum/maximum coverage or genome size
+	 * @param projectId identifier for a {@link Project}
+	 * @param locale    Currently logged in users locale
+	 * @return message to the user about the result of the update
+	 * @throws UpdateException thrown if there was an error updated the coverage.
+	 */
 	public String updateProcessingCoverage(Coverage coverage, Long projectId, Locale locale) throws UpdateException {
 		Project project = projectService.read(projectId);
 		Map<String, Object> updates = new HashMap<>();

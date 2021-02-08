@@ -52,6 +52,9 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
 		assertFalse("This pipeline does not need a reference file, so there should be none requested", page.isReferenceFilesRequiredDisplayed());
 
+		// Test email checkbox
+		assertEquals("No Email", page.getEmailValue());
+
 		// Test the name input
 		page.clearName();
 		assertTrue("There should be an error displayed that a name is required", page.isNameErrorDisplayed());
