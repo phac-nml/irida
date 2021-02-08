@@ -29,7 +29,7 @@ public class LaunchController {
      */
     @GetMapping("")
     public String getPipelineLaunchPage(@RequestParam(required = false) Long projectId) {
-        if(projectId != -1L || !cartService.isCartEmpty()) {
+        if(projectId != null || !cartService.isCartEmpty()) {
             return "launch";
         }
         // User cannot launch a pipeline if the cart is empty.
