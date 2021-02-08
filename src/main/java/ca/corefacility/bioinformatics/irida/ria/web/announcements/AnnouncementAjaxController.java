@@ -24,11 +24,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsServ
 @RestController
 @RequestMapping("/ajax/announcements")
 public class AnnouncementAjaxController {
-	private final UIAnnouncementsService UIAnnouncementsService;
+	private final UIAnnouncementsService service;
 
 	@Autowired
-	public AnnouncementAjaxController(UIAnnouncementsService UIAnnouncementsService) {
-		this.UIAnnouncementsService = UIAnnouncementsService;
+	public AnnouncementAjaxController(UIAnnouncementsService service) {
+		this.service = service;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/control/list")
 	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
-		return UIAnnouncementsService.getAnnouncementsAdmin(tableRequest);
+		return service.getAnnouncementsAdmin(tableRequest);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/user/list")
 	public ResponseEntity<List<AnnouncementUserReadDetails>> getAnnouncementsUser(Principal principal) {
-		List<AnnouncementUserReadDetails> announcements = UIAnnouncementsService.getAnnouncementsUser(principal);
+		List<AnnouncementUserReadDetails> announcements = service.getAnnouncementsUser(principal);
 		Collections.sort(announcements);
 		return ResponseEntity.ok(announcements);
 	}
@@ -63,7 +63,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/user/read")
 	public ResponseEntity<List<AnnouncementUserJoin>> getReadAnnouncementsUser(Principal principal) {
-		List<AnnouncementUserJoin> readAnnouncements = UIAnnouncementsService.getReadAnnouncementsUser(principal);
+		List<AnnouncementUserJoin> readAnnouncements = service.getReadAnnouncementsUser(principal);
 		Collections.sort(readAnnouncements);
 		return ResponseEntity.ok(readAnnouncements);
 	}
@@ -76,7 +76,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/user/unread")
 	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
-		List<Announcement> unreadAnnouncements = UIAnnouncementsService.getUnreadAnnouncementsUser(principal);
+		List<Announcement> unreadAnnouncements = service.getUnreadAnnouncementsUser(principal);
 		Collections.sort(unreadAnnouncements);
 		return ResponseEntity.ok(unreadAnnouncements);
 	}
@@ -89,7 +89,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/read/{aID}", method = RequestMethod.POST)
 	public void markAnnouncementRead(@PathVariable Long aID, Principal principal) {
-		UIAnnouncementsService.markAnnouncementAsReadByUser(aID, principal);
+		service.markAnnouncementAsReadByUser(aID, principal);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public void createNewAnnouncement(@RequestBody AnnouncementRequest announcementRequest, Principal principal) {
-		UIAnnouncementsService.createNewAnnouncement(announcementRequest, principal);
+		service.createNewAnnouncement(announcementRequest, principal);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/update", method = RequestMethod.PUT)
 	public void updateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
-		UIAnnouncementsService.updateAnnouncement(announcementRequest);
+		service.updateAnnouncement(announcementRequest);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	public void deleteAnnouncement(@RequestBody AnnouncementRequest announcementRequest) {
-		UIAnnouncementsService.deleteAnnouncement(announcementRequest);
+		service.deleteAnnouncement(announcementRequest);
 	}
 
 	/**
@@ -131,6 +131,6 @@ public class AnnouncementAjaxController {
 	 */
 	@RequestMapping(value = "/{aID}/details/list")
 	public TableResponse<AnnouncementUserTableModel> getUserAnnouncementInfoTable(@PathVariable Long aID, @RequestBody TableRequest tableRequest) {
-		return UIAnnouncementsService.getUserAnnouncementInfoTable(aID, tableRequest);
+		return service.getUserAnnouncementInfoTable(aID, tableRequest);
 	}
 }
