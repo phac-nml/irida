@@ -40,7 +40,7 @@ public class AnnouncementUserReadDetails implements Comparable<AnnouncementUserR
 	}
 
 	public boolean isRead() {
-		return announcementUserJoin == null;
+		return announcementUserJoin != null;
 	}
 
 }
