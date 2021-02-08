@@ -26,7 +26,7 @@ export function getAnnouncements() {
  */
 export function getReadAnnouncements() {
   try {
-    return axios.get(`${BASE}/user/read`);
+    return axios.get(`${BASE}/user/read`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -38,7 +38,7 @@ export function getReadAnnouncements() {
  */
 export function getUnreadAnnouncements() {
   try {
-    return axios.get(`${BASE}/user/unread`);
+    return axios.get(`${BASE}/user/unread`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
