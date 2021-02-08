@@ -24,8 +24,8 @@ export function AnnouncementsPage({}) {
 
   useEffect(() => {
     getAnnouncements().then((data) => {
-      setAnnouncements(data.data);
-      setFilteredAnnouncementsOnToggle(filter, data.data);
+      setAnnouncements(data);
+      setFilteredAnnouncementsOnToggle(filter, data);
     });
   }, [toggleRead]);
 

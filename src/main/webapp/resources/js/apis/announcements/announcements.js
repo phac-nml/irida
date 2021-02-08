@@ -14,7 +14,7 @@ const BASE = setBaseUrl(`ajax/announcements`);
  */
 export function getAnnouncements() {
   try {
-    return axios.get(`${BASE}/user/list`);
+    return axios.get(`${BASE}/user/list`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
