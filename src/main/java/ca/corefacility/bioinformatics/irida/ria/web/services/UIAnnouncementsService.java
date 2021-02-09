@@ -146,6 +146,7 @@ public class UIAnnouncementsService {
 	 * Get an announcement.
 	 *
 	 * @param aID ID of the {@link Announcement}
+	 * @return the found {@link Announcement}.
 	 */
 	public Announcement getAnnouncement(Long aID) {
 		Announcement announcement = announcementService.read(aID);
