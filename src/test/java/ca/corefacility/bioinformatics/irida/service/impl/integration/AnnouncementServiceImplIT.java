@@ -273,7 +273,7 @@ public class AnnouncementServiceImplIT {
         List<AnnouncementUserReadDetails> list = announcementService.getAnnouncementsForUser(user);
         assertEquals("Number of read and unread announcements doesn't match expected value", 6, list.size());
 
-        Long readListCount = list.stream().filter(a -> a.getAnnouncementUserJoin() != null).count();
+        Long readListCount = list.stream().filter(a -> a.getReadDate() != null).count();
         assertEquals("Number of unread announcements doesn't match expected value", 5L, (long) readListCount);
     }
 
