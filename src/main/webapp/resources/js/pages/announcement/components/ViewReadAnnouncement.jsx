@@ -49,7 +49,7 @@ function ViewReadAnnouncementModal({ announcementID, announcementTitle }) {
         </>
       ),
       content: (
-        <div style={{ overflowY: "auto", maxHeight: 600 }}>
+        <div style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }}>
           <Markdown source={announcement.message} />
         </div>
       ),
