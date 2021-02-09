@@ -62,7 +62,7 @@ export function getUnreadAnnouncements() {
  */
 export function markAnnouncementRead({ aID }) {
   try {
-    return axios.post(`${BASE}/read/${aID}`);
+    return axios.post(`${BASE}/read/${aID}`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -77,7 +77,9 @@ export function markAnnouncementRead({ aID }) {
  */
 export function createNewAnnouncement({ title, message, priority }) {
   try {
-    return axios.post(`${BASE}/create`, { title, message, priority });
+    return axios
+      .post(`${BASE}/create`, { title, message, priority })
+      .then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -93,7 +95,9 @@ export function createNewAnnouncement({ title, message, priority }) {
  */
 export function updateAnnouncement({ id, title, message, priority }) {
   try {
-    return axios.put(`${BASE}/update`, { id, title, message, priority });
+    return axios
+      .put(`${BASE}/update`, { id, title, message, priority })
+      .then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -111,5 +115,5 @@ export function deleteAnnouncement({ id }) {
     data: {
       id,
     },
-  });
+  }).then(({ data }) => data);
 }
