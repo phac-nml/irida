@@ -1,25 +1,34 @@
 import React from "react";
-import { Modal, Typography } from "antd";
+import { Modal, notification, Typography } from "antd";
 import { VisibilityProvider } from "../../../contexts/visibility-context";
 import { formatDate } from "../../../utilities/date-utilities";
 import Markdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
+import { getAnnouncement } from "../../../apis/announcements/announcements";
 
 const { Text } = Typography;
 const { info } = Modal;
 
 /**
- * Component to add a button which will open a modal to view a unread announcement.
- * @param {object} announcement - the announcement that is to be displayed.
- * @param {boolean} isRead - whether the announcement has been read.
- * @param {function} markAnnouncementAsRead - the function that marks the announcement as read.
+ * Component to add a button which will open a modal to view a read announcement.
+ * @param {long} announcementID - the announcement identifier.
+ * @param {string} announcementTitle - the announcement title to be displayed in the link.
  * @returns {*}
  * @constructor
  */
+function ViewReadAnnouncementModal({ announcementID, announcementTitle }) {
+  function showAnnouncement(aID) {
+    return getAnnouncement({ aID })
+      .then((data) => {
+        displayAnnouncement({ announcement: data });
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
 
-function ViewReadAnnouncementModal({ announcement }) {
-  const displayAnnouncement = () =>
+  const displayAnnouncement = ({ announcement }) =>
     info({
       type: "info",
       width: `60%`,
@@ -48,14 +57,24 @@ function ViewReadAnnouncementModal({ announcement }) {
 
   return (
     <>
-      <LinkButton text={announcement.title} onClick={displayAnnouncement} />
+      <LinkButton
+        text={announcementTitle}
+        onClick={() => showAnnouncement(announcementID)}
+      />
     </>
   );
 }
-export default function ViewReadAnnouncement({ announcement }) {
+
+export default function ViewReadAnnouncement({
+  announcementID,
+  announcementTitle,
+}) {
   return (
     <VisibilityProvider>
-      <ViewReadAnnouncementModal announcement={announcement} />
+      <ViewReadAnnouncementModal
+        announcementID={announcementID}
+        announcementTitle={announcementTitle}
+      />
     </VisibilityProvider>
   );
 }

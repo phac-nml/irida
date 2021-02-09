@@ -13,7 +13,6 @@ import { PriorityFlag } from "./PriorityFlag";
  * @returns {*}
  * @constructor
  */
-
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
 
@@ -55,7 +54,8 @@ export function AnnouncementDashboard() {
               icon={<PriorityFlag hasPriority={item.priority} />}
             />
             title=<ViewUnreadAnnouncement
-              announcement={item}
+              announcementID={item.identifier}
+              announcementTitle={item.title}
               markAnnouncementAsRead={markAnnouncementAsRead}
             />
             description={fromNow({ date: item.createdDate })}

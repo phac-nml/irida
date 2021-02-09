@@ -143,6 +143,16 @@ public class UIAnnouncementsService {
 	}
 
 	/**
+	 * Get an announcement.
+	 *
+	 * @param aID ID of the {@link Announcement}
+	 */
+	public Announcement getAnnouncement(Long aID) {
+		Announcement announcement = announcementService.read(aID);
+		return announcement;
+	}
+
+	/**
 	 * Get user read status for current announcement
 	 * @param announcementID {@link Long} identifier for the {@link Announcement}
 	 * @param tableRequest details about the current page of the table requested

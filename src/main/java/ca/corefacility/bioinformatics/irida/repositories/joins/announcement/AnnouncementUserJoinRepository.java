@@ -27,7 +27,7 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
      * @return A collection of {@link AnnouncementUserReadDetails}s representing the
      *         read and unread announcements for a user
      */
-    @Query ("select new ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails(a, j) from Announcement a left join AnnouncementUserJoin j on a.id = j.announcement.id and j.user = ?1")
+    @Query ("select new ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails(a.id, a.title, a.priority, a.createdDate, j.createdDate) from Announcement a left join AnnouncementUserJoin j on a.id = j.announcement.id and j.user = ?1")
     public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user);
 
     /**

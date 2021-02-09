@@ -23,10 +23,15 @@ export function AnnouncementsPage({}) {
   const [toggleRead, setToggleRead] = useState(false);
 
   useEffect(() => {
-    getAnnouncements().then((data) => {
-      setAnnouncements(data);
-      setFilteredAnnouncementsOnToggle(filter, data);
-    });
+    getAnnouncements()
+      .then((data) => {
+        console.log(data);
+        setAnnouncements(data);
+        setFilteredAnnouncementsOnToggle(filter, data);
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
   }, [toggleRead]);
 
   useEffect(() => {
@@ -47,11 +52,11 @@ export function AnnouncementsPage({}) {
     switch (filterOption) {
       case "read":
         return setFilteredAnnouncements(
-          announcementsList.filter((item) => item.announcementUserJoin !== null)
+          announcementsList.filter((item) => item.read)
         );
       case "unread":
         return setFilteredAnnouncements(
-          announcementsList.filter((item) => item.announcementUserJoin === null)
+          announcementsList.filter((item) => !item.read)
         );
       default:
         return setFilteredAnnouncements(announcementsList);
@@ -111,21 +116,23 @@ export function AnnouncementsPage({}) {
                         ? { backgroundColor: "#fff" }
                         : { backgroundColor: grey2 }
                     }
-                    icon={
-                      <PriorityFlag hasPriority={item.announcement.priority} />
-                    }
+                    icon={<PriorityFlag hasPriority={item.priority} />}
                   />
                   title={
                     item.read ? (
-                      <ViewUnreadAnnouncement
-                        announcement={item.announcement}
-                        markAnnouncementAsRead={markAnnouncementAsRead}
+                      <ViewReadAnnouncement
+                        announcementID={item.announcementID}
+                        announcementTitle={item.title}
                       />
                     ) : (
-                      <ViewReadAnnouncement announcement={item.announcement} />
+                      <ViewUnreadAnnouncement
+                        announcementID={item.announcementID}
+                        announcementTitle={item.title}
+                        markAnnouncementAsRead={markAnnouncementAsRead}
+                      />
                     )
                   }
-                  description={fromNow({ date: item.announcement.createdDate })}
+                  description={fromNow({ date: item.createdDate })}
                 />
               </List.Item>
             )}

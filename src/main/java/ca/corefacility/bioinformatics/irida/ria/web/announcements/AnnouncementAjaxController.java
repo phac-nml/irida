@@ -120,6 +120,18 @@ public class AnnouncementAjaxController {
 	}
 
 	/**
+	 * Handles request for getting an announcement.
+	 *
+	 * @param aID ID of the {@link Announcement}
+	 * @return an {@link Announcement}
+	 */
+	@RequestMapping(value = "/{aID}")
+	public ResponseEntity<Announcement> getAnnouncement(@PathVariable Long aID) {
+		Announcement announcement = service.getAnnouncement(aID);
+		return ResponseEntity.ok(announcement);
+	}
+
+	/**
 	 * Handles request for getting user read status for current announcement
 	 * @param aID {@link Long} identifier for the {@link Announcement}
 	 * @param tableRequest details about the current page of the table requested

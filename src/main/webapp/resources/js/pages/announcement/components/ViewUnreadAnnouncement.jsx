@@ -1,21 +1,39 @@
 import React from "react";
-import { Modal, Typography } from "antd";
+import { Modal, notification, Typography } from "antd";
 import { VisibilityProvider } from "../../../contexts/visibility-context";
 import { formatDate } from "../../../utilities/date-utilities";
 import Markdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
+import { getAnnouncement } from "../../../apis/announcements/announcements";
+
+const { Text } = Typography;
+const { confirm } = Modal;
 
 /**
  * Component to add a button which will open a modal to view a unread announcement.
- * @param {function} ViewAnnouncement - the function that displays a unread announcement.
+ * @param {long} announcementID - the announcement identifier.
+ * @param {string} announcementTitle - the announcement title to be displayed in the link.
+ * @param {function} markAnnouncementAsRead - the function that marks an announcement as read.
  * @returns {*}
  * @constructor
  */
-const { Text } = Typography;
-const { confirm } = Modal;
-function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
-  const displayAnnouncement = () =>
+function ViewUnreadAnnouncementModal({
+  announcementID,
+  announcementTitle,
+  markAnnouncementAsRead,
+}) {
+  function showAnnouncement(aID) {
+    return getAnnouncement({ aID })
+      .then((data) => {
+        displayAnnouncement({ announcement: data });
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
+
+  const displayAnnouncement = ({ announcement }) =>
     confirm({
       type: "info",
       width: `60%`,
@@ -45,18 +63,23 @@ function ViewUnreadAnnouncementModal({ announcement, markAnnouncementAsRead }) {
     });
   return (
     <>
-      <LinkButton text={announcement.title} onClick={displayAnnouncement} />
+      <LinkButton
+        text={announcementTitle}
+        onClick={() => showAnnouncement(announcementID)}
+      />
     </>
   );
 }
 export default function ViewUnreadAnnouncement({
-  announcement,
+  announcementID,
+  announcementTitle,
   markAnnouncementAsRead,
 }) {
   return (
     <VisibilityProvider>
       <ViewUnreadAnnouncementModal
-        announcement={announcement}
+        announcementID={announcementID}
+        announcementTitle={announcementTitle}
         markAnnouncementAsRead={markAnnouncementAsRead}
       />
     </VisibilityProvider>

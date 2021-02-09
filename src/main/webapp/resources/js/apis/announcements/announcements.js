@@ -9,6 +9,18 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 const BASE = setBaseUrl(`ajax/announcements`);
 
 /**
+ * Get an announcement.
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function getAnnouncement({ aID }) {
+  try {
+    return axios.get(`${BASE}/${aID}`).then(({ data }) => data);
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
+}
+
+/**
  * Get all the read and unread announcements.
  * @returns {Promise<AxiosResponse<T>>}
  */
