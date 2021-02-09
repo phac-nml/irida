@@ -25,7 +25,6 @@ export function AnnouncementsPage({}) {
   useEffect(() => {
     getAnnouncements()
       .then((data) => {
-        console.log(data);
         setAnnouncements(data);
         setFilteredAnnouncementsOnToggle(filter, data);
       })
