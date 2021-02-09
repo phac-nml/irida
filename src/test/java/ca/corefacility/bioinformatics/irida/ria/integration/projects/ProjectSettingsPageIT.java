@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsProcessingPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -34,16 +35,8 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 		processingPage.selectAutomatedTemplateByIndex(0);
 
-		// TODO: Update below with new pipeline code from next testing branch.
-
-//		BasicPipelinePage pipelinePage = new BasicPipelinePage(driver());
-//		pipelinePage.clickLaunchPipelineBtn();
-//
-//		assertTrue("Pipeline should say it's been created", pipelinePage.isPipelineSubmittedMessageShown());
-//
-//		processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
-//
-//		assertEquals("should be 2 automated analysis", 2, processingPage.countAutomatedAnalyses());
+		LaunchPipelinePage page = LaunchPipelinePage.init(driver());
+		assertEquals("Should be on the Assembly Pipeline", "Assembly and Annotation Pipeline", page.getPipelineName());
 	}
 
 	@Test
