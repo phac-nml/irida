@@ -23,11 +23,15 @@ export const AUTOMATED_ID = (() => {
  * @returns {string}
  */
 export function formatDefaultPipelineName(type, date) {
-  return `${type.replace(" ", "_")}__${formatInternationalizedDateTime(date, {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  }).replace(/\//g, "-")}`;
+  if (AUTOMATED_ID) {
+    return `${type}_automated`;
+  } else {
+    return `${type.replace(" ", "_")}__${formatInternationalizedDateTime(date, {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    }).replace(/\//g, "-")}`;
+  }
 }
 
 export function formatSavedParameterSets(sets = []) {
