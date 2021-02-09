@@ -23,7 +23,6 @@ public class AnnouncementReadPage extends AbstractPage {
     public List<WebElement> getAllReadAnnouncements() {
         WebElement readButton = driver.findElement(By.cssSelector(".t-read-announcements"));
         readButton.click();
-        //waitForTime(DEFAULT_WAIT);
         return driver.findElements(By.cssSelector(".t-announcement-item"));
     }
 }
