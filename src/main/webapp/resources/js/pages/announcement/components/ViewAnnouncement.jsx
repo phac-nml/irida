@@ -5,6 +5,7 @@ import Markdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 import { getAnnouncement } from "../../../apis/announcements/announcements";
+import { VisibilityProvider } from "../../../contexts/visibility-context";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -17,7 +18,7 @@ const { confirm } = Modal;
  * @returns {*}
  * @constructor
  */
-export default function ViewAnnouncementModal({
+function ViewAnnouncementModal({
   announcementID,
   announcementTitle,
   markAnnouncementAsRead,
@@ -41,13 +42,16 @@ export default function ViewAnnouncementModal({
       onOk() {
         markAnnouncementAsRead(announcement.identifier);
       },
+      okButtonProps: markAnnouncementAsRead
+        ? {}
+        : { style: { display: "none" } },
       title: (
         <>
           <Text strong>{announcement.title}</Text>
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
             {i18n(
-              "ViewAnnouncementModal.details",
+              "ViewAnnouncement.details",
               announcement.user.username,
               formatDate({ date: announcement.createdDate })
             )}
@@ -67,5 +71,21 @@ export default function ViewAnnouncementModal({
         onClick={() => showAnnouncement(announcementID)}
       />
     </>
+  );
+}
+
+export default function ViewAnnouncement({
+  announcementID,
+  announcementTitle,
+  markAnnouncementAsRead,
+}) {
+  return (
+    <VisibilityProvider>
+      <ViewAnnouncementModal
+        announcementID={announcementID}
+        announcementTitle={announcementTitle}
+        markAnnouncementAsRead={markAnnouncementAsRead}
+      />
+    </VisibilityProvider>
   );
 }

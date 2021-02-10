@@ -17,8 +17,7 @@ import {
 } from "antd";
 import { PriorityFlag } from "./PriorityFlag";
 import { fromNow } from "../../../utilities/date-utilities";
-import ViewReadAnnouncement from "./ViewReadAnnouncement";
-import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
+import ViewAnnouncement from "./ViewAnnouncement";
 import { grey2 } from "../../../styles/colors";
 
 /**
@@ -129,12 +128,12 @@ export function AnnouncementsPage({}) {
                     />
                     title={
                       item.read ? (
-                        <ViewReadAnnouncement
+                        <ViewAnnouncement
                           announcementID={item.announcementID}
                           announcementTitle={item.title}
                         />
                       ) : (
-                        <ViewUnreadAnnouncement
+                        <ViewAnnouncement
                           announcementID={item.announcementID}
                           announcementTitle={item.title}
                           markAnnouncementAsRead={markAnnouncementAsRead}

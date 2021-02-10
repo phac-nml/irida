@@ -5,7 +5,7 @@ import {
   getUnreadAnnouncements,
   markAnnouncementRead,
 } from "../../../apis/announcements/announcements";
-import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
+import ViewAnnouncement from "./ViewAnnouncement";
 import { PriorityFlag } from "./PriorityFlag";
 
 /**
@@ -53,7 +53,7 @@ export function AnnouncementDashboard() {
               style={{ backgroundColor: "#fff" }}
               icon={<PriorityFlag hasPriority={item.priority} />}
             />
-            title=<ViewUnreadAnnouncement
+            title=<ViewAnnouncement
               announcementID={item.identifier}
               announcementTitle={item.title}
               markAnnouncementAsRead={markAnnouncementAsRead}
