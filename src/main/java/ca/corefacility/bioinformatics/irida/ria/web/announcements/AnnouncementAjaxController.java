@@ -56,7 +56,7 @@ public class AnnouncementAjaxController {
 	/**
 	 * Handle request for getting a list of read announcements for a user.
 	 *
-	 * @param principal the currently getUnreadlogged in user
+	 * @param principal the currently logged in user
 	 * @return a {@link List} of unread {@link AnnouncementUserJoin}s for a user.
 	 */
 	@RequestMapping(value = "/user/read")
