@@ -13,22 +13,21 @@ import { PriorityFlag } from "./PriorityFlag";
  * @returns {*}
  * @constructor
  */
-
 export function AnnouncementDashboard() {
   const [unreadAnnouncements, setUnreadAnnouncements] = useState([]);
-  const [unreadTotal, setUnreadTotal] = useState(0);
 
   useEffect(() => {
     getUnreadAnnouncements().then((data) => {
-      setUnreadAnnouncements(data.data);
-      setUnreadTotal(data.data.length);
+      setUnreadAnnouncements(data);
     });
-  }, [unreadTotal]);
+  }, []);
 
   function markAnnouncementAsRead(aID) {
     return markAnnouncementRead({ aID })
       .then(() => {
-        setUnreadTotal(unreadTotal - 1);
+        setUnreadAnnouncements(
+          unreadAnnouncements.filter((item) => item.identifier !== aID)
+        );
       })
       .catch(({ message }) => {
         notification.error({ message });
@@ -45,7 +44,7 @@ export function AnnouncementDashboard() {
           />
         ),
       }}
-      pagination={unreadTotal > 5 ? { pageSize: 5 } : false}
+      pagination={unreadAnnouncements.length > 5 ? { pageSize: 5 } : false}
       dataSource={unreadAnnouncements}
       renderItem={(item) => (
         <List.Item className="t-announcement-item">
@@ -55,7 +54,8 @@ export function AnnouncementDashboard() {
               icon={<PriorityFlag hasPriority={item.priority} />}
             />
             title=<ViewUnreadAnnouncement
-              announcement={item}
+              announcementID={item.identifier}
+              announcementTitle={item.title}
               markAnnouncementAsRead={markAnnouncementAsRead}
             />
             description={fromNow({ date: item.createdDate })}

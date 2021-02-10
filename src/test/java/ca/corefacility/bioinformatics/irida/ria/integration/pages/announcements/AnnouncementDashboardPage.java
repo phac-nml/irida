@@ -21,11 +21,6 @@ public class AnnouncementDashboardPage extends AbstractPage {
         driver.get("dashboard");
     }
 
-    public void viewReadAnnouncements() {
-        WebElement viewReadButton = driver.findElement(By.id("view-read-announcements"));
-        viewReadButton.click();
-    }
-
     public List<WebElement> getCurrentUnreadAnnouncements() {
         return driver.findElements(By.cssSelector(".t-announcement-item"));
     }

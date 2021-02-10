@@ -9,12 +9,36 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 const BASE = setBaseUrl(`ajax/announcements`);
 
 /**
+ * Get an announcement.
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function getAnnouncement({ aID }) {
+  try {
+    return axios.get(`${BASE}/${aID}`).then(({ data }) => data);
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
+}
+
+/**
+ * Get all the read and unread announcements.
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function getAnnouncements() {
+  try {
+    return axios.get(`${BASE}/user/list`).then(({ data }) => data);
+  } catch (error) {
+    return Promise.reject(error.response.data.error);
+  }
+}
+
+/**
  * Get all the read announcements.
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function getReadAnnouncements() {
   try {
-    return axios.get(`${BASE}/user/read`);
+    return axios.get(`${BASE}/user/read`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -26,7 +50,7 @@ export function getReadAnnouncements() {
  */
 export function getUnreadAnnouncements() {
   try {
-    return axios.get(`${BASE}/user/unread`);
+    return axios.get(`${BASE}/user/unread`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -50,7 +74,7 @@ export function getUnreadAnnouncementsCount() {
  */
 export function markAnnouncementRead({ aID }) {
   try {
-    return axios.post(`${BASE}/read/${aID}`);
+    return axios.post(`${BASE}/read/${aID}`).then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -65,7 +89,9 @@ export function markAnnouncementRead({ aID }) {
  */
 export function createNewAnnouncement({ title, message, priority }) {
   try {
-    return axios.post(`${BASE}/create`, { title, message, priority });
+    return axios
+      .post(`${BASE}/create`, { title, message, priority })
+      .then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -81,7 +107,9 @@ export function createNewAnnouncement({ title, message, priority }) {
  */
 export function updateAnnouncement({ id, title, message, priority }) {
   try {
-    return axios.put(`${BASE}/update`, { id, title, message, priority });
+    return axios
+      .put(`${BASE}/update`, { id, title, message, priority })
+      .then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
   }
@@ -99,5 +127,5 @@ export function deleteAnnouncement({ id }) {
     data: {
       id,
     },
-  });
+  }).then(({ data }) => data);
 }
