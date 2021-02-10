@@ -84,10 +84,8 @@ public class AnnouncementAjaxController {
 	 * @return the count of unread {@link Announcement}s for a user.
 	 */
 	@RequestMapping(value = "/user/unread/count")
-	@PreAuthorize("hasRole('ROLE_USER')")
-	@ResponseBody
 	public ResponseEntity<Long> getUnreadAnnouncementsUserCount(Principal principal) {
-		Long unreadAnnouncementsCount = UIAnnouncementsService.getUnreadAnnouncementsUserCount(principal);
+		Long unreadAnnouncementsCount = service.getUnreadAnnouncementsUserCount(principal);
 		return ResponseEntity.ok(unreadAnnouncementsCount);
 	}
 
