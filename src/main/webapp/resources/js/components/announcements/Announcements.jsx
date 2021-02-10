@@ -34,9 +34,9 @@ export function Announcements() {
   }
 
   const onOk = () => {
-    if (index + 1 < announcements.length) {
-      markAnnouncementAsRead(announcements[index].identifier);
-    } else {
+    markAnnouncementAsRead(announcements[index].identifier);
+
+    if (index + 1 === announcements.length) {
       setVisible(false);
     }
   };
@@ -76,7 +76,7 @@ export function Announcements() {
           </>
         }
       >
-        <div style={{ overflowY: "auto", maxHeight: 600 }}>
+        <div style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }}>
           <Markdown source={announcements[index].message} />
         </div>
       </Card>

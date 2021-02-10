@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,14 @@ public interface AnnouncementService extends CRUDService<Long, Announcement> {
 	 * @return List of {@link User}s that haven't confirmed they've read the announcement
 	 */
 	public List<User> getUnreadUsersForAnnouncement(Announcement announcement);
+
+	/**
+	 * Get a list of {@link Announcement}s that have been read and unread by {@link User}
+	 *
+	 * @param user {@link User} for whom we want to get unread announcements
+	 * @return list of {@link AnnouncementUserReadDetails} objects representing announcements read and unread by a user
+	 */
+	public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user);
 
 	/**
 	 * Get a list of {@link Announcement}s that have been read by {@link User}
