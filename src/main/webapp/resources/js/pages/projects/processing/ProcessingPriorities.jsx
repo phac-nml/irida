@@ -5,6 +5,13 @@ import {
 } from "../../../apis/projects/settings";
 import { Form, notification, Select } from "antd";
 
+/**
+ * Allow the user to modify the priority of pipeline process.
+ *
+ * @param {number} projectId - project identifier
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ProcessingPriorities({ projectId }) {
   const [priorities, setPriorities] = React.useState([]);
   const [priority, setPriority] = React.useState();
