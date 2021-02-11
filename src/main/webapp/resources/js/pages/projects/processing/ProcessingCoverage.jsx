@@ -17,6 +17,14 @@ import {
   updateProcessingCoverage,
 } from "../../../apis/projects/settings";
 
+/**
+ * Display and allow managers to be able to modify the minimum and maximum
+ * coverage as well as the genome size.
+ * @param {number} projectId - project identifier
+ * @param {boolean} canManage - if the usr can manage this project
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ProcessingCoverage({ projectId, canManage }) {
   const [visible, setVisible] = React.useState(false);
   const [coverage, setCoverage] = React.useState({});
