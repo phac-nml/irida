@@ -10,6 +10,12 @@ import { ScrollableModal } from "../ant.design/ScrollableModal";
 
 const { Text, Title } = Typography;
 
+/**
+ * Component to show all unread priority announcements in a modal at login.
+ * If the user hits cancel, the announcements will be shown again the next day.
+ * @returns {*}
+ * @constructor
+ */
 export function Announcements() {
   const [visible, setVisible] = useState(false);
   const [announcements, setAnnouncements] = useState();
@@ -17,7 +23,7 @@ export function Announcements() {
 
   useEffect(() => {
     let session_date_string = window.localStorage.getItem(
-      "cancel-announcements-read-date"
+      "cancel-read-announcements-date"
     );
     if (session_date_string) {
       let session_date = new Date(session_date_string);
@@ -34,6 +40,7 @@ export function Announcements() {
         showAnnouncements();
       }
     } else {
+      // session attribute does not exist
       showAnnouncements();
     }
   }, []);
@@ -70,7 +77,7 @@ export function Announcements() {
   };
 
   const onCancel = () => {
-    window.localStorage.setItem("cancel-announcements-read-date", Date());
+    window.localStorage.setItem("cancel-read-announcements-date", Date());
     setVisible(false);
   };
 
