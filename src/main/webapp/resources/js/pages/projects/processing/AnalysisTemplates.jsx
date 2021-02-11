@@ -6,6 +6,15 @@ import {
 import { Button, List, notification, Popconfirm, Tag } from "antd";
 import { IconRemove } from "../../../components/icons/Icons";
 
+/**
+ * Display a list of analysis templates (automated pipelines) that are currently
+ * existing on the project.
+ *
+ * @param {number} projectId - project identifier
+ * @param {boolean} canManage - if the current user can manage the project
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function AnalysisTemplates({ projectId, canManage }) {
   const [templates, setTemplates] = React.useState();
 
