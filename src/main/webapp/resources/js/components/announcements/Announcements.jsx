@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Card, Modal, notification, Tag, Typography } from "antd";
+import { Card, notification, Tag, Typography } from "antd";
 import {
   getUnreadAnnouncements,
   markAnnouncementRead,
 } from "../../apis/announcements/announcements";
 import Markdown from "react-markdown";
 import { formatDate } from "../../utilities/date-utilities";
+import { ScrollableModal } from "../ant.design/ScrollableModal";
 
 const { Text, Title } = Typography;
 
@@ -74,7 +75,7 @@ export function Announcements() {
   };
 
   return announcements && visible ? (
-    <Modal
+    <ScrollableModal
       className="t-modal"
       closable={false}
       maskClosable={false}
@@ -112,6 +113,6 @@ export function Announcements() {
           <Markdown source={announcements[index].message} />
         </div>
       </Card>
-    </Modal>
+    </ScrollableModal>
   ) : null;
 }
