@@ -51,7 +51,7 @@ export function ProcessingCoverage({ projectId, canManage }) {
       if (!value || isNumeric(value)) {
         return Promise.resolve();
       }
-      return Promise.reject("Must be a numeric value");
+      return Promise.reject(i18n("ProcessingCoverage.numeric"));
     },
   });
 
