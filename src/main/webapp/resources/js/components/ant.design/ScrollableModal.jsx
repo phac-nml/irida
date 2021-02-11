@@ -10,6 +10,14 @@ const ScrollBodyModal = styled(Modal)`
   }
 `;
 
+/**
+ * React component to be used when you want a scrollable content in your ant design modal.
+ *
+ * @param {string} maxHeight - maximum height of the scrollable body
+ * @param {element} children - the modal content
+ * @returns {*}
+ * @constructor
+ */
 export function ScrollableModal({ maxHeight = 600, children, ...props }) {
   return (
     <ScrollBodyModal maxHeight={maxHeight} {...props}>
