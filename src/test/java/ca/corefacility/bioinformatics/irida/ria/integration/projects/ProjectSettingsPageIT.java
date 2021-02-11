@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.Laun
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsProcessingPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -26,7 +25,6 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 		LoginPage.loginAsAdmin(driver());
 		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
-		checkTranslations(processingPage, ImmutableList.of("project-settings-basic"), null);
 
 		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
 
