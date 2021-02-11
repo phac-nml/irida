@@ -26,6 +26,7 @@ import {
  * @constructor
  */
 export function ProcessingCoverage({ projectId, canManage }) {
+  const NOT_SET = i18n("ProcessingCoverage.not-set");
   const [visible, setVisible] = React.useState(false);
   const [coverage, setCoverage] = React.useState({});
   const [form] = Form.useForm();
@@ -34,7 +35,6 @@ export function ProcessingCoverage({ projectId, canManage }) {
     const { minimum, maximum, genomeSize } = await fetchProcessingCoverage(
       projectId
     );
-    const NOT_SET = i18n("ProcessingCoverage.not-set");
     setCoverage({
       minimum: minimum > -1 ? minimum : NOT_SET,
       maximum: maximum > -1 ? maximum : NOT_SET,
@@ -139,7 +139,7 @@ export function ProcessingCoverage({ projectId, canManage }) {
           <Card>
             <Statistic
               title={i18n("ProcessingCoverage.minimum")}
-              value={isNumeric(coverage.minimum) ? coverage.minimum : "Not set"}
+              value={isNumeric(coverage.minimum) ? coverage.minimum : NOT_SET}
               suffix={isNumeric(coverage.minimum) ? "X" : ""}
             />
           </Card>
@@ -148,7 +148,7 @@ export function ProcessingCoverage({ projectId, canManage }) {
           <Card>
             <Statistic
               title={i18n("ProcessingCoverage.maximum")}
-              value={isNumeric(coverage.maximum) ? coverage.maximum : "Not set"}
+              value={isNumeric(coverage.maximum) ? coverage.maximum : NOT_SET}
               suffix={isNumeric(coverage.maximum) ? "X" : ""}
             />
           </Card>
@@ -158,7 +158,7 @@ export function ProcessingCoverage({ projectId, canManage }) {
             <Statistic
               title={i18n("ProcessingCoverage.genomeSize")}
               value={
-                isNumeric(coverage.genomeSize) ? coverage.genomeSize : "Not set"
+                isNumeric(coverage.genomeSize) ? coverage.genomeSize : NOT_SET
               }
               suffix={isNumeric(coverage.genomeSize) ? "BP" : ""}
             />
