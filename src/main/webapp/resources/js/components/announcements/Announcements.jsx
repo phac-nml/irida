@@ -30,17 +30,25 @@ export function Announcements() {
         )
       ) {
         // dates are NOT in the same day
-        getUnreadAnnouncements({ params: { priority: true } }).then(
-          ({ data }) => {
-            if (data.length) {
-              setAnnouncements(data);
-              setVisible(true);
-            }
-          }
-        );
+        showAnnouncements();
       }
+    } else {
+      showAnnouncements();
     }
   }, []);
+
+  function showAnnouncements() {
+    getUnreadAnnouncements({ params: { priority: true } })
+      .then(({ data }) => {
+        if (data.length) {
+          setAnnouncements(data);
+          setVisible(true);
+        }
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
 
   function markAnnouncementAsRead(aID) {
     markAnnouncementRead({ aID })
