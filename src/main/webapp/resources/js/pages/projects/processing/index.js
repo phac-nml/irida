@@ -4,6 +4,11 @@ import { Col, Divider, Row, Space, Typography } from "antd";
 import { ProcessingCoverage } from "./ProcessingCoverage";
 import { ProcessingAutomatedPipelines } from "./ProcessingAutomatedPipelines";
 
+/**
+ * Base script for displaying project process page
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const ProcessingLayout = () => {
   const [projectId] = React.useState(
     () => window.location.href.match(/projects\/(\d+)\/settings/i)[1]

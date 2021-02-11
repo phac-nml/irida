@@ -8,7 +8,9 @@
     <title th:text="#{project.settings.page.title.basic}">Basic</title>
   </head>
   <body>
-    <div layout:fragment="settings-content" id="process-root"></div>
+    <div layout:fragment="settings-content" id="process-root">
+      <!-- Rendered by react from src/main/webapp/resources/js/pages/projects/processing/index.js -->
+    </div>
 
     <th:block layout:fragment="scripts">
       <script th:src="@{/dist/js/project-processing.bundle.js}"></script>
