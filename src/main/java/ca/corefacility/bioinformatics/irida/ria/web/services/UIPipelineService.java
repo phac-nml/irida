@@ -151,9 +151,11 @@ public class UIPipelineService {
 					.stream()
 					.map(samples -> updateSamplePermission.isAllowed(authentication, samples))
 					.reduce(true, (a, b) -> a && b);
-			detailsResponse.setUpdateSamples(messageSource.getMessage(
-					"workflow.label.share-analysis-samples." + description.getAnalysisType()
-							.getType(), new Object[] {}, locale));
+			if (canUpdateSamples) {
+				detailsResponse.setUpdateSamples(messageSource.getMessage(
+						"workflow.label.share-analysis-samples." + description.getAnalysisType()
+								.getType(), new Object[] {}, locale));
+			}
 		}
 
         /*
