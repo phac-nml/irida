@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, notification, Tag, Typography } from "antd";
+import { notification, Space, Tag, Typography } from "antd";
 import {
   getUnreadAnnouncements,
   markAnnouncementRead,
@@ -80,24 +80,16 @@ export function Announcements() {
       closable={false}
       maskClosable={false}
       title={
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          {announcements.length > 1
-            ? i18n("Announcements.title.multiple", announcements.length)
-            : i18n("Announcements.title.single")}
-          <Tag className="t-read-over-unread-ratio" color="red">
-            {index + 1} / {announcements.length}
-          </Tag>
-        </div>
-      }
-      visible={visible}
-      width="60%"
-      okText={i18n("Announcements.ok")}
-      onOk={onOk}
-      onCancel={onCancel}
-    >
-      <Card
-        title={
-          <>
+        <Space direction="vertical" style={{ width: `100%` }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            {announcements.length > 1
+              ? i18n("Announcements.title.multiple", announcements.length)
+              : i18n("Announcements.title.single")}
+            <Tag className="t-read-over-unread-ratio" color="red">
+              {index + 1} / {announcements.length}
+            </Tag>
+          </div>
+          <div>
             <Title level={5}>{announcements[index].title}</Title>
             <Text type="secondary" style={{ fontSize: `.8em` }}>
               {i18n(
@@ -106,13 +98,16 @@ export function Announcements() {
                 formatDate({ date: announcements[index].createdDate })
               )}
             </Text>
-          </>
-        }
-      >
-        <div style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }}>
-          <Markdown source={announcements[index].message} />
-        </div>
-      </Card>
+          </div>
+        </Space>
+      }
+      visible={visible}
+      width="60%"
+      okText={i18n("Announcements.ok")}
+      onOk={onOk}
+      onCancel={onCancel}
+    >
+      <Markdown source={announcements[index].message} />
     </ScrollableModal>
   ) : null;
 }
