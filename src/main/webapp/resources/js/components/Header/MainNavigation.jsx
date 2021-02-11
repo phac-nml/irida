@@ -3,6 +3,7 @@ import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
 import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
+import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -80,6 +81,7 @@ export function MainNavigation() {
         }}
       >
         <Menu mode="horizontal" theme={theme} className="accessory-menu">
+          <AnnouncementsSubMenu />
           <Menu.Item icon={<CartLink />} key="cart" />
           {!isAdmin && (
             <Menu.SubMenu title={<IconCog />}>
