@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -75,60 +76,71 @@ public class UIPipelineStartService {
 			namedParameters = namedParametersService.read(request.getSavedParameters());
 		}
 
-		/*
-		SHARE RESULTS BACK TO PROJECTS?
-		 */
-		List<Project> projects = new ArrayList<>();
-		if (request.getProjects()
-				.size() > 0) {
-			projects = (List<Project>) projectService.readMultiple(request.getProjects());
-		}
-
-		/*
-		SEQUENCE FILES
-		 */
-		List<SingleEndSequenceFile> singles = new ArrayList<>();
-		List<SequenceFilePair> pairs = new ArrayList<>();
-		// Check for single ended sequence files
-		Iterable<SequencingObject> sequencingObjects = sequencingObjectService.readMultiple(request.getFileIds());
-		if (description.acceptsSingleSequenceFiles()) {
-			sequencingObjects.forEach(sequencingObject -> {
-				if (sequencingObject instanceof SingleEndSequenceFile) {
-					singles.add((SingleEndSequenceFile) sequencingObject);
-				}
-			});
-		} else if (description.acceptsPairedSequenceFiles()) {
-			sequencingObjects.forEach(sequencingObject -> {
-				if (sequencingObject instanceof SequenceFilePair) {
-					pairs.add((SequenceFilePair) sequencingObject);
-				}
-			});
-		}
-
 		// Make sure there is a reference files if one is required.
-
 		if (description.requiresReference() && request.getReference() == null) {
 			throw new ReferenceFileRequiredException(
 					messageSource.getMessage("server.ReferenceFiles.notFound", new Object[] {}, locale));
 		}
 
-		IridaWorkflowInput inputs = description.getInputs();
-		Long submissionId;
-		if (inputs.requiresSingleSample()) {
-			Collection<AnalysisSubmission> submissions = submissionService.createSingleSampleSubmission(workflow,
-					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
-					request.getDescription(), projects, request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
-			submissionId = submissions.stream()
-					.findFirst()
-					.orElseThrow()
-					.getId();
+		if (request.getAutomatedProjectId() != null) {
+			Project project = projectService.read(request.getAutomatedProjectId());
+			String statusMessage = messageSource.getMessage("analysis.template.status.new", new Object[] {}, locale);
+			AnalysisSubmissionTemplate template = submissionService.createSingleSampleSubmissionTemplate(workflow,
+					request.getReference(), request.getParameters(), namedParameters, request.getName(), statusMessage,
+					request.getDescription(), project, request.isUpdateSamples(), request.sendEmailOnCompletion(),
+					request.sendEmailOnError());
+			return template.getId();
 		} else {
-			AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
-					request.getReference(), singles, pairs, request.getParameters(), namedParameters, request.getName(),
-					request.getDescription(), projects, request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnCompletion());
-			submissionId = submission.getId();
+			/*
+			SHARE RESULTS BACK TO PROJECTS?
+		 	*/
+			List<Project> projects = new ArrayList<>();
+			if (request.getProjects()
+					.size() > 0) {
+				projects = (List<Project>) projectService.readMultiple(request.getProjects());
+			}
+
+			/*
+			SEQUENCE FILES
+		 	*/
+			List<SingleEndSequenceFile> singles = new ArrayList<>();
+			List<SequenceFilePair> pairs = new ArrayList<>();
+			// Check for single ended sequence files
+			Iterable<SequencingObject> sequencingObjects = sequencingObjectService.readMultiple(request.getFileIds());
+			if (description.acceptsSingleSequenceFiles()) {
+				sequencingObjects.forEach(sequencingObject -> {
+					if (sequencingObject instanceof SingleEndSequenceFile) {
+						singles.add((SingleEndSequenceFile) sequencingObject);
+					}
+				});
+			} else if (description.acceptsPairedSequenceFiles()) {
+				sequencingObjects.forEach(sequencingObject -> {
+					if (sequencingObject instanceof SequenceFilePair) {
+						pairs.add((SequenceFilePair) sequencingObject);
+					}
+				});
+			}
+
+			IridaWorkflowInput inputs = description.getInputs();
+			Long submissionId;
+			if (inputs.requiresSingleSample()) {
+				Collection<AnalysisSubmission> submissions = submissionService.createSingleSampleSubmission(workflow,
+						request.getReference(), singles, pairs, request.getParameters(), namedParameters,
+						request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
+						request.sendEmailOnCompletion(), request.sendEmailOnError());
+				submissionId = submissions.stream()
+						.findFirst()
+						.orElseThrow()
+						.getId();
+			} else {
+				AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
+						request.getReference(), singles, pairs, request.getParameters(), namedParameters,
+						request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
+						request.sendEmailOnCompletion(), request.sendEmailOnCompletion());
+				submissionId = submission.getId();
+			}
+			cartService.emptyCart();
+			return submissionId;
 		}
-		cartService.emptyCart();
-		return submissionId;
 	}
 }

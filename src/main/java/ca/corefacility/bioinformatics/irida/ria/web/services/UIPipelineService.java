@@ -22,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDynamicSourceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
@@ -35,8 +37,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIRefere
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.Input;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -52,13 +57,14 @@ public class UIPipelineService {
 	private static final Logger logger = LoggerFactory.getLogger(UIPipelineService.class);
 
 	private final UICartService cartService;
-    private final IridaWorkflowsService workflowsService;
-    private final WorkflowNamedParametersService namedParametersService;
-    private final ProjectService projectService;
-    private final ReferenceFileService referenceFileService;
-    private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+	private final IridaWorkflowsService workflowsService;
+	private final WorkflowNamedParametersService namedParametersService;
+	private final ProjectService projectService;
+	private final ReferenceFileService referenceFileService;
+	private final AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private final UpdateSamplePermission updateSamplePermission;
 	private final GalaxyToolDataService galaxyToolDataService;
+	private final AnalysisSubmissionService analysisSubmissionService;
 	private final MessageSource messageSource;
 
 	@Autowired
@@ -67,7 +73,7 @@ public class UIPipelineService {
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
 			UpdateSamplePermission updateSamplePermission, GalaxyToolDataService galaxyToolDataService,
-			MessageSource messageSource) {
+			AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
 		this.cartService = cartService;
 		this.workflowsService = workflowsService;
 		this.namedParametersService = namedParametersService;
@@ -76,6 +82,7 @@ public class UIPipelineService {
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.updateSamplePermission = updateSamplePermission;
 		this.galaxyToolDataService = galaxyToolDataService;
+		this.analysisSubmissionService = analysisSubmissionService;
 		this.messageSource = messageSource;
 	}
 
@@ -225,11 +232,88 @@ public class UIPipelineService {
 		Map<String, String> updatedParams = namedParameters.getInputParameters();
 		List<Input> params = updatedParams.entrySet()
 				.stream()
-				.map(entry -> new Input(entry.getKey(), messageSource.getMessage(
-						"pipeline.parameters." + pipelineName + "." + entry.getKey(), new Object[] {}, locale), entry.getValue()))
+				.map(entry -> new Input(entry.getKey(),
+						messageSource.getMessage("pipeline.parameters." + pipelineName + "." + entry.getKey(),
+								new Object[] {}, locale), entry.getValue()))
 				.collect(Collectors.toList());
 
 		return new SavedPipelineParameters(namedParameters.getId(), namedParameters.getLabel(), params);
+	}
+
+	/**
+	 * Get a list of pipeline workflows, if the automated flag is set then only those pipelines that can be run
+	 * automated will be returned
+	 *
+	 * @param automated if true, then this is from a project for creating automated pipelines
+	 * @param locale    currently logged in users locale
+	 * @return list of pipelines
+	 */
+	public List<Pipeline> getWorkflowTypes(Boolean automated, Locale locale) {
+		Set<AnalysisType> analysisTypes = workflowsService.getDisplayableWorkflowTypes();
+		List<Pipeline> pipelines = new ArrayList<>();
+
+		for (AnalysisType type : analysisTypes) {
+			try {
+				IridaWorkflow flow = workflowsService.getDefaultWorkflowByType(type);
+				IridaWorkflowDescription description = flow.getWorkflowDescription();
+
+				// if we're setting up an automated project, strip out all the multi-sample pipelines
+				if (!automated || description.getInputs().requiresSingleSample()) {
+					Pipeline workflow = createPipeline(type, locale);
+					pipelines.add(workflow);
+				}
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
+			}
+		}
+		return pipelines.stream()
+				.sorted(Comparator.comparing(Pipeline::getName))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * List of existing automated workflows on a project
+	 *
+	 * @param projectId identifier for a project
+	 * @param locale    currently logged in users local
+	 * @return list of existing automated workflows ({@link AnalysisTemplate}) for a project.
+	 */
+	public List<AnalysisTemplate> getProjectAnalysisTemplates(Long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
+		return templates.stream()
+				.map(template -> {
+					UUID id = template.getWorkflowId();
+					String type;
+					try {
+						IridaWorkflow flow = workflowsService.getIridaWorkflow(id);
+						AnalysisType analysisType = flow.getWorkflowDescription()
+								.getAnalysisType();
+						type = messageSource.getMessage("workflow." + analysisType.getType() + ".title",
+								new Object[] {}, locale);
+					} catch (IridaWorkflowNotFoundException e) {
+						type = messageSource.getMessage("workflow.UNKNOWN.title", new Object[] {}, locale);
+					}
+					return new AnalysisTemplate(template.getId(), template.getName(), type, template.isEnabled(),
+							template.getStatusMessage());
+				})
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Remove an automated workflow from a project
+	 *
+	 * @param templateId identifier for the automated workflow ({@link AnalysisTemplate})
+	 * @param projectId  identifier for the project
+	 * @param locale     currently logged in users locale
+	 * @return message to the user about the status of the removal
+	 */
+	public String removeProjectAutomatedPipeline(Long templateId, Long projectId, Locale locale) {
+		Project project = projectService.read(projectId);
+		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
+				templateId, project);
+		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
+		return messageSource.getMessage("server.AnalysisTemplates.remove", new Object[] { template.getName() }, locale);
 	}
 
 	/**
@@ -239,8 +323,8 @@ public class UIPipelineService {
 	 * @param locale      {@link Locale} current users locale
 	 * @return List of pipeline parameters with options
 	 */
-	private List<InputWithOptions> getPipelineSpecificParametersWithOptions(
-			IridaWorkflowDescription description, Locale locale) {
+	private List<InputWithOptions> getPipelineSpecificParametersWithOptions(IridaWorkflowDescription description,
+			Locale locale) {
 		return description.getParameters()
 				.stream()
 				.filter(IridaWorkflowParameter::hasChoices)
@@ -381,4 +465,23 @@ public class UIPipelineService {
 				.flatMap(List::stream)
 				.collect(Collectors.toList());
 	}
+
+    /**
+     * Create a Pipeline for consumption by the UI
+     *
+     * @param analysisType {@link AnalysisType} type of analysis pipeline
+     * @param locale       {@link Locale}
+     * @return {@link Pipeline}
+     * @throws IridaWorkflowNotFoundException thrown if {@link IridaWorkflowDescription} is not found
+     */
+    private Pipeline createPipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
+        IridaWorkflowDescription workflowDescription = workflowsService.getDefaultWorkflowByType(analysisType)
+                .getWorkflowDescription();
+        String prefix = "workflow." + analysisType.getType();
+        String name = messageSource.getMessage(prefix + ".title", new Object[]{}, locale);
+        String description = messageSource.getMessage(prefix + ".description", new Object[]{}, locale);
+        UUID id = workflowDescription.getId();
+        String styleName = analysisType.getType();
+        return new Pipeline(name, description, id, styleName);
+    }
 }

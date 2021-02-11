@@ -1,17 +1,17 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto;
 
 /**
  * Response class for easily formatting analysis templates for the project settings page
  */
-public class TemplateResponse {
+public class AnalysisTemplate {
 
-	private Long id;
-	private String name;
-	private String analysisType;
-	private boolean enabled;
-	private String statusMessage;
+	private final Long id;
+	private final String name;
+	private final String analysisType;
+	private final boolean enabled;
+	private final String statusMessage;
 
-	public TemplateResponse(Long id, String name, String analysisType, boolean enabled, String statusMessage) {
+	public AnalysisTemplate(Long id, String name, String analysisType, boolean enabled, String statusMessage) {
 		this.id = id;
 		this.name = name;
 		this.analysisType = analysisType;

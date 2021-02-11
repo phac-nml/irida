@@ -10,6 +10,11 @@ export const PIPELINE_ID = (() => {
   return params.get("id");
 })();
 
+export const AUTOMATED_ID = (() => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("projectId");
+})();
+
 /**
  * Format the name of a pipeline to be unique.  The user can modify it at any point.
  *
@@ -18,11 +23,15 @@ export const PIPELINE_ID = (() => {
  * @returns {string}
  */
 export function formatDefaultPipelineName(type, date) {
-  return `${type.replace(" ", "_")}__${formatInternationalizedDateTime(date, {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  }).replace(/\//g, "-")}`;
+  if (AUTOMATED_ID) {
+    return `${type}_automated`;
+  } else {
+    return `${type.replace(" ", "_")}__${formatInternationalizedDateTime(date, {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    }).replace(/\//g, "-")}`;
+  }
 }
 
 export function formatSavedParameterSets(sets = []) {
