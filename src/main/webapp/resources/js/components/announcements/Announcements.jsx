@@ -15,12 +15,31 @@ export function Announcements() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    getUnreadAnnouncements({ params: { priority: true } }).then(({ data }) => {
-      if (data.length) {
-        setAnnouncements(data);
-        setVisible(true);
+    let session_date_string = window.localStorage.getItem(
+      "cancel-announcements-read-date"
+    );
+    if (session_date_string) {
+      let session_date = new Date(session_date_string);
+      let today = new Date();
+
+      if (
+        !(
+          session_date.getFullYear() === today.getFullYear() &&
+          session_date.getMonth() === today.getMonth() &&
+          session_date.getDate() === today.getDate()
+        )
+      ) {
+        // dates are NOT in the same day
+        getUnreadAnnouncements({ params: { priority: true } }).then(
+          ({ data }) => {
+            if (data.length) {
+              setAnnouncements(data);
+              setVisible(true);
+            }
+          }
+        );
       }
-    });
+    }
   }, []);
 
   function markAnnouncementAsRead(aID) {
@@ -39,6 +58,11 @@ export function Announcements() {
     if (index + 1 === announcements.length) {
       setVisible(false);
     }
+  };
+
+  const onCancel = () => {
+    window.localStorage.setItem("cancel-announcements-read-date", Date());
+    setVisible(false);
   };
 
   return announcements && visible ? (
@@ -60,7 +84,7 @@ export function Announcements() {
       width="60%"
       okText={i18n("Announcements.ok")}
       onOk={onOk}
-      onCancel={() => setVisible(false)}
+      onCancel={onCancel}
     >
       <Card
         title={
