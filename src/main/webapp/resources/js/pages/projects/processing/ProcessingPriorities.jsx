@@ -27,10 +27,12 @@ export function ProcessingPriorities({ projectId }) {
   }, [getProcessingInfo]);
 
   const update = (value) => {
-    updateProcessingPriority(projectId, value).then((message) => {
-      setPriority(value);
-      notification.success({ message });
-    });
+    updateProcessingPriority(projectId, value)
+      .then((message) => {
+        setPriority(value);
+        notification.success({ message });
+      })
+      .catch((message) => notification.error({ message }));
   };
 
   return (

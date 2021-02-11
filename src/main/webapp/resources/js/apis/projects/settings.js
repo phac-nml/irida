@@ -26,7 +26,8 @@ export const updateProcessingPriority = async (projectId, priority) =>
         `ajax/projects/${projectId}/settings/priority?priority=${priority}`
       )
     )
-    .then(({ data }) => data.message);
+    .then(({ data }) => data.message)
+    .catch((error) => Promise.reject(error.response.data.message));
 
 /**
  * Get the process coverage (minimum, maximum, and genome size) for the project
