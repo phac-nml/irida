@@ -34,10 +34,11 @@ export function ProcessingCoverage({ projectId, canManage }) {
     const { minimum, maximum, genomeSize } = await fetchProcessingCoverage(
       projectId
     );
+    const NOT_SET = i18n("ProcessingCoverage.not-set");
     setCoverage({
-      minimum: minimum > -1 ? minimum : "No set",
-      maximum: maximum > -1 ? maximum : "Not set",
-      genomeSize: genomeSize > -1 ? genomeSize : "Not set",
+      minimum: minimum > -1 ? minimum : NOT_SET,
+      maximum: maximum > -1 ? maximum : NOT_SET,
+      genomeSize: genomeSize > -1 ? genomeSize : NOT_SET,
     });
   }, [projectId]);
 
