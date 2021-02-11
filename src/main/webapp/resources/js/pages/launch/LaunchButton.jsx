@@ -7,9 +7,29 @@ import { SPACE_LG } from "../../styles/spacing";
 import { Button } from "antd";
 import { useLaunch } from "./launch-context";
 
+/**
+ * Launch button can change depending on whether it is an automated pipeline or
+ * a standard launch.  This will render the appropriate button.
+ * @param disabled
+ * @param loading
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function LaunchButton({ disabled, loading }) {
   const [{ automatedId }] = useLaunch();
-  return automatedId ? (
+
+  const props = automatedId
+    ? {
+        icon: <IconPlusCircle />,
+      }
+    : {
+        icon: <IconLaunchPipeline />,
+      };
+  const label = automatedId
+    ? i18n("LaunchButton.submit-automated")
+    : i18n("LaunchButton.submit");
+
+  return (
     <Button
       type="primary"
       className="t-submit-btn"
@@ -17,23 +37,10 @@ export function LaunchButton({ disabled, loading }) {
       htmlType="submit"
       loading={loading}
       disabled={disabled}
-      icon={<IconPlusCircle />}
       style={{ marginTop: SPACE_LG }}
+      {...props}
     >
-      {i18n("LaunchButton.submit-automated")}
-    </Button>
-  ) : (
-    <Button
-      type="primary"
-      className="t-submit-btn"
-      size="large"
-      htmlType="submit"
-      icon={<IconLaunchPipeline />}
-      loading={loading}
-      style={{ marginTop: SPACE_LG }}
-      disabled={disabled}
-    >
-      {i18n("LaunchButton.submit")}
+      {label}
     </Button>
   );
 }
