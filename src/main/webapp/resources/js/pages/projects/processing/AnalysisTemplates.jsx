@@ -46,7 +46,7 @@ export function AnalysisTemplates({ projectId, canManage }) {
                     key={`remove-${template.id}`}
                     placement="topRight"
                     onConfirm={() => removeAutomatedPipeline(template)}
-                    title={`Are you sure you want to remove the automated pipeline?`}
+                    title={i18n("AnalysisTemplates.confirm-title")}
                     okButtonProps={{ className: "t-confirm-remove" }}
                   >
                     <Button
