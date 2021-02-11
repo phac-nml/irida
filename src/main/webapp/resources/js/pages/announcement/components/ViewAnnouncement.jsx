@@ -5,7 +5,6 @@ import Markdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 import { getAnnouncement } from "../../../apis/announcements/announcements";
-import { VisibilityProvider } from "../../../contexts/visibility-context";
 
 const { Text } = Typography;
 const { confirm } = Modal;
@@ -80,12 +79,10 @@ export default function ViewAnnouncement({
   markAnnouncementAsRead,
 }) {
   return (
-    <VisibilityProvider>
-      <ViewAnnouncementModal
-        announcementID={announcementID}
-        announcementTitle={announcementTitle}
-        markAnnouncementAsRead={markAnnouncementAsRead}
-      />
-    </VisibilityProvider>
+    <ViewAnnouncementModal
+      announcementID={announcementID}
+      announcementTitle={announcementTitle}
+      markAnnouncementAsRead={markAnnouncementAsRead}
+    />
   );
 }
