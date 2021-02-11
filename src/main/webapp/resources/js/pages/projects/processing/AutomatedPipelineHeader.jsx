@@ -46,7 +46,7 @@ export function AutomatedPipelineHeader({ projectId, canMange }) {
                         `/launch?id=${item.id}&projectId=${projectId}`
                       )}
                     >
-                      Add Pipeline
+                      {i18n("AutomatedPipelineHeader.modal.add")}
                     </Button>
                   </List.Item>
                 )}
