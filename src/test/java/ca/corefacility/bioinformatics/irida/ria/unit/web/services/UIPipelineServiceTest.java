@@ -14,12 +14,16 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.UIPipelineDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.Pipeline;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -31,12 +35,14 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import static org.mockito.Mockito.*;
 
 public class UIPipelineServiceTest {
 	final String PIPELINE_TYPE = "PHYLOGENOMICS";
 	private final UUID WORKFLOW_ID = UUID.randomUUID();
+	private final Long TEMPLATE_ID = 101L;
 	private final List<Long> PROJECT_IDS = ImmutableList.of(1L, 3L, 5L);
 	private final String PIPELINE_NAME = "PEANUT BUTTER";
 	private final AnalysisType ANALYSIS_TYPE = new AnalysisType(PIPELINE_TYPE);
@@ -71,6 +77,8 @@ public class UIPipelineServiceTest {
 				referenceFileService, analysisSubmissionSampleProcessor, updateSamplePermission, galaxyToolDataService,
 				analysisSubmissionService, messageSource);
 
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("I want cookies");
+
 		when(cartService.getProjectIdsInCart()).thenReturn(new HashSet<>(PROJECT_IDS));
 		List<Project> projects = PROJECT_IDS.stream()
 				.map(id -> {
@@ -80,6 +88,12 @@ public class UIPipelineServiceTest {
 				})
 				.collect(Collectors.toList());
 		when(projectService.readMultiple(any())).thenReturn(projects);
+		when(projectService.read(1L)).thenReturn(projects.get(0));
+
+		List<AnalysisSubmissionTemplate> templates = ImmutableList.of(
+				new AnalysisSubmissionTemplate("Superman", WORKFLOW_ID, ImmutableMap.of(), null, true,
+						"Interesting superhero with cape", true, true, projects.get(0)));
+		when(analysisSubmissionService.getAnalysisTemplatesForProject(projects.get(0))).thenReturn(templates);
 
 		IridaWorkflowDescription description = mock(IridaWorkflowDescription.class);
 		when(description.getAnalysisType()).thenReturn(ANALYSIS_TYPE);
@@ -96,6 +110,9 @@ public class UIPipelineServiceTest {
 			cart.put(project, ImmutableList.of());
 		});
 		when(cartService.getFullCart()).thenReturn(cart);
+
+		when(analysisSubmissionService.readAnalysisSubmissionTemplateForProject(TEMPLATE_ID,
+				projects.get(0))).thenReturn(templates.get(0));
 	}
 
 	@Test
@@ -120,5 +137,48 @@ public class UIPipelineServiceTest {
 		when(namedParametersService.create(any())).thenReturn(parameters);
 		service.saveNewPipelineParameters(WORKFLOW_ID, request, Locale.CANADA);
 		verify(namedParametersService, times(1)).create(any());
+	}
+
+	@Test
+	public void getWorkflowTypesTest() {
+		Set<AnalysisType> mockWorkflowTypes = ImmutableSet.of(new AnalysisType("Lucky Charms"),
+				new AnalysisType("Honey Combs"), new AnalysisType("Count Chocula"));
+		List<Boolean> requiresSamples = ImmutableList.of(true, true, false);
+		when(workflowsService.getDisplayableWorkflowTypes()).thenReturn(mockWorkflowTypes);
+
+		Iterator<Boolean> requiresIter = requiresSamples.iterator();
+		mockWorkflowTypes.forEach(type -> {
+			try {
+				IridaWorkflowDescription description = mock(IridaWorkflowDescription.class);
+				when(description.getName()).thenReturn(type.getType());
+				when(description.getInputs()).thenReturn(new IridaWorkflowInput(null, null, null, requiresIter.next()));
+				IridaWorkflowStructure structure = mock(IridaWorkflowStructure.class);
+				IridaWorkflow workflow = new IridaWorkflow(description, structure);
+				when(workflowsService.getDefaultWorkflowByType(type)).thenReturn(workflow);
+			} catch (IridaWorkflowNotFoundException e) {
+				e.printStackTrace();
+			}
+		});
+
+		// Test for all pipelines
+		List<Pipeline> pipelines = service.getWorkflowTypes(false, Locale.CANADA);
+		Assert.assertEquals("Should have 3 pipelines", 3, pipelines.size());
+
+		// Test for ones that can be automated
+		pipelines = service.getWorkflowTypes(true, Locale.CANADA);
+		Assert.assertEquals("Should have 2 pipelines that can be automated", 2, pipelines.size());
+	}
+
+	@Test
+	public void getProjectAnalysisTemplatesTest() {
+		List<AnalysisTemplate> templates = service.getProjectAnalysisTemplates(1L, Locale.CANADA);
+		Assert.assertEquals("Should have 1 template", 1, templates.size());
+	}
+
+	@Test
+	public void removeProjectAutomatedPipelineTest() {
+		service.removeProjectAutomatedPipeline(TEMPLATE_ID, 1L, Locale.CANADA);
+		verify(analysisSubmissionService, times(1)).readAnalysisSubmissionTemplateForProject(any(), any());
+		verify(analysisSubmissionService, times(1)).deleteAnalysisSubmissionTemplateForProject(any(), any());
 	}
 }
