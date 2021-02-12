@@ -6,6 +6,15 @@ import {
 import { Button, List, notification, Popconfirm, Tag } from "antd";
 import { IconRemove } from "../../../components/icons/Icons";
 
+/**
+ * Display a list of analysis templates (automated pipelines) that are currently
+ * existing on the project.
+ *
+ * @param {number} projectId - project identifier
+ * @param {boolean} canManage - if the current user can manage the project
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function AnalysisTemplates({ projectId, canManage }) {
   const [templates, setTemplates] = React.useState();
 
@@ -37,7 +46,7 @@ export function AnalysisTemplates({ projectId, canManage }) {
                     key={`remove-${template.id}`}
                     placement="topRight"
                     onConfirm={() => removeAutomatedPipeline(template)}
-                    title={`Are you sure you want to remove the automated pipeline?`}
+                    title={i18n("AnalysisTemplates.confirm-title")}
                     okButtonProps={{ className: "t-confirm-remove" }}
                   >
                     <Button

@@ -97,10 +97,10 @@ public class UIProjectSettingsService {
 	 */
 	public Coverage getProcessingCoverageForProject(Long projectId) {
 		Project project = projectService.read(projectId);
-		var min = project.getMinimumCoverage() == null ? -1 : project.getMinimumCoverage();
-		var max = project.getMaximumCoverage() == null ? -1 : project.getMaximumCoverage();
-		var genomeSize = project.getGenomeSize() == null ? -1 : project.getGenomeSize();
-		return new Coverage(min, max, genomeSize);
+		var minimum = project.getMinimumCoverage() == null ? -1 : project.getMinimumCoverage();
+		var maximum = project.getMaximumCoverage() == null ? -1 : project.getMaximumCoverage();
+		var genomeSize = project.getGenomeSize() == null ? - 1 : project.getGenomeSize();
+		return new Coverage(minimum, maximum, genomeSize);
 	}
 
 	/**
