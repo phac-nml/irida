@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
@@ -45,6 +46,9 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
+
+	@Autowired
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
@@ -189,7 +193,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public boolean storageTypeIsLocal() {
-		return false;
+		return storageType.equals(StorageType.LOCAL);
 	}
 
 	/**
