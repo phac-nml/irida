@@ -169,7 +169,7 @@ public class ProjectSettingsAjaxController {
 	}
 
 	/**
-	 * Updated the minimum/maximum coverage or genome size for the project
+	 * Update the minimum/maximum coverage or genome size for the project
 	 *
 	 * @param projectId identifier for the project
 	 * @param coverage  minimum/maximum coverage or genome size for the project

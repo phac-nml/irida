@@ -3,6 +3,14 @@ import { Button, List, Modal, Typography } from "antd";
 import { fetchAutomatedIridaAnalysisWorkflows } from "../../../apis/pipelines/pipelines";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+/**
+ * Display title for automated pipelines and if the user can add new templates
+ * display a button to open the add modal.
+ * @param projectId
+ * @param canMange
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function AutomatedPipelineHeader({ projectId, canMange }) {
   const [visible, setVisible] = React.useState(false);
   const [pipelines, setPipelines] = React.useState([]);
@@ -27,7 +35,7 @@ export function AutomatedPipelineHeader({ projectId, canMange }) {
             </Button>
             <Modal
               visible={visible}
-              title={`Select an Automated Pipeline`}
+              title={i18n("AutomatedPipelineHeader.modal.title")}
               onCancel={() => setVisible(false)}
               className="t-template-modal"
             >
@@ -46,7 +54,7 @@ export function AutomatedPipelineHeader({ projectId, canMange }) {
                         `/launch?id=${item.id}&projectId=${projectId}`
                       )}
                     >
-                      Add Pipeline
+                      {i18n("AutomatedPipelineHeader.modal.add")}
                     </Button>
                   </List.Item>
                 )}

@@ -114,7 +114,7 @@ public class LaunchAjaxController {
     }
 
     /**
-     * Get a list of all pipeline in the IRIDA instance
+     * Get a list of all pipelines in the IRIDA instance
      *
      * @param locale currently logged in users locale
      * @return list of pipelines
