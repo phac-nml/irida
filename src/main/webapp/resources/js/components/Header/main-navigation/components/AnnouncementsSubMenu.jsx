@@ -6,6 +6,7 @@ import {
   markAnnouncementRead,
 } from "../../../../apis/announcements/announcements";
 import ViewAnnouncement from "../../../../pages/announcement/components/ViewAnnouncement";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 /**
  * React component to display the bell icon and new announcement count badge
@@ -54,6 +55,15 @@ export function AnnouncementsSubMenu({ ...props }) {
           />
         </Menu.Item>
       ))}
+      <Menu.Divider />
+      <Menu.Item key="view_all">
+        <a
+          className="t-bell-notification"
+          href={setBaseUrl(`/announcements/user/list`)}
+        >
+          View All
+        </a>
+      </Menu.Item>
     </Menu.SubMenu>
   );
 }
