@@ -72,7 +72,6 @@ export function SavedParameters({ form, sets }) {
       sets[0].parameters.map((parameter) => parameter.name)
     );
     const name = saveParamsForm.getFieldValue("name");
-    // TODO: make sure this is unique
     try {
       const id = await saveModifiedParametersAs(dispatch, name, fieldsValue);
       setCurrentSetId(id);
@@ -83,7 +82,7 @@ export function SavedParameters({ form, sets }) {
   return (
     <section>
       {fields.map(({ name }) => (
-        <Form.Item name={name} hidden>
+        <Form.Item key={`hidden-${name}`} name={name} hidden>
           <Input />
         </Form.Item>
       ))}
@@ -171,6 +170,7 @@ export function SavedParameters({ form, sets }) {
           ) : null}
           {fields.map(({ name, label }) => (
             <Form.Item
+              key={`field-${name}`}
               label={label}
               name={name}
               help={modified[name] ? i18n("ParametersModal.modified") : null}
