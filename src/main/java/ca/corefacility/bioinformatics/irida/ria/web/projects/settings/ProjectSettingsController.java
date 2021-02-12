@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -77,23 +79,12 @@ public class ProjectSettingsController {
 	 * @param projectId the ID of the {@link Project} to read
 	 * @param model     Model for the view
 	 * @param principal Logged in user
-	 * @param locale    Locale of the logged in user
 	 * @return name of the project settings page
 	 */
-	@RequestMapping(value = { "/processing", "/processing/*" })
+	@RequestMapping("/processing")
 	public String getProjectSettingsProcessingPage(@PathVariable Long projectId, final Model model,
-			final Principal principal, Locale locale) {
+			final Principal principal) {
 		Project project = projectService.read(projectId);
-		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
-
-		List<AnalysisTemplate> analysisTemplateTypes = templates.stream()
-				.map(t -> templatesToResponse(t, locale))
-				.collect(Collectors.toList());
-
-		model.addAttribute("project", project);
-		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "processing");
-		model.addAttribute("analysisTemplates", analysisTemplateTypes);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/settings/pages/processing";
 	}

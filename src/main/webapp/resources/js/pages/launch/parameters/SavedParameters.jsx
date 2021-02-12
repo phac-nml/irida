@@ -2,6 +2,7 @@ import React from "react";
 import {
   Alert,
   Button,
+  Collapse,
   Form,
   Input,
   Popover,
@@ -9,11 +10,21 @@ import {
   Space,
   Typography,
 } from "antd";
-import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
-import { ArrowRightOutlined } from "@ant-design/icons";
-import { grey5 } from "../../../styles/colors";
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { useLaunch } from "../launch-context";
 import { saveModifiedParametersAs } from "../launch-dispatch";
+import styled from "styled-components";
+
+const ParameterCollapse = styled(Collapse)`
+  .ant-collapse-header {
+    padding: 0 !important;
+  }
+  .template-parameters {
+    display: grid;
+    grid-template-columns: auto 100px;
+    gap: ${SPACE_XS};
+  }
+`;
 
 /**
  * React component to render a select input and modifying button for
@@ -61,7 +72,6 @@ export function SavedParameters({ form, sets }) {
       sets[0].parameters.map((parameter) => parameter.name)
     );
     const name = saveParamsForm.getFieldValue("name");
-    // TODO: make sure this is unique
     try {
       const id = await saveModifiedParametersAs(dispatch, name, fieldsValue);
       setCurrentSetId(id);
@@ -70,113 +80,109 @@ export function SavedParameters({ form, sets }) {
   }
 
   return (
-    <>
-      <div>
-        <Form.Item
-          label={i18n("SavedParameters.title")}
-          tooltip={i18n("SavedParameters.tooltip")}
-          help={
-            Object.keys(modified).length ? (
-              <Alert
-                className="t-modified-alert"
-                showIcon
-                style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
-                type={"warning"}
-                message={i18n("SavedParameters.modified")}
-                description={
-                  <div>
-                    {i18n("SavedParameters.modified.description")}{" "}
-                    <Space>
-                      <Popover
-                        placement="bottomRight"
-                        trigger="click"
-                        content={
-                          <>
-                            <Typography.Text>
-                              {i18n("SavedParameters.modified.name")}
-                            </Typography.Text>
-                            <Form
-                              form={saveParamsForm}
-                              layout="inline"
-                              style={{
-                                width: 305,
-                              }}
-                            >
-                              <Form.Item name="name" required>
-                                <Input className="t-modified-name" />
-                              </Form.Item>
-                              <Form.Item>
-                                <Button
-                                  onClick={saveParameters}
-                                  className="t-saveas-submit"
-                                >
-                                  {i18n("SavedParameters.modified.save")}
-                                </Button>
-                              </Form.Item>
-                            </Form>
-                          </>
-                        }
-                      >
-                        <Button
-                          size="small"
-                          type="ghost"
-                          className="t-modified-saveas"
-                        >
-                          {i18n("SavedParameters.modified.saveAs")}
-                        </Button>
-                      </Popover>
-                    </Space>
-                  </div>
-                }
-              />
-            ) : null
+    <section>
+      {fields.map(({ name }) => (
+        <Form.Item key={`hidden-${name}`} name={name} hidden>
+          <Input />
+        </Form.Item>
+      ))}
+      <ParameterCollapse
+        style={{ marginBottom: SPACE_MD }}
+        expandIcon={Function.prototype}
+        ghost
+      >
+        <Collapse.Panel
+          header={
+            <div className="template-parameters">
+              <Select
+                style={{ width: `100%` }}
+                value={currentSetId}
+                onChange={(id) => updateSelectedSet(id)}
+                onClick={(e) => e.stopPropagation()}
+                disabled={sets.length < 2}
+                className="t-saved-select"
+              >
+                {sets.map((set) => (
+                  <Select.Option key={set.key} value={set.id}>
+                    {set.label}
+                  </Select.Option>
+                ))}
+              </Select>
+              <Button className="t-show-parameters">
+                {i18n("SavedParameters.modify")}
+              </Button>
+            </div>
           }
         >
-          <Select
-            style={{ width: `100%` }}
-            value={currentSetId}
-            onChange={(id) => updateSelectedSet(id)}
-            disabled={sets.length < 2}
-            className="t-saved-select"
-          >
-            {sets.map((set) => (
-              <Select.Option key={set.key} value={set.id}>
-                {set.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </div>
-      {fields.map(({ name, label }) => (
-        <div
-          key={name}
-          style={{
-            display: "grid",
-            gridTemplateColumns: `8px auto`,
-            columnGap: 0,
-          }}
-        >
-          <ArrowRightOutlined
-            style={{
-              fontSize: 14,
-              marginLeft: SPACE_XS,
-              color: grey5,
-              marginTop: 2,
-            }}
-          />
-          <Form.Item
-            style={{ marginLeft: SPACE_LG }}
-            label={label}
-            name={name}
-            help={modified[name] ? i18n("ParametersModal.modified") : null}
-          >
-            <Input
-              className="t-saved-input"
-              onChange={(e) => onValueUpdated(name, e.target.value)}
+          {Object.keys(modified).length ? (
+            <Alert
+              className="t-modified-alert"
+              showIcon
+              style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
+              type={"warning"}
+              message={i18n("SavedParameters.modified")}
+              description={
+                <div>
+                  {i18n("SavedParameters.modified.description")}{" "}
+                  <Space>
+                    <Popover
+                      placement="bottomRight"
+                      trigger="click"
+                      content={
+                        <>
+                          <Typography.Text>
+                            {i18n("SavedParameters.modified.name")}
+                          </Typography.Text>
+                          <Form
+                            form={saveParamsForm}
+                            layout="inline"
+                            style={{
+                              width: 305,
+                            }}
+                          >
+                            <Form.Item name="name" required>
+                              <Input className="t-modified-name" />
+                            </Form.Item>
+                            <Form.Item>
+                              <Button
+                                onClick={saveParameters}
+                                className="t-saveas-submit"
+                              >
+                                {i18n("SavedParameters.modified.save")}
+                              </Button>
+                            </Form.Item>
+                          </Form>
+                        </>
+                      }
+                    >
+                      <Button
+                        size="small"
+                        type="ghost"
+                        className="t-modified-saveas"
+                      >
+                        {i18n("SavedParameters.modified.saveAs")}
+                      </Button>
+                    </Popover>
+                  </Space>
+                </div>
+              }
             />
-          </Form.Item>
-        </div>
-      ))}
-    </>
+          ) : null}
+          {fields.map(({ name, label }) => (
+            <Form.Item
+              key={`field-${name}`}
+              label={label}
+              name={name}
+              help={modified[name] ? i18n("ParametersModal.modified") : null}
+            >
+              <Input
+                className="t-saved-input"
+                onChange={(e) => onValueUpdated(name, e.target.value)}
+              />
+            </Form.Item>
+          ))}
+        </Collapse.Panel>
+      </ParameterCollapse>
+    </section>
   );
 }
