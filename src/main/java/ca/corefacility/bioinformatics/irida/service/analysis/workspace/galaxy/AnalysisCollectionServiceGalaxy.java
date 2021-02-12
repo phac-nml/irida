@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -45,6 +46,7 @@ public class AnalysisCollectionServiceGalaxy {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
+	private StorageType storageType;
 
 	/**
 	 * Builds a new {@link AnalysisCollectionServiceGalaxy} with the given
@@ -57,10 +59,11 @@ public class AnalysisCollectionServiceGalaxy {
 	 */
 	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			IridaFileStorageUtility iridaFileStorageUtility,
-			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
+			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository, StorageType storageType) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;
+		this.storageType = storageType;
 	}
 
 	/**
@@ -96,7 +99,7 @@ public class AnalysisCollectionServiceGalaxy {
 			 record to save to the database. The cleanup of these files happens once the final
 			 workflow status is set for an analysis.
 			 */
-			if (!iridaFileStorageUtility.storageTypeIsLocal()) {
+			if (!storageType.equals(StorageType.LOCAL)) {
 				AnalysisSubmissionTempFile analysisSubmissionTempFile = new AnalysisSubmissionTempFile(submissionId,
 						iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
 				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFile);
@@ -169,7 +172,7 @@ public class AnalysisCollectionServiceGalaxy {
 			 record to save to the database. The cleanup of these files happens once the final
 			 workflow status is set for an analysis.
 			 */
-			if (!iridaFileStorageUtility.storageTypeIsLocal()) {
+			if (!storageType.equals(StorageType.LOCAL)) {
 				AnalysisSubmissionTempFile analysisSubmissionTempFileForward = new AnalysisSubmissionTempFile(
 						submissionId, iridaTemporaryFileForward.getFile(),
 						iridaTemporaryFileForward.getDirectoryPath());

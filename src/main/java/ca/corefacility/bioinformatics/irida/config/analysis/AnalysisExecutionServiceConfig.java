@@ -17,6 +17,7 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AnalysisSubmissionSampleProcessorImpl;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
@@ -113,6 +114,9 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
+	@Autowired
+	private StorageType storageType;
+
 	private List<AnalysisSampleUpdater> loadPluginAnalysisSampleUpdaters() {
 		List<AnalysisSampleUpdater> pluginUpdaters = Lists.newLinkedList();
 
@@ -179,6 +183,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility,
+				analysisSubmissionTempFileRepository, storageType);
 	}
 }

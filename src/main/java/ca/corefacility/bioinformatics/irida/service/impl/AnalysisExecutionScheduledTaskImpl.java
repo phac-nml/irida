@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.AnalysisOutputFileInfo;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -62,6 +61,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisWorkspaceService analysisWorkspaceService;
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
+	private StorageType storageType;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -83,7 +83,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
 			JobErrorRepository jobErrorRepository, EmailController emailController, AnalysisWorkspaceService analysisWorkspaceService, IridaFileStorageUtility iridaFileStorageUtility,
-			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
+			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository, StorageType storageType) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
@@ -93,6 +93,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 		this.analysisWorkspaceService = analysisWorkspaceService;
 		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;
+		this.storageType = storageType;
 	}
 
 	/**
@@ -384,7 +385,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 Cleanup any files that were downloaded from an object store to run an analysis and
 		 remove the analysis submission temp file record from the database.
 		 */
-		if (!iridaFileStorageUtility.storageTypeIsLocal()) {
+		if (!storageType.equals(StorageType.LOCAL)) {
 			List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
 					submission.getId());
 			logger.debug("Cleaning up " + analysisSubmissionTempFiles.size()

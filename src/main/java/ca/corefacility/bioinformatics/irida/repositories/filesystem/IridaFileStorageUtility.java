@@ -62,13 +62,6 @@ public interface IridaFileStorageUtility {
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
 
 	/**
-	 * Returns if the storage type is local or not
-	 *
-	 * @return {@link Boolean#TRUE} if local, {@link Boolean#FALSE} if not.
-	 */
-	public boolean storageTypeIsLocal();
-
-	/**
 	 * Gets the file name from the storage type that the file
 	 * is saved to (azure, aws, or local disk)
 	 *

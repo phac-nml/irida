@@ -48,6 +48,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -137,6 +138,8 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
+	@Autowired
+	private StorageType storageType;
 
 	private Path sequenceFilePathA1;
 	private Path sequenceFilePathA2;
@@ -183,7 +186,8 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
+				analysisSubmissionTempFileRepository, storageType);
 
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
