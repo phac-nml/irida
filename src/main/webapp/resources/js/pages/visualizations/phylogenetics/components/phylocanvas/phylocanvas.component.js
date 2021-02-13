@@ -120,11 +120,17 @@ function phylocanvasController(
   $scope.$on(METADATA.LOADED, (event, args) => {
     const { metadata } = args;
     // Add the metadata to the branches before the tree is drawn.
+    console.log("METADATA: ", metadata);
     tree.on("beforeFirstDraw", () => {
       for (const leaf of tree.leaves) {
-        leaf.data = metadata[leaf.label];
+        console.log("LEAF: ", leaf.label);
+        if (metadata.hasOwnProperty(leaf.label)){
+          leaf.data = metadata[leaf.label];
+        }else{          
+          leaf.data = metadata.reference;
+        }
       }
-    });
+    });    
     metadataPromise.resolve();
   });
 
