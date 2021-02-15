@@ -71,7 +71,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
         1. On Error: only send an email if the pipeline fails
         1. On Completion: Send an email if the pipeline fails or when the pipeline successfully completes running.
 1. Parameters: parameters used to run the pipeline.  There are default sets provifed by the pipeline developer as well as any that have been saved.  
-   ![Default Parameters](parameters-default.png)
+   ![Default Parameters](images/parameters-default.png)
     1. Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
     1. 
 
