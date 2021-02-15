@@ -70,11 +70,14 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
         1. No email: don't send any emails about the pipeline outcome (default)
         1. On Error: only send an email if the pipeline fails
         1. On Completion: Send an email if the pipeline fails or when the pipeline successfully completes running.
-1. Parameters: parameters used to run the pipeline.  There are default sets provifed by the pipeline developer as well as any that have been saved.  
-   ![Default Parameters](images/parameters-default.png)
+1. Parameters: parameters used to run the pipeline.
+   1. There are default sets provifed by the pipeline developer as well as any that have been saved.
+      ![Default Parameters](images/parameters-default.png)
     1. Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
        ![Default Parameters](images/parameters-exposed.png)
-    1. 
+    1. If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
+       ![Save Parameters](images/parameters-modified.png)
+    1. Below these parameters are other settings that can be set (but cannout be saved)
 
 **Note**: Some pipelines will require a reference sequence:
 
