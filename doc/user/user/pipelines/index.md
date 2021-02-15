@@ -60,15 +60,19 @@ Click on the "Select" button at the bottom of the pipeline that you'd like to la
 Running a pipeline
 ------------------
 
-After selecting a pipeline you will be sent to the pipeline specific launch page where you can modify the pipeline's general information, parameters, reference file, and have a final look at the files that are goig to be used.
+After selecting a pipeline, you will be sent to the pipeline specific launch page where you can modify the pipeline's general information, parameters, reference file, and have a final look at the files that are goig to be used.
 
-1. Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later data.  By default, the name is given the pipeline name followed by the data run (e.g. SNVPhyl__2-15-2021).
-1. Pipeline Description: Any custom text can be entered here.
-1. Email Pipeline Results: There are three options:
-    1. No email: don't send any emails about the pipeline outcome (default)
-    1. On Error: only send an email if the pipeline fails
-    1. On Complettion: Send an email if the pipeline fails or when the pipeline successfully completes running.
-1. Parameters:
+1. General Details:
+   ![General Details](images/general-details.png)
+    1. Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later data.  By default, the name is given the pipeline name followed by the data run (e.g. SNVPhyl__2-15-2021).
+    1. Pipeline Description: Any custom text can be entered here.
+    1. Email Pipeline Results: There are three options:
+        1. No email: don't send any emails about the pipeline outcome (default)
+        1. On Error: only send an email if the pipeline fails
+        1. On Completion: Send an email if the pipeline fails or when the pipeline successfully completes running.
+1. Parameters: parameters used to run the pipeline.  There are default sets provifed by the pipeline developer as well as any that have been saved.  
+    1. Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
+    1. 
 
 **Note**: Some pipelines will require a reference sequence:
 
