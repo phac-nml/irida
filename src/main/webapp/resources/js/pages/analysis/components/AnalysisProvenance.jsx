@@ -3,12 +3,11 @@
  * file the user has selected to view
  */
 
-import React, { useEffect, useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Collapse, Descriptions, Layout } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import {
-  grey1,
-  grey3,
+  blue10,
   blue2,
   blue3,
   blue4,
@@ -17,7 +16,8 @@ import {
   blue7,
   blue8,
   blue9,
-  blue10
+  grey1,
+  grey3
 } from "../../../styles/colors";
 import { getAnalysisProvenanceByFile } from "../../../apis/analysis/analysis";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";

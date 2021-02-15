@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Empty, List, notification } from "antd";
+import { Empty, List, notification } from "antd";
 import { fromNow } from "../../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,

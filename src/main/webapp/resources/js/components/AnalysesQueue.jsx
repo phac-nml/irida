@@ -4,7 +4,7 @@ import { fetchAnalysesQueueCounts } from "./../apis/analysis/analysis";
 import { SPACE_XS } from "../styles/spacing";
 import styled from "styled-components";
 import { formatNumber } from "../utilities/number-utilities";
-import { blue4, blue6 } from "../styles/colors";
+import { blue6 } from "../styles/colors";
 import { IconCloudServer } from "./icons/Icons";
 import { useInterval } from "../hooks";
 

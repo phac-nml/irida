@@ -7,7 +7,6 @@ import React from "react";
 import { render } from "react-dom";
 import { AnalysesQueue } from "../../components/AnalysesQueue";
 import { emptyCart, removeSample } from "../../apis/cart/cart";
-import { CART } from "../../utilities/events-utilities";
 
 render(<AnalysesQueue />, document.querySelector("#queue-root"));
 

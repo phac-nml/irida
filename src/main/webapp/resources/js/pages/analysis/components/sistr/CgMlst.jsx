@@ -5,6 +5,7 @@
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+
 const max_cgMLST_count = 330; /* the maximum number of possible cgMLST alleles in SISTR */
 
 export default function CgMlst({ sistrResults }) {
