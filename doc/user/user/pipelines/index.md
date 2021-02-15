@@ -78,6 +78,9 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
     1. If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
        ![Save Parameters](images/parameters-modified.png)
     1. Below these parameters are other settings that can be set (but cannout be saved)
+1. Share Results
+    1. Some pipeline will allow you to share result back to either the project or sample run.  Checkbox will be visible here if this option is available on this pipeline
+        ![Share Results](images/share-results.png)
 
 **Note**: Some pipelines will require a reference sequence:
 
