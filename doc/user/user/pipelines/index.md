@@ -71,10 +71,15 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
         1. On Error: only send an email if the pipeline fails
         1. On Completion: Send an email if the pipeline fails or when the pipeline successfully completes running.
 1. Parameters: parameters used to run the pipeline.
-    * There are default sets provifed by the pipeline developer as well as any that have been saved.
+    * There are default sets provided by the pipeline developer as well as any that have been saved.
       ![Default Parameters](images/parameters-default.png)
     * Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
-       ![Default Parameters](images/parameters-exposed.png)
+      ![Default Parameters](images/parameters-exposed.png)
+      
+   <blockquote>
+      <p><b>Note</b>: customized pipeline parameters are not validated, please ensure that the values you are entering are valid for the parameter that you are modifying.</p>
+   </blockquote>
+   
     * If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
        ![Save Parameters](images/parameters-modified.png)
     1. Below these parameters are other settings that can be set (but cannout be saved)
@@ -91,69 +96,14 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
     * You can remove a sample by clicking on the remove button to the right of the sample.
     * If the sample contains multiple files that could be run on the pipeline, the most recently added are selected by default.  If you want to run a different set, but select them by clicking on the name.
 
-### Removing samples from a pipeline submission
-
-You can remove a sample from a pipeline submission by clicking on the "Remove" button on the right-hand side of the sample:
-
-![Sample remove button.](images/sample-remove-button.png)
-
-### Multiple filesets per sample
-
-If a sample has been sequenced multiple times (a top-up run, for example), the pipeline submission page will display multiple filesets for that sample:
-
-![Multiple filesets per sample.](images/multiple-filesets-per-sample.png)
-
-You may only select one fileset for submission to the pipeline for analysis. You can select the fileset that you want to submit to the pipeline for analysis using the radio buttons on the left-hand side of the sample fileset display:
-
-![Multiple filesets per sample selection.](images/multiple-filesets-per-sample-radio-buttons.png)
-
-Modifying pipeline parameters
------------------------------
-
-IRIDA has pre-defined some default values for pipeline submissions, but you may change the default parameters for your analysis by clicking on the "Customize" button on the right-hand side of the parameters drop-down at the top of the pipeline submission page:
-
-![Customize parameters button.](images/customize-parameters-button.png)
-
-The dialog window that appears will allow you to change the parameters for the pipeline execution:
-
-![Default pipeline parameters.](images/default-pipeline-parameters.png)
-
-If you would like to reset a value that you modified back to the default value, click on the "Use Default" button on the right-hand side of the paramater:
-
-![Use Default button for pipeline parameters.](images/use-default-button.png)
-
-<blockquote>
-<p><b>Note</b>: customized pipeline parameters are not validated, please ensure that the values you are entering are valid for the parameter that you are modifying.</p>
-</blockquote>
-
-When you've finished customizing the pipeline parameters, you can click on the "Use these Parameters" button to return to the pipeline submission page.
-
-### Saving pipeline parameters
-
-You may save the [parameters that you modified](#modifying-pipeline-parameters) by clicking on the "Save these parameters for later?" checkbox at the bottom of the parameters dialog:
-
-![Save parameters for later checkbox.](images/save-parameters-for-later-checkbox.png)
-
-You should provide a name for the pipeline parameters that reflects the modifications that you've made to the parameters. When you've entered the name for the parameter set, you can click on the "Use these Parameters" button at the bottom of the parameter modification dialog to return to the pipeline submission page.
-
-### Using pre-saved pipeline parameters
-
-Parameter sets that [have been saved](#saving-pipeline-parameters) can be used on subsequent executions of the pipeline by using the parameters drop-down, just below the pipeline name:
-
-![Named parameters drop-down.](images/parameters-dropdown.png)
-
 Running the pipeline
 --------------------
 
-Once you've [selected the files](#multiple-filesets-per-sample) and [selected](#using-pre-saved-pipeline-parameters) or [customized](#modifying-pipeline-parameters) the parameters, you can submit the pipeline for execution by clicking on the rocket ship button on the right-hand side of the page:
+Once you have made all the modifications to the pipeline and are ready to launch, click the "Launch Pipeline" button at the bottom of the page:
+![Launch Pipeline](images/pipeline-launch.png)
 
-![Rocket ship launch icon.](images/ready-to-launch.png)
-
-Your pipeline submission will be prepared and launched, and you will see a confirmation dialog:
-
-![Pipeline launch success.](images/launch-success.png)
-
-You can [monitor pipeline progress](#monitoring-pipeline-progress) by clicking on the "Let's see how this pipeline is doing" button, or you can empty your cart and start again by clicking on the "Let the pipeline run!" button.
+ONce the pipeline has been launch, you will be directed to the analyses page where you can see the current state of the pipeline, as well as the settings for the pipeline:
+![Pipeline Running](images/pipeline-launch.png)
 
 Monitoring pipeline progress
 ----------------------------
