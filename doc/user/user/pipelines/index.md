@@ -78,21 +78,16 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
     1. If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
        ![Save Parameters](images/parameters-modified.png)
     1. Below these parameters are other settings that can be set (but cannout be saved)
-1. Share Results
+1. Share Results:
     1. Some pipeline will allow you to share result back to either the project or sample run.  Checkbox will be visible here if this option is available on this pipeline
         ![Share Results](images/share-results.png)
-
-**Note**: Some pipelines will require a reference sequence:
-
-![Reference file required.](images/reference-file-required.png)
-
-If you have a **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
-
-If you do not have a **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload Upload" area or dragging a reference file to it. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
-
-When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#reference-files)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
-
-![Pipeline samples.](images/pipeline-samples.png)
+1. Reference Files:
+    1. If the pipeline requires a reference files you will be prompeted to select a reference file from one of the projects or to upload a new one.
+       ![Reference file required.](images/reference-file-required.png)
+    2. If you have a **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
+    3. If you do not have a **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload Upload" area or dragging a reference file to it. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
+1. Samples
+    ![Pipeline samples.](images/pipeline-samples.png)
 
 ### Removing samples from a pipeline submission
 
