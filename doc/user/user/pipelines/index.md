@@ -73,6 +73,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
 1. Parameters: parameters used to run the pipeline.  There are default sets provifed by the pipeline developer as well as any that have been saved.  
    ![Default Parameters](images/parameters-default.png)
     1. Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
+       ![Default Parameters](images/parameters-exposed.png)
     1. 
 
 **Note**: Some pipelines will require a reference sequence:
