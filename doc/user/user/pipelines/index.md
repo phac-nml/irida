@@ -64,18 +64,18 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
 
 1. General Details:
    ![General Details](images/general-details.png)
-    1. Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later data.  By default, the name is given the pipeline name followed by the data run (e.g. SNVPhyl__2-15-2021).
-    1. Pipeline Description: Any custom text can be entered here.
-    1. Email Pipeline Results: There are three options:
+    * Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later data.  By default, the name is given the pipeline name followed by the data run (e.g. SNVPhyl__2-15-2021).
+    * Pipeline Description: Any custom text can be entered here.
+    * Email Pipeline Results: There are three options:
         1. No email: don't send any emails about the pipeline outcome (default)
         1. On Error: only send an email if the pipeline fails
         1. On Completion: Send an email if the pipeline fails or when the pipeline successfully completes running.
 1. Parameters: parameters used to run the pipeline.
-   1. There are default sets provifed by the pipeline developer as well as any that have been saved.
+    * There are default sets provifed by the pipeline developer as well as any that have been saved.
       ![Default Parameters](images/parameters-default.png)
-    1. Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
+    * Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
        ![Default Parameters](images/parameters-exposed.png)
-    1. If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
+    * If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
        ![Save Parameters](images/parameters-modified.png)
     1. Below these parameters are other settings that can be set (but cannout be saved)
 1. Share Results:
@@ -86,8 +86,10 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
        ![Reference file required.](images/reference-file-required.png)
     2. If you have a **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
     3. If you do not have a **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload Upload" area or dragging a reference file to it. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
-1. Samples
-    ![Pipeline samples.](images/pipeline-samples.png)
+1. Samples are listed last.  Here you can see all the files selected to run.
+   ![Pipeline samples.](images/pipeline-samples.png)
+    * You can remove a sample by clicking on the remove button to the right of the sample.
+    * If the sample contains multiple files that could be run on the pipeline, the most recently added are selected by default.  If you want to run a different set, but select them by clicking on the name.
 
 ### Removing samples from a pipeline submission
 
