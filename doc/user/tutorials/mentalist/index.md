@@ -53,7 +53,6 @@ Before launching the pipeline, we must select a MentaLiST kmer database to run o
 
 ![mentalist-pipeline-parameters]
 
-
 Please use the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button]
