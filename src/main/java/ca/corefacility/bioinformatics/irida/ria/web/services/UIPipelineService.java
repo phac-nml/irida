@@ -147,13 +147,16 @@ public class UIPipelineService {
 			Authentication authentication = SecurityContextHolder.getContext()
 					.getAuthentication();
 			// Need to make sure that all samples are allowed to be updated.
-			canUpdateSamples = cart.values()
+			List<Sample> samples = cart.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+			canUpdateSamples = samples
 					.stream()
-					.map(samples -> updateSamplePermission.isAllowed(authentication, samples))
+					.map(sample -> updateSamplePermission.isAllowed(authentication, sample))
 					.reduce(true, (a, b) -> a && b);
-			detailsResponse.setUpdateSamples(messageSource.getMessage(
-					"workflow.label.share-analysis-samples." + description.getAnalysisType()
-							.getType(), new Object[] {}, locale));
+			if (canUpdateSamples) {
+				detailsResponse.setUpdateSamples(messageSource.getMessage(
+						"workflow.label.share-analysis-samples." + description.getAnalysisType()
+								.getType(), new Object[] {}, locale));
+			}
 		}
 
         /*
