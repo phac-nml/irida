@@ -17,8 +17,8 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
-    "@ant-design/charts": "^1.0.1",
-    "@ant-design/icons": "^4.2.1",
+    "@ant-design/charts": "^1.0.17",
+    "@ant-design/icons": "^4.5.0",
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
@@ -30,7 +30,7 @@
     "angular-marked": "^1.2.2",
     "angular-ui-bootstrap": "^2.5.6",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "4.7.3",
+    "antd": "4.12.3",
     "axios": "^0.21.1",
     "bootstrap": "3.4.1",
     "bootstrap-daterangepicker": "^3.0.3",
