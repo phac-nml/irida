@@ -121,8 +121,7 @@ public class UIPipelineServiceTest {
 
 		verify(projectService, times(1)).readMultiple(new HashSet<>(PROJECT_IDS));
 		verify(analysisSubmissionSampleProcessor, times(1)).hasRegisteredAnalysisSampleUpdater(ANALYSIS_TYPE);
-		verify(messageSource, times(3)).getMessage(any(), any(), any());
-		verify(updateSamplePermission, times(3)).isAllowed(any(), any());
+		verify(messageSource, times(4)).getMessage(any(), any(), any());
 
 		Assert.assertEquals("Should contain the pipeline type (which in this case is the pipeline name)", PIPELINE_NAME,
 				response.getType());
