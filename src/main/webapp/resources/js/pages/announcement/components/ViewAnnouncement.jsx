@@ -64,12 +64,10 @@ function ViewAnnouncementModal({
       ),
     });
   return (
-    <>
-      <LinkButton
-        text={announcementTitle}
-        onClick={() => showAnnouncement(announcementID)}
-      />
-    </>
+    <LinkButton
+      text={announcementTitle}
+      onClick={() => showAnnouncement(announcementID)}
+    />
   );
 }
 

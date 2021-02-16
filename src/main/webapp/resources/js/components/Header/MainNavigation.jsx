@@ -81,7 +81,6 @@ export function MainNavigation() {
         }}
       >
         <Menu mode="horizontal" theme={theme} className="accessory-menu">
-          <AnnouncementsSubMenu />
           <Menu.Item icon={<CartLink />} key="cart" />
           {!isAdmin && (
             <Menu.SubMenu title={<IconCog />}>
@@ -136,6 +135,7 @@ export function MainNavigation() {
             <Menu.Divider />
             <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
           </Menu.SubMenu>
+          <AnnouncementsSubMenu />
           <Menu.SubMenu
             title={
               <Space>
