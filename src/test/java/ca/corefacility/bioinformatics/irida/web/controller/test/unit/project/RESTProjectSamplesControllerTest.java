@@ -233,8 +233,8 @@ public class RESTProjectSamplesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(projectService.addSampleToProject(p, s, false)).thenReturn(r);
-		ModelMap modelMap = controller
-				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response, Locale.ENGLISH);
+		ModelMap modelMap = controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), false, response,
+				Locale.ENGLISH);
 		
 		verify(projectService).addSampleToProject(p, s, false);
 		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
@@ -283,7 +283,7 @@ public class RESTProjectSamplesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(r);
 
 		ModelMap modelMap = controller
-				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response, Locale.ENGLISH);
+				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), false, response, Locale.ENGLISH);
 
 		verify(projectService).addSampleToProject(p, s, false);
 		verify(sampleService).getSampleForProject(p,s.getId());
