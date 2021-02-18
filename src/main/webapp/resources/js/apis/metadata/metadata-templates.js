@@ -13,3 +13,24 @@ export function getProjectMetadataTemplates(projectId) {
     .get(`${BASE_URL}?projectId=${projectId}`)
     .then(({ data }) => data);
 }
+
+export async function createProjectMetadataTemplate(projectId, parameters) {
+  try {
+    const { data } = await axios.post(
+      `${BASE_URL}?projectId=${projectId}`,
+      parameters
+    );
+    return data;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}
+
+export async function getMetadataTemplate(id) {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/${id}`);
+    return data;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}
