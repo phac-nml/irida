@@ -59,4 +59,9 @@ public class UIMetadataTemplateService {
 	public void updateMetadataTemplate(MetadataTemplate template) {
 		templateService.updateMetadataTemplateInProject(template);
 	}
+
+	public void deleteMetadataTemplate(Long templateId, Long projectId) {
+		Project project = projectService.read(projectId);
+		templateService.deleteMetadataTemplateFromProject(project, templateId);
+	}
 }

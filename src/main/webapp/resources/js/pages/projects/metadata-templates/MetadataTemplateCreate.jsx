@@ -14,7 +14,6 @@ export function MetadataTemplateCreate({ createTemplate }) {
     } catch (e) {
       console.log(e);
     }
-    console.log(values);
   };
 
   return (
