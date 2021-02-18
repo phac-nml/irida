@@ -46,3 +46,14 @@ export async function updateMetadataTemplate(template) {
     return Promise.reject(e.response.data.message);
   }
 }
+
+export async function deleteMetadataTemplate(projectId, templateId) {
+  try {
+    const { data } = await axios.delete(
+      `${BASE_URL}/${templateId}?projectId=${projectId}`
+    );
+    return data.message;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}

@@ -51,4 +51,13 @@ public class MetadataTemplatesAjaxController {
 		service.updateMetadataTemplate(template);
 		return ResponseEntity.ok(new AjaxSuccessResponse("__Template has been saved"));
 	}
+
+	@DeleteMapping("/{templateId}")
+	public ResponseEntity<AjaxResponse> deleteMetadataTemplate(@PathVariable Long templateId,
+			@RequestParam Long projectId) {
+		service.deleteMetadataTemplate(templateId, projectId);
+		return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
+	}
+
+
 }

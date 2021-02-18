@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, notification, PageHeader, Space, Typography } from "antd";
+import { Button, List, notification, PageHeader, Typography } from "antd";
 import { navigate } from "@reach/router";
 import {
   getMetadataTemplate,
@@ -73,27 +73,49 @@ export function MetadataTemplate({ id }) {
 
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
-      <Space direction="vertical" style={{ width: `100%` }}>
-        <Text strong>Name</Text>
-        <Paragraph editable={{ onChange: (text) => onChange("name", text) }}>
-          {template.name}
-        </Paragraph>
-        <Text strong>Description</Text>
-        <Paragraph
-          editable={{ onChange: (text) => onChange("description", text) }}
-        >
-          {template.description || ""}
-        </Paragraph>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Text strong>Metadata Fields</Text>
-          <Button>Add New Field</Button>
-        </div>
-        <DnDTable
-          data={data}
-          columns={columns}
-          onRowUpdate={(data) => setData(data)}
-        />
-      </Space>
+      <List itemLayout="vertical">
+        <List.Item>
+          <List.Item.Meta
+            title={<Text strong>Name</Text>}
+            description={
+              <Paragraph
+                editable={{ onChange: (text) => onChange("name", text) }}
+              >
+                {template.name}
+              </Paragraph>
+            }
+          />
+        </List.Item>
+        <List.Item>
+          <List.Item.Meta
+            title={<Text strong>Description</Text>}
+            description={
+              <Paragraph
+                editable={{
+                  onChange: (text) => onChange("description", text),
+                }}
+              >
+                {template.description || ""}
+              </Paragraph>
+            }
+          />
+        </List.Item>
+        <List.Item>
+          <List.Item.Meta
+            title={
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Text strong>Metadata Fields</Text>
+                <Button>Add New Field</Button>
+              </div>
+            }
+          />
+          <DnDTable
+            data={data}
+            columns={columns}
+            onRowUpdate={(data) => setData(data)}
+          />
+        </List.Item>
+      </List>
     </PageHeader>
   );
 }
