@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, List, notification, PageHeader, Typography } from "antd";
+import { List, notification, PageHeader, Typography } from "antd";
 import { navigate } from "@reach/router";
 import {
   getMetadataTemplate,
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
 import DnDTable from "../../../components/ant.design/DnDTable";
+import { MetadataFieldCreate } from "./MetadataFieldCreate";
 
 const { Paragraph, Text } = Typography;
 
@@ -105,7 +106,7 @@ export function MetadataTemplate({ id }) {
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Text strong>Metadata Fields</Text>
-                <Button>Add New Field</Button>
+                <MetadataFieldCreate />
               </div>
             }
           />
