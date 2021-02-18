@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  AppstoreOutlined,
   BoldOutlined,
+  CalendarTwoTone,
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -35,6 +35,7 @@ import {
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
+  SettingOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -45,10 +46,8 @@ import {
   TableOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined,
   UploadOutlined,
-  CalendarTwoTone,
-  SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -132,10 +131,6 @@ export const IconEye = ({ ...props }) => <EyeOutlined {...props} />;
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
-
-export const IconMetadataTemplate = ({ ...props }) => (
-  <AppstoreOutlined {...props} />
-);
 
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
 

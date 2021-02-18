@@ -1,5 +1,14 @@
 import React from "react";
-import { Button, Col, List, notification, PageHeader, Row, Tag } from "antd";
+import {
+  Button,
+  Col,
+  List,
+  notification,
+  PageHeader,
+  Popconfirm,
+  Row,
+  Tag,
+} from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
@@ -9,6 +18,7 @@ import {
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
 } from "../../../apis/metadata/metadata-templates";
+import { blue6 } from "../../../styles/colors";
 
 export function MetadataTemplatesList({ navigate }) {
   const [BASE_URL] = React.useState(() =>
@@ -78,18 +88,26 @@ export function MetadataTemplatesList({ navigate }) {
                     key="list-download"
                   />,
                   window.project.canManage ? (
-                    <Button
-                      shape="circle"
-                      size="small"
-                      icon={<IconRemove />}
-                      onClick={() => deleteTemplate(item.id)}
-                    />
+                    <Popconfirm
+                      placement="bottomRight"
+                      title={"Delete this template?"}
+                      onConfirm={() => deleteTemplate(item.id)}
+                    >
+                      <Button
+                        shape="circle"
+                        size="small"
+                        icon={<IconRemove />}
+                      />
+                    </Popconfirm>
                   ) : null,
                 ]}
               >
                 <List.Item.Meta
-                  // avatar={<Avatar icon={<IconMetadataTemplate />} />}
-                  title={<Link to={`${item.id}`}>{item.label}</Link>}
+                  title={
+                    <Link style={{ color: blue6 }} to={`${item.id}`}>
+                      {item.label}
+                    </Link>
+                  }
                   description={item.description}
                 />
               </List.Item>
