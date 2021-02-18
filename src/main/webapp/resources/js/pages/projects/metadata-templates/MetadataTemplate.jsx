@@ -1,69 +1,10 @@
 import React from "react";
-import { PageHeader, Space, Table, Typography } from "antd";
-import { createDndContext, DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { Button, PageHeader, Space, Typography } from "antd";
 import { navigate } from "@reach/router";
 import { getMetadataTemplate } from "../../../apis/metadata/metadata-templates";
-import update from "immutability-helper";
-import styled from "styled-components";
+import DnDTable from "../../../components/ant.design/DnDTable";
 
 const { Paragraph, Text } = Typography;
-
-const RNDContext = createDndContext(HTML5Backend);
-
-const DraggableTable = styled(Table)`
-  tr.drop-over-downward td {
-    border-bottom: 2px dashed #1890ff;
-  }
-
-  tr.drop-over-upward td {
-    border-top: 2px dashed #1890ff;
-  }
-`;
-
-const type = "DragableBodyRow";
-
-const DragableBodyRow = ({
-  index,
-  moveRow,
-  className,
-  style,
-  ...restProps
-}) => {
-  const ref = React.useRef();
-  const [{ isOver, dropClassName }, drop] = useDrop({
-    accept: type,
-    collect: (monitor) => {
-      const { index: dragIndex } = monitor.getItem() || {};
-      if (dragIndex === index) {
-        return {};
-      }
-      return {
-        isOver: monitor.isOver(),
-        dropClassName:
-          dragIndex < index ? " drop-over-downward" : " drop-over-upward",
-      };
-    },
-    drop: (item) => {
-      moveRow(item.index, index);
-    },
-  });
-  const [, drag] = useDrag({
-    item: { type, index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-  drop(drag(ref));
-  return (
-    <tr
-      ref={ref}
-      className={`${className}${isOver ? dropClassName : ""}`}
-      style={{ cursor: "move", ...style }}
-      {...restProps}
-    />
-  );
-};
 
 const columns = [
   {
@@ -120,23 +61,6 @@ export function MetadataTemplate({ id }) {
     console.log(field, text);
   };
 
-  const moveRow = React.useCallback(
-    (dragIndex, hoverIndex) => {
-      const dragRow = data[dragIndex];
-      setData(
-        update(data, {
-          $splice: [
-            [dragIndex, 1],
-            [hoverIndex, 0, dragRow],
-          ],
-        })
-      );
-    },
-    [data]
-  );
-
-  const manager = React.useRef(RNDContext);
-
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
       <Space direction="vertical" style={{ width: `100%` }}>
@@ -146,22 +70,15 @@ export function MetadataTemplate({ id }) {
         >
           {template.description || ""}
         </Paragraph>
-        <DndProvider manager={manager.current.dragDropManager}>
-          <DraggableTable
-            pagination={false}
-            dataSource={data}
-            columns={columns}
-            components={{
-              body: {
-                row: DragableBodyRow,
-              },
-            }}
-            onRow={(record, index) => ({
-              index,
-              moveRow,
-            })}
-          />
-        </DndProvider>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Text strong>Metadata Fields</Text>
+          <Button>Add New Field</Button>
+        </div>
+        <DnDTable
+          data={data}
+          columns={columns}
+          onRowUpdate={(data) => setData(data)}
+        />
       </Space>
     </PageHeader>
   );
