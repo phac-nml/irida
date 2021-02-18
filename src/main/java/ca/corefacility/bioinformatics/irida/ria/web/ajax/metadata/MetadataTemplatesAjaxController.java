@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataTemplateService;
 
 /**
@@ -29,8 +29,18 @@ public class MetadataTemplatesAjaxController {
 	 * @param projectId Identifier for the project to get templates for.
 	 * @return List of metadata templates with associate details.
 	 */
-	@RequestMapping("")
+	@GetMapping("")
 	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
+	}
+
+	@PostMapping("")
+	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(@RequestBody CreateMetadataTemplateRequest request, @RequestParam Long projectId) {
+		return ResponseEntity.ok(service.createMetadataTemplate(request, projectId));
+	}
+
+	@GetMapping("/{templateId}")
+	public ResponseEntity<MetadataTemplate> getMetadataTemplate(@PathVariable Long templateId) {
+		return ResponseEntity.ok(service.getMetadataTemplate(templateId));
 	}
 }
