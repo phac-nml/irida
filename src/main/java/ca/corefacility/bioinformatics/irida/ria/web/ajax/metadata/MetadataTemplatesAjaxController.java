@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataTemplateService;
 
@@ -42,5 +44,11 @@ public class MetadataTemplatesAjaxController {
 	@GetMapping("/{templateId}")
 	public ResponseEntity<MetadataTemplate> getMetadataTemplate(@PathVariable Long templateId) {
 		return ResponseEntity.ok(service.getMetadataTemplate(templateId));
+	}
+
+	@PutMapping("/{templateId}")
+	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template) {
+		service.updateMetadataTemplate(template);
+		return ResponseEntity.ok(new AjaxSuccessResponse("__Template has been saved"));
 	}
 }

@@ -55,4 +55,8 @@ public class UIMetadataTemplateService {
 	public MetadataTemplate getMetadataTemplate(Long templateId) {
 		return templateService.read(templateId);
 	}
+
+	public void updateMetadataTemplate(MetadataTemplate template) {
+		templateService.updateMetadataTemplateInProject(template);
+	}
 }
