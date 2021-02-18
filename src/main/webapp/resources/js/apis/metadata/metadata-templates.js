@@ -34,3 +34,15 @@ export async function getMetadataTemplate(id) {
     return Promise.reject(e.response.data.message);
   }
 }
+
+export async function updateMetadataTemplate(template) {
+  try {
+    const { data } = await axios.put(
+      `${BASE_URL}/${template.identifier}`,
+      template
+    );
+    return data.message;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}

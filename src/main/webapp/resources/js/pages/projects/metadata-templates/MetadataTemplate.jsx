@@ -1,7 +1,10 @@
 import React from "react";
-import { Button, PageHeader, Space, Typography } from "antd";
+import { Button, notification, PageHeader, Space, Typography } from "antd";
 import { navigate } from "@reach/router";
-import { getMetadataTemplate } from "../../../apis/metadata/metadata-templates";
+import {
+  getMetadataTemplate,
+  updateMetadataTemplate,
+} from "../../../apis/metadata/metadata-templates";
 import DnDTable from "../../../components/ant.design/DnDTable";
 
 const { Paragraph, Text } = Typography;
@@ -57,13 +60,24 @@ export function MetadataTemplate({ id }) {
     getMetadataTemplate(id).then((data) => setTemplate(data));
   }, []);
 
-  const onChange = (field, text) => {
-    console.log(field, text);
+  const onChange = async (field, text) => {
+    if (template[field] !== text) {
+      const updated = { ...template, [field]: text };
+      try {
+        const message = await updateMetadataTemplate(updated);
+        notification.success({ message });
+        setTemplate(updated);
+      } catch (e) {}
+    }
   };
 
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
       <Space direction="vertical" style={{ width: `100%` }}>
+        <Text strong>Name</Text>
+        <Paragraph editable={{ onChange: (text) => onChange("name", text) }}>
+          {template.name}
+        </Paragraph>
         <Text strong>Description</Text>
         <Paragraph
           editable={{ onChange: (text) => onChange("description", text) }}
