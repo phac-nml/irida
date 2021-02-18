@@ -4,6 +4,7 @@ import { Badge } from "antd";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { getCartCount } from "../../../../apis/cart/cart";
+import { theme } from "../../../../utilities/theme-utilities";
 
 /**
  * React component to display the cart icon and current counts in the
@@ -41,9 +42,10 @@ export function CartLink() {
       href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
     >
       <Badge count={count}>
-
-        <IconShoppingCart data-count={count} />
-
+        <IconShoppingCart
+          style={theme === "dark" ? { color: "rgba(255, 255, 255, 0.65)" } : {}}
+          data-count={count}
+        />
       </Badge>
     </a>
   );

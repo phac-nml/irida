@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)
 * [Developer]: Fixed webpack not outputting css bundle files.
+* [UI]: Updated to latest release of Ant Design (v4.12.3).
 
 20.09 to 21.01
 --------------
