@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
@@ -45,6 +46,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
@@ -52,6 +54,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 				.sasToken(sasToken)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+		this.storageType = StorageType.AZURE;
 	}
 
 	/**
@@ -406,5 +409,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (IOException e) {
 			throw new StorageException("Unable to clean up temporary file", e);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
 	}
 }

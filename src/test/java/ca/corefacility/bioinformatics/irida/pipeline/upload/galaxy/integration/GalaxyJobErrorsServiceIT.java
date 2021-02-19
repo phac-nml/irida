@@ -25,7 +25,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
@@ -92,8 +91,6 @@ public class GalaxyJobErrorsServiceIT {
 	@Autowired
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
-	@Autowired
-	private StorageType storageType;
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -114,7 +111,7 @@ public class GalaxyJobErrorsServiceIT {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
 				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository, storageType);
+				analysisSubmissionTempFileRepository);
 
 	}
 

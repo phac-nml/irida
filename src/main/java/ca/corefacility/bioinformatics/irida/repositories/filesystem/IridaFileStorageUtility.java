@@ -154,4 +154,11 @@ public interface IridaFileStorageUtility {
 	 * @return if the directory is writable or not
 	 */
 	public boolean checkWriteAccess(Path baseDirectory);
+
+	/**
+	 * Check if the storage type is local
+	 *
+	 * @return if the storage type is local or not
+	 */
+	public boolean isStorageTypeLocal();
 }

@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import org.joda.time.DateTime;
@@ -106,7 +105,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
-	private StorageType storageType;
 
 	/**
 	 * Sets up variables for tests.
@@ -115,11 +113,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
-		storageType = StorageType.LOCAL;
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
 				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository, storageType);
+				analysisSubmissionTempFileRepository);
 
 		analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
@@ -685,7 +682,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
 				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService,
-				iridaFileStorageUtility, analysisSubmissionTempFileRepository, storageType);
+				iridaFileStorageUtility, analysisSubmissionTempFileRepository);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -713,7 +710,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ZERO),
 				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService,
-				iridaFileStorageUtility, analysisSubmissionTempFileRepository, storageType);
+				iridaFileStorageUtility, analysisSubmissionTempFileRepository);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -741,7 +738,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
 				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService,
-				iridaFileStorageUtility, analysisSubmissionTempFileRepository, storageType);
+				iridaFileStorageUtility, analysisSubmissionTempFileRepository);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);
@@ -769,7 +766,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
 				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService,
-				iridaFileStorageUtility, analysisSubmissionTempFileRepository, storageType);
+				iridaFileStorageUtility, analysisSubmissionTempFileRepository);
 
 		when(analysisSubmissionMock.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 		when(analysisSubmissionMock.getAnalysisCleanedState()).thenReturn(AnalysisCleanedState.NOT_CLEANED);

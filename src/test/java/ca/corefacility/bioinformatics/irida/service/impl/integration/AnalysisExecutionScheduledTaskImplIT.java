@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -106,9 +105,6 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Autowired
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
-	@Autowired
-	private StorageType storageType;
-
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
@@ -134,7 +130,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
 				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository, storageType);
+				analysisSubmissionTempFileRepository);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -202,7 +198,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
 				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService,
-				iridaFileStorageUtility, analysisSubmissionTempFileRepository, storageType);
+				iridaFileStorageUtility, analysisSubmissionTempFileRepository);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);

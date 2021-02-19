@@ -11,9 +11,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -47,13 +48,11 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	// @formatter:on
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService, IridaFileStorageUtility iridaFileStorageUtility) {
+	public BioHanselSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 
-		try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(filePath)) {
+		try(InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
 			@SuppressWarnings("resource") String jsonText = new Scanner(inputStream).useDelimiter("\\Z")
 					.next();
 			ObjectMapper mapper = new ObjectMapper();

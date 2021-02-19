@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
@@ -44,6 +45,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
@@ -53,6 +55,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
 				.build();
 		this.bucketName = bucketName;
+		this.storageType = StorageType.AWS;
 	}
 
 	/**
@@ -409,5 +412,13 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 					"Unable to locate bucket " + bucketName + ". Please check your credentials and that the bucket "
 							+ bucketName + " exists.");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
 	}
 }

@@ -23,7 +23,6 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -112,8 +111,6 @@ public class AnalysisExecutionServiceTestConfig {
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Autowired
-	private StorageType storageType;
 	
 	@Bean
 	public AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor() {
@@ -156,7 +153,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
 		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository, storageType);
+				analysisSubmissionTempFileRepository);
 	}
 
 	@Lazy

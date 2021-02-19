@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -12,8 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.BioHanselSampleUpdater;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.ImmutableMap;
@@ -40,14 +37,12 @@ public class BioHanselSampleUpdaterTest {
 	private BioHanselSampleUpdater bioHanselSampleUpdater;
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		sampleService = mock(SampleService.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
-		bioHanselSampleUpdater = new BioHanselSampleUpdater(metadataTemplateService, sampleService, iridaFileStorageUtility);
+		bioHanselSampleUpdater = new BioHanselSampleUpdater(metadataTemplateService, sampleService);
 	}
 
 	@SuppressWarnings("unchecked")

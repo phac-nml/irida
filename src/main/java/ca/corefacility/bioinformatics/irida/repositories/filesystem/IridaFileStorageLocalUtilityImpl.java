@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -32,9 +33,11 @@ import ca.corefacility.bioinformatics.irida.util.FileUtils;
 public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageLocalUtilityImpl() {
+		this.storageType = StorageType.LOCAL;
 	}
 
 	/**
@@ -300,5 +303,13 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		 true otherwise the system will have exited startup
 		 */
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
 	}
 }

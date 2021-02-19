@@ -11,10 +11,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
@@ -36,7 +37,6 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private MetadataTemplateService metadataTemplateService;
 	private IridaWorkflowsService iridaWorkflowsService;
 	private SampleService sampleService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	// @formatter:off
 	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String,String>builder()
@@ -54,11 +54,10 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-							  IridaWorkflowsService iridaWorkflowsService, IridaFileStorageUtility iridaFileStorageUtility) {
+							  IridaWorkflowsService iridaWorkflowsService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -79,7 +78,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
 
-			try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(filePath)) {
+			try(InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
 
 				//Read the JSON file from SISTR output
 				@SuppressWarnings("resource")
