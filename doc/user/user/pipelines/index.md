@@ -80,7 +80,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
       <p><b>Note</b>: customized pipeline parameters are not validated, please ensure that the values you are entering are valid for the parameter that you are modifying.</p>
    </blockquote>
    
-    * If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameters.  Once saved they can be selected in the dropdown above for future pipelines.
+    * If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameter set.  Once saved they can be selected in the dropdown above for the current pipeline or any future pipelines.
        ![Save Parameters](images/parameters-modified.png)
     1. Below these parameters are other settings that can be set (but cannout be saved)
 1. Share Results:
