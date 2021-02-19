@@ -50,7 +50,7 @@ Please select the **Salmonella Heidelberg SNV Subtyping Scheme**.
 
 ![biohansel-pipeline-params]
 
-You can leave the other parameters unmodified. Please use the **Ready to Launch?** button to start the pipeline.
+You can leave the other parameters unmodified. Please select the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button]
 
