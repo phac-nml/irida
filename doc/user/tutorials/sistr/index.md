@@ -46,7 +46,7 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![sistr-pipeline-page]
 
-Please use the **Ready to Launch?** button to start the pipeline.
+Please use the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button]
 
