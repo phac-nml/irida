@@ -56,7 +56,7 @@ SNVPhyl requires a reference genome to be used for mapping sequencing reads and 
 
 ## Optional parameters
 
-Next, selecting **Modify** brings up a page where parameters can be customized. The default parameters will often be appropriate, so we will use them for now.
+Next, selecting the **Modify** button brings up a page where parameters can be customized. The default parameters will often be appropriate, so we will use them for now.
 
 ![snvphyl-pipeline-customize][]
 
