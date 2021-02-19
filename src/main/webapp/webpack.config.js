@@ -43,7 +43,7 @@ const config = {
         test: /\.less$/,
         use: [
           {
-            loader: "style-loader",
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: "css-loader", // translates CSS into CommonJS
