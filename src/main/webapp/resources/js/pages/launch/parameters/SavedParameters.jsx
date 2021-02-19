@@ -7,7 +7,6 @@ import {
   Input,
   Popover,
   Select,
-  Space,
   Typography,
 } from "antd";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
@@ -120,52 +119,48 @@ export function SavedParameters({ form, sets }) {
               showIcon
               style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
               type={"warning"}
-              message={i18n("SavedParameters.modified")}
-              description={
-                <div>
-                  {i18n("SavedParameters.modified.description")}{" "}
-                  <Space>
-                    <Popover
-                      placement="bottomRight"
-                      trigger="click"
-                      content={
-                        <>
-                          <Typography.Text>
-                            {i18n("SavedParameters.modified.name")}
-                          </Typography.Text>
-                          <Form
-                            form={saveParamsForm}
-                            layout="inline"
-                            style={{
-                              width: 305,
-                            }}
-                          >
-                            <Form.Item name="name" required>
-                              <Input className="t-modified-name" />
-                            </Form.Item>
-                            <Form.Item>
-                              <Button
-                                onClick={saveParameters}
-                                className="t-saveas-submit"
-                              >
-                                {i18n("SavedParameters.modified.save")}
-                              </Button>
-                            </Form.Item>
-                          </Form>
-                        </>
-                      }
-                    >
-                      <Button
-                        size="small"
-                        type="ghost"
-                        className="t-modified-saveas"
+              action={
+                <Popover
+                  placement="bottomRight"
+                  trigger="click"
+                  content={
+                    <>
+                      <Typography.Text>
+                        {i18n("SavedParameters.modified.name")}
+                      </Typography.Text>
+                      <Form
+                        form={saveParamsForm}
+                        layout="inline"
+                        style={{
+                          width: 305,
+                        }}
                       >
-                        {i18n("SavedParameters.modified.saveAs")}
-                      </Button>
-                    </Popover>
-                  </Space>
-                </div>
+                        <Form.Item name="name" required>
+                          <Input className="t-modified-name" />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            onClick={saveParameters}
+                            className="t-saveas-submit"
+                          >
+                            {i18n("SavedParameters.modified.save")}
+                          </Button>
+                        </Form.Item>
+                      </Form>
+                    </>
+                  }
+                >
+                  <Button
+                    size="small"
+                    type="ghost"
+                    className="t-modified-saveas"
+                  >
+                    {i18n("SavedParameters.modified.saveAs")}
+                  </Button>
+                </Popover>
               }
+              message={i18n("SavedParameters.modified")}
+              description={i18n("SavedParameters.modified.description")}
             />
           ) : null}
           {fields.map(({ name, label }) => (
