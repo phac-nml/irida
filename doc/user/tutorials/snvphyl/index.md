@@ -79,7 +79,7 @@ Please select the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button][]
 
-Once the button is selected you should be brought to the pipeline detials page.
+Once the button is selected, you will be redirected to the pipeline details page.
 
 Monitoring Pipeline Status
 ==========================
