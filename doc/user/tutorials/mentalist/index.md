@@ -57,7 +57,7 @@ Please use the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button]
 
-Once the button is selected, you will be redirected to the analysis details paged.
+Once the button is selected, you will be redirected to the analysis details page.
 
 
 ![analysis-in-progress]
