@@ -68,7 +68,7 @@ We will use the default parameters.  Please select the **Launch Pipeline** butto
 
 ![launch-button][]
 
-Once the button is selected the pipeline while be initialted and you will be redirected to the analysis details page, where you can monitor the status the workflow.
+Once the button is selected, the pipeline is initialized and you will be redirected to the analysis details page. From this page you can monitor the status of the workflow.
 
 You can also find your analyses any time through the main menu by clicking on the "Analyses" > "Your Analyses" link.
 
