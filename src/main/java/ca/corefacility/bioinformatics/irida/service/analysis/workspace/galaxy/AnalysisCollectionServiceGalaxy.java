@@ -71,7 +71,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 *                            {@link SingleEndSequenceFile}.
 	 * @param workflowHistory     The history to upload the sequence files into.
 	 * @param workflowLibrary     A temporary library to upload files into.
-	 * @param submissionId        The {@link AnalysisSubmission} id
+	 * @param analysisSubmission  The {@link AnalysisSubmission}
 	 * @return A CollectionResponse for the dataset collection constructed from the
 	 * given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
@@ -79,7 +79,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 */
 	public CollectionResponse uploadSequenceFilesSingleEnd(
 			Map<Sample, SingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
-			Library workflowLibrary, Long submissionId) throws ExecutionManagerException, IOException {
+			Library workflowLibrary, AnalysisSubmission analysisSubmission) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
@@ -97,7 +97,7 @@ public class AnalysisCollectionServiceGalaxy {
 			 workflow status is set for an analysis.
 			 */
 			if (!iridaFileStorageUtility.isStorageTypeLocal()) {
-				AnalysisSubmissionTempFile analysisSubmissionTempFile = new AnalysisSubmissionTempFile(submissionId,
+				AnalysisSubmissionTempFile analysisSubmissionTempFile = new AnalysisSubmissionTempFile(analysisSubmission,
 						iridaTemporaryFile.getFile(), iridaTemporaryFile.getDirectoryPath());
 				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFile);
 			}
@@ -134,7 +134,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @param workflowHistory           The history to upload the sequence files
 	 *                                  into.
 	 * @param workflowLibrary           A temporary library to upload files into.
-	 * @param submissionId              The {@link AnalysisSubmission} id
+	 * @param analysisSubmission        The {@link AnalysisSubmission}
 	 * @return A CollectionResponse for the dataset collection constructed from the
 	 * given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
@@ -142,7 +142,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 */
 	public CollectionResponse uploadSequenceFilesPaired(
 			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
-			Library workflowLibrary, Long submissionId) throws ExecutionManagerException, IOException {
+			Library workflowLibrary, AnalysisSubmission analysisSubmission) throws ExecutionManagerException, IOException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
@@ -171,10 +171,10 @@ public class AnalysisCollectionServiceGalaxy {
 			 */
 			if (!iridaFileStorageUtility.isStorageTypeLocal()) {
 				AnalysisSubmissionTempFile analysisSubmissionTempFileForward = new AnalysisSubmissionTempFile(
-						submissionId, iridaTemporaryFileForward.getFile(),
+						analysisSubmission, iridaTemporaryFileForward.getFile(),
 						iridaTemporaryFileForward.getDirectoryPath());
 				AnalysisSubmissionTempFile analysisSubmissionTempFileReverse = new AnalysisSubmissionTempFile(
-						submissionId, iridaTemporaryFileReverse.getFile(),
+						analysisSubmission, iridaTemporaryFileReverse.getFile(),
 						iridaTemporaryFileReverse.getDirectoryPath());
 				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFileForward);
 				analysisSubmissionTempFileRepository.save(analysisSubmissionTempFileReverse);

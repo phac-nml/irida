@@ -88,5 +88,9 @@
 		  phoneNumber="0000" username="admin" system_role="ROLE_ADMIN"
 		  credentialsNonExpired="true" enabled="true" />
 
+	<analysis_submission id="1" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02"
+						 name="My Completed Submission BIO HANSEL"
+						 analysis_id="1" workflow_id="0e8738e6-2aeb-4627-9d6e-15ae32f21c44" submitter="1"
+						 analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
 
 </dataset>

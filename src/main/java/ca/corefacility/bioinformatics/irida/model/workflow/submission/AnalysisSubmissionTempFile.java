@@ -15,13 +15,14 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @Entity
 @Table(name = "analysis_submission_temp_files")
 public class AnalysisSubmissionTempFile implements IridaThing {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;
 
-	@NotNull
-	@Column(name = "analysis_submission_id")
-	private final Long analysisSubmissionId;
+	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE })
+	@JoinColumn(name = "analysis_submission_id")
+	private final AnalysisSubmission analysisSubmission;
 
 	@NotNull
 	@Column(name = "temp_file_path")
@@ -41,7 +42,7 @@ public class AnalysisSubmissionTempFile implements IridaThing {
 	 */
 	@SuppressWarnings("unused")
 	private AnalysisSubmissionTempFile() {
-		this.analysisSubmissionId = null;
+		this.analysisSubmission = null;
 		this.filePath = null;
 		this.fileDirectoryPath = null;
 		this.id = null;
@@ -52,12 +53,12 @@ public class AnalysisSubmissionTempFile implements IridaThing {
 	 * Create a new {@link AnalysisSubmissionTempFile} with the given file
 	 * analysis submission id, file path, and directory path.
 	 *
-	 * @param analysisSubmissionId The id of the {@link AnalysisSubmission}
+	 * @param analysisSubmission The {@link AnalysisSubmission} object
 	 * @param filePath The path to the temporary file
 	 * @param fileDirectoryPath The path to the temporary file directory
 	 */
-	public AnalysisSubmissionTempFile(Long analysisSubmissionId, Path filePath, Path fileDirectoryPath) {
-		this.analysisSubmissionId = analysisSubmissionId;
+	public AnalysisSubmissionTempFile(AnalysisSubmission analysisSubmission, Path filePath, Path fileDirectoryPath) {
+		this.analysisSubmission = analysisSubmission;
 		this.filePath = filePath;
 		this.fileDirectoryPath = fileDirectoryPath;
 		this.id = null;

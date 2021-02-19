@@ -382,8 +382,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 Cleanup any files that were downloaded from an object store to run an analysis and
 		 remove the analysis submission temp file record from the database.
 		 */
-		List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
-				submission.getId());
+		List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmission(
+				submission);
 
 		if (analysisSubmissionTempFiles.size() > 0) {
 			logger.debug("Cleaning up " + analysisSubmissionTempFiles.size()
