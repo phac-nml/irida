@@ -75,18 +75,16 @@ More information on SNV density filtering can be found in the [SNVPhyl documenta
 Running the pipeline
 ====================
 
-Please use the **Ready to Launch?** button to start the pipeline.
+Please select the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button][]
 
-Once the button is selected you should see a screen showing that your pipeline has been launched.
-
-![pipeline-launched][]
+Once the button is selected you should be brought to the pipeline detials page.
 
 Monitoring Pipeline Status
 ==========================
 
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
+At any point, to monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
 
 ![view-your-analyses][]
 
