@@ -5,6 +5,7 @@ import {
   Collapse,
   Form,
   Input,
+  notification,
   Popover,
   Select,
   Typography,
@@ -70,12 +71,14 @@ export function SavedParameters({ form, sets }) {
     const fieldsValue = form.getFieldsValue(
       sets[0].parameters.map((parameter) => parameter.name)
     );
-    const name = saveParamsForm.getFieldValue("name");
-    try {
-      const id = await saveModifiedParametersAs(dispatch, name, fieldsValue);
-      setCurrentSetId(id);
-      setModified({});
-    } catch (e) {}
+    saveParamsForm.validateFields().then(({ name }) => {
+      saveModifiedParametersAs(dispatch, name, fieldsValue)
+        .then((id) => {
+          setCurrentSetId(id);
+          setModified({});
+        })
+        .catch((e) => notification.error({ message: e }));
+    });
   }
 
   return (
@@ -128,14 +131,24 @@ export function SavedParameters({ form, sets }) {
                       <Typography.Text>
                         {i18n("SavedParameters.modified.name")}
                       </Typography.Text>
-                      <Form
-                        form={saveParamsForm}
-                        layout="inline"
-                        style={{
-                          width: 305,
-                        }}
-                      >
-                        <Form.Item name="name" required>
+                      <Form form={saveParamsForm} layout="inline">
+                        <Form.Item
+                          name="name"
+                          rules={[
+                            {
+                              required: true,
+                              message: i18n(
+                                "SavedParameters.modified-name.required"
+                              ),
+                            },
+                            {
+                              min: 3,
+                              message: i18n(
+                                "SavedParameters.modified-name.length"
+                              ),
+                            },
+                          ]}
+                        >
                           <Input className="t-modified-name" />
                         </Form.Item>
                         <Form.Item>
