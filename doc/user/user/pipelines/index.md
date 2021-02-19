@@ -99,10 +99,12 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
 Running the pipeline
 --------------------
 
-Once you have made all the modifications to the pipeline and are ready to launch, click the "Launch Pipeline" button at the bottom of the page:
+Once you have made all the modifications to the pipeline and are ready to launch, select the "Launch Pipeline" button to start the pipeline.
+
 ![Launch Pipeline](images/pipeline-launch.png)
 
 Once the pipeline has been launched, you will be redirected to the analysis page where you can see the current state of the pipeline, as well as the settings for the pipeline:
+
 ![Pipeline Running](images/pipeline-launch.png)
 
 Monitoring pipeline progress
