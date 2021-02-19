@@ -91,7 +91,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
        ![Reference file required.](images/reference-file-required.png)
     2. If you have a **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
     3. If you do not have a **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload Upload" area or dragging a reference file to it. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
-1. Samples are listed last.  Here you can see all the files selected to run.
+1. Samples are listed last.  Here you can see all the files selected to run the pipeline with.
    ![Pipeline samples.](images/pipeline-samples.png)
     * You can remove a sample by clicking on the remove button to the right of the sample.
     * If the sample contains multiple files that could be run on the pipeline, the most recently added are selected by default.  If you want to run a different set, but select them by clicking on the name.
