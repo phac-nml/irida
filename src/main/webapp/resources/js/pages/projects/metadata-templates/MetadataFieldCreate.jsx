@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Input, Modal, Select, Steps } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 
 export function MetadataFieldCreate({ onCreate = Function.prototype }) {
   const [form] = Form.useForm();
@@ -37,9 +37,9 @@ export function MetadataFieldCreate({ onCreate = Function.prototype }) {
         onCancel={() => setVisible(false)}
       >
         <Form form={form} layout="vertical">
-          <Steps current={current}>
-            <
-          </Steps>
+          {/*<Steps current={current}>*/}
+          {/*  <*/}
+          {/*</Steps>*/}
         </Form>
       </Modal>
     </>
