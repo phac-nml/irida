@@ -44,14 +44,6 @@ public interface IridaFileStorageUtility {
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile);
 
 	/**
-	 * Get file size
-	 *
-	 * @param file The {@link Path} to the file
-	 * @return {@link String} size of file retrieved from path
-	 */
-	public String getFileSize(Path file);
-
-	/**
 	 * Write file to storage (azure, aws, or local)
 	 *
 	 * @param source The {@link Path} to the file

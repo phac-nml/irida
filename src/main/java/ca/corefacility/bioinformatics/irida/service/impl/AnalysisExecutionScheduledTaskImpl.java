@@ -384,8 +384,10 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 */
 		List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
 				submission.getId());
-		logger.debug("Cleaning up " + analysisSubmissionTempFiles.size()
-				+ " temporary files downloaded from object store.");
+		if (analysisSubmissionTempFiles.size() > 0) {
+			logger.debug("Cleaning up " + analysisSubmissionTempFiles.size()
+					+ " temporary files downloaded from object store.");
+		}
 		for (AnalysisSubmissionTempFile analysisSubmissionTempFile : analysisSubmissionTempFiles) {
 			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(
 					new IridaTemporaryFile(analysisSubmissionTempFile.getFilePath(),

@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -142,24 +141,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to delete local directory", e);
 			throw new StorageException(e.getMessage());
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try {
-			// We set the blobClient "path" to which we want to get a file size for
-			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties()
-					.getBlobSize(), true);
-		} catch (BlobStorageException e) {
-			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
-		}
-
-		return fileSize;
 	}
 
 	/**

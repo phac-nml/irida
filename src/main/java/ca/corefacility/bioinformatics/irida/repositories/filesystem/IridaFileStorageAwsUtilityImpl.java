@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -151,23 +150,6 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			logger.error("Unable to delete local directory", e);
 			throw new StorageException("Unable to delete local directory", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
-			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
-					.getContentLength(), true);
-		} catch (AmazonServiceException e) {
-			logger.error("Unable to get file size from s3 bucket: " + e);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-		return fileSize;
 	}
 
 	/**

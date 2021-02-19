@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
  * Component implementation of file utitlities for local storage
@@ -74,25 +73,6 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					+ iridaTemporaryFile.getDirectoryPath()
 					.toString() + "]");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try {
-			if (file != null) {
-				fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
-			}
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file);
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
-
-		return fileSize;
 	}
 
 	/**
