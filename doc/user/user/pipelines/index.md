@@ -87,7 +87,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
     1. Some pipelines will allow you to share the results back to either the project or sample. Checkbox will be visible here if this option is available on this pipeline
         ![Share Results](images/share-results.png)
 1. Reference Files:
-    1. If the pipeline requires a reference files you will be prompeted to select a reference file from one of the projects or to upload a new one.
+    1. If the pipeline requires a reference file, you will be prompted to select a reference file from one of the projects that you have access to, or to upload a new one.
        ![Reference file required.](images/reference-file-required.png)
     2. If you have a **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
     3. If you do not have a **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload Upload" area or dragging a reference file to it. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
