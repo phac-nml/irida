@@ -84,7 +84,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
        ![Save Parameters](images/parameters-modified.png)
     1. Below these parameters are other settings that can be set (but cannout be saved)
 1. Share Results:
-    1. Some pipeline will allow you to share result back to either the project or sample run.  Checkbox will be visible here if this option is available on this pipeline
+    1. Some pipelines will allow you to share the results back to either the project or sample. Checkbox will be visible here if this option is available on this pipeline
         ![Share Results](images/share-results.png)
 1. Reference Files:
     1. If the pipeline requires a reference files you will be prompeted to select a reference file from one of the projects or to upload a new one.
