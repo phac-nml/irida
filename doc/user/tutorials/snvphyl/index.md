@@ -50,7 +50,7 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ## Select a reference genome
 
-SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` by clicking the **Click or drag a new reference file to this area to upload.** button.
+SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` by clicking the **Click or drag a new reference file to this area to upload.** button or by dragging and dropping the files in this area.
 
 ![snvphyl-pipeline-upload-ref-file][]
 
