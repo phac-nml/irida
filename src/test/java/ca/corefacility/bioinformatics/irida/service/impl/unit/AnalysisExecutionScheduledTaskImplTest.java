@@ -91,6 +91,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	@Mock
 	private AnalysisWorkspaceService analysisWorkspaceService;
 
+	@Mock
+	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -101,8 +103,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private UUID workflowId = UUID.randomUUID();
 
 	private IridaFileStorageUtility iridaFileStorageUtility;
-
-	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
 
 	/**
