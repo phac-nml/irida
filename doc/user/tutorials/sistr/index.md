@@ -50,7 +50,7 @@ Please use the **Ready to Launch?** button to start the pipeline.
 
 ![launch-button]
 
-Once the button is selected you should be brought to the pipeline detials page.
+Once the pipeline is launched, you will be redirected to the analysis details page.
 
 Monitoring Pipeline Status
 ==========================
