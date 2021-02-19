@@ -64,7 +64,7 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![assembly-pipeline-page][]
 
-We will use the default parameters.  Please select the **Launch Pipeline** button to continue.
+We will use the default parameters.  Please select the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button][]
 
