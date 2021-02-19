@@ -112,7 +112,7 @@ export function ReferenceFiles() {
               tooltipText={i18n("ReferenceFile.removeTooltip")}
               confirmText={i18n(
                 "ReferenceFile.confirmText",
-                file.label,
+                file.name,
                 projectInfo.projectName
               )}
             />
