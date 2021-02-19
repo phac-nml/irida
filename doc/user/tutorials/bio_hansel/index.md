@@ -54,7 +54,7 @@ You can leave the other parameters unmodified. Please select the **Launch Pipeli
 
 ![launch-button]
 
-Once the button is selected you will be redirected to the analysis details page.
+Once the button is selected, you will be redirected to the analysis details page.
 
 ![analysis-in-progress]
 
