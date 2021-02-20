@@ -90,6 +90,7 @@ module.exports = {
     extensions: [".js", ".jsx"],
   },
   plugins: [new MiniCssExtractPlugin({
+    ignoreOrder: true,
     filename: 'css/[name].bundle.css',
   }), new WebpackBar()],
   optimization: {

@@ -12,7 +12,7 @@ module.exports = {
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
-  // "client-base": "./resources/js/client.js",
+  "client-base": "./resources/js/client.js",
   // activities: "./resources/js/pages/activities/activities.js",
   // announcements: "./resources/js/pages/announcement/announcements.js",
   // analysis: "./resources/js/pages/analysis/index.js",

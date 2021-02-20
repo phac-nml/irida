@@ -3,7 +3,11 @@
   "plugins": [
     [
       "import",
-      { "libraryName": "antd", "libraryDirectory": "es", "style": true }
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "lib",
+        "style": true
+      }
     ],
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-transform-react-jsx-source",
