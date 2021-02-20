@@ -321,7 +321,7 @@ public class ProjectSynchronizationService {
 
 				localSample = sampleService.update(sample);
 
-				localSample = syncSampleMetadata(sample, localSample);
+				syncSampleMetadata(sample, localSample);
 			}
 
 		} else {
@@ -330,7 +330,7 @@ public class ProjectSynchronizationService {
 			localSample = sampleService.create(sample);
 			projectService.addSampleToProject(project, sample, true);
 
-			localSample = syncSampleMetadata(sample, localSample);
+			syncSampleMetadata(sample, localSample);
 		}
 
 		//get a collection of the files already sync'd.  we don't want to grab them a 2nd time.
@@ -472,18 +472,15 @@ public class ProjectSynchronizationService {
 	 *
 	 * @param remoteSample the sample read from the remote api
 	 * @param localSample  the local sample being saved
-	 * @return the synchronized sample
 	 */
-	public Sample syncSampleMetadata(Sample remoteSample, Sample localSample) {
+	public void syncSampleMetadata(Sample remoteSample, Sample localSample) {
 		Map<String, MetadataEntry> sampleMetadata = sampleRemoteService.getSampleMetadata(remoteSample);
 
 		sampleMetadata.values()
 				.forEach(e -> e.setId(null));
 
 		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(sampleMetadata);
-		localSample = sampleService.updateSampleMetadata(localSample, metadata);
-
-		return localSample;
+		sampleService.updateSampleMetadata(localSample, metadata);
 	}
 
 	/**

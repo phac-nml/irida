@@ -1,6 +1,12 @@
 Changes
 =======
 
+21.01 to 20.05
+--------------
+* [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)
+* [Developer]: Fixed webpack not outputting css bundle files.
+* [UI]: Updated to latest release of Ant Design (v4.12.3).
+
 20.09 to 21.01
 --------------
 * [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)
@@ -42,6 +48,9 @@ Changes
 * [UI]: Added option for project managers to check for changes using the hash above, or to force a full project sync on the project remote settings page.
 * [Developer/REST/UI]: Updated announcements with a new title and priority fields.
 * [UI]: Added option for user to only receive an email upon pipeline failure.
+* [Developer]: Updated `frontend-maven-plugin`.
+* [UI]: Fixed issue with trying to copy a large number of samples between projects.
+* [Developer]: Chromedriver updated to 88
 
 20.05 to 20.09
 --------------

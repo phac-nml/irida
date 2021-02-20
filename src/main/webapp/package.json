@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "webpack --mode=production",
-    "start": "webpack --mode=development",
+    "build": "webpack --env.mode production",
+    "start": "webpack --env.mode development",
     "clean": "rm -r node* resources/dist/",
     "test": "jest resources/js/**/*.test.js",
     "test:watch": "jest --watch resources/js/**/*.test.js"
@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "@ant-design/charts": "^1.0.17",
-    "@ant-design/icons": "^4.2.1",
+    "@ant-design/icons": "^4.5.0",
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
@@ -30,8 +30,7 @@
     "angular-marked": "^1.2.2",
     "angular-ui-bootstrap": "^2.5.6",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "4.11.2",
-    "autoprefixer": "^10.2.3",
+    "antd": "4.12.3",
     "axios": "^0.21.1",
     "bootstrap": "3.4.1",
     "bootstrap-daterangepicker": "^3.0.3",
@@ -93,7 +92,7 @@
     "@babel/preset-react": "^7.12.13",
     "babel-loader": "^8.2.2",
     "babel-plugin-import": "^1.13.3",
-    "chromedriver": "86.0.0",
+    "chromedriver": "88.0.0",
     "css-loader": "^5.0.1",
     "css-minimizer-webpack-plugin": "^1.2.0",
     "expose-loader": "^2.0.0",
