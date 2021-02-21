@@ -11,7 +11,6 @@ import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
 
 const TabularOutputWrapper = styled.div`
-  max-height: 300px;
   width: 100%;
   margin-bottom: ${SPACE_XS};
 `;
@@ -58,7 +57,10 @@ export function AnalysisTabularPreview({ output }) {
           pagination={
             fileRows.length <= MAX_TABLE_ROWS_PER_PAGE
               ? false
-              : { pageSize: MAX_TABLE_ROWS_PER_PAGE }
+              : {
+                  defaultPageSize: MAX_TABLE_ROWS_PER_PAGE,
+                  pageSizeOptions: [5, 10, 20, 50, 100],
+                }
           }
         />
       </TabularOutputWrapper>
