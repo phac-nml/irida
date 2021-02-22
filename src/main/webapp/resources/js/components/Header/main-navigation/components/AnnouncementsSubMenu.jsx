@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Menu, notification, Space, Typography } from "antd";
+import {
+  Badge,
+  Button,
+  Menu,
+  notification,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
 import { IconBell } from "../../../icons/Icons";
 import {
   getAnnouncement,
   getUnreadAnnouncements,
+  markAnnouncementRead,
 } from "../../../../apis/announcements/announcements";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import "./announcements.css";
@@ -22,6 +31,8 @@ const { Text } = Typography;
  * @constructor
  */
 export function AnnouncementsSubMenu({ ...props }) {
+  const [readCount, setReadCount] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [badgeCount, setBadgeCount] = useState(0);
   const [menuList, setMenuList] = useState([]);
   const [menuListIndex, setMenuListIndex] = useState(0);
@@ -30,10 +41,15 @@ export function AnnouncementsSubMenu({ ...props }) {
   const [visibility, setVisibility] = useState(false);
 
   useEffect(() => {
-    getUnreadAnnouncements({}).then(({ data }) => {
-      setMenuList(data);
-      setBadgeCount(data.length);
-    });
+    getUnreadAnnouncements({})
+      .then(({ data }) => {
+        setMenuList(data);
+        setBadgeCount(data.length);
+        setTotalCount(data.length);
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
   }, []);
 
   function showAnnouncementModal(index) {
@@ -56,20 +72,20 @@ export function AnnouncementsSubMenu({ ...props }) {
       let cachedAnnouncement = cachedAnnouncements.find(
         (item) => item.identifier === aID
       );
+      readAnnouncement();
       if (!cachedAnnouncement) {
         getAnnouncement({ aID })
           .then((data) => {
             setAnnouncement(data);
             setCachedAnnouncements([...cachedAnnouncements, data]);
-            setMenuListIndex(menuListIndex + 1);
           })
           .catch(({ message }) => {
             notification.error({ message });
           });
       } else {
         setAnnouncement(cachedAnnouncement);
+        setMenuListIndex(menuListIndex + 1);
       }
-      setMenuListIndex(menuListIndex + 1);
     }
   }
 
@@ -79,11 +95,13 @@ export function AnnouncementsSubMenu({ ...props }) {
       let cachedAnnouncement = cachedAnnouncements.find(
         (item) => item.identifier === aID
       );
+      readAnnouncement();
       if (!cachedAnnouncement) {
         getAnnouncement({ aID })
           .then((data) => {
             setAnnouncement(data);
             setCachedAnnouncements([data, ...cachedAnnouncements]);
+            setMenuListIndex(menuListIndex - 1);
           })
           .catch(({ message }) => {
             notification.error({ message });
@@ -91,8 +109,68 @@ export function AnnouncementsSubMenu({ ...props }) {
       } else {
         setAnnouncement(cachedAnnouncement);
       }
-      setMenuListIndex(menuListIndex - 1);
     }
+  }
+
+  function readAnnouncement() {
+    let aID = menuList[menuListIndex].identifier;
+    markAnnouncementRead({ aID })
+      .then(() => {
+        let newMenuList = menuList.filter((item) => item.identifier !== aID);
+        setMenuList(newMenuList);
+        setBadgeCount(badgeCount - 1);
+        setReadCount(readCount + 1);
+        if (newMenuList.length === 0) {
+          setVisibility(false);
+        }
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
+
+  let footerButtons;
+  // only one in list
+  if (menuList.length === 1) {
+    footerButtons = [
+      <Button key="read" onClick={() => readAnnouncement()}>
+        Read & Close
+      </Button>,
+    ];
+  } else if (menuListIndex === 0) {
+    // first in list
+    footerButtons = [
+      <Button key="next" onClick={() => nextAnnouncement()}>
+        Next
+      </Button>,
+    ];
+  } else if (menuListIndex + 1 === menuList.length) {
+    // last in list
+    footerButtons = [
+      <Button key="previous" onClick={() => previousAnnouncement()}>
+        Previous
+      </Button>,
+      <Button key="next" onClick={() => nextAnnouncement()}>
+        Read & Close
+      </Button>,
+    ];
+  } else {
+    footerButtons = [
+      <Button
+        key="previous"
+        disabled={!(menuListIndex > 0)}
+        onClick={() => previousAnnouncement()}
+      >
+        Previous
+      </Button>,
+      <Button
+        key="next"
+        disabled={!(menuListIndex + 1 < menuList.length)}
+        onClick={() => nextAnnouncement()}
+      >
+        Next
+      </Button>,
+    ];
   }
 
   return (
@@ -116,7 +194,7 @@ export function AnnouncementsSubMenu({ ...props }) {
             />
           </Menu.Item>
         ))}
-        <Menu.Divider />
+        {menuList.length > 0 && <Menu.Divider />}
         <Menu.Item key="view_all">
           <LinkButton
             text="View All"
@@ -124,47 +202,38 @@ export function AnnouncementsSubMenu({ ...props }) {
           />
         </Menu.Item>
       </Menu.SubMenu>
-
       {announcement && announcement.user && (
         <ScrollableModal
           className="t-modal"
           maskClosable={false}
           title={
-            <Space align="start">
-              <PriorityFlag hasPriority={announcement.priority} />
-              <Space direction="vertical">
-                <Text strong>{announcement.title}</Text>
-                <Text type="secondary" style={{ fontSize: `.8em` }}>
-                  {i18n(
-                    "Announcements.create.details",
-                    announcement.user.username,
-                    formatDate({ date: announcement.createdDate })
-                  )}
-                </Text>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <Tag>
+                {readCount} / {totalCount}
+              </Tag>
+              <Space align="start">
+                <PriorityFlag hasPriority={announcement.priority} />
+                <Space direction="vertical">
+                  <Text strong>{announcement.title}</Text>
+                  <Text type="secondary" style={{ fontSize: `.8em` }}>
+                    {i18n(
+                      "Announcements.create.details",
+                      announcement.user.username,
+                      formatDate({ date: announcement.createdDate })
+                    )}
+                  </Text>
+                </Space>
               </Space>
             </Space>
           }
           visible={visibility}
-          width="60%"
+          width="90ch"
           onCancel={() => setVisibility(false)}
-          footer={[
-            <Button
-              key="previous"
-              disabled={!(menuListIndex > 0)}
-              onClick={() => previousAnnouncement()}
-            >
-              Previous
-            </Button>,
-            <Button
-              key="next"
-              disabled={!(menuListIndex + 1 < menuList.length)}
-              onClick={() => nextAnnouncement()}
-            >
-              Next
-            </Button>,
-          ]}
+          footer={footerButtons}
         >
-          <Markdown source={announcement.message} />
+          <div style={{ marginLeft: "25px" }}>
+            <Markdown source={announcement.message} />
+          </div>
         </ScrollableModal>
       )}
     </>
