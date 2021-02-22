@@ -5,18 +5,24 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
@@ -57,8 +63,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
@@ -93,7 +98,13 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private GzipFileProcessor gzipFileProcessor;
 
 	@Autowired
-	private AnalysisSubmissionService analysisSubmissionService;
+	private SequencingObjectRepository objectRepository;
+
+	@Autowired
+	private ReferenceFileRepository referenceFileRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	@Qualifier("rootTempDirectory")
@@ -126,9 +137,17 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private static final String FORWARD_NAME = "forward";
 	private static final String REVERSE_NAME = "reverse";
 
-	private static final Long ANALYSIS_SUBMISSION_ID = 1L;
-
 	private AnalysisSubmission analysisSubmission;
+	private SingleEndSequenceFile singleEndFile;
+	private SequenceFile sequenceFile;
+	private UUID workflowId = UUID.randomUUID();
+	private ReferenceFile referenceFile;
+
+	private static final String analysisId = "1";
+
+	private final String analysisName = "analysis 1";
+
+	private User submitter1;
 
 	/**
 	 * Sets up variables for testing.
@@ -192,7 +211,20 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		gzipFileProcessor.setDisableFileProcessor(false);
 
-		analysisSubmission = analysisSubmissionService.read(ANALYSIS_SUBMISSION_ID);
+		submitter1 = userRepository.findById(1L).orElse(null);
+
+		referenceFile = referenceFileRepository.findById(1L).orElse(null);
+		singleEndFile = (SingleEndSequenceFile) objectRepository.findById(2L).orElse(null);
+		sequenceFile = singleEndFile.getFileWithId(1L);
+		assertNotNull(sequenceFile);
+		Set<SequencingObject> singleFiles = Sets.newHashSet(singleEndFile);
+
+		analysisSubmission = AnalysisSubmission.builder(workflowId).name(analysisName).inputFiles(singleFiles)
+				.referenceFile(referenceFile).build();
+		analysisSubmission.setRemoteAnalysisId(analysisId);
+		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisSubmission.setSubmitter(submitter1);
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 	}
 
 	/**
