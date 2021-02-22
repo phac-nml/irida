@@ -7,6 +7,7 @@ Changes
 * [Developer]: Fixed webpack not outputting css bundle files.
 * [UI]: Updated to latest release of Ant Design (v4.12.3).
 * [Developer]: Fixed the advanced visualisation viewer for Phylogeny Tree with metadata.
+* [UI]: Update to the pipeline launch process.
 
 20.09 to 21.01
 --------------
