@@ -3,6 +3,7 @@ import { Alert, Form, Radio, Space, Tag } from "antd";
 import { useLaunch } from "../launch-context";
 import { UploadReferenceFile } from "./UploadReferenceFile";
 import { SectionHeading } from "../../../components/ant.design/SectionHeading";
+import { SPACE_LG } from "../../../styles/spacing";
 
 /**
  * React component for selecting and uploading reference files for a pipeline
@@ -42,7 +43,9 @@ export function ReferenceFiles({ form }) {
             {referenceFiles.map((file) => (
               <Radio key={`ref-${file.id}`} value={file.id}>
                 {file.name}
-                {file.projectName ? <Tag>{file.projectName}</Tag> : null}
+                {file.projectName ? (
+                  <Tag style={{ marginLeft: SPACE_LG }}>{file.projectName}</Tag>
+                ) : null}
               </Radio>
             ))}
           </Radio.Group>

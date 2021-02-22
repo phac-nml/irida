@@ -5,9 +5,9 @@ import {
   Collapse,
   Form,
   Input,
+  notification,
   Popover,
   Select,
-  Space,
   Typography,
 } from "antd";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
@@ -71,12 +71,14 @@ export function SavedParameters({ form, sets }) {
     const fieldsValue = form.getFieldsValue(
       sets[0].parameters.map((parameter) => parameter.name)
     );
-    const name = saveParamsForm.getFieldValue("name");
-    try {
-      const id = await saveModifiedParametersAs(dispatch, name, fieldsValue);
-      setCurrentSetId(id);
-      setModified({});
-    } catch (e) {}
+    saveParamsForm.validateFields().then(({ name }) => {
+      saveModifiedParametersAs(dispatch, name, fieldsValue)
+        .then((id) => {
+          setCurrentSetId(id);
+          setModified({});
+        })
+        .catch((e) => notification.error({ message: e }));
+    });
   }
 
   return (
@@ -120,52 +122,58 @@ export function SavedParameters({ form, sets }) {
               showIcon
               style={{ marginBottom: SPACE_XS, marginTop: SPACE_XS }}
               type={"warning"}
-              message={i18n("SavedParameters.modified")}
-              description={
-                <div>
-                  {i18n("SavedParameters.modified.description")}{" "}
-                  <Space>
-                    <Popover
-                      placement="bottomRight"
-                      trigger="click"
-                      content={
-                        <>
-                          <Typography.Text>
-                            {i18n("SavedParameters.modified.name")}
-                          </Typography.Text>
-                          <Form
-                            form={saveParamsForm}
-                            layout="inline"
-                            style={{
-                              width: 305,
-                            }}
+              action={
+                <Popover
+                  placement="bottomRight"
+                  trigger="click"
+                  content={
+                    <>
+                      <Typography.Text>
+                        {i18n("SavedParameters.modified.name")}
+                      </Typography.Text>
+                      <Form form={saveParamsForm} layout="inline">
+                        <Form.Item
+                          name="name"
+                          rules={[
+                            {
+                              required: true,
+                              message: i18n(
+                                "SavedParameters.modified-name.required"
+                              ),
+                            },
+                            {
+                              min: 3,
+                              message: i18n(
+                                "SavedParameters.modified-name.length"
+                              ),
+                            },
+                          ]}
+                        >
+                          <Input className="t-modified-name" />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            onClick={saveParameters}
+                            className="t-saveas-submit"
                           >
-                            <Form.Item name="name" required>
-                              <Input className="t-modified-name" />
-                            </Form.Item>
-                            <Form.Item>
-                              <Button
-                                onClick={saveParameters}
-                                className="t-saveas-submit"
-                              >
-                                {i18n("SavedParameters.modified.save")}
-                              </Button>
-                            </Form.Item>
-                          </Form>
-                        </>
-                      }
-                    >
-                      <Button
-                        size="small"
-                        type="ghost"
-                        className="t-modified-saveas"
-                      >
-                        {i18n("SavedParameters.modified.saveAs")}
-                      </Button>
-                    </Popover>
-                  </Space>
-                </div>
+                            {i18n("SavedParameters.modified.save")}
+                          </Button>
+                        </Form.Item>
+                      </Form>
+                    </>
+                  }
+                >
+                  <Button
+                    size="small"
+                    type="ghost"
+                    className="t-modified-saveas"
+                  >
+                    {i18n("SavedParameters.modified.saveAs")}
+                  </Button>
+                </Popover>
               }
+              message={i18n("SavedParameters.modified")}
+              description={i18n("SavedParameters.modified.description")}
             />
           ) : null}
           {fields.map(({ name, label }) => (
