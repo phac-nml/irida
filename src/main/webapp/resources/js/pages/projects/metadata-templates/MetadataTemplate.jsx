@@ -1,117 +1,75 @@
 import React from "react";
-import { List, PageHeader, Table, Tag, Transfer, Typography } from "antd";
+import { Button, List, notification, PageHeader, Typography } from "antd";
 import { navigate } from "@reach/router";
-import difference from "lodash/difference";
-import { getMetadataTemplate } from "../../../apis/metadata/metadata-templates";
-import { MetadataFieldCreate } from "./MetadataFieldCreate";
+import {
+  getMetadataTemplate,
+  updateMetadataTemplate,
+} from "../../../apis/metadata/metadata-templates";
+import DnDTable from "../../../components/ant.design/DnDTable";
 
 const { Paragraph, Text } = Typography;
 
-const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
-  <Transfer {...restProps} showSelectAll={false}>
-    {({
-      direction,
-      filteredItems,
-      onItemSelectAll,
-      onItemSelect,
-      selectedKeys: listSelectedKeys,
-      disabled: listDisabled,
-    }) => {
-      const columns = direction === "left" ? leftColumns : rightColumns;
-
-      const rowSelection = {
-        getCheckboxProps: (item) => ({
-          disabled: listDisabled || item.disabled,
-        }),
-        onSelectAll(selected, selectedRows) {
-          const treeSelectedKeys = selectedRows
-            .filter((item) => !item.disabled)
-            .map(({ key }) => key);
-          const diffKeys = selected
-            ? difference(treeSelectedKeys, listSelectedKeys)
-            : difference(listSelectedKeys, treeSelectedKeys);
-          onItemSelectAll(diffKeys, selected);
-        },
-        onSelect({ key }, selected) {
-          onItemSelect(key, selected);
-        },
-        selectedRowKeys: listSelectedKeys,
-      };
-
-      return (
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={filteredItems}
-          size="small"
-          style={{ pointerEvents: listDisabled ? "none" : null }}
-          onRow={({ key, disabled: itemDisabled }) => ({
-            onClick: () => {
-              if (itemDisabled || listDisabled) return;
-              onItemSelect(key, !listSelectedKeys.includes(key));
-            },
-          })}
-        />
-      );
-    }}
-  </Transfer>
-);
-
-const mockTags = ["cat", "dog", "bird"];
-
-const mockData = [];
-for (let i = 0; i < 20; i++) {
-  mockData.push({
-    key: i.toString(),
-    title: `content${i + 1}`,
-    description: `description of content${i + 1}`,
-    disabled: i % 4 === 0,
-    tag: mockTags[i % 3],
-  });
-}
-
-const originTargetKeys = mockData
-  .filter((item) => +item.key % 3 > 1)
-  .map((item) => item.key);
-
-const leftTableColumns = [
+const columns = [
   {
-    dataIndex: "title",
     title: "Name",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    dataIndex: "tag",
-    title: "Tag",
-    render: (tag) => <Tag>{tag}</Tag>,
+    title: "Age",
+    dataIndex: "age",
+    key: "age",
   },
   {
-    dataIndex: "description",
-    title: "Description",
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
   },
 ];
-const rightTableColumns = [
+
+const dataSource = [
   {
-    dataIndex: "title",
-    title: "Name",
+    key: "1",
+    name: "John Brown",
+    age: 32,
+    address: "New York No. 1 Lake Park",
+    index: 0,
+  },
+  {
+    key: "2",
+    name: "Jim Green",
+    age: 42,
+    address: "London No. 1 Lake Park",
+    index: 1,
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    index: 2,
   },
 ];
 
 export function MetadataTemplate({ id }) {
   const [template, setTemplate] = React.useState({});
 
-  const [data, setData] = React.useState(mockData);
-  const [selectedKeys, setSelectedKeys] = React.useState([]);
-  const [targetKeys, setTargetKeys] = React.useState(
-    mockData.filter((item) => +item.key % 3 > 1).map((item) => item.key)
-  );
-
-  const onChange = (nextTargetKeys) => {
-    setTargetKeys(nextTargetKeys);
-  };
+  const [data, setData] = React.useState(dataSource);
 
   React.useEffect(() => {
     getMetadataTemplate(id).then((data) => setTemplate(data));
   }, []);
+
+  const onChange = async (field, text) => {
+    if (template[field] !== text) {
+      const updated = { ...template, [field]: text };
+      try {
+        const message = await updateMetadataTemplate(updated);
+        notification.success({ message });
+        setTemplate(updated);
+      } catch (e) {}
+    }
+  };
 
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
@@ -147,21 +105,14 @@ export function MetadataTemplate({ id }) {
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Text strong>Metadata Fields</Text>
-                <MetadataFieldCreate />
+                <Button>Add New Field</Button>
               </div>
             }
           />
-          <TableTransfer
-            dataSource={mockData}
-            targetKeys={targetKeys}
-            showSearch={true}
-            onChange={onChange}
-            filterOption={(inputValue, item) =>
-              item.title.indexOf(inputValue) !== -1 ||
-              item.tag.indexOf(inputValue) !== -1
-            }
-            leftColumns={leftTableColumns}
-            rightColumns={rightTableColumns}
+          <DnDTable
+            data={data}
+            columns={columns}
+            onRowUpdate={(data) => setData(data)}
           />
         </List.Item>
       </List>
