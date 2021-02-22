@@ -17,7 +17,7 @@ public interface AnalysisSubmissionTempFileRepository extends IridaJpaRepository
 	/**
 	 * Get all {@link AnalysisSubmissionTempFile} objects by submission id.
 	 *
-	 * @param analysisSubmissionId The analysis submission id
+	 * @param analysisSubmission The {@link AnalysisSubmission}
 	 * @return a list of {@link AnalysisSubmissionTempFile}
 	 */
 	@Query("FROM AnalysisSubmissionTempFile f WHERE f.analysisSubmission = ?1")

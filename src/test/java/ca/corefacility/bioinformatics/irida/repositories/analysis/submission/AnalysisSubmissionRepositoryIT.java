@@ -316,7 +316,7 @@ public class AnalysisSubmissionRepositoryIT {
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter1);
 		assertNotNull("submissions should not be null", submissions);
-		assertEquals("there are an invalid number of submissions found", 1, submissions.size());
+		assertEquals("there are an invalid number of submissions found", 2, submissions.size());
 		AnalysisSubmission returnedSubmission = submissions.iterator().next();
 		assertEquals("the id of the submission returned is incorrect", savedSubmission.getId(),
 				returnedSubmission.getId());
@@ -336,7 +336,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission2);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter1);
-		assertEquals("there are an invalid number of submissions found", 2, submissions.size());
+		assertEquals("there are an invalid number of submissions found", 3, submissions.size());
 	}
 
 	/**
