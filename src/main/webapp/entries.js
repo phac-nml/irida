@@ -19,7 +19,6 @@ module.exports = {
   analysis: "./resources/js/pages/analysis/index.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
-  "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
   launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-events": "./resources/js/pages/projects/project-events.js",
