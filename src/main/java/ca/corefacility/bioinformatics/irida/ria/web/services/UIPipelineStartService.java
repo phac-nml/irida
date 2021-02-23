@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -122,25 +125,19 @@ public class UIPipelineStartService {
 			}
 
 			IridaWorkflowInput inputs = description.getInputs();
-			Long submissionId;
+			cartService.emptyCart();
 			if (inputs.requiresSingleSample()) {
-				Collection<AnalysisSubmission> submissions = submissionService.createSingleSampleSubmission(workflow,
-						request.getReference(), singles, pairs, request.getParameters(), namedParameters,
-						request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
-						request.sendEmailOnCompletion(), request.sendEmailOnError());
-				submissionId = submissions.stream()
-						.findFirst()
-						.orElseThrow()
-						.getId();
+				submissionService.createSingleSampleSubmission(workflow, request.getReference(), singles, pairs,
+						request.getParameters(), namedParameters, request.getName(), request.getDescription(), projects,
+						request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
+				return -1L;
 			} else {
 				AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
 						request.getReference(), singles, pairs, request.getParameters(), namedParameters,
 						request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
 						request.sendEmailOnCompletion(), request.sendEmailOnCompletion());
-				submissionId = submission.getId();
+				return submission.getId();
 			}
-			cartService.emptyCart();
-			return submissionId;
 		}
 	}
 }

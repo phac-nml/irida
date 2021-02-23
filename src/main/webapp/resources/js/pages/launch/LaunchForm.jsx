@@ -40,7 +40,7 @@ export function LaunchForm() {
           setLaunchState(LAUNCH_STATES.SUCCESS);
           const url = state.automatedId
             ? `projects/${state.automatedId}/settings/processing`
-            : `analysis/${id}`;
+            : `analysis${+id > 0 ? `/${id}` : ``}`;
           window.setTimeout(() => {
             window.location.href = setBaseUrl(url);
           }, 350);
