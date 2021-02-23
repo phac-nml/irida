@@ -49,8 +49,12 @@ public class UIProjectSettingsService {
 		Priorities response = new Priorities();
 
 		Project project = projectService.read(projectId);
-		response.setPriority(project.getAnalysisPriority()
-				.name());
+		AnalysisSubmission.Priority analysisPriority = project.getAnalysisPriority();
+		if (analysisPriority != null) {
+			response.setPriority(analysisPriority.name());
+		} else {
+			response.setPriority(AnalysisSubmission.Priority.LOW.name());
+		}
 
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication()
