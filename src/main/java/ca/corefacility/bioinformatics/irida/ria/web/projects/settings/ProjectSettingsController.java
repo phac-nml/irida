@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +9,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
@@ -25,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Handles basic settings pages for a project
@@ -151,67 +149,5 @@ public class ProjectSettingsController {
 		}
 
 		return "redirect: /projects/" + projectId + "/settings/delete";
-	}
-
-	/**
-	 * TODO: REMOVE THIS
-	 * Set the priority of a given analysis submission
-	 *
-	 * @param projectId The ID of the project to set priority
-	 * @param priority  the priority to set
-	 * @param locale    locale of the logged in user
-	 * @return Success message
-	 */
-	@RequestMapping(value = "/priority", method = RequestMethod.POST)
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Map<String, String> updatePrioritySetting(@PathVariable Long projectId,
-			@RequestParam(name = "priority") AnalysisSubmission.Priority priority, Locale locale) {
-		Project project = projectService.read(projectId);
-
-		Map<String, Object> updates = new HashMap<>();
-		updates.put("analysisPriority", priority);
-
-		projectService.updateProjectSettings(project, updates);
-
-		String message = messageSource.getMessage("project.settings.notifications.priority.updated", null, locale);
-
-		return ImmutableMap.of("result", message);
-	}
-
-	/**
-	 * TODO: REMOVE THIS
-	 * Update the coverage QC setting of a {@link Project}
-	 *
-	 * @param projectId       the ID of a {@link Project}
-	 * @param genomeSize      the genomeSize to set for the project
-	 * @param minimumCoverage minimum coverage needed for qc to pass
-	 * @param maximumCoverage maximum coverage needed for QC to pass
-	 * @param locale          locale of the user
-	 * @return success message if successful
-	 */
-	@RequestMapping(value = "/coverage", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, String> updateCoverageSetting(@PathVariable Long projectId, @RequestParam Long genomeSize,
-			@RequestParam(defaultValue = "0") Integer minimumCoverage,
-			@RequestParam(defaultValue = "0") Integer maximumCoverage, Locale locale) {
-		Project read = projectService.read(projectId);
-
-		if (minimumCoverage == 0) {
-			minimumCoverage = null;
-		}
-		if (maximumCoverage == 0) {
-			maximumCoverage = null;
-		}
-
-		Map<String, Object> updates = new HashMap<>();
-		updates.put("minimumCoverage", minimumCoverage);
-		updates.put("maximumCoverage", maximumCoverage);
-		updates.put("genomeSize", genomeSize);
-
-		projectService.updateProjectSettings(read, updates);
-
-		String message = messageSource.getMessage("project.settings.notifications.coverage.updated", null, locale);
-
-		return ImmutableMap.of("result", message);
 	}
 }
