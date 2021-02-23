@@ -6,6 +6,10 @@
 >
   <head>
     <title th:text="#{project.settings.page.title.basic}">Basic</title>
+    <link
+      rel="stylesheet"
+      th:href="@{/dist/css/project-processing.bundle.css}"
+    />
   </head>
   <body>
     <div layout:fragment="settings-content" id="process-root">
