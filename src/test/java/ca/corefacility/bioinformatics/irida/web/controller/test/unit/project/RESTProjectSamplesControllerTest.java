@@ -228,8 +228,9 @@ public class RESTProjectSamplesControllerTest {
 	public void testCopySampleToProject() {
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
-		final ProjectSampleJoin r = new ProjectSampleJoin(p,s, true);
 		boolean copyOwner = false;
+
+		final ProjectSampleJoin r = new ProjectSampleJoin(p,s, copyOwner);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
