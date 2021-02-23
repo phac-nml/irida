@@ -229,14 +229,15 @@ public class RESTProjectSamplesControllerTest {
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
 		final ProjectSampleJoin r = new ProjectSampleJoin(p,s, true);
+		boolean copyOwner = false;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(projectService.addSampleToProject(p, s, false)).thenReturn(r);
-		ModelMap modelMap = controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), false, response,
+		ModelMap modelMap = controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), copyOwner, response,
 				Locale.ENGLISH);
-		
-		verify(projectService).addSampleToProject(p, s, false);
+
+		verify(projectService).addSampleToProject(p, s, copyOwner);
 		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 		final String location = response.getHeader(HttpHeaders.LOCATION);
 		assertEquals("location should include sample and project IDs", "http://localhost/api/projects/" + p.getId()
