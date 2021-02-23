@@ -37,6 +37,10 @@ export function AnnouncementsSubMenu({ ...props }) {
   const [menuList, setMenuList] = useState([]);
   const [menuListIndex, setMenuListIndex] = useState(0);
   const [cachedAnnouncements, setCachedAnnouncements] = useState([]);
+  const [priorityAnnouncements, setPriorityAnnouncements] = useState([]);
+  const [priorityAnnouncementsIndex, setPriorityAnnouncementsIndex] = useState(
+    0
+  );
   const [announcement, setAnnouncement] = useState({});
   const [visibility, setVisibility] = useState(false);
 
@@ -45,7 +49,13 @@ export function AnnouncementsSubMenu({ ...props }) {
       .then(({ data }) => {
         setMenuList(data);
         setBadgeCount(data.length);
-        setTotalCount(data.length);
+        let priorityList = data.filter((item) => item.priority);
+        setPriorityAnnouncements(priorityList);
+        setTotalCount(data.length - priorityList.length);
+        if (priorityList) {
+          setAnnouncement(priorityList[0]);
+          setVisibility(true);
+        }
       })
       .catch(({ message }) => {
         notification.error({ message });
@@ -129,29 +139,80 @@ export function AnnouncementsSubMenu({ ...props }) {
       });
   }
 
+  function nextPriorityAnnouncement() {
+    if (priorityAnnouncementsIndex + 1 < priorityAnnouncements.length) {
+      let aID =
+        priorityAnnouncements[priorityAnnouncementsIndex + 1].identifier;
+      readPriorityAnnouncement();
+      getAnnouncement({ aID })
+        .then((data) => {
+          setAnnouncement(data);
+        })
+        .catch(({ message }) => {
+          notification.error({ message });
+        });
+    }
+  }
+
+  function readPriorityAnnouncement() {
+    let aID = priorityAnnouncements[priorityAnnouncementsIndex].identifier;
+    markAnnouncementRead({ aID })
+      .then(() => {
+        if (priorityAnnouncementsIndex + 1 === priorityAnnouncements.length) {
+          setPriorityAnnouncements([]);
+          setVisibility(false);
+        } else {
+          setPriorityAnnouncementsIndex(priorityAnnouncementsIndex + 1);
+        }
+        let newMenuList = menuList.filter((item) => item.identifier !== aID);
+        setMenuList(newMenuList);
+        setBadgeCount(badgeCount - 1);
+      })
+      .catch(({ message }) => {
+        notification.error({ message });
+      });
+  }
+
   let footerButtons;
-  // only one in list
-  if (menuList.length === 1) {
+  if (
+    priorityAnnouncements.length === 1 ||
+    priorityAnnouncementsIndex + 1 === priorityAnnouncements.length
+  ) {
+    // only one in priority list or last in priority list
     footerButtons = [
-      <Button key="read" onClick={() => readAnnouncement()}>
-        Read & Close
+      <Button key="close" onClick={() => readPriorityAnnouncement()}>
+        {i18n("AnnouncementsSubMenu.close")}
+      </Button>,
+    ];
+  } else if (priorityAnnouncements.length > 0) {
+    // first in priority list
+    footerButtons = [
+      <Button key="next" onClick={() => nextPriorityAnnouncement()}>
+        {i18n("AnnouncementsSubMenu.next")}
+      </Button>,
+    ];
+  } else if (menuList.length === 1) {
+    // only one in list
+    footerButtons = [
+      <Button key="close" onClick={() => readAnnouncement()}>
+        {i18n("AnnouncementsSubMenu.close")}
       </Button>,
     ];
   } else if (menuListIndex === 0) {
     // first in list
     footerButtons = [
       <Button key="next" onClick={() => nextAnnouncement()}>
-        Next
+        {i18n("AnnouncementsSubMenu.next")}
       </Button>,
     ];
   } else if (menuListIndex + 1 === menuList.length) {
     // last in list
     footerButtons = [
       <Button key="previous" onClick={() => previousAnnouncement()}>
-        Previous
+        {i18n("AnnouncementsSubMenu.previous")}
       </Button>,
-      <Button key="next" onClick={() => nextAnnouncement()}>
-        Read & Close
+      <Button key="close" onClick={() => readAnnouncement()}>
+        {i18n("AnnouncementsSubMenu.close")}
       </Button>,
     ];
   } else {
@@ -161,14 +222,14 @@ export function AnnouncementsSubMenu({ ...props }) {
         disabled={!(menuListIndex > 0)}
         onClick={() => previousAnnouncement()}
       >
-        Previous
+        {i18n("AnnouncementsSubMenu.previous")}
       </Button>,
       <Button
         key="next"
         disabled={!(menuListIndex + 1 < menuList.length)}
         onClick={() => nextAnnouncement()}
       >
-        Next
+        {i18n("AnnouncementsSubMenu.next")}
       </Button>,
     ];
   }
@@ -197,7 +258,7 @@ export function AnnouncementsSubMenu({ ...props }) {
         {menuList.length > 0 && <Menu.Divider />}
         <Menu.Item key="view_all">
           <LinkButton
-            text="View All"
+            text={i18n("AnnouncementsSubMenu.view-all")}
             href={setBaseUrl(`/announcements/user/list`)}
           />
         </Menu.Item>
@@ -205,19 +266,37 @@ export function AnnouncementsSubMenu({ ...props }) {
       {announcement && announcement.user && (
         <ScrollableModal
           className="t-modal"
-          maskClosable={false}
+          closable={priorityAnnouncements.length > 0 ? false : true}
+          maskClosable={true}
           title={
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Tag>
-                {readCount} / {totalCount}
-              </Tag>
+              {priorityAnnouncements.length > 0 ? (
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  {priorityAnnouncements.length > 1
+                    ? i18n(
+                        "AnnouncementsSubMenu.title.multiple",
+                        priorityAnnouncements.length
+                      )
+                    : i18n("AnnouncementsSubMenu.title.single")}
+                  <Tag className="t-read-over-unread-ratio" color="red">
+                    {priorityAnnouncementsIndex + 1} /{" "}
+                    {priorityAnnouncements.length}
+                  </Tag>
+                </div>
+              ) : (
+                <Tag className="t-read-over-unread-ratio">
+                  {readCount} / {totalCount}
+                </Tag>
+              )}
               <Space align="start">
                 <PriorityFlag hasPriority={announcement.priority} />
                 <Space direction="vertical">
                   <Text strong>{announcement.title}</Text>
                   <Text type="secondary" style={{ fontSize: `.8em` }}>
                     {i18n(
-                      "Announcements.create.details",
+                      "AnnouncementsSubMenu.create.details",
                       announcement.user.username,
                       formatDate({ date: announcement.createdDate })
                     )}
