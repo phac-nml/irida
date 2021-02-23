@@ -267,7 +267,7 @@ export function AnnouncementsSubMenu({ ...props }) {
         <ScrollableModal
           className="t-modal"
           closable={priorityAnnouncements.length > 0 ? false : true}
-          maskClosable={true}
+          maskClosable={priorityAnnouncements.length > 0 ? false : true}
           title={
             <Space direction="vertical" style={{ width: "100%" }}>
               {priorityAnnouncements.length > 0 ? (
