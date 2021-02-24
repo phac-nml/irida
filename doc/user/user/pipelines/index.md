@@ -94,7 +94,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
 1. Samples are listed last.  Here you can see all the files selected to run the pipeline with.
    ![Pipeline samples.](images/pipeline-samples.png)
     * You can remove a sample by clicking on the remove button to the right of the sample.
-    * If the sample contains multiple files that could be run on the pipeline, the most recently added are selected by default.  If you want to run a different set, but select them by clicking on the name.
+    * If the sample contains multiple files that could be run on the pipeline, the most recently added are selected by default.  If you want to run a different set, select them by clicking on the name.
 
 Running the pipeline
 --------------------
