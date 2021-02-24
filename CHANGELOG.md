@@ -8,6 +8,7 @@ Changes
 * [UI]: Updated to latest release of Ant Design (v4.12.3).
 * [Developer]: Fixed the advanced visualisation viewer for Phylogeny Tree with metadata.
 * [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
+* [UI]: Update to the pipeline launch process.
 
 20.09 to 21.01
 --------------

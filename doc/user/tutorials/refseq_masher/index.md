@@ -67,23 +67,13 @@ Modify the parameters to run `refseq_masher` if desired:
 
 ![refseq-pipeline-customize]
 
-Click the "Launch" button to submit the analysis. 
+Click the "Launch Pipeline" button to submit the analysis. 
 
 ![launch-button]
 
+Once the pipeline is selected, the next page provides an overview of all the input files, as well as the option to modify parameters.
 
-Monitoring Analysis Status
---------------------------
-
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
-
-![view-your-analyses][]
-
-The will bring you to a page where you can monitor the status of each launched workflow.
-
-![monitor-analyses][]
-
-Clicking the pipeline name will bring you to a page for that analysis pipeline. It will take a while for the RefSeqMasher analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion or error. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
+It will take a while for the RefSeqMasher analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion or error. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
 ![analysis-in-progress]
 
