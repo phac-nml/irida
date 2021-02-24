@@ -34,6 +34,11 @@ export function formatDefaultPipelineName(type, date) {
   }
 }
 
+/**
+ * Add the key to each set for React rendering
+ * @param sets - Sets of pipeline parameters
+ * @returns {{[p: string]: *}[]}
+ */
 export function formatSavedParameterSets(sets = []) {
   return sets.map((set) => ({ ...set, key: `set-${set.id}` }));
 }
