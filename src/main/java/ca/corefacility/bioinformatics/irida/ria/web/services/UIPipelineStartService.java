@@ -130,6 +130,8 @@ public class UIPipelineStartService {
 				submissionService.createSingleSampleSubmission(workflow, request.getReference(), singles, pairs,
 						request.getParameters(), namedParameters, request.getName(), request.getDescription(), projects,
 						request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
+				// Returning -1L as a flag to the UI that multiple pipelines have been launched, thereby there is not
+				// On specific pipeline to go to.
 				return -1L;
 			} else {
 				AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
