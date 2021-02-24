@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Strings;
 
 /**
- * Represents a IRIDA Workflow Pipeline Parameter that has specific options to be render
+ * Represents a IRIDA Workflow Pipeline Parameter that has specific options to be rendered
  * within the UI.
  */
 public class InputWithOptions extends Input {
