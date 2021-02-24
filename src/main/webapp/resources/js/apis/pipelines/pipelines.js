@@ -20,7 +20,7 @@ export async function getIridaWorkflowDescription(workflowUUID) {
     });
     return { data };
   } catch (error) {
-    return { error };
+    return Promise.reject(error.response.data.message);
   }
 }
 
@@ -37,7 +37,12 @@ export const fetchIridaAnalysisWorkflows = async function () {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export const fetchAutomatedIridaAnalysisWorkflows = async function () {
-  return axios.get(`${AJAX_URL}/automated`).then((response) => response.data);
+  try {
+    const { data } = await axios.get(`${AJAX_URL}/automated`);
+    return data;
+  } catch (e) {
+    return Promise.reject(e.response.error.message);
+  }
 };
 
 /**
@@ -50,7 +55,7 @@ export const getPipelineDetails = ({ id }) =>
     .get(`${AJAX_URL}/${id}`)
     .then(({ data }) => data)
     .catch((error) => {
-      throw new Error(error.response.data);
+      return Promise.reject(e.response.error.message);
     });
 
 /**
@@ -64,7 +69,7 @@ export const launchPipeline = (id, parameters) =>
     .post(`${AJAX_URL}/${id}`, parameters)
     .then(({ data }) => data)
     .catch((error) => {
-      throw new Error(error.response.data);
+      throw Promise.reject(error.response.data);
     });
 
 /**
@@ -79,7 +84,7 @@ export function saveNewPipelineParameters({ label, parameters, id }) {
     .post(`${AJAX_URL}/${id}/parameters`, { label, parameters })
     .then(({ data }) => data)
     .catch((error) => {
-      throw new Error(error.response.data);
+      throw Promise.reject(error.response.data);
     });
 }
 
