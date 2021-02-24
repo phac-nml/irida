@@ -1,9 +1,10 @@
 import React from "react";
 import { Button, List, Radio } from "antd";
-import { grey1, grey3, grey4 } from "../../../styles/colors";
+import { grey1, grey3 } from "../../../styles/colors";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { BlockRadioInput } from "../../../components/ant.design/forms/BlockRadioInput";
 import { SPACE_XS } from "../../../styles/spacing";
+import { BORDERED_LIGHT } from "../../../styles/borders";
 
 /**
  * React component to display the list of files that can be run on the current
@@ -36,7 +37,7 @@ export function SampleFilesListItem({
       style={{
         backgroundColor: sample.selected ? grey1 : grey3,
         boxSizing: `border-box`,
-        borderBottom: `1px solid ${grey4}`,
+        borderBottom: BORDERED_LIGHT,
         ...style,
       }}
     >
