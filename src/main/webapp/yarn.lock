@@ -102,7 +102,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@antv/color-util@npm:^2.0.1, @antv/color-util@npm:^2.0.2":
+"@antv/color-util@npm:^2.0.1, @antv/color-util@npm:^2.0.2, @antv/color-util@npm:^2.0.6":
   version: 2.0.6
   resolution: "@antv/color-util@npm:2.0.6"
   dependencies:
@@ -452,6 +452,26 @@ __metadata:
     fecha: ~4.2.0
     tslib: ^2.0.0
   checksum: 8d448f6548d5f25a135cfc0286eb9421307f6e12edf8efb504a9e9e5b5cc3bc9879e42766c09784d089d665500c8da6a6c48f4ea30782e65a6828c85d9dffc79
+  languageName: node
+  linkType: hard
+
+"@antv/scale@npm:^0.3.9":
+  version: 0.3.9
+  resolution: "@antv/scale@npm:0.3.9"
+  dependencies:
+    "@antv/util": ~2.0.3
+    fecha: ~4.2.0
+    tslib: ^2.0.0
+  checksum: 41f817635dc33dcb1c8377bd2d8d671a9d38cce7ef75e252b0332e2b5938c03f42c808a2ed06a861558a35e32bd820fc3bcd19ef23e22e69f9199fd2111090b9
+  languageName: node
+  linkType: hard
+
+"@antv/util@npm:^2.0.12":
+  version: 2.0.12
+  resolution: "@antv/util@npm:2.0.12"
+  dependencies:
+    tslib: ^2.0.3
+  checksum: afb7fcf1ae2752645d1254a3b5426bab61340ab36eee370daf3321377ee40ae3e5e98bccc68248968550f5d3dcb9ee8b9b3dbbf4ada6a7b2ce4a22666969f0b9
   languageName: node
   linkType: hard
 
@@ -6427,6 +6447,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"inherits@npm:2.0.3":
+  version: 2.0.3
+  resolution: "inherits@npm:2.0.3"
+  checksum: 9488f9433effbc24474f6baee8014e5337c7f99305ecb4204fa5864ae7655c24225780d87fc65ed8d3d374715a18c5dc8c69fe3bf9745cde2e7acd0ac068a07b
+  languageName: node
+  linkType: hard
+
 "insert-css@npm:^2.0.0":
   version: 2.0.0
   resolution: "insert-css@npm:2.0.0"
@@ -6491,6 +6518,10 @@ fsevents@^2.1.2:
   dependencies:
     "@ant-design/charts": ^1.0.17
     "@ant-design/icons": ^4.5.0
+    "@antv/color-util": ^2.0.6
+    "@antv/matrix-util": ^3.0.4
+    "@antv/scale": ^0.3.9
+    "@antv/util": ^2.0.12
     "@babel/core": ^7.12.13
     "@babel/plugin-proposal-class-properties": ^7.12.13
     "@babel/plugin-proposal-export-default-from": ^7.12.13
@@ -6547,6 +6578,7 @@ fsevents@^2.1.2:
     mini-css-extract-plugin: ^1.3.5
     moment: ^2.24.0
     ng-file-upload: ^12.2.12
+    path: ^0.12.7
     phylocanvas: ^2.8.1
     phylocanvas-plugin-export-svg: ^1.0.0
     phylocanvas-plugin-metadata: ^2.2.0
@@ -8918,6 +8950,16 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"path@npm:^0.12.7":
+  version: 0.12.7
+  resolution: "path@npm:0.12.7"
+  dependencies:
+    process: ^0.11.1
+    util: ^0.10.3
+  checksum: 0e2d3342ca6f91aba8e514919cae8a08ad12071297a3a99da6e3ea493f5296d9bb323ca9bece4d035fc280e91b701a740ce1e48ff65802004deaaae2f2cd623e
+  languageName: node
+  linkType: hard
+
 "pend@npm:~1.2.0":
   version: 1.2.0
   resolution: "pend@npm:1.2.0"
@@ -9877,6 +9919,13 @@ fsevents@^2.1.2:
   version: 2.0.1
   resolution: "process-nextick-args@npm:2.0.1"
   checksum: ddeb0f07d0d5efa649c2c5e39d1afd0e3668df2b392d036c8a508b0034f7beffbc474b3c2f7fd3fed2dc4113cef8f1f7e00d05690df3c611b36f6c7efd7852d1
+  languageName: node
+  linkType: hard
+
+"process@npm:^0.11.1":
+  version: 0.11.10
+  resolution: "process@npm:0.11.10"
+  checksum: ed93a85e9185b40fb01788c588a87c1a9da0eb925ef7cebebbe1b8bbf0eba1802130366603a29e3b689c116969d4fe018de6aed3474bbeb5aefb3716b85d6449
   languageName: node
   linkType: hard
 
@@ -12496,6 +12545,15 @@ fsevents@^2.1.2:
     has-symbols: ^1.0.1
     object.getownpropertydescriptors: ^2.1.0
   checksum: 99e5b0a7a4c72d8d4db3cbc911a1d8770e7ab233b5841e1b29e56ffc6ac21142acebf5ca7d5e7afd921662a83639094b4f1197d0f4af3cb058ba28ba1a7f4b8f
+  languageName: node
+  linkType: hard
+
+"util@npm:^0.10.3":
+  version: 0.10.4
+  resolution: "util@npm:0.10.4"
+  dependencies:
+    inherits: 2.0.3
+  checksum: 6682ea8239076243495c45e81f19c2c002e02805de4de08554dc815500805923f27f504ec1a9c7599d420b62bf7452efbab6fa078219d529188b0ca830f142a5
   languageName: node
   linkType: hard
 

@@ -2,7 +2,7 @@
  * @file Responsible for loading and setting a table of events..
  * Used on both the Dashboard and Admin > Events pages.
  */
-
+import $ from "jquery";
 import angular from "angular";
 import "../../../css/modules/events.css";
 

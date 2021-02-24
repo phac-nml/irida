@@ -1,8 +1,10 @@
 const path = require("path");
+const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WebpackBar = require("webpackbar");
+const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 const entries = require("./entries");
 
 module.exports = {
@@ -62,7 +64,7 @@ module.exports = {
                 // publicPath is the relative path of the resource to the context
                 // e.g. for ./css/admin/main.css the publicPath will be ../../
                 // while for ./css/main.css the publicPath will be ../
-                return path.relative(path.dirname(resourcePath), context) + "/";
+                return path.relative(path.dirname(resourcePath), context) + "/dist/css/";
               },
             },
           },
@@ -92,7 +94,13 @@ module.exports = {
   plugins: [new MiniCssExtractPlugin({
     ignoreOrder: true,
     filename: 'css/[name].bundle.css',
-  }), new WebpackBar()],
+  }), new WebpackBar(),
+    new i18nThymeleafWebpackPlugin({
+      functionName: "i18n",
+    }),
+    new webpack.ProvidePlugin({
+      i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
+    })],
   optimization: {
     minimize: true,
     minimizer: [
