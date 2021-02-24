@@ -8,7 +8,8 @@ import { removeSample } from "../../apis/cart/cart";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
 import { setSelectedSampleFiles } from "./launch-dispatch";
-import { grey3, grey4 } from "../../styles/colors";
+import { grey3 } from "../../styles/colors";
+import { BORDERED_LIGHT } from "../../styles/borders";
 
 /**
  * React component to display sample files that will be used in the launching
@@ -165,7 +166,7 @@ export function LaunchFiles() {
             {({ height = 600, width = 400 }) => (
               <VList
                 style={{
-                  border: `1px solid ${grey4}`,
+                  border: BORDERED_LIGHT,
                   backgroundColor: grey3,
                 }}
                 ref={listRef}
