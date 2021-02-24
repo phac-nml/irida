@@ -137,7 +137,7 @@ public class UIPipelineStartService {
 				AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
 						request.getReference(), singles, pairs, request.getParameters(), namedParameters,
 						request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
-						request.sendEmailOnCompletion(), request.sendEmailOnCompletion());
+						request.sendEmailOnCompletion(), request.sendEmailOnError());
 				return submission.getId();
 			}
 		}
