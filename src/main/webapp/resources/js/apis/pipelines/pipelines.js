@@ -32,6 +32,10 @@ export const fetchIridaAnalysisWorkflows = async function () {
   return axios.get(AJAX_URL).then((response) => response.data);
 };
 
+/**
+ * Get al listing of all pipelines in IRIDA that can be automated
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export const fetchAutomatedIridaAnalysisWorkflows = async function () {
   return axios.get(`${AJAX_URL}/automated`).then((response) => response.data);
 };
