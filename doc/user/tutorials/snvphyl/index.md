@@ -66,7 +66,7 @@ One component of the SNVPhyl pipeline is to remove regions with high SNV density
 
 ![snvphyl-pipeline-snv-density.png][]
 
-Selecting the checkbox if all the genomes are closely-related to each other and you wish to remove SNVs in high-density regions (that could be indicative of recombination). The thresholds for SNV removal can be set in the [optional parameters][] section.
+Select the checkbox if all the genomes are closely-related to each other and you wish to remove SNVs in high-density regions (that could be indicative of recombination). The thresholds for SNV removal can be set in the [optional parameters][] section.
 
 Leave the checkbox unchecked if you wish to turn off SNV density filtering. This is useful if you are analyzing genomes that are much more distantly related to each other (and so the SNV density filtering would be likely to remove non-recombinant SNVs).
 
