@@ -11,6 +11,8 @@ import { setSelectedSampleFiles } from "./launch-dispatch";
 import { grey3 } from "../../styles/colors";
 import { BORDERED_LIGHT } from "../../styles/borders";
 
+const DEFAULT_HEIGHT = 600;
+
 /**
  * React component to display sample files that will be used in the launching
  * of the pipeline
@@ -21,7 +23,7 @@ import { BORDERED_LIGHT } from "../../styles/borders";
 export function LaunchFiles() {
   const listRef = React.useRef();
   const [selected, setSelected] = React.useState();
-  const [height, setHeight] = React.useState(600);
+  const [height, setHeight] = React.useState(DEFAULT_HEIGHT);
   const [
     { acceptsPairedSequenceFiles: paired, acceptsSingleSequenceFiles: singles },
     dispatch,
@@ -87,8 +89,8 @@ export function LaunchFiles() {
       let newHeight = 0;
       for (let i = 0; i < samples.length; i++) {
         newHeight += getRowHeight(i);
-        if (newHeight > 600) {
-          newHeight = 600;
+        if (newHeight > DEFAULT_HEIGHT) {
+          newHeight = DEFAULT_HEIGHT;
           break;
         }
       }
@@ -163,7 +165,7 @@ export function LaunchFiles() {
           }}
         >
           <AutoSizer>
-            {({ height = 600, width = 400 }) => (
+            {({ height = DEFAULT_HEIGHT, width = 400 }) => (
               <VList
                 style={{
                   border: BORDERED_LIGHT,
