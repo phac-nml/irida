@@ -69,6 +69,6 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		// Test submitting
 		page.submit();
 		WebDriverWait wait = new WebDriverWait(driver(), 5);
-		wait.until(ExpectedConditions.urlMatches("/analysis/"));
+		wait.until(ExpectedConditions.urlMatches("/analysis"));
 	}
 }
