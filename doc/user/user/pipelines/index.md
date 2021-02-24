@@ -64,7 +64,7 @@ After selecting a pipeline, you will be sent to the pipeline specific launch pag
 
 1. General Details:
    ![General Details](images/general-details.png)
-    * Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later date.  By default, the name is given the pipeline name followed by the date run (e.g. SNVPhyl__2-15-2021).
+    * Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later date.  By default, the name is given the pipeline name followed by the date ran (e.g. SNVPhyl__2-15-2021).
     * Pipeline Description: Any custom text can be entered here.
     * Email Pipeline Results: There are three options:
         1. No email: don't send any emails about the pipeline outcome (default)
