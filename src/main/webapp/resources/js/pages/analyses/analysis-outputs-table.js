@@ -340,10 +340,25 @@ async function getTableData(isShared = true) {
       filterParams: {
         // provide comparator function
         comparator: (filterLocalDateAtMidnight, cellValue) => {
-          const cellDate = new Date(cellValue);
-          if (cellDate < filterLocalDateAtMidnight) {
+          const cellDateTime = new Date(cellValue);
+          const cellDate = new Date(
+            Date.UTC(
+              cellDateTime.getFullYear(),
+              cellDateTime.getMonth(),
+              cellDateTime.getDate()
+            )
+          );
+          const filterDate = new Date(
+            Date.UTC(
+              filterLocalDateAtMidnight.getFullYear(),
+              filterLocalDateAtMidnight.getMonth(),
+              filterLocalDateAtMidnight.getDate()
+            )
+          );
+
+          if (cellDate < filterDate) {
             return -1;
-          } else if (cellDate > filterLocalDateAtMidnight) {
+          } else if (cellDate > filterDate) {
             return 1;
           }
           return 0;
