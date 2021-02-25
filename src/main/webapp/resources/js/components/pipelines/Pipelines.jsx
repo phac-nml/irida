@@ -11,19 +11,19 @@ import { SPACE_MD } from "../../styles/spacing";
 export class Pipelines extends React.Component {
   state = {
     pipelines: [],
-    loaded: false
+    loaded: false,
   };
 
   componentDidMount() {
-    fetchIridaAnalysisWorkflows().then(data => {
-      this.setState({ pipelines: data.pipelineList, loaded: true });
+    fetchIridaAnalysisWorkflows().then((pipelines) => {
+      this.setState({ pipelines, loaded: true });
     });
   }
 
   render() {
     return (
       <Row className="t-pipelines" gutter={16}>
-        {this.state.pipelines.map(pipeline => (
+        {this.state.pipelines.map((pipeline) => (
           <Col
             md={24}
             lg={12}

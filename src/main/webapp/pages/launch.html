@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/dist/css/launch.bundle.css}" />
+  </head>
+  <body>
+    <div
+      id="root"
+      style="height: 100%; min-height: 100%"
+      layout:fragment="page"
+    >
+      <!--
+       React root for launch component found in src/main/webapp/resources/js/pages/launch/index.js
+       -->
+    </div>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/launch.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>

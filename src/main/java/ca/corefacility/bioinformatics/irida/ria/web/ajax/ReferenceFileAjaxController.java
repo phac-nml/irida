@@ -16,8 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UploadReferenceFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 
 /**
@@ -43,19 +46,15 @@ public class ReferenceFileAjaxController {
 	 * @param locale    locale of the logged in user
 	 * @return Success message if file was successfully uploaded
 	 */
-	@PostMapping("/project/{projectId}")
-	public ResponseEntity<AjaxResponse> addReferenceFileToProject(@PathVariable Long projectId,
+	@PostMapping("")
+	public ResponseEntity<AjaxResponse> addReferenceFileToProject( @RequestParam(required = false) Long projectId,
 			@RequestParam(value = "file") List<MultipartFile> files, final Locale locale) {
 		try
 		{
-			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(uiProjectReferenceFileService.addReferenceFileToProject(projectId, files, locale)));
-		} catch (UnsupportedReferenceFileContentError e) {
+			return ResponseEntity.ok(new UploadReferenceFilesResponse(uiProjectReferenceFileService.addReferenceFileToProject(projectId, files, locale)));
+		} catch (UnsupportedReferenceFileContentError | IOException e) {
 			return ResponseEntity.status(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE)
 					.body(new AjaxErrorResponse(e.getMessage()));
-		} catch (IOException e) {
-			return ResponseEntity.status(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE)
-					.body(new AjaxErrorResponse(
-							e.getMessage()));
 		}
 	}
 
