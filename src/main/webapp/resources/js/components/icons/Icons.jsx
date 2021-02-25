@@ -32,6 +32,7 @@ import {
   MenuUnfoldOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
+  RocketOutlined,
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
@@ -138,6 +139,10 @@ export const IconMetadataTemplate = ({ ...props }) => (
 );
 
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
+
+export const IconLaunchPipeline = ({ ...props }) => (
+  <RocketOutlined {...props} />
+);
 
 /*
 Editor Icons

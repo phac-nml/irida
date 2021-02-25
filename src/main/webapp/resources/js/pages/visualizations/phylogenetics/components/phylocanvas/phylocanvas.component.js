@@ -122,7 +122,11 @@ function phylocanvasController(
     // Add the metadata to the branches before the tree is drawn.
     tree.on("beforeFirstDraw", () => {
       for (const leaf of tree.leaves) {
-        leaf.data = metadata[leaf.label];
+        if (metadata.hasOwnProperty(leaf.label)) {
+          leaf.data = metadata[leaf.label];
+        } else {
+          leaf.data = metadata.reference;
+        }
       }
     });
     metadataPromise.resolve();

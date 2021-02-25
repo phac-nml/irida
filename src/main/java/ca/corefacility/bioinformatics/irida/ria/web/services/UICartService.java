@@ -233,6 +233,14 @@ public class UICartService {
 	}
 
 	/**
+	 * Determine if the cart is empty
+	 * @return Boolean if the cart is empty
+	 */
+	public Boolean isCartEmpty() {
+		return cart.isEmpty();
+	}
+
+	/**
 	 * Determine if a sample is in the cart.
 	 *
 	 * @param sampleId identifier for a sample
