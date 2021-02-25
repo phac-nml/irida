@@ -6,10 +6,7 @@
 >
   <head>
     <title th:text="#{project.settings.page.title.basic}">Basic</title>
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/project-processing.bundle.css}"
-    />
+    <webpacker:css entry="project-processing" />
   </head>
   <body>
     <div layout:fragment="settings-content" id="process-root">
@@ -17,7 +14,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/project-processing.bundle.js}"></script>
+      <webpacker:js entry="project-processing" />
     </th:block>
   </body>
 </html>
