@@ -22,11 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -37,22 +37,22 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 
-	private Object prepareAnalysesLock = new Object();
-	private Object executeAnalysesLock = new Object();
-	private Object monitorRunningAnalysesLock = new Object();
-	private Object postProcessingLock = new Object();
-	private Object transferAnalysesResultsLock = new Object();
-	private Object cleanupAnalysesResultsLock = new Object();
+	private final Object prepareAnalysesLock = new Object();
+	private final Object executeAnalysesLock = new Object();
+	private final Object monitorRunningAnalysesLock = new Object();
+	private final Object postProcessingLock = new Object();
+	private final Object transferAnalysesResultsLock = new Object();
+	private final Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisExecutionService analysisExecutionService;
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
+	private final AnalysisExecutionService analysisExecutionService;
 	private final CleanupAnalysisSubmissionCondition cleanupCondition;
-	private GalaxyJobErrorsService galaxyJobErrorsService;
-	private JobErrorRepository jobErrorRepository;
+	private final GalaxyJobErrorsService galaxyJobErrorsService;
+	private final JobErrorRepository jobErrorRepository;
 	private final EmailController emailController;
-	private AnalysisWorkspaceService analysisWorkspaceService;
+	private final AnalysisWorkspaceService analysisWorkspaceService;
 
 
 	/**
@@ -307,8 +307,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 and the user selected to be emailed on completion or on error, then the following code
 		 will be executed.
 		 */
-		if (finalWorkflowStatusSet && (analysisSubmission.getEmailPipelineResultCompleted()
-				|| analysisSubmission.getEmailPipelineResultError())) {
+		if (finalWorkflowStatusSet && (!analysisSubmission.getEmailPipelineResultCompleted()
+				&& analysisSubmission.getEmailPipelineResultError() && analysisSubmission.getAnalysisState()
+				.equals(AnalysisState.ERROR)) || analysisSubmission.getEmailPipelineResultCompleted()) {
 			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 

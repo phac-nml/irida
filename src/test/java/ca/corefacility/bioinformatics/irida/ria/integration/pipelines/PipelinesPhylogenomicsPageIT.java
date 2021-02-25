@@ -4,20 +4,18 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 /**
  * <p>
@@ -27,158 +25,12 @@ import static org.junit.Assert.assertFalse;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
-	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
-	private PipelinesPhylogenomicsPage page;
-	private CartPage cartPage;
+	protected LaunchPipelinePage page;
 
 	@Before
 	public void setUpTest() throws IOException {
-		page = new PipelinesPhylogenomicsPage(driver());
-		cartPage = new CartPage(driver());
-	}
-
-	@Test
-	public void testPageSetup() {
+		page = LaunchPipelinePage.init(driver());
 		addSamplesToCart();
-
-		logger.info("Checking Phylogenomics Page Setup.");
-		assertEquals("Should display the correct number of reference files in the select input.", 2,
-				page.getReferenceFileCount());
-		assertEquals("Should display the correct number of samples.", 2, page.getNumberOfSamplesDisplayed());
-	}
-
-	@Test
-	public void testSubmitWithTransientReferenceFile() throws IOException {
-		LoginPage.loginAsUser(driver());
-
-		// Add sample from a project that user is a "Project User" and has no
-		// reference files.
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 2);
-		samplesPage.selectSample(0);
-		samplesPage.addSelectedSamplesToCart();
-
-		cartPage.selectPhylogenomicsPipeline();
-		assertTrue("Should display a warning to the user that there are no reference files.",
-				page.isNoReferenceWarningDisplayed());
-		String fileName = page.selectReferenceFile();
-		assertTrue("Page should display reference file name.", page.isReferenceFileNameDisplayed(fileName));
-	}
-
-	@Test
-	public void testPipelineSubmission() {
-		addSamplesToCart();
-		assertFalse("Pipeline launch should not be enabled until density filtering is set",
-				page.isPipelineLaunchButtonEnabled());
-		page.selectAndSetDensityFiltering("Disable");
-		assertTrue("Pipeline launch should now be enabled",
-				page.isPipelineLaunchButtonEnabled());
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-	}
-
-	@Test
-	public void testCheckPipelineStatusAfterSubmit() {
-		addSamplesToCart();
-
-		assertFalse("Pipeline launch should not be enabled until density filtering is set",
-				page.isPipelineLaunchButtonEnabled());
-		page.selectAndSetDensityFiltering("Disable");
-		assertTrue("Pipeline launch should now be enabled",
-				page.isPipelineLaunchButtonEnabled());
-
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
-		page.clickSeePipeline();
-
-		assertTrue("Should be on analysis page", driver().getCurrentUrl().endsWith("/analysis"));
-	}
-
-	@Test
-	public void testRemoveSample() {
-		addSamplesToCart();
-
-		int numberOfSamplesDisplayed = page.getNumberOfSamplesDisplayed();
-
-		page.removeFirstSample();
-		int laterNumber = page.getNumberOfSamplesDisplayed();
-
-		assertEquals("should have 1 less sample than before", numberOfSamplesDisplayed - 1, laterNumber);
-		assertEquals("cart samples count should equal samples on page", laterNumber, page.getCartCount());
-	}
-
-	@Test
-	public void testModifyParameters() {
-		addSamplesToCart();
-		page.clickPipelineParametersBtn();
-		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
-				page.getParametersModalTitle());
-
-		// set the value
-		String value = page.getSNVAbundanceRatio();
-		String newValue = "10";
-		page.setSNVAbundanceRatio(newValue);
-		assertEquals("Should not have the same value as the default after being changed", newValue,
-				page.getSNVAbundanceRatio());
-		page.clickSetDefaultSNVAbundanceRatio();
-		assertEquals("Value should be reset to the default value", value, page.getSNVAbundanceRatio());
-	}
-
-	@Test
-	public void testModifyParametersAgain() throws InterruptedException {
-		addSamplesToCart();
-		page.clickPipelineParametersBtn();
-		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
-				page.getParametersModalTitle());
-
-		// set the value for the ALternative Allele Fraction
-		String newValue = "10";
-		page.setSNVAbundanceRatio(newValue);
-		assertEquals("Should be set to the new value.", newValue, page.getSNVAbundanceRatio());
-
-		page.clickUseParametersButton();
-
-		// open the dialog again and make sure that the changed values are still
-		// there:
-		page.clickPipelineParametersBtn();
-		assertEquals("snv abundance ratio should have the same value as the new value after being changed",
-				newValue, page.getSNVAbundanceRatio());
-	}
-
-	@Test
-	public void testModifyAndSaveParameters() {
-		addSamplesToCart();
-
-		assertFalse("Pipeline launch should not be enabled until density filtering is set",
-				page.isPipelineLaunchButtonEnabled());
-		page.selectAndSetDensityFiltering("Enable");
-		assertTrue("Pipeline launch should now be enabled",
-				page.isPipelineLaunchButtonEnabled());
-
-		page.clickPipelineParametersBtn();
-		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
-				page.getParametersModalTitle());
-
-		// set the value for the ALternative Allele Fraction
-		String newValue = "10";
-		final String savedParametersName = "Saved parameters name.";
-		page.setSNVAbundanceRatio(newValue);
-		assertEquals("Should have updated snv abundance ratio value to new value.", newValue,
-				page.getSNVAbundanceRatio());
-		page.clickSaveParameters();
-		assertTrue("Page should have shown name for parameters field with selected parameters name.",
-				page.isNameForParametersVisible());
-		page.setNameForSavedParameters(savedParametersName);
-		page.clickUseParametersButton();
-		assertEquals("Selected parameter set should be the saved one.", savedParametersName,
-				page.getSelectedParameterSet());
-		// now test that we can run the pipeline
-		page.clickLaunchPipelineBtn();
-		assertTrue("Message should be displayed once the pipeline finished submitting",
-				page.isPipelineSubmittedSuccessMessageShown());
 	}
 
 	private void addSamplesToCart() {
@@ -187,6 +39,64 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		samplesPage.selectSample(0);
 		samplesPage.selectSample(1);
 		samplesPage.addSelectedSamplesToCart();
+	}
+
+	@Test
+	public void testPageSetup() {
+		CartPage cartPage = new CartPage(driver());
 		cartPage.selectPhylogenomicsPipeline();
+		assertEquals("Launch Page should display  the pipeline name", "SNVPhyl Phylogenomics Pipeline", page.getPipelineName());
+		assertTrue("Launch form should be displayed", page.isLaunchFormDisplayed());
+		assertTrue("Launch details should be displayed", page.isLaunchDetailsDisplayed());
+		assertTrue("Launch parameters should be displayed", page.isLaunchParametersDisplayed());
+		assertFalse("Share with samples should not be displayed", page.isShareWithSamplesDisplayed());
+		assertTrue("Share with projects should be displayed", page.isShareWithProjectsDisplayed());
+		assertTrue("Should be able to select a reference file", page.isReferenceFilesDisplayed());
+		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
+		assertTrue("Should have an alert showing that reference files were not found", page.isReferenceFilesRequiredDisplayed());
+		assertFalse("Reference file error should only be shown after trying to submit", page.isReferenceFilesRequiredErrorDisplayed());
+
+		// Test the name input
+		page.clearName();
+		assertTrue("There should be an error displayed that a name is required", page.isNameErrorDisplayed());
+		page.updateName("TEST_NAME");
+		assertFalse("Name required warning should be cleared", page.isNameErrorDisplayed());
+
+		// Test email checkbox
+		assertEquals("No Email", page.getEmailValue());
+
+		// Make sure the saved pipeline parameter inputs are set up correctly
+		assertEquals("No saved parameters should be initially displayed", 0, page.getNumberOfSavedPipelineParameters());
+		page.showSavedParameters();
+		assertEquals("Phylogenomics Pipeline should have 8 inputs", 8, page.getNumberOfSavedPipelineParameters());
+		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
+
+		String MINIMUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
+		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MINIMUM_COVERAGE_PARAMETER);
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER,"123456");
+		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
+		assertFalse("Modified alert should go way once the value is the same as the original", page.isModifiedAlertVisible());
+
+		// Test saving modified parameters
+		String newCoverage = "123";
+		String newRepeat = "456";
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, newCoverage);
+		String REPEAT_MINIMUM_LENGTH_PARAMETER = "repeat-minimum-length";
+		page.updateSavedParameterValue(REPEAT_MINIMUM_LENGTH_PARAMETER, newRepeat);
+		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
+		final String newModifiedTemplateName = "FOOBAR";
+		page.saveModifiedTemplateAs(newModifiedTemplateName);
+		assertEquals("Then newly template should be selected", newModifiedTemplateName, page.getSelectedParametersTemplateName());
+
+		// Test submitting
+		page.submit();
+		assertTrue("Should display warning that a reference file is required", page.isReferenceFilesRequiredErrorDisplayed());
+
+		page.uploadReferenceFile();
+		assertFalse("Now a reference file should exist", page.isReferenceFilesRequiredErrorDisplayed());
+		page.submit();
+		WebDriverWait wait = new WebDriverWait(driver(), 5);
+		wait.until(ExpectedConditions.urlMatches("/analysis/"));
 	}
 }

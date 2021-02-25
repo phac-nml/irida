@@ -1,12 +1,6 @@
 import React from "react";
 import { notification, Space, Table, Typography } from "antd";
 import { InfoAlert } from "../../../components/alerts";
-import {
-  downloadProjectReferenceFile,
-  getProjectReferenceFiles,
-  removeProjectReferenceFile,
-  uploadProjectReferenceFiles,
-} from "../../../apis/projects/reference-files";
 import { getProjectInfo } from "../../../apis/projects/projects";
 
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
@@ -15,6 +9,12 @@ import {
   DownloadTableItemButton,
   RemoveTableItemButton,
 } from "../../../components/Buttons";
+import {
+  downloadProjectReferenceFile,
+  getProjectReferenceFiles,
+  removeProjectReferenceFile,
+  uploadProjectReferenceFiles,
+} from "../../../apis/references/reference-files";
 import { DragUpload } from "../../../components/files/DragUpload";
 
 const { Title } = Typography;
@@ -112,7 +112,7 @@ export function ReferenceFiles() {
               tooltipText={i18n("ReferenceFile.removeTooltip")}
               confirmText={i18n(
                 "ReferenceFile.confirmText",
-                file.label,
+                file.name,
                 projectInfo.projectName
               )}
             />
