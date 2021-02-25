@@ -16,6 +16,9 @@
 }
 
 .announcement-dd .ant-menu-item {
+    height: auto !important;
+    whiteSpace: normal !important;
+    lineHeight: 1em !important;
     background-color: white !important;
 }
 

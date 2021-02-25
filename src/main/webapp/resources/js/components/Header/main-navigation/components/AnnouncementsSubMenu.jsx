@@ -1,10 +1,13 @@
 import React from "react";
-import { Badge, Menu } from "antd";
+import { Badge, Menu, Space, Typography } from "antd";
 import { IconBell } from "../../../icons/Icons";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import "./announcements.css";
 import { LinkButton } from "../../../Buttons/LinkButton";
 import { TYPES, useAnnouncements } from "./announcements-context";
+import { fromNow } from "../../../../utilities/date-utilities";
+
+const { Text } = Typography;
 
 /**
  * React component to display the bell icon and new announcement count badge
@@ -41,7 +44,15 @@ export function AnnouncementsSubMenu(props) {
         {announcements.map((item, index) => (
           <Menu.Item key={"announcement_" + index}>
             <LinkButton
-              text={item.title}
+              title={item.title}
+              text={
+                <Space direction="vertical">
+                  <Text>{item.title.substring(0, 100)}</Text>
+                  <Text type="secondary" style={{ fontSize: `.8em` }}>
+                    {fromNow({ date: item.createdDate })}
+                  </Text>
+                </Space>
+              }
               onClick={() => {
                 showAnnouncementModal(index);
               }}
