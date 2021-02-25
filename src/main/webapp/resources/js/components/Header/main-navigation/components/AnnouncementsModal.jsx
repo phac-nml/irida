@@ -37,7 +37,7 @@ export function AnnouncementsModal() {
           readAndPreviousAnnouncement(dispatch, newAnnouncements[index])
         }
       >
-        Previous
+        {i18n("AnnouncementsModal.previous")}
       </Button>
     ),
     (index === 0 || index + 1 === newAnnouncements.length) && (
@@ -47,7 +47,7 @@ export function AnnouncementsModal() {
           readAndCloseAnnouncement(dispatch, newAnnouncements[index])
         }
       >
-        Close
+        {i18n("AnnouncementsModal.close")}
       </Button>
     ),
     index + 1 < newAnnouncements.length && (
@@ -57,7 +57,7 @@ export function AnnouncementsModal() {
           readAndNextAnnouncement(dispatch, newAnnouncements[index])
         }
       >
-        Next
+        {i18n("AnnouncementsModal.next")}
       </Button>
     ),
   ];
@@ -70,9 +70,11 @@ export function AnnouncementsModal() {
       title={
         <Space direction="vertical" style={{ width: "100%" }}>
           <Tag className="t-read-over-unread-ratio">
-            {`Read: ${newAnnouncements.filter((a) => a.read).length} / ${
+            {i18n(
+              "AnnouncementsModal.tag.details",
+              newAnnouncements.filter((a) => a.read).length,
               newAnnouncements.length
-            }`}
+            )}
           </Tag>
           <Space align="start">
             <PriorityFlag hasPriority={newAnnouncements[index].priority} />
@@ -80,7 +82,7 @@ export function AnnouncementsModal() {
               <Text strong>{newAnnouncements[index].title}</Text>
               <Text type="secondary" style={{ fontSize: `.8em` }}>
                 {i18n(
-                  "AnnouncementsSubMenu.create.details",
+                  "AnnouncementsModal.create.details",
                   newAnnouncements[index].user.username,
                   formatDate({ date: newAnnouncements[index].createdDate })
                 )}
