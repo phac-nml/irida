@@ -20,6 +20,7 @@ export function LinkButton({ text, href, onClick, ...props }) {
         height: "auto",
         whiteSpace: "normal",
         textAlign: "left",
+        margin: 0,
       }}
       href={href}
       onClick={onClick}

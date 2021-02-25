@@ -1,11 +1,12 @@
 import React from "react";
-import { Badge, Menu, Space, Typography } from "antd";
+import { Badge, Dropdown, Menu, Space, Typography } from "antd";
 import { IconBell } from "../../../icons/Icons";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import "./announcements.css";
 import { LinkButton } from "../../../Buttons/LinkButton";
 import { TYPES, useAnnouncements } from "./announcements-context";
 import { fromNow } from "../../../../utilities/date-utilities";
+import { BORDERED_LIGHT } from "../../../../styles/borders";
+import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
 
 const { Text } = Typography;
 
@@ -28,45 +29,53 @@ export function AnnouncementsSubMenu(props) {
     });
   }
 
-  return (
-    <>
-      <Menu.SubMenu
-        popupClassName="announcement-dd"
-        title={
-          <Badge
-            count={announcements && announcements.filter((a) => !a.read).length}
-          >
-            <IconBell />
-          </Badge>
-        }
-        {...props}
-      >
-        {announcements.map((item, index) => (
-          <Menu.Item key={"announcement_" + index}>
-            <LinkButton
-              title={item.title}
-              text={
-                <Space direction="vertical">
-                  <Text>{item.title.substring(0, 100)}</Text>
+  const aMenu = (
+    <Menu>
+      {announcements.map((item, index) => (
+        <Menu.Item
+          key={"announcement_" + index}
+          style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+        >
+          <LinkButton
+            title={item.title}
+            text={
+              <Space size="large">
+                <PriorityFlag hasPriority={item.priority} />
+                <span>
+                  <Text strong ellipsis style={{ width: 310 }}>
+                    {item.title}
+                  </Text>
+                  <br />
                   <Text type="secondary" style={{ fontSize: `.8em` }}>
                     {fromNow({ date: item.createdDate })}
                   </Text>
-                </Space>
-              }
-              onClick={() => {
-                showAnnouncementModal(index);
-              }}
-            />
-          </Menu.Item>
-        ))}
-        {announcements.length > 0 && <Menu.Divider />}
-        <Menu.Item key="view_all">
-          <LinkButton
-            text={i18n("AnnouncementsSubMenu.view-all")}
-            href={setBaseUrl(`/announcements/user/list`)}
+                </span>
+              </Space>
+            }
+            onClick={() => {
+              showAnnouncementModal(index);
+            }}
           />
         </Menu.Item>
-      </Menu.SubMenu>
-    </>
+      ))}
+      <Menu.Item key="view_all">
+        <LinkButton
+          text={i18n("AnnouncementsSubMenu.view-all")}
+          href={setBaseUrl(`/announcements/user/list`)}
+        />
+      </Menu.Item>
+    </Menu>
+  );
+
+  return (
+    <Dropdown overlay={aMenu}>
+      <span style={{ padding: 20 }}>
+        <Badge
+          count={announcements && announcements.filter((a) => !a.read).length}
+        >
+          <IconBell />
+        </Badge>
+      </span>
+    </Dropdown>
   );
 }
