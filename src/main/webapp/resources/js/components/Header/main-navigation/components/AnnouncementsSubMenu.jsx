@@ -20,6 +20,7 @@ export function AnnouncementsSubMenu(props) {
       type: TYPES.SHOW_ANNOUNCEMENT,
       payload: {
         index,
+        isPriority: false,
       },
     });
   }

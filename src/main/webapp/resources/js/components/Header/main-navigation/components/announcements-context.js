@@ -16,7 +16,15 @@ export const TYPES = {
 const reducer = (state, action) => {
   switch (action.type) {
     case TYPES.LOADED:
-      return { ...state, announcements: action.payload.announcements };
+      const isPriority =
+        action.payload.announcements.filter((a) => a.priority).length > 0;
+      return {
+        ...state,
+        announcements: action.payload.announcements,
+        modalVisible: isPriority,
+        index: 0,
+        isPriority,
+      };
     case TYPES.SHOW_ANNOUNCEMENT:
       return {
         ...state,

@@ -19,36 +19,50 @@ export function AnnouncementsModal() {
     dispatch,
   ] = useAnnouncements();
 
+  const [newAnnouncements, setNewAnnouncements] = React.useState([]);
+
+  React.useEffect(() => {
+    if (isPriority) {
+      setNewAnnouncements(announcements.filter((a) => a.priority));
+    } else {
+      setNewAnnouncements(announcements);
+    }
+  }, [announcements]);
+
   const footer = [
     index > 0 && (
       <Button
         key="previous_announcement"
         onClick={() =>
-          readAndPreviousAnnouncement(dispatch, announcements[index])
+          readAndPreviousAnnouncement(dispatch, newAnnouncements[index])
         }
       >
         Previous
       </Button>
     ),
-    (index === 0 || index + 1 === announcements.length) && (
+    (index === 0 || index + 1 === newAnnouncements.length) && (
       <Button
         key="close_announcement"
-        onClick={() => readAndCloseAnnouncement(dispatch, announcements[index])}
+        onClick={() =>
+          readAndCloseAnnouncement(dispatch, newAnnouncements[index])
+        }
       >
         Close
       </Button>
     ),
-    index + 1 < announcements.length && (
+    index + 1 < newAnnouncements.length && (
       <Button
         key="next_announcement"
-        onClick={() => readAndNextAnnouncement(dispatch, announcements[index])}
+        onClick={() =>
+          readAndNextAnnouncement(dispatch, newAnnouncements[index])
+        }
       >
         Next
       </Button>
     ),
   ];
 
-  return visible && announcements.length ? (
+  return visible && newAnnouncements.length ? (
     <ScrollableModal
       className="t-modal"
       closable={!isPriority}
@@ -56,19 +70,19 @@ export function AnnouncementsModal() {
       title={
         <Space direction="vertical" style={{ width: "100%" }}>
           <Tag className="t-read-over-unread-ratio">
-            {`${announcements.filter((a) => a.read).length} / ${
-              announcements.length
+            {`Read: ${newAnnouncements.filter((a) => a.read).length} / ${
+              newAnnouncements.length
             }`}
           </Tag>
           <Space align="start">
-            <PriorityFlag hasPriority={announcements[index].priority} />
+            <PriorityFlag hasPriority={newAnnouncements[index].priority} />
             <Space direction="vertical">
-              <Text strong>{announcements[index].title}</Text>
+              <Text strong>{newAnnouncements[index].title}</Text>
               <Text type="secondary" style={{ fontSize: `.8em` }}>
                 {i18n(
                   "AnnouncementsSubMenu.create.details",
-                  announcements[index].user.username,
-                  formatDate({ date: announcements[index].createdDate })
+                  newAnnouncements[index].user.username,
+                  formatDate({ date: newAnnouncements[index].createdDate })
                 )}
               </Text>
             </Space>
@@ -81,7 +95,7 @@ export function AnnouncementsModal() {
       footer={footer}
     >
       <div style={{ marginLeft: "25px" }}>
-        <Markdown source={announcements[index].message} />
+        <Markdown source={newAnnouncements[index].message} />
       </div>
     </ScrollableModal>
   ) : null;
