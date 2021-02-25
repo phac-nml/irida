@@ -8,7 +8,9 @@ export const TYPES = {
   LOADED: "ANNOUNCEMENTS_LOADED",
   SHOW_ANNOUNCEMENT: "SHOW_ANNOUNCEMENT",
   CLOSE_ANNOUNCEMENT: "CLOSE_ANNOUNCEMENT",
-  SHOW_NEXT: "SHOW_NEXT",
+  READ_AND_NEXT: "READ_AND_NEXT",
+  READ_AND_PREVIOUS: "READ_AND_PREVIOUS",
+  READ_AND_CLOSE: "READ_AND_CLOSE",
 };
 
 const reducer = (state, action) => {
@@ -28,15 +30,33 @@ const reducer = (state, action) => {
         modalVisible: false,
         index: null,
         isPriority: null,
-        announcements: state.announcements.filter((a) => a.read),
+        announcements: state.announcements.filter((a) => !a.read),
       };
-    case TYPES.SHOW_NEXT:
-      const newAnnouncements = [...state.announcements];
-      newAnnouncements[state.index] = action.payload.announcement;
+    case TYPES.READ_AND_NEXT:
+      const newNextAnnouncements = [...state.announcements];
+      newNextAnnouncements[state.index] = action.payload.announcement;
       return {
         ...state,
         index: state.index + 1,
-        announcements: newAnnouncements,
+        announcements: newNextAnnouncements,
+      };
+    case TYPES.READ_AND_PREVIOUS:
+      const newPreviousAnnouncements = [...state.announcements];
+      newPreviousAnnouncements[state.index] = action.payload.announcement;
+      return {
+        ...state,
+        index: state.index - 1,
+        announcements: newPreviousAnnouncements,
+      };
+    case TYPES.READ_AND_CLOSE:
+      const newCloseAnnouncements = [...state.announcements];
+      newCloseAnnouncements[state.index] = action.payload.announcement;
+      return {
+        ...state,
+        modalVisible: false,
+        index: null,
+        isPriority: null,
+        announcements: newCloseAnnouncements.filter((a) => !a.read),
       };
     default:
       return { ...state };

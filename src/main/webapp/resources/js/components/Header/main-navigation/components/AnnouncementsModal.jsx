@@ -5,7 +5,11 @@ import { PriorityFlag } from "../../../../pages/announcement/components/Priority
 import { formatDate } from "../../../../utilities/date-utilities";
 import Markdown from "react-markdown";
 import { TYPES, useAnnouncements } from "./announcements-context";
-import { displayNextAnnouncement } from "./announcement-dispatch";
+import {
+  readAndNextAnnouncement,
+  readAndPreviousAnnouncement,
+  readAndCloseAnnouncement,
+} from "./announcement-dispatch";
 
 const { Text } = Typography;
 
@@ -15,22 +19,33 @@ export function AnnouncementsModal() {
     dispatch,
   ] = useAnnouncements();
 
-  /*
- 1. Read & Close
- > 1 Read && Previous && Read & Next
- Read & Close
-   */
   const footer = [
-    index > 0 && <Button key="previous">Previous</Button>,
+    index > 0 && (
+      <Button
+        key="previous_announcement"
+        onClick={() =>
+          readAndPreviousAnnouncement(dispatch, announcements[index])
+        }
+      >
+        Previous
+      </Button>
+    ),
+    (index === 0 || index + 1 === announcements.length) && (
+      <Button
+        key="close_announcement"
+        onClick={() => readAndCloseAnnouncement(dispatch, announcements[index])}
+      >
+        Close
+      </Button>
+    ),
     index + 1 < announcements.length && (
       <Button
-        key="next"
-        onClick={() => displayNextAnnouncement(dispatch, announcements[index])}
+        key="next_announcement"
+        onClick={() => readAndNextAnnouncement(dispatch, announcements[index])}
       >
         Next
       </Button>
     ),
-    index + 1 === announcements.length && <Button key="close">Close</Button>,
   ];
 
   return visible && announcements.length ? (
@@ -41,7 +56,7 @@ export function AnnouncementsModal() {
       title={
         <Space direction="vertical" style={{ width: "100%" }}>
           <Tag className="t-read-over-unread-ratio">
-            {`${announcements.filter((a) => a.read).length + 1} / ${
+            {`${announcements.filter((a) => a.read).length} / ${
               announcements.length
             }`}
           </Tag>
