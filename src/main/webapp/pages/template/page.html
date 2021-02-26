@@ -34,7 +34,7 @@
 
     window.TL = {
       _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
-      _BASE_URL      : /*[[@{/}]]*/ '/',
+      _BASE_URL: /*[[@{/}]]*/ '/',
       LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
       URLS: {
         cart: {
@@ -42,12 +42,12 @@
         }
       },
       SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
-      lang          : {
-        page  : {
+      lang: {
+        page: {
           "first": /*[[#{table.first}]]*/ 'First',
-          "prev" : /*[[#{table.previous}]]*/ 'Previous',
-          "next" : /*[[#{table.next}]]*/ 'Next',
-          "last" : /*[[#{table.last}]]*/ 'Last'
+          "prev": /*[[#{table.previous}]]*/ 'Previous',
+          "next": /*[[#{table.next}]]*/ 'Next',
+          "last": /*[[#{table.last}]]*/ 'Last'
         }
       }
     };

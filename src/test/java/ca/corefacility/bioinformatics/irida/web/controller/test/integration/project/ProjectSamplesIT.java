@@ -15,7 +15,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -25,6 +28,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
@@ -43,35 +51,91 @@ import static org.junit.Assert.*;
 
 /**
  * Integration tests for project samples.
- *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+		IridaApiPropertyPlaceholderConfig.class, IridaApiServicesConfig.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExecutionListener.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectSamplesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectSamplesIT {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesIT.class);
 
-	@Test
-	public void testShareSampleToProject() {
-		final List<String> samples = Lists.newArrayList("1");
+	@Autowired
+	SampleService sampleService;
+	@Autowired
+	ProjectService projectService;
 
-		final String projectUri = "/api/projects/4";
-		final String projectJson = asUser().get(projectUri).asString();
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testShareSampleToProjectWithoutOwnershipDefault() {
+		Long projectId = 4L;
+		Long sampleId = 1L;
+		final List<Long> samples = Lists.newArrayList(sampleId);
+
+		final String projectUri = "/api/projects/" + projectId;
+		final String projectJson = asUser().get(projectUri)
+				.asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
 		assertTrue("The samples URI should end with /api/projects/4/samples",
-				samplesUri.endsWith("/api/projects/4/samples"));
-		final Response r = asUser().contentType(ContentType.JSON).body(samples)
-				.header("Content-Type", "application/idcollection+json").expect().response()
-				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
+				samplesUri.endsWith("/api/projects/" + projectId + "/samples"));
+		final Response r = asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull("Location should not be null.", location);
-		assertEquals("The project/sample location uses the wrong sample ID.", ITestSystemProperties.BASE_URL
-				+ "/api/projects/4/samples/1", location);
+		assertEquals("The project/sample location uses the wrong sample ID.",
+				ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location);
+
+		Project project = projectService.read(projectId);
+
+		ProjectSampleJoin sampleForProject = sampleService.getSampleForProject(project, sampleId);
+		assertFalse("Project should not be owner of this sample", sampleForProject.isOwner());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testShareSampleToProjectWithOwnership() {
+		Long projectId = 4L;
+		Long sampleId = 1L;
+		final List<Long> samples = Lists.newArrayList(sampleId);
+
+		final String projectUri = "/api/projects/" + projectId;
+		final String projectJson = asUser().get(projectUri)
+				.asString();
+		String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
+
+		assertTrue("The samples URI should end with /api/projects/4/samples",
+				samplesUri.endsWith("/api/projects/" + projectId + "/samples"));
+
+		//adding ownership flag
+		samplesUri = samplesUri + "?ownership=true";
+
+		final Response r = asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
+		final String location = r.getHeader(HttpHeaders.LOCATION);
+		assertNotNull("Location should not be null.", location);
+		assertEquals("The project/sample location uses the wrong sample ID.",
+				ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location);
+
+		Project project = projectService.read(projectId);
+
+		ProjectSampleJoin sampleForProject = sampleService.getSampleForProject(project, sampleId);
+		assertTrue("Project should be owner of this sample", sampleForProject.isOwner());
 	}
 
 	@Test
@@ -79,7 +143,8 @@ public class ProjectSamplesIT {
 		final List<String> samples = Lists.newArrayList("1");
 
 		final String projectUri = "/api/projects/1";
-		final String projectJson = asUser().get(projectUri).asString();
+		final String projectJson = asUser().get(projectUri)
+				.asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
 		//this used to return CONFLICT, but ended up in errors where samples were partially added.  Now it accepts the POST but doesn't change anything since the sample is already there
@@ -101,38 +166,45 @@ public class ProjectSamplesIT {
 		// load a project
 		final String projectUri = "/api/projects/1";
 		// get the uri for creating samples associated with the project.
-		final String projectJson = asUser().get(projectUri).asString();
+		final String projectJson = asUser().get(projectUri)
+				.asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
 		final Callable<List<Integer>> task = () -> {
 			final List<Integer> responses = new CopyOnWriteArrayList<>();
-			final Random rand = new Random(Thread.currentThread().getId());
+			final Random rand = new Random(Thread.currentThread()
+					.getId());
 
 			for (int i = 0; i < numberOfSamples; i++) {
-				final String sampleName = Thread.currentThread().getName() + "-" + rand.nextInt();
-				final HttpClient client = HttpClientBuilder.create().build();
+				final String sampleName = Thread.currentThread()
+						.getName() + "-" + rand.nextInt();
+				final HttpClient client = HttpClientBuilder.create()
+						.build();
 				final HttpPost request = new HttpPost(samplesUri);
 				request.addHeader("Authorization", "Bearer " + ITestAuthUtils.getTokenForRole("user"));
 				request.addHeader("Content-Type", "application/json");
-				final StringEntity content = new StringEntity("{\"sampleName\": \"" + sampleName + "\", \"sequencerSampleId\": \"" + sampleName + "\"}");
+				final StringEntity content = new StringEntity(
+						"{\"sampleName\": \"" + sampleName + "\", \"sequencerSampleId\": \"" + sampleName + "\"}");
 				request.setEntity(content);
 				final HttpResponse response = client.execute(request);
 
 				// post that uri
-				responses.add(response.getStatusLine().getStatusCode());
+				responses.add(response.getStatusLine()
+						.getStatusCode());
 			}
 			return responses;
 		};
 
 		final List<Future<List<Integer>>> futures = new CopyOnWriteArrayList<>();
-		for (int i = 0 ; i < numberOfThreads; i++) {
+		for (int i = 0; i < numberOfThreads; i++) {
 			futures.add(executorService.submit(task));
 		}
 
 		for (final Future<List<Integer>> f : futures) {
 			try {
 				final List<Integer> responses = f.get();
-				assertTrue("All responses should be created.", responses.stream().allMatch(r -> r == HttpStatus.CREATED.value()));
+				assertTrue("All responses should be created.", responses.stream()
+						.allMatch(r -> r == HttpStatus.CREATED.value()));
 			} catch (InterruptedException | ExecutionException e) {
 				logger.error("Failed to submit multiple samples simultaneously:", e);
 				fail("Failed to submit multiple samples simultaneously.");
@@ -152,11 +224,16 @@ public class ProjectSamplesIT {
 		// load a project
 		String projectUri = "/api/projects/1";
 		// get the uri for creating samples associated with the project.
-		String projectJson = asUser().get(projectUri).asString();
+		String projectJson = asUser().get(projectUri)
+				.asString();
 		String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
 		// post that uri
-		Response r = asUser().body(sample).expect().response().statusCode(HttpStatus.CREATED.value()).when()
+		Response r = asUser().body(sample)
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
 				.post(samplesUri);
 
 		// check that the locations are set appropriately.
@@ -171,18 +248,25 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/4";
 
 		// load the project
-		String projectJson = asUser().get(projectUri).asString();
+		String projectJson = asUser().get(projectUri)
+				.asString();
 		String projectSamplesUri = from(projectJson).get("resource.links.find{it.rel=='project/samples'}.href");
-		String projectSamplesJson = asUser().get(projectSamplesUri).asString();
+		String projectSamplesJson = asUser().get(projectSamplesUri)
+				.asString();
 		String sampleLabel = from(projectSamplesJson).get("resource.resources[0].sampleName");
 		// get the uri for a specific sample associated with a project
-		String sampleUri = from(projectSamplesJson).get("resource.resources[0].links.find{it.rel == 'project/sample'}.href");
+		String sampleUri = from(projectSamplesJson).get(
+				"resource.resources[0].links.find{it.rel == 'project/sample'}.href");
 		// issue a delete against the service
-		Response r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(sampleUri);
+		Response r = asAdmin().expect()
+				.statusCode(HttpStatus.OK.value())
+				.when()
+				.delete(sampleUri);
 
 		// check that the response body contains links to the project and
 		// samples collection
-		String responseBody = r.getBody().asString();
+		String responseBody = r.getBody()
+				.asString();
 		String projectUriRel = from(responseBody).get("resource.links.find{it.rel == 'project'}.href");
 		assertNotNull(projectUriRel);
 		assertEquals(projectUri, projectUriRel);
@@ -192,7 +276,9 @@ public class ProjectSamplesIT {
 		assertEquals(projectUri + "/samples", samplesUri);
 
 		// now confirm that the sample is not there anymore
-		asUser().expect().body("resource.resources.sampleName", not(hasItem(sampleLabel))).when()
+		asUser().expect()
+				.body("resource.resources.sampleName", not(hasItem(sampleLabel)))
+				.when()
 				.get(projectSamplesUri);
 	}
 
@@ -203,12 +289,18 @@ public class ProjectSamplesIT {
 		String updatedName = "Totally-different-sample-name";
 		updatedFields.put("sampleName", updatedName);
 
-		asUser().and().body(updatedFields).expect()
-				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles")).when()
+		asUser().and()
+				.body(updatedFields)
+				.expect()
+				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles"))
+				.when()
 				.patch(projectSampleUri);
 
 		// now confirm that the sample name was updated
-		asUser().expect().body("resource.sampleName", is(updatedName)).when().get(projectSampleUri);
+		asUser().expect()
+				.body("resource.sampleName", is(updatedName))
+				.when()
+				.get(projectSampleUri);
 	}
 
 	@Test
@@ -216,8 +308,10 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when().get(projectSampleUri);
+		asAdmin().expect()
+				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when()
+				.get(projectSampleUri);
 	}
 
 	@Test
@@ -225,8 +319,10 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asAdmin().expect().body("resource.collectionDate", is("2019-01-24"))
-				.when().get(projectSampleUri);
+		asAdmin().expect()
+				.body("resource.collectionDate", is("2019-01-24"))
+				.when()
+				.get(projectSampleUri);
 	}
 
 	@Test
@@ -234,8 +330,10 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/3";
 
-		asAdmin().expect().body("resource.collectionDate", is("1999-12-05"))
-				.when().get(projectSampleUri);
+		asAdmin().expect()
+				.body("resource.collectionDate", is("1999-12-05"))
+				.when()
+				.get(projectSampleUri);
 	}
 
 	@Test
@@ -243,12 +341,20 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api//projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		final Response r = asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when().given().urlEncodingEnabled(false).get(projectSampleUri);
-		final String responseBody = r.getBody().asString();
+		final Response r = asAdmin().expect()
+				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when()
+				.given()
+				.urlEncodingEnabled(false)
+				.get(projectSampleUri);
+		final String responseBody = r.getBody()
+				.asString();
 		final String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'sample/project'}.href");
 		// now verify that we can actually get this (so doubled slash should not have affected the link)
-		asAdmin().expect().statusCode(HttpStatus.OK.value()).when().get(samplesUri);
+		asAdmin().expect()
+				.statusCode(HttpStatus.OK.value())
+				.when()
+				.get(samplesUri);
 	}
 
 	@Test
@@ -256,7 +362,9 @@ public class ProjectSamplesIT {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when().get(projectSampleUri);
+		asSequencer().expect()
+				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when()
+				.get(projectSampleUri);
 	}
 }

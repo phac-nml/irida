@@ -15,12 +15,19 @@ const { Content } = Layout;
  * @returns {*}
  * @constructor
  */
-export function PageWrapper({ title, headerExtras, children, onBack }) {
+export function PageWrapper({
+  title,
+  headerExtras,
+  children,
+  onBack = Function.prototype,
+  subTitle = "",
+}) {
   return (
     <Layout style={{ height: "100%", minHeight: "100%" }}>
       <PageHeader
         className="t-main-heading"
         title={title}
+        subTitle={subTitle}
         extra={headerExtras}
         onBack={onBack}
       />

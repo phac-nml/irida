@@ -55,10 +55,8 @@ public class UIProjectReferenceFileService {
 	 * @throws UnsupportedReferenceFileContentError if content is invalid
 	 * @throws IOException if there is an I/O error
 	 */
-	public String addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
-		Project project = projectService.read(projectId);
-		logger.debug("Adding reference file to project " + projectId);
-
+	public List<UIReferenceFile> addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
+		List<UIReferenceFile> referenceFiles = new ArrayList<>();
 		try {
 			for (MultipartFile file : files) {
 				// Prepare a new reference file using the multipart file supplied by the caller
@@ -67,8 +65,17 @@ public class UIProjectReferenceFileService {
 				Path target = temp.resolve(file.getOriginalFilename());
 				file.transferTo(target.toFile());
 
-				ReferenceFile referenceFile = new ReferenceFile(target);
-				projectService.addReferenceFileToProject(project, referenceFile);
+				ReferenceFile referenceFile = referenceFileService.create(new ReferenceFile(target));
+				if (projectId != null) {
+					logger.debug("Adding reference file to project " + projectId);
+					Project project = projectService.read(projectId);
+					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
+					ReferenceFile refFile = join.getObject();
+					long filesize = Files.size(refFile.getFile());
+					referenceFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
+				} else {
+					referenceFiles.add(new UIReferenceFile(referenceFile));
+				}
 
 				// Clean up temporary files
 				Files.deleteIfExists(target);
@@ -83,7 +90,7 @@ public class UIProjectReferenceFileService {
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
 		}
 
-		return "Upload complete";
+		return referenceFiles;
 	}
 
 	/**
