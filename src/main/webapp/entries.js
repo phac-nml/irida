@@ -7,6 +7,7 @@ module.exports = {
   vendor: [
     // "core-js/stable",
     // "regenerator-runtime/runtime",
+    "jquery",
     "./resources/js/vendors",
   ],
   login: "./resources/js/pages/LoginPage.jsx",
