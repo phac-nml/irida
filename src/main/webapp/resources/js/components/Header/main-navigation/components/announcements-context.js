@@ -75,11 +75,13 @@ function AnnouncementProvider({ children }) {
   const [state, dispatch] = React.useReducer(reducer, { announcements: [] });
 
   React.useEffect(() => {
-    getUnreadAnnouncements({}).then(({ data }) => {
-      const announcements = data.map((a) => ({
-        ...a,
-        id: `announcement-${a.identifier}`,
-      }));
+    getUnreadAnnouncements().then((data) => {
+      const announcements = data
+        ? data.map((a) => ({
+            ...a,
+            id: `announcement-${a.identifier}`,
+          }))
+        : [];
       dispatch({
         type: TYPES.LOADED,
         payload: { announcements },

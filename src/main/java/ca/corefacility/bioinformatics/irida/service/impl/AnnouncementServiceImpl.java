@@ -188,13 +188,9 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      */
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
-    public List<Announcement> getUnreadAnnouncementsForUser(User user, Boolean priority) {
+    public List<Announcement> getUnreadAnnouncementsForUser(User user) {
         List<Announcement> announcements;
-        if(priority == null){
-            announcements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
-        }else{
-            announcements = announcementUserJoinRepository.getPriorityAnnouncementsUnreadByUser(user, priority);
-        }
+        announcements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
         return announcements;
     }
 

@@ -55,21 +55,6 @@ public interface AnnouncementUserJoinRepository extends PagingAndSortingReposito
     public List<Announcement> getAnnouncementsUnreadByUser(User user);
 
     /**
-     * Gets a collection of priority {@link Announcement}s that have not been marked as read by
-     * the {@link User}.
-     *
-     * @param user
-     *          The {@link User} for which we want to fetch all unread {@link Announcement}s
-     * @param priority
-     *          The priority of the {@link Announcement}s
-     * @return List of {@link Announcement}s unread by the user
-     */
-    @Query ("select a from Announcement a where a not in " +
-            "(select j.announcement from AnnouncementUserJoin j where j.user = ?1)" +
-            "and a.priority = ?2")
-    public List<Announcement> getPriorityAnnouncementsUnreadByUser(User user, Boolean priority);
-
-    /**
      * Get a specific {@link AnnouncementUserJoin} by {@link Announcement} and {@link User}
      *
      * @param announcement

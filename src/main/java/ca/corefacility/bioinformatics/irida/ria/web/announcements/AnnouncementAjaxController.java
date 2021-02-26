@@ -69,12 +69,11 @@ public class AnnouncementAjaxController {
 	 * Handle request for getting a list of unread announcements for a user.
 	 *
 	 * @param principal the currently logged in user
-	 * @param priority the announcement priority
 	 * @return a {@link List} of unread {@link Announcement}s for a user.
 	 */
 	@RequestMapping(value = "/user/unread")
-	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal,  @RequestParam(required = false) Boolean priority) {
-		List<Announcement> unreadAnnouncements = service.getUnreadAnnouncementsUser(principal, priority);
+	public ResponseEntity<List<Announcement>> getUnreadAnnouncementsUser(Principal principal) {
+		List<Announcement> unreadAnnouncements = service.getUnreadAnnouncementsUser(principal);
 		return ResponseEntity.ok(unreadAnnouncements);
 	}
 

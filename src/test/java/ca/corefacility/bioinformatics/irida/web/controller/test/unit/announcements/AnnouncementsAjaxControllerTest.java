@@ -272,9 +272,9 @@ public class AnnouncementsAjaxControllerTest {
 	@Test
 	public void getUnreadAnnouncementsUserTest() {
 		Principal principal = () -> "FRED";
-		controller.getUnreadAnnouncementsUser(principal, null);
+		controller.getUnreadAnnouncementsUser(principal);
 
-		verify(announcementService, times(1)).getUnreadAnnouncementsForUser(any(User.class), anyBoolean());
+		verify(announcementService, times(1)).getUnreadAnnouncementsForUser(any(User.class));
 	}
 
 	@Test
