@@ -7,6 +7,7 @@ import { TYPES, useAnnouncements } from "./announcements-context";
 import { fromNow } from "../../../../utilities/date-utilities";
 import { BORDERED_LIGHT } from "../../../../styles/borders";
 import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
+import "./announcements.css";
 
 const { Text } = Typography;
 
@@ -16,7 +17,7 @@ const { Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function AnnouncementsSubMenu(props) {
+export function AnnouncementsSubMenu() {
   const [{ announcements }, dispatch] = useAnnouncements();
 
   function showAnnouncementModal(index) {
