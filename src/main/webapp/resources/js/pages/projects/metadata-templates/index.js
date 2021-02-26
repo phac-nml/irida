@@ -14,7 +14,7 @@ const Content = ({ children }) => children;
 function ProjectMetadataTemplates() {
   return (
     <Router>
-      <Content path={"/projects/5/settings/metadata-templates"}>
+      <Content path={"/projects/:projectId/settings/metadata-templates"}>
         <MetadataTemplatesList path="/" />
         <MetadataTemplate path="/:id" />
       </Content>
