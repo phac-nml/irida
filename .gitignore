@@ -18,3 +18,11 @@ src/main/webapp/node
 /src/main/webapp/dist
 /src/main/webapp/pages/templates/i18n/*.html
 /doc/.jekyll-cache/Jekyll/Cache/
+
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
