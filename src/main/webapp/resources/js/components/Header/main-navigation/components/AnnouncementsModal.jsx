@@ -33,6 +33,7 @@ export function AnnouncementsModal() {
     index > 0 && (
       <Button
         key="previous_announcement"
+        className="t-previous-announcement-button"
         onClick={() =>
           readAndPreviousAnnouncement(dispatch, newAnnouncements[index])
         }
@@ -43,6 +44,7 @@ export function AnnouncementsModal() {
     (index === 0 || index + 1 === newAnnouncements.length) && (
       <Button
         key="close_announcement"
+        className="t-close-announcement-button"
         onClick={() =>
           readAndCloseAnnouncement(dispatch, newAnnouncements[index])
         }
@@ -53,6 +55,7 @@ export function AnnouncementsModal() {
     index + 1 < newAnnouncements.length && (
       <Button
         key="next_announcement"
+        className="t-next-announcement-button"
         onClick={() =>
           readAndNextAnnouncement(dispatch, newAnnouncements[index])
         }
@@ -64,7 +67,7 @@ export function AnnouncementsModal() {
 
   return visible && newAnnouncements.length ? (
     <ScrollableModal
-      className="t-modal"
+      className="t-announcements-modal"
       closable={!isPriority}
       maskClosable={!isPriority}
       title={
