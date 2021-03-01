@@ -3,16 +3,19 @@ package ca.corefacility.bioinformatics.irida.ria.integration.components;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
- * Used to test the state of the React Announcements component.
- * This component can be found on the dashboard page.
+ * Used to test the state of the React AnnouncementsModal component.
+ * This component can be found at login.
  */
 public class Announcements {
 	private static final String RATIO_REGULAR_EXPRESSION = "Read: (\\d+) / (\\d+)";
@@ -32,14 +35,24 @@ public class Announcements {
 	@FindBy(css = ".t-announcements-modal button.t-close-announcement-button")
 	private WebElement closeButton;
 
+	@FindBy(css= ".t-announcements-badge")
+	private WebElement badge;
+
+	@FindBy(className = "t-announcements-submenu")
+	private WebElement submenu;
+
 	private static WebDriverWait wait;
+	private static Actions actions;
 
 	public static Announcements goTo(WebDriver driver) {
-		wait = new WebDriverWait(driver, 3);
+		wait = new WebDriverWait(driver, 10);
+		actions = new Actions(driver);
 		return PageFactory.initElements(driver, Announcements.class);
 	}
 
 	public boolean isModalVisible(){ return modal.isDisplayed(); }
+
+	public void closeModal(){ actions.sendKeys(Keys.ESCAPE).perform(); }
 
 	public int getTotalReadAnnouncements() {
 		int numerator = 0;
@@ -61,10 +74,6 @@ public class Announcements {
 		return denominator;
 	}
 
-	public void clickPreviousButton() {
-		previousButton.click();
-	}
-
 	public void clickNextButton() {
 		nextButton.click();
 	}
@@ -81,11 +90,17 @@ public class Announcements {
 		wait.until(ExpectedConditions.visibilityOf(previousButton));
 	}
 
-	public void waitForNextButton() {
-		wait.until(ExpectedConditions.visibilityOf(nextButton));
+	public void waitForSubmenu(){ wait.until(ExpectedConditions.visibilityOf(submenu)); }
+
+	public void hoverOverBadge(){
+		actions.moveToElement(badge).perform();
 	}
 
-	public void waitForCloseButton() {
-		wait.until(ExpectedConditions.visibilityOf(closeButton));
+	public int getBadgeCount() {
+		return Integer.parseInt(badge.findElement(By.tagName("p")).getText());
+	}
+
+	public String getSubmenuAnnouncementTitle(int position) {
+		return submenu.findElements(By.cssSelector("ul li button")).get(position).getAttribute("title");
 	}
 }

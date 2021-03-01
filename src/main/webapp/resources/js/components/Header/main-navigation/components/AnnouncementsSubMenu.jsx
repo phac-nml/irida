@@ -31,7 +31,7 @@ export function AnnouncementsSubMenu() {
   }
 
   const aMenu = (
-    <Menu>
+    <Menu className="t-announcements-submenu">
       {announcements.map((item, index) => (
         <Menu.Item
           key={"announcement_" + index}
@@ -72,6 +72,7 @@ export function AnnouncementsSubMenu() {
     <Dropdown overlay={aMenu}>
       <span style={{ padding: 20 }}>
         <Badge
+          className="t-announcements-badge"
           count={announcements && announcements.filter((a) => !a.read).length}
         >
           <IconBell />
