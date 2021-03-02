@@ -16,6 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +56,7 @@ public class UserServiceImplTest {
 	private UserService userService;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
+	private AnnouncementUserJoinRepository announcementUserJoinRepository;
 	private Validator validator;
 	private PasswordEncoder passwordEncoder;
 
@@ -64,7 +66,8 @@ public class UserServiceImplTest {
 		userRepository = mock(UserRepository.class);
 		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
-		userService = new UserServiceImpl(userRepository, pujRepository, passwordEncoder,
+		announcementUserJoinRepository = mock(AnnouncementUserJoinRepository.class);
+		userService = new UserServiceImpl(userRepository, announcementUserJoinRepository, pujRepository, passwordEncoder,
 				validator);
 	}
 
