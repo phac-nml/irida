@@ -56,30 +56,30 @@ class i18nThymeleafWebpackPlugin {
   apply(compiler) {
     let i18nsByRequests = {};
 
-    /**
-     * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
-     * @return {Set<string>} a set of the translations keys required by the chunkGroup
-     */
-    const getKeysByChunkGroup = (chunkGroup) => {
-      let keys = new Set();
-
-      for (const chunk of chunkGroup.chunks) {
-        for (const issuer of chunk.modulesIterable) {
-          if (
-            isValidLocalRequest(issuer.userRequest) &&
-            i18nsByRequests[issuer.userRequest]
-          ) {
-            keys = new Set([...keys, ...i18nsByRequests[issuer.userRequest]]);
-          }
-        }
-      }
-
-      const childKeys = chunkGroup
-        .getChildren()
-        .map((child) => [...getKeysByChunkGroup(child)]);
-
-      return new Set([...keys, ...childKeys.flat()]);
-    };
+    // /**
+    //  * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
+    //  * @return {Set<string>} a set of the translations keys required by the chunkGroup
+    //  */
+    // const getKeysByChunkGroup = (chunkGroup) => {
+    //   let keys = new Set();
+    //
+    //   for (const chunk of chunkGroup.chunks) {
+    //     for (const issuer of chunk.modulesIterable) {
+    //       if (
+    //         isValidLocalRequest(issuer.userRequest) &&
+    //         i18nsByRequests[issuer.userRequest]
+    //       ) {
+    //         keys = new Set([...keys, ...i18nsByRequests[issuer.userRequest]]);
+    //       }
+    //     }
+    //   }
+    //
+    //   const childKeys = chunkGroup
+    //     .getChildren()
+    //     .map((child) => [...getKeysByChunkGroup(child)]);
+    //
+    //   return new Set([...keys, ...childKeys.flat()]);
+    // };
 
     /**
      * Gather all the translation keys required by each js file.
@@ -131,26 +131,39 @@ class i18nThymeleafWebpackPlugin {
     compiler.hooks.emit.tapAsync(
       "i18nThymeleafWebpackPlugin",
       (compilation, callback) => {
-        for (const [
-          entrypointName,
-          entrypoint,
-        ] of compilation.entrypoints.entries()) {
-          const keys = [...getKeysByChunkGroup(entrypoint)];
+        compilation.chunks.forEach((chunk) => {
+          // Explore each module within the chunk (built inputs):
+          chunk.getModules().forEach((module) => {
+            // Explore each source file path that was included into the module:
+            module.buildInfo &&
+              module.buildInfo.fileDependencies &&
+              module.buildInfo.fileDependencies.forEach((filepath) => {
+                // we've learned a lot about the source structure now...
+                console.log(filepath);
+              });
+          });
+        });
 
-          if (keys.length) {
-            /*
-            This adds a file for translations for webpack to write to the file system.
-             */
-            const html = template(keys, entrypointName);
-            compilation.assets[
-              `../pages/templates/i18n/${entrypointName}.html`
-            ] = {
-              source: () => html,
-              size: () => html.length,
-            };
-          }
-        }
-        callback();
+        // for (const [
+        //   entrypointName,
+        //   entrypoint,
+        // ] of compilation.entrypoints.entries()) {
+        //   const keys = [...getKeysByChunkGroup(entrypoint)];
+        //
+        //   if (keys.length) {
+        //     /*
+        //     This adds a file for translations for webpack to write to the file system.
+        //      */
+        //     const html = template(keys, entrypointName);
+        //     compilation.assets[
+        //       `../pages/templates/i18n/${entrypointName}.html`
+        //     ] = {
+        //       source: () => html,
+        //       size: () => html.length,
+        //     };
+        //   }
+        // }
+        // callback();
       }
     );
   }
