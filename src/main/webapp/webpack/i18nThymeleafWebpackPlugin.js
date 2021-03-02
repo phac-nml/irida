@@ -132,15 +132,11 @@ class i18nThymeleafWebpackPlugin {
       "i18nThymeleafWebpackPlugin",
       (compilation, callback) => {
         compilation.chunks.forEach((chunk) => {
-          // Explore each module within the chunk (built inputs):
-          chunk.getModules().forEach((module) => {
-            // Explore each source file path that was included into the module:
-            module.buildInfo &&
-              module.buildInfo.fileDependencies &&
-              module.buildInfo.fileDependencies.forEach((filepath) => {
-                // we've learned a lot about the source structure now...
-                console.log(filepath);
-              });
+          compilation.chunkGraph.getChunkModules(chunk).forEach((module) => {
+            const exportInfo = compilation.chunkGraph.moduleGraph.getExportInfo(
+              module
+            );
+            console.log(exportInfo);
           });
         });
 
@@ -163,7 +159,8 @@ class i18nThymeleafWebpackPlugin {
         //     };
         //   }
         // }
-        // callback();
+
+        callback();
       }
     );
   }
