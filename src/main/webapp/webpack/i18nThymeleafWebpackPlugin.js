@@ -25,7 +25,7 @@ const template = (keys, entry) => `
     )}-translations" th:inline="javascript" th:fragment="i18n">
       window.translations = window.translations || [];
       window.translations.unshift({
-        ${keys.map(key => `"${key}": /*[[#{${key}}]]*/ ""`)}
+        ${keys.map((key) => `"${key}": /*[[#{${key}}]]*/ ""`)}
       });
     </script>
   </body>
@@ -36,7 +36,7 @@ const template = (keys, entry) => `
  * @param {string} request the path to the js file being requested
  * @returns {boolean} request is valid and is local
  */
-const isValidLocalRequest = request => {
+const isValidLocalRequest = (request) => {
   return (
     typeof request !== "undefined" &&
     request.match(/src\/main\/webapp\/resources\/js/)
@@ -60,7 +60,7 @@ class i18nThymeleafWebpackPlugin {
      * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
      * @return {Set<string>} a set of the translations keys required by the chunkGroup
      */
-    const getKeysByChunkGroup = chunkGroup => {
+    const getKeysByChunkGroup = (chunkGroup) => {
       let keys = new Set();
 
       for (const chunk of chunkGroup.chunks) {
@@ -76,7 +76,7 @@ class i18nThymeleafWebpackPlugin {
 
       const childKeys = chunkGroup
         .getChildren()
-        .map(child => [...getKeysByChunkGroup(child)]);
+        .map((child) => [...getKeysByChunkGroup(child)]);
 
       return new Set([...keys, ...childKeys.flat()]);
     };
@@ -86,13 +86,13 @@ class i18nThymeleafWebpackPlugin {
      */
     compiler.hooks.normalModuleFactory.tap(
       "i18nThymeleafWebpackPlugin",
-      factory => {
+      (factory) => {
         factory.hooks.parser
           .for("javascript/auto")
-          .tap("i18nThymeleafWebpackPlugin", parser => {
+          .tap("i18nThymeleafWebpackPlugin", (parser) => {
             parser.hooks.call
               .for(this.functionName)
-              .tap("i18nThymeleafWebpackPlugin", expr => {
+              .tap("i18nThymeleafWebpackPlugin", (expr) => {
                 /*
                 Make sure an argument was passed to the function.
                  */
@@ -133,7 +133,7 @@ class i18nThymeleafWebpackPlugin {
       (compilation, callback) => {
         for (const [
           entrypointName,
-          entrypoint
+          entrypoint,
         ] of compilation.entrypoints.entries()) {
           const keys = [...getKeysByChunkGroup(entrypoint)];
 
@@ -146,7 +146,7 @@ class i18nThymeleafWebpackPlugin {
               `../pages/templates/i18n/${entrypointName}.html`
             ] = {
               source: () => html,
-              size: () => html.length
+              size: () => html.length,
             };
           }
         }

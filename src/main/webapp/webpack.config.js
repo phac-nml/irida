@@ -64,7 +64,10 @@ module.exports = {
                 // publicPath is the relative path of the resource to the context
                 // e.g. for ./css/admin/main.css the publicPath will be ../../
                 // while for ./css/main.css the publicPath will be ../
-                return path.relative(path.dirname(resourcePath), context) + "/dist/css/";
+                return (
+                  path.relative(path.dirname(resourcePath), context) +
+                  "/dist/css/"
+                );
               },
             },
           },
@@ -91,16 +94,19 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"],
   },
-  plugins: [new MiniCssExtractPlugin({
-    ignoreOrder: true,
-    filename: 'css/[name].bundle.css',
-  }), new WebpackBar(),
+  plugins: [
+    new MiniCssExtractPlugin({
+      ignoreOrder: true,
+      filename: "css/[name].bundle.css",
+    }),
+    // new WebpackBar(),
     new i18nThymeleafWebpackPlugin({
       functionName: "i18n",
     }),
     new webpack.ProvidePlugin({
       i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
-    })],
+    }),
+  ],
   optimization: {
     minimize: true,
     minimizer: [
