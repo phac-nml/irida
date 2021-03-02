@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
+import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -45,7 +46,7 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testMainNavigationAnnouncementsBadgeCount() {
 		Announcements announcements = Announcements.goTo(driver());
-		announcements.waitForModal();
+		waitForTime(500);
 		announcements.closeModal();
 		assertEquals("The announcements badge count does not match", 6, announcements.getBadgeCount());
 	}
@@ -53,7 +54,7 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testMainNavigationAnnouncementsSubmenu() {
 		Announcements announcements = Announcements.goTo(driver());
-		announcements.waitForModal();
+		waitForTime(500);
 		announcements.closeModal();
 		announcements.hoverOverBadge();
 		announcements.waitForSubmenu();

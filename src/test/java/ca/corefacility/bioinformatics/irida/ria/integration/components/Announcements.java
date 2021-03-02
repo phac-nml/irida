@@ -41,18 +41,23 @@ public class Announcements {
 	@FindBy(className = "t-announcements-submenu")
 	private WebElement submenu;
 
+	@FindBy(className = "t-announcements-view-all")
+	private WebElement viewAllLink;
+
 	private static WebDriverWait wait;
 	private static Actions actions;
 
 	public static Announcements goTo(WebDriver driver) {
-		wait = new WebDriverWait(driver, 10);
+		wait = new WebDriverWait(driver, 5);
 		actions = new Actions(driver);
 		return PageFactory.initElements(driver, Announcements.class);
 	}
 
-	public boolean isModalVisible(){ return modal.isDisplayed(); }
+	public boolean isModalVisible() { return modal.isDisplayed(); }
 
-	public void closeModal(){ actions.sendKeys(Keys.ESCAPE).perform(); }
+	public void closeModal() {
+		actions.sendKeys(Keys.ESCAPE).perform();
+	}
 
 	public int getTotalReadAnnouncements() {
 		int numerator = 0;
@@ -78,22 +83,19 @@ public class Announcements {
 		nextButton.click();
 	}
 
-	public void clickCloseButton() {
-		closeButton.click();
+	public void clickCloseButton() { closeButton.click(); }
+
+	public WebElement waitForModal() { return wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-announcements-modal")));}
+
+	public WebElement waitForPreviousButton() {
+		return wait.until(ExpectedConditions.visibilityOf(previousButton));
 	}
 
-	public void waitForModal() {
-		wait.until(ExpectedConditions.visibilityOf(modal));
-	}
+	public WebElement waitForSubmenu() { return wait.until(ExpectedConditions.visibilityOf(submenu)); }
 
-	public void waitForPreviousButton() {
-		wait.until(ExpectedConditions.visibilityOf(previousButton));
-	}
-
-	public void waitForSubmenu(){ wait.until(ExpectedConditions.visibilityOf(submenu)); }
-
-	public void hoverOverBadge(){
+	public void hoverOverBadge() {
 		actions.moveToElement(badge).perform();
+		wait.until(ExpectedConditions.visibilityOf(viewAllLink));
 	}
 
 	public int getBadgeCount() {

@@ -61,6 +61,7 @@ export function AnnouncementsSubMenu() {
       ))}
       <Menu.Item key="view_all">
         <LinkButton
+          className="t-announcements-view-all"
           text={i18n("AnnouncementsSubMenu.view-all")}
           href={setBaseUrl(`/announcements/user/list`)}
         />
