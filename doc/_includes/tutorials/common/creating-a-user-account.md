@@ -19,3 +19,5 @@ When you click "Create User", an e-mail will be sent to the user (to the e-mail 
 On successfully creating a new user account, you will see the user details that you entered:
 
 ![User details page.]({{ site.baseurl }}/images/tutorials/common/users/user-details-page.png)
+
+**Note**: During new user creation, all prior announcements older than one month will be marked as read. The new user should not be spammed with historical irrelevant announcements.
