@@ -13,6 +13,12 @@ import {
 
 const { Text } = Typography;
 
+/**
+ * React component to display the announcements modal.
+ *
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function AnnouncementsModal() {
   const [
     { announcements, modalVisible: visible, index, isPriority },
