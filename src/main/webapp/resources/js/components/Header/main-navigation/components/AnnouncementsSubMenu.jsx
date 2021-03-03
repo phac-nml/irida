@@ -7,7 +7,15 @@ import { TYPES, useAnnouncements } from "./announcements-context";
 import { fromNow } from "../../../../utilities/date-utilities";
 import { BORDERED_LIGHT } from "../../../../styles/borders";
 import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
-import "./announcements.css";
+import styled from "styled-components";
+
+const IconBellStyled = styled(IconBell)`
+  color: rgba(255, 255, 255, 0.65);
+
+  &:hover {
+    color: #ffffff;
+  }
+`;
 
 const { Text } = Typography;
 
@@ -76,7 +84,7 @@ export function AnnouncementsSubMenu() {
           className="t-announcements-badge"
           count={announcements && announcements.filter((a) => !a.read).length}
         >
-          <IconBell />
+          <IconBellStyled />
         </Badge>
       </span>
     </Dropdown>
