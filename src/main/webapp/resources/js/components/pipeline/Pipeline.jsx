@@ -55,18 +55,18 @@ export default class Pipeline extends React.Component {
     /**
      * Ability to select this pipeline
      */
-    displaySelect: PropTypes.bool.isRequired
+    displaySelect: PropTypes.bool.isRequired,
   };
 
   constructor(props) {
     super(props);
-    this.url = setBaseUrl(`pipelines/${this.props.id}`);
+    this.url = setBaseUrl(`launch?id=${this.props.id}`);
   }
 
   render() {
     let pipelineUrl = this.url;
     if (this.props.automatedProject !== null) {
-      pipelineUrl = `${pipelineUrl}?automatedProject=${this.props.automatedProject}`;
+      pipelineUrl = `${pipelineUrl}&automatedProject=${this.props.automatedProject}`;
     }
     return (
       <PipelineCard
@@ -88,7 +88,7 @@ export default class Pipeline extends React.Component {
                   href={pipelineUrl}
                 >
                   {i18n("pipelines.cart.select")}
-                </Button>
+                </Button>,
               ]
             : []
         }

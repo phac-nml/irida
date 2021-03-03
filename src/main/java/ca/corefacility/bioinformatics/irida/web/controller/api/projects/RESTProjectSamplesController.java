@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -91,14 +88,16 @@ public class RESTProjectSamplesController {
 	 *
 	 * @param projectId the project to copy the sample to.
 	 * @param sampleIds the collection of sample IDs to copy.
+	 * @param ownership Whether the receiving project should have ownership of the sample
 	 * @param response  a reference to the servlet response.
-	 * @param locale The user's in case a warning message is needed
+	 * @param locale    The user's in case a warning message is needed
 	 * @return the response indicating that the sample was joined to the
 	 * project.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
-			HttpServletResponse response, Locale locale) {
+			@RequestParam(name = "ownership", defaultValue = "false") boolean ownership, HttpServletResponse response,
+			Locale locale) {
 
 		ModelMap modelMap = new ModelMap();
 
@@ -112,7 +111,7 @@ public class RESTProjectSamplesController {
 			Sample sample = sampleService.read(sampleId);
 			Join<Project, Sample> join = null;
 			try {
-				join = projectService.addSampleToProject(p, sample, false);
+				join = projectService.addSampleToProject(p, sample, ownership);
 			} catch (ExistingSampleNameException e) {
 				logger.error(
 						"Could not add sample to project because another sample exists with this name :" + e.getSample()

@@ -36,8 +36,7 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 
 		//create the oauth client
-		String redirectLocation = RemoteApiUtilities.getRedirectLocation
-				();
+		String redirectLocation = RemoteApiUtilities.getRedirectLocation();
 		createClientPage = new CreateClientPage(driver());
 		createClientPage.goTo();
 		createClientPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, true, false);
@@ -61,7 +60,7 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectRemoteSettingsPage remoteSettingsPage = ProjectRemoteSettingsPage.initElements(driver());
 		final Long projectId = remoteSettingsPage.getProjectId();
-		remoteSettingsPage.goTo(driver(), projectId);
+		ProjectRemoteSettingsPage.goTo(driver(), projectId);
 
 		checkTranslations(remoteSettingsPage, ImmutableList.of("project-remote"), "Project Synchronization Settings");
 
