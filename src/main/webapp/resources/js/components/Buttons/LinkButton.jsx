@@ -10,7 +10,7 @@ import { Button } from "antd";
  * @param {object} props any other props that should be added to the button
  * @returns {*}
  */
-export function LinkButton({ text, href, onClick, ...props }) {
+export function LinkButton({ text, href, onClick, style, ...props }) {
   return (
     <Button
       type="link"
@@ -21,6 +21,7 @@ export function LinkButton({ text, href, onClick, ...props }) {
         whiteSpace: "normal",
         textAlign: "left",
         margin: 0,
+        ...style,
       }}
       href={href}
       onClick={onClick}
