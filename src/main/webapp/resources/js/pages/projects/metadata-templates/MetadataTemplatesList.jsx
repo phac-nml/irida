@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Col,
-  List,
-  notification,
-  PageHeader,
-  Popconfirm,
-  Row,
-  Tag,
-} from "antd";
+import { Button, List, notification, PageHeader, Popconfirm, Tag } from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
@@ -58,63 +49,52 @@ export function MetadataTemplatesList({ navigate }) {
   };
 
   return (
-    <Row>
-      <Col xs={24} lg={18} xxl={12}>
-        <PageHeader
-          title={i18n("ProjectMetadataTemplates.title")}
-          extra={[
-            <MetadataTemplateCreate
-              key="create"
-              createTemplate={createTemplate}
-            />,
-          ]}
-        >
-          <List
-            bordered
-            itemLayout="horizontal"
-            dataSource={templates}
-            renderItem={(item) => (
-              <List.Item
-                className="t-template"
-                actions={[
-                  <Tag>
-                    {i18n("ProjectMetadataTemplates.fields", item.numFields)}
-                  </Tag>,
-                  <Button
-                    shape="circle"
-                    size="small"
-                    icon={<IconDownloadFile />}
-                    href={`${BASE_URL}/${item.id}/excel`}
-                    key="list-download"
-                  />,
-                  window.project.canManage ? (
-                    <Popconfirm
-                      placement="bottomRight"
-                      title={"Delete this template?"}
-                      onConfirm={() => deleteTemplate(item.id)}
-                    >
-                      <Button
-                        shape="circle"
-                        size="small"
-                        icon={<IconRemove />}
-                      />
-                    </Popconfirm>
-                  ) : null,
-                ]}
-              >
-                <List.Item.Meta
-                  title={
-                    <Link style={{ color: blue6 }} to={`${item.id}`}>
-                      {item.label}
-                    </Link>
-                  }
-                  description={item.description}
-                />
-              </List.Item>
-            )}
-          />
-        </PageHeader>
-      </Col>
-    </Row>
+    <PageHeader
+      title={i18n("ProjectMetadataTemplates.title")}
+      extra={[
+        <MetadataTemplateCreate key="create" createTemplate={createTemplate} />,
+      ]}
+    >
+      <List
+        bordered
+        itemLayout="horizontal"
+        dataSource={templates}
+        renderItem={(item) => (
+          <List.Item
+            className="t-template"
+            actions={[
+              <Tag>
+                {i18n("ProjectMetadataTemplates.fields", item.numFields)}
+              </Tag>,
+              <Button
+                shape="circle"
+                size="small"
+                icon={<IconDownloadFile />}
+                href={`${BASE_URL}/${item.id}/excel`}
+                key="list-download"
+              />,
+              window.project.canManage ? (
+                <Popconfirm
+                  placement="bottomRight"
+                  title={"Delete this template?"}
+                  onConfirm={() => deleteTemplate(item.id)}
+                >
+                  <Button shape="circle" size="small" icon={<IconRemove />} />
+                </Popconfirm>
+              ) : null,
+            ]}
+          >
+            <List.Item.Meta
+              title={
+                <Link style={{ color: blue6 }} to={`${item.id}`}>
+                  {item.label}
+                </Link>
+              }
+              description={item.description}
+            />
+          </List.Item>
+        )}
+      />
+    </PageHeader>
   );
 }
