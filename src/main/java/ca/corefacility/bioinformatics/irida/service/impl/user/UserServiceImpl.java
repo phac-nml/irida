@@ -217,9 +217,14 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			User user = super.create(u);
 			List<Announcement> announcements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
 			Date now = new Date();
+			/**
+			 * When a new user is created, every announcements will be displayed when the new user logs in for the first time.
+			 * These historical announcements could be months/years old and irrelevant for the new user.
+			 * Here we mark all prior announcements older than one month as read.
+			 * This prevents the new user from being spammed with old announcements.
+			 */
 			for (Announcement announcement : announcements) {
 				if(DateUtils.addMonths(announcement.getCreatedDate(),MARK_ANNOUNCEMENTS_READ_MONTHS).before(now)){
-					// mark announcement as read if older than one month
 					AnnouncementUserJoin auj = new AnnouncementUserJoin(announcement, user);
 					announcementUserJoinRepository.save(auj);
 				}
