@@ -48,10 +48,10 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(id="t-download-all-files-btn")
 	private List<WebElement> downloadAllFilesButton;
 
-	@FindBy(className="ant-dropdown-trigger")
+	@FindBy(css="#t-download-all-files-btn button.ant-dropdown-trigger")
 	private List<WebElement> downloadIndividualFilesMenuButton;
 
-	@FindBy(className="ant-dropdown-menu-vertical")
+	@FindBy(className="t-download-individual-files-menu")
 	private List<WebElement> downloadIndividualFilesMenu;
 
 	@FindBy(className="ant-steps")
