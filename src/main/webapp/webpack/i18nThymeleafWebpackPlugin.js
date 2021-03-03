@@ -10,6 +10,8 @@
 
 "use strict";
 
+const ConcatenatedModule = require('webpack/lib/optimize/ConcatenatedModule');
+
 /**
  * @param {string[]} keys the translation keys required for the entry
  * @param {string} entry the name of the entry
@@ -56,30 +58,69 @@ class i18nThymeleafWebpackPlugin {
   apply(compiler) {
     let i18nsByRequests = {};
 
-    // /**
-    //  * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
-    //  * @return {Set<string>} a set of the translations keys required by the chunkGroup
-    //  */
-    // const getKeysByChunkGroup = (chunkGroup) => {
-    //   let keys = new Set();
-    //
-    //   for (const chunk of chunkGroup.chunks) {
-    //     for (const issuer of chunk.modulesIterable) {
-    //       if (
-    //         isValidLocalRequest(issuer.userRequest) &&
-    //         i18nsByRequests[issuer.userRequest]
-    //       ) {
-    //         keys = new Set([...keys, ...i18nsByRequests[issuer.userRequest]]);
-    //       }
-    //     }
-    //   }
-    //
-    //   const childKeys = chunkGroup
-    //     .getChildren()
-    //     .map((child) => [...getKeysByChunkGroup(child)]);
-    //
-    //   return new Set([...keys, ...childKeys.flat()]);
-    // };
+    /**
+     * @param {Compilation} compilation the Compilation object
+     * @param {ConcatedModule} concatenatedModule the ConcatenatedModule to get translations keys from
+     * @return {Set<string>} a set of the translations keys required by the concatenatedModule
+     */
+    const getKeysByConcatenatedModule = (compilation, concatenatedModule) => {
+      let keys = new Set();
+
+      if (
+        isValidLocalRequest(concatenatedModule.rootModule.userRequest)
+      ) {
+        if ( i18nsByRequests[module.userRequest] ) {
+          keys = new Set([...keys, ...i18nsByRequests[concatenatedModule.rootModule.userRequest]]);
+        }
+
+        for (const module of concatenatedModule.modules) {
+          if (module instanceof ConcatenatedModule) {
+            keys = new Set([...keys, ...getKeysByConcatenatedModule(compilation, module)]);
+          }
+          else {
+            if (
+              isValidLocalRequest(module.userRequest) &&
+              i18nsByRequests[module.userRequest]
+            ) {
+              keys = new Set([...keys, ...i18nsByRequests[module.userRequest]]);
+            }
+          }
+        }
+      }
+
+      return keys;
+    }
+
+    /**
+     * @param {Compilation} compilation the Compilation object
+     * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
+     * @return {Set<string>} a set of the translations keys required by the chunkGroup
+     */
+    const getKeysByChunkGroup = (compilation, chunkGroup) => {
+      let keys = new Set();
+
+      for (const chunk of chunkGroup.chunks) {
+        compilation.chunkGraph.getChunkModulesIterable(chunk).forEach(module => {
+          if ( module instanceof ConcatenatedModule ) {
+            keys = new Set([...keys, ...getKeysByConcatenatedModule(compilation, module)]);
+          }
+          else {
+            if (
+              isValidLocalRequest(module.userRequest) &&
+              i18nsByRequests[module.userRequest]
+            ) {
+              keys = new Set([...keys, ...i18nsByRequests[module.userRequest]]);
+            }
+          }
+        });
+      }
+
+      const childKeys = chunkGroup
+        .getChildren()
+        .map((child) => [...getKeysByChunkGroup(compilation, child)]);
+
+      return new Set([...keys, ...childKeys.flat()]);
+    };
 
     /**
      * Gather all the translation keys required by each js file.
@@ -124,43 +165,41 @@ class i18nThymeleafWebpackPlugin {
       }
     );
 
+    const { sources, Compilation } = require('webpack');
+
     /**
      * Emit a thymeleaf templated translations file for each entry that has calls to i18n or has dependencies
      * that have calls to i18n.
-     */
-    compiler.hooks.emit.tapAsync(
+    */
+    compiler.hooks.thisCompilation.tap(
       "i18nThymeleafWebpackPlugin",
-      (compilation, callback) => {
-        compilation.chunks.forEach((chunk) => {
-          compilation.chunkGraph.getChunkModules(chunk).forEach((module) => {
-            const exportInfo = compilation.chunkGraph.moduleGraph.getExportInfo(
-              module
-            );
-            console.log(exportInfo);
-          });
-        });
+      (compilation) => {
+        compilation.hooks.processAssets.tapPromise(
+          {
+            name: "i18nThymeleafWebpackPlugin",
+            state: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
+          },
+          async () => {
 
-        // for (const [
-        //   entrypointName,
-        //   entrypoint,
-        // ] of compilation.entrypoints.entries()) {
-        //   const keys = [...getKeysByChunkGroup(entrypoint)];
-        //
-        //   if (keys.length) {
-        //     /*
-        //     This adds a file for translations for webpack to write to the file system.
-        //      */
-        //     const html = template(keys, entrypointName);
-        //     compilation.assets[
-        //       `../pages/templates/i18n/${entrypointName}.html`
-        //     ] = {
-        //       source: () => html,
-        //       size: () => html.length,
-        //     };
-        //   }
-        // }
+            for (const [
+              entrypointName,
+              entrypoint,
+            ] of compilation.entrypoints.entries()) {
+              const keys = [...getKeysByChunkGroup(compilation, entrypoint)];
 
-        callback();
+              if (keys.length) {
+                /*
+                This adds a file for translations for webpack to write to the file system.
+                */
+                const html = template(keys, entrypointName);
+                compilation.emitAsset(
+                  `../pages/templates/i18n/${entrypointName}.html`,
+                  new sources.RawSource(html)
+                );
+              }
+            }
+          }
+        );
       }
     );
   }
