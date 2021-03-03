@@ -8,10 +8,17 @@ const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin
 const entries = require("./entries");
 
 module.exports = {
+  cache: {
+    type: 'filesystem',
+  },
   entry: entries,
+  resolve: {
+    symlinks: false,
+  },
   output: {
     filename: "js/[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
+    pathinfo: false,
   },
   module: {
     rules: [
@@ -24,8 +31,12 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/i,
-        use: "babel-loader",
         exclude: /node_modules/,
+        loader: "babel-loader",
+        options: {
+          cacheCompression: false,
+          cacheDirectory: true,
+        },
       },
       {
         test: /\.less$/i,
@@ -108,12 +119,11 @@ module.exports = {
     }),
   ],
   optimization: {
-    minimize: true,
     minimizer: [
       // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
       // `...`,
       new CssMinimizerPlugin({ parallel: true }),
-      new TerserPlugin(),
+      new TerserPlugin({ parallel: true }),
     ],
   },
 };
