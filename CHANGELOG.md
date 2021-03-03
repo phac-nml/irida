@@ -10,6 +10,7 @@ Changes
 * [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
 * [UI]: Update to the pipeline launch process.
 * [UI]: Fixed bug where filter menu was missing from the Analsyis Outputs Table.
+* [UI/Developer]: Webpack does full bundle splitting to optimize loading time and thymeleaf injects the bundles onto template at compile time, see documentation for more details.
 
 20.09 to 21.01
 --------------
