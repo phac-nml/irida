@@ -8,9 +8,6 @@ const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin
 const entries = require("./entries");
 
 module.exports = {
-  cache: {
-    type: 'filesystem',
-  },
   entry: entries,
   resolve: {
     symlinks: false,
@@ -119,6 +116,7 @@ module.exports = {
     }),
   ],
   optimization: {
+    minimize: true,
     minimizer: [
       // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
       // `...`,
