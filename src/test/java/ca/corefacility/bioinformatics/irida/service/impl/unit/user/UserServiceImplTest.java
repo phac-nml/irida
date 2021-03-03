@@ -7,15 +7,14 @@ import static org.mockito.Mockito.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
@@ -129,6 +128,20 @@ public class UserServiceImplTest {
 
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).save(u);
+	}
+
+	@Test
+	public void testReadAnnouncements() {
+		final User u = user();
+
+		List<Announcement> readAnnouncements = Lists.newArrayList(new Announcement("test 1", "this is a test message", true, u),
+				new Announcement("test 2", "this is also a test message", false, u));
+
+		doReturn(readAnnouncements).when(announcementUserJoinRepository).getAnnouncementsReadByUser(u);
+
+		userService.create(u);
+
+		verify(announcementUserJoinRepository, times(0)).save(any(AnnouncementUserJoin.class));
 	}
 
 	@Test
