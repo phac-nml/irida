@@ -21,7 +21,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/i,
-        exclude: /node_modules/,
+        include: path.resolve(__dirname, "resources/js"),
         loader: "babel-loader",
         options: {
           cacheCompression: false,
@@ -102,7 +102,7 @@ module.exports = {
       ignoreOrder: true,
       filename: "css/[name].bundle.css",
     }),
-    // new WebpackBar(),
+    new WebpackBar(),
     new i18nThymeleafWebpackPlugin({
       functionName: "i18n",
     }),
