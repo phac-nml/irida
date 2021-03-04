@@ -3,11 +3,10 @@ const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const WebpackBar = require("webpackbar");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 const entries = require("./entries");
 
-module.exports = {
+const webpackConfig = {
   entry: entries,
   resolve: {
     symlinks: false,
@@ -90,7 +89,6 @@ module.exports = {
       ignoreOrder: true,
       filename: "css/[name].bundle.css",
     }),
-    new WebpackBar(),
     new i18nThymeleafWebpackPlugin({
       functionName: "i18n",
     }),
@@ -99,13 +97,27 @@ module.exports = {
       process: "process/browser",
     }),
   ],
-  optimization: {
-    minimize: true,
-    minimizer: [
-      // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
-      // `...`,
-      new CssMinimizerPlugin({ parallel: true }),
-      new TerserPlugin({ parallel: true }),
-    ],
-  },
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === "development") {
+    webpackConfig.devtool = "source-map";
+    webpackConfig.optimization = {
+      minimize: false,
+    };
+  }
+
+  if (argv.mode === "production") {
+    webpackConfig.optimization = {
+      minimize: true,
+      minimizer: [
+        // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+        // `...`,
+        new CssMinimizerPlugin({ parallel: true }),
+        new TerserPlugin({ parallel: true, include: /\/resources/ }),
+      ],
+    };
+  }
+
+  return webpackConfig;
 };

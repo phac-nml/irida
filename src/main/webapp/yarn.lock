@@ -6,8 +6,8 @@ __metadata:
   cacheKey: 7
 
 "@ant-design/charts@npm:^1.0.17":
-  version: 1.0.18
-  resolution: "@ant-design/charts@npm:1.0.18"
+  version: 1.0.19
+  resolution: "@ant-design/charts@npm:1.0.19"
   dependencies:
     "@antv/g2plot": ^2.2.11
     "@antv/g6": ^4.1.7
@@ -16,7 +16,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.4
     react-dom: ^16.8.4
-  checksum: 91478dfb2ebba46b802c666fe7e8d2e5eed6429b79255b96d04945871ae1059565016eb63828dff42ebeb55b7350ee51b7f673e6d3a4b2d34c5608d16f5a9a15
+  checksum: 4cb5cde15119e4631461454094756414ff889a77846efeac0977a478f468e263d53b6a5a2b443fb452a1d05db76b60ee4b7d36ad543177f04760716202810e36
   languageName: node
   linkType: hard
 
@@ -2768,7 +2768,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-escapes@npm:^4.2.1, ansi-escapes@npm:^4.3.1":
+"ansi-escapes@npm:^4.2.1":
   version: 4.3.1
   resolution: "ansi-escapes@npm:4.3.1"
   dependencies:
@@ -3550,7 +3550,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
+"chalk@npm:^4.0.0":
   version: 4.1.0
   resolution: "chalk@npm:4.1.0"
   dependencies:
@@ -3633,13 +3633,6 @@ __metadata:
   version: 2.0.0
   resolution: "ci-info@npm:2.0.0"
   checksum: 553fe83c085fce5e19e20f85b993f24a463e6f805803837a8868607bb68b1300567868694a5dff1beca6c54926a4c0be1cc9ef0c35f810653d590bf64183f6a0
-  languageName: node
-  linkType: hard
-
-"ci-info@npm:^3.0.0":
-  version: 3.1.1
-  resolution: "ci-info@npm:3.1.1"
-  checksum: 417d2bf17c320d477bc32997d3831bcc1b174d6b48616c2f0463765f042f073bfbfb15e06abdeea55b05ca9c8e054057eb9e0672e4e6031457e87216b2faddda
   languageName: node
   linkType: hard
 
@@ -3902,13 +3895,6 @@ __metadata:
   version: 0.0.1
   resolution: "concat-map@npm:0.0.1"
   checksum: 554e28d9ee5aa6e061795473ee092cb3d3a2cbdb76c35416e0bb6e03f136d7d07676da387b2ed0ec4106cedbb6534080d9abc48ecc4a92b76406cf2d0c3c0c4b
-  languageName: node
-  linkType: hard
-
-"consola@npm:^2.15.0":
-  version: 2.15.3
-  resolution: "consola@npm:2.15.3"
-  checksum: 914e2b0b24605a41f1a83ae29a0238558d01a01c40ada5817db81b2dd1543a540d59e38e81e736d05360246379a18013e6930b32231650898dfc4adb52a93523
   languageName: node
   linkType: hard
 
@@ -5366,15 +5352,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"figures@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "figures@npm:3.2.0"
-  dependencies:
-    escape-string-regexp: ^1.0.5
-  checksum: 6c8acb1c17c4d27eeb6ff06801b5ae39a999c4794ec50eacf858a1e32746d92af77a9a907c3e1865e2e6ac7d9f1aa765f0f8a01a16a4676b79b6e90a7cc23f44
-  languageName: node
-  linkType: hard
-
 "fill-range@npm:^4.0.0":
   version: 4.0.0
   resolution: "fill-range@npm:4.0.0"
@@ -6248,7 +6225,6 @@ fsevents@^2.1.2:
     url-loader: ^4.1.1
     webpack: ^5.21.0
     webpack-cli: ^4.5.0
-    webpackbar: ^5.0.0-3
     xlsx: ^0.13.0
   languageName: unknown
   linkType: soft
@@ -9548,13 +9524,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"pretty-time@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "pretty-time@npm:1.1.0"
-  checksum: 1467cfb88f0478c277dd4b47419d536f92e417ce17da927390145f9e69ba3ac5c36e54b2a5244538c64e3ed8d299c604117c3018b3a15772c5d030030adbdef6
-  languageName: node
-  linkType: hard
-
 "printj@npm:~1.1.0, printj@npm:~1.1.2":
   version: 1.1.2
   resolution: "printj@npm:1.1.2"
@@ -11370,15 +11339,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"std-env@npm:^2.2.1":
-  version: 2.3.0
-  resolution: "std-env@npm:2.3.0"
-  dependencies:
-    ci-info: ^3.0.0
-  checksum: 464b9b3211c391152b04d8609b9b73908da38d5caba67af0db3bd2e31efdf918afb5631211db6e6b0147585edff53f410fa121f13d85133298acab9ce079955b
-  languageName: node
-  linkType: hard
-
 "stealthy-require@npm:^1.1.1":
   version: 1.1.1
   resolution: "stealthy-require@npm:1.1.1"
@@ -11717,13 +11677,6 @@ fsevents@^2.1.2:
     glob: ^7.1.4
     minimatch: ^3.0.4
   checksum: 68294d10066726cbced152aeb8a39cf9fd199199c62afb39290b824f613090f2535fc6acbad7d78f1f34cf00f4f00d42fa14f02d6262b910a7c9e2db2ecfa388
-  languageName: node
-  linkType: hard
-
-"text-table@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "text-table@npm:0.2.0"
-  checksum: 373904ce70524ba11ec7e1905c44fb92671132d5e0b0aba2fb48057161f8bf9cbf7f6178f0adf31810150cf44fb52c7b912dc722bff3fddf9688378596dbeb56
   languageName: node
   linkType: hard
 
@@ -12492,24 +12445,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"webpackbar@npm:^5.0.0-3":
-  version: 5.0.0-3
-  resolution: "webpackbar@npm:5.0.0-3"
-  dependencies:
-    ansi-escapes: ^4.3.1
-    chalk: ^4.1.0
-    consola: ^2.15.0
-    figures: ^3.2.0
-    pretty-time: ^1.1.0
-    std-env: ^2.2.1
-    text-table: ^0.2.0
-    wrap-ansi: ^7.0.0
-  peerDependencies:
-    webpack: 3 || 4 || 5
-  checksum: 0c69f0998551a7218c43f65ba1f11e6c3262141011047a77434af013cf543c12916050a419c7528970dd2181d3d5339d28d1bb77d4d77d6a8c89a658286c3335
-  languageName: node
-  linkType: hard
-
 "whatwg-encoding@npm:^1.0.5":
   version: 1.0.5
   resolution: "whatwg-encoding@npm:1.0.5"
@@ -12621,17 +12556,6 @@ fsevents@^2.1.2:
     string-width: ^4.1.0
     strip-ansi: ^6.0.0
   checksum: ee4ed8b2994cfbdcd571f4eadde9d8ba00b8a74113483fe5d0c5f9e84054e43df8e9092d7da35c5b051faeca8fe32bd6cea8bf5ae8ad4896d6ea676a347e90af
-  languageName: node
-  linkType: hard
-
-"wrap-ansi@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "wrap-ansi@npm:7.0.0"
-  dependencies:
-    ansi-styles: ^4.0.0
-    string-width: ^4.1.0
-    strip-ansi: ^6.0.0
-  checksum: 09939dd775ae565bb99a25a6c072fe3775a95fa71751b5533c94265fe986ba3e3ab071a027ab76cf26876bd9afd10ac3c2d06d7c4bcce148bf7d2d9514e3a0df
   languageName: node
   linkType: hard
 
