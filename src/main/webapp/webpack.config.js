@@ -45,31 +45,10 @@ const webpackConfig = {
       {
         test: /\.css$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: (resourcePath, context) => {
-                // publicPath is the relative path of the resource to the context
-                // e.g. for ./css/admin/main.css the publicPath will be ../../
-                // while for ./css/main.css the publicPath will be ../
-                return (
-                  path.relative(path.dirname(resourcePath), context) +
-                  "/dist/css/"
-                );
-              },
-            },
-          },
+          MiniCssExtractPlugin.loader,
           { loader: "css-loader", options: { importLoaders: 1 } },
-          {
-            loader: "postcss-loader",
-          },
+          "postcss-loader",
         ],
-      },
-      {
-        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: {
-          loader: "url-loader",
-        },
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
