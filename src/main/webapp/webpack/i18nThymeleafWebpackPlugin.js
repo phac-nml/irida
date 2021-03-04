@@ -156,11 +156,19 @@ class i18nThymeleafWebpackPlugin {
     compiler.hooks.watchRun.tap(
       "i18nThymeleafWebpackPlugin",
       (compiler, err) => {
-        const { watchFileSystem } = compiler;
-        const watcher = watchFileSystem.watcher || watchFileSystem.wfs.watcher;
+        const modifiedFiles = compiler.modifiedFiles;
+        const removedFiles = compiler.removedFiles;
 
-        for (const file of Object.keys(watcher.mtimes)) {
-          delete i18nsByRequests[file];
+        if ( modifiedFiles !== undefined ) {
+          modifiedFiles.forEach(file => {
+            delete i18nsByRequests[file];
+          });
+        }
+
+        if ( removedFiles !== undefined ) {
+          removedFiles.forEach(file => {
+            delete i18nsByRequests[file];
+          });
         }
       }
     );
