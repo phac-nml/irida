@@ -211,7 +211,7 @@ class i18nThymeleafWebpackPlugin {
         compilation.hooks.buildModule.tap(
           "i18nThymeleafWebpackPlugin",
           (module) => {
-            delete i18nsByRequests[module.resource];
+            delete i18nsByRequests[module.identifier()];
           }
         );
 
