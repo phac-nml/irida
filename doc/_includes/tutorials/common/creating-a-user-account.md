@@ -20,4 +20,4 @@ On successfully creating a new user account, you will see the user details that 
 
 ![User details page.]({{ site.baseurl }}/images/tutorials/common/users/user-details-page.png)
 
-**Note**: During new user creation, all prior announcements older than one month will be marked as read. The new user should not be spammed with historical irrelevant announcements.
+**Note**: Announcements created within the last month will be shown to new users.
