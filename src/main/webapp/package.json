@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "webpack --mode production --watch",
+    "start": "webpack --mode development --watch",
     "clean": "rm -r node* resources/dist/",
     "test": "jest resources/js/**/*.test.js",
     "test:watch": "jest --watch resources/js/**/*.test.js"
