@@ -9,7 +9,7 @@ const entries = require("./entries");
 
 module.exports = {
   cache: {
-    type: 'filesystem',
+    type: "filesystem",
   },
   entry: entries,
   resolve: {
@@ -22,13 +22,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: require.resolve("jquery"),
-        loader: "expose-loader",
-        options: {
-          exposes: ["$", "jQuery"],
-        },
-      },
       {
         test: /\.(js|jsx)$/i,
         exclude: /node_modules/,
@@ -95,10 +88,12 @@ module.exports = {
         },
       },
       {
-        test: /\.(ttf|eot|svg|otf|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: {
-          loader: "file-loader",
-        },
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: "asset/resource",
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: "asset/resource",
       },
     ],
   },
@@ -116,6 +111,7 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
+      process: "process/browser",
     }),
   ],
   optimization: {
