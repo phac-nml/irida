@@ -8,7 +8,7 @@ const entries = require("./entries");
 
 const webpackConfig = {
   cache: {
-    type: 'filesystem',
+    type: "filesystem",
   },
   entry: entries,
   resolve: {
@@ -18,6 +18,9 @@ const webpackConfig = {
     filename: "js/[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
     pathinfo: false,
+  },
+  externals: {
+    jquery: "jQuery",
   },
   module: {
     rules: [

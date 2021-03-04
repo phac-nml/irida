@@ -5194,6 +5194,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expose-loader@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "expose-loader@npm:2.0.0"
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: 54f019cf24c54cfc961cfcae60c018957d3fd1580e2088a5cb77ea369dbefa6161b4869701f1df5e8d1c311ade1b71bcdf39a3f34c5325642c4b1fc612a536a4
+  languageName: node
+  linkType: hard
+
 "extend-shallow@npm:^2.0.1":
   version: 2.0.1
   resolution: "extend-shallow@npm:2.0.1"
@@ -6167,6 +6176,7 @@ fsevents@^2.1.2:
     datatables.net-scroller: ^1.5.1
     datatables.net-scroller-bs: ^1.5.1
     dayjs: ^1.8.27
+    expose-loader: ^2.0.0
     find-cache-dir: 3.3.1
     jest: ^26.6.3
     jquery: 3.5.1
