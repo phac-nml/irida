@@ -7,6 +7,9 @@ const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin
 const entries = require("./entries");
 
 const webpackConfig = {
+  cache: {
+    type: 'filesystem',
+  },
   entry: entries,
   resolve: {
     symlinks: false,
