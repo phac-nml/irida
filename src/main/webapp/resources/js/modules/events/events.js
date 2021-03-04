@@ -2,7 +2,6 @@
  * @file Responsible for loading and setting a table of events..
  * Used on both the Dashboard and Admin > Events pages.
  */
-import $ from "jquery";
 import angular from "angular";
 import "../../../css/modules/events.css";
 
@@ -69,8 +68,8 @@ function events(svc, $compile) {
 
         function getEvents() {
           svc.getEvents($scope.url, vm.size).then(function (data) {
-            $element.html($compile(data)($scope));
-            $('[data-toggle="tooltip"]').tooltip();
+            const html = $compile(data)($scope);
+            $element.append(html);
           });
         }
 
