@@ -37,7 +37,7 @@ function ViewAnnouncementModal({
       type: "info",
       width: `60%`,
       icon: <PriorityFlag hasPriority={announcement.priority} />,
-      okText: `Read`,
+      okText: i18n("ViewAnnouncement.read"),
       onOk() {
         markAnnouncementAsRead(announcement.identifier);
       },
