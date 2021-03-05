@@ -5,13 +5,17 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 const entries = require("./entries");
+const formatAntStyles = require("./styles");
+
+const antColours = formatAntStyles();
 
 const webpackConfig = {
-  cache: {
-    type: "filesystem",
-  },
+  // cache: {
+  //   type: "filesystem",
+  // },
   entry: entries,
   resolve: {
+    extensions: [".js", ".jsx"],
     symlinks: false,
   },
   output: {
@@ -42,6 +46,7 @@ const webpackConfig = {
             loader: "less-loader",
             options: {
               lessOptions: {
+                modifyVars: antColours,
                 javascriptEnabled: true,
               },
             },
@@ -65,9 +70,6 @@ const webpackConfig = {
         type: "asset/resource",
       },
     ],
-  },
-  resolve: {
-    extensions: [".js", ".jsx"],
   },
   plugins: [
     new MiniCssExtractPlugin({

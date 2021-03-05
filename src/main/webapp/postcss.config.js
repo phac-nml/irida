@@ -1,9 +1,11 @@
 const formatAntStyles = require("./styles");
 
+const modifyVars = formatAntStyles();
+
 module.exports = {
   options: {
     lessOptions: {
-      modifyVars: { ...formatAntStyles() },
+      modifyVars,
       javascriptEnabled: true,
     },
   },
@@ -16,10 +18,3 @@ module.exports = {
     }),
   ],
 };
-// plugins: (loader) => [
-//   require("postcss-import")({ root: loader.resourcePath }),
-//   require("postcss-preset-env")(),
-//   require("cssnano")(),
-//   require("autoprefixer")(),
-//   require("postcss-nested")(),
-// ],
