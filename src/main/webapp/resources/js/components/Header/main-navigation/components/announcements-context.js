@@ -1,6 +1,11 @@
 import React from "react";
 import { getUnreadAnnouncements } from "../../../../apis/announcements/announcements";
 
+/**
+ * The context provides access to shared announcement data and actions.
+ * These unread announcements are displayed in a modal that's triggered at login
+ * and from the drop down submenu at the bell icon on the main navigation bar.
+ */
 const AnnouncementContext = React.createContext();
 AnnouncementContext.displayName = "Announcement Context";
 
@@ -13,6 +18,9 @@ export const TYPES = {
   READ_AND_CLOSE: "READ_AND_CLOSE",
 };
 
+/**
+ * Using a reducer to hold all the announcement data for each action that is used to display the unread announcements in a modal.
+ */
 const reducer = (state, action) => {
   switch (action.type) {
     case TYPES.LOADED:
@@ -71,6 +79,9 @@ const reducer = (state, action) => {
   }
 };
 
+/**
+ *  The provider for displaying the unread announcements in a modal.
+ */
 function AnnouncementProvider({ children }) {
   const [state, dispatch] = React.useReducer(reducer, { announcements: [] });
 
@@ -97,6 +108,9 @@ function AnnouncementProvider({ children }) {
   );
 }
 
+/**
+ * The consumer gets the provided context from within an AnnouncementsProvider.
+ */
 function useAnnouncements() {
   const context = React.useContext(AnnouncementContext);
   if (context === undefined) {
