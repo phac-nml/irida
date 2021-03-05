@@ -63,7 +63,7 @@ class i18nThymeleafWebpackPlugin {
 
     let cacheGetPromise;
 
-    compiler.hooks.beforeRun.tap(
+    compiler.hooks.beforeCompile.tap(
       "i18nThymeleafWebpackPlugin",
       () => {
         if (!cacheGetPromise) {
@@ -82,9 +82,10 @@ class i18nThymeleafWebpackPlugin {
       }
     );
 
-    compiler.hooks.afterEmit.tapPromise(
+    compiler.hooks.afterCompile.tapPromise(
       "i18nThymeleafWebpackPlugin",
       (compilation) => {
+        if (compilation.compiler.isChild()) return Promise.resolve();
         return cacheGetPromise.then(async oldData => {
           // if we loaded data from cache, remove any entries that are no
           // longer required.

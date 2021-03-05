@@ -10,9 +10,9 @@ const formatAntStyles = require("./styles");
 const antColours = formatAntStyles();
 
 const webpackConfig = {
-  // cache: {
-  //   type: "filesystem",
-  // },
+  cache: {
+    type: "filesystem",
+  },
   entry: entries,
   resolve: {
     extensions: [".js", ".jsx"],
