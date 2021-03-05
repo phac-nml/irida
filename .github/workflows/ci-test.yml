@@ -39,11 +39,18 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ matrix.suite }}-${{ hashFiles('**/pom.xml') }}
-      - name: Cache Node modules #Pull the cache for node_modules.  This caches all dependencies assuming the yarn.lock file stays the same
+      - name: Cache PNP  #Pull the cache for PNP.  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: '**/.pnp.js'
+          key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache yarn  #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
+        uses: actions/cache@v2
+        with:
+          path: '**/.yarn'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Ensure yarn version
+        run: pushd src/main/webapp; yarn --no-default-rc set version $(cat .yarnrc.yml | grep yarnPath | sed 's/.*yarn-\(.*\).cjs/\1/'); popd
       - uses: mirromutth/mysql-action@v1.1
         with:
           host port: ${{ env.MYSQL_PORT }}
