@@ -50,7 +50,7 @@ jobs:
           path: '**/.yarn'
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Ensure yarn version
-        run: pushd src/main/webapp; yarn --no-default-rc set version $(cat .yarnrc.yml | grep yarnPath | sed 's/.*yarn-\(.*\).cjs/\1/'); popd
+        run: pushd src/main/webapp; mv .yarnrc.yml .yarnrc.yml.bak; yarn set version berry; yarn set version $(cat .yarnrc.yml.bak | grep yarnPath | sed 's/.*yarn-\(.*\).cjs/\1/'); popd
       - uses: mirromutth/mysql-action@v1.1
         with:
           host port: ${{ env.MYSQL_PORT }}
