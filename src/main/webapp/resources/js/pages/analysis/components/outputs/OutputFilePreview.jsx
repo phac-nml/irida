@@ -209,7 +209,7 @@ export default function OutputFilePreview() {
     return (
       <div style={{ display: "flex", flexDirection: "row-reverse" }}>
         <Dropdown.Button
-          id="t-download-all-files-btn"
+          className="t-download-all-files-btn"
           onClick={() => downloadFilesAsZip(analysisIdentifier)}
           overlay={downloadFilesMenu()}
         >

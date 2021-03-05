@@ -39,16 +39,16 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "ant-popover-inner-content")
 	private WebElement confirmDiv;
 
-	@FindBy(id = "t-delete-analysis-btn")
+	@FindBy(className = "t-delete-analysis-btn")
 	private WebElement deleteButton;
 
-	@FindBy(id="t-sample-search-input")
+	@FindBy(className="t-sample-search-input")
 	private WebElement searchInput;
 
-	@FindBy(id="t-download-all-files-btn")
+	@FindBy(className="t-download-all-files-btn")
 	private List<WebElement> downloadAllFilesButton;
 
-	@FindBy(css="#t-download-all-files-btn button.ant-dropdown-trigger")
+	@FindBy(css=".t-download-all-files-btn button.ant-dropdown-trigger")
 	private List<WebElement> downloadIndividualFilesMenuButton;
 
 	@FindBy(className="t-download-individual-files-menu")
@@ -87,19 +87,19 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className="ant-checkbox-checked")
 	private List<WebElement> checkedCheckBoxes;
 
-	@FindBy(id="t-tree-shape-tools")
+	@FindBy(className="t-tree-shape-tools")
 	private WebElement treeTools;
 
-	@FindBy(id="t-advanced-phylo-btn")
+	@FindBy(className="t-advanced-phylo-btn")
 	private WebElement advPhyloBtn;
 
-	@FindBy(id="t-phylocanvas-wrapper")
+	@FindBy(className="t-phylocanvas-wrapper")
 	private WebElement phylocanvasWrapper;
 
 	@FindBy(id="phyloCanvasDiv__canvas")
 	private WebElement phyloTree;
 
-	@FindBy(id="t-citation")
+	@FindBy(className="t-citation")
 	private WebElement citation;
 
 	public AnalysisDetailsPage(WebDriver driver) {
@@ -144,7 +144,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean advancedPhylogeneticTreeButtonNotFound() {
-		return driver.findElements( By.id("t-tree-shape-tools") ).size() == 0;
+		return driver.findElements( By.className("t-tree-shape-tools") ).size() == 0;
 	}
 
 	/**
@@ -463,7 +463,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean phylocanvasWrapperNotFound() {
-		return driver.findElements( By.id("t-phylocanvas-wrapper") ).size() == 0;
+		return driver.findElements( By.className("t-phylocanvas-wrapper") ).size() == 0;
 	}
 
 	/**
@@ -503,7 +503,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean treeToolsNotFound() {
-		return driver.findElements( By.id("t-tree-shape-tools") ).size() == 0;
+		return driver.findElements( By.className("t-tree-shape-tools") ).size() == 0;
 	}
 
 	/**
