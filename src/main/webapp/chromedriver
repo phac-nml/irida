@@ -3,5 +3,5 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 pushd $SCRIPTPATH
-yarn run chromedriver
+yarn run chromedriver $@
 popd
