@@ -10,8 +10,6 @@
 
 "use strict";
 
-const fs = require('fs');
-const path = require('path');
 const ConcatenatedModule = require('webpack/lib/optimize/ConcatenatedModule');
 
 /**
@@ -51,7 +49,6 @@ class i18nThymeleafWebpackPlugin {
   constructor(options) {
     this.options = options || {};
     this.functionName = this.options.functionName || "i18n";
-    this.cacheLocation = path.resolve(__dirname, '.i18n_cache.json');
   }
 
   /**
@@ -60,46 +57,51 @@ class i18nThymeleafWebpackPlugin {
    */
   apply(compiler) {
     let i18nsByRequests = {};
+    const cache = compiler
+      .getCache("i18nThymeleafWebpackPlugin")
+      .getItemCache("i18nsByRequests", null);
 
-    compiler.hooks.beforeRun.tapAsync(
+    let cacheGetPromise;
+
+    compiler.hooks.beforeRun.tap(
       "i18nThymeleafWebpackPlugin",
-      (params, callback) => {
-        // load i18nsByRequests cache
-        if (fs.existsSync(this.cacheLocation)) {
-          const rawData = fs.readFileSync(this.cacheLocation);
-          i18nsByRequests = JSON.parse(rawData, (key, value) => {
-            if (typeof value === "object" && Array.isArray(value)) {
-              return new Set(value);
+      () => {
+        if (!cacheGetPromise) {
+          cacheGetPromise = cache.getPromise().then(
+            data => {
+              if (data) {
+                i18nsByRequests = data;
+              }
+              return data;
+            },
+            err => {
+              // Ignore error
             }
-            return value;
-          });
+          );
         }
-
-        callback();
       }
     );
 
-    compiler.hooks.afterEmit.tapAsync(
+    compiler.hooks.afterEmit.tapPromise(
       "i18nThymeleafWebpackPlugin",
-      (compilation, callback) => {
-        // remove unused entries from i18nsByRequests
-        const localModuleIdentifiers = Object.keys(i18nsByRequests);
-        localModuleIdentifiers.forEach((moduleIdentifier) => {
-          if (compilation.findModule(moduleIdentifier) === undefined) {
-            delete i18nsByRequests[moduleIdentifier];
+      (compilation) => {
+        return cacheGetPromise.then(async oldData => {
+          // if we loaded data from cache, remove any entries that are no
+          // longer required.
+          if ( oldData ) {
+            Object.keys(i18nsByRequests).forEach((moduleIdentifier) => {
+              if (compilation.findModule(moduleIdentifier) === undefined) {
+                delete i18nsByRequests[moduleIdentifier];
+              }
+            });
+          }
+
+          if ( !oldData ||
+            oldData !== i18nsByRequests
+          ) {
+            await cache.storePromise(i18nsByRequests);
           }
         });
-
-        // save i18nsByRequests cache
-        const data = JSON.stringify(i18nsByRequests, (key, value) => {
-          if (typeof value === 'object' && value instanceof Set) {
-            return [...value];
-          }
-          return value;
-        });
-        fs.writeFileSync(this.cacheLocation, data);
-
-        callback();
       }
     );
 
