@@ -27,4 +27,3 @@ src/main/webapp/node
 !/src/main/webapp/.yarn/sdks
 !/src/main/webapp/.yarn/versions
 /src/main/webapp/.pnp.*
-/src/main/webapp/webpack/.i18n_cache.json
