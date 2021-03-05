@@ -77,7 +77,7 @@ export function AnnouncementsModal() {
       closable={!isPriority}
       maskClosable={!isPriority}
       title={
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Space direction="vertical" style={{ display: "block" }}>
           <Tag className="t-read-over-unread-ratio">
             {i18n(
               "AnnouncementsModal.tag.details",
