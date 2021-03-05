@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Empty, List, notification } from "antd";
-import { fromNow } from "../../../utilities/date-utilities";
+import React, {useEffect, useState} from "react";
+import {Empty, List, notification} from "antd";
+import {fromNow} from "../../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,
   markAnnouncementRead,
 } from "../../../apis/announcements/announcements";
 import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
-import { PriorityFlag } from "./PriorityFlag";
+import {PriorityFlag} from "./PriorityFlag";
 
 /**
  * Component to display displays a list of unread announcements.
