@@ -3,7 +3,5 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 pushd $SCRIPTPATH
-CHROMEDRIVER=`yarn bin chromedriver`
+yarn run chromedriver
 popd
-
-exec $CHROMEDRIVER $@
