@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,32 +32,15 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testReadingHighPriorityAnnouncements() {
 		Announcements announcements = Announcements.goTo(driver());
-		announcements.waitForModal();
 		assertTrue("The priority announcements modal should be visible", announcements.isModalVisible());
 		assertEquals("The total unread priority announcements count does not match", 2, announcements.getTotalUnreadAnnouncements());
 		assertEquals("The total read priority announcements count does not match", 0, announcements.getTotalReadAnnouncements());
-		announcements.clickNextButton();
-		announcements.waitForPreviousButton();
+		announcements.getNextAnnouncement();
 		assertEquals("The total read priority announcements count does not match", 1, announcements.getTotalReadAnnouncements());
-		announcements.clickCloseButton();
-	}
 
-	@Test
-	public void testMainNavigationAnnouncementsBadgeCount() {
-		Announcements announcements = Announcements.goTo(driver());
-		waitForTime(500);
-		announcements.closeModal();
-		assertEquals("The announcements badge count does not match", 6, announcements.getBadgeCount());
-	}
+		assertEquals("The announcements badge count does not match", 5, announcements.getBadgeCount());
 
-	@Test
-	public void testMainNavigationAnnouncementsSubmenu() {
-		Announcements announcements = Announcements.goTo(driver());
-		waitForTime(500);
-		announcements.closeModal();
-		announcements.hoverOverBadge();
-		announcements.waitForSubmenu();
-		assertEquals("The announcements title in the submenu does not match", "No cake", announcements.getSubmenuAnnouncementTitle(3));
+		announcements.getSubmenuAnnouncement();
+		assertEquals("The announcements title in the submenu does not match", "No cake", announcements.getSubmenuAnnouncementTitle(2));
 	}
-
 }

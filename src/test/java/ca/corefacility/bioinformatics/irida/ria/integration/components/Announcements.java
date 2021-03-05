@@ -13,6 +13,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
+
 /**
  * Used to test the state of the React AnnouncementsModal component.
  * This component can be found at login.
@@ -53,9 +55,13 @@ public class Announcements {
 		return PageFactory.initElements(driver, Announcements.class);
 	}
 
-	public boolean isModalVisible() { return modal.isDisplayed(); }
+	public boolean isModalVisible() {
+		waitForModal();
+		return modal.isDisplayed();
+	}
 
 	public void closeModal() {
+		waitForTime(500);
 		actions.sendKeys(Keys.ESCAPE).perform();
 	}
 
@@ -99,10 +105,23 @@ public class Announcements {
 	}
 
 	public int getBadgeCount() {
+		closeModal();
 		return Integer.parseInt(badge.findElement(By.tagName("p")).getText());
 	}
 
 	public String getSubmenuAnnouncementTitle(int position) {
 		return submenu.findElements(By.cssSelector("ul li button")).get(position).getAttribute("title");
 	}
+
+	public void getSubmenuAnnouncement() {
+		closeModal();
+		hoverOverBadge();
+		waitForSubmenu();
+	}
+
+	public void getNextAnnouncement() {
+		clickNextButton();
+		waitForPreviousButton();
+	}
+
 }
