@@ -42,7 +42,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "t-delete-analysis-btn")
 	private WebElement deleteButton;
 
-	@FindBy(className="t-sample-search-input")
+	@FindBy(css=".t-sample-search-input input")
 	private WebElement searchInput;
 
 	@FindBy(className="t-download-all-files-btn")
