@@ -42,7 +42,7 @@ export default function AnnouncementAdminPage({}) {
 
   return (
     <PageWrapper
-      title={i18n("announcement.admin-menu")}
+      title={i18n("AnnouncementAdminPage.title")}
       headerExtras={
         <CreateNewAnnouncement createAnnouncement={addNewAnnouncement} />
       }
