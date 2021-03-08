@@ -7,22 +7,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
  * Ajax controller for project metedata templates.
  */
 @RestController
-@RequestMapping("/ajax/metadata-templates")
-public class MetadataTemplatesAjaxController {
-	private final UIMetadataTemplateService service;
+@RequestMapping("/ajax/metadata")
+public class MetadataAjaxController {
+	private final UIMetadataService service;
 
 	@Autowired
-	public MetadataTemplatesAjaxController(UIMetadataTemplateService service) {
+	public MetadataAjaxController(UIMetadataService service) {
 		this.service = service;
 	}
 
@@ -31,33 +32,36 @@ public class MetadataTemplatesAjaxController {
 	 * @param projectId Identifier for the project to get templates for.
 	 * @return List of metadata templates with associate details.
 	 */
-	@GetMapping("")
+	@GetMapping("/templates")
 	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
-	@PostMapping("")
+	@PostMapping("/templates")
 	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(@RequestBody CreateMetadataTemplateRequest request, @RequestParam Long projectId) {
 		return ResponseEntity.ok(service.createMetadataTemplate(request, projectId));
 	}
 
-	@GetMapping("/{templateId}")
+	@GetMapping("/templates/{templateId}")
 	public ResponseEntity<MetadataTemplate> getMetadataTemplate(@PathVariable Long templateId) {
 		return ResponseEntity.ok(service.getMetadataTemplate(templateId));
 	}
 
-	@PutMapping("/{templateId}")
+	@PutMapping("/templates/{templateId}")
 	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template) {
 		service.updateMetadataTemplate(template);
 		return ResponseEntity.ok(new AjaxSuccessResponse("__Template has been saved"));
 	}
 
-	@DeleteMapping("/{templateId}")
+	@DeleteMapping("/templates/{templateId}")
 	public ResponseEntity<AjaxResponse> deleteMetadataTemplate(@PathVariable Long templateId,
 			@RequestParam Long projectId) {
 		service.deleteMetadataTemplate(templateId, projectId);
 		return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
 	}
 
-
+	@GetMapping("/fields")
+	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam Long projectId) {
+		return service.getMetadataFieldsForProject(projectId);
+	}
 }

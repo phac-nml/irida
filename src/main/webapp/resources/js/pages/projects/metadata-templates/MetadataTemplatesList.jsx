@@ -11,9 +11,9 @@ import {
 } from "../../../apis/metadata/metadata-templates";
 import { blue6 } from "../../../styles/colors";
 
-export function MetadataTemplatesList({ navigate }) {
+export function MetadataTemplatesList({ navigate, projectId }) {
   const [BASE_URL] = React.useState(() =>
-    setBaseUrl(`/projects/${window.project.id}/metadata-templates`)
+    setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
   const [templates, setTemplates] = React.useState([]);
 

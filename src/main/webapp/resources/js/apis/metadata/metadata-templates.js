@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const BASE_URL = setBaseUrl(`/ajax/metadata-templates`);
+const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
 
 /**
  * Get all metadata templates associated with a project

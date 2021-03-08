@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -20,12 +21,12 @@ import com.google.common.collect.ImmutableList;
  * Service for Metadata Templates in the user interface
  */
 @Component
-public class UIMetadataTemplateService {
+public class UIMetadataService {
 	private final ProjectService projectService;
 	private final MetadataTemplateService templateService;
 
 	@Autowired
-	public UIMetadataTemplateService(ProjectService projectService, MetadataTemplateService templateService) {
+	public UIMetadataService(ProjectService projectService, MetadataTemplateService templateService) {
 		this.projectService = projectService;
 		this.templateService = templateService;
 	}
@@ -63,5 +64,10 @@ public class UIMetadataTemplateService {
 	public void deleteMetadataTemplate(Long templateId, Long projectId) {
 		Project project = projectService.read(projectId);
 		templateService.deleteMetadataTemplateFromProject(project, templateId);
+	}
+
+	public List<MetadataTemplateField> getMetadataFieldsForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		return templateService.getMetadataFieldsForProject(project);
 	}
 }
