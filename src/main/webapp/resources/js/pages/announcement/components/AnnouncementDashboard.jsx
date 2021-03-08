@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Avatar, Empty, List, notification } from "antd";
-import { fromNow } from "../../../utilities/date-utilities";
+import React, {useEffect, useState} from "react";
+import {Avatar, Empty, List, notification} from "antd";
+import {fromNow} from "../../../utilities/date-utilities";
 import {
   getUnreadAnnouncements,
   markAnnouncementRead,
 } from "../../../apis/announcements/announcements";
-import { PriorityFlag } from "./PriorityFlag";
+import {PriorityFlag} from "./PriorityFlag";
+import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
 
 /**
  * Component to display displays a list of unread announcements.
@@ -55,10 +56,12 @@ export function AnnouncementDashboard() {
                 icon={<PriorityFlag hasPriority={item.priority} />}
               />
             }
-            title=<ViewUnreadAnnouncement
-              announcement={item}
-              markAnnouncementAsRead={markAnnouncementAsRead}
-            />
+            title={
+              <ViewUnreadAnnouncement
+                announcement={item}
+                markAnnouncementAsRead={markAnnouncementAsRead}
+              />
+            }
             description={fromNow({ date: item.createdDate })}
           />
         </List.Item>
