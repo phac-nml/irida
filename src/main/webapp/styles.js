@@ -2,7 +2,7 @@ const propertiesReader = require("properties-reader");
 const fs = require("fs");
 
 const defaults = {
-  "primary-color": "#99EE66",
+  "primary-color": "#1890ff",
   "info-color": "#1890ff",
   "link-color": "#1890ff",
   "font-size-base": "2px",
