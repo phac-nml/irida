@@ -1,3 +1,7 @@
+/**
+ * @file AnnouncementsSubMenu is the announcements drop down in the main navigation bar.
+ */
+
 import React from "react";
 import { Badge, Dropdown, Menu, Space, Typography } from "antd";
 import { IconBell } from "../../../icons/Icons";

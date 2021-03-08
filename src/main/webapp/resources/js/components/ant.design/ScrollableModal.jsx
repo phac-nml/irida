@@ -1,3 +1,7 @@
+/**
+ * @file ScrollableModal is a styled component for ant.design modal that has scrollable content.
+ */
+
 import React from "react";
 import styled from "styled-components";
 import { Modal } from "antd";
