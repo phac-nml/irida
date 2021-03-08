@@ -6,14 +6,12 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
@@ -23,7 +21,6 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
