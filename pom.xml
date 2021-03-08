@@ -1050,7 +1050,15 @@
 							<yarnVersion>${yarn.version}</yarnVersion>
 						</configuration>
 					</execution>
-
+					<execution>
+						<id>yarn berry</id>
+						<goals>
+							<goal>yarn</goal>
+						</goals>
+						<configuration>
+							<arguments>set version berry</arguments>
+						</configuration>
+					</execution>
 					<execution>
 						<id>yarn install</id>
 						<goals>
@@ -1062,15 +1070,6 @@
                             you can remove this whole <configuration> section.
                             -->
 							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>yarn berry</id>
-						<goals>
-							<goal>yarn</goal>
-						</goals>
-						<configuration>
-							<arguments>set version berry</arguments>
 						</configuration>
 					</execution>
 					<execution>
