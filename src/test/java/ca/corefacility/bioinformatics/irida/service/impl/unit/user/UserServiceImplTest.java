@@ -134,10 +134,7 @@ public class UserServiceImplTest {
 	public void testReadAnnouncements() {
 		final User u = user();
 
-		List<Announcement> readAnnouncements = Lists.newArrayList(new Announcement("test 1", "this is a test message", true, u),
-				new Announcement("test 2", "this is also a test message", false, u));
-
-		doReturn(readAnnouncements).when(announcementUserJoinRepository).getAnnouncementsReadByUser(u);
+		when(announcementUserJoinRepository.getAnnouncementsReadByUser(u)).thenReturn(anyList());
 
 		userService.create(u);
 
