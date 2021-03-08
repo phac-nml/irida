@@ -11,9 +11,9 @@ import styled from "styled-components";
 
 const AnnouncementLink = styled.span`
   padding: 20px;
+  cursor: pointer;
 
   &:hover .anticon-bell {
-    cursor: pointer;
     color: #ffffff;
   }
 
