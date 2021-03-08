@@ -20,4 +20,4 @@ On successfully creating a new user account, you will see the user details that 
 
 ![User details page.]({{ site.baseurl }}/images/tutorials/common/users/user-details-page.png)
 
-**Note**: Announcements created within the last month will be shown to new users.
+**Note**: Only announcements created within the last month will be shown to new users.
