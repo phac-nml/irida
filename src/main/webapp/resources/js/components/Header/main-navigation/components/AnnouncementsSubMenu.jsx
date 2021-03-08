@@ -45,33 +45,43 @@ export function AnnouncementsSubMenu() {
 
   const aMenu = (
     <Menu className="t-announcements-submenu">
-      {announcements.map((item, index) => (
+      {announcements.length == 0 ? (
         <Menu.Item
-          key={"announcement_" + index}
+          key={"announcement_none"}
           style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+          disabled={true}
         >
-          <LinkButton
-            title={item.title}
-            text={
-              <Space size="large">
-                <PriorityFlag hasPriority={item.priority} />
-                <span>
-                  <Text strong ellipsis style={{ width: 310 }}>
-                    {item.title}
-                  </Text>
-                  <br />
-                  <Text type="secondary" style={{ fontSize: `.8em` }}>
-                    {fromNow({ date: item.createdDate })}
-                  </Text>
-                </span>
-              </Space>
-            }
-            onClick={() => {
-              showAnnouncementModal(index);
-            }}
-          />
+          {i18n("AnnouncementsSubMenu.emptyList")}
         </Menu.Item>
-      ))}
+      ) : (
+        announcements.map((item, index) => (
+          <Menu.Item
+            key={"announcement_" + index}
+            style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+          >
+            <LinkButton
+              title={item.title}
+              text={
+                <Space size="large">
+                  <PriorityFlag hasPriority={item.priority} />
+                  <span>
+                    <Text strong ellipsis style={{ width: 310 }}>
+                      {item.title}
+                    </Text>
+                    <br />
+                    <Text type="secondary" style={{ fontSize: `.8em` }}>
+                      {fromNow({ date: item.createdDate })}
+                    </Text>
+                  </span>
+                </Space>
+              }
+              onClick={() => {
+                showAnnouncementModal(index);
+              }}
+            />
+          </Menu.Item>
+        ))
+      )}
       <Menu.Item key="view_all">
         <LinkButton
           className="t-announcements-view-all"
