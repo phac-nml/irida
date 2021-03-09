@@ -3,6 +3,7 @@ import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
 import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
+import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -134,6 +135,7 @@ export function MainNavigation() {
             <Menu.Divider />
             <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
           </Menu.SubMenu>
+          <AnnouncementsSubMenu />
           <Menu.SubMenu
             title={
               <Space>

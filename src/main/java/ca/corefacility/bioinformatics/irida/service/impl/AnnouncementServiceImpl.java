@@ -168,8 +168,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user) {
-        List<AnnouncementUserReadDetails> announcements = announcementUserJoinRepository.getAnnouncementsForUser(user);
-        return announcements;
+        return announcementUserJoinRepository.getAnnouncementsForUser(user);
     }
 
     /**
@@ -178,8 +177,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserJoin> getReadAnnouncementsForUser(User user) {
-        List<AnnouncementUserJoin> readAnnouncements = announcementUserJoinRepository.getAnnouncementsReadByUser(user);
-        return readAnnouncements;
+        return announcementUserJoinRepository.getAnnouncementsReadByUser(user);
     }
 
 
@@ -189,8 +187,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
     @Override
     @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<Announcement> getUnreadAnnouncementsForUser(User user) {
-        List<Announcement> unreadAnnouncements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
-        return unreadAnnouncements;
+        return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
     }
 
     /**

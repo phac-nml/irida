@@ -17,8 +17,7 @@ import {
 } from "antd";
 import { PriorityFlag } from "./PriorityFlag";
 import { fromNow } from "../../../utilities/date-utilities";
-import ViewReadAnnouncement from "./ViewReadAnnouncement";
-import ViewUnreadAnnouncement from "./ViewUnreadAnnouncement";
+import ViewAnnouncement from "./ViewAnnouncement";
 import { grey2 } from "../../../styles/colors";
 
 /**
@@ -73,10 +72,10 @@ export function AnnouncementsPage({}) {
   }
 
   return (
-    <PageWrapper title="Announcements">
-      <Space direction="vertical" style={{ width: "100%" }}>
-        <Row justify="center">
-          <Col xs={24} sm={20} md={16} lg={12} xl={8}>
+    <Row justify="center">
+      <Col xs={24} sm={20} md={16} lg={12} xl={8}>
+        <PageWrapper title="Announcements">
+          <Space direction="vertical" style={{ width: "100%" }}>
             <Form>
               <Form.Item noStyle>
                 <Radio.Group
@@ -98,10 +97,6 @@ export function AnnouncementsPage({}) {
                 </Radio.Group>
               </Form.Item>
             </Form>
-          </Col>
-        </Row>
-        <Row justify="center">
-          <Col xs={24} sm={20} md={16} lg={12} xl={8}>
             <List
               bordered
               locale={{
@@ -133,12 +128,12 @@ export function AnnouncementsPage({}) {
                     />
                     title={
                       item.read ? (
-                        <ViewReadAnnouncement
+                        <ViewAnnouncement
                           announcementID={item.announcementID}
                           announcementTitle={item.title}
                         />
                       ) : (
-                        <ViewUnreadAnnouncement
+                        <ViewAnnouncement
                           announcementID={item.announcementID}
                           announcementTitle={item.title}
                           markAnnouncementAsRead={markAnnouncementAsRead}
@@ -150,9 +145,9 @@ export function AnnouncementsPage({}) {
                 </List.Item>
               )}
             />
-          </Col>
-        </Row>
-      </Space>
-    </PageWrapper>
+          </Space>
+        </PageWrapper>
+      </Col>
+    </Row>
   );
 }

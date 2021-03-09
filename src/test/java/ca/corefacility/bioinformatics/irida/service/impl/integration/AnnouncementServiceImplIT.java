@@ -301,7 +301,6 @@ public class AnnouncementServiceImplIT {
         announcementList = announcementService.getUnreadAnnouncementsForUser(user);
 
         assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
-
     }
 
     @Test

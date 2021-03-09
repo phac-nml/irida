@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -141,21 +140,6 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		ViewAnnouncementComponent viewAnnouncementComponent = ViewAnnouncementComponent.goTo(driver());
 		controlPage.gotoViewMessage(0);
 		assertEquals("Unexpected number of user information rows in table", 6, viewAnnouncementComponent.getTableDataSize());
-    }
-
-    @Test
-    public void testMarkAnnouncementAsRead() {
-        List<WebElement> announcements = dashboardPage.getCurrentUnreadAnnouncements();
-        assertEquals("Unexpected number of announcements", 5, announcements.size());
-
-        dashboardPage.markTopAnnouncementAsRead();
-
-        announcements = dashboardPage.getCurrentUnreadAnnouncements();
-        assertEquals("Unexpected number of announcements", 4, announcements.size());
-
-		readPage.goTo();
-        List<WebElement> readAnnouncements = readPage.getAllReadAnnouncements();
-        assertEquals("Unexpected number of announcements displayed as read", 2, readAnnouncements.size());
     }
 
     /**
