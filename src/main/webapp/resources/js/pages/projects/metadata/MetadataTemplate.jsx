@@ -6,6 +6,7 @@ import {
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
 import DnDTable from "../../../components/ant.design/DnDTable";
+import { HelpPopover } from "../../../components/popovers";
 
 const { Paragraph, Text } = Typography;
 
@@ -15,7 +16,9 @@ export function MetadataTemplate({ id }) {
 
   React.useEffect(() => {
     getMetadataTemplate(id).then(({ fields: newFields, ...newTemplate }) => {
-      setFields(newFields);
+      setFields(
+        newFields.map((field) => ({ ...field, key: `field-${field.id}` }))
+      );
       setTemplate(newTemplate);
     });
   }, []);
@@ -64,7 +67,17 @@ export function MetadataTemplate({ id }) {
           <List.Item.Meta
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Text strong>Metadata Fields</Text>
+                <span>
+                  <Text strong>Metadata Fields</Text>
+                  <HelpPopover
+                    content={
+                      <div>
+                        You can drag and drop to re-arrange the order of the
+                        fields
+                      </div>
+                    }
+                  />
+                </span>
                 <Button>Add New Field</Button>
               </div>
             }

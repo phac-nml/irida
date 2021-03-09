@@ -3,15 +3,20 @@ import { Form, Input, Modal, Typography } from "antd";
 import { createProjectMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
+import { HelpPopover } from "../../../components/popovers";
 
 const { Text } = Typography;
 
 export function MetadataTemplateCreate({ children, fields = [] }) {
   const [visible, setVisible] = React.useState(false);
-  const [fieldsState, setFieldsState] = React.useState(
-    fields.map((field) => ({ ...fields, key: field.id }))
-  );
+  const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
+
+  React.useEffect(() => {
+    if (fields.length) {
+      setFieldsState(fields.map((field) => ({ ...field, key: field.id })));
+    }
+  }, [fields]);
 
   const onOk = async () => {
     const values = await form.validateFields();
@@ -50,7 +55,16 @@ export function MetadataTemplateCreate({ children, fields = [] }) {
         onOk={onOk}
       >
         <Form layout="vertical" form={form}>
-          <Form.Item label={"NAME"} name="name">
+          <Form.Item
+            label={"NAME"}
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: "Please suplly a name for this template",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
           <Form.Item label={"DESCRIPTION"} name="description">
@@ -64,7 +78,19 @@ export function MetadataTemplateCreate({ children, fields = [] }) {
             onRowUpdate={setFieldsState}
             columns={[
               {
-                title: <Text strong>Metadata Fields</Text>,
+                title: (
+                  <>
+                    <Text strong>Metadata Fields</Text>
+                    <HelpPopover
+                      content={
+                        <div>
+                          You can drag and drop to re-arrange the order of the
+                          fields
+                        </div>
+                      }
+                    />
+                  </>
+                ),
                 dataIndex: "label",
                 key: "label",
               },
