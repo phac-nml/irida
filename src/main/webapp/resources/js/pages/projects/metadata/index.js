@@ -1,11 +1,11 @@
 import React from "react";
-import {render} from "react-dom";
-import {Link, Router} from "@reach/router";
-import {MetadataTemplatesList} from "./MetadataTemplatesList";
-import {MetadataTemplate} from "./MetadataTemplate";
-import {MetadataTemplates} from "./MetadataTemplates";
-import {Col, Menu, Row, Space} from "antd";
-import {MetadataFields} from "./MetadataFields";
+import { render } from "react-dom";
+import { Link, Router } from "@reach/router";
+import { MetadataTemplatesList } from "./MetadataTemplatesList";
+import { MetadataTemplate } from "./MetadataTemplate";
+import { MetadataTemplates } from "./MetadataTemplates";
+import { Col, Menu, Row, Space } from "antd";
+import { MetadataFields } from "./MetadataFields";
 
 /**
  * React component handles the layout of the metadata fields and templates page.

@@ -1,9 +1,9 @@
 import React from "react";
-import {Popover} from "antd";
+import { Popover } from "antd";
 
 import PropTypes from "prop-types";
-import {IconQuestionCircle} from "../icons/Icons";
-import {grey6} from "../../styles/colors";
+import { IconQuestionCircle } from "../icons/Icons";
+import { grey6 } from "../../styles/colors";
 
 /**
  * This create a help (?) icon with a popover that will contain the contents passed
