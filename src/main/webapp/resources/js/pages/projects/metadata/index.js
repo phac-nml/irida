@@ -1,13 +1,24 @@
 import React from "react";
-import { render } from "react-dom";
-import { Link, Router } from "@reach/router";
-import { MetadataTemplatesList } from "./MetadataTemplatesList";
-import { MetadataTemplate } from "./MetadataTemplate";
-import { MetadataTemplates } from "./MetadataTemplates";
-import { Col, Menu, Row, Space } from "antd";
-import { MetadataFields } from "./MetadataFields";
+import {render} from "react-dom";
+import {Link, Router} from "@reach/router";
+import {MetadataTemplatesList} from "./MetadataTemplatesList";
+import {MetadataTemplate} from "./MetadataTemplate";
+import {MetadataTemplates} from "./MetadataTemplates";
+import {Col, Menu, Row, Space} from "antd";
+import {MetadataFields} from "./MetadataFields";
 
+/**
+ * React component handles the layout of the metadata fields and templates page.
+ *
+ * @param {JSX.Element} children - Components making up the metadata page
+ * @param {Object} props - all remaining props including those passed by Reach Router
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const Content = ({ children, ...props }) => {
+  /**
+   * @type {[String, Function]} which page is currently being displayed
+   */
   const [selectedKey, setSelectedKey] = React.useState("fields");
 
   React.useEffect(() => {
@@ -18,10 +29,10 @@ const Content = ({ children, ...props }) => {
     <Space style={{ display: "block" }}>
       <Menu mode="horizontal" selectedKeys={[selectedKey]}>
         <Menu.Item key="fields">
-          <Link to="">Metadata Fields</Link>
+          <Link to="">{i18n("MetadataFields.title")}</Link>
         </Menu.Item>
         <Menu.Item key="templates">
-          <Link to="templates">Metadata Templates</Link>
+          <Link to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
         </Menu.Item>
       </Menu>
       <Row>
@@ -35,6 +46,7 @@ const Content = ({ children, ...props }) => {
 
 /**
  * Display a list of metadata templates that are associated with a project.
+ *
  * @returns {JSX.Element}
  * @constructor
  */

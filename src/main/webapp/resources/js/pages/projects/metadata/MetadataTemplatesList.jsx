@@ -5,7 +5,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { Link } from "@reach/router";
 import {
-  createProjectMetadataTemplate,
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
 } from "../../../apis/metadata/metadata-templates";
@@ -22,18 +21,6 @@ export function MetadataTemplatesList({ navigate, projectId }) {
       setTemplates(data)
     );
   }, []);
-
-  const createTemplate = async (details) => {
-    try {
-      const template = await createProjectMetadataTemplate(
-        window.project.id,
-        details
-      );
-      navigate(`${template.id}`);
-    } catch (e) {
-      return Promise.reject(e);
-    }
-  };
 
   const deleteTemplate = async (templateId) => {
     try {
@@ -52,7 +39,9 @@ export function MetadataTemplatesList({ navigate, projectId }) {
     <PageHeader
       title={i18n("ProjectMetadataTemplates.title")}
       extra={[
-        <MetadataTemplateCreate key="create" createTemplate={createTemplate} />,
+        <MetadataTemplateCreate>
+          <Button>New Template</Button>
+        </MetadataTemplateCreate>,
       ]}
     >
       <List

@@ -74,8 +74,7 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
-  "project-metadata-templates":
-    "./resources/js/pages/projects/metadata-templates",
+  "project-metadata": "./resources/js/pages/projects/metadata",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
 };

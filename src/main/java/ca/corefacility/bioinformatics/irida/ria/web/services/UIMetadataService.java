@@ -49,6 +49,7 @@ public class UIMetadataService {
 		Project project = projectService.read(projectId);
 		MetadataTemplate template = new MetadataTemplate(request.getName(), ImmutableList.of());
 		template.setDescription(request.getDescription());
+		template.setFields(request.getFields());
 		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
 		return new ProjectMetadataTemplate(join);
 	}

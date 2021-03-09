@@ -9,55 +9,15 @@ import DnDTable from "../../../components/ant.design/DnDTable";
 
 const { Paragraph, Text } = Typography;
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-];
-
-const dataSource = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    index: 0,
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    index: 1,
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    index: 2,
-  },
-];
-
 export function MetadataTemplate({ id }) {
   const [template, setTemplate] = React.useState({});
-
-  const [data, setData] = React.useState(dataSource);
+  const [fields, setFields] = React.useState([]);
 
   React.useEffect(() => {
-    getMetadataTemplate(id).then((data) => setTemplate(data));
+    getMetadataTemplate(id).then(({ fields: newFields, ...newTemplate }) => {
+      setFields(newFields);
+      setTemplate(newTemplate);
+    });
   }, []);
 
   const onChange = async (field, text) => {
@@ -73,7 +33,7 @@ export function MetadataTemplate({ id }) {
 
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
-      <List itemLayout="vertical">
+      <List itemLayout="vertical" size="small">
         <List.Item>
           <List.Item.Meta
             title={<Text strong>Name</Text>}
@@ -110,9 +70,22 @@ export function MetadataTemplate({ id }) {
             }
           />
           <DnDTable
-            data={data}
-            columns={columns}
-            onRowUpdate={(data) => setData(data)}
+            data={fields}
+            columns={[
+              { title: "Metadata Field", dataIndex: "label", key: "label" },
+              { title: "Type", dataIndex: "type", key: "text" },
+              window.project.canManage
+                ? {
+                    title: "Permissions",
+                    dataIndex: "type",
+                    key: "permissions",
+                    render() {
+                      return "All";
+                    },
+                  }
+                : null,
+            ]}
+            onRowUpdate={setFields}
           />
         </List.Item>
       </List>
