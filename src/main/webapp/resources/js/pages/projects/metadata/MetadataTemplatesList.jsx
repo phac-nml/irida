@@ -18,7 +18,12 @@ export function MetadataTemplatesList({ navigate, projectId }) {
 
   React.useEffect(() => {
     getProjectMetadataTemplates(window.project.id).then((data) =>
-      setTemplates(data)
+      setTemplates(
+        data.map((template) => ({
+          ...template,
+          key: `template-${template.id}`,
+        }))
+      )
     );
   }, []);
 
@@ -29,7 +34,7 @@ export function MetadataTemplatesList({ navigate, projectId }) {
         templateId
       );
       notification.success({ message });
-      setTemplates(templates.filter((template) => template.id != templateId));
+      setTemplates(templates.filter((template) => template.id !== templateId));
     } catch (e) {
       notification.error({ message: e });
     }
@@ -39,7 +44,7 @@ export function MetadataTemplatesList({ navigate, projectId }) {
     <PageHeader
       title={i18n("ProjectMetadataTemplates.title")}
       extra={[
-        <MetadataTemplateCreate>
+        <MetadataTemplateCreate key="new-template">
           <Button>New Template</Button>
         </MetadataTemplateCreate>,
       ]}
@@ -52,7 +57,7 @@ export function MetadataTemplatesList({ navigate, projectId }) {
           <List.Item
             className="t-template"
             actions={[
-              <Tag>
+              <Tag key={`fields-${item.id}`}>
                 {i18n("ProjectMetadataTemplates.fields", item.numFields)}
               </Tag>,
               <Button
@@ -60,10 +65,11 @@ export function MetadataTemplatesList({ navigate, projectId }) {
                 size="small"
                 icon={<IconDownloadFile />}
                 href={`${BASE_URL}/${item.id}/excel`}
-                key="list-download"
+                key={`download-${item.id}`}
               />,
               window.project.canManage ? (
                 <Popconfirm
+                  key={`remove-${item.id}`}
                   placement="bottomRight"
                   title={"Delete this template?"}
                   onConfirm={() => deleteTemplate(item.id)}

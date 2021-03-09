@@ -8,12 +8,10 @@ const { Text } = Typography;
 
 export function MetadataTemplateCreate({ children, fields = [] }) {
   const [visible, setVisible] = React.useState(false);
-  const [fieldsState, setFieldsState] = React.useState([]);
+  const [fieldsState, setFieldsState] = React.useState(
+    fields.map((field) => ({ ...fields, key: field.id }))
+  );
   const [form] = Form.useForm();
-
-  React.useEffect(() => {
-    setFieldsState([...fields]);
-  }, [fields]);
 
   const onOk = async () => {
     const values = await form.validateFields();

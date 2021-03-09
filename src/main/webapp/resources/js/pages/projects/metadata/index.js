@@ -29,7 +29,7 @@ const Content = ({ children, ...props }) => {
     <Space style={{ display: "block" }}>
       <Menu mode="horizontal" selectedKeys={[selectedKey]}>
         <Menu.Item key="fields">
-          <Link to="">{i18n("MetadataFields.title")}</Link>
+          <Link to="fields">{i18n("MetadataFields.title")}</Link>
         </Menu.Item>
         <Menu.Item key="templates">
           <Link to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
@@ -54,7 +54,7 @@ function ProjectMetadataTemplates() {
   return (
     <Router>
       <Content path={"/projects/:projectId/settings/metadata"}>
-        <MetadataFields path="/" />
+        <MetadataFields path="/fields/" />
         <MetadataTemplates path="/templates">
           <MetadataTemplatesList path="/" />
           <MetadataTemplate path="/:id" />
