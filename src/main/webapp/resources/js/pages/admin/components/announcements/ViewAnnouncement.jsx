@@ -39,6 +39,7 @@ function ViewAnnouncementModal({ announcement }) {
         visible={visible}
         width={640}
         footer={null}
+        maskClosable={false}
       >
         <PagedTableProvider
           url={setBaseUrl(`ajax/announcements/${announcement.id}/details/list`)}

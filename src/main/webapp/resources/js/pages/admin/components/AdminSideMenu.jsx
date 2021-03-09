@@ -24,7 +24,6 @@ export default function AdminHeader() {
   // The following renders the AdminPanelSideMenu component
   return (
     <Sider width={220}>
-      return (
       <section>
         <Link
           style={{ paddingLeft: 10, paddingRight: 10 }}
@@ -121,7 +120,6 @@ export default function AdminHeader() {
           </Menu.Item>
         </Menu>
       </section>
-      );
     </Sider>
   );
 }

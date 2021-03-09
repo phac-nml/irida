@@ -1,6 +1,5 @@
 import React from "react";
 import { Modal, notification, Typography } from "antd";
-import { VisibilityProvider } from "../../../contexts/visibility-context";
 import { formatDate } from "../../../utilities/date-utilities";
 import Markdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
@@ -18,7 +17,7 @@ const { confirm } = Modal;
  * @returns {*}
  * @constructor
  */
-function ViewUnreadAnnouncementModal({
+function ViewAnnouncementModal({
   announcementID,
   announcementTitle,
   markAnnouncementAsRead,
@@ -38,17 +37,20 @@ function ViewUnreadAnnouncementModal({
       type: "info",
       width: `60%`,
       icon: <PriorityFlag hasPriority={announcement.priority} />,
-      okText: `Read`,
+      okText: i18n("ViewAnnouncement.read"),
       onOk() {
         markAnnouncementAsRead(announcement.identifier);
       },
+      okButtonProps: markAnnouncementAsRead
+        ? {}
+        : { style: { display: "none" } },
       title: (
         <>
           <Text strong>{announcement.title}</Text>
           <br />
           <Text type="secondary" style={{ fontSize: `.8em` }}>
             {i18n(
-              "ViewUnreadAnnouncement.details",
+              "ViewAnnouncement.details",
               announcement.user.username,
               formatDate({ date: announcement.createdDate })
             )}
@@ -62,26 +64,23 @@ function ViewUnreadAnnouncementModal({
       ),
     });
   return (
-    <>
-      <LinkButton
-        text={announcementTitle}
-        onClick={() => showAnnouncement(announcementID)}
-      />
-    </>
+    <LinkButton
+      text={announcementTitle}
+      onClick={() => showAnnouncement(announcementID)}
+    />
   );
 }
-export default function ViewUnreadAnnouncement({
+
+export default function ViewAnnouncement({
   announcementID,
   announcementTitle,
   markAnnouncementAsRead,
 }) {
   return (
-    <VisibilityProvider>
-      <ViewUnreadAnnouncementModal
-        announcementID={announcementID}
-        announcementTitle={announcementTitle}
-        markAnnouncementAsRead={markAnnouncementAsRead}
-      />
-    </VisibilityProvider>
+    <ViewAnnouncementModal
+      announcementID={announcementID}
+      announcementTitle={announcementTitle}
+      markAnnouncementAsRead={markAnnouncementAsRead}
+    />
   );
 }
