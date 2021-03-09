@@ -12,9 +12,11 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -128,14 +130,34 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testReadAnnouncements() {
-		final User u = user();
+	public void testReadNewAnnouncements() {
+		User u = user();
 
-		when(announcementUserJoinRepository.getAnnouncementsReadByUser(u)).thenReturn(anyList());
+		Announcement first_announcement = new Announcement("test 1", "this is a test message", true, u);
+		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u);
+		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
+
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
 
 		userService.create(u);
 
 		verify(announcementUserJoinRepository, times(0)).save(any(AnnouncementUserJoin.class));
+	}
+
+	@Test
+	public void testReadOldAnnouncements() {
+		User u = user();
+
+		Date two_months_ago = new DateTime().minusMonths(2).toDate();
+		Announcement first_announcement = new Announcement("test 1", "this is a test message", true, u, two_months_ago );
+		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u, two_months_ago);
+		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
+
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+
+		userService.create(u);
+
+		verify(announcementUserJoinRepository, times(2)).save(any(AnnouncementUserJoin.class));
 	}
 
 	@Test
