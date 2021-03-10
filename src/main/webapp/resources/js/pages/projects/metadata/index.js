@@ -10,6 +10,7 @@ import {MetadataFields} from "./MetadataFields";
 import store from "./redux/store";
 import {Provider, useDispatch} from "react-redux";
 import {fetchFieldsForProject} from "./fields/fieldsSlice";
+import {fetchTemplatesForProject} from "./templates/templatesSlice";
 
 /**
  * React component handles the layout of the metadata fields and templates page.
@@ -28,6 +29,7 @@ const Content = ({ projectId, children, ...props }) => {
 
   React.useEffect(() => {
     dispatch(fetchFieldsForProject(projectId));
+    dispatch(fetchTemplatesForProject(projectId));
   }, [dispatch, projectId]);
 
   React.useEffect(() => {
@@ -35,21 +37,23 @@ const Content = ({ projectId, children, ...props }) => {
   }, [props["*"]]);
 
   return (
-    <Space style={{ display: "block" }}>
-      <Menu mode="horizontal" selectedKeys={[selectedKey]}>
-        <Menu.Item key="fields">
-          <Link to="fields">{i18n("MetadataFields.title")}</Link>
-        </Menu.Item>
-        <Menu.Item key="templates">
-          <Link to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
-        </Menu.Item>
-      </Menu>
-      <Row>
-        <Col xs={24} lg={18} xxl={12}>
+    <Row>
+      <Col xs={24} lg={18} xxl={12}>
+        <Space direction="vertical" size="large" style={{ display: "block" }}>
+          <Menu mode="horizontal" selectedKeys={[selectedKey]}>
+            <Menu.Item key="fields">
+              <Link to="fields">{i18n("MetadataFields.title")}</Link>
+            </Menu.Item>
+            <Menu.Item key="templates">
+              <Link to="templates">
+                {i18n("ProjectMetadataTemplates.title")}
+              </Link>
+            </Menu.Item>
+          </Menu>
           {children}
-        </Col>
-      </Row>
-    </Space>
+        </Space>
+      </Col>
+    </Row>
   );
 };
 

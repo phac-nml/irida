@@ -14,12 +14,14 @@ export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
     templates: [],
+    loading: true,
   },
   reducers: {},
   extraReducers: {
     [fetchTemplatesForProject.fulfilled]: (state, action) => ({
       ...state,
       templates: action.payload,
+      loading: false,
     }),
   },
 });
