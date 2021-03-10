@@ -1,11 +1,15 @@
 import React from "react";
-import { render } from "react-dom";
-import { Link, Router } from "@reach/router";
-import { MetadataTemplatesList } from "./MetadataTemplatesList";
-import { MetadataTemplate } from "./MetadataTemplate";
-import { MetadataTemplates } from "./MetadataTemplates";
-import { Col, Menu, Row, Space } from "antd";
-import { MetadataFields } from "./MetadataFields";
+import {render} from "react-dom";
+import {Link, Router} from "@reach/router";
+import {MetadataTemplatesList} from "./MetadataTemplatesList";
+import {MetadataTemplate} from "./MetadataTemplate";
+import {MetadataTemplates} from "./MetadataTemplates";
+import {Col, Menu, Row, Space} from "antd";
+import {MetadataFields} from "./MetadataFields";
+
+import store from "./redux/store";
+import {Provider, useDispatch} from "react-redux";
+import {fetchFieldsForProject} from "./fields/fieldsSlice";
 
 /**
  * React component handles the layout of the metadata fields and templates page.
@@ -15,11 +19,16 @@ import { MetadataFields } from "./MetadataFields";
  * @returns {JSX.Element}
  * @constructor
  */
-const Content = ({ children, ...props }) => {
+const Content = ({ projectId, children, ...props }) => {
+  const dispatch = useDispatch();
   /**
    * @type {[String, Function]} which page is currently being displayed
    */
   const [selectedKey, setSelectedKey] = React.useState("fields");
+
+  React.useEffect(() => {
+    dispatch(fetchFieldsForProject(projectId));
+  }, [dispatch, projectId]);
 
   React.useEffect(() => {
     setSelectedKey(props["*"].includes("templates") ? "templates" : "fields");
@@ -52,15 +61,17 @@ const Content = ({ children, ...props }) => {
  */
 function ProjectMetadataTemplates() {
   return (
-    <Router>
-      <Content path={"/projects/:projectId/settings/metadata"}>
-        <MetadataFields path="/fields/" />
-        <MetadataTemplates path="/templates">
-          <MetadataTemplatesList path="/" />
-          <MetadataTemplate path="/:id" />
-        </MetadataTemplates>
-      </Content>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Content path={"/projects/:projectId/settings/metadata"}>
+          <MetadataFields path="/fields/" />
+          <MetadataTemplates path="/templates">
+            <MetadataTemplatesList path="/" />
+            <MetadataTemplate path="/:id" />
+          </MetadataTemplates>
+        </Content>
+      </Router>
+    </Provider>
   );
 }
 

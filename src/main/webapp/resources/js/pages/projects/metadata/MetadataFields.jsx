@@ -1,45 +1,48 @@
 import React from "react";
 import { Button, PageHeader, Space, Table } from "antd";
-import { getMetadataFieldsForProject } from "../../../apis/metadata/field";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
+import { useSelector } from "react-redux";
 
-export function MetadataFields({ projectId }) {
-  const [fields, setFields] = React.useState();
+export function MetadataFields({}) {
+  const { fields, loading } = useSelector((state) => state.fields);
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
-
-  React.useEffect(() => {
-    getMetadataFieldsForProject(projectId).then((data) => {
-      setFields(data.map((f) => ({ ...f, key: `field-${f.id}` })));
-    });
-  }, [projectId]);
 
   React.useEffect(() => {
     if (fields) {
       const set = new Set(selected);
       setSelectedFields(fields.filter((field) => set.has(field.key)));
     }
-  }, [selected]);
+  }, [fields, selected]);
 
   return (
-    <PageHeader title={"METADATA FIELDS"}>
+    <PageHeader title={i18n("MetadataFields.title")}>
       <Space direction="vertical" style={{ display: "block" }}>
         <div>
           <MetadataTemplateCreate fields={selectedFields}>
-            <Button>Create New Template</Button>
+            <Button>{i18n("MetadataTemplates.create")}</Button>
           </MetadataTemplateCreate>
         </div>
         <Table
+          loading={loading}
           pagination={false}
           rowSelection={{ selectedRowKeys: selected, onChange: setSelected }}
           scroll={{ y: 800 }}
           dataSource={fields}
           columns={[
-            { title: "Metadata Field", dataIndex: "label", key: "label" },
-            { title: "Type", dataIndex: "type", key: "text" },
+            {
+              title: i18n("MetadataTemplate.table.field"),
+              dataIndex: "label",
+              key: "label",
+            },
+            {
+              title: i18n("MetadataTemplate.table.type"),
+              dataIndex: "type",
+              key: "text",
+            },
             window.project.canManage
               ? {
-                  title: "Permissions",
+                  title: i18n("MetadataTemplate.table.permissions"),
                   dataIndex: "type",
                   key: "permissions",
                   render() {

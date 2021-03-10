@@ -4,28 +4,15 @@ import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { Link } from "@reach/router";
-import {
-  deleteMetadataTemplate,
-  getProjectMetadataTemplates,
-} from "../../../apis/metadata/metadata-templates";
+import { deleteMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import { blue6 } from "../../../styles/colors";
+import { useSelector } from "react-redux";
 
-export function MetadataTemplatesList({ navigate, projectId }) {
+export function MetadataTemplatesList({ projectId }) {
+  const { templates } = useSelector((state) => state.templates);
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
-  const [templates, setTemplates] = React.useState([]);
-
-  React.useEffect(() => {
-    getProjectMetadataTemplates(window.project.id).then((data) =>
-      setTemplates(
-        data.map((template) => ({
-          ...template,
-          key: `template-${template.id}`,
-        }))
-      )
-    );
-  }, []);
 
   const deleteTemplate = async (templateId) => {
     try {
@@ -34,7 +21,7 @@ export function MetadataTemplatesList({ navigate, projectId }) {
         templateId
       );
       notification.success({ message });
-      setTemplates(templates.filter((template) => template.id !== templateId));
+      // setTemplates(templates.filter((template) => template.id !== templateId));
     } catch (e) {
       notification.error({ message: e });
     }
