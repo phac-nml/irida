@@ -1,16 +1,16 @@
 import React from "react";
-import {render} from "react-dom";
-import {Link, Router} from "@reach/router";
-import {MetadataTemplatesList} from "./MetadataTemplatesList";
-import {MetadataTemplate} from "./MetadataTemplate";
-import {MetadataTemplates} from "./MetadataTemplates";
-import {Col, Menu, Row, Space} from "antd";
-import {MetadataFields} from "./MetadataFields";
+import { render } from "react-dom";
+import { Link, Router } from "@reach/router";
+import { MetadataTemplatesList } from "./MetadataTemplatesList";
+import { MetadataTemplate } from "./MetadataTemplate";
+import { MetadataTemplates } from "./MetadataTemplates";
+import { Col, Menu, Row, Space } from "antd";
+import { MetadataFields } from "./MetadataFields";
 
 import store from "./redux/store";
-import {Provider, useDispatch} from "react-redux";
-import {fetchFieldsForProject} from "./fields/fieldsSlice";
-import {fetchTemplatesForProject} from "./templates/templatesSlice";
+import { Provider, useDispatch } from "react-redux";
+import { fetchFieldsForProject } from "./fields/fieldsSlice";
+import { fetchTemplatesForProject } from "./templates/templatesSlice";
 
 /**
  * React component handles the layout of the metadata fields and templates page.
