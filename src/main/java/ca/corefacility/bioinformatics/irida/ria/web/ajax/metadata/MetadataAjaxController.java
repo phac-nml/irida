@@ -3,12 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
@@ -56,8 +58,12 @@ public class MetadataAjaxController {
 	@DeleteMapping("/templates/{templateId}")
 	public ResponseEntity<AjaxResponse> deleteMetadataTemplate(@PathVariable Long templateId,
 			@RequestParam Long projectId) {
-		service.deleteMetadataTemplate(templateId, projectId);
-		return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
+		try {
+			service.deleteMetadataTemplate(templateId, projectId);
+			return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse("Could not remove templates"));
+		}
 	}
 
 	@GetMapping("/fields")

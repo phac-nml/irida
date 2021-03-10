@@ -54,6 +54,6 @@ export async function deleteMetadataTemplate(projectId, templateId) {
     );
     return data.message;
   } catch (e) {
-    return Promise.reject(e.response.data.message);
+    return Promise.reject(e.response.data.error);
   }
 }

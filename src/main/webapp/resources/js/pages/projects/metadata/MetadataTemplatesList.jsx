@@ -3,28 +3,23 @@ import { Button, List, notification, Popconfirm, Tag } from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
-import { deleteMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import { blue6 } from "../../../styles/colors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { removeTemplateFromProject } from "./templates/templatesSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);
+  const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
 
-  const deleteTemplate = async (templateId) => {
-    try {
-      const message = await deleteMetadataTemplate(
-        window.project.id,
-        templateId
-      );
-      notification.success({ message });
-      // setTemplates(templates.filter((template) => template.id !== templateId));
-    } catch (e) {
-      notification.error({ message: e });
-    }
-  };
+  const deleteTemplate = (templateId) =>
+    dispatch(removeTemplateFromProject({ projectId, templateId }))
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }))
+      .catch((message) => notification.error({ message }));
 
   return (
     <List
