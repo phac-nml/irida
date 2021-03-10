@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMeta
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
- * Ajax controller for project metedata templates.
+ * Ajax controller for project metadata templates.
  */
 @RestController
 @RequestMapping("/ajax/metadata")
@@ -31,6 +31,7 @@ public class MetadataAjaxController {
 
 	/**
 	 * Get a list of metadata templates for a specific project
+	 *
 	 * @param projectId Identifier for the project to get templates for.
 	 * @return List of metadata templates with associate details.
 	 */
@@ -39,22 +40,49 @@ public class MetadataAjaxController {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
+	/**
+	 * Create a new metadata template within a project
+	 *
+	 * @param request   details about the template to create
+	 * @param projectId identifier for a project
+	 * @return the newly created {@link ProjectMetadataTemplate}
+	 */
 	@PostMapping("/templates")
-	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(@RequestBody CreateMetadataTemplateRequest request, @RequestParam Long projectId) {
+	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(
+			@RequestBody CreateMetadataTemplateRequest request, @RequestParam Long projectId) {
 		return ResponseEntity.ok(service.createMetadataTemplate(request, projectId));
 	}
 
+	/**
+	 * Get a metadata template
+	 *
+	 * @param templateId - Identifier for a {@link MetadataTemplate}
+	 * @return a {@link MetadataTemplate}
+	 */
 	@GetMapping("/templates/{templateId}")
 	public ResponseEntity<MetadataTemplate> getMetadataTemplate(@PathVariable Long templateId) {
 		return ResponseEntity.ok(service.getMetadataTemplate(templateId));
 	}
 
+	/**
+	 * Updated the fields in a {@link MetadataTemplate}
+	 *
+	 * @param template the updated template to save
+	 * @return Message for UI to display about the result of the update.
+	 */
 	@PutMapping("/templates/{templateId}")
 	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template) {
 		service.updateMetadataTemplate(template);
 		return ResponseEntity.ok(new AjaxSuccessResponse("__Template has been saved"));
 	}
 
+	/**
+	 * Delete a metadata template from the project
+	 *
+	 * @param templateId Identifier for a {@link MetadataTemplate}
+	 * @param projectId  Identifier for the current project
+	 * @return Message for UI about the result
+	 */
 	@DeleteMapping("/templates/{templateId}")
 	public ResponseEntity<AjaxResponse> deleteMetadataTemplate(@PathVariable Long templateId,
 			@RequestParam Long projectId) {
@@ -62,10 +90,17 @@ public class MetadataAjaxController {
 			service.deleteMetadataTemplate(templateId, projectId);
 			return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse("Could not remove templates"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse("Could not remove templates"));
 		}
 	}
 
+	/**
+	 * Get all the metadata fields in a project
+	 *
+	 * @param projectId Identifier for a project
+	 * @return list of {@link MetadataTemplateField}s
+	 */
 	@GetMapping("/fields")
 	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);

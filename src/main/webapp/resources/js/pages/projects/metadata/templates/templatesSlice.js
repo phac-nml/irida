@@ -5,6 +5,10 @@ import {
 } from "../../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../../utilities/http-utilities";
 
+/**
+ * Redux Async Thunk for fetching all the templates for a specific project.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const fetchTemplatesForProject = createAsyncThunk(
   `templates/fetchTemplatesForProject`,
   async (projectId) => {
@@ -13,6 +17,10 @@ export const fetchTemplatesForProject = createAsyncThunk(
   }
 );
 
+/**
+ * Redux Async Thunk for removing a template from a specific project.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const removeTemplateFromProject = createAsyncThunk(
   `templates/removeTemplateFromProject`,
   async ({ projectId, templateId }, { rejectWithValue }) => {
