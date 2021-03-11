@@ -36,7 +36,7 @@ public class MetadataAjaxController {
 	 * @return List of metadata templates with associate details.
 	 */
 	@GetMapping("/templates")
-	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
+	public ResponseEntity<List<MetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
@@ -48,7 +48,7 @@ public class MetadataAjaxController {
 	 * @return the newly created {@link ProjectMetadataTemplate}
 	 */
 	@PostMapping("/templates")
-	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(
+	public ResponseEntity<MetadataTemplate> createNewMetadataTemplate(
 			@RequestBody CreateMetadataTemplateRequest request, @RequestParam Long projectId) {
 		return ResponseEntity.ok(service.createMetadataTemplate(request, projectId));
 	}

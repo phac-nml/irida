@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -32,26 +31,26 @@ public class UIMetadataService {
 	}
 
 	/**
-	 * Get a list of {@link ProjectMetadataTemplate} for a specific {@link Project}
+	 * Get a list of {@link MetadataTemplate} for a specific {@link Project}
 	 *
 	 * @param projectId Identifier for a {@link Project}
-	 * @return {@link List} of {@link ProjectMetadataTemplate}
+	 * @return {@link List} of {@link MetadataTemplate}
 	 */
-	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
+	public List<MetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
 		return joins.stream()
-				.map(ProjectMetadataTemplate::new)
+				.map(ProjectMetadataTemplateJoin::getObject)
 				.collect(Collectors.toList());
 	}
 
-	public ProjectMetadataTemplate createMetadataTemplate(CreateMetadataTemplateRequest request, Long projectId) {
+	public MetadataTemplate createMetadataTemplate(CreateMetadataTemplateRequest request, Long projectId) {
 		Project project = projectService.read(projectId);
 		MetadataTemplate template = new MetadataTemplate(request.getName(), ImmutableList.of());
 		template.setDescription(request.getDescription());
 		template.setFields(request.getFields());
 		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
-		return new ProjectMetadataTemplate(join);
+		return join.getObject();
 	}
 
 	public MetadataTemplate getMetadataTemplate(Long templateId) {

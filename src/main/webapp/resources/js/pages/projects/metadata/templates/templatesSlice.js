@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
 } from "../../../../apis/metadata/metadata-templates";
-import { addKeysToList } from "../../../../utilities/http-utilities";
+import {addKeysToList} from "../../../../utilities/http-utilities";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.
@@ -13,7 +13,7 @@ export const fetchTemplatesForProject = createAsyncThunk(
   `templates/fetchTemplatesForProject`,
   async (projectId) => {
     const templates = await getProjectMetadataTemplates(projectId);
-    return addKeysToList(templates, "template", "id");
+    return addKeysToList(templates, "template", "identifier");
   }
 );
 
@@ -38,6 +38,7 @@ export const templatesSlice = createSlice({
   initialState: {
     templates: [],
     loading: true,
+    template: undefined,
   },
   reducers: {},
   extraReducers: {

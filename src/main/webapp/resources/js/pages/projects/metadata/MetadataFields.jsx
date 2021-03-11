@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Space, Table } from "antd";
-import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
-import { useSelector } from "react-redux";
+import {Button, Space, Table} from "antd";
+import {MetadataTemplateCreate} from "./MetadataTemplateCreate";
+import {useSelector} from "react-redux";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -20,10 +20,12 @@ export function MetadataFields() {
     }
   }, [fields, selected]);
 
+  const addNewField = () => alert("This needs to be created!");
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Space>
-        <Button>Add New Field</Button>
+        <Button onClick={addNewField}>Add New Field</Button>
         <MetadataTemplateCreate fields={selectedFields}>
           <Button disabled={selected.length === 0}>
             {i18n("MetadataTemplates.create")}

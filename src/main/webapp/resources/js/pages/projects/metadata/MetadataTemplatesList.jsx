@@ -32,7 +32,7 @@ export function MetadataTemplatesList({ projectId }) {
           className="t-template"
           actions={[
             <Tag key={`fields-${item.id}`}>
-              {i18n("ProjectMetadataTemplates.fields", item.numFields)}
+              {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
             </Tag>,
             <Button
               shape="circle"

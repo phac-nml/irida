@@ -7,6 +7,7 @@ import {
 } from "../../../apis/metadata/metadata-templates";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
+import { addKeysToList } from "../../../utilities/http-utilities";
 
 const { Paragraph, Text } = Typography;
 
@@ -16,22 +17,30 @@ export function MetadataTemplate({ id }) {
 
   React.useEffect(() => {
     getMetadataTemplate(id).then(({ fields: newFields, ...newTemplate }) => {
-      setFields(
-        newFields.map((field) => ({ ...field, key: `field-${field.id}` }))
-      );
+      setFields(addKeysToList(newFields, "field"));
       setTemplate(newTemplate);
     });
   }, []);
 
+  const updateTemplate = async (updated) => {
+    try {
+      const message = await updateMetadataTemplate(updated);
+      notification.success({ message });
+      setTemplate(updated);
+    } catch (e) {}
+  };
+
   const onChange = async (field, text) => {
     if (template[field] !== text) {
       const updated = { ...template, [field]: text };
-      try {
-        const message = await updateMetadataTemplate(updated);
-        notification.success({ message });
-        setTemplate(updated);
-      } catch (e) {}
+      await updateTemplate(updated);
     }
+  };
+
+  const onRowUpdate = async (newOrder) => {
+    console.log(template.id);
+    const updated = { ...template, fields: newOrder };
+    await updateTemplate(updated);
   };
 
   return (
@@ -98,7 +107,7 @@ export function MetadataTemplate({ id }) {
                   }
                 : null,
             ]}
-            onRowUpdate={setFields}
+            onRowUpdate={onRowUpdate}
           />
         </List.Item>
       </List>
