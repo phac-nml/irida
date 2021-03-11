@@ -1,9 +1,9 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
 } from "../../../../apis/metadata/metadata-templates";
-import {addKeysToList} from "../../../../utilities/http-utilities";
+import { addKeysToList } from "../../../../utilities/http-utilities";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.
