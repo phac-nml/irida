@@ -9,6 +9,7 @@ Changes
 * [Developer]: Fixed the advanced visualisation viewer for Phylogeny Tree with metadata.
 * [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
 * [UI]: Update to the pipeline launch process.
+* [Developer/REST/UI]: Added announcements bell icon to main nav bar, added priority announcements modal at login, and refreshed user announcements page.
 
 20.09 to 21.01
 --------------
