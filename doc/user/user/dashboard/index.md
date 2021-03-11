@@ -158,7 +158,8 @@ The IRIDA platform uses announcements to inform users of important information. 
 * When scheduled downtime will happen
 * Recently added features or bug fixes
 
-There are priority and non-priority announcements, indicated by the flag. Priority announcements will be automatically displayed at login. These announcements must be acknowledged that they have been read before continuing.
+There are priority and non-priority announcements, represented by the flag icon. A blue flag represents a priority announcement and a grey flag represents a non-priority announcement.
+Priority announcements will be automatically displayed at login. These announcements must be acknowledged that they have been read before continuing.
 
 To dismiss an announcement or mark it as read, hit the `Close` button. Or if more than one priority announcement exists, hit the `Next` button.
 
@@ -170,19 +171,17 @@ The total unread announcement count is represented by the badge number on the be
 
 To view the list of all unread announcements, hover over the bell icon for a drop down menu to appear.
 
-![Announcement Submenu](images/announcements-submenu-zoomed.png)
+![Announcement Submenu](images/announcements-submenu.png)
 
-To view the announcement details, click on the announcement title link. Hit the `Close`, `Next`, or `Previous` button to mark the announcement as read. 
-To close the announcement and come back to it later, hit the `X` icon in the top-right corner of the modal. 
+To view the announcement details, click on the announcement title link. A modal will open and display the announcement details. 
+Hit the `Close`, `Next`, or `Previous` button to mark the announcement as read. To close the non-priority announcement and come back to it later, hit the `X` icon in the top-right corner of the modal. 
 
 ![Announcement Submenu](images/announcements-modal.png)
 
-To view all announcements, hit the `View All` link. This will bring you to the announcements page.
+To view all announcements, hit the `View All` link from the drop down menu. This will bring you to the announcements page.
 
 ![Announcements Page](images/announcements-page.png)
 
 To view the announcement details, click on the announcement title link.
-
-![Announcements Page Modal](images/announcements-page-modal.png)
 
 <a href="../login/">Previous: Logging in</a><a href="../user-groups/" style="float: right;">Next: Managing user groups</a>
