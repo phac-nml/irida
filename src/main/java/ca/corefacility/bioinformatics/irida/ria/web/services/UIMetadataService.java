@@ -53,10 +53,6 @@ public class UIMetadataService {
 		return join.getObject();
 	}
 
-	public MetadataTemplate getMetadataTemplate(Long templateId) {
-		return templateService.read(templateId);
-	}
-
 	public void updateMetadataTemplate(MetadataTemplate template) {
 		templateService.updateMetadataTemplateInProject(template);
 	}

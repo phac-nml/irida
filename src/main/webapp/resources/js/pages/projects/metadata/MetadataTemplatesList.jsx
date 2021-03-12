@@ -1,12 +1,11 @@
 import React from "react";
-import { Button, List, notification, Popconfirm, Tag } from "antd";
+import { Button, List, Popconfirm, Tag } from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
 import { blue6 } from "../../../styles/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { removeTemplateFromProject } from "./templates/templatesSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
 
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);
@@ -15,11 +14,15 @@ export function MetadataTemplatesList({ projectId }) {
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
 
-  const deleteTemplate = (templateId) =>
-    dispatch(removeTemplateFromProject({ projectId, templateId }))
-      .then(unwrapResult)
-      .then(({ message }) => notification.success({ message }))
-      .catch((message) => notification.error({ message }));
+  const deleteTemplate = async (templateId) => {
+    const { payload } = await dispatch(
+      removeTemplateFromProject({ projectId, templateId })
+    );
+    console.log(payload);
+    // .then(unwrapResult)
+    // .then(({ message }) => notification.success({ message }))
+    // .catch((message) => notification.error({ message }));
+  };
 
   return (
     <List
@@ -31,22 +34,22 @@ export function MetadataTemplatesList({ projectId }) {
         <List.Item
           className="t-template"
           actions={[
-            <Tag key={`fields-${item.id}`}>
+            <Tag key={`fields-${item.identifier}`}>
               {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
             </Tag>,
             <Button
               shape="circle"
               size="small"
               icon={<IconDownloadFile />}
-              href={`${BASE_URL}/${item.id}/excel`}
-              key={`download-${item.id}`}
+              href={`${BASE_URL}/${item.identifier}/excel`}
+              key={`download-${item.identifier}`}
             />,
             window.project.canManage ? (
               <Popconfirm
                 key={`remove-${item.id}`}
                 placement="bottomRight"
                 title={"Delete this template?"}
-                onConfirm={() => deleteTemplate(item.id)}
+                onConfirm={() => deleteTemplate(item.identifier)}
               >
                 <Button shape="circle" size="small" icon={<IconRemove />} />
               </Popconfirm>
@@ -55,7 +58,7 @@ export function MetadataTemplatesList({ projectId }) {
         >
           <List.Item.Meta
             title={
-              <Link style={{ color: blue6 }} to={`${item.id}`}>
+              <Link style={{ color: blue6 }} to={`${item.identifier}`}>
                 {item.label}
               </Link>
             }

@@ -54,17 +54,6 @@ public class MetadataAjaxController {
 	}
 
 	/**
-	 * Get a metadata template
-	 *
-	 * @param templateId - Identifier for a {@link MetadataTemplate}
-	 * @return a {@link MetadataTemplate}
-	 */
-	@GetMapping("/templates/{templateId}")
-	public ResponseEntity<MetadataTemplate> getMetadataTemplate(@PathVariable Long templateId) {
-		return ResponseEntity.ok(service.getMetadataTemplate(templateId));
-	}
-
-	/**
 	 * Updated the fields in a {@link MetadataTemplate}
 	 *
 	 * @param template the updated template to save

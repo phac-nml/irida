@@ -26,15 +26,6 @@ export async function createProjectMetadataTemplate(projectId, parameters) {
   }
 }
 
-export async function getMetadataTemplate(id) {
-  try {
-    const { data } = await axios.get(`${BASE_URL}/${id}`);
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
-}
-
 export async function updateMetadataTemplate(template) {
   try {
     const { data } = await axios.put(

@@ -1,13 +1,16 @@
 import React from "react";
 import { Form, Input, Modal, Typography } from "antd";
-import { createProjectMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
+import { useDispatch } from "react-redux";
+import { createNewMetadataTemplate } from "./templates/templatesSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const { Text } = Typography;
 
-export function MetadataTemplateCreate({ children, fields = [] }) {
+export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
+  const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
   const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
@@ -22,23 +25,16 @@ export function MetadataTemplateCreate({ children, fields = [] }) {
     const values = await form.validateFields();
     try {
       values.fields = fieldsState;
-      await createTemplate(values);
-      form.resetFields(Object.keys(values));
+      dispatch(createNewMetadataTemplate({ projectId, template: values }))
+        .then(unwrapResult)
+        .then((template) => {
+          form.resetFields(Object.keys(values));
+          setVisible(false);
+          navigate(`templates/${template.identifier}`);
+        });
       setVisible(false);
     } catch (e) {
       console.log(e);
-    }
-  };
-
-  const createTemplate = async (details) => {
-    try {
-      const template = await createProjectMetadataTemplate(
-        window.project.id,
-        details
-      );
-      navigate(`templates/${template.id}`);
-    } catch (e) {
-      return Promise.reject(e);
     }
   };
 
