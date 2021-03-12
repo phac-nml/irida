@@ -9,7 +9,11 @@ import {
   Row,
   Tag,
 } from "antd";
-import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
+import {
+  IconDownloadFile,
+  IconRemove,
+  IconSetDefault,
+} from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { Link } from "@reach/router";
@@ -17,6 +21,8 @@ import {
   createProjectMetadataTemplate,
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
+  removeDefaultMetadataTemplate,
+  setDefaultMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
 import { blue6 } from "../../../styles/colors";
 
@@ -57,6 +63,27 @@ export function MetadataTemplatesList({ navigate }) {
     }
   };
 
+  const setDefaultTemplate = async (templateId) => {
+    try {
+      const message = await setDefaultMetadataTemplate(
+        window.project.id,
+        templateId
+      );
+      notification.success({ message });
+    } catch (e) {
+      notification.error({ message: e });
+    }
+  };
+
+  const removeDefaultTemplate = async () => {
+    try {
+      const message = await removeDefaultMetadataTemplate(window.project.id);
+      notification.success({ message });
+    } catch (e) {
+      notification.error({ message: e });
+    }
+  };
+
   return (
     <Row>
       <Col xs={24} lg={18} xxl={12}>
@@ -66,6 +93,7 @@ export function MetadataTemplatesList({ navigate }) {
             <MetadataTemplateCreate
               key="create"
               createTemplate={createTemplate}
+              removeDefaultTemplate={removeDefaultTemplate}
             />,
           ]}
         >
@@ -80,6 +108,13 @@ export function MetadataTemplatesList({ navigate }) {
                   <Tag>
                     {i18n("ProjectMetadataTemplates.fields", item.numFields)}
                   </Tag>,
+                  <Button
+                    shape="circle"
+                    size="small"
+                    icon={<IconSetDefault />}
+                    onClick={() => setDefaultTemplate(item.id)}
+                    key="set-default-template"
+                  />,
                   <Button
                     shape="circle"
                     size="small"

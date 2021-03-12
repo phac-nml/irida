@@ -145,15 +145,24 @@ public class LineListController {
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
 
+		MetadataTemplate defaultMetadataTemplate = project.getDefaultMetadataTemplate();
+
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
-				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
+				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields, false));
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
 			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
 			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, canEdit);
-			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
+
+			if(defaultMetadataTemplate != null && defaultMetadataTemplate.getId() == template.getId()) {
+				// If project has default metadata template then set it to the beginning of the list
+				templates.add(new UIMetadataTemplate(defaultMetadataTemplate.getId(), defaultMetadataTemplate.getName(), fields, true));
+			} else {
+				templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields, false));
+			}
+
 		}
 
 		return templates;
@@ -185,11 +194,14 @@ public class LineListController {
 	 */
 	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns,
 			boolean canEdit) {
+
+		AgGridColumn col1 = allFieldsAgGridColumns.get(0);
+		AgGridColumn col2 = allFieldsAgGridColumns.get(1);
+
 		/*
 		Need to remove the sample since allFields begins with the sample.
 		 */
 		allFieldsAgGridColumns.remove(0);
-
 		/*
 		Get a list of all the column field keys to facilitate faster look ups.
 		 */
@@ -217,12 +229,17 @@ public class LineListController {
 			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
 		}
 
+		templateAgGridColumns.add(0, col1);
+
 		/*
 		Since it the previous for loop we removed all of the current template fields from allFieldsAgGridColumns,
 		we can assume the rest should be hidden and then just appended to the end of the template.
 		 */
 		allFieldsAgGridColumns.forEach(field -> {
-			field.setHide(true);
+			if(!field.getField().equals(col2.getField()))
+			{
+				field.setHide(true);
+			}
 			templateAgGridColumns.add(field);
 		});
 		return templateAgGridColumns;
@@ -276,7 +293,7 @@ public class LineListController {
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
 				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale),
-						canUserEdit(project)));
+						canUserEdit(project)), false);
 	}
 
 	/**

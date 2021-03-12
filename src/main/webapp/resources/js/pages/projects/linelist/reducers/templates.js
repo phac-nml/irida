@@ -12,7 +12,7 @@ export const types = {
   SAVING_TEMPLATE: "METADATA/TEMPLATES/SAVING_TEMPLATE",
   SAVED_TEMPLATE: "METADATA/TEMPLATES/SAVED_TEMPLATE",
   SAVE_COMPLETE: "METADATA/TEMPLATES/SAVE_COMPLETE",
-  TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED"
+  TEMPLATE_MODIFIED: "METADATA/TEMPLATES/TEMPLATE_MODIFIED",
 };
 
 const initialState = {
@@ -21,7 +21,7 @@ const initialState = {
   templates: [], // The List of UIMetadataTemplates returned.
   current: NO_TEMPLATE_INDEX, // Which template is currently being used.
   saving: false, // Flag whether the current template is being actively saved to the server
-  saved: false // Flag whether the current template's save function has been completed.
+  saved: false, // Flag whether the current template's save function has been completed.
 };
 
 export const reducer = (state = initialState, action = {}) => {
@@ -31,7 +31,17 @@ export const reducer = (state = initialState, action = {}) => {
       Let the UI know that there has been a request for the MetadataTemplates
        */
       return { ...state, fetching: true, error: false };
-    case types.LOAD_SUCCESS:
+    case types.LOAD_SUCCESS: {
+      let defaultTemplateIndex = 0;
+      /*
+      Get the default template index if there is one
+      */
+      action.templates.forEach((template, index) => {
+        if (template.defaultTemplate) {
+          defaultTemplateIndex = index;
+        }
+      });
+
       /*
       Let the UI know that the templates were fetched successfully, and
       pass the templates along.  Each template should have a modified state.
@@ -39,11 +49,13 @@ export const reducer = (state = initialState, action = {}) => {
       return {
         ...state,
         fetching: false,
-        templates: action.templates.map(t => {
+        templates: action.templates.map((t) => {
           t.modified = [];
           return t;
-        })
+        }),
+        current: defaultTemplateIndex,
       };
+    }
     case types.LOAD_ERROR:
       /*
       Let the UI know that there was an error loading the MetadataTemplates.
@@ -62,7 +74,7 @@ export const reducer = (state = initialState, action = {}) => {
           t[state.current].modified = [];
           return t;
         })(),
-        current: action.index
+        current: action.index,
       };
     case types.TABLE_MODIFIED:
       /*
@@ -74,7 +86,7 @@ export const reducer = (state = initialState, action = {}) => {
           const t = [...state.templates];
           t[state.current].modified = action.fields;
           return t;
-        })()
+        })(),
       };
     case types.TEMPLATE_MODIFIED:
       /*
@@ -93,14 +105,14 @@ export const reducer = (state = initialState, action = {}) => {
               ? [...template.modified]
               : cloneDeep(template.fields); // cloneDeep so we ensure not to overwrite the original fields
 
-          template.modified = fields.map(f => {
+          template.modified = fields.map((f) => {
             if (f.field === action.field.field) {
               f.hide = !action.field.hide;
             }
             return f;
           });
           return templates;
-        })()
+        })(),
       };
     case types.SAVE_TEMPLATE:
       return { ...state, saving: true };
@@ -117,7 +129,7 @@ export const reducer = (state = initialState, action = {}) => {
           const { template } = action;
           template.modified = [];
 
-          let index = t.findIndex(temp => temp.id === template.id);
+          let index = t.findIndex((temp) => temp.id === template.id);
 
           if (index > 0) {
             /*
@@ -133,7 +145,7 @@ export const reducer = (state = initialState, action = {}) => {
           }
 
           return { templates: t, current: index };
-        })()
+        })(),
       };
     case types.SAVE_COMPLETE:
       return { ...state, saved: false };
@@ -144,15 +156,15 @@ export const reducer = (state = initialState, action = {}) => {
 
 export const actions = {
   load: () => ({ type: types.LOAD }),
-  success: templates => ({ type: types.LOAD_SUCCESS, templates }),
-  error: error => ({ type: types.LOAD_ERROR, error }),
-  use: index => ({ type: types.USE_TEMPLATE, index }),
-  tableModified: fields => ({ type: types.TABLE_MODIFIED, fields }),
+  success: (templates) => ({ type: types.LOAD_SUCCESS, templates }),
+  error: (error) => ({ type: types.LOAD_ERROR, error }),
+  use: (index) => ({ type: types.USE_TEMPLATE, index }),
+  tableModified: (fields) => ({ type: types.TABLE_MODIFIED, fields }),
   saveTemplate: (name, fields, id) => ({
     type: types.SAVE_TEMPLATE,
-    data: { name, fields, id }
+    data: { name, fields, id },
   }),
-  savedTemplate: template => ({ type: types.SAVED_TEMPLATE, template }),
+  savedTemplate: (template) => ({ type: types.SAVED_TEMPLATE, template }),
   savedComplete: () => ({ type: types.SAVE_COMPLETE }),
-  templateModified: field => ({ type: types.TEMPLATE_MODIFIED, field })
+  templateModified: (field) => ({ type: types.TEMPLATE_MODIFIED, field }),
 };

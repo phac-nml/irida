@@ -57,3 +57,25 @@ export async function deleteMetadataTemplate(projectId, templateId) {
     return Promise.reject(e.response.data.message);
   }
 }
+
+export async function setDefaultMetadataTemplate(projectId, templateId) {
+  try {
+    const { data } = await axios.post(
+      `${BASE_URL}/${templateId}/set-project-default?projectId=${projectId}`
+    );
+    return data.message;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}
+
+export async function removeDefaultMetadataTemplate(projectId) {
+  try {
+    const { data } = await axios.post(
+      `${BASE_URL}/remove-project-default?projectId=${projectId}`
+    );
+    return data.message;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}
