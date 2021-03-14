@@ -10,6 +10,7 @@ Changes
 * [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
 * [UI]: Update to the pipeline launch process.
 * [UI]: Fixed bug where filter menu was missing from the Analsyis Outputs Table.
+* [UI]: Fixed bug where samples not rendering on project samples page when the config setting ngsarchive.linker.available is set to false.
 
 20.09 to 21.01
 --------------
