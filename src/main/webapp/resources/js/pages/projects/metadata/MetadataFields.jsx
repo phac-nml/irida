@@ -14,7 +14,7 @@ export function MetadataFields({ projectId }) {
   const [selectedFields, setSelectedFields] = React.useState([]);
 
   React.useEffect(() => {
-    if (fields) {
+    if (fields && selected.length) {
       const set = new Set(selected);
       setSelectedFields(fields.filter((field) => set.has(field.key)));
     }

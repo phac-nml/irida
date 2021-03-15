@@ -3,7 +3,7 @@ import { Form, Input, Modal, Typography } from "antd";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createNewMetadataTemplate } from "./redux/templates/templatesSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 
@@ -11,6 +11,8 @@ const { Text } = Typography;
 
 export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const dispatch = useDispatch();
+  const { templates } = useSelector((state) => state.templates);
+  const [names, setNames] = React.useState(undefined);
   const [visible, setVisible] = React.useState(false);
   const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
@@ -20,6 +22,15 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
       setFieldsState(fields.map((field) => ({ ...field, key: field.id })));
     }
   }, [fields]);
+
+  React.useEffect(() => {
+    if (templates) {
+      const templateNames = new Set(
+        templates.map((template) => template.label)
+      );
+      setNames(templateNames);
+    }
+  }, [templates]);
 
   const onOk = async () => {
     const values = await form.validateFields();
@@ -59,6 +70,16 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
                 required: true,
                 message: "Please suplly a name for this template",
               },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value.length && names.has(value)) {
+                    return Promise.reject(
+                      new Error("A template with this name already exists")
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
           >
             <Input />

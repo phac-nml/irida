@@ -30,7 +30,7 @@ const Content = ({ projectId, children, ...props }) => {
   React.useEffect(() => {
     dispatch(fetchFieldsForProject(projectId));
     dispatch(fetchTemplatesForProject(projectId));
-  }, [dispatch, projectId]);
+  }, []);
 
   React.useEffect(() => {
     setSelectedKey(props["*"].includes("templates") ? "templates" : "fields");

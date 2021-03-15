@@ -31,16 +31,19 @@ export function MetadataTemplate({ id }) {
   const [fields, setFields] = React.useState();
 
   React.useEffect(() => {
-    if (templates.length === 0) {
-      console.log("NO TEMPLATES");
-    } else if (templates) {
-      const found = templates.find((template) => template.identifier === id);
-      if (found) {
-        const { fields, ...newTemplate } = found;
-        setTemplate(newTemplate);
-        setFields(addKeysToList(fields, "field"));
+    // Undefined templates == loading sate
+    if (templates !== undefined) {
+      if (templates.length === 0) {
+        navigate(`../templates`);
+      } else {
+        const found = templates.find((template) => template.identifier === id);
+        if (found) {
+          const { fields, ...newTemplate } = found;
+          setTemplate(newTemplate);
+          setFields(addKeysToList(fields, "field"));
+        }
+        // Need to go to templates listing if template not found
       }
-      // Need to go to templates listing if template not found
     }
   }, [templates]);
 

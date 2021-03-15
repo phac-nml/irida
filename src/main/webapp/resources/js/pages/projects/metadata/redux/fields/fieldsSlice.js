@@ -13,7 +13,7 @@ export const fetchFieldsForProject = createAsyncThunk(
 export const fieldsSlice = createSlice({
   name: "fields",
   initialState: {
-    fields: [],
+    fields: undefined,
     selected: [],
     loading: true,
   },

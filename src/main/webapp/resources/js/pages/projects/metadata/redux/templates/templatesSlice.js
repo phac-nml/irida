@@ -61,7 +61,7 @@ export const createNewMetadataTemplate = createAsyncThunk(
 export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
-    templates: [],
+    templates: undefined,
     loading: true,
     template: undefined,
   },
@@ -82,9 +82,11 @@ export const templatesSlice = createSlice({
       return { ...state, templates };
     },
     [createNewMetadataTemplate.fulfilled]: (state, action) => {
-      const templates = [...state.templates];
-      templates.unshift(action.payload);
-      return { ...state, templates };
+      if (state.templates !== undefined) {
+        const templates = [...state.templates];
+        templates.unshift(action.payload);
+        return { ...state, templates };
+      }
     },
     [updateTemplate.fulfilled]: (state, action) => {
       const index = state.templates.findIndex(
