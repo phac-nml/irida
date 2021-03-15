@@ -22,7 +22,7 @@ import { MetadataFieldCreate } from "./MetadataFieldCreate";
  * @returns {JSX.Element}
  * @constructor
  */
-const Content = ({ projectId, children, ...props }) => {
+const MetadataLayout = ({ projectId, children, ...props }) => {
   const dispatch = useDispatch();
   /**
    * @type {[String, Function]} which page is currently being displayed
@@ -30,11 +30,17 @@ const Content = ({ projectId, children, ...props }) => {
   const [selectedKey, setSelectedKey] = React.useState("fields");
 
   React.useEffect(() => {
+    /*
+    Fetch all fields and templates.
+     */
     dispatch(fetchFieldsForProject(projectId));
     dispatch(fetchTemplatesForProject(projectId));
   }, []);
 
   React.useEffect(() => {
+    /*
+    Determine which menu item is currently active
+     */
     setSelectedKey(props["*"].includes("templates") ? "templates" : "fields");
   }, [props["*"]]);
 
@@ -69,7 +75,7 @@ function ProjectMetadataTemplates() {
   return (
     <Provider store={store}>
       <Router>
-        <Content path={"/projects/:projectId/settings/metadata"}>
+        <MetadataLayout path={"/projects/:projectId/settings/metadata"}>
           <MetadataFields path="/fields">
             <MetadataFieldsList path="/" />
             <MetadataFieldCreate path="/create" />
@@ -78,7 +84,7 @@ function ProjectMetadataTemplates() {
             <MetadataTemplatesList path="/" />
             <MetadataTemplate path="/:id" />
           </MetadataTemplates>
-        </Content>
+        </MetadataLayout>
       </Router>
     </Provider>
   );
