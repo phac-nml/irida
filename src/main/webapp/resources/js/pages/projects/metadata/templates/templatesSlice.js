@@ -81,18 +81,19 @@ export const templatesSlice = createSlice({
       );
       return { ...state, templates };
     },
-    //   [updateTemplate.fulfilled]: (state, action) => {
-    //     const index = state.templates.findIndex(
-    //       (template) => template.identifier === action.payload.template.identifier
-    //     );
-    //     if (index) {
-    //       state.templates[index] = action.payload.template;
-    //     }
-    //   },
     [createNewMetadataTemplate.fulfilled]: (state, action) => {
       const templates = [...state.templates];
       templates.unshift(action.payload);
       return { ...state, templates };
+    },
+    [updateTemplate.fulfilled]: (state, action) => {
+      const index = state.templates.findIndex(
+        (template) => template.identifier === action.payload.template.identifier
+      );
+      if (index >= 0) {
+        state.templates[index] = action.payload.template;
+      }
+      return state;
     },
   },
 });

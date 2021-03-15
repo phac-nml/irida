@@ -1,11 +1,11 @@
 import React from "react";
-import {Button, List, PageHeader, Skeleton, Typography} from "antd";
-import {navigate} from "@reach/router";
+import { Button, List, PageHeader, Skeleton, Typography } from "antd";
+import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
-import {HelpPopover} from "../../../components/popovers";
-import {updateTemplate} from "./templates/templatesSlice";
-import {useDispatch, useSelector} from "react-redux";
-import {addKeysToList} from "../../../utilities/http-utilities";
+import { HelpPopover } from "../../../components/popovers";
+import { updateTemplate } from "./templates/templatesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addKeysToList } from "../../../utilities/http-utilities";
 
 const { Paragraph, Text } = Typography;
 
@@ -29,13 +29,6 @@ export function MetadataTemplate({ id }) {
       // Need to go to templates listing if template not found
     }
   }, [templates]);
-
-  // React.useEffect(() => {
-  //   getMetadataTemplate(id).then(({ fields: newFields, ...newTemplate }) => {
-  //     setFields(addKeysToList(newFields, "field"));
-  //     setTemplate(newTemplate);
-  //   });
-  // }, []);
 
   const completeUpdate = async (updated) => {
     await dispatch(updateTemplate(updated));
