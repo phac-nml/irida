@@ -5,12 +5,14 @@ import { MetadataTemplatesList } from "./MetadataTemplatesList";
 import { MetadataTemplate } from "./MetadataTemplate";
 import { MetadataTemplates } from "./MetadataTemplates";
 import { Col, Menu, Row, Space } from "antd";
-import { MetadataFields } from "./MetadataFields";
+import { MetadataFieldsList } from "./MetadataFieldsList";
 
 import store from "./redux/store";
 import { Provider, useDispatch } from "react-redux";
 import { fetchFieldsForProject } from "./redux/fields/fieldsSlice";
 import { fetchTemplatesForProject } from "./redux/templates/templatesSlice";
+import { MetadataFields } from "./MetadataFields";
+import { MetadataFieldCreate } from "./MetadataFieldCreate";
 
 /**
  * React component handles the layout of the metadata fields and templates page.
@@ -68,7 +70,10 @@ function ProjectMetadataTemplates() {
     <Provider store={store}>
       <Router>
         <Content path={"/projects/:projectId/settings/metadata"}>
-          <MetadataFields path="/fields/" />
+          <MetadataFields path="/fields">
+            <MetadataFieldsList path="/" />
+            <MetadataFieldCreate path="/create" />
+          </MetadataFields>
           <MetadataTemplates path="/templates">
             <MetadataTemplatesList path="/" />
             <MetadataTemplate path="/:id" />

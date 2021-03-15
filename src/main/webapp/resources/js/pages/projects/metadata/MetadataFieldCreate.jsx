@@ -1,10 +1,8 @@
 import React from "react";
-import { Button, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select, Space } from "antd";
 
-export function MetadataFieldCreate({ onCreate = Function.prototype }) {
+export function MetadataFieldCreate({}) {
   const [form] = Form.useForm();
-  const [visible, setVisible] = React.useState(false);
-  const [current, setCurrent] = React.useState(0);
 
   const steps = [
     {
@@ -29,19 +27,13 @@ export function MetadataFieldCreate({ onCreate = Function.prototype }) {
   ];
 
   return (
-    <>
-      <Button onClick={() => setVisible(true)}>Add New Field</Button>
-      <Modal
-        title={"Add Metadata Field"}
-        visible={visible}
-        onCancel={() => setVisible(false)}
-      >
-        <Form form={form} layout="vertical">
-          {/*<Steps current={current}>*/}
-          {/*  <*/}
-          {/*</Steps>*/}
-        </Form>
-      </Modal>
-    </>
+    <Space>
+      <p>HELLO</p>
+      <Form form={form} layout="vertical">
+        {/*<Steps current={current}>*/}
+        {/*  <*/}
+        {/*</Steps>*/}
+      </Form>
+    </Space>
   );
 }
