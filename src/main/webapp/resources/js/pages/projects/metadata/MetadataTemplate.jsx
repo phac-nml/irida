@@ -123,11 +123,19 @@ export function MetadataTemplate({ id }) {
             <DnDTable
               data={fields}
               columns={[
-                { title: "Metadata Field", dataIndex: "label", key: "label" },
-                { title: "Type", dataIndex: "type", key: "text" },
+                {
+                  title: i18n("MetadataField.label"),
+                  dataIndex: "label",
+                  key: "label",
+                },
+                {
+                  title: i18n("MetadataField.type"),
+                  dataIndex: "type",
+                  key: "text",
+                },
                 window.project.canManage
                   ? {
-                      title: "Permissions",
+                      title: i18n("MetadataField.permissions"),
                       dataIndex: "type",
                       key: "permissions",
                       render() {

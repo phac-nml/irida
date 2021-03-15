@@ -3,6 +3,7 @@ import { Button, Space, Table } from "antd";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { useSelector } from "react-redux";
 import { navigate } from "@reach/router";
+import { SPACE_MD } from "../../../styles/spacing";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -15,6 +16,10 @@ export function MetadataFieldsList({ projectId }) {
   const [selectedFields, setSelectedFields] = React.useState([]);
 
   React.useEffect(() => {
+    /*
+    When fields are selected, Ant Table only five the key, here we are setting
+    the selected fields as the entire field value.
+     */
     if (fields && selected.length) {
       const set = new Set(selected);
       setSelectedFields(fields.filter((field) => set.has(field.key)));
@@ -22,14 +27,17 @@ export function MetadataFieldsList({ projectId }) {
   }, [fields, selected]);
 
   return (
-    <Space direction="vertical" style={{ display: "block" }}>
+    <Space
+      direction="vertical"
+      style={{ display: "block", marginTop: SPACE_MD }}
+    >
       <Space>
         <Button onClick={() => navigate("./fields/create")}>
-          Add New Field
+          {i18n("MetadataFieldsList.add-new")}
         </Button>
         <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
           <Button disabled={selected.length === 0}>
-            {i18n("MetadataTemplates.create")}
+            {i18n("MetadataFieldsList.create")}
           </Button>
         </MetadataTemplateCreate>
       </Space>
@@ -41,18 +49,18 @@ export function MetadataFieldsList({ projectId }) {
         dataSource={fields}
         columns={[
           {
-            title: i18n("MetadataTemplate.table.field"),
+            title: i18n("MetadataField.label"),
             dataIndex: "label",
             key: "label",
           },
           {
-            title: i18n("MetadataTemplate.table.type"),
+            title: i18n("MetadataField.type"),
             dataIndex: "type",
             key: "text",
           },
           window.project.canManage
             ? {
-                title: i18n("MetadataTemplate.table.permissions"),
+                title: i18n("MetadataField.permissions"),
                 dataIndex: "type",
                 key: "permissions",
                 render() {
