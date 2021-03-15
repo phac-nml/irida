@@ -1,11 +1,11 @@
 import React from "react";
-import { Button, List, PageHeader, Skeleton, Typography } from "antd";
-import { navigate } from "@reach/router";
+import {Button, List, PageHeader, Skeleton, Typography} from "antd";
+import {navigate} from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
-import { HelpPopover } from "../../../components/popovers";
-import { updateTemplate } from "./templates/templatesSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { addKeysToList } from "../../../utilities/http-utilities";
+import {HelpPopover} from "../../../components/popovers";
+import {updateTemplate} from "./templates/templatesSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {addKeysToList} from "../../../utilities/http-utilities";
 
 const { Paragraph, Text } = Typography;
 
@@ -16,6 +16,7 @@ export function MetadataTemplate({ id }) {
   const [fields, setFields] = React.useState();
 
   React.useEffect(() => {
+    console.log(templates);
     if (templates.length === 0) {
       console.log("NO TEMPLATES");
     } else if (templates) {

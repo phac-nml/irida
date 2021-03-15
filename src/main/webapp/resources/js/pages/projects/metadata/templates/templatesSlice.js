@@ -66,50 +66,36 @@ export const templatesSlice = createSlice({
     template: undefined,
   },
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: {
     /*
     Occurs on page load to add all templates.
      */
-    builder.addCase(
-      fetchTemplatesForProject.fulfilled,
-      (state, { payload }) => {
-        state.templates = payload;
-        state.loading = false;
-      }
-    );
-
-    builder.addCase(
-      removeTemplateFromProject.fulfilled,
-      (state, { payload }) => {
-        return {
-          ...state,
-          templates: state.templates.filter(
-            (template) => template.id !== payload.templateId
-          ),
-        };
-      }
-    );
+    [fetchTemplatesForProject.fulfilled]: (state, { payload }) => ({
+      ...state,
+      templates: payload,
+      loading: false,
+    }),
+    [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
+      console.log(payload); // TODO: NOT WORKING
+      const templates = state.templates.filter(
+        (template) => template.identifier !== payload.templateId
+      );
+      return { ...state, templates };
+    },
+    //   [updateTemplate.fulfilled]: (state, action) => {
+    //     const index = state.templates.findIndex(
+    //       (template) => template.identifier === action.payload.template.identifier
+    //     );
+    //     if (index) {
+    //       state.templates[index] = action.payload.template;
+    //     }
+    //   },
+    [createNewMetadataTemplate.fulfilled]: (state, action) => {
+      const templates = [...state.templates];
+      templates.unshift(action.payload);
+      return { ...state, templates };
+    },
   },
-
-  //   [removeTemplateFromProject.fulfilled]: (state, action) => ({
-  //     ...state,
-  //     templates: state.templates.filter(
-  //       (template) => template.id !== action.payload.templateId
-  //     ),
-  //   }),
-  //   [updateTemplate.fulfilled]: (state, action) => {
-  //     const index = state.templates.findIndex(
-  //       (template) => template.identifier === action.payload.template.identifier
-  //     );
-  //     if (index) {
-  //       state.templates[index] = action.payload.template;
-  //     }
-  //   },
-  //   [createNewMetadataTemplate.fulfilled]: (state, action) => {
-  //     state.templates.shift(action.payload);
-  //     return action.payload;
-  //   },
-  // },
 });
 
 export const { setTemplate } = templatesSlice.actions;
