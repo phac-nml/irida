@@ -20,6 +20,7 @@ const DraggableTable = styled(Table)`
 const RNDContext = createDndContext(HTML5Backend);
 
 export default function DnDTable({
+  size = "default",
   data,
   columns,
   onRowUpdate = Function.prototype,
@@ -44,6 +45,7 @@ export default function DnDTable({
   return (
     <DndProvider manager={manager.current.dragDropManager}>
       <DraggableTable
+        size={size}
         pagination={false}
         dataSource={data}
         columns={columns}

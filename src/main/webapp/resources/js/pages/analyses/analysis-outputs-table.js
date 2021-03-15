@@ -10,7 +10,7 @@ import {
   getPrincipalUserSingleSampleAnalysisOutputs,
   getProjectAutomatedSingleSampleAnalysisOutputs,
   getProjectSharedSingleSampleAnalysisOutputs,
-  prepareAnalysisOutputsDownload
+  prepareAnalysisOutputsDownload,
 } from "../../apis/analysis/analysis";
 import { getIridaWorkflowDescription } from "../../apis/pipelines/pipelines";
 
@@ -89,7 +89,7 @@ async function downloadSelected($dlButton, api) {
       analysisOutputFileId,
       sampleName,
       sampleId,
-      filePath
+      filePath,
     } = selectedNodes[0].data;
     let url = `${BASE_URL}ajax/analysis/download/${analysisSubmissionId}/file/${analysisOutputFileId}`;
     const downloadName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
@@ -98,7 +98,7 @@ async function downloadSelected($dlButton, api) {
     url += "?" + $.param({ filename: downloadName });
     download(url);
   } else if (selectedNodes.length > 1) {
-    const outputs = selectedNodes.map(node => node.data);
+    const outputs = selectedNodes.map((node) => node.data);
     const { data, error } = await prepareAnalysisOutputsDownload(outputs);
     if (error) {
       console.error(i18n("analysis.batch-download.ajax.error"), error);
@@ -161,18 +161,18 @@ function initAgGrid($grid, headers, rows, $dlButton) {
     defaultColDef: {
       resizable: true,
       sortable: true,
-      filterable: true
+      filterable: true,
     },
     rowSelection: "multiple",
-    onSelectionChanged: e => {
+    onSelectionChanged: (e) => {
       const selectedNodes = e.api.getSelectedNodes();
       const selectionLength = selectedNodes.length;
       setDownloadButtonHtml($dlButton, selectionLength, selectionLength === 0);
-    }
+    },
   };
   const grid = new Grid($grid, gridOptions);
   gridOptions.api.sizeColumnsToFit();
-  $dlButton.addEventListener("click", e => {
+  $dlButton.addEventListener("click", (e) => {
     e.preventDefault();
     downloadSelected($dlButton, gridOptions.api);
   });
@@ -198,8 +198,8 @@ function filterSingleSampleOutputs(data) {
   // return AOF info that only has one Sample assoc with the AOF id, i.e. single
   // sample AOFs
   return Object.keys(groupedDataByAofId)
-    .filter(x => groupedDataByAofId[x].length === 1)
-    .map(x => groupedDataByAofId[x][0]);
+    .filter((x) => groupedDataByAofId[x].length === 1)
+    .map((x) => groupedDataByAofId[x][0]);
 }
 
 /**
@@ -212,7 +212,7 @@ function getWorkflowInfo(singleSampleOutputs) {
     (acc, x) => Object.assign(acc, { [x.workflowId]: null }),
     {}
   );
-  Object.keys(workflowIds).forEach(async function(workflowId) {
+  Object.keys(workflowIds).forEach(async function (workflowId) {
     const { data, error } = await getIridaWorkflowDescription(workflowId);
     if (!error) {
       workflowIds[workflowId] = data;
@@ -270,39 +270,42 @@ async function getTableData(isShared = true) {
       checkboxSelection: true,
       headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
-      cellRenderer: p => {
+      cellRenderer: (p) => {
         const { sampleId, sampleName } = p.data;
         const projectUrlPrefix = PROJECT_ID ? `projects/${PROJECT_ID}/` : "";
         return `<a href="${BASE_URL}${projectUrlPrefix}samples/${sampleId}/details" target="_blank">${sampleName}</a>`;
-      }
+      },
     },
     {
       field: "filePath",
       headerName: i18n("bc.file"),
-      cellRenderer: p => {
+      filter: "agTextColumnFilter",
+      cellRenderer: (p) => {
         const {
           filePath,
           analysisOutputFileKey,
-          analysisOutputFileId
+          analysisOutputFileId,
         } = p.data;
         const REGEX = /^\d+\/\d+\/(.+)$/;
         const groups = REGEX.exec(filePath);
         if (groups === null) return filePath;
         const filename = groups[1];
         return `${filename} <small>(${analysisOutputFileKey}, id=${analysisOutputFileId})</small>`;
-      }
+      },
     },
     {
       field: "analysisType",
       headerName: i18n("analysis.table.type"),
-      valueGetter: function(p) {
+      filter: "agTextColumnFilter",
+      valueGetter: function (p) {
         return p.data.analysisType.type;
-      }
+      },
     },
     {
       field: "workflowId",
+      filter: "agTextColumnFilter",
       headerName: i18n("pipeline"),
-      valueGetter: function(p) {
+      valueGetter: function (p) {
         const wfInfo = workflowIds[p.data.workflowId];
         if (wfInfo === null) return p.data.workflowId;
         const version =
@@ -314,27 +317,56 @@ async function getTableData(isShared = true) {
             ? i18n("analysis.table.name.unknown")
             : wfInfo.name;
         return `${name} (${version})`;
-      }
+      },
     },
     {
       field: "analysisSubmissionName",
+      filter: "agTextColumnFilter",
       headerName: i18n("analysis-submission"),
-      cellRenderer: p =>
-        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`
+      cellRenderer: (p) =>
+        `<a href="${BASE_URL}analysis/${p.data.analysisSubmissionId}" target="_blank">${p.data.analysisSubmissionName}</a>`,
     },
     PROJECT_ID
       ? {
           field: "userId",
           headerName: i18n("project.export.submitter"),
-          cellRenderer: p => `${p.data.userFirstName} ${p.data.userLastName}`
+          cellRenderer: (p) => `${p.data.userFirstName} ${p.data.userLastName}`,
         }
       : null,
     {
       field: "createdDate",
       headerName: i18n("analysis.date-created"),
-      cellRenderer: p => formatDate({ date: p.data.createdDate })
-    }
-  ].filter(header => header !== null);
+      filter: "agDateColumnFilter",
+      filterParams: {
+        // provide comparator function
+        comparator: (filterLocalDateAtMidnight, cellValue) => {
+          const cellDateTime = new Date(cellValue);
+          const cellDate = new Date(
+            Date.UTC(
+              cellDateTime.getFullYear(),
+              cellDateTime.getMonth(),
+              cellDateTime.getDate()
+            )
+          );
+          const filterDate = new Date(
+            Date.UTC(
+              filterLocalDateAtMidnight.getFullYear(),
+              filterLocalDateAtMidnight.getMonth(),
+              filterLocalDateAtMidnight.getDate()
+            )
+          );
+
+          if (cellDate < filterDate) {
+            return -1;
+          } else if (cellDate > filterDate) {
+            return 1;
+          }
+          return 0;
+        },
+      },
+      cellRenderer: (p) => formatDate({ date: p.data.createdDate }),
+    },
+  ].filter((header) => header !== null);
   const $grid = newElement(
     `<div id="grid-outputs" class="ag-theme-balham" style="height: 600px; width: 100%; resize: both;"/>`
   );

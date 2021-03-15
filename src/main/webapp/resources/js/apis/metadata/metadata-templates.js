@@ -1,7 +1,7 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const BASE_URL = setBaseUrl(`/ajax/metadata-templates`);
+const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
 
 /**
  * Get all metadata templates associated with a project
@@ -20,15 +20,6 @@ export async function createProjectMetadataTemplate(projectId, parameters) {
       `${BASE_URL}?projectId=${projectId}`,
       parameters
     );
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
-}
-
-export async function getMetadataTemplate(id) {
-  try {
-    const { data } = await axios.get(`${BASE_URL}/${id}`);
     return data;
   } catch (e) {
     return Promise.reject(e.response.data.message);
@@ -54,7 +45,7 @@ export async function deleteMetadataTemplate(projectId, templateId) {
     );
     return data.message;
   } catch (e) {
-    return Promise.reject(e.response.data.message);
+    return Promise.reject(e.response.data.error);
   }
 }
 
@@ -67,7 +58,7 @@ export async function deleteMetadataTemplate(projectId, templateId) {
 export async function setDefaultMetadataTemplate(projectId, templateId) {
   try {
     const { data } = await axios.post(
-      `${BASE_URL}/${templateId}/set-project-default?projectId=${projectId}`
+      `${BASE_URL}/templates/${templateId}/set-project-default?projectId=${projectId}`
     );
     return data.message;
   } catch (e) {
@@ -83,7 +74,7 @@ export async function setDefaultMetadataTemplate(projectId, templateId) {
 export async function removeDefaultMetadataTemplate(projectId) {
   try {
     const { data } = await axios.post(
-      `${BASE_URL}/remove-project-default?projectId=${projectId}`
+      `${BASE_URL}/templates/remove-project-default?projectId=${projectId}`
     );
     return data.message;
   } catch (e) {

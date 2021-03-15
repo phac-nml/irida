@@ -39,7 +39,7 @@ public class ProjectSettingsMetadataController {
 	 * @param principal Logged in user
 	 * @return name of the project remote settings page
 	 */
-	@RequestMapping(value = {"/metadata-templates", "/metadata-templates/*"})
+	@RequestMapping(value = {"/metadata", "/metadata/**/*"})
 	public String getSampleMetadataTemplatesPage(@PathVariable Long projectId, final Model model,
 			final Principal principal) {
 		Project project = projectService.read(projectId);

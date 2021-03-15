@@ -4,12 +4,10 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.BasicPipelinePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSettingsProcessingPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -27,25 +25,16 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 
 		LoginPage.loginAsAdmin(driver());
 		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
-		checkTranslations(processingPage, ImmutableList.of("project-settings-basic"), null);
 
 		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
 
 		assertTrue("create analysis button should be visible", processingPage.isCreateAnalysisButtonVisible());
 		processingPage.clickCreateAnalysis();
 
-		CartPage cartPage = CartPage.initPage(driver());
-		assertTrue("Should be able to see pipelines for auto analysis", cartPage.onPipelinesView());
-		cartPage.selectFirstPipeline();
+		processingPage.selectAutomatedTemplateByIndex(0);
 
-		BasicPipelinePage pipelinePage = new BasicPipelinePage(driver());
-		pipelinePage.clickLaunchPipelineBtn();
-
-		assertTrue("Pipeline should say it's been created", pipelinePage.isPipelineSubmittedMessageShown());
-
-		processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
-
-		assertEquals("should be 2 automated analysis", 2, processingPage.countAutomatedAnalyses());
+		LaunchPipelinePage page = LaunchPipelinePage.init(driver());
+		assertEquals("Should be on the Assembly Pipeline", "Assembly and Annotation Pipeline", page.getPipelineName());
 	}
 
 	@Test
@@ -70,7 +59,6 @@ public class ProjectSettingsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 		ProjectSettingsProcessingPage processingPage = ProjectSettingsProcessingPage.goToPage(driver(), projectId);
 		assertEquals("should be 1 automated analyses", 1, processingPage.countAutomatedAnalyses());
-
 		assertFalse("create analysis button should NOT be visible", processingPage.isCreateAnalysisButtonVisible());
 	}
 

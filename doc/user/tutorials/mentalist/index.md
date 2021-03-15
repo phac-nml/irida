@@ -49,31 +49,16 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![mentalist-pipeline-page]
 
-Before launching the pipeline, we must select a MentaLiST kmer database to run our samples against. Select an appropriate 'Salmonella enterica' database from the **Kmer DB** drop-down menu. Note that the kmer databases available on your system will have a different date and may have been built with a different value of k than the ones shown below. If there is no 'Salmonella enterica' database available, please contact your IRIDA system administrator and refer to the [administrator documentation][mentalist-admin-docs] for detailed instructions on installing MentaLiST kmer databases.
+Before launching the pipeline, we must select a MentaLiST kmer database to run our samples against. Select an appropriate 'Salmonella enterica' database from the **Kmer DB** from the options displayed. Note that the kmer databases available on your system will have a different date and may have been built with a different value of k than the ones shown below. If there is no 'Salmonella enterica' database available, please contact your IRIDA system administrator and refer to the [administrator documentation][mentalist-admin-docs] for detailed instructions on installing MentaLiST kmer databases.
 
 ![mentalist-pipeline-parameters]
 
-
-Please use the **Ready to Launch?** button to start the pipeline.
+Please use the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button]
 
-Once the button is selected you should see a screen showing that your pipeline has been launched.
+Once the button is selected, you will be redirected to the analysis details page.
 
-![pipeline-launched]
-
-Monitoring Pipeline Status
-==========================
-
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
-
-![view-your-analyses]
-
-The will bring you to a page where you can monitor the status of each launched workflow.
-
-![monitor-analyses]
-
-Clicking the pipeline name **MLSTMentalist_20200227** will bring you to a page for that analysis pipeline. It will take a while for the MentaLiST analysis pipeline to complete. Along the top of the page you can check the current step of the analysis and at the bottom of the **Details** tab you can select if you would like to receive an email upon pipeline completion. The email option is only available if the analysis is not in `COMPLETED` or `ERROR` state.
 
 ![analysis-in-progress]
 

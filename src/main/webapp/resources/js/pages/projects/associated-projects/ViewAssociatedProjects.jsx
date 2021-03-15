@@ -8,7 +8,7 @@ import { Avatar, Switch, Table, Typography } from "antd";
 import {
   addAssociatedProject,
   getAssociatedProjects,
-  removeAssociatedProject
+  removeAssociatedProject,
 } from "../../../apis/projects/associated-projects";
 import { TextFilter } from "../../../components/Tables/fitlers";
 import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
@@ -23,12 +23,12 @@ export default function ViewAssociatedProjects() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAssociatedProjects(window.project.id).then(data => {
-      setProjects(data.associatedProjectList);
+    getAssociatedProjects(window.project.id).then((data) => {
+      setProjects(data);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
-          list: data.associatedProjectList,
-          attr: "organism"
+          list: data,
+          attr: "organism",
         })
       );
       setLoading(false);
@@ -63,17 +63,17 @@ export default function ViewAssociatedProjects() {
                 className="t-selection"
                 checked={project.associated}
                 loading={project.updating}
-                onClick={checked => updateProject(checked, project)}
+                onClick={(checked) => updateProject(checked, project)}
               />
             );
-          }
+          },
         }
       : {
           key: "icon",
           width: 60,
           render() {
             return <Avatar icon={<IconFolder />} />;
-          }
+          },
         },
     {
       key: "project",
@@ -92,7 +92,7 @@ export default function ViewAssociatedProjects() {
           .toLowerCase()
           .includes(value.toLowerCase());
       },
-      sorter: (a, b) => ("" + a.label).localeCompare("" + b.label)
+      sorter: (a, b) => ("" + a.label).localeCompare("" + b.label),
     },
     {
       key: "organism",
@@ -105,8 +105,8 @@ export default function ViewAssociatedProjects() {
       filters: organismFilters,
       onFilter: (value, record) =>
         record.organism === value || (!record.organism && value === "unknown"),
-      sorter: (a, b) => ("" + a.organism).localeCompare("" + b.organism)
-    }
+      sorter: (a, b) => ("" + a.organism).localeCompare("" + b.organism),
+    },
   ];
 
   return (
