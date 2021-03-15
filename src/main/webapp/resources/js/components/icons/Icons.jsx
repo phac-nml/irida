@@ -39,6 +39,7 @@ import {
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
+  StarFilled,
   StarOutlined,
   StopOutlined,
   StrikethroughOutlined,
@@ -208,3 +209,7 @@ export const IconCheckCircle = ({ ...props }) => (
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 
 export const IconSetDefault = ({ ...props }) => <StarOutlined {...props} />;
+
+export const IconIsDefault = ({ ...props }) => (
+  <StarFilled style={{ color: blue6 }} {...props} />
+);

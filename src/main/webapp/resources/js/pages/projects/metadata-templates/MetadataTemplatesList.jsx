@@ -12,6 +12,7 @@ import {
 import {
   IconDownloadFile,
   IconRemove,
+  IconIsDefault,
   IconSetDefault,
 } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -31,11 +32,21 @@ export function MetadataTemplatesList({ navigate }) {
     setBaseUrl(`/projects/${window.project.id}/metadata-templates`)
   );
   const [templates, setTemplates] = React.useState([]);
+  const [hasDefaultTemplate, setHasDefaultTemplate] = React.useState(false);
+  const [defaultTemplateId, setDefaultTemplateId] = React.useState(-1);
 
   React.useEffect(() => {
-    getProjectMetadataTemplates(window.project.id).then((data) =>
-      setTemplates(data)
-    );
+    getProjectMetadataTemplates(window.project.id).then((data) => {
+      setTemplates(data);
+      let templateIndex = data.findIndex(
+        (template) => template.default === true
+      );
+
+      if (templateIndex >= 0) {
+        setHasDefaultTemplate(true);
+        setDefaultTemplateId(data[templateIndex].id);
+      }
+    });
   }, []);
 
   const createTemplate = async (details) => {
@@ -70,6 +81,8 @@ export function MetadataTemplatesList({ navigate }) {
         templateId
       );
       notification.success({ message });
+      setHasDefaultTemplate(true);
+      setDefaultTemplateId(templateId);
     } catch (e) {
       notification.error({ message: e });
     }
@@ -79,6 +92,8 @@ export function MetadataTemplatesList({ navigate }) {
     try {
       const message = await removeDefaultMetadataTemplate(window.project.id);
       notification.success({ message });
+      setHasDefaultTemplate(false);
+      setDefaultTemplateId(-1);
     } catch (e) {
       notification.error({ message: e });
     }
@@ -93,6 +108,7 @@ export function MetadataTemplatesList({ navigate }) {
             <MetadataTemplateCreate
               key="create"
               createTemplate={createTemplate}
+              hasDefaultTemplate={hasDefaultTemplate}
               removeDefaultTemplate={removeDefaultTemplate}
             />,
           ]}
@@ -111,7 +127,13 @@ export function MetadataTemplatesList({ navigate }) {
                   <Button
                     shape="circle"
                     size="small"
-                    icon={<IconSetDefault />}
+                    icon={
+                      defaultTemplateId === item.id ? (
+                        <IconIsDefault />
+                      ) : (
+                        <IconSetDefault />
+                      )
+                    }
                     onClick={() => setDefaultTemplate(item.id)}
                     key="set-default-template"
                   />,

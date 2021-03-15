@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 
 /**
@@ -15,15 +16,20 @@ public class ProjectMetadataTemplate {
 	private final int numFields;
 	private final Date createdDate;
 	private final Date modifiedDate;
+	private final boolean isDefault;
 
 	public ProjectMetadataTemplate(ProjectMetadataTemplateJoin join) {
 		MetadataTemplate template = join.getObject();
+		Project project = join.getSubject();
 		this.id = template.getId();
 		this.label = template.getLabel();
 		this.description = template.getDescription();
-		this.numFields = template.getFields().size();
+		this.numFields = template.getFields()
+				.size();
 		this.createdDate = template.getCreatedDate();
 		this.modifiedDate = template.getModifiedDate();
+		this.isDefault = project.getDefaultMetadataTemplate() != null && project.getDefaultMetadataTemplate()
+				.getId() == template.getId();
 	}
 
 	public Long getId() {
@@ -48,5 +54,9 @@ public class ProjectMetadataTemplate {
 
 	public Date getModifiedDate() {
 		return modifiedDate;
+	}
+
+	public boolean isDefault() {
+		return isDefault;
 	}
 }
