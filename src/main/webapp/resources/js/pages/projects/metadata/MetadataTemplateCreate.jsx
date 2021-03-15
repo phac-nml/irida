@@ -4,7 +4,7 @@ import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
 import { useDispatch } from "react-redux";
-import { createNewMetadataTemplate } from "./templates/templatesSlice";
+import { createNewMetadataTemplate } from "./redux/templates/templatesSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 
 const { Text } = Typography;

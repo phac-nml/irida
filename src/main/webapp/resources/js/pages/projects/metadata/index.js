@@ -9,8 +9,8 @@ import { MetadataFields } from "./MetadataFields";
 
 import store from "./redux/store";
 import { Provider, useDispatch } from "react-redux";
-import { fetchFieldsForProject } from "./fields/fieldsSlice";
-import { fetchTemplatesForProject } from "./templates/templatesSlice";
+import { fetchFieldsForProject } from "./redux/fields/fieldsSlice";
+import { fetchTemplatesForProject } from "./redux/templates/templatesSlice";
 
 /**
  * React component handles the layout of the metadata fields and templates page.

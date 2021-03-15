@@ -3,7 +3,7 @@ import { Button, List, PageHeader, Skeleton, Typography } from "antd";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
-import { updateTemplate } from "./templates/templatesSlice";
+import { updateTemplate } from "./redux/templates/templatesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
 

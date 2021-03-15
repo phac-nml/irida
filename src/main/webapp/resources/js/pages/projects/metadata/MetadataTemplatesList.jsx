@@ -5,7 +5,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
 import { blue6 } from "../../../styles/colors";
 import { useDispatch, useSelector } from "react-redux";
-import { removeTemplateFromProject } from "./templates/templatesSlice";
+import { removeTemplateFromProject } from "./redux/templates/templatesSlice";
 
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);

@@ -4,8 +4,8 @@ import {
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
   updateMetadataTemplate,
-} from "../../../../apis/metadata/metadata-templates";
-import { addKeysToList } from "../../../../utilities/http-utilities";
+} from "../../../../../apis/metadata/metadata-templates";
+import { addKeysToList } from "../../../../../utilities/http-utilities";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.
@@ -68,7 +68,7 @@ export const templatesSlice = createSlice({
   reducers: {},
   extraReducers: {
     /*
-    Occurs on page load to add all templates.
+    Successful fetching of metadata templates for the current project.
      */
     [fetchTemplatesForProject.fulfilled]: (state, { payload }) => ({
       ...state,
