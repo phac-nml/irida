@@ -13,7 +13,15 @@ module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
 
   return {
+    /*
+    This option controls if and how source maps are generated.
+    1. Development: "eval-source-map" - Recommended choice for development builds with high quality SourceMaps.
+    2. Production: "source-map" - Recommended choice for production builds with high quality SourceMaps.
+    */
     devtool: isProduction ? "source-map" : "eval-source-map",
+    /*
+    Cache the generated webpack modules and chunks to improve build speed.
+     */
     cache: {
       type: "filesystem",
     },
@@ -27,6 +35,9 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, "dist"),
       pathinfo: false,
     },
+    /*
+    Prevent bundling of jQuery, it will be added (and exposed) through the vendor bundle.
+     */
     externals: {
       jquery: "jQuery",
     },
@@ -76,6 +87,9 @@ module.exports = (env, argv) => {
       ],
     },
     optimization: {
+      /*
+      Only minimize assets for production builds
+       */
       ...(isProduction
         ? {
             minimize: true,
@@ -87,14 +101,21 @@ module.exports = (env, argv) => {
         : { minimize: false }),
     },
     plugins: [
+      /*
+      Extract CSS into its own bundle.
+       */
       new MiniCssExtractPlugin({
         ignoreOrder: true,
         filename: "css/[name].bundle.css",
       }),
+      /*
+      Custom IRIDA internationalization plugin.  See Docs for more information
+       */
       new i18nThymeleafWebpackPlugin({
         functionName: "i18n",
       }),
       new webpack.ProvidePlugin({
+        // Provide the custom internationalization function.
         i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
         process: "process/browser",
       }),

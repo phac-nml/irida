@@ -1,5 +1,12 @@
 const formatAntStyles = require("./styles");
 
+/**
+ * Used by Post CSS through the WebPack build process
+ */
+
+/*
+Import custom styles for Ant Design
+ */
 const modifyVars = formatAntStyles();
 
 module.exports = {
