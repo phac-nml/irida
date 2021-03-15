@@ -1,14 +1,29 @@
 import React from "react";
-import { Button, List, PageHeader, Skeleton, Typography } from "antd";
+import {
+  Button,
+  List,
+  notification,
+  PageHeader,
+  Skeleton,
+  Typography,
+} from "antd";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
 import { updateTemplate } from "./redux/templates/templatesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const { Paragraph, Text } = Typography;
 
+/**
+ * Component for displaying and modifying a metadata template.
+ *
+ * @param {number} id - identifier for the current metadata template
+ * @returns {JSX.Element|string}
+ * @constructor
+ */
 export function MetadataTemplate({ id }) {
   const dispatch = useDispatch();
   const { templates, loading } = useSelector((state) => state.templates);
@@ -16,7 +31,6 @@ export function MetadataTemplate({ id }) {
   const [fields, setFields] = React.useState();
 
   React.useEffect(() => {
-    console.log(templates);
     if (templates.length === 0) {
       console.log("NO TEMPLATES");
     } else if (templates) {
@@ -30,14 +44,15 @@ export function MetadataTemplate({ id }) {
     }
   }, [templates]);
 
-  const completeUpdate = async (updated) => {
-    await dispatch(updateTemplate(updated));
-    // try {
-    //   const message = await updateMetadataTemplate(updated);
-    //   notification.success({ message });
-    //   setTemplate(updated);
-    // } catch (e) {}
-  };
+  /**
+   * Update the current template (any field updated will call this).
+   * @param updated
+   */
+  const completeUpdate = async (updated) =>
+    dispatch(updateTemplate(updated))
+      .then(unwrapResult)
+      .then(({ message }) => notification.info({ message }))
+      .catch(({ message }) => notification.info({ message }));
 
   const onChange = async (field, text) => {
     if (template[field] !== text) {
