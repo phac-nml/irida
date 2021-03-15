@@ -58,6 +58,12 @@ export async function deleteMetadataTemplate(projectId, templateId) {
   }
 }
 
+/**
+ * Set a default metadata template for a project
+ * @param templateIdId Identifier of the metadata template
+ * @param projectId Identifier of the project
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export async function setDefaultMetadataTemplate(projectId, templateId) {
   try {
     const { data } = await axios.post(
@@ -69,6 +75,11 @@ export async function setDefaultMetadataTemplate(projectId, templateId) {
   }
 }
 
+/**
+ * Removes a default metadata template for a project
+ * @param projectId Identifier of the project
+ * @returns {Promise<AxiosResponse<any>>}
+ */
 export async function removeDefaultMetadataTemplate(projectId) {
   try {
     const { data } = await axios.post(

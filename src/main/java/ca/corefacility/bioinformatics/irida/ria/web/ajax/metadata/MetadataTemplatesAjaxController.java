@@ -59,6 +59,12 @@ public class MetadataTemplatesAjaxController {
 		return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
 	}
 
+	/**
+	 * Set a default metadata template for a project
+	 * @param templateId Identifier for the metadata template to set as default.
+	 * @param projectId Identifier for the project to set the metadata template as default for.
+	 * @return {@link AjaxSuccessResponse} with the success message
+	 */
 	@PostMapping("/{templateId}/set-project-default")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@PathVariable Long templateId,
 			@RequestParam Long projectId) {
@@ -66,6 +72,11 @@ public class MetadataTemplatesAjaxController {
 		return ResponseEntity.ok(new AjaxSuccessResponse("Set default template for project."));
 	}
 
+	/**
+	 * Remove default metadata template for a project
+	 * @param projectId Identifier for the project to remove the default metadata template for.
+	 * @return {@link AjaxSuccessResponse} with the success message
+	 */
 	@PostMapping("/remove-project-default")
 	public ResponseEntity<AjaxResponse> removeDefaultMetadataTemplate(@RequestParam Long projectId) {
 		service.removeDefaultMetadataTemplate(projectId);

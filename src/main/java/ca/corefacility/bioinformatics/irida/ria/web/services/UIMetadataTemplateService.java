@@ -62,9 +62,24 @@ public class UIMetadataTemplateService {
 
 	public void deleteMetadataTemplate(Long templateId, Long projectId) {
 		Project project = projectService.read(projectId);
+
+		/*
+		If this template was set as the project default then we need to
+		remove it from the project first
+		 */
+		if(project.getDefaultMetadataTemplate().getId() == templateId) {
+			removeDefaultMetadataTemplate(projectId);
+		}
+
 		templateService.deleteMetadataTemplateFromProject(project, templateId);
 	}
 
+	/**
+	 * Set the default {@link MetadataTemplate} for a {@link Project}
+	 *
+	 * @param templateId Identifier for a {@link MetadataTemplate}
+	 * @param projectId Identifier for a {@link Project}
+	 */
 	public void setDefaultMetadataTemplate(Long templateId, Long projectId) {
 		Project project = projectService.read(projectId);
 		MetadataTemplate metadataTemplate = templateService.read(templateId);
@@ -72,6 +87,11 @@ public class UIMetadataTemplateService {
 		projectService.update(project);
 	}
 
+	/**
+	 * Remove the default {@link MetadataTemplate} for a {@link Project}
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 */
 	public void removeDefaultMetadataTemplate(Long projectId) {
 		Project project = projectService.read(projectId);
 		project.setDefaultMetadataTemplate(null);

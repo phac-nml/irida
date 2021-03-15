@@ -108,8 +108,13 @@ export function MetadataTemplatesList({ navigate }) {
             <MetadataTemplateCreate
               key="create"
               createTemplate={createTemplate}
-              hasDefaultTemplate={hasDefaultTemplate}
-              removeDefaultTemplate={removeDefaultTemplate}
+              removeDefaultTemplate={
+                hasDefaultTemplate ? (
+                  <Button onClick={removeDefaultTemplate}>
+                    Remove Default Template
+                  </Button>
+                ) : null
+              }
             />,
           ]}
         >

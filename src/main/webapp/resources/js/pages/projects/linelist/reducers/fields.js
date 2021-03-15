@@ -100,12 +100,22 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD:
       return { ...state, initializing: true, error: false };
     case templateActionTypes.LOAD_SUCCESS: {
-      let defaultTemplateIndex = 0;
-      action.templates.forEach((template, index) => {
-        if (template.defaultTemplate) {
-          defaultTemplateIndex = index;
-        }
-      });
+      /*
+      Get the default template index if there is one
+      */
+      let defaultTemplateIndex = action.templates.findIndex(
+        (template) => template.defaultTemplate
+      );
+
+      /*
+      If a default template index is not found then it returns a -1,
+      in which case we set the defaultTemplateIndex to 0 which is the
+      "all fields" template
+      */
+      if (defaultTemplateIndex < 0) {
+        defaultTemplateIndex = 0;
+      }
+
       return {
         ...state,
         initializing: false,

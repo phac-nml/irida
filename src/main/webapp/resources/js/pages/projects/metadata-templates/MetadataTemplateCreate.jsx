@@ -4,7 +4,6 @@ import { Button, Form, Input, Modal } from "antd";
 export function MetadataTemplateCreate({
   createTemplate,
   removeDefaultTemplate,
-  hasDefaultTemplate,
 }) {
   const [visible, setVisible] = React.useState(false);
   const [form] = Form.useForm();
@@ -22,9 +21,7 @@ export function MetadataTemplateCreate({
 
   return (
     <>
-      {hasDefaultTemplate ? (
-        <Button onClick={removeDefaultTemplate}>Remove Default Template</Button>
-      ) : null}
+      {removeDefaultTemplate}
       <Button onClick={() => setVisible(true)}>New Template</Button>
       <Modal
         title={"CREATE NEW METADATE TEMPLATE"}
