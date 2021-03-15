@@ -76,7 +76,6 @@ export const templatesSlice = createSlice({
       loading: false,
     }),
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
-      console.log(payload); // TODO: NOT WORKING
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
       );
