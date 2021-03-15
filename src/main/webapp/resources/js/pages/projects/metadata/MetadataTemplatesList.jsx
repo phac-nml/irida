@@ -6,6 +6,7 @@ import { Link } from "@reach/router";
 import { blue6 } from "../../../styles/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { removeTemplateFromProject } from "./redux/templates/templatesSlice";
+import { SPACE_MD } from "../../../styles/spacing";
 
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);
@@ -26,6 +27,7 @@ export function MetadataTemplatesList({ projectId }) {
 
   return (
     <List
+      style={{ marginTop: SPACE_MD }}
       loading={loading}
       bordered
       itemLayout="horizontal"

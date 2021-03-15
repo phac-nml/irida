@@ -47,19 +47,15 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
   return (
     <Row>
       <Col xs={24} lg={18} xxl={12}>
-        <Space direction="vertical" size="large" style={{ display: "block" }}>
-          <Menu mode="horizontal" selectedKeys={[selectedKey]}>
-            <Menu.Item key="fields">
-              <Link to="fields">{i18n("MetadataFields.title")}</Link>
-            </Menu.Item>
-            <Menu.Item key="templates">
-              <Link to="templates">
-                {i18n("ProjectMetadataTemplates.title")}
-              </Link>
-            </Menu.Item>
-          </Menu>
-          {children}
-        </Space>
+        <Menu mode="horizontal" selectedKeys={[selectedKey]}>
+          <Menu.Item key="fields">
+            <Link to="fields">{i18n("MetadataFields.title")}</Link>
+          </Menu.Item>
+          <Menu.Item key="templates">
+            <Link to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
+          </Menu.Item>
+        </Menu>
+        {children}
       </Col>
     </Row>
   );
@@ -71,7 +67,7 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
  * @returns {JSX.Element}
  * @constructor
  */
-function ProjectMetadataTemplates() {
+function ProjectMetadata() {
   return (
     <Provider store={store}>
       <Router>
@@ -90,4 +86,4 @@ function ProjectMetadataTemplates() {
   );
 }
 
-render(<ProjectMetadataTemplates />, document.querySelector("#templates-root"));
+render(<ProjectMetadata />, document.querySelector("#templates-root"));
