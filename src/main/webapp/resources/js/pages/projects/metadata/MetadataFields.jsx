@@ -1,7 +1,7 @@
 import React from "react";
-import {Button, Space, Table} from "antd";
-import {MetadataTemplateCreate} from "./MetadataTemplateCreate";
-import {useSelector} from "react-redux";
+import { Button, Space, Table } from "antd";
+import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
+import { useSelector } from "react-redux";
 
 /**
  * Component for showing metadata fields associated with a project.
