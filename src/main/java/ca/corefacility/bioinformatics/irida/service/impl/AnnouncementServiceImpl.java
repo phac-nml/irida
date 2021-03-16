@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
  *
  */
 @Service
-
 public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement> implements AnnouncementService {
 
     private AnnouncementRepository announcementRepository;
@@ -166,7 +166,16 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
+    public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user) {
+        return announcementUserJoinRepository.getAnnouncementsForUser(user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<AnnouncementUserJoin> getReadAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsReadByUser(user);
     }
@@ -176,7 +185,7 @@ public class AnnouncementServiceImpl extends CRUDServiceImpl<Long, Announcement>
      * {@inheritDoc}
      */
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasPermission(#user, 'canUpdateUser')")
     public List<Announcement> getUnreadAnnouncementsForUser(User user) {
         return announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
     }

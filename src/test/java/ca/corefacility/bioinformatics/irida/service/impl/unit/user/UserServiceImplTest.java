@@ -6,24 +6,23 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
@@ -55,6 +54,7 @@ public class UserServiceImplTest {
 	private UserService userService;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
+	private AnnouncementUserJoinRepository announcementUserJoinRepository;
 	private Validator validator;
 	private PasswordEncoder passwordEncoder;
 
@@ -64,7 +64,8 @@ public class UserServiceImplTest {
 		userRepository = mock(UserRepository.class);
 		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
-		userService = new UserServiceImpl(userRepository, pujRepository, passwordEncoder,
+		announcementUserJoinRepository = mock(AnnouncementUserJoinRepository.class);
+		userService = new UserServiceImpl(userRepository, announcementUserJoinRepository, pujRepository, passwordEncoder,
 				validator);
 	}
 
@@ -126,6 +127,37 @@ public class UserServiceImplTest {
 
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).save(u);
+	}
+
+	@Test
+	public void testReadNewAnnouncements() {
+		User u = user();
+
+		Announcement first_announcement = new Announcement("test 1", "this is a test message", true, u);
+		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u);
+		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
+
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+
+		userService.create(u);
+
+		verify(announcementUserJoinRepository, times(0)).save(any(AnnouncementUserJoin.class));
+	}
+
+	@Test
+	public void testReadOldAnnouncements() {
+		User u = user();
+
+		Date two_months_ago = new DateTime().minusMonths(2).toDate();
+		Announcement first_announcement = new Announcement("test 1", "this is a test message", true, u, two_months_ago );
+		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u, two_months_ago);
+		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
+
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+
+		userService.create(u);
+
+		verify(announcementUserJoinRepository, times(2)).save(any(AnnouncementUserJoin.class));
 	}
 
 	@Test

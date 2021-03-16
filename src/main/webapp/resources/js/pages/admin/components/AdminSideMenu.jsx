@@ -122,7 +122,6 @@ export default function AdminHeader() {
           </Menu.Item>
         </Menu>
       </section>
-      );
     </Sider>
   );
 }

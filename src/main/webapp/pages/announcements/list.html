@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
+
+<head>
+    <title th:text="#{announcement.all}">_Viewing announcements_</title>
+    <link rel="stylesheet" th:href="@{/dist/css/announcements.bundle.css}" />
+</head>
+
+<body>
+<div layout:fragment="page" id="announcements-root" style="height:100%; background-color:rgb(240, 242, 245);">
+    <!-- Contents rendered from AnnouncementsPage.jsx -->
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/announcements.bundle.js}"></script>
+</th:block>
+</body>
+</html>

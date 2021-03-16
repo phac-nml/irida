@@ -1,6 +1,7 @@
 import React from "react";
 import {
   AppstoreOutlined,
+  BellOutlined,
   BoldOutlined,
   CalendarTwoTone,
   CheckCircleOutlined,
@@ -139,6 +140,8 @@ export const IconMetadataTemplate = ({ ...props }) => (
 );
 
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
+
+export const IconBell = ({ ...props }) => <BellOutlined {...props} />;
 
 export const IconLaunchPipeline = ({ ...props }) => (
   <RocketOutlined {...props} />

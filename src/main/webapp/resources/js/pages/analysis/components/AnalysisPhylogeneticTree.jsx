@@ -40,7 +40,7 @@ export default function Tree() {
 
   // On load gets the newick string for the analysis
   useEffect(() => {
-    getNewickTree(analysisIdentifier).then(data => {
+    getNewickTree(analysisIdentifier).then((data) => {
       if (data.newick === null) {
         //Empty tree
         setNewickString("");
@@ -73,7 +73,11 @@ export default function Tree() {
    */
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={i18n("AnalysisPhylogeneticTree.tree")} xl={24} xxl={24}>
+      <TabPaneContent
+        title={i18n("AnalysisPhylogeneticTree.tree")}
+        xl={24}
+        xxl={24}
+      >
         {serverMsg !== null ? (
           <WarningAlert
             message={serverMsg}
@@ -91,7 +95,7 @@ export default function Tree() {
                 <Radio.Group
                   value={currTreeShape}
                   onChange={handleClick}
-                  id="t-tree-shape-tools"
+                  className="t-tree-shape-tools"
                 >
                   <Radio.Button value="rectangular">
                     {i18n("AnalysisPhylogeneticTree.rectangular")}
@@ -114,12 +118,12 @@ export default function Tree() {
                   href={`${URL}/${analysisIdentifier}/advanced-phylo`}
                   target="_blank"
                   key="advphylo"
-                  id="t-advanced-phylo-btn"
+                  className="t-advanced-phylo-btn"
                 >
                   {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
                 </Button>
               </ButtonGroupWrapper>
-              <VisualizationWrapper id="t-phylocanvas-wrapper">
+              <VisualizationWrapper className="t-phylocanvas-wrapper">
                 {getTree()}
               </VisualizationWrapper>
             </div>

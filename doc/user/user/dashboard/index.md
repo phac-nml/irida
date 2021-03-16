@@ -153,30 +153,35 @@ All activities in the recent activities section will link to the project or user
 Updates-Announcements
 ---------------------
 
-Updates to the IRIDA Platform will be announced on the right side of the dashboard.
+The IRIDA platform uses announcements to inform users of important information. Some examples may include:
 
-![Platform Update/Announcement section.](images/announcements-display-to-user.png)
+* When scheduled downtime will happen
+* Recently added features or bug fixes
 
-The platform announcements section will show you things like:
+There are priority and non-priority announcements, represented by the flag icon. A blue flag represents a priority announcement and a grey flag represents a non-priority announcement.
+Priority announcements will be automatically displayed at login. These announcements must be acknowledged that they have been read before continuing.
 
-* When scheduled downtime will happen.
-* Recently added features or bug fixes.
-* Other platform announcements.
+To dismiss an announcement or mark it as read, hit the `Close` button. Or if more than one priority announcement exists, hit the `Next` button.
 
-To dismiss an announcement/mark it as read, click the announcement title link:
+![Priority Announcement](images/announcements-priority-modal.png)
 
-![Mark As Read button](images/announcements-mark-as-read-user_1.png)
+The total unread announcement count is represented by the badge number on the bell icon within the main navigation bar.
 
-This will open a modal window and then you may hit the `Read` button:
+![Announcement Bell Icon](images/announcements-bell-icon.png)
 
-![Mark As Read button](images/announcements-mark-as-read-user_2.png)
+To view the list of all unread announcements, hover over the bell icon for a drop down menu to appear.
 
-If you accidentally marked an announcement as read and want to see it again, or if you would like to view *all* announcements you have marked, click the `View Read Announcements` button:
+![Announcement Submenu](images/announcements-submenu.png)
 
-![View Read Announcements button](images/announcements-view-read-announcements.png)
+To view the announcement details, click on the announcement title link. A modal will open and display the announcement details. 
+Hit the `Close`, `Next`, or `Previous` button to mark the announcement as read. To close the non-priority announcement and come back to it later, hit the `X` icon in the top-right corner of the modal. 
 
-This will bring you to the `Read Announcements` page, which will show you all announcements you have marked as read. 
+![Announcement Submenu](images/announcements-modal.png)
 
-![View Read Announcements button](images/announcements-view-read-announcements-page.png)
+To view all announcements, hit the `View All` link from the drop down menu. This will bring you to the announcements page.
+
+![Announcements Page](images/announcements-page.png)
+
+To view the announcement details, click on the announcement title link.
 
 <a href="../login/">Previous: Logging in</a><a href="../user-groups/" style="float: right;">Next: Managing user groups</a>
