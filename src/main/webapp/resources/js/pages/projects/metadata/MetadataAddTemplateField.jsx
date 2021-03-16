@@ -22,13 +22,14 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
   return (
     <>
       <Button disabled={fields.length === 0} onClick={() => setVisible(true)}>
-        Add Field{" "}
+        {i18n("MetadataAddTemplateField.button")}
       </Button>
       <Modal
         title={i18n("MetadataAddTemplateField.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={onOk}
+        okText={i18n("MetadataAddTemplateField.ok-text")}
       >
         <Table
           rowSelection={{
