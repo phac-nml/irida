@@ -61,10 +61,10 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         onClick: () => setVisible(true),
       })}
       <Modal
-        title={i18n("CreateMetadataTemplate.ok-text")}
+        title={i18n("CreateMetadataTemplate.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
-        okText={"CREATE TEMPLATE"}
+        okText={i18n("CreateMetadataTemplate.ok-text")}
         onOk={onOk}
       >
         <Form layout="vertical" form={form}>
@@ -74,13 +74,13 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
             rules={[
               {
                 required: true,
-                message: "Please suplly a name for this template",
+                message: i18n("CreateMetadataTemplate.name.required"),
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (value.length && names.has(value)) {
                     return Promise.reject(
-                      new Error("A template with this name already exists")
+                      new Error(i18n("CreateMetadataTemplate.name.duplicate"))
                     );
                   }
                   return Promise.resolve();
