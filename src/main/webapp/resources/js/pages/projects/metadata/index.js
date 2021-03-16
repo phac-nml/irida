@@ -2,9 +2,9 @@ import React from "react";
 import { render } from "react-dom";
 import { Link, Router } from "@reach/router";
 import { MetadataTemplatesList } from "./MetadataTemplatesList";
-import { MetadataTemplate } from "./MetadataTemplate";
+import { MetadataTemplateAdmin } from "./MetadataTemplateAdmin";
 import { MetadataTemplates } from "./MetadataTemplates";
-import { Col, Menu, Row, Space } from "antd";
+import { Col, Menu, Row } from "antd";
 import { MetadataFieldsList } from "./MetadataFieldsList";
 
 import store from "./store";
@@ -13,6 +13,7 @@ import { fetchFieldsForProject } from "../redux/fieldsSlice";
 import { fetchTemplatesForProject } from "../redux/templatesSlice";
 import { MetadataFields } from "./MetadataFields";
 import { MetadataFieldCreate } from "./MetadataFieldCreate";
+import { MetadataTemplateMember } from "./MetadataTemplateMember";
 
 /**
  * React component handles the layout of the metadata fields and templates page.
@@ -79,7 +80,11 @@ function ProjectMetadata() {
         </MetadataFields>
         <MetadataTemplates path="/templates">
           <MetadataTemplatesList path="/" />
-          <MetadataTemplate path="/:id" />
+          {canManage ? (
+            <MetadataTemplateAdmin path="/:id" />
+          ) : (
+            <MetadataTemplateMember path="/:id" />
+          )}
         </MetadataTemplates>
       </MetadataLayout>
     </Router>

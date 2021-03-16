@@ -27,6 +27,30 @@ export function MetadataFieldsList({ projectId }) {
     }
   }, [fields, selected]);
 
+  const columns = [
+    {
+      title: i18n("MetadataField.label"),
+      dataIndex: "label",
+      key: "label",
+    },
+    {
+      title: i18n("MetadataField.type"),
+      dataIndex: "type",
+      key: "text",
+    },
+  ];
+
+  if (canManage) {
+    columns.push({
+      title: i18n("MetadataField.permissions"),
+      dataIndex: "type",
+      key: "permissions",
+      render() {
+        return "All";
+      },
+    });
+  }
+
   return (
     <Space
       direction="vertical"
@@ -47,31 +71,14 @@ export function MetadataFieldsList({ projectId }) {
       <Table
         loading={loading}
         pagination={false}
-        rowSelection={{ selectedRowKeys: selected, onChange: setSelected }}
+        rowSelection={
+          canManage
+            ? { selectedRowKeys: selected, onChange: setSelected }
+            : false
+        }
         scroll={{ y: 800 }}
         dataSource={fields}
-        columns={[
-          {
-            title: i18n("MetadataField.label"),
-            dataIndex: "label",
-            key: "label",
-          },
-          {
-            title: i18n("MetadataField.type"),
-            dataIndex: "type",
-            key: "text",
-          },
-          canManage
-            ? {
-                title: i18n("MetadataField.permissions"),
-                dataIndex: "type",
-                key: "permissions",
-                render() {
-                  return "All";
-                },
-              }
-            : null,
-        ]}
+        columns={columns}
       />
     </Space>
   );

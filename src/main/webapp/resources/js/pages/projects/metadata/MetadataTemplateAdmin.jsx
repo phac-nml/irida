@@ -27,7 +27,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplate({ id }) {
+export function MetadataTemplateAdmin({ id }) {
   const dispatch = useDispatch();
   const { templates, loading } = useSelector((state) => state.templates);
   const { fields: allFields } = useSelector((state) => state.fields);
@@ -50,7 +50,7 @@ export function MetadataTemplate({ id }) {
         // Need to go to templates listing if template not found
       }
     }
-  }, [templates]);
+  }, [id, templates]);
 
   React.useEffect(() => {
     if (Array.isArray(fields) && Array.isArray(allFields)) {

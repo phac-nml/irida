@@ -24,6 +24,34 @@ export function MetadataTemplatesList({ projectId }) {
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
 
+  const getActionsForItem = (item) => {
+    const actions = [
+      <Tag key={`fields-${item.identifier}`}>
+        {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
+      </Tag>,
+      <Button
+        shape="circle"
+        size="small"
+        icon={<IconDownloadFile />}
+        href={`${BASE_URL}/${item.identifier}/excel`}
+        key={`download-${item.identifier}`}
+      />,
+    ];
+    if (canManage) {
+      getActionsForItem.push(
+        <Popconfirm
+          key={`remove-${item.id}`}
+          placement="bottomRight"
+          title={i18n("MetadataTemplatesList.delete-confirm")}
+          onConfirm={() => deleteTemplate(item.identifier)}
+        >
+          <Button shape="circle" size="small" icon={<IconRemove />} />
+        </Popconfirm>
+      );
+    }
+    return actions;
+  };
+
   /**
    * Delete a metadata template.
    *
@@ -43,31 +71,7 @@ export function MetadataTemplatesList({ projectId }) {
       itemLayout="horizontal"
       dataSource={templates}
       renderItem={(item) => (
-        <List.Item
-          className="t-template"
-          actions={[
-            <Tag key={`fields-${item.identifier}`}>
-              {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
-            </Tag>,
-            <Button
-              shape="circle"
-              size="small"
-              icon={<IconDownloadFile />}
-              href={`${BASE_URL}/${item.identifier}/excel`}
-              key={`download-${item.identifier}`}
-            />,
-            canManage ? (
-              <Popconfirm
-                key={`remove-${item.id}`}
-                placement="bottomRight"
-                title={i18n("MetadataTemplatesList.delete-confirm")}
-                onConfirm={() => deleteTemplate(item.identifier)}
-              >
-                <Button shape="circle" size="small" icon={<IconRemove />} />
-              </Popconfirm>
-            ) : null,
-          ]}
-        >
+        <List.Item className="t-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
               <Link style={{ color: blue6 }} to={`${item.identifier}`}>
