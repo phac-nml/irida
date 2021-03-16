@@ -35,7 +35,7 @@ function Linker() {
 
   const options = [
     { label: i18n("Linker.fastq"), value: "fastq" },
-    { label: i18n("Linker.assembly"), value: "assembly" }
+    { label: i18n("Linker.assembly"), value: "assembly" },
   ];
 
   function handleSampleIds({ detail }) {
@@ -69,7 +69,7 @@ function Linker() {
         style={{
           margin: `0 inherit`,
           padding: 0,
-          color: grey9
+          color: grey9,
         }}
         className="t-linker-btn"
         onClick={getIds}
@@ -110,4 +110,7 @@ function Linker() {
   );
 }
 
-render(<Linker />, document.querySelector("#linker"));
+let linker_html = document.querySelector("#linker");
+if (linker_html) {
+  render(<Linker />, linker_html);
+}

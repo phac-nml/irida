@@ -15,7 +15,7 @@ module.exports = {
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
-  announcements: "./resources/js/pages/announcement/announcements.js",
+  announcements: "./resources/js/pages/announcement",
   analysis: "./resources/js/pages/analysis/index.js",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
