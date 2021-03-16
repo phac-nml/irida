@@ -59,7 +59,7 @@ export function MetadataTemplatesList({ projectId }) {
               <Popconfirm
                 key={`remove-${item.id}`}
                 placement="bottomRight"
-                title={"Delete this template?"}
+                title={i18n("MetadataTemplatesList.delete-confirm")}
                 onConfirm={() => deleteTemplate(item.identifier)}
               >
                 <Button shape="circle" size="small" icon={<IconRemove />} />
