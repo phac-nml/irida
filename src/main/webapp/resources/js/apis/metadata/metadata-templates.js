@@ -58,7 +58,7 @@ export async function deleteMetadataTemplate(projectId, templateId) {
 export async function setDefaultMetadataTemplate(projectId, templateId) {
   try {
     const { data } = await axios.post(
-      `${BASE_URL}/templates/${templateId}/set-project-default?projectId=${projectId}`
+      `${BASE_URL}/${templateId}/set-project-default?projectId=${projectId}`
     );
     return data.message;
   } catch (e) {
@@ -74,9 +74,25 @@ export async function setDefaultMetadataTemplate(projectId, templateId) {
 export async function removeDefaultMetadataTemplate(projectId) {
   try {
     const { data } = await axios.post(
-      `${BASE_URL}/templates/remove-project-default?projectId=${projectId}`
+      `${BASE_URL}/remove-project-default?projectId=${projectId}`
     );
     return data.message;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}
+
+/**
+ * Gets a default metadata template for a project
+ * @param projectId Identifier of the project
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export async function getProjectDefaultMetadataTemplate(projectId) {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/get-project-default?projectId=${projectId}`
+    );
+    return data;
   } catch (e) {
     return Promise.reject(e.response.data.message);
   }

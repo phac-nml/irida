@@ -99,4 +99,18 @@ public class UIMetadataService {
 		project.setDefaultMetadataTemplate(null);
 		projectService.update(project);
 	}
+
+	/**
+	 * Get the default {@link MetadataTemplate} for a {@link Project}
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 */
+	public MetadataTemplate getProjectDefaultMetadataTemplate(Long projectId) {
+		Project project = projectService.read(projectId);
+		MetadataTemplate projectDefaultMetadataTemplate = null;
+		if(project.getDefaultMetadataTemplate() != null) {
+			projectDefaultMetadataTemplate = project.getDefaultMetadataTemplate();
+		}
+		return projectDefaultMetadataTemplate;
+	}
 }
