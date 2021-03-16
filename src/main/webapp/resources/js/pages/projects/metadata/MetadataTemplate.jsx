@@ -14,6 +14,8 @@ import { updateTemplate } from "./redux/templates/templatesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
+import differenceBy from "lodash/differenceBy";
 
 const { Paragraph, Text } = Typography;
 
@@ -27,8 +29,10 @@ const { Paragraph, Text } = Typography;
 export function MetadataTemplate({ id }) {
   const dispatch = useDispatch();
   const { templates, loading } = useSelector((state) => state.templates);
+  const { fields: allFields } = useSelector((state) => state.fields);
   const [template, setTemplate] = React.useState({});
   const [fields, setFields] = React.useState();
+  const [newFields, setNewFields] = React.useState();
 
   React.useEffect(() => {
     // Undefined templates == loading sate
@@ -46,6 +50,12 @@ export function MetadataTemplate({ id }) {
       }
     }
   }, [templates]);
+
+  React.useEffect(() => {
+    if (Array.isArray(fields) && Array.isArray(allFields)) {
+      setNewFields(differenceBy(allFields, fields, "id"));
+    }
+  }, [fields, allFields]);
 
   /**
    * Update the current template (any field updated will call this).
@@ -66,6 +76,14 @@ export function MetadataTemplate({ id }) {
 
   const onRowUpdate = async (newOrder) => {
     const updated = { ...template, fields: newOrder };
+    await completeUpdate(updated);
+  };
+
+  const onAddFields = async (newFields) => {
+    const updated = {
+      ...template,
+      fields: [...fields, ...newFields],
+    };
     await completeUpdate(updated);
   };
 
@@ -116,7 +134,10 @@ export function MetadataTemplate({ id }) {
                       }
                     />
                   </span>
-                  <Button>Add New Field</Button>
+                  <MetadataAddTemplateField
+                    fields={newFields}
+                    onAddFields={onAddFields}
+                  />
                 </div>
               }
             />
