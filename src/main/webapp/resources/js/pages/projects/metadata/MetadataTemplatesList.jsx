@@ -38,7 +38,7 @@ export function MetadataTemplatesList({ projectId }) {
       />,
     ];
     if (canManage) {
-      getActionsForItem.push(
+      actions.push(
         <Popconfirm
           key={`remove-${item.id}`}
           placement="bottomRight"

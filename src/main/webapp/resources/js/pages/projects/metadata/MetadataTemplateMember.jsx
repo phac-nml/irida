@@ -1,25 +1,44 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { navigate } from "@reach/router";
-import { List, PageHeader, Skeleton, Table, Typography } from "antd";
+import {
+  List,
+  notification,
+  PageHeader,
+  Skeleton,
+  Table,
+  Typography,
+} from "antd";
 import { addKeysToList } from "../../../utilities/http-utilities";
 
 const { Text } = Typography;
 
+/**
+ * Component for viewing a metadata template.  This is for members who cannot
+ * manage the current project.
+ *
+ * @param {number} id - identifier for the current template
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function MetadataTemplateMember({ id }) {
   const { templates, loading } = useSelector((state) => state.templates);
   const [template, setTemplate] = React.useState({});
 
   React.useEffect(() => {
     if (templates !== undefined) {
-      if (templates.length === 0) {
-        navigate(`../templates`);
+      const found = templates.find((template) => template.identifier === id);
+
+      if (found) {
+        setTemplate(found);
+      } else if (templates.length === 0) {
+        navigate(`../fields`).then(() =>
+          notification.warn({ message: "__No templates found" })
+        );
       } else {
-        const found = templates.find((template) => template.identifier === id);
-        if (found) {
-          setTemplate(found);
-        }
-        // Need to go to templates listing if template not found
+        navigate(`../templates`).then(() =>
+          notification.warn({ message: "__Template cannot be found" })
+        );
       }
     }
   }, [id, templates]);

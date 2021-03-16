@@ -21,7 +21,8 @@ import { IconRemove } from "../../../components/icons/Icons";
 const { Paragraph, Text } = Typography;
 
 /**
- * Component for displaying and modifying a metadata template.
+ * Component for displaying and modifying a metadata template for users who
+ * can manage the current project.
  *
  * @param {number} id - identifier for the current metadata template
  * @returns {JSX.Element|string}
@@ -36,18 +37,21 @@ export function MetadataTemplateAdmin({ id }) {
   const [newFields, setNewFields] = React.useState();
 
   React.useEffect(() => {
-    // Undefined templates == loading sate
     if (templates !== undefined) {
-      if (templates.length === 0) {
-        navigate(`../templates`);
+      const found = templates.find((template) => template.identifier === id);
+
+      if (found) {
+        const { fields, ...newTemplate } = found;
+        setTemplate(newTemplate);
+        setFields(addKeysToList(fields, "field"));
+      } else if (templates.length === 0) {
+        navigate(`../fields`).then(() =>
+          notification.warn({ message: "__No templates found" })
+        );
       } else {
-        const found = templates.find((template) => template.identifier === id);
-        if (found) {
-          const { fields, ...newTemplate } = found;
-          setTemplate(newTemplate);
-          setFields(addKeysToList(fields, "field"));
-        }
-        // Need to go to templates listing if template not found
+        navigate(`../templates`).then(() =>
+          notification.warn({ message: "__Template cannot be found" })
+        );
       }
     }
   }, [id, templates]);
