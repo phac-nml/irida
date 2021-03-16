@@ -58,9 +58,6 @@ export function MetadataFieldsList({ projectId }) {
     >
       {canManage && (
         <Space>
-          <Button onClick={() => navigate("./fields/create")}>
-            {i18n("MetadataFieldsList.add-new")}
-          </Button>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
             <Button disabled={selected.length === 0}>
               {i18n("MetadataFieldsList.create")}

@@ -12,7 +12,6 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { fetchFieldsForProject } from "../redux/fieldsSlice";
 import { fetchTemplatesForProject } from "../redux/templatesSlice";
 import { MetadataFields } from "./MetadataFields";
-import { MetadataFieldCreate } from "./MetadataFieldCreate";
 import { MetadataTemplateMember } from "./MetadataTemplateMember";
 
 /**
@@ -76,7 +75,6 @@ function ProjectMetadata() {
       <MetadataLayout path={"/projects/:projectId/settings/metadata"}>
         <MetadataFields path="/fields">
           <MetadataFieldsList path="/" />
-          {canManage && <MetadataFieldCreate path="/create" />}
         </MetadataFields>
         <MetadataTemplates path="/templates">
           <MetadataTemplatesList path="/" />
