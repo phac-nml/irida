@@ -10,42 +10,57 @@ import {
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
-import { updateTemplate } from "./redux/templates/templatesSlice";
+import { updateTemplate } from "../redux/templatesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
+import differenceBy from "lodash/differenceBy";
+import { IconRemove } from "../../../components/icons/Icons";
 
 const { Paragraph, Text } = Typography;
 
 /**
- * Component for displaying and modifying a metadata template.
+ * Component for displaying and modifying a metadata template for users who
+ * can manage the current project.
  *
  * @param {number} id - identifier for the current metadata template
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplate({ id }) {
+export function MetadataTemplateAdmin({ id }) {
   const dispatch = useDispatch();
   const { templates, loading } = useSelector((state) => state.templates);
+  const { fields: allFields } = useSelector((state) => state.fields);
   const [template, setTemplate] = React.useState({});
   const [fields, setFields] = React.useState();
+  const [newFields, setNewFields] = React.useState();
 
   React.useEffect(() => {
-    // Undefined templates == loading sate
     if (templates !== undefined) {
-      if (templates.length === 0) {
-        navigate(`../templates`);
+      const found = templates.find((template) => template.identifier === id);
+
+      if (found) {
+        const { fields, ...newTemplate } = found;
+        setTemplate(newTemplate);
+        setFields(addKeysToList(fields, "field"));
+      } else if (templates.length === 0) {
+        navigate(`../fields`).then(() =>
+          notification.warn({ message: "__No templates found" })
+        );
       } else {
-        const found = templates.find((template) => template.identifier === id);
-        if (found) {
-          const { fields, ...newTemplate } = found;
-          setTemplate(newTemplate);
-          setFields(addKeysToList(fields, "field"));
-        }
-        // Need to go to templates listing if template not found
+        navigate(`../templates`).then(() =>
+          notification.warn({ message: "__Template cannot be found" })
+        );
       }
     }
-  }, [templates]);
+  }, [id, templates]);
+
+  React.useEffect(() => {
+    if (Array.isArray(fields) && Array.isArray(allFields)) {
+      setNewFields(differenceBy(allFields, fields, "id"));
+    }
+  }, [fields, allFields]);
 
   /**
    * Update the current template (any field updated will call this).
@@ -66,6 +81,22 @@ export function MetadataTemplate({ id }) {
 
   const onRowUpdate = async (newOrder) => {
     const updated = { ...template, fields: newOrder };
+    await completeUpdate(updated);
+  };
+
+  const onAddFields = async (newFields) => {
+    const updated = {
+      ...template,
+      fields: [...fields, ...newFields],
+    };
+    await completeUpdate(updated);
+  };
+
+  const removeField = async (item) => {
+    const updated = {
+      ...template,
+      fields: fields.filter((field) => field.id !== item.id),
+    };
     await completeUpdate(updated);
   };
 
@@ -116,25 +147,52 @@ export function MetadataTemplate({ id }) {
                       }
                     />
                   </span>
-                  <Button>Add New Field</Button>
+                  <MetadataAddTemplateField
+                    fields={newFields}
+                    onAddFields={onAddFields}
+                  />
                 </div>
               }
             />
             <DnDTable
               data={fields}
               columns={[
-                { title: "Metadata Field", dataIndex: "label", key: "label" },
-                { title: "Type", dataIndex: "type", key: "text" },
-                window.project.canManage
-                  ? {
-                      title: "Permissions",
-                      dataIndex: "type",
-                      key: "permissions",
-                      render() {
-                        return "All";
+                {
+                  title: i18n("MetadataField.label"),
+                  dataIndex: "label",
+                  key: "label",
+                },
+                {
+                  title: i18n("MetadataField.type"),
+                  dataIndex: "type",
+                  key: "text",
+                },
+                ...(window.project.canManage
+                  ? [
+                      {
+                        title: i18n("MetadataField.permissions"),
+                        dataIndex: "type",
+                        key: "permissions",
+                        render() {
+                          return "All";
+                        },
                       },
-                    }
-                  : null,
+                      {
+                        align: "right",
+                        width: 100,
+                        render(item) {
+                          return (
+                            <Button
+                              onClick={() => removeField(item)}
+                              shape="circle"
+                              size="small"
+                              icon={<IconRemove />}
+                            />
+                          );
+                        },
+                      },
+                    ]
+                  : []),
               ]}
               onRowUpdate={onRowUpdate}
             />

@@ -69,7 +69,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     private List<AnnouncementUserJoin> users;
 
     /**
-     *      Default constructor, needed by Hibernate.
+     * Default constructor, needed by Hibernate.
      */
     private Announcement() {
         createdDate = new Date();
@@ -80,7 +80,7 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
     }
 
     /**
-     *      Create a new {@link Announcement} object, for display on the front page.
+     * Create a new {@link Announcement} object, for display on the front page.
      * @param title of the announcement
      * @param message Content of the announcement
      * @param priority of the announcement
@@ -92,6 +92,22 @@ public class Announcement implements IridaThing, Comparable<Announcement> {
         this.message = message;
         this.priority = priority;
         this.user = user;
+    }
+
+    /**
+     * Create a new {@link Announcement} object with a created date, for testing purposes.
+     * @param title of the announcement
+     * @param message Content of the announcement
+     * @param priority of the announcement
+     * @param user The {@link User} that created the announcement
+     * @param createdDate of the announcement
+     */
+    public Announcement(String title, String message, boolean priority, User user, Date createdDate) {
+        this.title = title;
+        this.message = message;
+        this.priority = priority;
+        this.user = user;
+        this.createdDate = createdDate;
     }
 
     @Override

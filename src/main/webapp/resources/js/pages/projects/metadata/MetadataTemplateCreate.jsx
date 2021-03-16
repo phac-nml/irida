@@ -1,14 +1,23 @@
 import React from "react";
-import { Form, Input, Modal, Typography } from "antd";
+import { Form, Input, Modal, notification, Typography } from "antd";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
 import { useDispatch, useSelector } from "react-redux";
-import { createNewMetadataTemplate } from "./redux/templates/templatesSlice";
+import { createNewMetadataTemplate } from "../redux/templatesSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 
 const { Text } = Typography;
 
+/**
+ * Component to create a new metadata template with a list of metadata fields
+ *
+ * @param {JSX.Element} children
+ * @param {number} projectId - identifier for the current project
+ * @param {Object[]} fields - list of metadata fields for the template
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const dispatch = useDispatch();
   const { templates } = useSelector((state) => state.templates);
@@ -34,19 +43,16 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
 
   const onOk = async () => {
     const values = await form.validateFields();
-    try {
-      values.fields = fieldsState;
-      dispatch(createNewMetadataTemplate({ projectId, template: values }))
-        .then(unwrapResult)
-        .then((template) => {
-          form.resetFields(Object.keys(values));
-          setVisible(false);
-          navigate(`templates/${template.identifier}`);
-        });
-      setVisible(false);
-    } catch (e) {
-      console.log(e);
-    }
+    values.fields = fieldsState;
+    dispatch(createNewMetadataTemplate({ projectId, template: values }))
+      .then(unwrapResult)
+      .then((template) => {
+        form.resetFields(Object.keys(values));
+        setVisible(false);
+        navigate(`templates/${template.identifier}`);
+        setVisible(false);
+      })
+      .catch((message) => notification.error({ message }));
   };
 
   return (
@@ -55,10 +61,10 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         onClick: () => setVisible(true),
       })}
       <Modal
-        title={"CREATE NEW METADATA TEMPLATE"}
+        title={i18n("CreateMetadataTemplate.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
-        okText={"CREATE TEMPLATE"}
+        okText={i18n("CreateMetadataTemplate.ok-text")}
         onOk={onOk}
       >
         <Form layout="vertical" form={form}>
@@ -68,13 +74,13 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
             rules={[
               {
                 required: true,
-                message: "Please suplly a name for this template",
+                message: i18n("CreateMetadataTemplate.name.required"),
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (value.length && names.has(value)) {
                     return Promise.reject(
-                      new Error("A template with this name already exists")
+                      new Error(i18n("CreateMetadataTemplate.name.duplicate"))
                     );
                   }
                   return Promise.resolve();

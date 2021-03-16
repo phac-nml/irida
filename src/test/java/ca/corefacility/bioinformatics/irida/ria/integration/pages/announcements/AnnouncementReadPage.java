@@ -16,7 +16,13 @@ public class AnnouncementReadPage extends AbstractPage {
         super(driver);
     }
 
+    public void goTo() {
+        get(driver, "announcements/user/list");
+    }
+
     public List<WebElement> getAllReadAnnouncements() {
-        return driver.findElements(By.cssSelector(".announcement-item"));
+        WebElement readButton = driver.findElement(By.cssSelector(".t-read-announcements"));
+        readButton.click();
+        return driver.findElements(By.cssSelector(".t-announcement-item"));
     }
 }

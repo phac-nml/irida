@@ -7,8 +7,8 @@ import {
   removeDefaultMetadataTemplate,
   setDefaultMetadataTemplate,
   updateMetadataTemplate,
-} from "../../../../../apis/metadata/metadata-templates";
-import { addKeysToList } from "../../../../../utilities/http-utilities";
+} from "../../../apis/metadata/metadata-templates";
+import { addKeysToList } from "../../../utilities/http-utilities";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.

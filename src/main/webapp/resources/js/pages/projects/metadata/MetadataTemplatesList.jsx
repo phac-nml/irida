@@ -6,6 +6,7 @@ import {
   IconRemove,
   IconSetDefault,
 } from "../../../components/icons/Icons";
+
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
 import { blue6 } from "../../../styles/colors";
@@ -15,14 +16,24 @@ import {
   removeDefaultTemplateForProject,
   removeTemplateFromProject,
   setDefaultTemplateForProject,
-} from "./redux/templates/templatesSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { SPACE_XS } from "../../../styles/spacing";
+} from "../../projects/redux/templatesSlice";
 
+import { unwrapResult } from "@reduxjs/toolkit";
+import { SPACE_MD } from "../../../styles/spacing";
+
+/**
+ * Component to display all metadata templates associated with a project.
+ *
+ * @param projectId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading, defaultTemplate } = useSelector(
     (state) => state.templates
   );
+  const { canManage } = useSelector((state) => state.project);
+
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
@@ -31,16 +42,6 @@ export function MetadataTemplatesList({ projectId }) {
   React.useEffect(() => {
     dispatch(getDefaultTemplateForProject({ projectId }));
   }, []);
-
-  const deleteTemplate = async (templateId) => {
-    const { payload } = await dispatch(
-      removeTemplateFromProject({ projectId, templateId })
-    );
-    console.log(payload);
-    // .then(unwrapResult)
-    // .then(({ message }) => notification.success({ message }))
-    // .catch((message) => notification.error({ message }));
-  };
 
   const setDefaultTemplate = async (templateId) => {
     if (templateId !== defaultTemplate) {
@@ -62,55 +63,71 @@ export function MetadataTemplatesList({ projectId }) {
       .catch((message) => notification.error({ message }));
   };
 
+  const getActionsForItem = (item) => {
+    const actions = [
+      <Tag key={`fields-${item.identifier}`}>
+        {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
+      </Tag>,
+      <Button
+        shape="circle"
+        size="small"
+        icon={<IconDownloadFile />}
+        href={`${BASE_URL}/${item.identifier}/excel`}
+        key={`download-${item.identifier}`}
+      />,
+    ];
+    if (canManage) {
+      actions.push(
+        defaultTemplate == item.identifier ? (
+          <Button
+            shape="circle"
+            size="small"
+            icon={<IconIsDefault />}
+            key="remove-default-template"
+            onClick={() => removeDefaultTemplate()}
+          />
+        ) : (
+          <Button
+            shape="circle"
+            size="small"
+            icon={<IconSetDefault />}
+            key="set-default-template"
+            onClick={() => setDefaultTemplate(item.identifier)}
+          />
+        ),
+        <Popconfirm
+          key={`remove-${item.id}`}
+          placement="bottomRight"
+          title={i18n("MetadataTemplatesList.delete-confirm")}
+          onConfirm={() => deleteTemplate(item.identifier)}
+        >
+          <Button shape="circle" size="small" icon={<IconRemove />} />
+        </Popconfirm>
+      );
+    }
+    return actions;
+  };
+
+  /**
+   * Delete a metadata template.
+   *
+   * @param {number} templateId - identifier for the metadata template to delete
+   */
+  const deleteTemplate = async (templateId) =>
+    dispatch(removeTemplateFromProject({ projectId, templateId }))
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }))
+      .catch((message) => notification.error({ message }));
+
   return (
     <List
+      style={{ marginTop: SPACE_MD }}
       loading={loading}
       bordered
       itemLayout="horizontal"
       dataSource={templates}
       renderItem={(item) => (
-        <List.Item
-          className="t-template"
-          actions={[
-            <Tag key={`fields-${item.identifier}`}>
-              {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
-            </Tag>,
-            defaultTemplate == item.identifier ? (
-              <Button
-                shape="circle"
-                size="small"
-                icon={<IconIsDefault />}
-                key="remove-default-template"
-                onClick={() => removeDefaultTemplate()}
-              />
-            ) : (
-              <Button
-                shape="circle"
-                size="small"
-                icon={<IconSetDefault />}
-                key="set-default-template"
-                onClick={() => setDefaultTemplate(item.identifier)}
-              />
-            ),
-            <Button
-              shape="circle"
-              size="small"
-              icon={<IconDownloadFile />}
-              href={`${BASE_URL}/${item.identifier}/excel`}
-              key={`download-${item.identifier}`}
-            />,
-            window.project.canManage ? (
-              <Popconfirm
-                key={`remove-${item.id}`}
-                placement="bottomRight"
-                title={"Delete this template?"}
-                onConfirm={() => deleteTemplate(item.identifier)}
-              >
-                <Button shape="circle" size="small" icon={<IconRemove />} />
-              </Popconfirm>
-            ) : null,
-          ]}
-        >
+        <List.Item className="t-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
               <Link style={{ color: blue6 }} to={`${item.identifier}`}>
