@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Space, Table } from "antd";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { useSelector } from "react-redux";
-import { navigate } from "@reach/router";
 import { SPACE_MD } from "../../../styles/spacing";
 
 /**
@@ -13,12 +12,13 @@ import { SPACE_MD } from "../../../styles/spacing";
 export function MetadataFieldsList({ projectId }) {
   const { canManage } = useSelector((state) => state.project);
   const { fields, loading } = useSelector((state) => state.fields);
+
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
 
   React.useEffect(() => {
     /*
-    When fields are selected, Ant Table only five the key, here we are setting
+    When fields are selected, Ant Table only has the key, here we are setting
     the selected fields as the entire field value.
      */
     if (fields && selected.length) {
