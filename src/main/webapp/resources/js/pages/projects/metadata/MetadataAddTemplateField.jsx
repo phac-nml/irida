@@ -19,9 +19,11 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
 
   const onOk = () => onAddFields(selectedFields).then(() => setVisible(false));
 
-  return fields.length ? (
+  return (
     <>
-      <Button onClick={() => setVisible(true)}>Add Field </Button>
+      <Button disabled={fields.length === 0} onClick={() => setVisible(true)}>
+        Add Field{" "}
+      </Button>
       <Modal
         title={"Select fields to add to template"}
         visible={visible}
@@ -44,5 +46,5 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
         />
       </Modal>
     </>
-  ) : null;
+  );
 }
