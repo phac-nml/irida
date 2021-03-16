@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Modal, Typography } from "antd";
+import { Form, Input, Modal, notification, Typography } from "antd";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
@@ -43,19 +43,16 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
 
   const onOk = async () => {
     const values = await form.validateFields();
-    try {
-      values.fields = fieldsState;
-      dispatch(createNewMetadataTemplate({ projectId, template: values }))
-        .then(unwrapResult)
-        .then((template) => {
-          form.resetFields(Object.keys(values));
-          setVisible(false);
-          navigate(`templates/${template.identifier}`);
-        });
-      setVisible(false);
-    } catch (e) {
-      console.log(e);
-    }
+    values.fields = fieldsState;
+    dispatch(createNewMetadataTemplate({ projectId, template: values }))
+      .then(unwrapResult)
+      .then((template) => {
+        form.resetFields(Object.keys(values));
+        setVisible(false);
+        navigate(`templates/${template.identifier}`);
+        setVisible(false);
+      })
+      .catch((message) => notification.error({ message }));
   };
 
   return (
