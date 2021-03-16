@@ -25,7 +25,7 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
         Add Field{" "}
       </Button>
       <Modal
-        title={"Select fields to add to template"}
+        title={i18n("MetadataAddTemplateField.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={onOk}
