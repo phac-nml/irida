@@ -7,10 +7,10 @@ import { MetadataTemplates } from "./MetadataTemplates";
 import { Col, Menu, Row, Space } from "antd";
 import { MetadataFieldsList } from "./MetadataFieldsList";
 
-import store from "./redux/store";
-import { Provider, useDispatch } from "react-redux";
-import { fetchFieldsForProject } from "./redux/fields/fieldsSlice";
-import { fetchTemplatesForProject } from "./redux/templates/templatesSlice";
+import store from "./store";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { fetchFieldsForProject } from "../redux/fieldsSlice";
+import { fetchTemplatesForProject } from "../redux/templatesSlice";
 import { MetadataFields } from "./MetadataFields";
 import { MetadataFieldCreate } from "./MetadataFieldCreate";
 
@@ -68,22 +68,27 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
  * @constructor
  */
 function ProjectMetadata() {
+  const { canManage } = useSelector((state) => state.project);
+
   return (
-    <Provider store={store}>
-      <Router>
-        <MetadataLayout path={"/projects/:projectId/settings/metadata"}>
-          <MetadataFields path="/fields">
-            <MetadataFieldsList path="/" />
-            <MetadataFieldCreate path="/create" />
-          </MetadataFields>
-          <MetadataTemplates path="/templates">
-            <MetadataTemplatesList path="/" />
-            <MetadataTemplate path="/:id" />
-          </MetadataTemplates>
-        </MetadataLayout>
-      </Router>
-    </Provider>
+    <Router>
+      <MetadataLayout path={"/projects/:projectId/settings/metadata"}>
+        <MetadataFields path="/fields">
+          <MetadataFieldsList path="/" />
+          {canManage && <MetadataFieldCreate path="/create" />}
+        </MetadataFields>
+        <MetadataTemplates path="/templates">
+          <MetadataTemplatesList path="/" />
+          <MetadataTemplate path="/:id" />
+        </MetadataTemplates>
+      </MetadataLayout>
+    </Router>
   );
 }
 
-render(<ProjectMetadata />, document.querySelector("#templates-root"));
+render(
+  <Provider store={store}>
+    <ProjectMetadata />
+  </Provider>,
+  document.querySelector("#templates-root")
+);

@@ -11,6 +11,7 @@ import { SPACE_MD } from "../../../styles/spacing";
  * @returns {JSX.Element|string}
  */
 export function MetadataFieldsList({ projectId }) {
+  const { canManage } = useSelector((state) => state.project);
   const { fields, loading } = useSelector((state) => state.fields);
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
@@ -31,16 +32,18 @@ export function MetadataFieldsList({ projectId }) {
       direction="vertical"
       style={{ display: "block", marginTop: SPACE_MD }}
     >
-      <Space>
-        <Button onClick={() => navigate("./fields/create")}>
-          {i18n("MetadataFieldsList.add-new")}
-        </Button>
-        <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
-          <Button disabled={selected.length === 0}>
-            {i18n("MetadataFieldsList.create")}
+      {canManage && (
+        <Space>
+          <Button onClick={() => navigate("./fields/create")}>
+            {i18n("MetadataFieldsList.add-new")}
           </Button>
-        </MetadataTemplateCreate>
-      </Space>
+          <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
+            <Button disabled={selected.length === 0}>
+              {i18n("MetadataFieldsList.create")}
+            </Button>
+          </MetadataTemplateCreate>
+        </Space>
+      )}
       <Table
         loading={loading}
         pagination={false}
@@ -58,7 +61,7 @@ export function MetadataFieldsList({ projectId }) {
             dataIndex: "type",
             key: "text",
           },
-          window.project.canManage
+          canManage
             ? {
                 title: i18n("MetadataField.permissions"),
                 dataIndex: "type",

@@ -5,7 +5,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
 import { blue6 } from "../../../styles/colors";
 import { useDispatch, useSelector } from "react-redux";
-import { removeTemplateFromProject } from "./redux/templates/templatesSlice";
+import { removeTemplateFromProject } from "../redux/templatesSlice";
 import { SPACE_MD } from "../../../styles/spacing";
 import { unwrapResult } from "@reduxjs/toolkit";
 
@@ -17,6 +17,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
  * @constructor
  */
 export function MetadataTemplatesList({ projectId }) {
+  const { canManage } = useSelector((state) => state.project);
   const { templates, loading } = useSelector((state) => state.templates);
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
@@ -55,7 +56,7 @@ export function MetadataTemplatesList({ projectId }) {
               href={`${BASE_URL}/${item.identifier}/excel`}
               key={`download-${item.identifier}`}
             />,
-            window.project.canManage ? (
+            canManage ? (
               <Popconfirm
                 key={`remove-${item.id}`}
                 placement="bottomRight"

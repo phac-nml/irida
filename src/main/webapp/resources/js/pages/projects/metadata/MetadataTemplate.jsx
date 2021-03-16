@@ -10,7 +10,7 @@ import {
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
-import { updateTemplate } from "./redux/templates/templatesSlice";
+import { updateTemplate } from "../redux/templatesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { unwrapResult } from "@reduxjs/toolkit";

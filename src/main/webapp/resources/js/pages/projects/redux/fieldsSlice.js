@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getMetadataFieldsForProject } from "../../../../../apis/metadata/field";
-import { addKeysToList } from "../../../../../utilities/http-utilities";
+import { getMetadataFieldsForProject } from "../../../apis/metadata/field";
+import { addKeysToList } from "../../../utilities/http-utilities";
 
 export const fetchFieldsForProject = createAsyncThunk(
   `fields/fetchFieldsForProject`,
