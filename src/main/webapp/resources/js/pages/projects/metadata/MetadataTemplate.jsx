@@ -16,6 +16,7 @@ import { addKeysToList } from "../../../utilities/http-utilities";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 import differenceBy from "lodash/differenceBy";
+import { IconRemove } from "../../../components/icons/Icons";
 
 const { Paragraph, Text } = Typography;
 
@@ -87,6 +88,14 @@ export function MetadataTemplate({ id }) {
     await completeUpdate(updated);
   };
 
+  const removeField = async (item) => {
+    const updated = {
+      ...template,
+      fields: fields.filter((field) => field.id !== item.id),
+    };
+    await completeUpdate(updated);
+  };
+
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
       <Skeleton loading={loading}>
@@ -154,16 +163,32 @@ export function MetadataTemplate({ id }) {
                   dataIndex: "type",
                   key: "text",
                 },
-                window.project.canManage
-                  ? {
-                      title: i18n("MetadataField.permissions"),
-                      dataIndex: "type",
-                      key: "permissions",
-                      render() {
-                        return "All";
+                ...(window.project.canManage
+                  ? [
+                      {
+                        title: i18n("MetadataField.permissions"),
+                        dataIndex: "type",
+                        key: "permissions",
+                        render() {
+                          return "All";
+                        },
                       },
-                    }
-                  : null,
+                      {
+                        align: "right",
+                        width: 100,
+                        render(item) {
+                          return (
+                            <Button
+                              onClick={() => removeField(item)}
+                              shape="circle"
+                              size="small"
+                              icon={<IconRemove />}
+                            />
+                          );
+                        },
+                      },
+                    ]
+                  : []),
               ]}
               onRowUpdate={onRowUpdate}
             />

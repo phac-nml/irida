@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Modal, Table } from "antd";
 
-export function MetadataAddTemplateField({ fields, onAddFields }) {
+export function MetadataAddTemplateField({ fields = [], onAddFields }) {
   const [visible, setVisible] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
@@ -19,7 +19,7 @@ export function MetadataAddTemplateField({ fields, onAddFields }) {
 
   const onOk = () => onAddFields(selectedFields).then(() => setVisible(false));
 
-  return (
+  return fields.length ? (
     <>
       <Button onClick={() => setVisible(true)}>Add Field </Button>
       <Modal
@@ -44,5 +44,5 @@ export function MetadataAddTemplateField({ fields, onAddFields }) {
         />
       </Modal>
     </>
-  );
+  ) : null;
 }
