@@ -9,6 +9,15 @@ import { unwrapResult } from "@reduxjs/toolkit";
 
 const { Text } = Typography;
 
+/**
+ * Component to create a new metadata template with a list of metadata fields
+ *
+ * @param {JSX.Element} children
+ * @param {number} projectId - identifier for the current project
+ * @param {Object[]} fields - list of metadata fields for the template
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const dispatch = useDispatch();
   const { templates } = useSelector((state) => state.templates);
