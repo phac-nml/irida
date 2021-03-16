@@ -61,7 +61,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         onClick: () => setVisible(true),
       })}
       <Modal
-        title={"CREATE NEW METADATA TEMPLATE"}
+        title={i18n("CreateMetadataTemplate.ok-text")}
         visible={visible}
         onCancel={() => setVisible(false)}
         okText={"CREATE TEMPLATE"}
