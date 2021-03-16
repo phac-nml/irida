@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, List, Popconfirm, Tag } from "antd";
+import { Button, List, notification, Popconfirm, Tag } from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
@@ -7,7 +7,15 @@ import { blue6 } from "../../../styles/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { removeTemplateFromProject } from "./redux/templates/templatesSlice";
 import { SPACE_MD } from "../../../styles/spacing";
+import { unwrapResult } from "@reduxjs/toolkit";
 
+/**
+ * Component to display all metadata templates associated with a project.
+ *
+ * @param projectId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);
   const dispatch = useDispatch();
@@ -15,15 +23,16 @@ export function MetadataTemplatesList({ projectId }) {
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
 
-  const deleteTemplate = async (templateId) => {
-    const { payload } = await dispatch(
-      removeTemplateFromProject({ projectId, templateId })
-    );
-    console.log(payload);
-    // .then(unwrapResult)
-    // .then(({ message }) => notification.success({ message }))
-    // .catch((message) => notification.error({ message }));
-  };
+  /**
+   * Delete a metadata template.
+   *
+   * @param {number} templateId - identifier for the metadata template to delete
+   */
+  const deleteTemplate = async (templateId) =>
+    dispatch(removeTemplateFromProject({ projectId, templateId }))
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }))
+      .catch((message) => notification.error({ message }));
 
   return (
     <List
