@@ -9,7 +9,7 @@
  *required by the components encompassed within
  */
 
-import React, { lazy, Suspense, useContext, useEffect } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import { Menu } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";

@@ -19,7 +19,7 @@ export function PageWrapper({
   title,
   headerExtras,
   children,
-  onBack = Function.prototype,
+  onBack = undefined,
   subTitle = "",
 }) {
   return (
