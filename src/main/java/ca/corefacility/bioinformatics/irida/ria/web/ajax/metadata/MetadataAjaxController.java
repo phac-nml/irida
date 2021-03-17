@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +25,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 @RequestMapping("/ajax/metadata")
 public class MetadataAjaxController {
 	private final UIMetadataService service;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public MetadataAjaxController(UIMetadataService service) {
+	public MetadataAjaxController(UIMetadataService service, MessageSource messageSource) {
 		this.service = service;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -97,30 +101,35 @@ public class MetadataAjaxController {
 
 	/**
 	 * Set a default metadata template for a project
+	 *
 	 * @param templateId Identifier for the metadata template to set as default.
-	 * @param projectId Identifier for the project to set the metadata template as default for.
+	 * @param projectId  Identifier for the project to set the metadata template as default for.
 	 * @return {@link AjaxSuccessResponse} with the success message
 	 */
 	@PostMapping("/templates/{templateId}/set-project-default")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@PathVariable Long templateId,
-			@RequestParam Long projectId) {
+			@RequestParam Long projectId, Locale locale) {
 		service.setDefaultMetadataTemplate(templateId, projectId);
-		return ResponseEntity.ok(new AjaxSuccessResponse("Set default template for project."));
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale)));
 	}
 
 	/**
 	 * Remove default metadata template for a project
+	 *
 	 * @param projectId Identifier for the project to remove the default metadata template for.
 	 * @return {@link AjaxSuccessResponse} with the success message
 	 */
 	@PostMapping("/templates/remove-project-default")
-	public ResponseEntity<AjaxResponse> removeDefaultMetadataTemplate(@RequestParam Long projectId) {
+	public ResponseEntity<AjaxResponse> removeDefaultMetadataTemplate(@RequestParam Long projectId, Locale locale) {
 		service.removeDefaultMetadataTemplate(projectId);
-		return ResponseEntity.ok(new AjaxSuccessResponse("Removed default template for project."));
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				messageSource.getMessage("server.metadata-template.removed-default", new Object[] {}, locale)));
 	}
 
 	/**
 	 * Get default metadata template for a project
+	 *
 	 * @param projectId Identifier for the project to remove the default metadata template for.
 	 * @return {@link MetadataTemplate} if default one is set for the project
 	 */
