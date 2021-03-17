@@ -24,6 +24,7 @@ export default function DnDTable({
   data,
   columns,
   onRowUpdate = Function.prototype,
+  ...props
 }) {
   const manager = React.useRef(RNDContext);
 
@@ -58,6 +59,7 @@ export default function DnDTable({
           index,
           moveRow,
         })}
+        {...props}
       />
     </DndProvider>
   );
