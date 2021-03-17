@@ -3,7 +3,7 @@
  * for Reach Router nesting.
  *
  * @param children
- * @returns {*}
+ * @returns {JSX.Element|string}
  * @constructor
  */
 export function MetadataFields({ children }) {

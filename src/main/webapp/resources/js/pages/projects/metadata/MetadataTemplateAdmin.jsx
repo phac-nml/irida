@@ -171,7 +171,7 @@ export function MetadataTemplateAdmin({ id }) {
             <List.Item.Meta
               title={
                 <>
-                  <Text strong>{i18n("MetadataTemplateAdmin.fields")}</Text>
+                  <Text strong>{i18n("MetadataTemplate.fields")}</Text>
                   <HelpPopover
                     content={<div>{i18n("MetadataTemplateAdmin.drag")}</div>}
                   />
