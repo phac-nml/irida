@@ -97,8 +97,7 @@ public class UIMetadataService {
 		try {
 			Project project = projectService.read(projectId);
 			templateService.deleteMetadataTemplateFromProject(project, templateId);
-			return messageSource.getMessage("server.MetadataTemplateAdmin.remove-success",
-					new Object[] { template.getName() }, locale);
+			return messageSource.getMessage("server.MetadataTemplateAdmin.remove-success", new Object[] {}, locale);
 		} catch (Exception e) {
 			throw new Exception(messageSource.getMessage("server.MetadataTemplateAdmin.remove-error",
 					new Object[] {}, locale));
