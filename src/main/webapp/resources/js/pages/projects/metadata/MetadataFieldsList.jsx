@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Space, Table } from "antd";
+import { Button, Empty, Space, Table } from "antd";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { useSelector } from "react-redux";
 import { SPACE_MD } from "../../../styles/spacing";
@@ -65,10 +65,10 @@ export function MetadataFieldsList({ projectId }) {
         }
         locale={{
           emptyText: (
-            <div>
-              <IconFolder />
-              "Yo! Nothing in here!"
-            </div>
+            <Empty
+              description={i18n("MetadataFieldsList.empty")}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
           ),
         }}
         scroll={{ y: 800 }}

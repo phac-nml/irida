@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, List, notification, Popconfirm, Tag } from "antd";
+import { Button, Empty, List, notification, Popconfirm, Tag } from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
@@ -76,6 +76,14 @@ export function MetadataTemplatesList({ projectId }) {
       loading={loading}
       bordered
       itemLayout="horizontal"
+      locale={{
+        emptyText: (
+          <Empty
+            description={i18n("MetadataTemplatesList.empty")}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        ),
+      }}
       dataSource={templates}
       renderItem={(item) => (
         <List.Item className="t-template" actions={getActionsForItem(item)}>
