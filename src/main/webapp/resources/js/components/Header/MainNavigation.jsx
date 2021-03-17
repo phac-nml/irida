@@ -19,7 +19,7 @@ export function MainNavigation() {
         borderBottom: `2px solid ${primaryColour}`,
       }}
     >
-      <Col md={10} sm={24}>
+      <Col md={8} sm={24}>
         <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
           <img
             style={{ height: 20 }}
@@ -71,7 +71,7 @@ export function MainNavigation() {
         </Menu>
       </Col>
       <Col
-        md={14}
+        md={16}
         sm={24}
         style={{
           display: "flex",
