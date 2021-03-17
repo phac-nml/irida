@@ -95,7 +95,7 @@ export function MetadataTemplateAdmin({ id }) {
    * @param {string }text - new value for the template attribute.
    */
   const onChange = async (attribute, text) => {
-    if (template[attribute] && template[attribute] !== text) {
+    if (attribute in template && template[attribute] !== text) {
       const updated = { ...template, [attribute]: text, fields };
       await completeUpdate(updated);
     }

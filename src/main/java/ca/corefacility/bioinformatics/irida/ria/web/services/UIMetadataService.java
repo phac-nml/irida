@@ -76,11 +76,10 @@ public class UIMetadataService {
 	public String updateMetadataTemplate(MetadataTemplate template, Locale locale) throws Exception {
 		try {
 			templateService.updateMetadataTemplateInProject(template);
-			return messageSource.getMessage("server.MetadataTemplateAdmin.update-success",
-					new Object[] { template.getName() }, locale);
+			return messageSource.getMessage("server.MetadataTemplateAdmin.update-success", new Object[] {}, locale);
 		} catch (Exception e) {
-			 throw new Exception(messageSource.getMessage("server.MetadataTemplateAdmin.update-error",
-					 new Object[] { template.getName() }, locale));
+			throw new Exception(
+					messageSource.getMessage("server.MetadataTemplateAdmin.update-error", new Object[] {}, locale));
 		}
 	}
 
