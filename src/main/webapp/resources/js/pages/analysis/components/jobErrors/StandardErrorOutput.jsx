@@ -5,7 +5,7 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 import { OutputWrapper } from "../../../../components/OutputFiles/OutputWrapper";
-import { SPACE_XS, SPACE_MD } from "../../../../styles/spacing";
+import { SPACE_MD, SPACE_XS } from "../../../../styles/spacing";
 
 import {
   IconSortAscending,

@@ -3,6 +3,7 @@ import {
   AppstoreOutlined,
   BellOutlined,
   BoldOutlined,
+  CalendarTwoTone,
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -37,6 +38,7 @@ import {
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
+  SettingOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -47,10 +49,8 @@ import {
   TableOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined,
   UploadOutlined,
-  CalendarTwoTone,
-  SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 

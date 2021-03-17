@@ -4,11 +4,11 @@ import { types as appTypes } from "../reducers/app";
 import {
   emptyCart,
   getCartCount,
-  putSampleInCart,
-  removeSample,
-  removeProject,
   getCartIds,
   getSamplesForProjects,
+  putSampleInCart,
+  removeProject,
+  removeSample,
 } from "../../apis/cart/cart";
 import { FIELDS } from "../../pages/projects/linelist/constants";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Space } from "antd";
+import { Space, Typography } from "antd";
 
 export function SequenceFileTypeRenderer({ children, title }) {
   return (

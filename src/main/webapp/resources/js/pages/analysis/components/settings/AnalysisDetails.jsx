@@ -19,7 +19,6 @@ import {
   formatDate,
   getHumanizedDuration,
 } from "../../../../utilities/date-utilities";
-import { SimpleRadioButtonGroup } from "../../../../components/Buttons/SimpleRadioButtonGroup";
 
 const { Title, Paragraph } = Typography;
 

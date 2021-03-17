@@ -7,8 +7,8 @@ import { Divider, Space, Typography } from "antd";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
 import {
-  getNewChunkSize,
   fileSizeLoaded,
+  getNewChunkSize,
 } from "../../../utilities/file-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";

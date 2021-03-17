@@ -12,6 +12,7 @@ Changes
 * [UI]: Fixed bug where filter menu was missing from the Analsyis Outputs Table.
 * [Developer/REST/UI]: Added announcements bell icon to main nav bar, added priority announcements modal at login, and refreshed user announcements page.
 * [UI]: Fixed bug where samples not rendering on project samples page when the config setting ngsarchive.linker.available is set to false.
+* [Developer]: Updated to Webpack v5 and Yarn v2.
 
 20.09 to 21.01
 --------------

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Form, notification, Typography } from "antd";
+import { Button, Form, notification, Space, Typography } from "antd";
 import { BasicList } from "../../../components/lists";
 import { RemoteApiStatus } from "../../admin/components/remote-connections/RemoteApiStatus";
 import {
-  updateRemoteProjectSyncSettings,
   getRemoteProjectSyncSettings,
+  updateRemoteProjectSyncSettings,
 } from "../../../apis/projects/remote-projects";
 import { formatDate } from "../../../utilities/date-utilities";
 import { SyncFrequencySelect } from "../../../components/remote-api/SyncFrequencySelect";
