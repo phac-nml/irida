@@ -63,22 +63,29 @@ export function MetadataTemplatesList({ projectId }) {
       .catch((message) => notification.error({ message }));
   };
 
-  const getActionsForItem = (item) => {
+  /**
+   * This crates the "actions" that appear at the right of every row in
+   * the table: field count, download template, and remove template (if applicable).
+   *
+   * @param {Object} template
+   * @returns {JSX.Element[]}
+   */
+  const getActionsForItem = (template) => {
     const actions = [
-      <Tag key={`fields-${item.identifier}`}>
-        {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
+      <Tag key={`fields-${template.identifier}`}>
+        {i18n("ProjectMetadataTemplates.fields", template.fields.length)}
       </Tag>,
       <Button
         shape="circle"
         size="small"
         icon={<IconDownloadFile />}
-        href={`${BASE_URL}/${item.identifier}/excel`}
-        key={`download-${item.identifier}`}
+        href={`${BASE_URL}/${template.identifier}/excel`}
+        key={`download-${template.identifier}`}
       />,
     ];
     if (canManage) {
       actions.push(
-        defaultTemplate == item.identifier ? (
+        defaultTemplate == template.identifier ? (
           <Button
             shape="circle"
             size="small"
@@ -92,14 +99,14 @@ export function MetadataTemplatesList({ projectId }) {
             size="small"
             icon={<IconSetDefault />}
             key="set-default-template"
-            onClick={() => setDefaultTemplate(item.identifier)}
+            onClick={() => setDefaultTemplate(template.identifier)}
           />
         ),
         <Popconfirm
-          key={`remove-${item.id}`}
+          key={`remove-${template.id}`}
           placement="bottomRight"
           title={i18n("MetadataTemplatesList.delete-confirm")}
-          onConfirm={() => deleteTemplate(item.identifier)}
+          onConfirm={() => deleteTemplate(template.identifier)}
         >
           <Button shape="circle" size="small" icon={<IconRemove />} />
         </Popconfirm>

@@ -6,6 +6,7 @@ import { HelpPopover } from "../../../components/popovers";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewMetadataTemplate } from "../redux/templatesSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { addKeysToList } from "../../../utilities/http-utilities";
 
 const { Text } = Typography;
 
@@ -28,11 +29,15 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
 
   React.useEffect(() => {
     if (fields.length) {
-      setFieldsState(fields.map((field) => ({ ...field, key: field.id })));
+      setFieldsState(addKeysToList(fields, "field"));
     }
   }, [fields]);
 
   React.useEffect(() => {
+    /*
+    Need to get a list of template names so that there can only be distinct
+    names.
+     */
     if (templates) {
       const templateNames = new Set(
         templates.map((template) => template.label)
@@ -41,6 +46,10 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
     }
   }, [templates]);
 
+  /**
+   * Create the metadata template.  Ensures the name field is properly validated.
+   * Once created the user is redirected to the template details page.
+   */
   const onOk = async () => {
     const values = await form.validateFields();
     values.fields = fieldsState;
@@ -76,9 +85,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
                 required: true,
                 message: i18n("CreateMetadataTemplate.name.required"),
               },
-              ({ getFieldValue }) => ({
+              () => ({
                 validator(_, value) {
-                  if (value.length && names.has(value)) {
+                  if (value && names.has(value)) {
                     return Promise.reject(
                       new Error(i18n("CreateMetadataTemplate.name.duplicate"))
                     );
@@ -103,14 +112,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
               {
                 title: (
                   <>
-                    <Text strong>Metadata Fields</Text>
+                    <Text strong>{i18n("MetadataTemplate.fields")}</Text>
                     <HelpPopover
-                      content={
-                        <div>
-                          You can drag and drop to re-arrange the order of the
-                          fields
-                        </div>
-                      }
+                      content={<div>{i18n("MetadataTemplateAdmin.drag")}</div>}
                     />
                   </>
                 ),

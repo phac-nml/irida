@@ -132,7 +132,7 @@ export const templatesSlice = createSlice({
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
       );
-      state.defaultTemplate = 0;
+      state.defaultTemplate = undefined;
       return { ...state, templates };
     },
     [createNewMetadataTemplate.fulfilled]: (state, action) => {
@@ -164,12 +164,12 @@ export const templatesSlice = createSlice({
       if (payload !== null) {
         state.defaultTemplate = payload.identifier;
       } else {
-        state.defaultTemplate = 0;
+        state.defaultTemplate = undefined;
       }
       return state;
     },
     [removeDefaultTemplateForProject.fulfilled]: (state) => {
-      state.defaultTemplate = 0;
+      state.defaultTemplate = undefined;
       return state;
     },
   },

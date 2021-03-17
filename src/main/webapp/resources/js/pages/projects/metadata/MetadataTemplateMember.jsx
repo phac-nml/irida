@@ -26,7 +26,13 @@ export function MetadataTemplateMember({ id }) {
   const [template, setTemplate] = React.useState({});
 
   React.useEffect(() => {
-    if (templates !== undefined) {
+    /*
+    On mount we need to find the current template in the list of all templates.
+    If it is not found the we redirect to all templates, if no templates at all
+    are found then we redirect to the metadata fields page so the user can
+    create one.
+     */
+    if (!loading) {
       const found = templates.find((template) => template.identifier === id);
 
       if (found) {
@@ -49,25 +55,25 @@ export function MetadataTemplateMember({ id }) {
         <List itemLayout="vertical" size="small">
           <List.Item>
             <List.Item.Meta
-              title={<Text strong>Name</Text>}
+              title={<Text strong>{i18n("MetadataTemplate.label")}</Text>}
               description={template.name}
             />
           </List.Item>
           <List.Item>
             <List.Item.Meta
-              title={<Text strong>Description</Text>}
+              title={<Text strong>{i18n("MetadataTemplate.description")}</Text>}
               description={template.description || ""}
             />
           </List.Item>
           <List.Item>
             <List.Item.Meta
-              title={<Text strong>Metadata Fields</Text>}
+              title={<Text strong>{i18n("MetadataTemplateAdmin.fields")}</Text>}
               description={
                 <Table
                   pagination={false}
                   columns={[
-                    { title: "Label", dataIndex: "label" },
-                    { title: "Type", dataIndex: "type" },
+                    { title: i18n("MetadataField.label"), dataIndex: "label" },
+                    { title: i18n("MetadataField.type"), dataIndex: "type" },
                   ]}
                   dataSource={addKeysToList(template.fields || [], "field")}
                 />

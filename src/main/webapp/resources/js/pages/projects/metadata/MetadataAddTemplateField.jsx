@@ -1,6 +1,14 @@
 import React from "react";
 import { Button, Modal, Table } from "antd";
 
+/**
+ * Component for adding metadata fields to an existing metadata template
+ *
+ * @param {Object[]} fields - available metadata fields that are not on the template.
+ * @param {Function} onAddFields - callback function to add the fields to the template.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function MetadataAddTemplateField({ fields = [], onAddFields }) {
   const [visible, setVisible] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
@@ -17,7 +25,12 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
     }
   }, [fields, selected]);
 
-  const onOk = () => onAddFields(selectedFields).then(() => setVisible(false));
+  /**
+   * Send the currently selected to the callback function.  When the callback
+   * is successfully completed, close the modal.
+   */
+  const addFieldsToTemplate = () =>
+    onAddFields(selectedFields).then(() => setVisible(false));
 
   return (
     <>
@@ -28,7 +41,7 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
         title={i18n("MetadataAddTemplateField.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
-        onOk={onOk}
+        onOk={addFieldsToTemplate}
         okText={i18n("MetadataAddTemplateField.ok-text")}
       >
         <Table
