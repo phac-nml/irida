@@ -41,17 +41,6 @@ export function MetadataFieldsList({ projectId }) {
     },
   ];
 
-  if (canManage) {
-    columns.push({
-      title: i18n("MetadataField.permissions"),
-      dataIndex: "type",
-      key: "permissions",
-      render() {
-        return "All";
-      },
-    });
-  }
-
   return (
     <Space
       direction="vertical"
