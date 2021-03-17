@@ -42,8 +42,6 @@ module.exports = {
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "create-metadata-template":
-    "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
