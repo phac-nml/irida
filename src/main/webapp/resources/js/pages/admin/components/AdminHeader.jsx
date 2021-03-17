@@ -10,12 +10,13 @@
 import React from "react";
 
 import { Layout, Menu } from "antd";
-const { SubMenu } = Menu;
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { grey1 } from "../../../styles/colors";
+import { IconHome, IconUser } from "../../../components/icons/Icons";
+
+const { SubMenu } = Menu;
 
 const { Header } = Layout;
-import { IconUser, IconHome } from "../../../components/icons/Icons";
 
 export default function AdminHeader() {
   const HOME_URL = setBaseUrl("/");

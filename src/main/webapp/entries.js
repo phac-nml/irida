@@ -4,19 +4,14 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: [
-    "core-js/stable",
-    "regenerator-runtime/runtime",
-    "expose-loader?$!jquery",
-    "./resources/js/vendors",
-  ],
+  vendor: ["expose-loader?exposes=$,jQuery!jquery", "./resources/js/vendors"],
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement",
-  analysis: "./resources/js/pages/analysis/index.js",
+  analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   launch: "./resources/js/pages/launch",
@@ -47,8 +42,6 @@ module.exports = {
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "create-metadata-template":
-    "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",

@@ -1,4 +1,5 @@
 import { COLOR_BORDER_LIGHT } from "./colors";
+
 /**
  * @fileOverview Borders used in .js and .jsx files need to be standardized
  * using the values contained in this file.

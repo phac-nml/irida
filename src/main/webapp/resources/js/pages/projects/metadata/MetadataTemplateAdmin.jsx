@@ -197,14 +197,6 @@ export function MetadataTemplateAdmin({ id }) {
                     key: "text",
                   },
                   {
-                    title: i18n("MetadataField.permissions"),
-                    dataIndex: "type",
-                    key: "permissions",
-                    render() {
-                      return "All";
-                    },
-                  },
-                  {
                     align: "right",
                     width: 50,
                     render(item) {

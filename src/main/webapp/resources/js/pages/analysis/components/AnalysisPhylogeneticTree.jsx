@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { PhylocanvasComponent } from "../../../components/PhylocanvasComponent";
-import { Button, Radio, Layout } from "antd";
+import { Button, Layout, Radio } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getNewickTree } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";

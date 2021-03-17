@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
@@ -47,14 +46,14 @@ public class MetadataAjaxController {
 	/**
 	 * Create a new metadata template within a project
 	 *
-	 * @param request   details about the template to create
+	 * @param template   details about the template to create
 	 * @param projectId identifier for a project
 	 * @return the newly created {@link ProjectMetadataTemplate}
 	 */
 	@PostMapping("/templates")
 	public ResponseEntity<MetadataTemplate> createNewMetadataTemplate(
-			@RequestBody CreateMetadataTemplateRequest request, @RequestParam Long projectId) {
-		return ResponseEntity.ok(service.createMetadataTemplate(request, projectId));
+			@RequestBody MetadataTemplate template, @RequestParam Long projectId) {
+		return ResponseEntity.ok(service.createMetadataTemplate(template, projectId));
 	}
 
 	/**

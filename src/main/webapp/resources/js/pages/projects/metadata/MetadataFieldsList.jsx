@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Space, Table } from "antd";
+import { Button, Empty, Space, Table } from "antd";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { useSelector } from "react-redux";
 import { SPACE_MD } from "../../../styles/spacing";
+import { IconFolder } from "../../../components/icons/Icons";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -40,17 +41,6 @@ export function MetadataFieldsList({ projectId }) {
     },
   ];
 
-  if (canManage) {
-    columns.push({
-      title: i18n("MetadataField.permissions"),
-      dataIndex: "type",
-      key: "permissions",
-      render() {
-        return "All";
-      },
-    });
-  }
-
   return (
     <Space
       direction="vertical"
@@ -73,6 +63,14 @@ export function MetadataFieldsList({ projectId }) {
             ? { selectedRowKeys: selected, onChange: setSelected }
             : false
         }
+        locale={{
+          emptyText: (
+            <Empty
+              description={i18n("MetadataFieldsList.empty")}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
         scroll={{ y: 800 }}
         dataSource={fields}
         columns={columns}
