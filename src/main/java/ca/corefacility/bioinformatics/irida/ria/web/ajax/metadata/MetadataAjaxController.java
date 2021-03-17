@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,12 +58,17 @@ public class MetadataAjaxController {
 	 * Updated the fields in a {@link MetadataTemplate}
 	 *
 	 * @param template the updated template to save
+	 * @param locale     Current users {@link Locale}
 	 * @return Message for UI to display about the result of the update.
 	 */
 	@PutMapping("/templates/{templateId}")
-	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template) {
-		service.updateMetadataTemplate(template);
-		return ResponseEntity.ok(new AjaxSuccessResponse("__Template has been saved"));
+	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template, Locale locale) {
+
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateMetadataTemplate(template, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()))
+		}
 	}
 
 	/**
@@ -70,17 +76,19 @@ public class MetadataAjaxController {
 	 *
 	 * @param templateId Identifier for a {@link MetadataTemplate}
 	 * @param projectId  Identifier for the current project
+	 * @param locale     Current users {@link Locale}
 	 * @return Message for UI about the result
 	 */
 	@DeleteMapping("/templates/{templateId}")
 	public ResponseEntity<AjaxResponse> deleteMetadataTemplate(@PathVariable Long templateId,
-			@RequestParam Long projectId) {
+			@RequestParam Long projectId, Locale locale) {
 		try {
-			service.deleteMetadataTemplate(templateId, projectId);
-			return ResponseEntity.ok(new AjaxSuccessResponse("__Removed template"));
+
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.deleteMetadataTemplate(templateId, projectId, locale)));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse("Could not remove templates"));
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
