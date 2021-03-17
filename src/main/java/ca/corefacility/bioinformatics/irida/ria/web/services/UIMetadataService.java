@@ -12,11 +12,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.CreateMetadataTemplateRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Service for Metadata Templates in the user interface
@@ -52,15 +49,12 @@ public class UIMetadataService {
 	/**
 	 * Create a new {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param request   Details about the {@link MetadataTemplate} to create
+	 * @param template   Details about the {@link MetadataTemplate} to create
 	 * @param projectId Identifier for the {@link Project} to add them template to
 	 * @return {@link MetadataTemplate}
 	 */
-	public MetadataTemplate createMetadataTemplate(CreateMetadataTemplateRequest request, Long projectId) {
+	public MetadataTemplate createMetadataTemplate(MetadataTemplate template, Long projectId) {
 		Project project = projectService.read(projectId);
-		MetadataTemplate template = new MetadataTemplate(request.getName(), ImmutableList.of());
-		template.setDescription(request.getDescription());
-		template.setFields(request.getFields());
 		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
 		return join.getObject();
 	}

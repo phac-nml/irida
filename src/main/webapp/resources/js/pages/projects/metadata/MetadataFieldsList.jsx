@@ -3,6 +3,7 @@ import { Button, Space, Table } from "antd";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 import { useSelector } from "react-redux";
 import { SPACE_MD } from "../../../styles/spacing";
+import { IconFolder } from "../../../components/icons/Icons";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -73,6 +74,14 @@ export function MetadataFieldsList({ projectId }) {
             ? { selectedRowKeys: selected, onChange: setSelected }
             : false
         }
+        locale={{
+          emptyText: (
+            <div>
+              <IconFolder />
+              "Yo! Nothing in here!"
+            </div>
+          ),
+        }}
         scroll={{ y: 800 }}
         dataSource={fields}
         columns={columns}
