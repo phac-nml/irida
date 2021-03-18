@@ -58,6 +58,7 @@ export function MetadataFieldsList({ projectId }) {
       <Table
         loading={loading}
         pagination={false}
+        rowClassName={() => `t-m-field`}
         rowSelection={
           canManage
             ? { selectedRowKeys: selected, onChange: setSelected }
