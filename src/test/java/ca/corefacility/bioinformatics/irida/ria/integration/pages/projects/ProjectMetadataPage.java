@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -30,6 +31,12 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	@FindBy(className = "t-m-template")
 	List<WebElement> metadataTemplateRow;
+
+	@FindBy(className = "t-t-header-name")
+	WebElement metadataTemplateName;
+
+	@FindBy(className = "t-t-edit-name")
+	WebElement templateEditName;
 
 	public ProjectMetadataPage(WebDriver driver) {
 		super(driver);
@@ -87,14 +94,33 @@ public class ProjectMetadataPage extends AbstractPage {
 				break;
 			}
 		}
-		templateRow.findElement(By.className("t-t-remove-button")).click();
-		WebElement confirm = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-confirm-remove")));
+		templateRow.findElement(By.className("t-t-remove-button"))
+				.click();
+		WebElement confirm = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-confirm-remove")));
 		confirm.click();
 		wait.until(ExpectedConditions.stalenessOf(confirm));
 	}
 
 	public int getNumberOfMetadataTemplates() {
 		return metadataTemplateRow.size();
+	}
+
+	public void editTemplateName(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebElement editIcon = templateEditName.findElement(By.className("ant-typography-edit"));
+		editIcon.click();
+		wait.until(
+				ExpectedConditions.invisibilityOfAllElements(editIcon));
+		WebElement input = driver.switchTo().activeElement();
+		input.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		input.sendKeys(name);
+		input.sendKeys(Keys.ENTER);
+		wait.until(ExpectedConditions.textToBePresentInElement(templateEditName, name));
+	}
+
+	public String getTemplateName() {
+		return metadataTemplateName.getText();
 	}
 
 	private void waitForFields() {

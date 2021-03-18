@@ -138,7 +138,10 @@ export function MetadataTemplateManager({ id }) {
   };
 
   return (
-    <PageHeader title={template.name} onBack={() => navigate("./")}>
+    <PageHeader
+      title={<span className="t-t-header-name">{template.name}</span>}
+      onBack={() => navigate("./")}
+    >
       <Skeleton loading={loading}>
         <List itemLayout="vertical" size="small">
           <List.Item>
@@ -146,6 +149,7 @@ export function MetadataTemplateManager({ id }) {
               title={<Text strong>{i18n("MetadataTemplate.label")}</Text>}
               description={
                 <Paragraph
+                  className="t-t-edit-name"
                   editable={{ onChange: (text) => onChange("name", text) }}
                 >
                   {template.name}
