@@ -49,10 +49,10 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
       <Col xs={24} lg={18} xxl={12}>
         <Menu mode="horizontal" selectedKeys={[selectedKey]}>
           <Menu.Item key="fields">
-            <Link to="fields">{i18n("MetadataFields.title")}</Link>
+            <Link className="t-m-field-link" to="fields">{i18n("MetadataFields.title")}</Link>
           </Menu.Item>
           <Menu.Item key="templates">
-            <Link to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
+            <Link className="t-m-template-link" to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
           </Menu.Item>
         </Menu>
         {children}

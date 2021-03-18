@@ -86,7 +86,7 @@ export function MetadataTemplatesList({ projectId }) {
       }}
       dataSource={templates}
       renderItem={(item) => (
-        <List.Item className="t-template" actions={getActionsForItem(item)}>
+        <List.Item className="t-m-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
               <Link style={{ color: blue6 }} to={`${item.identifier}`}>
