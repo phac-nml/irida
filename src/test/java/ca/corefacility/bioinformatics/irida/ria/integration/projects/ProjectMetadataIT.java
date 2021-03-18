@@ -38,6 +38,9 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		Assert.assertEquals("Should be one more template than there was initially", numberOfMetadataTemplates + 1,
 				page.getNumberOfMetadataTemplates());
 
+		page.deleteTemplate("Test Template");
+		Assert.assertEquals("Should be the same number of template as there was initially", numberOfMetadataTemplates,
+				page.getNumberOfMetadataTemplates());
 		String foobbar = "BAZ";
 	}
 }

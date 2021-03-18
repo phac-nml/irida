@@ -77,6 +77,22 @@ public class ProjectMetadataPage extends AbstractPage {
 		wait.until(ExpectedConditions.urlContains("/templates"));
 	}
 
+	public void deleteTemplate(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebElement templateRow = null;
+		for (WebElement row : metadataTemplateRow) {
+			String text = row.findElement(By.className("t-t-name")).getText();
+			if (text.equalsIgnoreCase(name)) {
+				templateRow = row;
+				break;
+			}
+		}
+		templateRow.findElement(By.className("t-t-remove-button")).click();
+		WebElement confirm = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-confirm-remove")));
+		confirm.click();
+		wait.until(ExpectedConditions.stalenessOf(confirm));
+	}
+
 	public int getNumberOfMetadataTemplates() {
 		return metadataTemplateRow.size();
 	}

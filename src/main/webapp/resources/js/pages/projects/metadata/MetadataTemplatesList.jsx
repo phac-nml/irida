@@ -51,8 +51,16 @@ export function MetadataTemplatesList({ projectId }) {
           placement="bottomRight"
           title={i18n("MetadataTemplatesList.delete-confirm")}
           onConfirm={() => deleteTemplate(template.identifier)}
+          okButtonProps={{
+            className: "t-t-confirm-remove",
+          }}
         >
-          <Button shape="circle" size="small" icon={<IconRemove />} />
+          <Button
+            className="t-t-remove-button"
+            shape="circle"
+            size="small"
+            icon={<IconRemove />}
+          />
         </Popconfirm>
       );
     }
@@ -89,7 +97,11 @@ export function MetadataTemplatesList({ projectId }) {
         <List.Item className="t-m-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
-              <Link style={{ color: blue6 }} to={`${item.identifier}`}>
+              <Link
+                className="t-t-name"
+                style={{ color: blue6 }}
+                to={`${item.identifier}`}
+              >
                 {item.label}
               </Link>
             }

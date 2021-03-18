@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import { Link, Router } from "@reach/router";
 import { MetadataTemplatesList } from "./MetadataTemplatesList";
-import { MetadataTemplateAdmin } from "./MetadataTemplateAdmin";
+import { MetadataTemplateManager } from "./MetadataTemplateManager";
 import { MetadataTemplates } from "./MetadataTemplates";
 import { Col, Menu, Row } from "antd";
 import { MetadataFieldsList } from "./MetadataFieldsList";
@@ -49,10 +49,14 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
       <Col xs={24} lg={18} xxl={12}>
         <Menu mode="horizontal" selectedKeys={[selectedKey]}>
           <Menu.Item key="fields">
-            <Link className="t-m-field-link" to="fields">{i18n("MetadataFields.title")}</Link>
+            <Link className="t-m-field-link" to="fields">
+              {i18n("MetadataFields.title")}
+            </Link>
           </Menu.Item>
           <Menu.Item key="templates">
-            <Link className="t-m-template-link" to="templates">{i18n("ProjectMetadataTemplates.title")}</Link>
+            <Link className="t-m-template-link" to="templates">
+              {i18n("ProjectMetadataTemplates.title")}
+            </Link>
           </Menu.Item>
         </Menu>
         {children}
@@ -79,7 +83,7 @@ function ProjectMetadata() {
         <MetadataTemplates path="/templates">
           <MetadataTemplatesList path="/" />
           {canManage ? (
-            <MetadataTemplateAdmin path="/:id" />
+            <MetadataTemplateManager path="/:id" />
           ) : (
             <MetadataTemplateMember path="/:id" />
           )}

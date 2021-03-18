@@ -70,10 +70,10 @@ public class UIMetadataService {
 	public String updateMetadataTemplate(MetadataTemplate template, Locale locale) throws Exception {
 		try {
 			templateService.updateMetadataTemplateInProject(template);
-			return messageSource.getMessage("server.MetadataTemplateAdmin.update-success", new Object[] {}, locale);
+			return messageSource.getMessage("server.MetadataTemplateManager.update-success", new Object[] {}, locale);
 		} catch (Exception e) {
 			throw new Exception(
-					messageSource.getMessage("server.MetadataTemplateAdmin.update-error", new Object[] {}, locale));
+					messageSource.getMessage("server.MetadataTemplateManager.update-error", new Object[] {}, locale));
 		}
 	}
 
@@ -90,9 +90,9 @@ public class UIMetadataService {
 		try {
 			Project project = projectService.read(projectId);
 			templateService.deleteMetadataTemplateFromProject(project, templateId);
-			return messageSource.getMessage("server.MetadataTemplateAdmin.remove-success", new Object[] {}, locale);
+			return messageSource.getMessage("server.MetadataTemplateManager.remove-success", new Object[] {}, locale);
 		} catch (Exception e) {
-			throw new Exception(messageSource.getMessage("server.MetadataTemplateAdmin.remove-error",
+			throw new Exception(messageSource.getMessage("server.MetadataTemplateManager.remove-error",
 					new Object[] {}, locale));
 		}
 	}
