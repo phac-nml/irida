@@ -74,21 +74,47 @@ public class ProjectMetadataPage extends AbstractPage {
 		}
 	}
 
+	public boolean isCreateTemplateButtonVisible() {
+		return driver.findElements(By.className("t-create-template"))
+				.size() == 1;
+	}
+
 	public void createNewTemplate(String name, String description) {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		createTemplateButton.click();
 		wait.until(ExpectedConditions.visibilityOf(createTemplateModal));
-		createTemplateModal.findElement(By.className("t-c-t-name")).sendKeys(name);
-		createTemplateModal.findElement(By.className("t-c-t-desc")).sendKeys(description);
-		createTemplateModal.findElement(By.className("t-create-modal-ok")).click();
+		createTemplateModal.findElement(By.className("t-c-t-name"))
+				.sendKeys(name);
+		createTemplateModal.findElement(By.className("t-c-t-desc"))
+				.sendKeys(description);
+		createTemplateModal.findElement(By.className("t-create-modal-ok"))
+				.click();
 		wait.until(ExpectedConditions.urlContains("/templates"));
+	}
+
+	public void gotoTemplate(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		for (WebElement row : metadataTemplateRow) {
+			WebElement element = row.findElement(By.className("t-t-name"));
+			if (element.getText()
+					.equalsIgnoreCase(name)) {
+				element.click();
+				wait.until(ExpectedConditions.urlContains("/templates/"));
+			}
+		}
+
+	}
+
+	public boolean canDeleteTemplate() {
+		return metadataTemplateRow.get(0).findElements(By.className("t-t-remove-btn")).size() > 0;
 	}
 
 	public void deleteTemplate(String name) {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		WebElement templateRow = null;
 		for (WebElement row : metadataTemplateRow) {
-			String text = row.findElement(By.className("t-t-name")).getText();
+			String text = row.findElement(By.className("t-t-name"))
+					.getText();
 			if (text.equalsIgnoreCase(name)) {
 				templateRow = row;
 				break;
@@ -104,6 +130,15 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	public int getNumberOfMetadataTemplates() {
 		return metadataTemplateRow.size();
+	}
+
+	public boolean canEditTemplateName() {
+		try {
+			templateEditName.findElement(By.className("ant-typography-edit"));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public void editTemplateName(String name) {

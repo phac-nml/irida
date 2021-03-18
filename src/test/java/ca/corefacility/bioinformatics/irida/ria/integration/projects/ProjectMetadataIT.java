@@ -46,6 +46,21 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		page.deleteTemplate("Test Template");
 		Assert.assertEquals("Should be the same number of template as there was initially", numberOfMetadataTemplates,
 				page.getNumberOfMetadataTemplates());
-		String foobbar = "BAZ";
+	}
+
+	@Test
+	public void testMemberProjectMetadata() {
+		LoginPage.loginAsUser(driver());
+		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
+
+		Assert.assertFalse("Should not have a create template button", page.isCreateTemplateButtonVisible());
+		Assert.assertEquals("Should be able to see the metadata fields", 5, page.getNumberOfMetadataFields());
+		page.gotoMetadataTemplates();
+		Assert.assertEquals("Should be able to see the metadata templates", 1, page.getNumberOfMetadataTemplates());
+		Assert.assertFalse("Should not be able to delete a template", page.canDeleteTemplate());
+
+		page.gotoTemplate("test template");
+		Assert.assertFalse("Should not be able to edit the template name", page.canEditTemplateName());
+		String foobar = "ba";
 	}
 }
