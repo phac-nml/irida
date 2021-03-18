@@ -16,6 +16,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 	public void testAdminProjectMetadata() {
 		LoginPage.loginAsManager(driver());
 		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
-		Assert.assertEquals(5, page.getNumberOfMetadataFields());
+		Assert.assertEquals("Expected to display all metadata fields i the project", 5,
+				page.getNumberOfMetadataFields());
 	}
 }
