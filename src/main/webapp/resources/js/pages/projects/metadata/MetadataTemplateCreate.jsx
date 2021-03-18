@@ -76,6 +76,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         onCancel={() => setVisible(false)}
         okText={i18n("CreateMetadataTemplate.ok-text")}
         onOk={onOk}
+        okButtonProps={{
+          className: "t-create-modal-ok",
+        }}
       >
         <Form layout="vertical" form={form}>
           <Form.Item

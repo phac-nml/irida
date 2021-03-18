@@ -73,6 +73,8 @@ public class ProjectMetadataPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOf(createTemplateModal));
 		createTemplateModal.findElement(By.className("t-c-t-name")).sendKeys(name);
 		createTemplateModal.findElement(By.className("t-c-t-desc")).sendKeys(description);
+		createTemplateModal.findElement(By.className("t-create-modal-ok")).click();
+		wait.until(ExpectedConditions.urlContains("/templates"));
 	}
 
 	public int getNumberOfMetadataTemplates() {
