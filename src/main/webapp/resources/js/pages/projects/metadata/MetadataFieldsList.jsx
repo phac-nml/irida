@@ -33,6 +33,7 @@ export function MetadataFieldsList({ projectId }) {
       title: i18n("MetadataField.label"),
       dataIndex: "label",
       key: "label",
+      className: "t-m-field-label"
     },
     {
       title: i18n("MetadataField.type"),
@@ -49,7 +50,7 @@ export function MetadataFieldsList({ projectId }) {
       {canManage && (
         <Space>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
-            <Button disabled={selected.length === 0}>
+            <Button className="t-create-template" disabled={selected.length === 0}>
               {i18n("MetadataFieldsList.create")}
             </Button>
           </MetadataTemplateCreate>

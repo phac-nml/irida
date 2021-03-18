@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -20,6 +21,12 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	@FindBy(className = "t-m-field")
 	List<WebElement> metadataFieldRow;
+
+	@FindBy(className = "t-create-template")
+	WebElement createTemplateButton;
+
+	@FindBy(className = "t-create-modal")
+	WebElement createTemplateModal;
 
 	@FindBy(className = "t-m-template")
 	List<WebElement> metadataTemplateRow;
@@ -45,6 +52,27 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	public int getNumberOfMetadataFields() {
 		return metadataFieldRow.size();
+	}
+
+	public void selectMetadataField(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		for (WebElement row : metadataFieldRow) {
+			String text = row.findElement(By.className("t-m-field-label"))
+					.getText();
+			if (text.equalsIgnoreCase(name)) {
+				WebElement checkbox = row.findElement(By.className("ant-checkbox-input"));
+				checkbox.click();
+				wait.until(ExpectedConditions.elementToBeSelected(checkbox));
+			}
+		}
+	}
+
+	public void createNewTemplate(String name, String description) {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		createTemplateButton.click();
+		wait.until(ExpectedConditions.visibilityOf(createTemplateModal));
+		createTemplateModal.findElement(By.className("t-c-t-name")).sendKeys(name);
+		createTemplateModal.findElement(By.className("t-c-t-desc")).sendKeys(description);
 	}
 
 	public int getNumberOfMetadataTemplates() {
