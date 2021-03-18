@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectMetadataView.xml")
-public class ProjectMetadataTemplateIT extends AbstractIridaUIITChromeDriver {
+public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testAdminProjectMetadata() {
