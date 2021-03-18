@@ -18,14 +18,14 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
  * Controller for managing metadata settings for a project
  */
 @Controller
-@RequestMapping("/projects/{projectId}/settings")
-public class ProjectSettingsMetadataController {
+@RequestMapping("/projects/{projectId}")
+public class ProjectMetadataController {
 	private final ProjectService projectService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private MetadataTemplateService metadataTemplateService;
 
 	@Autowired
-	public ProjectSettingsMetadataController(ProjectService projectService,
+	public ProjectMetadataController(ProjectService projectService,
 			ProjectControllerUtils projectControllerUtils) {
 		this.projectService = projectService;
 		this.projectControllerUtils = projectControllerUtils;
@@ -46,8 +46,8 @@ public class ProjectSettingsMetadataController {
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
-		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "metadata_templates");
-		return "projects/settings/pages/metadata_templates";
+		model.addAttribute(ProjectsController.ACTIVE_NAV, "metadata");
+		model.addAttribute("page", "metadata");
+		return "projects/metadata";
 	}
 }

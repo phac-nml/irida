@@ -43,7 +43,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public static ProjectMetadataPage goTo(WebDriver driver) {
-		get(driver, "/projects/1/settings/metadata/fields");
+		get(driver, "/projects/1/metadata/fields");
 		return PageFactory.initElements(driver, ProjectMetadataPage.class);
 	}
 

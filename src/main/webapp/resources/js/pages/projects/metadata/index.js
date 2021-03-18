@@ -4,7 +4,7 @@ import { Link, Router } from "@reach/router";
 import { MetadataTemplatesList } from "./MetadataTemplatesList";
 import { MetadataTemplateManager } from "./MetadataTemplateManager";
 import { MetadataTemplates } from "./MetadataTemplates";
-import { Col, Menu, Row } from "antd";
+import { Col, Layout, Menu, Row } from "antd";
 import { MetadataFieldsList } from "./MetadataFieldsList";
 
 import store from "./store";
@@ -13,6 +13,10 @@ import { fetchFieldsForProject } from "../redux/fieldsSlice";
 import { fetchTemplatesForProject } from "../redux/templatesSlice";
 import { MetadataFields } from "./MetadataFields";
 import { MetadataTemplateMember } from "./MetadataTemplateMember";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_SM } from "../../../styles/spacing";
+
+const { Content, Sider } = Layout;
 
 /**
  * React component handles the layout of the metadata fields and templates page.
@@ -45,9 +49,9 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
   }, [props["*"]]);
 
   return (
-    <Row>
-      <Col xs={24} lg={18} xxl={12}>
-        <Menu mode="horizontal" selectedKeys={[selectedKey]}>
+    <Layout>
+      <Sider width={200} style={{ backgroundColor: grey1 }}>
+        <Menu mode="inline" selectedKeys={[selectedKey]}>
           <Menu.Item key="fields">
             <Link className="t-m-field-link" to="fields">
               {i18n("MetadataFields.title")}
@@ -59,9 +63,13 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
             </Link>
           </Menu.Item>
         </Menu>
-        {children}
-      </Col>
-    </Row>
+      </Sider>
+      <Layout>
+        <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
+          {children}
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
@@ -76,7 +84,7 @@ function ProjectMetadata() {
 
   return (
     <Router>
-      <MetadataLayout path={"/projects/:projectId/settings/metadata"}>
+      <MetadataLayout path={"/projects/:projectId/metadata"}>
         <MetadataFields path="/fields">
           <MetadataFieldsList path="/" />
         </MetadataFields>
@@ -97,5 +105,5 @@ render(
   <Provider store={store}>
     <ProjectMetadata />
   </Provider>,
-  document.querySelector("#templates-root")
+  document.querySelector("#root")
 );

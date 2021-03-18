@@ -80,7 +80,6 @@ export function MetadataTemplatesList({ projectId }) {
 
   return (
     <List
-      style={{ marginTop: SPACE_MD }}
       loading={loading}
       bordered
       itemLayout="horizontal"
