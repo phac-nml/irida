@@ -156,5 +156,28 @@ Metadata Fields have:
 
 Metadata Templates provide a pre-defined collection and order of metadata fields used for displaying sample metadata on the line list page.
 
-To create a new metadata template select the fields from the metadata fields table and click the "Create Template" button:
+To create a new metadata template (**project managers only**) select the fields from the metadata fields table and click the "Create Template" button:
 
+![Video displaying how to select fields and create a new template](images/sample-metadata-create-template.gif)
+
+ * **Name**: Must be unique within the project (required)
+ * **Description**: Any information that well help to understand why this template should be used.
+ * **Fields**: Fields can be dragged and dropped into any order.
+
+A list of all metadata templates on the project can be seen in the "Metadata Template" menu option in the left menu:
+
+![Image displaying metadata template list](images/metadata-template-list.png)
+
+Each template listing contains:
+  * Template name; clicking this will redirect to the template details page. 
+  * Template description, the number of fields in the template.
+  * Template actions, including (download Excel file of template fields, and remove template (managers only))
+ 
+Template Details Page
+---------------------
+
+Clicking on a template name will redirect you to the template details page.
+
+![Image displaying the metadata template details page](images/metadata-template-details.png)
+
+Project manage can edit/update the template name, description and fields on this page.
