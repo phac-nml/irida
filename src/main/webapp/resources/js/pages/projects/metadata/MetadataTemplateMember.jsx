@@ -67,7 +67,7 @@ export function MetadataTemplateMember({ id }) {
           </List.Item>
           <List.Item>
             <List.Item.Meta
-              title={<Text strong>{i18n("MetadataTemplateAdmin.fields")}</Text>}
+              title={<Text strong>{i18n("MetadataTemplate.fields")}</Text>}
               description={
                 <Table
                   pagination={false}

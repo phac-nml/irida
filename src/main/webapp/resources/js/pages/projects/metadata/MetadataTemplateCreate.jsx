@@ -70,11 +70,15 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         onClick: () => setVisible(true),
       })}
       <Modal
+        className="t-create-modal"
         title={i18n("CreateMetadataTemplate.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
         okText={i18n("CreateMetadataTemplate.ok-text")}
         onOk={onOk}
+        okButtonProps={{
+          className: "t-create-modal-ok",
+        }}
       >
         <Form layout="vertical" form={form}>
           <Form.Item
@@ -97,10 +101,10 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
               }),
             ]}
           >
-            <Input />
+            <Input className="t-c-t-name" />
           </Form.Item>
           <Form.Item label={"DESCRIPTION"} name="description">
-            <Input.TextArea rows={4} />
+            <Input.TextArea className="t-c-t-desc" rows={4} />
           </Form.Item>
         </Form>
         {fieldsState.length > 0 && (

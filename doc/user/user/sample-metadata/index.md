@@ -134,3 +134,27 @@ Hovering over the `Export` button which will reveal a dropdown where you can sel
 
 Values within the metadata table can be updated by double clicking on the cell you want to modify, enter the new value and press enter.  The new value will be automatically saved.  Once a cell has been edited, a notification will display with a "undo" button, that will revert the value back to the original.
 
+Project Sample Metadata
+-----------------------
+
+Each sample can contain it's own metadata.  IRIDA uses the terms:
+* **Metadata Field** as the label for a piece of metadata (e.g. Organism).
+* **Metadata Entry** for the value associated with it (e.g. _Salmonella enterica_).
+
+All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Sample Metadata' tab.
+
+![Image showing sample metadata tan](images/sample-metadata-tab.png)
+
+Once on the Sample Metadata page, you will see a listing of all *Metadata Field* associated with samples in this project:
+
+![Image showing sample metadata fields](images/sample-metadata-fields.png)
+
+Metadata Fields have:
+* **Type**: Indicates the type of data that the field can be.  Usually this will be just "text".
+
+### Metadata Templates
+
+Metadata Templates provide a pre-defined collection and order of metadata fields used for displaying sample metadata on the line list page.
+
+To create a new metadata template select the fields from the metadata fields table and click the "Create Template" button:
+

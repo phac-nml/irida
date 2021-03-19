@@ -30,7 +30,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplateAdmin({ id }) {
+export function MetadataTemplateManager({ id }) {
   const dispatch = useDispatch();
 
   const { templates, loading } = useSelector((state) => state.templates);
@@ -138,7 +138,10 @@ export function MetadataTemplateAdmin({ id }) {
   };
 
   return (
-    <PageHeader title={template.name} onBack={() => navigate("./")}>
+    <PageHeader
+      title={<span className="t-t-header-name">{template.name}</span>}
+      onBack={() => navigate("./")}
+    >
       <Skeleton loading={loading}>
         <List itemLayout="vertical" size="small">
           <List.Item>
@@ -146,6 +149,7 @@ export function MetadataTemplateAdmin({ id }) {
               title={<Text strong>{i18n("MetadataTemplate.label")}</Text>}
               description={
                 <Paragraph
+                  className="t-t-edit-name"
                   editable={{ onChange: (text) => onChange("name", text) }}
                 >
                   {template.name}
@@ -173,7 +177,7 @@ export function MetadataTemplateAdmin({ id }) {
                 <>
                   <Text strong>{i18n("MetadataTemplate.fields")}</Text>
                   <HelpPopover
-                    content={<div>{i18n("MetadataTemplateAdmin.drag")}</div>}
+                    content={<div>{i18n("MetadataTemplateManager.drag")}</div>}
                   />
                 </>
               }
@@ -203,7 +207,7 @@ export function MetadataTemplateAdmin({ id }) {
                       return (
                         <Tooltip
                           placement="left"
-                          title={i18n("MetadataTemplateAdmin.remove-field")}
+                          title={i18n("MetadataTemplateManager.remove-field")}
                         >
                           <Button
                             onClick={() => removeField(item)}
