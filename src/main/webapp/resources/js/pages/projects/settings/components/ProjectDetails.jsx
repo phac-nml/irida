@@ -35,7 +35,7 @@ function reducer(state, action) {
  * @returns {*}
  * @constructor
  */
-export function ProjectDetails() {
+export default function ProjectDetails() {
   const [state, dispatch] = useReducer(reducer, { loading: true });
 
   /*
