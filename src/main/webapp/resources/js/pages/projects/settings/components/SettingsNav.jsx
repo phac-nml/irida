@@ -6,7 +6,7 @@ export default function SettingsNav({ path }) {
   return (
     <Menu selectedKeys={[path]}>
       <Menu.Item key="details">
-        <Link to="details">Details</Link>
+        <Link to="details">{i18n("project.settings.page.details")}</Link>
       </Menu.Item>
     </Menu>
   );
