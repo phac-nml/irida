@@ -9,6 +9,9 @@ import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 import { fetchProjectDetails } from "../redux/projectSlice";
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
+const ProjectProcessing = React.lazy(() =>
+  import("./components/ProjectProcessing")
+);
 
 const { Content, Sider } = Layout;
 
@@ -20,8 +23,7 @@ const SettingsLayout = () => (
 
 const ProjectSettings = (props) => {
   const dispatch = useDispatch();
-  // const { remote } = useSelector((state) => state.project);
-  //
+
   React.useEffect(() => {
     dispatch(fetchProjectDetails(props.projectId));
   }, []);
@@ -36,6 +38,7 @@ const ProjectSettings = (props) => {
           <Suspense fallback={<Skeleton />}>
             <Router>
               <ProjectDetails path="/details" />
+              <ProjectProcessing path="/processing" />
             </Router>
           </Suspense>
         </Content>

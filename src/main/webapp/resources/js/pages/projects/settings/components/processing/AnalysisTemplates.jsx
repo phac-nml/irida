@@ -2,9 +2,9 @@ import React from "react";
 import {
   deleteAnalysisTemplateForProject,
   fetchAnalysisTemplatesForProject,
-} from "../../../apis/projects/settings";
+} from "../../../../../apis/projects/settings";
 import { Button, List, notification, Popconfirm, Tag } from "antd";
-import { IconRemove } from "../../../components/icons/Icons";
+import { IconRemove } from "../../../../../components/icons/Icons";
 
 /**
  * Display a list of analysis templates (automated pipelines) that are currently

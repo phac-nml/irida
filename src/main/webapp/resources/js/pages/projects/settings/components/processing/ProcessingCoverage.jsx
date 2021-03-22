@@ -15,7 +15,7 @@ import isNumeric from "antd/es/_util/isNumeric";
 import {
   fetchProcessingCoverage,
   updateProcessingCoverage,
-} from "../../../apis/projects/settings";
+} from "../../../../../apis/projects/settings";
 
 /**
  * Display and allow managers to be able to modify the minimum and maximum

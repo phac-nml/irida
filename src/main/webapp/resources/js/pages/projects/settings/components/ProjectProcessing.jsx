@@ -1,20 +1,16 @@
 import React from "react";
-import { render } from "react-dom";
 import { Col, Divider, Row, Space, Typography } from "antd";
-import { ProcessingCoverage } from "./ProcessingCoverage";
-import { ProcessingAutomatedPipelines } from "./ProcessingAutomatedPipelines";
+import { ProcessingCoverage } from "./processing/ProcessingCoverage";
+import { ProcessingAutomatedPipelines } from "./processing/ProcessingAutomatedPipelines";
+import { useSelector } from "react-redux";
 
 /**
  * Base script for displaying project process page
  * @returns {JSX.Element}
  * @constructor
  */
-const ProcessingLayout = () => {
-  const [projectId] = React.useState(
-    () => window.location.href.match(/projects\/(\d+)\/settings/i)[1]
-  );
-
-  const { canManage } = window.project;
+export default function ProjectProcessing({ projectId }) {
+  const { canManage } = useSelector((state) => state.project);
 
   return (
     <Row>
@@ -33,6 +29,4 @@ const ProcessingLayout = () => {
       </Col>
     </Row>
   );
-};
-
-render(<ProcessingLayout />, document.querySelector("#process-root"));
+}

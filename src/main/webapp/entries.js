@@ -38,7 +38,6 @@ module.exports = {
   "project-settings": "./resources/js/pages/projects/settings",
   "project-remote": "./resources/js/pages/projects/remote/",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
-  "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, List, Modal, Typography } from "antd";
-import { fetchAutomatedIridaAnalysisWorkflows } from "../../../apis/pipelines/pipelines";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { fetchAutomatedIridaAnalysisWorkflows } from "../../../../../apis/pipelines/pipelines";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 /**
  * Display title for automated pipelines and if the user can add new templates

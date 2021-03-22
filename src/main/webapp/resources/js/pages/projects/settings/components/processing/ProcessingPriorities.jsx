@@ -2,7 +2,7 @@ import React from "react";
 import {
   fetchProcessingInformation,
   updateProcessingPriority,
-} from "../../../apis/projects/settings";
+} from "../../../../../apis/projects/settings";
 import { Form, notification, Select } from "antd";
 
 /**
