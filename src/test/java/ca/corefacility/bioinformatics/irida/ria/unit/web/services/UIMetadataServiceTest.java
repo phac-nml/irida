@@ -66,5 +66,6 @@ public class UIMetadataServiceTest {
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).createMetadataTemplateInProject(template, project);
 		Assert.assertEquals("Should have the same template name", template.getLabel(), newTemplate.getName());
+		Assert.assertEquals("Should have a new identifier", NEW_TEMPLATE_ID, newTemplate.getId());
 	}
 }
