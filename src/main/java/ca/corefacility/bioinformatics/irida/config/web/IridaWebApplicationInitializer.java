@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.web.filter.SlashFilter;
 
 /**
  * REST API initializer with security.
- * 
+ *
  *
  */
 public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -53,6 +53,6 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class[] { IridaRestApiWebConfig.class, IridaUIWebConfig.class, IridaWebSecurityConfig.class };
+		return new Class[] {OpenAPIConfig.class, IridaRestApiWebConfig.class, IridaUIWebConfig.class, IridaWebSecurityConfig.class };
 	}
 }
