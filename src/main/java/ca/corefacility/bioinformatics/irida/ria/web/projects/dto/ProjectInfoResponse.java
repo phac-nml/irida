@@ -1,36 +1,38 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+
 /**
  * Encapsulates information about the project as well as permissions.
  */
 
 public class ProjectInfoResponse {
-	private Long projectId;
-	private String projectName;
+	private Long id;
+	private String name;
 	private boolean canManage;
 	private boolean canManageRemote;
 
-	public ProjectInfoResponse(Long projectId, String projectName, boolean canManage, boolean canManageRemote) {
-		this.projectId = projectId;
-		this.projectName = projectName;
+	public ProjectInfoResponse(Project project, boolean canManage, boolean canManageRemote) {
+		this.id = project.getId();
+		this.name = project.getName();
 		this.canManage = canManage;
 		this.canManageRemote = canManageRemote;
 	}
 
-	public Long getProjectId() {
-		return projectId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getProjectName() {
-		return projectName;
+	public String getName() {
+		return name;
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean isCanManage() {
