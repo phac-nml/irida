@@ -91,7 +91,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/resources/**").permitAll()
 				.antMatchers("/dist/**").permitAll()
 				.antMatchers("/swagger*/**").permitAll()
-				.antMatchers("/v3/api-docs").permitAll()
+				.antMatchers("/v3/api-docs/**").permitAll()
 				.antMatchers("/password_reset/**").permitAll()
 				.antMatchers("/admin/**").hasRole("ADMIN")
 				.antMatchers("/**").fullyAuthenticated()
