@@ -1,34 +1,15 @@
-import React, { useEffect, useReducer } from "react";
-import {
-  getProjectDetails,
-  updateProjectAttribute,
-} from "../../../../apis/projects/projects";
+import React from "react";
 import { notification, Typography } from "antd";
 import { BasicList } from "../../../../components/lists";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { EditableParagraph } from "../../../../components/ant.design";
 import { OntologySelect } from "../../../../components/ontology";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProjectDetails } from "../../redux/projectSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const { Paragraph, Title } = Typography;
-
-/**
- * Reducer for the state of the project details.
- *
- * @param {object} state - current state of the project details
- * @param {object} action - include type and payload
- * @returns {object}
- */
-function reducer(state, action) {
-  switch (action.type) {
-    case "LOADED":
-      return { ...state, ...action.payload, loading: false };
-    case "UPDATE":
-      return { ...state, ...action.payload };
-    default:
-      return { ...state };
-  }
-}
 
 /**
  * React component for render the basic information about a project.
@@ -36,17 +17,8 @@ function reducer(state, action) {
  * @constructor
  */
 export default function ProjectDetails() {
-  const [state, dispatch] = useReducer(reducer, { loading: true });
-
-  /*
-  When this component is rendered, query the api for the specific details
-  about this project.
-   */
-  useEffect(() => {
-    getProjectDetails(window.project.id).then((data) =>
-      dispatch({ type: "LOADED", payload: data })
-    );
-  }, []);
+  const project = useSelector((state) => state.project);
+  const dispatch = useDispatch();
 
   /**
    * When a field is updated, submitted it to the server to be saved.
@@ -60,81 +32,73 @@ export default function ProjectDetails() {
     /*
     Make sure the value actually changed, if it didn't, don't update it.
      */
-    if (state[field] === value) return;
+    if (project[field] === value) return;
 
-    updateProjectAttribute({
-      projectId: window.project.id,
-      field,
-      value,
-    })
-      .then(({ data }) => {
-        notification.success({ message: data });
-        dispatch({ type: "UPDATE", payload: { [field]: value } });
-      })
-      .catch(({ response }) => {
-        notification.error({ message: response.data });
-      });
+    dispatch(updateProjectDetails({ field, value }))
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }))
+      .catch((message) => notification.error({ message }));
   };
 
-  const details = state.loading
+  const details = project.loading
     ? []
     : [
         {
           title: i18n("ProjectDetails.label"),
-          desc: window.project.canManage ? (
+          desc: project.canManage ? (
             <Paragraph
               className="t-project-name"
               editable={{ onChange: (value) => updateField("label", value) }}
             >
-              {state.label}
+              {project.label}
             </Paragraph>
           ) : (
-            <span className="t-project-name">{state.label}</span>
+            <span className="t-project-name">{project.label}</span>
           ),
         },
         {
           title: i18n("ProjectDetails.description"),
-          desc: window.project.canManage ? (
+          desc: project.canManage ? (
             <Paragraph
               className="t-project-desc"
               editable={{
                 onChange: (value) => updateField("description", value),
               }}
             >
-              {state.description}
+              {project.description}
             </Paragraph>
           ) : (
-            <span className="t-project-desc">{state.description}</span>
+            <span className="t-project-desc">{project.description}</span>
           ),
         },
         {
           title: i18n("ProjectDetails.id"),
-          desc: <span className="t-project-id">{state.id}</span>,
+          desc: <span className="t-project-id">{project.id}</span>,
         },
         {
           title: i18n("ProjectDetails.organism"),
-          desc: window.project.canManage ? (
+          desc: project.canManage ? (
             <EditableParagraph
-              value={state.organism}
+              value={project.organism}
               valueClassName="t-project-organism"
             >
               <OntologySelect
-                term={state.organism}
+                term={project.organism}
                 ontology={TAXONOMY}
                 onTermSelected={(term) => updateField("organism", term)}
               />
             </EditableParagraph>
           ) : (
-            <span className="t-project-organism">{state.organism}</span>
+            <span className="t-project-organism">{project.organism}</span>
           ),
         },
         {
           title: i18n("ProjectDetails.createdDate"),
-          desc: formatInternationalizedDateTime(state.createdDate),
+          desc: formatInternationalizedDateTime(project.createdDate),
         },
         {
           title: i18n("ProjectDetails.modifiedDate"),
-          desc: formatInternationalizedDateTime(state.modifiedDate),
+          desc: formatInternationalizedDateTime(project.modifiedDate),
         },
       ];
 

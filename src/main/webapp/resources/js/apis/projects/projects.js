@@ -49,9 +49,16 @@ export async function getProjectDetails(projectId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateProjectAttribute({ projectId, field, value }) {
-  return axios.put(`${URL}/${projectId}/details/edit`, { field, value });
+  try {
+    const { data } = await axios.put(`${URL}/${projectId}/details/edit`, {
+      field,
+      value,
+    });
+    return data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
 }
-
 
 /**
  * Get project info (name, permissions)

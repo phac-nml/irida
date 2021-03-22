@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
+import java.util.Date;
+
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
@@ -8,13 +10,21 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 public class ProjectInfoResponse {
 	private Long id;
-	private String name;
+	private String label;
+	private Date createdDate;
+	private Date modifiedDate;
+	private String organism;
+	private String description;
 	private boolean canManage;
 	private boolean canManageRemote;
 
 	public ProjectInfoResponse(Project project, boolean canManage, boolean canManageRemote) {
 		this.id = project.getId();
-		this.name = project.getName();
+		this.label = project.getName();
+		this.createdDate = project.getCreatedDate();
+		this.modifiedDate = project.getModifiedDate();
+		this.organism = project.getOrganism();
+		this.description = project.getProjectDescription();
 		this.canManage = canManage;
 		this.canManageRemote = canManageRemote;
 	}
@@ -27,12 +37,28 @@ public class ProjectInfoResponse {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public boolean isCanManage() {

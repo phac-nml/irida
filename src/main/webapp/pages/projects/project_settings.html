@@ -5,6 +5,7 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/project-settings.bundle.css}">
 </head>
 <body>
 <div id="root" layout:fragment="main"></div>

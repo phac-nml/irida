@@ -12,8 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.ProjectDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
@@ -23,11 +24,13 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 @RequestMapping("/ajax/projects/{projectId}/details")
 public class ProjectDetailsAjaxController {
 	private final ProjectService projectService;
+	private final UIProjectsService service;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public ProjectDetailsAjaxController(ProjectService projectService, MessageSource messageSource) {
+	public ProjectDetailsAjaxController(ProjectService projectService, UIProjectsService service, MessageSource messageSource) {
 		this.projectService = projectService;
+		this.service = service;
 		this.messageSource = messageSource;
 	}
 
@@ -38,9 +41,8 @@ public class ProjectDetailsAjaxController {
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
-	public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		return ResponseEntity.ok(new ProjectDetailsResponse(project));
+	public ResponseEntity<ProjectInfoResponse> getProjectDetails(@PathVariable Long projectId) {
+		return ResponseEntity.ok(service.getProjectInfo(projectId));
 	}
 
 	/**

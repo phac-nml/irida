@@ -1,30 +1,52 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
-import { Layout } from "antd";
+import { Layout, Skeleton } from "antd";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_SM } from "../../../styles/spacing";
+import { Provider, useDispatch } from "react-redux";
+import SettingsNav from "./components/SettingsNav";
+import store from "./store";
+import { fetchProjectDetails } from "../redux/projectSlice";
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
 
 const { Content, Sider } = Layout;
 
-const Root = ({ children }) => children;
-
 const SettingsLayout = () => (
-  <Layout>
-    <Sider>SIDER</Sider>
-    <Layout>
-      <Content>
-        <Router>
-          <ProjectDetails path="details" />
-        </Router>
-      </Content>
-    </Layout>
-  </Layout>
+  <Router>
+    <ProjectSettings path="/projects/:projectId/settings/*" />
+  </Router>
 );
 
-const ProjectSettings = () => (<Router>
-  <Root path="/projects/:projectId/settings/*">
-    <SettingsLayout
-  </Root>
-</Router>)
+const ProjectSettings = (props) => {
+  const dispatch = useDispatch();
+  // const { remote } = useSelector((state) => state.project);
+  //
+  React.useEffect(() => {
+    dispatch(fetchProjectDetails(props.projectId));
+  }, []);
 
-render(<ProjectSettings />, document.querySelector("#root"));
+  return (
+    <Layout>
+      <Sider width={200} style={{ backgroundColor: grey1 }}>
+        <SettingsNav path={props["*"]} />
+      </Sider>
+      <Layout>
+        <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
+          <Suspense fallback={<Skeleton />}>
+            <Router>
+              <ProjectDetails path="/details" />
+            </Router>
+          </Suspense>
+        </Content>
+      </Layout>
+    </Layout>
+  );
+};
+
+render(
+  <Provider store={store}>
+    <SettingsLayout />
+  </Provider>,
+  document.querySelector("#root")
+);
