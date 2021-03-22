@@ -2,13 +2,13 @@ import React, { useEffect, useReducer } from "react";
 import {
   getProjectDetails,
   updateProjectAttribute,
-} from "../../../apis/projects/projects";
+} from "../../../../apis/projects/projects";
 import { notification, Typography } from "antd";
-import { BasicList } from "../../../components/lists";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { EditableParagraph } from "../../../components/ant.design";
-import { OntologySelect } from "../../../components/ontology";
-import { TAXONOMY } from "../../../apis/ontology/taxonomy";
+import { BasicList } from "../../../../components/lists";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { EditableParagraph } from "../../../../components/ant.design";
+import { OntologySelect } from "../../../../components/ontology";
+import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
 
 const { Paragraph, Title } = Typography;
 
