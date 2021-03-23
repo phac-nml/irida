@@ -18,12 +18,12 @@ export const fetchProjectCoverage = createAsyncThunk(
       genomeSize: genomeSize > -1 ? genomeSize : NOT_SET,
     };
   }, {
-    condition(_, { getState }) {
+    condition(_args, { getState }) {
       /*
       We only want to get the data if it has not already been fetched.
        */
-      const { processing } = getState();
-      if ("maximum" in processing) {
+      const { coverage } = getState();
+      if ("maximum" in coverage) {
         return false;
       }
     }
@@ -41,7 +41,7 @@ export const updateProcessingCoverage = createAsyncThunk(
   }
 )
 
-export const processingSlice = createSlice({
+export const coverageSlice = createSlice({
   name: "project/processing",
   initialState: {
     loading: true
@@ -60,4 +60,4 @@ export const processingSlice = createSlice({
   }
 })
 
-export default processingSlice.reducer;
+export default coverageSlice.reducer;

@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProjectCoverage,
   updateProcessingCoverage
-} from "../../../redux/processingSlice";
+} from "../../../redux/coverageSlice";
 
 /**
  * Display and allow managers to be able to modify the minimum and maximum
@@ -33,8 +33,7 @@ export function ProcessingCoverage({ projectId, canManage }) {
     maximum,
     genomeSize,
     loading
-  } = useSelector(state => state.processing);
-  console.log({ minimum, maximum, genomeSize });
+  } = useSelector(state => state.coverage);
 
   const dispatch = useDispatch();
   const NOT_SET = i18n("ProcessingCoverage.not-set");

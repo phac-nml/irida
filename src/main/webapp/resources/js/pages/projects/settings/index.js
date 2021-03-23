@@ -8,7 +8,6 @@ import { Provider, useDispatch } from "react-redux";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 import { fetchProjectDetails } from "../redux/projectSlice";
-import {fetchProjectCoverage} from "../redux/processingSlice";
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
 const ProjectProcessing = React.lazy(() =>
   import("./components/ProjectProcessing")
