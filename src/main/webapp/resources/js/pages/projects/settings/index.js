@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Router } from "@reach/router";
+import { Router, Redirect } from "@reach/router";
 import { Layout, Skeleton } from "antd";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
@@ -8,6 +8,7 @@ import { Provider, useDispatch } from "react-redux";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 import { fetchProjectDetails } from "../redux/projectSlice";
+import {fetchProjectCoverage} from "../redux/processingSlice";
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
 const ProjectProcessing = React.lazy(() =>
   import("./components/ProjectProcessing")
@@ -26,6 +27,7 @@ const ProjectSettings = (props) => {
 
   React.useEffect(() => {
     dispatch(fetchProjectDetails(props.projectId));
+    dispatch(fetchProjectCoverage(props.projectId));
   }, []);
 
   return (
@@ -39,6 +41,10 @@ const ProjectSettings = (props) => {
             <Router>
               <ProjectDetails path="/details" />
               <ProjectProcessing path="/processing" />
+              <Redirect
+                from="/"
+                to="/details"
+              />
             </Router>
           </Suspense>
         </Content>

@@ -72,22 +72,6 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Request for a {@link Project} basic settings page
-	 *
-	 * @param projectId the ID of the {@link Project} to read
-	 * @param model     Model for the view
-	 * @param principal Logged in user
-	 * @return name of the project settings page
-	 */
-	@RequestMapping("/processing")
-	public String getProjectSettingsProcessingPage(@PathVariable Long projectId, final Model model,
-			final Principal principal) {
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/settings/pages/processing";
-	}
-
-	/**
 	 * Convert a analysis template to {@link AnalysisTemplate}
 	 *
 	 * @param template the {@link AnalysisSubmissionTemplate}
