@@ -27,7 +27,6 @@ const ProjectSettings = (props) => {
 
   React.useEffect(() => {
     dispatch(fetchProjectDetails(props.projectId));
-    dispatch(fetchProjectCoverage(props.projectId));
   }, []);
 
   return (

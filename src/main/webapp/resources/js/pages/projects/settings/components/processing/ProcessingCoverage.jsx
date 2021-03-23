@@ -1,4 +1,4 @@
-import React from "react";
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Button,
   Card,
@@ -12,9 +12,12 @@ import {
   Typography,
 } from "antd";
 import isNumeric from "antd/es/_util/isNumeric";
-import {useDispatch, useSelector} from "react-redux";
-import {updateProcessingCoverage} from "../../../redux/processingSlice";
-import {unwrapResult} from "@reduxjs/toolkit";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchProjectCoverage,
+  updateProcessingCoverage
+} from "../../../redux/processingSlice";
 
 /**
  * Display and allow managers to be able to modify the minimum and maximum
@@ -24,14 +27,23 @@ import {unwrapResult} from "@reduxjs/toolkit";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ProcessingCoverage({projectId, canManage}) {
-  const {minimum, maximum, genomeSize} = useSelector(state => state.processing);
-  console.log({minimum, maximum, genomeSize})
+export function ProcessingCoverage({ projectId, canManage }) {
+  const {
+    minimum,
+    maximum,
+    genomeSize,
+    loading
+  } = useSelector(state => state.processing);
+  console.log({ minimum, maximum, genomeSize });
 
   const dispatch = useDispatch();
   const NOT_SET = i18n("ProcessingCoverage.not-set");
   const [visible, setVisible] = React.useState(false);
   const [form] = Form.useForm();
+
+  React.useEffect(() => {
+    dispatch(fetchProjectCoverage(projectId));
+  }, []);
 
   const numericValidator = () => ({
     validator(rule, value) {
@@ -126,6 +138,7 @@ export function ProcessingCoverage({projectId, canManage}) {
         <Col span={8}>
           <Card>
             <Statistic
+              loading={loading}
               title={i18n("ProcessingCoverage.minimum")}
               value={isNumeric(minimum) ? minimum : NOT_SET}
               suffix={isNumeric(minimum) ? "X" : ""}
@@ -135,6 +148,7 @@ export function ProcessingCoverage({projectId, canManage}) {
         <Col span={8}>
           <Card>
             <Statistic
+              loading={loading}
               title={i18n("ProcessingCoverage.maximum")}
               value={isNumeric(maximum) ? maximum : NOT_SET}
               suffix={isNumeric(maximum) ? "X" : ""}
@@ -144,6 +158,7 @@ export function ProcessingCoverage({projectId, canManage}) {
         <Col span={8}>
           <Card>
             <Statistic
+              loading={loading}
               title={i18n("ProcessingCoverage.genomeSize")}
               value={
                 isNumeric(genomeSize) ? genomeSize : NOT_SET
