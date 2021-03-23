@@ -11,20 +11,6 @@ import { TYPES, useAnnouncements } from "./announcements-context";
 import { fromNow } from "../../../../utilities/date-utilities";
 import { BORDERED_LIGHT } from "../../../../styles/borders";
 import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
-import styled from "styled-components";
-
-const AnnouncementLink = styled.span`
-  padding: 20px;
-  cursor: pointer;
-
-  &:hover .anticon-bell {
-    color: #ffffff;
-  }
-
-  .anticon-bell {
-    color: rgba(255, 255, 255, 0.65);
-  }
-`;
 
 const { Text } = Typography;
 
@@ -98,14 +84,14 @@ export function AnnouncementsSubMenu() {
 
   return (
     <Dropdown overlay={aMenu}>
-      <AnnouncementLink>
+      <span className="announcements-dropdown">
         <Badge
           className="t-announcements-badge"
           count={announcements && announcements.filter((a) => !a.read).length}
         >
           <IconBell />
         </Badge>
-      </AnnouncementLink>
+      </span>
     </Dropdown>
   );
 }
