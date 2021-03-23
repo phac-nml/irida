@@ -11,6 +11,6 @@ export default configureStore({
   reducer: {
     project: projectReducer,
     coverage: coverageSlice,
-    pipelines: pipelinesSlice
+    pipelines: pipelinesSlice,
   },
 });

@@ -13,11 +13,13 @@ import { setBaseUrl } from "../../../../../utilities/url-utilities";
  */
 export function AutomatedPipelineHeader({ projectId, canMange }) {
   const [visible, setVisible] = React.useState(false);
-  const [pipelines, setPipelines] = React.useState([]);
+  const [pipelines, setPipelines] = React.useState(undefined);
 
   React.useEffect(() => {
-    fetchAutomatedIridaAnalysisWorkflows().then(setPipelines);
-  }, []);
+    if (visible && !pipelines) {
+      fetchAutomatedIridaAnalysisWorkflows().then(setPipelines);
+    }
+  }, [visible]);
 
   return (
     <>

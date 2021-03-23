@@ -4,6 +4,10 @@ import {
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
 
+/**
+ * Redux Async Thunk for fetching project details
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const fetchProjectDetails = createAsyncThunk(
   `project/details`,
   async (projectId) => {
@@ -11,6 +15,10 @@ export const fetchProjectDetails = createAsyncThunk(
   }
 );
 
+/**
+ * Redux thunk for updating aspects of the project details
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const updateProjectDetails = createAsyncThunk(
   `project/update`,
   async ({ field, value }, { getState, rejectWithValue }) => {

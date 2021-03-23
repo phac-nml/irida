@@ -1,9 +1,15 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProcessingInformation,
   updateProcessingPriority,
 } from "../../../../../apis/projects/settings";
 import { Form, notification, Select } from "antd";
+import {
+  fetchPipelinePriorityInfo,
+  putPriorityUpdate
+} from "../../../redux/pipelinesSlice";
 
 /**
  * Allow the user to modify the priority of pipeline process.
@@ -13,27 +19,17 @@ import { Form, notification, Select } from "antd";
  * @constructor
  */
 export function ProcessingPriorities({ projectId }) {
-  const [priorities, setPriorities] = React.useState([]);
-  const [priority, setPriority] = React.useState();
+  const dispatch = useDispatch();
+  const { priority, priorities } = useSelector(state => state.pipelines);
 
-  const getProcessingInfo = React.useCallback(async () => {
-    const data = await fetchProcessingInformation(projectId);
-    setPriorities(data.priorities);
-    setPriority(data.priority);
-  }, [projectId]);
+  React.useEffect(async () => {
+    dispatch(fetchPipelinePriorityInfo(projectId));
+  }, []);
 
-  React.useEffect(() => {
-    getProcessingInfo();
-  }, [getProcessingInfo]);
-
-  const update = (value) => {
-    updateProcessingPriority(projectId, value)
-      .then((message) => {
-        setPriority(value);
-        notification.success({ message });
-      })
-      .catch((message) => notification.error({ message }));
-  };
+  const update = (value) => dispatch(putPriorityUpdate({ projectId, priority: value }))
+    .then(unwrapResult)
+    .then(({message}) => notification.success({ message}))
+    .catch(message => notification.error({ message}))
 
   return (
     <Form layout="vertical">

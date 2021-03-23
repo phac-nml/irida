@@ -39,10 +39,7 @@ const ProjectSettings = (props) => {
             <Router>
               <ProjectDetails path="/details" />
               <ProjectProcessing path="/processing" />
-              <Redirect
-                from="/"
-                to="/details"
-              />
+              <Redirect from="/" to="/details" />
             </Router>
           </Suspense>
         </Content>

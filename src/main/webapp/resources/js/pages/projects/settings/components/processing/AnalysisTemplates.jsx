@@ -1,9 +1,12 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, List, notification, Popconfirm, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAnalysisTemplateForProject, } from "../../../../../apis/projects/settings";
 import { IconRemove } from "../../../../../components/icons/Icons";
-import { fetchAnalysisTemplates } from "../../../redux/pipelinesSlice";
+import {
+  deletePipeline,
+  fetchAnalysisTemplates,
+} from "../../../redux/pipelinesSlice";
 
 /**
  * Display a list of analysis templates (automated pipelines) that are currently
@@ -16,19 +19,21 @@ import { fetchAnalysisTemplates } from "../../../redux/pipelinesSlice";
  */
 export function AnalysisTemplates({ projectId, canManage }) {
   const dispatch = useDispatch();
-  const { templates, loading } = useSelector(state => state.pipelines);
+  const { templates, loading } = useSelector((state) => state.pipelines);
 
   React.useEffect(() => {
     dispatch(fetchAnalysisTemplates(projectId));
   }, []);
 
-  const removeAutomatedPipeline = (template) => {
-    deleteAnalysisTemplateForProject(template.id, projectId).then((message) => {
-      notification.success({ message });
-      const filteredTemplates = templates.filter((t) => t.id !== template.id);
-      setTemplates(filteredTemplates);
-    });
-  };
+  const removeAutomatedPipeline = (template) =>
+    dispatch(
+      deletePipeline({
+        templateId: template.id,
+        projectId,
+      })
+    )
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }));
 
   return (
     <List
