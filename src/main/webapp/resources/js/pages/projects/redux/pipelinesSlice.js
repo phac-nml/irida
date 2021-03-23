@@ -3,14 +3,15 @@ import {
   deleteAnalysisTemplateForProject,
   fetchAnalysisTemplatesForProject,
   fetchProcessingInformation,
-  updateProcessingPriority
+  updateProcessingPriority,
 } from "../../../apis/projects/settings";
 
 export const fetchAnalysisTemplates = createAsyncThunk(
   `pipelines/fetchAnalysisTemplates`,
   async (projectId) => {
     return await fetchAnalysisTemplatesForProject(projectId);
-  },{
+  },
+  {
     condition(_args, { getState }) {
       /*
       We only want to get the data if it has not already been fetched.
@@ -19,14 +20,17 @@ export const fetchAnalysisTemplates = createAsyncThunk(
       if ("templates" in pipelines) {
         return false;
       }
-    }
+    },
   }
 );
 
 export const deletePipeline = createAsyncThunk(
-    `pipelines/deletePipeline`,
+  `pipelines/deletePipeline`,
   async ({ templateId, projectId }) => {
-    const message = await deleteAnalysisTemplateForProject(templateId, projectId);
+    const message = await deleteAnalysisTemplateForProject(
+      templateId,
+      projectId
+    );
     return { message, templateId };
   }
 );
@@ -34,8 +38,9 @@ export const deletePipeline = createAsyncThunk(
 export const fetchPipelinePriorityInfo = createAsyncThunk(
   `pipelines/fetchPipelinePriorityInfo`,
   async (projectId) => {
-    return  await fetchProcessingInformation(projectId);
-  },{
+    return await fetchProcessingInformation(projectId);
+  },
+  {
     condition(_args, { getState }) {
       /*
       We only want to get the data if it has not already been fetched.
@@ -44,13 +49,13 @@ export const fetchPipelinePriorityInfo = createAsyncThunk(
       if ("priorities" in pipelines) {
         return false;
       }
-    }
+    },
   }
-)
+);
 
 export const putPriorityUpdate = createAsyncThunk(
   `pipelines/putPriorityUpdate`,
-  async ({projectId, priority}, {rejectWithValue}) => {
+  async ({ projectId, priority }, { rejectWithValue }) => {
     try {
       const message = await updateProcessingPriority(projectId, priority);
       return { priority, message };
@@ -58,12 +63,12 @@ export const putPriorityUpdate = createAsyncThunk(
       rejectWithValue(e);
     }
   }
-)
+);
 
 export const pipelinesSlice = createSlice({
   name: "project/pipelines",
   initialState: {
-    loading: true
+    loading: true,
   },
   reducers: {},
   extraReducers: {
@@ -72,7 +77,9 @@ export const pipelinesSlice = createSlice({
       state.loading = false;
     },
     [deletePipeline.fulfilled]: (state, action) => {
-      state.templates = state.templates.filter(template => template.id !== action.payload.templateId);
+      state.templates = state.templates.filter(
+        (template) => template.id !== action.payload.templateId
+      );
     },
     [fetchPipelinePriorityInfo.fulfilled]: (state, action) => {
       state.priority = action.payload.priority;
@@ -80,8 +87,8 @@ export const pipelinesSlice = createSlice({
     },
     [putPriorityUpdate.fulfilled]: (state, action) => {
       state.priority = action.payload.priority;
-    }
-  }
+    },
+  },
 });
 
 export default pipelinesSlice.reducer;

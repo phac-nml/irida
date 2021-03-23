@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   fetchProcessingCoverage,
-  putProcessingCoverage
+  putProcessingCoverage,
 } from "../../../apis/projects/settings";
 
 const NOT_SET = i18n("ProcessingCoverage.not-set");
@@ -17,7 +17,8 @@ export const fetchProjectCoverage = createAsyncThunk(
       maximum: maximum > -1 ? maximum : NOT_SET,
       genomeSize: genomeSize > -1 ? genomeSize : NOT_SET,
     };
-  }, {
+  },
+  {
     condition(_args, { getState }) {
       /*
       We only want to get the data if it has not already been fetched.
@@ -26,9 +27,9 @@ export const fetchProjectCoverage = createAsyncThunk(
       if ("maximum" in coverage) {
         return false;
       }
-    }
+    },
   }
-)
+);
 
 export const updateProcessingCoverage = createAsyncThunk(
   `processing/updateProcessingCoverage`,
@@ -36,28 +37,28 @@ export const updateProcessingCoverage = createAsyncThunk(
     const message = await putProcessingCoverage(projectId, coverage);
     return {
       ...coverage,
-      message
+      message,
     };
   }
-)
+);
 
 export const coverageSlice = createSlice({
   name: "project/processing",
   initialState: {
-    loading: true
+    loading: true,
   },
   reducers: {},
   extraReducers: {
     [fetchProjectCoverage.fulfilled]: (state, action) => ({
       ...state,
       ...action.payload,
-      loading: false
+      loading: false,
     }),
     [updateProcessingCoverage.fulfilled]: (state, action) => ({
       ...state,
-      ...action.payload
-    })
-  }
-})
+      ...action.payload,
+    }),
+  },
+});
 
 export default coverageSlice.reducer;

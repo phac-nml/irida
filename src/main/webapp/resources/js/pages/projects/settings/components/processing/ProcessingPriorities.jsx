@@ -1,14 +1,10 @@
 import { unwrapResult } from "@reduxjs/toolkit";
+import { Form, notification, Select } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchProcessingInformation,
-  updateProcessingPriority,
-} from "../../../../../apis/projects/settings";
-import { Form, notification, Select } from "antd";
-import {
   fetchPipelinePriorityInfo,
-  putPriorityUpdate
+  putPriorityUpdate,
 } from "../../../redux/pipelinesSlice";
 
 /**
@@ -20,16 +16,17 @@ import {
  */
 export function ProcessingPriorities({ projectId }) {
   const dispatch = useDispatch();
-  const { priority, priorities } = useSelector(state => state.pipelines);
+  const { priority, priorities } = useSelector((state) => state.pipelines);
 
   React.useEffect(async () => {
     dispatch(fetchPipelinePriorityInfo(projectId));
   }, []);
 
-  const update = (value) => dispatch(putPriorityUpdate({ projectId, priority: value }))
-    .then(unwrapResult)
-    .then(({message}) => notification.success({ message}))
-    .catch(message => notification.error({ message}))
+  const update = (value) =>
+    dispatch(putPriorityUpdate({ projectId, priority: value }))
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }))
+      .catch((message) => notification.error({ message }));
 
   return (
     <Form layout="vertical">
