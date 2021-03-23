@@ -6,19 +6,24 @@ import {
   PageHeader,
   Skeleton,
   Space,
+  Tag,
   Tooltip,
   Typography,
 } from "antd";
 import { navigate } from "@reach/router";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
-import { updateTemplate } from "../redux/templatesSlice";
+import {
+  setDefaultTemplateForProject,
+  updateTemplate
+} from "../redux/templatesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 import differenceBy from "lodash/differenceBy";
-import { IconRemove } from "../../../components/icons/Icons";
+import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
+import { blue6 } from "../../../styles/colors";
 
 const { Paragraph, Text } = Typography;
 
@@ -39,6 +44,8 @@ export function MetadataTemplateManager({ id }) {
   const [fields, setFields] = React.useState();
   const [newFields, setNewFields] = React.useState();
 
+  const [isProjectDefault, setIsProjectDefault] = React.useState(0);
+
   React.useEffect(() => {
     /*
     On mount we need to find the current template in the list of all templates.
@@ -47,7 +54,13 @@ export function MetadataTemplateManager({ id }) {
     create one.
      */
     if (!loading) {
-      const found = templates.find((template) => template.identifier === id);
+      const found = templates.find((template) => template.identifier == id);
+
+      const defaultTemplateIndex = templates.findIndex((template) => template.default);
+
+      if(defaultTemplateIndex >= 0) {
+        setIsProjectDefault(templates[defaultTemplateIndex].identifier);
+      }
 
       if (found) {
         const { fields, ...newTemplate } = found;
@@ -137,10 +150,54 @@ export function MetadataTemplateManager({ id }) {
     await completeUpdate(updated);
   };
 
+  /**
+   * Returns either a default tag or a set default button depending
+   * on if template is project default or not
+   *
+   * @param {Object} template - the template to return component for
+   */
+  const displayHeaderExtras = (template) => {
+    if(template.identifier == isProjectDefault) {
+      return [
+        <Tag
+          color={blue6}
+          icon={<IconCheckCircle />}
+        >
+          {i18n("MetadataTemplateManager.default")}
+        </Tag>
+      ];
+    }
+    return [
+      <Button
+        onClick={() => setDefaultTemplate(template)}
+      >
+        {i18n("MetadataTemplateManager.set-as-default")}
+      </Button>
+    ]
+  };
+
+  /**
+   * Sets the default template for the project
+   *
+   * @param {Object} template - the template to set as default
+   */
+  const setDefaultTemplate = async (template) => {
+    if (!template.default) {
+      await dispatch(setDefaultTemplateForProject({ projectId: window.project.id, templateId: template.identifier }))
+        .then(unwrapResult)
+        .then(({ message }) => {
+          setIsProjectDefault(template.identifier);
+          notification.success({ message });
+        })
+        .catch((message) => notification.error({ message }));
+    }
+  };
+
   return (
     <PageHeader
       title={<span className="t-t-header-name">{template.name}</span>}
       onBack={() => navigate("./")}
+      extra={displayHeaderExtras(template)}
     >
       <Skeleton loading={loading}>
         <List itemLayout="vertical" size="small">

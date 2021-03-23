@@ -39,7 +39,7 @@ public class MetadataAjaxController {
 	 * @return List of metadata templates with associate details.
 	 */
 	@GetMapping("/templates")
-	public ResponseEntity<List<MetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
+	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
@@ -119,27 +119,4 @@ public class MetadataAjaxController {
 				messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale)));
 	}
 
-	/**
-	 * Remove default metadata template for a project
-	 *
-	 * @param projectId Identifier for the project to remove the default metadata template for.
-	 * @return {@link AjaxSuccessResponse} with the success message
-	 */
-	@PostMapping("/templates/remove-project-default")
-	public ResponseEntity<AjaxResponse> removeDefaultMetadataTemplate(@RequestParam Long projectId, Locale locale) {
-		service.removeDefaultMetadataTemplate(projectId);
-		return ResponseEntity.ok(new AjaxSuccessResponse(
-				messageSource.getMessage("server.metadata-template.removed-default", new Object[] {}, locale)));
-	}
-
-	/**
-	 * Get default metadata template for a project
-	 *
-	 * @param projectId Identifier for the project to remove the default metadata template for.
-	 * @return {@link MetadataTemplate} if default one is set for the project
-	 */
-	@GetMapping("/templates/get-project-default")
-	public ResponseEntity<MetadataTemplate> getProjectDefaultMetadataTemplate(@RequestParam Long projectId) {
-		return ResponseEntity.ok(service.getProjectDefaultMetadataTemplate(projectId));
-	}
 }

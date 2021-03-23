@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  AppstoreOutlined,
   BellOutlined,
   BoldOutlined,
   CalendarTwoTone,
@@ -42,8 +41,6 @@ import {
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
-  StarFilled,
-  StarOutlined,
   StopOutlined,
   StrikethroughOutlined,
   SwapOutlined,
@@ -217,8 +214,4 @@ export const IconCheckCircle = ({ ...props }) => (
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 
-export const IconSetDefault = ({ ...props }) => <StarOutlined {...props} />;
 
-export const IconIsDefault = ({ ...props }) => (
-  <StarFilled style={{ color: blue6 }} {...props} />
-);

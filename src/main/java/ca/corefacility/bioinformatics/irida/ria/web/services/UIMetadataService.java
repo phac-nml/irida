@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -38,11 +39,11 @@ public class UIMetadataService {
 	 * @param projectId Identifier for a {@link Project}
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
-	public List<MetadataTemplate> getProjectMetadataTemplates(Long projectId) {
+	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
 		return joins.stream()
-				.map(ProjectMetadataTemplateJoin::getObject)
+				.map(ProjectMetadataTemplate::new)
 				.collect(Collectors.toList());
 	}
 
@@ -90,15 +91,6 @@ public class UIMetadataService {
 		try {
 			Project project = projectService.read(projectId);
 
-			/*
-			If this template was set as the project default then we need to
-			remove it from the project first
-			 */
-			if (project.getDefaultMetadataTemplate()
-					.getId() == templateId) {
-				removeDefaultMetadataTemplate(projectId);
-			}
-
 			templateService.deleteMetadataTemplateFromProject(project, templateId);
 			return messageSource.getMessage("server.MetadataTemplateManager.remove-success", new Object[] {}, locale);
 		} catch (Exception e) {
@@ -131,28 +123,4 @@ public class UIMetadataService {
 		projectService.update(project);
 	}
 
-	/**
-	 * Remove the default {@link MetadataTemplate} for a {@link Project}
-	 *
-	 * @param projectId Identifier for a {@link Project}
-	 */
-	public void removeDefaultMetadataTemplate(Long projectId) {
-		Project project = projectService.read(projectId);
-		project.setDefaultMetadataTemplate(null);
-		projectService.update(project);
-	}
-
-	/**
-	 * Get the default {@link MetadataTemplate} for a {@link Project}
-	 *
-	 * @param projectId Identifier for a {@link Project}
-	 */
-	public MetadataTemplate getProjectDefaultMetadataTemplate(Long projectId) {
-		Project project = projectService.read(projectId);
-		MetadataTemplate projectDefaultMetadataTemplate = null;
-		if(project.getDefaultMetadataTemplate() != null) {
-			projectDefaultMetadataTemplate = project.getDefaultMetadataTemplate();
-		}
-		return projectDefaultMetadataTemplate;
-	}
 }

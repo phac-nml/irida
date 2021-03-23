@@ -1,25 +1,25 @@
 import React from "react";
-import { Button, Empty, List, notification, Popconfirm, Tag } from "antd";
 import {
-  IconDownloadFile,
-  IconIsDefault,
-  IconRemove,
-  IconSetDefault,
-} from "../../../components/icons/Icons";
+  Button,
+  Empty,
+  List,
+  notification,
+  Popconfirm,
+  Tag,
+  Tooltip,
+} from "antd";
+import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
 import { blue6 } from "../../../styles/colors";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getDefaultTemplateForProject,
-  removeDefaultTemplateForProject,
   removeTemplateFromProject,
   setDefaultTemplateForProject,
 } from "../../projects/redux/templatesSlice";
 
 import { unwrapResult } from "@reduxjs/toolkit";
-import { SPACE_MD } from "../../../styles/spacing";
 
 /**
  * Component to display all metadata templates associated with a project.
@@ -34,44 +34,54 @@ export function MetadataTemplatesList({ projectId }) {
   );
   const { canManage } = useSelector((state) => state.project);
 
+  const [currDefault, setCurrDefault] = React.useState(0);
+
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
-
-  React.useEffect(() => {
-    dispatch(getDefaultTemplateForProject({ projectId }));
-  }, []);
 
   const setDefaultTemplate = async (templateId) => {
     if (templateId !== defaultTemplate) {
       await dispatch(setDefaultTemplateForProject({ projectId, templateId }))
         .then(unwrapResult)
         .then(({ message }) => {
+          setCurrDefault(templateId);
           notification.success({ message });
         })
         .catch((message) => notification.error({ message }));
     }
   };
 
-  const removeDefaultTemplate = async () => {
-    await dispatch(removeDefaultTemplateForProject({ projectId }))
-      .then(unwrapResult)
-      .then(({ message }) => {
-        notification.success({ message });
-      })
-      .catch((message) => notification.error({ message }));
+  const isTemplateDefault = (template) => {
+    return template.default || currDefault == template.identifier;
   };
 
   /**
-   * This crates the "actions" that appear at the right of every row in
-   * the table: field count, download template, and remove template (if applicable).
+   * This creates the "actions" that appear at the right of every row in
+   * the table: default tag, set default, field count, download template,
+   * and remove template (if applicable).
    *
    * @param {Object} template
    * @returns {JSX.Element[]}
    */
   const getActionsForItem = (template) => {
+    let defaultTemplate = isTemplateDefault(template);
+
     const actions = [
+      defaultTemplate ? (
+        <Tag key={`default-${template.identifier}`} color={blue6}>
+          {i18n("MetadataTemplatesList.default")}
+        </Tag>
+      ) : (
+        <Button
+          size="small"
+          key={`set-default-${template.identifier}`}
+          onClick={() => setDefaultTemplate(template.identifier)}
+        >
+          {i18n("MetadataTemplatesList.set-as-default")}
+        </Button>
+      ),
       <Tag key={`fields-${template.identifier}`}>
         {i18n("ProjectMetadataTemplates.fields", template.fields.length)}
       </Tag>,
@@ -85,39 +95,35 @@ export function MetadataTemplatesList({ projectId }) {
     ];
     if (canManage) {
       actions.push(
-        defaultTemplate == template.identifier ? (
-          <Button
-            shape="circle"
-            size="small"
-            icon={<IconIsDefault />}
-            key="remove-default-template"
-            onClick={() => removeDefaultTemplate()}
-          />
-        ) : (
-          <Button
-            shape="circle"
-            size="small"
-            icon={<IconSetDefault />}
-            key="set-default-template"
-            onClick={() => setDefaultTemplate(template.identifier)}
-          />
-        ),
-        <Popconfirm
-          key={`remove-${template.id}`}
-          placement="bottomRight"
-          title={i18n("MetadataTemplatesList.delete-confirm")}
-          onConfirm={() => deleteTemplate(template.identifier)}
-          okButtonProps={{
-            className: "t-t-confirm-remove",
-          }}
+        <Tooltip
+          placement="topLeft"
+          title={
+            defaultTemplate
+              ? i18n("MetadataTemplatesList.cannot-remove-default")
+              : i18n("MetadataTemplatesList.remove-template")
+          }
+          arrowPointAtCenter
+          key={`remove-tooltip-${template.identifier}`}
         >
-          <Button
-            className="t-t-remove-button"
-            shape="circle"
-            size="small"
-            icon={<IconRemove />}
-          />
-        </Popconfirm>
+          <Popconfirm
+            key={`remove-${template.id}`}
+            placement="bottomRight"
+            title={i18n("MetadataTemplatesList.delete-confirm")}
+            disabled={defaultTemplate}
+            onConfirm={() => deleteTemplate(template.identifier)}
+            okButtonProps={{
+              className: "t-t-confirm-remove",
+            }}
+          >
+            <Button
+              className="t-t-remove-button"
+              shape="circle"
+              size="small"
+              icon={<IconRemove />}
+              disabled={defaultTemplate}
+            />
+          </Popconfirm>
+        </Tooltip>
       );
     }
     return actions;

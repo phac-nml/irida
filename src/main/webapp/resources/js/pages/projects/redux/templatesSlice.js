@@ -2,9 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   createProjectMetadataTemplate,
   deleteMetadataTemplate,
-  getProjectDefaultMetadataTemplate,
   getProjectMetadataTemplates,
-  removeDefaultMetadataTemplate,
   setDefaultMetadataTemplate,
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
@@ -77,44 +75,12 @@ export const setDefaultTemplateForProject = createAsyncThunk(
   }
 );
 
-/**
- * Redux Async Thunk for getting a default template for a specific project.
- * @type {AsyncThunk<unknown, void, {}>}
- */
-export const getDefaultTemplateForProject = createAsyncThunk(
-  `templates/getDefaultTemplateForProject`,
-  async ({ projectId }, { rejectWithValue }) => {
-    try {
-      return await getProjectDefaultMetadataTemplate(projectId);
-    } catch (e) {
-      return rejectWithValue(e);
-    }
-  }
-);
-
-/**
- * Redux Async Thunk for removing a default template for a specific project.
- * @type {AsyncThunk<unknown, void, {}>}
- */
-export const removeDefaultTemplateForProject = createAsyncThunk(
-  `templates/removeDefaultTemplateForProject`,
-  async ({ projectId }, { rejectWithValue }) => {
-    try {
-      const message = await removeDefaultMetadataTemplate(projectId);
-      return { message };
-    } catch (e) {
-      return rejectWithValue(e);
-    }
-  }
-);
-
 export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
     templates: undefined,
     loading: true,
     template: undefined,
-    defaultTemplate: undefined,
   },
   reducers: {},
   extraReducers: {
@@ -132,7 +98,6 @@ export const templatesSlice = createSlice({
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
       );
-      state.defaultTemplate = undefined;
       return { ...state, templates };
     },
     [createNewMetadataTemplate.fulfilled]: (state, action) => {
@@ -151,25 +116,23 @@ export const templatesSlice = createSlice({
       }
       return state;
     },
-    [setDefaultTemplateForProject.fulfilled]: (state, { payload }) => {
-      const index = state.templates.findIndex(
-        (template) => template.identifier === payload.templateId
+    [setDefaultTemplateForProject.fulfilled]: (state, action) => {
+      const prevDefaultIndex = state.templates.findIndex(
+        (template) => template.default
       );
-      if (index >= 0) {
-        state.defaultTemplate = payload.templateId;
+
+      const newDefaultIndex = state.templates.findIndex(
+        (template) => template.identifier === action.payload.templateId
+      );
+
+      if (prevDefaultIndex >= 0) {
+        state.templates[prevDefaultIndex].default = false
       }
-      return state;
-    },
-    [getDefaultTemplateForProject.fulfilled]: (state, { payload }) => {
-      if (payload !== null) {
-        state.defaultTemplate = payload.identifier;
-      } else {
-        state.defaultTemplate = undefined;
+
+      if (newDefaultIndex >= 0) {
+        state.templates[newDefaultIndex].default = true;
       }
-      return state;
-    },
-    [removeDefaultTemplateForProject.fulfilled]: (state) => {
-      state.defaultTemplate = undefined;
+
       return state;
     },
   },
