@@ -22,6 +22,10 @@ export function ProcessingPriorities({ projectId }) {
     dispatch(fetchPipelinePriorityInfo(projectId));
   }, []);
 
+  /**
+   * Update the pipeline running priority on the project.
+   * @param {string} value - new priority
+   */
   const update = (value) =>
     dispatch(putPriorityUpdate({ projectId, priority: value }))
       .then(unwrapResult)
