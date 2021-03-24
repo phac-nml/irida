@@ -6,6 +6,10 @@ import {
   updateProcessingPriority,
 } from "../../../apis/projects/settings";
 
+/**
+ * Get all analysis pipelines that can be can be automated on this project.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const fetchAnalysisTemplates = createAsyncThunk(
   `pipelines/fetchAnalysisTemplates`,
   async (projectId) => {
@@ -24,6 +28,10 @@ export const fetchAnalysisTemplates = createAsyncThunk(
   }
 );
 
+/**
+ * Delete an automated analysis pipeline from the project.
+ * @type {AsyncThunk<{message: *, templateId: *}, {readonly templateId?: *, readonly projectId?: *}, {}>}
+ */
 export const deletePipeline = createAsyncThunk(
   `pipelines/deletePipeline`,
   async ({ templateId, projectId }) => {
@@ -35,6 +43,11 @@ export const deletePipeline = createAsyncThunk(
   }
 );
 
+/**
+ * Fetch information about the pipeline priority for the current project.
+ * This will also return a list of the available pipeline priorities.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const fetchPipelinePriorityInfo = createAsyncThunk(
   `pipelines/fetchPipelinePriorityInfo`,
   async (projectId) => {
