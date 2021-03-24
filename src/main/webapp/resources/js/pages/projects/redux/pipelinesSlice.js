@@ -2,8 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   deleteAnalysisTemplateForProject,
   fetchAnalysisTemplatesForProject,
-  fetchProcessingInformation,
-  updateProcessingPriority,
 } from "../../../apis/projects/settings";
 
 /**
@@ -43,41 +41,6 @@ export const deletePipeline = createAsyncThunk(
   }
 );
 
-/**
- * Fetch information about the pipeline priority for the current project.
- * This will also return a list of the available pipeline priorities.
- * @type {AsyncThunk<unknown, void, {}>}
- */
-export const fetchPipelinePriorityInfo = createAsyncThunk(
-  `pipelines/fetchPipelinePriorityInfo`,
-  async (projectId) => {
-    return await fetchProcessingInformation(projectId);
-  },
-  {
-    condition(_args, { getState }) {
-      /*
-      We only want to get the data if it has not already been fetched.
-       */
-      const { pipelines } = getState();
-      if ("priorities" in pipelines) {
-        return false;
-      }
-    },
-  }
-);
-
-export const putPriorityUpdate = createAsyncThunk(
-  `pipelines/putPriorityUpdate`,
-  async ({ projectId, priority }, { rejectWithValue }) => {
-    try {
-      const message = await updateProcessingPriority(projectId, priority);
-      return { priority, message };
-    } catch (e) {
-      rejectWithValue(e);
-    }
-  }
-);
-
 export const pipelinesSlice = createSlice({
   name: "project/pipelines",
   initialState: {
@@ -93,13 +56,6 @@ export const pipelinesSlice = createSlice({
       state.templates = state.templates.filter(
         (template) => template.id !== action.payload.templateId
       );
-    },
-    [fetchPipelinePriorityInfo.fulfilled]: (state, action) => {
-      state.priority = action.payload.priority;
-      state.priorities = action.payload.priorities;
-    },
-    [putPriorityUpdate.fulfilled]: (state, action) => {
-      state.priority = action.payload.priority;
     },
   },
 });

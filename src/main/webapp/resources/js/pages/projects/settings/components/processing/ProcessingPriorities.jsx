@@ -2,10 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Form, notification, Select } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchPipelinePriorityInfo,
-  putPriorityUpdate,
-} from "../../../redux/pipelinesSlice";
+import { putPriorityUpdate } from "../../../redux/projectSlice";
 
 /**
  * Allow the user to modify the priority of pipeline process.
@@ -16,11 +13,12 @@ import {
  */
 export function ProcessingPriorities({ projectId }) {
   const dispatch = useDispatch();
-  const { priority, priorities } = useSelector((state) => state.pipelines);
-
-  React.useEffect(async () => {
-    dispatch(fetchPipelinePriorityInfo(projectId));
-  }, []);
+  const { priority } = useSelector((state) => state.project);
+  const PRIORITIES = [
+    { value: "LOW", label: i18n("ProcessingPriorities.LOW") },
+    { value: "MEDIUM", label: i18n("ProcessingPriorities.MEDIUM") },
+    { value: "HIGH", label: i18n("ProcessingPriorities.HIGH") },
+  ];
 
   /**
    * Update the pipeline running priority on the project.
@@ -35,7 +33,7 @@ export function ProcessingPriorities({ projectId }) {
   return (
     <Form layout="vertical">
       <Form.Item label={i18n("ProcessingPriorities.title")}>
-        <Select options={priorities} value={priority} onChange={update} />
+        <Select value={priority} onChange={update} options={PRIORITIES} />
       </Form.Item>
     </Form>
   );

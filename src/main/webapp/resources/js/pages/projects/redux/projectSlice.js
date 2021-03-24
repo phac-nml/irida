@@ -3,6 +3,7 @@ import {
   getProjectDetails,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
+import { updateProcessingPriority } from "../../../apis/projects/settings";
 
 /**
  * Redux Async Thunk for fetching project details
@@ -36,6 +37,18 @@ export const updateProjectDetails = createAsyncThunk(
   }
 );
 
+export const putPriorityUpdate = createAsyncThunk(
+  `pipelines/putPriorityUpdate`,
+  async ({ projectId, priority }, { rejectWithValue }) => {
+    try {
+      const message = await updateProcessingPriority(projectId, priority);
+      return { priority, message };
+    } catch (e) {
+      rejectWithValue(e);
+    }
+  }
+);
+
 export const projectSlice = createSlice({
   name: "project",
   initialState: {
@@ -54,6 +67,9 @@ export const projectSlice = createSlice({
         ...state,
         [action.payload.field]: action.payload.value,
       };
+    },
+    [putPriorityUpdate.fulfilled]: (state, action) => {
+      state.priority = action.payload.priority;
     },
   },
 });

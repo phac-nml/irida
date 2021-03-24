@@ -53,7 +53,11 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
   return (
     <Layout>
       <Sider width={200} style={{ backgroundColor: grey1 }}>
-        <Menu mode="inline" selectedKeys={[selectedKey]} style={{ height: `100%`}}>
+        <Menu
+          mode="inline"
+          selectedKeys={[selectedKey]}
+          style={{ height: `100%` }}
+        >
           <Menu.Item key="fields">
             <Link className="t-m-field-link" to="fields">
               {i18n("MetadataFields.title")}
