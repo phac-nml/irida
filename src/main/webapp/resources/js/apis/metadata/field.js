@@ -7,7 +7,8 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 const OLD_URL = setBaseUrl(`linelist/fields`);
 
 /**
- * @deprecated
+ * @deprecated - this is currently being used on the linelist page.
+ * // TODO: remove once line list page refactor is complete.
  * Get all the MetadataTemplateFields belonging to the templates withing a
  * project.These will be the table headers.
  * @param {number} projectId
