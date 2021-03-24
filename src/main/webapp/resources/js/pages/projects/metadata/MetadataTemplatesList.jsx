@@ -20,6 +20,7 @@ import {
 } from "../../projects/redux/templatesSlice";
 
 import { unwrapResult } from "@reduxjs/toolkit";
+import styled from "styled-components";
 
 /**
  * Component to display all metadata templates associated with a project.
@@ -40,6 +41,16 @@ export function MetadataTemplatesList({ projectId }) {
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
+
+  const HoverItem = styled(List.Item)`
+    button.ant-btn-link {
+      opacity: 0;
+      transition: opacity 0.35s ease-in-out;
+    }
+    &:hover button.ant-btn-link {
+      opacity: 1;
+    }
+  `;
 
   const setDefaultTemplate = async (templateId) => {
     if (templateId !== defaultTemplate) {
@@ -78,6 +89,7 @@ export function MetadataTemplatesList({ projectId }) {
           size="small"
           key={`set-default-${template.identifier}`}
           onClick={() => setDefaultTemplate(template.identifier)}
+          type="link"
         >
           {i18n("MetadataTemplatesList.set-as-default")}
         </Button>
@@ -155,7 +167,7 @@ export function MetadataTemplatesList({ projectId }) {
       }}
       dataSource={templates}
       renderItem={(item) => (
-        <List.Item className="t-m-template" actions={getActionsForItem(item)}>
+        <HoverItem className="t-m-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
               <Link
@@ -168,7 +180,7 @@ export function MetadataTemplatesList({ projectId }) {
             }
             description={item.description}
           />
-        </List.Item>
+        </HoverItem>
       )}
     />
   );
