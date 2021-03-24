@@ -7,6 +7,7 @@ import {
   Popconfirm,
   Tag,
   Tooltip,
+  Typography,
 } from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 
@@ -80,60 +81,43 @@ export function MetadataTemplatesList({ projectId }) {
     let defaultTemplate = isTemplateDefault(template);
 
     const actions = [
-      defaultTemplate ? (
-        <Tag key={`default-${template.identifier}`} color={blue6}>
-          {i18n("MetadataTemplatesList.default")}
-        </Tag>
-      ) : (
-        <Button
-          size="small"
-          key={`set-default-${template.identifier}`}
-          onClick={() => setDefaultTemplate(template.identifier)}
-          type="link"
-        >
-          {i18n("MetadataTemplatesList.set-as-default")}
-        </Button>
-      ),
-      <Tag key={`fields-${template.identifier}`}>
-        {i18n("ProjectMetadataTemplates.fields", template.fields.length)}
-      </Tag>,
       <Button
-        shape="circle"
         size="small"
         icon={<IconDownloadFile />}
         href={`${BASE_URL}/${template.identifier}/excel`}
         key={`download-${template.identifier}`}
-      />,
+      >
+        {i18n("MetadataTemplatesList.download")}
+      </Button>,
     ];
     if (canManage) {
       actions.push(
         <Tooltip
           placement="topLeft"
           title={
-            defaultTemplate
-              ? i18n("MetadataTemplatesList.cannot-remove-default")
-              : i18n("MetadataTemplatesList.remove-template")
+            defaultTemplate &&
+              i18n("MetadataTemplatesList.cannot-remove-default")
           }
           arrowPointAtCenter
           key={`remove-tooltip-${template.identifier}`}
         >
           <Popconfirm
             key={`remove-${template.id}`}
-            placement="bottomRight"
             title={i18n("MetadataTemplatesList.delete-confirm")}
-            disabled={defaultTemplate}
             onConfirm={() => deleteTemplate(template.identifier)}
             okButtonProps={{
               className: "t-t-confirm-remove",
             }}
+            disabled={defaultTemplate}
           >
             <Button
               className="t-t-remove-button"
-              shape="circle"
               size="small"
               icon={<IconRemove />}
               disabled={defaultTemplate}
-            />
+            >
+              {i18n("MetadataTemplatesList.remove")}
+            </Button>
           </Popconfirm>
         </Tooltip>
       );
@@ -156,7 +140,8 @@ export function MetadataTemplatesList({ projectId }) {
     <List
       loading={loading}
       bordered
-      itemLayout="horizontal"
+      itemLayout="vertical"
+      size="large"
       locale={{
         emptyText: (
           <Empty
@@ -170,16 +155,60 @@ export function MetadataTemplatesList({ projectId }) {
         <HoverItem className="t-m-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
-              <Link
-                className="t-t-name"
-                style={{ color: blue6 }}
-                to={`${item.identifier}`}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                {item.name}
-              </Link>
+                <Link
+                  className="t-t-name"
+                  style={{ color: blue6, display: "block" }}
+                  to={`${item.identifier}`}
+                >
+                  {item.name}
+                </Link>
+                <div
+                  style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  }}
+                >
+                  {
+                    isTemplateDefault(item) ? (
+                      <Tag key={`default-${item.identifier}`} color={blue6}>
+                        {i18n("MetadataTemplatesList.default")}
+                      </Tag>
+                    ) : (
+                      <Button
+                        size="small"
+                        key={`set-default-${item.identifier}`}
+                        onClick={() => setDefaultTemplate(item.identifier)}
+                        type="link"
+                      >
+                        {i18n("MetadataTemplatesList.set-as-default")}
+                      </Button>
+                    )
+                  }
+                  <Tag key={`fields-${item.identifier}`}>
+                    {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
+                  </Tag>
+                </div>
+              </div>
             }
-            description={item.description}
           />
+          {item.description && (
+            <Typography.Paragraph
+              ellipsis={{
+                rows: 2,
+                expandable: true,
+              }}
+            >
+              {item.description}
+            </Typography.Paragraph>
+          )}
         </HoverItem>
       )}
     />
