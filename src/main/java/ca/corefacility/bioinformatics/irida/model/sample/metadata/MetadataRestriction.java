@@ -21,11 +21,13 @@ public class MetadataRestriction {
 	private Long id;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "field_id", nullable = false)
 	private MetadataTemplateField field;
 
 	@NotNull
