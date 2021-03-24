@@ -114,9 +114,28 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project project);
 
+	/**
+	 * Get the {@link MetadataRestriction} for the given {@link MetadataTemplateField} and {@link Project}
+	 *
+	 * @param project the {@link Project} to get the restriction for
+	 * @param field   the {@link MetadataTemplateField} to get the restriction for
+	 * @return The found {@link MetadataRestriction}.  If there is no restriction defined, this may be null
+	 */
 	public MetadataRestriction getMetadataRestrictionForFieldAndProject(Project project, MetadataTemplateField field);
 
+	/**
+	 * List all the {@link MetadataRestriction} for the given {@link Project}
+	 *
+	 * @param project the {@link Project} the Project to get restrictions for
+	 * @return a List of all defined {@link MetadataRestriction}
+	 */
 	public List<MetadataRestriction> getMetadataRestrictionsForProject(Project project);
 
+	/**
+	 * Add a new {@link MetadataRestriction} for a project
+	 *
+	 * @param metadataRestriction the new {@link MetadataRestriction} to create
+	 * @return the created {@link MetadataRestriction}
+	 */
 	public MetadataRestriction addMetadataRestriction(MetadataRestriction metadataRestriction);
 }
