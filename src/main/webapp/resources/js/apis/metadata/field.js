@@ -22,6 +22,11 @@ export function fetchMetadataFields(projectId) {
 
 const URL = setBaseUrl(`/ajax/metadata/fields`);
 
+/**
+ * Get all metadata fields associated with samples in a given project.
+ * @param {number} projectId - identifier for a project
+ * @returns {Promise<any>}
+ */
 export async function getMetadataFieldsForProject(projectId) {
   try {
     const { data } = await axios.get(`${URL}?projectId=${projectId}`);
