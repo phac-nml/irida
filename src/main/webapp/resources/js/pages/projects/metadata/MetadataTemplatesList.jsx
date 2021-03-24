@@ -42,18 +42,18 @@ export function MetadataTemplatesList({ projectId }) {
   const getActionsForItem = (template) => {
     const actions = [
       <Button
-        shape="circle"
         size="small"
         icon={<IconDownloadFile />}
         href={`${BASE_URL}/${template.identifier}/excel`}
         key={`download-${template.identifier}`}
-      />,
+      >
+        {i18n("MetadataTemplatesList.download")}
+      </Button>,
     ];
     if (canManage) {
       actions.push(
         <Popconfirm
           key={`remove-${template.id}`}
-          placement="bottomRight"
           title={i18n("MetadataTemplatesList.delete-confirm")}
           onConfirm={() => deleteTemplate(template.identifier)}
           okButtonProps={{
@@ -62,10 +62,11 @@ export function MetadataTemplatesList({ projectId }) {
         >
           <Button
             className="t-t-remove-button"
-            shape="circle"
             size="small"
             icon={<IconRemove />}
-          />
+          >
+            {i18n("MetadataTemplatesList.remove")}
+          </Button>
         </Popconfirm>
       );
     }
