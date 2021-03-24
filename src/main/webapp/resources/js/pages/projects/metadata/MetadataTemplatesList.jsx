@@ -101,7 +101,7 @@ export function MetadataTemplatesList({ projectId }) {
                 style={{ color: blue6 }}
                 to={`${item.identifier}`}
               >
-                {item.label}
+                {item.name}
               </Link>
             }
             description={item.description}
