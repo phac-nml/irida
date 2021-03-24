@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Router, Redirect } from "@reach/router";
-import { Layout, Skeleton } from "antd";
+import { Col, Layout, Row, Skeleton } from "antd";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { Provider, useDispatch } from "react-redux";
@@ -60,13 +60,17 @@ const ProjectSettings = (props) => {
       </Sider>
       <Layout>
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
-          <Suspense fallback={<Skeleton />}>
-            <Router>
-              <ProjectDetails path="/details" />
-              <ProjectProcessing path="/processing" />
-              <Redirect from="/" to="/details" />
-            </Router>
-          </Suspense>
+          <Row>
+            <Col lg={24} xl={16} xxl={12}>
+              <Suspense fallback={<Skeleton />}>
+                <Router>
+                  <ProjectDetails path="/details" />
+                  <ProjectProcessing path="/processing" />
+                  <Redirect from="/" to="/details" />
+                </Router>
+              </Suspense>
+            </Col>
+          </Row>
         </Content>
       </Layout>
     </Layout>

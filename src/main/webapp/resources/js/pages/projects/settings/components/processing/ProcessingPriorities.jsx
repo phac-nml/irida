@@ -15,9 +15,9 @@ export function ProcessingPriorities({ projectId }) {
   const dispatch = useDispatch();
   const { priority } = useSelector((state) => state.project);
   const PRIORITIES = [
-    { value: "LOW", label: i18n("ProcessingPriorities.LOW") },
-    { value: "MEDIUM", label: i18n("ProcessingPriorities.MEDIUM") },
-    { value: "HIGH", label: i18n("ProcessingPriorities.HIGH") },
+    { value: "LOW", label: i18n("AnalysisDetailsPriority.LOW") },
+    { value: "MEDIUM", label: i18n("AnalysisDetailsPriority.MEDIUM") },
+    { value: "HIGH", label: i18n("AnalysisDetailsPriority.HIGH") },
   ];
 
   /**

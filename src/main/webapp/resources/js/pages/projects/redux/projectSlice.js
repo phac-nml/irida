@@ -37,6 +37,10 @@ export const updateProjectDetails = createAsyncThunk(
   }
 );
 
+/**
+ * Update the project automated analysis priority.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const putPriorityUpdate = createAsyncThunk(
   `pipelines/putPriorityUpdate`,
   async ({ projectId, priority }, { rejectWithValue }) => {
