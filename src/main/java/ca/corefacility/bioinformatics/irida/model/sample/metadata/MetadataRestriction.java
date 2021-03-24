@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
  * A class to define restrictions on which metadata fields can be viewed by a {@link ProjectRole} on a {@link Project}
  */
 @Entity
-@Table(name = "metadata_restriction")
+@Table(name = "metadata_restriction", uniqueConstraints = @UniqueConstraint(columnNames = { "project", "field" }))
 @Audited
 public class MetadataRestriction {
 	@Id
