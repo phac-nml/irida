@@ -33,7 +33,7 @@ public class MetadataAjaxController {
 	 * Get a list of metadata templates for a specific project
 	 *
 	 * @param projectId Identifier for the project to get templates for.
-	 * @return List of metadata templates with associate details.
+	 * @return List of metadata templates with associated details.
 	 */
 	@GetMapping("/templates")
 	public ResponseEntity<List<MetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
