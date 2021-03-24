@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, Empty, List, notification, Popconfirm, Tag } from "antd";
+import {
+  Button,
+  Empty,
+  List,
+  notification,
+  Popconfirm,
+  Tag,
+  Typography,
+} from "antd";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { Link } from "@reach/router";
@@ -33,9 +41,6 @@ export function MetadataTemplatesList({ projectId }) {
    */
   const getActionsForItem = (template) => {
     const actions = [
-      <Tag key={`fields-${template.identifier}`}>
-        {i18n("ProjectMetadataTemplates.fields", template.fields.length)}
-      </Tag>,
       <Button
         shape="circle"
         size="small"
@@ -82,7 +87,8 @@ export function MetadataTemplatesList({ projectId }) {
     <List
       loading={loading}
       bordered
-      itemLayout="horizontal"
+      itemLayout="vertical"
+      size="large"
       locale={{
         emptyText: (
           <Empty
@@ -96,16 +102,36 @@ export function MetadataTemplatesList({ projectId }) {
         <List.Item className="t-m-template" actions={getActionsForItem(item)}>
           <List.Item.Meta
             title={
-              <Link
-                className="t-t-name"
-                style={{ color: blue6 }}
-                to={`${item.identifier}`}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
-                {item.name}
-              </Link>
+                <Link
+                  className="t-t-name"
+                  style={{ color: blue6, display: "block" }}
+                  to={`${item.identifier}`}
+                >
+                  {item.name}
+                </Link>
+                <Tag key={`fields-${item.identifier}`}>
+                  {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
+                </Tag>
+              </div>
             }
-            description={item.description}
           />
+          {item.description && (
+            <Typography.Paragraph
+              ellipsis={{
+                rows: 2,
+                expandable: true,
+              }}
+            >
+              {item.description}
+            </Typography.Paragraph>
+          )}
         </List.Item>
       )}
     />
