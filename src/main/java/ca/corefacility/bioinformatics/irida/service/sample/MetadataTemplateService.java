@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 import java.util.List;
@@ -18,11 +19,9 @@ import java.util.Set;
 public interface MetadataTemplateService extends CRUDService<Long, MetadataTemplate> {
 	/**
 	 * Create a new {@link MetadataTemplate} for a {@link Project}
-	 * 
-	 * @param template
-	 *            the {@link MetadataTemplate} to create
-	 * @param project
-	 *            the {@link Project} to create the template in
+	 *
+	 * @param template the {@link MetadataTemplate} to create
+	 * @param project  the {@link Project} to create the template in
 	 * @return a {@link ProjectMetadataTemplateJoin}
 	 */
 	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project);
@@ -30,27 +29,23 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	/**
 	 * Deleta a {@link MetadataTemplate} from a {@link Project}
 	 *
-	 * @param project
-	 *            the {@link Project} to template lives in.
-	 * @param id
-	 *            the {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param project the {@link Project} to template lives in.
+	 * @param id      the {@link Long} identifier for a {@link MetadataTemplate}
 	 */
 	public void deleteMetadataTemplateFromProject(Project project, Long id);
 
 	/**
 	 * Update a {@link MetadataTemplate} within a {@link Project}
-	 * 
-	 * @param metadataTemplate
-	 *            {@link MetadataTemplate}
+	 *
+	 * @param metadataTemplate {@link MetadataTemplate}
 	 * @return {@link MetadataTemplate}
 	 */
 	public MetadataTemplate updateMetadataTemplateInProject(MetadataTemplate metadataTemplate);
 
 	/**
 	 * Get a list of {@link MetadataTemplate}s for a given {@link Project}
-	 * 
-	 * @param project
-	 *            the {@link Project}
+	 *
+	 * @param project the {@link Project}
 	 * @return a list of {@link ProjectMetadataTemplateJoin}
 	 */
 	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
@@ -58,8 +53,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	/**
 	 * Get a {@link MetadataTemplateField} by its {@link Long} identifier
 	 *
-	 * @param id
-	 *            {@link Long} identifier for a {@link MetadataTemplateField}
+	 * @param id {@link Long} identifier for a {@link MetadataTemplateField}
 	 * @return {@link MetadataTemplateField}
 	 */
 	public MetadataTemplateField readMetadataField(Long id);
@@ -67,10 +61,8 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	/**
 	 * Get a {@link MetadataTemplateField} by its {@link String} label
 	 *
-	 * @param label
-	 *            the {@link String} label for the
-	 *            {@link MetadataTemplateField}.
-	 *
+	 * @param label the {@link String} label for the
+	 *              {@link MetadataTemplateField}.
 	 * @return {@link MetadataTemplateField}
 	 */
 	public MetadataTemplateField readMetadataFieldByLabel(String label);
@@ -93,9 +85,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	/**
 	 * Save a new metadata fields
 	 *
-	 * @param field
-	 *            the {@link MetadataTemplateField} to save.
-	 *
+	 * @param field the {@link MetadataTemplateField} to save.
 	 * @return the saved {@link MetadataTemplateField}
 	 */
 	public MetadataTemplateField saveMetadataField(MetadataTemplateField field);
@@ -103,9 +93,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	/**
 	 * Get a list of all {@link MetadataTemplateField}s that contain the query
 	 *
-	 * @param query
-	 *            the {@link String} to search labels for.
-	 *
+	 * @param query the {@link String} to search labels for.
 	 * @return {@link List} of {@link MetadataTemplateField}
 	 */
 	public List<MetadataTemplateField> getAllMetadataFieldsByQueryString(String query);
@@ -125,4 +113,10 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return a list of fields
 	 */
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project project);
+
+	public MetadataRestriction getMetadataRestrictionForFieldAndProject(Project project, MetadataTemplateField field);
+
+	public List<MetadataRestriction> getMetadataRestrictionsForProject(Project project);
+
+	public MetadataRestriction addMetadataRestriction(MetadataRestriction metadataRestriction);
 }

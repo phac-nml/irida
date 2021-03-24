@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -21,4 +23,13 @@ public interface MetadataRestrictionRepository extends IridaJpaRepository<Metada
 	 */
 	@Query("FROM MetadataRestriction r WHERE r.project=?1 AND r.field=?2")
 	public MetadataRestriction getRestrictionForFieldAndProject(Project project, MetadataTemplateField field);
+
+	/**
+	 * List all {@link MetadataRestriction} for a given {@link Project}
+	 *
+	 * @param project the {@link Project} to get restrictions for
+	 * @return a list of {@link MetadataRestriction}
+	 */
+	@Query("FROM MetadataRestriction r WHERE r.project=?1")
+	public List<MetadataRestriction> getRestrictionForProject(Project project);
 }
