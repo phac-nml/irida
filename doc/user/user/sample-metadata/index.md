@@ -180,4 +180,4 @@ Clicking on a template name will redirect you to the template details page.
 
 ![Image displaying the metadata template details page](images/metadata-template-details.png)
 
-Project manage can edit/update the template name, description and fields on this page.
+Project manager can edit/update the template name, description and fields on this page.
