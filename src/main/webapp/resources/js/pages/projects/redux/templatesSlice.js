@@ -36,6 +36,10 @@ export const removeTemplateFromProject = createAsyncThunk(
   }
 );
 
+/**
+ * Update details within a template (name, description, and fields)
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const updateTemplate = createAsyncThunk(
   `templates/updateTemplate`,
   async (template, { rejectWithValue }) => {
@@ -48,6 +52,10 @@ export const updateTemplate = createAsyncThunk(
   }
 );
 
+/**
+ * Create a new metadata template
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const createNewMetadataTemplate = createAsyncThunk(
   `templates/create`,
   async ({ template, projectId }, { rejectWithValue }) => {
