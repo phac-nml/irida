@@ -61,7 +61,7 @@ public class MetadataAjaxController {
 	 * @return Message for UI to display about the result of the update.
 	 */
 	@PutMapping("/templates/{templateId}")
-	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateMetadataTemplate(@RequestBody MetadataTemplate template, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateMetadataTemplate(template, locale)));
 		} catch (Exception e) {
