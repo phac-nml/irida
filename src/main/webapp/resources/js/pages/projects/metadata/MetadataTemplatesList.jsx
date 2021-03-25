@@ -23,6 +23,16 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import styled from "styled-components";
 
+const HoverItem = styled(List.Item)`
+  button.ant-btn-link {
+    opacity: 0;
+    transition: opacity 0.35s ease-in-out;
+  }
+  &:hover button.ant-btn-link {
+    opacity: 1;
+  }
+`;
+
 /**
  * Component to display all metadata templates associated with a project.
  *
@@ -31,42 +41,23 @@ import styled from "styled-components";
  * @constructor
  */
 export function MetadataTemplatesList({ projectId }) {
-  const { templates, loading, defaultTemplate } = useSelector(
+  const { templates, loading } = useSelector(
     (state) => state.templates
   );
   const { canManage } = useSelector((state) => state.project);
-
-  const [currDefault, setCurrDefault] = React.useState(0);
 
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
 
-  const HoverItem = styled(List.Item)`
-    button.ant-btn-link {
-      opacity: 0;
-      transition: opacity 0.35s ease-in-out;
-    }
-    &:hover button.ant-btn-link {
-      opacity: 1;
-    }
-  `;
-
   const setDefaultTemplate = async (templateId) => {
-    if (templateId !== defaultTemplate) {
-      await dispatch(setDefaultTemplateForProject({ projectId, templateId }))
-        .then(unwrapResult)
-        .then(({ message }) => {
-          setCurrDefault(templateId);
-          notification.success({ message });
-        })
-        .catch((message) => notification.error({ message }));
-    }
-  };
-
-  const isTemplateDefault = (template) => {
-    return template.default || currDefault == template.identifier;
+    await dispatch(setDefaultTemplateForProject({ projectId, templateId }))
+      .then(unwrapResult)
+      .then(({ message }) => {
+        notification.success({ message });
+      })
+      .catch((message) => notification.error({ message }));
   };
 
   /**
@@ -78,8 +69,6 @@ export function MetadataTemplatesList({ projectId }) {
    * @returns {JSX.Element[]}
    */
   const getActionsForItem = (template) => {
-    let defaultTemplate = isTemplateDefault(template);
-
     const actions = [
       <Button
         size="small"
@@ -95,7 +84,7 @@ export function MetadataTemplatesList({ projectId }) {
         <Tooltip
           placement="topLeft"
           title={
-            defaultTemplate &&
+            template.default &&
               i18n("MetadataTemplatesList.cannot-remove-default")
           }
           arrowPointAtCenter
@@ -108,13 +97,13 @@ export function MetadataTemplatesList({ projectId }) {
             okButtonProps={{
               className: "t-t-confirm-remove",
             }}
-            disabled={defaultTemplate}
+            disabled={template.default}
           >
             <Button
               className="t-t-remove-button"
               size="small"
               icon={<IconRemove />}
-              disabled={defaultTemplate}
+              disabled={template.default}
             >
               {i18n("MetadataTemplatesList.remove")}
             </Button>
@@ -176,9 +165,13 @@ export function MetadataTemplatesList({ projectId }) {
                   alignItems: "center",
                   }}
                 >
-                  {
-                    isTemplateDefault(item) ? (
-                      <Tag key={`default-${item.identifier}`} color={blue6}>
+                  { canManage &&
+                    (item.default ? (
+                      <Tag
+                        key={`default-${item.identifier}`}
+                        color={blue6}
+                        className="t-t-default-tag"
+                      >
                         {i18n("MetadataTemplatesList.default")}
                       </Tag>
                     ) : (
@@ -187,10 +180,11 @@ export function MetadataTemplatesList({ projectId }) {
                         key={`set-default-${item.identifier}`}
                         onClick={() => setDefaultTemplate(item.identifier)}
                         type="link"
+                        className="t-t-set-default-button"
                       >
                         {i18n("MetadataTemplatesList.set-as-default")}
                       </Button>
-                    )
+                    ))
                   }
                   <Tag key={`fields-${item.identifier}`}>
                     {i18n("ProjectMetadataTemplates.fields", item.fields.length)}

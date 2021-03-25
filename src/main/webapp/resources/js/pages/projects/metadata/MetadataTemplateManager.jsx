@@ -44,7 +44,7 @@ export function MetadataTemplateManager({ id }) {
   const [fields, setFields] = React.useState();
   const [newFields, setNewFields] = React.useState();
 
-  const [isProjectDefault, setIsProjectDefault] = React.useState(0);
+  const [defaultTemplateId, setDefaultTemplateId] = React.useState(0);
 
   React.useEffect(() => {
     /*
@@ -59,7 +59,7 @@ export function MetadataTemplateManager({ id }) {
       const defaultTemplateIndex = templates.findIndex((template) => template.default);
 
       if(defaultTemplateIndex >= 0) {
-        setIsProjectDefault(templates[defaultTemplateIndex].identifier);
+        setDefaultTemplateId(templates[defaultTemplateIndex].identifier);
       }
 
       if (found) {
@@ -157,11 +157,13 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the template to return component for
    */
   const displayHeaderExtras = (template) => {
-    if(template.identifier == isProjectDefault) {
+    if(template.identifier === defaultTemplateId) {
       return [
         <Tag
+          key={`default-template-${template.identifier}`}
           color={blue6}
           icon={<IconCheckCircle />}
+          className="t-t-default-tag"
         >
           {i18n("MetadataTemplateManager.default")}
         </Tag>
@@ -170,6 +172,8 @@ export function MetadataTemplateManager({ id }) {
     return [
       <Button
         onClick={() => setDefaultTemplate(template)}
+        key={`set-default-template-${template.identifier}`}
+        className="t-t-set-default-button"
       >
         {i18n("MetadataTemplateManager.set-as-default")}
       </Button>
@@ -182,15 +186,13 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the template to set as default
    */
   const setDefaultTemplate = async (template) => {
-    if (!template.default) {
-      await dispatch(setDefaultTemplateForProject({ projectId: window.project.id, templateId: template.identifier }))
-        .then(unwrapResult)
-        .then(({ message }) => {
-          setIsProjectDefault(template.identifier);
-          notification.success({ message });
-        })
-        .catch((message) => notification.error({ message }));
-    }
+    await dispatch(setDefaultTemplateForProject({ projectId: window.project.id, templateId: template.identifier }))
+      .then(unwrapResult)
+      .then(({ message }) => {
+        setDefaultTemplateId(template.identifier);
+        notification.success({ message });
+      })
+      .catch((message) => notification.error({ message }));
   };
 
   return (

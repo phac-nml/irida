@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
  * Used to return details about a metadata template associated with a project.
  */
 public class ProjectMetadataTemplate {
-	private final Long identifier;
+	private final Long id;
 	private final String name;
 	private final String label;
 	private final String description;
@@ -24,7 +24,7 @@ public class ProjectMetadataTemplate {
 	public ProjectMetadataTemplate(ProjectMetadataTemplateJoin join) {
 		MetadataTemplate template = join.getObject();
 		Project project = join.getSubject();
-		this.identifier = template.getId();
+		this.id = template.getId();
 		this.name = template.getName();
 		this.label = template.getLabel();
 		this.description = template.getDescription();
@@ -36,7 +36,7 @@ public class ProjectMetadataTemplate {
 	}
 
 	public Long getIdentifier() {
-		return identifier;
+		return id;
 	}
 
 	public String getLabel() {
