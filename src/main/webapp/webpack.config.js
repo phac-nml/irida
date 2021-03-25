@@ -101,17 +101,17 @@ module.exports = (env, argv) => {
               new CssMinimizerPlugin({ parallel: true }),
               new TerserPlugin({ parallel: true, include: /\/resources/ }),
             ],
-          runtimeChunk: "single",
-    splitChunks: {
-      name: false,
-      chunks(chunk) {
-        // exclude modals in projects-samples-*
-        return (
-          typeof chunk.name === "string" &&
-          !chunk.name.includes("project-samples-")
-        );
-      }
-    }
+            runtimeChunk: "single",
+            splitChunks: {
+              name: false,
+              chunks(chunk) {
+                // exclude modals in projects-samples-*
+                return (
+                  typeof chunk.name === "string" &&
+                  !chunk.name.includes("project-samples-")
+                );
+              },
+            },
           }
         : { minimize: false }),
     },
@@ -134,11 +134,11 @@ module.exports = (env, argv) => {
         i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
         process: "process/browser",
       }),
-    new WebpackAssetsManifest({
-      integrity: false,
-      entrypoints: true,
-      writeToDisk: true
-    })
+      new WebpackAssetsManifest({
+        integrity: false,
+        entrypoints: true,
+        writeToDisk: true,
+      }),
     ],
   };
 };
