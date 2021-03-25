@@ -14,6 +14,12 @@ export function getProjectMetadataTemplates(projectId) {
     .then(({ data }) => data);
 }
 
+/**
+ * Create a new metadata template within a project
+ * @param {number} projectId - identifier for the project to create the template within.
+ * @param {Object} parameters - details about the template (name, desc, and fields)
+ * @returns {Promise<any>}
+ */
 export async function createProjectMetadataTemplate(projectId, parameters) {
   try {
     const { data } = await axios.post(
@@ -26,6 +32,11 @@ export async function createProjectMetadataTemplate(projectId, parameters) {
   }
 }
 
+/**
+ * Update the details in a metadata template
+ * @param {Object} template - the template to update
+ * @returns {Promise<*>}
+ */
 export async function updateMetadataTemplate(template) {
   try {
     const { data } = await axios.put(
@@ -38,6 +49,12 @@ export async function updateMetadataTemplate(template) {
   }
 }
 
+/**
+ * Remove a metadata template from within a project
+ * @param {number} projectId - identifier for a project
+ * @param {number} templateId - identifier for a metadata template
+ * @returns {Promise<*>}
+ */
 export async function deleteMetadataTemplate(projectId, templateId) {
   try {
     const { data } = await axios.delete(

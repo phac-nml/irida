@@ -2,6 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getMetadataFieldsForProject } from "../../../apis/metadata/field";
 import { addKeysToList } from "../../../utilities/http-utilities";
 
+/**
+ * Redux Thunk for fetching all the metadata fields on a project.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 export const fetchFieldsForProject = createAsyncThunk(
   `fields/fetchFieldsForProject`,
   async (projectId) => {
@@ -10,6 +14,10 @@ export const fetchFieldsForProject = createAsyncThunk(
   }
 );
 
+/**
+ * Redux store slice for metadata fields.
+ * @type {Slice<{fields: undefined, loading: boolean, selected: *[]}, {}, string>}
+ */
 export const fieldsSlice = createSlice({
   name: "fields",
   initialState: {

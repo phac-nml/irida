@@ -36,7 +36,7 @@ public class MetadataAjaxController {
 	 * Get a list of metadata templates for a specific project
 	 *
 	 * @param projectId Identifier for the project to get templates for.
-	 * @return List of metadata templates with associate details.
+	 * @return List of metadata templates with associated details.
 	 */
 	@GetMapping("/templates")
 	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
@@ -64,7 +64,7 @@ public class MetadataAjaxController {
 	 * @return Message for UI to display about the result of the update.
 	 */
 	@PutMapping("/templates/{templateId}")
-	public ResponseEntity<AjaxResponse> updatedMetadataTemplate(@RequestBody MetadataTemplate template, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateMetadataTemplate(@RequestBody MetadataTemplate template, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateMetadataTemplate(template, locale)));
 		} catch (Exception e) {
