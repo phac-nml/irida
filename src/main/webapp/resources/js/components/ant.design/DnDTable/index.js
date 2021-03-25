@@ -19,6 +19,17 @@ const DraggableTable = styled(Table)`
 
 const RNDContext = createDndContext(HTML5Backend);
 
+/**
+ * React component to render and Ant Design table with drag and drop rows for sorting
+ * @param {string} size - size of the table rows (from Ant Design, either default, middle, small)
+ * @param {Array} data - dataSource for the table
+ * @param {Array} columns - table columns
+ * @param {function} onRowUpdate - Callback function to handle updating order of the data
+ * @param {Array} props - any other properties passed to the table
+ * @returns {JSX.Element}
+ * @constructor
+ * @see https://ant.design/components/table/#components-table-demo-drag-sorting
+ */
 export default function DnDTable({
   size = "default",
   data,
