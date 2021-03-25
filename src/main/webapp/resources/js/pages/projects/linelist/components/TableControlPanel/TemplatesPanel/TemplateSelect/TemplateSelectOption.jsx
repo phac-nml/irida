@@ -32,7 +32,7 @@ export function TemplateSelectOption(props) {
             </Tag>
           ) : null}
           <Tag className="templates-option--field-count">
-            {fields.filter(f => !f.hide).length}
+            {fields.filter(f => !f.hide).length - 2}
           </Tag>
         </span>
       </div>

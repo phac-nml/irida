@@ -195,8 +195,8 @@ public class LineListController {
 	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns,
 			boolean canEdit) {
 
-		AgGridColumn col1 = allFieldsAgGridColumns.get(0);
-		AgGridColumn col2 = allFieldsAgGridColumns.get(1);
+		AgGridColumn iconCol = allFieldsAgGridColumns.get(0);
+		AgGridColumn sampleNameCol = allFieldsAgGridColumns.get(1);
 
 		/*
 		Need to remove the sample since allFields begins with the sample.
@@ -229,14 +229,16 @@ public class LineListController {
 			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
 		}
 
-		templateAgGridColumns.add(0, col1);
+		// Add the "icon" to the template columns
+		templateAgGridColumns.add(0, iconCol);
 
 		/*
 		Since it the previous for loop we removed all of the current template fields from allFieldsAgGridColumns,
 		we can assume the rest should be hidden and then just appended to the end of the template.
 		 */
 		allFieldsAgGridColumns.forEach(field -> {
-			if(!field.getField().equals(col2.getField()))
+			// Don't hide the sample name as it is required for the table header
+			if(!field.getField().equals(sampleNameCol.getField()))
 			{
 				field.setHide(true);
 			}
