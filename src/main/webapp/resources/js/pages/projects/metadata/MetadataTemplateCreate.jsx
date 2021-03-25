@@ -118,7 +118,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
                   <>
                     <Text strong>{i18n("MetadataTemplate.fields")}</Text>
                     <HelpPopover
-                      content={<div>{i18n("MetadataTemplateManager.drag")}</div>}
+                      content={
+                        <div>{i18n("MetadataTemplateManager.drag")}</div>
+                      }
                     />
                   </>
                 ),
