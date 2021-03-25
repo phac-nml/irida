@@ -135,10 +135,6 @@ export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
 
-export const IconMetadataTemplate = ({ ...props }) => (
-  <AppstoreOutlined {...props} />
-);
-
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
 
 export const IconBell = ({ ...props }) => <BellOutlined {...props} />;

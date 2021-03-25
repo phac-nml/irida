@@ -69,15 +69,6 @@
               >_Remote</a
             >
             <a
-              href=""
-              th:href="@{/projects/{id}/settings/metadata-templates(id=${project.getId()})}"
-              class="list-group-item"
-              th:classappend="${#strings.equalsIgnoreCase(page, 'metadata_templates') ? 'active' : ''}"
-              th:text="#{project.settings.metadata-templates}"
-            >
-              _Metadata Templates_
-            </a>
-            <a
               th:if="${manageMembers} or ${isAdmin}"
               th:href="@{/projects/{id}/settings/delete(id=${project.getId()})}"
               class="list-group-item"
