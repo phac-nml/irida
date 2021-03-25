@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
  */
 public class WebpackerManifestParser {
 	private static final Logger logger = LoggerFactory.getLogger(WebpackerManifestParser.class);
-	private static Map<String, Map<String, List<String>>> entryMap;
+	private static Map<String, Map<String, Map<String, List<String>>>> entryMap;
 	private static String manifestChecksum = "";
 	private static Boolean autoUpdatable = true;
 
@@ -52,7 +52,7 @@ public class WebpackerManifestParser {
 	 */
 	public static List<String> getChunksForEntryType(
 			ServletContext context, String entry, WebpackerTagType type) {
-		Map<String, Map<String, List<String>>> entries = getEntryMap(context);
+		Map<String, Map<String, Map<String, List<String>>>> entries = getEntryMap(context);
 
 		/*
 		 * Ensure the entry actually exists in webpack.
@@ -65,13 +65,13 @@ public class WebpackerManifestParser {
 		/*
 		 * Entry that the entry has resources for the type wanted.
 		 */
-		if (!entries.get(entry).containsKey(type.toString()) && !entry.equals("vendor")) {
+		if (!entries.get(entry).get("assets").containsKey(type.toString()) && !entry.equals("vendor")) {
 			logger.debug(
 					String.format("For the entry %s, Webpack manifest does a %s file type", type.toString(), entry));
 			return null;
 		}
 
-		return entries.get(entry).get(type.toString());
+		return entries.get(entry).get("assets").get(type.toString());
 	}
 
 	/**
@@ -80,10 +80,10 @@ public class WebpackerManifestParser {
 	 *
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
-	private static Map<String, Map<String, List<String>>> getEntryMap(ServletContext context) {
+	private static Map<String, Map<String, Map<String, List<String>>>> getEntryMap(ServletContext context) {
 		try {
 			if (WebpackerManifestParser.entryMap == null || autoUpdatable) {
-				String path = context.getResource("/dist/manifest.json")
+				String path = context.getResource("/dist/assets-manifest.json")
 						.getPath();
 				File manifestFile = ResourceUtils.getFile(path);
 				try (InputStream is = Files.newInputStream(manifestFile.toPath())) {
@@ -109,14 +109,14 @@ public class WebpackerManifestParser {
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
 	@SuppressWarnings("unchecked")
-	private static Map<String, Map<String, List<String>>> parseWebpackManifestFile(File file) {
-		Map<String, Map<String, List<String>>> newEntries = new HashMap<>();
+	private static Map<String, Map<String, Map<String, List<String>>>> parseWebpackManifestFile(File file) {
+		Map<String, Map<String, Map<String, List<String>>>> newEntries = new HashMap<>();
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			Map<String, Object> manifest = objectMapper.readValue(file, new TypeReference<Map<String, Object>>() {
 			});
 
-			newEntries = (Map<String, Map<String, List<String>>>) manifest.get("entrypoints");
+			newEntries = (Map<String, Map<String, Map<String, List<String>>>>) manifest.get("entrypoints");
 		} catch (IOException e) {
 			logger.error("Error reading webpack manifest file.");
 		}
