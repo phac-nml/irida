@@ -71,7 +71,7 @@ export function MetadataTemplateManager({ id }) {
       Whenever the fields on the template are updated (or initially loaded), we
       determine which fields from the project are not currently on the template.
       This allows us to be able to only display the fields that need to be displayed
-      when the user want to add a new field to the template.
+      when the user wants to add a new field to the template.
        */
       setNewFields(differenceBy(allFields, fields, "id"));
     }
