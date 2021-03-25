@@ -1,5 +1,5 @@
-import React from "react";
 import { Button, Modal, Table } from "antd";
+import React from "react";
 
 /**
  * Component for adding metadata fields to an existing metadata template
@@ -16,8 +16,9 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
 
   React.useEffect(() => {
     /*
-    When fields are selected, Ant Table only five the key, here we are setting
-    the selected fields as the entire field value.
+    When fields are selected, Ant Table only passes the key for the entry,
+    here we are setting the selected fields as the entire field value, based
+    on the selected keys.
      */
     if (fields && selected.length) {
       const set = new Set(selected);
