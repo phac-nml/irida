@@ -1,115 +1,107 @@
 const path = require("path");
 const webpack = require("webpack");
-const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
-const { formatAntStyles } = require("./styles");
+const entries = require("./entries");
+const formatAntStyles = require("./styles");
 
-const dev = require("./webpack.config.dev");
-const prod = require("./webpack.config.prod");
+const antColours = formatAntStyles();
 
-const entries = require("./entries.js");
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === "production";
 
-const BUILD_PATH = path.resolve(__dirname, "dist");
-
-const config = {
-  externals: {
-    jquery: "jQuery",
-  },
-  stats: {
-    children: false,
-    cached: false,
-  },
-  resolve: {
-    extensions: [".js", ".jsx"],
-    alias: {
-      "./dist/cpexcel.js": "",
+  return {
+    /*
+    This option controls if and how source maps are generated.
+    1. Development: "eval-source-map" - Recommended choice for development builds with high quality SourceMaps.
+    2. Production: "source-map" - Recommended choice for production builds with high quality SourceMaps.
+    */
+    devtool: isProduction ? "source-map" : "eval-source-map",
+    /*
+    Cache the generated webpack modules and chunks to improve build speed.
+     */
+    cache: {
+      type: "filesystem",
     },
-  },
-  entry: entries,
-  output: {
-    path: BUILD_PATH,
-    publicPath: `/dist/`,
-    filename: "js/[name]-[contenthash].js",
-    chunkFilename: "js/[name]-[contenthash].chunk.js",
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /(node_modules)/,
-        use: "babel-loader?cacheDirectory",
-      },
-      {
-        test: /\.less$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
+    entry: entries,
+    resolve: {
+      extensions: [".js", ".jsx"],
+      symlinks: false,
+    },
+    output: {
+      filename: "js/[name].bundle.js",
+      path: path.resolve(__dirname, "dist"),
+      pathinfo: false,
+      publicPath: `/dist/`,
+      filename: "js/[name]-[contenthash].js",
+      chunkFilename: "js/[name]-[contenthash].chunk.js",
+    },
+    /*
+    Prevent bundling of jQuery, it will be added (and exposed) through the vendor bundle.
+     */
+    externals: {
+      jquery: "jQuery",
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/i,
+          include: path.resolve(__dirname, "resources/js"),
+          loader: "babel-loader",
+          options: {
+            cacheCompression: false,
+            cacheDirectory: true,
           },
-          {
-            loader: "css-loader", // translates CSS into CommonJS
-          },
-          {
-            loader: "less-loader", // compiles Less to CSS
-            options: {
-              lessOptions: {
-                modifyVars: { ...formatAntStyles() },
-                javascriptEnabled: true,
+        },
+        {
+          test: /\.less$/i,
+          use: [
+            MiniCssExtractPlugin.loader,
+            "css-loader",
+            {
+              loader: "less-loader",
+              options: {
+                lessOptions: {
+                  modifyVars: antColours,
+                  javascriptEnabled: true,
+                },
               },
             },
-          },
-        ],
-      },
-      {
-        test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              ident: "postcss",
-              plugins: (loader) => [
-                require("postcss-import")({ root: loader.resourcePath }),
-                require("postcss-preset-env")(),
-                require("cssnano")(),
-                require("autoprefixer")(),
-                require("postcss-nested")(),
-              ],
-            },
-          },
-        ],
-      },
-      {
-        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: {
-          loader: "url-loader",
+          ],
         },
-      },
-      {
-        test: /\.(ttf|eot|svg|otf|gif|png)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: {
-          loader: "file-loader",
+        {
+          test: /\.css$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            { loader: "css-loader", options: { importLoaders: 1 } },
+            "postcss-loader",
+          ],
         },
-      },
-      {
-        test: require.resolve("jquery"),
-        use: [
-          {
-            loader: "expose-loader",
-            options: "$",
-          },
-          {
-            loader: "expose-loader",
-            options: "jQuery",
-          },
-        ],
-      },
-    ],
-  },
-  optimization: {
-    runtimeChunk: "single",
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: "asset/resource",
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          type: "asset/resource",
+        },
+      ],
+    },
+    optimization: {
+      /*
+      Only minimize assets for production builds
+       */
+      ...(isProduction
+        ? {
+            minimize: true,
+            minimizer: [
+              new CssMinimizerPlugin({ parallel: true }),
+              new TerserPlugin({ parallel: true, include: /\/resources/ }),
+            ],
+          runtimeChunk: "single",
     splitChunks: {
       name: false,
       chunks(chunk) {
@@ -120,29 +112,33 @@ const config = {
         );
       }
     }
-  },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: "css/[name]-[contenthash].css",
-    }),
-    new i18nThymeleafWebpackPlugin({
-      functionName: "i18n",
-    }),
-    new webpack.ProvidePlugin({
-      i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
-    }),
+          }
+        : { minimize: false }),
+    },
+    plugins: [
+      /*
+      Extract CSS into its own bundle.
+       */
+      new MiniCssExtractPlugin({
+        ignoreOrder: true,
+        filename: "css/[name].bundle.css",
+      }),
+      /*
+      Custom IRIDA internationalization plugin.  See Docs for more information
+       */
+      new i18nThymeleafWebpackPlugin({
+        functionName: "i18n",
+      }),
+      new webpack.ProvidePlugin({
+        // Provide the custom internationalization function.
+        i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
+        process: "process/browser",
+      }),
     new WebpackAssetsManifest({
       integrity: false,
       entrypoints: true,
       writeToDisk: true
     })
-  ],
-};
-
-module.exports = ({ mode = "development" }) => {
-  return merge(
-    { mode },
-    config,
-    mode === "production" ? prod.config : dev.config
-  );
+    ],
+  };
 };

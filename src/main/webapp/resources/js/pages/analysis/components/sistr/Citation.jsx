@@ -12,7 +12,10 @@ export default function Citation() {
    */
   return (
     <TabPaneContent title={i18n("AnalysisSistr.citation")}>
-      <a href="https://doi.org/10.1371/journal.pone.0147101" id="t-citation">
+      <a
+        href="https://doi.org/10.1371/journal.pone.0147101"
+        className="t-citation"
+      >
         {i18n("AnalysisSistr.citationLinkText")}
         <cite>{i18n("AnalysisSistr.plosOne")}</cite>
       </a>

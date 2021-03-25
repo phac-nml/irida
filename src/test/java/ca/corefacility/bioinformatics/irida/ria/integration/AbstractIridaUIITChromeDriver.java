@@ -59,7 +59,7 @@ public class AbstractIridaUIITChromeDriver {
 	private static boolean isSingleTest = false;
 
 	private static final String CHROMEDRIVER_PROP_KEY = "webdriver.chrome.driver";
-	private static final String CHROMEDRIVER_LOCATION = "src/main/webapp/node_modules/chromedriver/lib/chromedriver/chromedriver";
+	private static final String CHROMEDRIVER_LOCATION = "src/main/webapp/chromedriver";
 
     @Rule
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();

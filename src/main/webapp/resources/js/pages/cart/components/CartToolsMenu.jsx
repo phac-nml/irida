@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Button, Menu } from "antd";
 import { Link } from "@reach/router";
-import { grey1, grey6 } from "../../../styles/colors";
+import { grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
 import { BORDERED_LIGHT } from "../../../styles/borders";

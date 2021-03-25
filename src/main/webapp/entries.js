@@ -4,19 +4,14 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: [
-    "core-js/stable",
-    "regenerator-runtime/runtime",
-    "expose-loader?$!jquery",
-    "./resources/js/vendors",
-  ],
+  vendor: ["expose-loader?exposes=$,jQuery!jquery", "./resources/js/vendors"],
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
-  announcements: "./resources/js/pages/announcement/announcements.js",
-  analysis: "./resources/js/pages/analysis/index.js",
+  announcements: "./resources/js/pages/announcement",
+  analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
   launch: "./resources/js/pages/launch",

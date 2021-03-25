@@ -31,11 +31,11 @@ export default function AnalysisDelete() {
    * to the dashboard
    */
   function handleDeleteConfirm() {
-    deleteAnalysis(analysisIdentifier).then(res =>
+    deleteAnalysis(analysisIdentifier).then((res) =>
       showNotification({ text: res.result })
     );
 
-    window.setTimeout(function() {
+    window.setTimeout(function () {
       window.location.replace(setBaseUrl("/"));
     }, 3500);
   }
@@ -59,7 +59,7 @@ export default function AnalysisDelete() {
           <Button
             type="danger"
             style={{ marginTop: SPACE_LG }}
-            id="t-delete-analysis-btn"
+            className="t-delete-analysis-btn"
           >
             {i18n("AnalysisDelete.delete")}
           </Button>

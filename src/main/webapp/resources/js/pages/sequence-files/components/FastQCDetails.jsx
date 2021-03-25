@@ -3,16 +3,14 @@
  * lists the file details as well as the sequence details.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Divider, Layout, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { BasicList } from "../../../components/lists";
-import { getFastQCDetails } from "../../../apis/files/sequence-files";
 import { formatDate } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
-import { useParams } from "@reach/router";
 import { useFastQCState } from "../fastqc-context";
 
 export default function FastQCDetails() {

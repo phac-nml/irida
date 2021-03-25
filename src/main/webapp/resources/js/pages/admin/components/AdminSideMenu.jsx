@@ -6,10 +6,11 @@
  * all the elements required by the component
  */
 import React from "react";
-import { Layout, Menu } from "antd";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Link } from "@reach/router";
-import { ADMIN } from "../routes";
+import {Layout, Menu} from "antd";
+import {setBaseUrl} from "../../../utilities/url-utilities";
+import {Link} from "@reach/router";
+import {ADMIN} from "../routes";
+
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 export default function AdminHeader() {
@@ -24,14 +25,14 @@ export default function AdminHeader() {
   // The following renders the AdminPanelSideMenu component
   return (
     <Sider width={220}>
-      return (
       <section>
         <Link
           style={{ paddingLeft: 10, paddingRight: 10 }}
           to={`${DEFAULT_URL}/${ADMIN.USERS}`}
         >
           <img
-            style={{ height: 64, width: 200 }}
+            height="64"
+            width="200"
             src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
           />
         </Link>
@@ -121,7 +122,6 @@ export default function AdminHeader() {
           </Menu.Item>
         </Menu>
       </section>
-      );
     </Sider>
   );
 }
