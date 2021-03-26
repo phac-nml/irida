@@ -18,7 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
  * @param <DomainObjectType> the type of domain object that this permission is evaluating.
  * @param <IdentifierType>   The identifier for the domain object in the database
  */
-public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierType extends Serializable> {
+public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierType extends Serializable>
+		implements BasePermission<DomainObjectType> {
 
 	private static final Logger logger = LoggerFactory.getLogger(RepositoryBackedPermission.class);
 

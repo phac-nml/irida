@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.config.security;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
+import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import com.google.common.base.Joiner;
@@ -58,7 +59,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * permission to invoke a method by the expression handler.
 	 */
 	@Autowired
-	private List<RepositoryBackedPermission<?,?>> basePermissions;
+	private List<BasePermission<?>> basePermissions;
 
 	@Autowired
 	private UserRepository userRepository;
