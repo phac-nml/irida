@@ -26,13 +26,6 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	private static final String ADMIN_AUTHORITY = Role.ROLE_ADMIN.getAuthority();
 
 	/**
-	 * Get the implementation-specific permission provided.
-	 * 
-	 * @return the permission provided by the permission class.
-	 */
-	public abstract String getPermissionProvided();
-
-	/**
 	 * This method is called by {@link RepositoryBackedPermission} to evaluate the custom
 	 * permissions provided by implementing classes.
 	 * 
@@ -139,17 +132,10 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	}
 
 	/**
-	 * Is the authenticated user allowed to perform some action on the target
-	 * domain object?
-	 * 
-	 * @param authentication
-	 *            the authenticated user.
-	 * @param targetDomainObject
-	 *            the object the user is requesting to perform an action on.
-	 * @return true if the action is allowed, false otherwise.
+	 * {@inheritDoc}
 	 */
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
-		
+
 		// fast fail on anonymous users:
 		if (authentication instanceof AnonymousAuthenticationToken) {
 			return false;
@@ -161,7 +147,7 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 			return customPermissionAllowedSingleObject(authentication, targetDomainObject);
 		}
 	}
-	
+
 	/**
 	 * Check whether admins should be quick-approved for this permission. This
 	 * may be overridden for special cases
