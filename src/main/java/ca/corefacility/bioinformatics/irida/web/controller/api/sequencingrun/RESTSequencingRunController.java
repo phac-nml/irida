@@ -65,10 +65,10 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
-	@Operation(operationId = "createSequencingRun", summary = "Create a SequencingRun",
-			description = "Create a SequencingRun.", tags = "sequencingrun")
+	@Operation(operationId = "createSequencingRun", summary = "Create a sequencing run",
+			description = "Create a sequencing run.", tags = "sequencingrun")
 	@ApiResponse(responseCode = "200", description = "Returns the modified sequencing run.",
-			content = @Content(schema = @Schema(implementation = SequencingRunResponse.class)))
+			content = @Content(schema = @Schema(implementation = SequencingRunSchema.class)))
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
 			HttpServletResponse response) {
@@ -99,7 +99,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	}
 
 	// TODO: revisit these classes that define the response schemas for openapi
-	private class SequencingRunResponse {
+	private class SequencingRunSchema {
 		public SequencingRun resource;
 	}
 

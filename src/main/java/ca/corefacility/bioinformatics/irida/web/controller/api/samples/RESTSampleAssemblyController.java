@@ -10,6 +10,11 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +51,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Controller for viewing and downloading assemblies for samples
  */
 @Controller
+@Tag(name = "samples")
 public class RESTSampleAssemblyController {
 
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleAssemblyController.class);
@@ -70,7 +76,11 @@ public class RESTSampleAssemblyController {
 	 * @param sampleId the id of the sample
 	 * @return a list of details about the assemblies
 	 */
-	@RequestMapping("/api/samples/{sampleId}/assemblies")
+	@Operation(operationId = "listAssembliesForSample", summary = "Find all the genome assemblies for a given sample",
+			description = "Get all the genome assemblies for a given sample.", tags = "samples")
+	@ApiResponse(responseCode = "200", description = "Returns the list of genome assemblies associated with the given sample.",
+			content = @Content(schema = @Schema(implementation = GenomeAssembliesSchema.class)))
+	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.GET)
 	public ModelMap listAssembliesForSample(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 
@@ -104,7 +114,11 @@ public class RESTSampleAssemblyController {
 	 * @param assemblyId the id of the assembly
 	 * @return details about the requested assembly
 	 */
-	@RequestMapping("/api/samples/{sampleId}/assemblies/{assemblyId}")
+	@Operation(operationId = "readAssemblyForSample", summary = "Find the genome assembly for a given sample",
+			description = "Get the genome assembly for a given sample.", tags = "samples")
+	@ApiResponse(responseCode = "200", description = "Returns the genome assembly associated with the given sample.",
+			content = @Content(schema = @Schema(implementation = GenomeAssemblySchema.class)))
+	@RequestMapping(value = "/api/samples/{sampleId}/assemblies/{assemblyId}", method = RequestMethod.GET)
 	public ModelMap readAssemblyForSample(@PathVariable Long sampleId, @PathVariable Long assemblyId) {
 		ModelMap modelMap = new ModelMap();
 
@@ -141,6 +155,10 @@ public class RESTSampleAssemblyController {
 	 * @return a model with links to the created assembly
 	 * @throws IOException if the upload fails
 	 */
+	@Operation(operationId = "addNewAssemblyToSample", summary = "Upload a new genome assembly for a given sample",
+			description = "Upload a new genome assemblies for a given sample.", tags = "samples")
+	@ApiResponse(responseCode = "200", description = "Returns the saved genome assemblies associated with the given sample.",
+			content = @Content(schema = @Schema(implementation = GenomeAssemblySchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewAssemblyToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
 			HttpServletResponse response) throws IOException {
@@ -214,4 +232,15 @@ public class RESTSampleAssemblyController {
 
 		return links;
 	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class GenomeAssemblySchema {
+		public GenomeAssembly resource;
+	}
+
+	private class GenomeAssembliesSchema {
+		public ResourceCollection<GenomeAssembly>  resource;
+	}
+
 }
