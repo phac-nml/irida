@@ -72,9 +72,9 @@ export function MetadataTemplatesList({ projectId }) {
       let templatesCopy = Object.assign([{}], templates)
 
       let allFieldsTemplate = {
-        name: "All Fields",
-        label: "All Fields",
-        description: "Test Desc",
+        name: i18n("MetadataTemplatesList.allFields"),
+        label: i18n("MetadataTemplatesList.allFields"),
+        description: i18n("MetadataTemplatesList.allfields-description"),
         identifier: 0,
         key: "template-0",
         default: !defaultTemplateFound,
@@ -151,7 +151,7 @@ export function MetadataTemplatesList({ projectId }) {
       .then(({ message }) => notification.success({ message }))
       .catch((message) => notification.error({ message }));
 
- 
+
   return (
     <List
       loading={loading}
@@ -170,7 +170,7 @@ export function MetadataTemplatesList({ projectId }) {
     >
       { templatesModified &&
           templatesModified.map(item => (
-            <HoverItem className="t-m-template" actions={item.identifier != 0 ? getActionsForItem(item) : null} key={`hover-item-${item.identifier}`}>
+            <HoverItem className="t-m-template" actions={item.identifier != 0 && getActionsForItem(item)} key={`hover-item-${item.identifier}`}>
               <List.Item.Meta
                 title={
                   <div
