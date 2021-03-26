@@ -10,14 +10,14 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 /**
  * Permission for reading {@link MetadataTemplate}
  */
 @Component
-public class ReadMetadataTemplatePermission extends BasePermission<MetadataTemplate, Long> {
+public class ReadMetadataTemplatePermission extends RepositoryBackedPermission<MetadataTemplate, Long> {
 
 	public static final String PERMISSION_PROVIDED = "canReadMetadataTemplate";
 

@@ -26,14 +26,14 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaPermissionEvaluator.class);
 
-	private Collection<BasePermission<?,?>> permissions;
-	private Map<String, BasePermission<?,?>> namedPermissionMap;
+	private Collection<RepositoryBackedPermission<?,?>> permissions;
+	private Map<String, RepositoryBackedPermission<?,?>> namedPermissionMap;
 
-	public IridaPermissionEvaluator(BasePermission<?,?>... permissions) {
+	public IridaPermissionEvaluator(RepositoryBackedPermission<?,?>... permissions) {
 		this(Arrays.asList(permissions));
 	}
 
-	public IridaPermissionEvaluator(Collection<BasePermission<?,?>> permissions) {
+	public IridaPermissionEvaluator(Collection<RepositoryBackedPermission<?,?>> permissions) {
 		this.permissions = permissions;
 		this.namedPermissionMap = new HashMap<>();
 	}
@@ -43,7 +43,7 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 	 */
 	@PostConstruct
 	public void init() {
-		for (BasePermission<?,?> p : permissions) {
+		for (RepositoryBackedPermission<?,?> p : permissions) {
 			logger.trace("Registering permission [" + p.getPermissionProvided() + "] with class ["
 					+ p.getClass().getName() + "]");
 			namedPermissionMap.put(p.getPermissionProvided(), p);
@@ -60,7 +60,7 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 					+ "] is not registered with " + getClass().getName() + ".");
 		}
 
-		BasePermission<?,?> permissionEvaluator = namedPermissionMap.get(permission.toString());
+		RepositoryBackedPermission<?,?> permissionEvaluator = namedPermissionMap.get(permission.toString());
 		boolean allowed = permissionEvaluator.isAllowed(authentication, targetDomainObject);
 
 		logger.trace("Permission request for access to [" + targetDomainObject + "] with permission [" + permission

@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Confirms if a {@link User} can update a {@link AnalysisSubmission}.
@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
  *
  */
 @Component
-public class UpdateAnalysisSubmissionPermission extends BasePermission<AnalysisSubmission, Long> {
+public class UpdateAnalysisSubmissionPermission extends RepositoryBackedPermission<AnalysisSubmission, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(UpdateAnalysisSubmissionPermission.class);
 	private static final String PERMISSION_PROVIDED = "canUpdateAnalysisSubmission";

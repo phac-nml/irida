@@ -18,9 +18,9 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
  * @param <DomainObjectType> the type of domain object that this permission is evaluating.
  * @param <IdentifierType>   The identifier for the domain object in the database
  */
-public abstract class BasePermission<DomainObjectType, IdentifierType extends Serializable> {
+public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierType extends Serializable> {
 
-	private static final Logger logger = LoggerFactory.getLogger(BasePermission.class);
+	private static final Logger logger = LoggerFactory.getLogger(RepositoryBackedPermission.class);
 
 	private static final String ADMIN_AUTHORITY = Role.ROLE_ADMIN.getAuthority();
 
@@ -32,7 +32,7 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	public abstract String getPermissionProvided();
 
 	/**
-	 * This method is called by {@link BasePermission} to evaluate the custom
+	 * This method is called by {@link RepositoryBackedPermission} to evaluate the custom
 	 * permissions provided by implementing classes.
 	 * 
 	 * @param authentication
@@ -71,7 +71,7 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	 *            the repository to load objects of the type for this
 	 *            permission.
 	 */
-	protected BasePermission(Class<DomainObjectType> domainObjectType, Class<IdentifierType> identifierType,
+	protected RepositoryBackedPermission(Class<DomainObjectType> domainObjectType, Class<IdentifierType> identifierType,
 			CrudRepository<DomainObjectType, IdentifierType> repository) {
 		this.repository = repository;
 		this.domainObjectType = domainObjectType;

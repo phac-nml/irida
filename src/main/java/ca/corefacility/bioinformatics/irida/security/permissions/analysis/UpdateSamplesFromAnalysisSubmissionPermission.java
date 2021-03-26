@@ -12,14 +12,15 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 
 /**
  * Permission for whether a user can update samples in a given analysis submission.
  */
 @Component
-public class UpdateSamplesFromAnalysisSubmissionPermission extends BasePermission<AnalysisSubmission, Long> {
+public class UpdateSamplesFromAnalysisSubmissionPermission extends
+		RepositoryBackedPermission<AnalysisSubmission, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(UpdateSamplesFromAnalysisSubmissionPermission.class);
 	private static final String PERMISSION_PROVIDED = "canUpdateSamplesFromAnalysisSubmission";

@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.config.security;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import com.google.common.base.Joiner;
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -52,13 +52,13 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private int passwordExpiryInDays = -1;
 
 	/**
-	 * Loads all of the {@link BasePermission} sub-classes found in the security
-	 * package during component scan. {@link BasePermission} classes are used in
+	 * Loads all of the {@link RepositoryBackedPermission} sub-classes found in the security
+	 * package during component scan. {@link RepositoryBackedPermission} classes are used in
 	 * {@link @PreAuthorize} annotations for verifying that a user has
 	 * permission to invoke a method by the expression handler.
 	 */
 	@Autowired
-	private List<BasePermission<?,?>> basePermissions;
+	private List<RepositoryBackedPermission<?,?>> basePermissions;
 
 	@Autowired
 	private UserRepository userRepository;
