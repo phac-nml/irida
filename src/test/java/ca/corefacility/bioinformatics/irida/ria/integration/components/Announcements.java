@@ -13,8 +13,6 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
-
 /**
  * Used to test the state of the React AnnouncementsModal component.
  * This component can be found at login.
@@ -61,8 +59,7 @@ public class Announcements {
 	}
 
 	public void closeModal() {
-		waitForTime(500);
-		actions.sendKeys(Keys.ESCAPE).perform();
+		closeButton.sendKeys(Keys.ESCAPE);
 	}
 
 	public int getTotalReadAnnouncements() {
@@ -114,7 +111,6 @@ public class Announcements {
 	}
 
 	public void getSubmenuAnnouncement() {
-		closeModal();
 		hoverOverBadge();
 		waitForSubmenu();
 	}
