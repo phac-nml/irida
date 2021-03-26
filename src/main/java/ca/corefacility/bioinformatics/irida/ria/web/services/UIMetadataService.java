@@ -118,8 +118,11 @@ public class UIMetadataService {
 	 */
 	public void setDefaultMetadataTemplate(Long templateId, Long projectId) {
 		Project project = projectService.read(projectId);
-		MetadataTemplate metadataTemplate = templateService.read(templateId);
-		project.setDefaultMetadataTemplate(metadataTemplate);
+		if(templateId == 0) {
+			project.setDefaultMetadataTemplate(null);
+		} else {
+			project.setDefaultMetadataTemplate(templateService.read(templateId));
+		}
 		projectService.update(project);
 	}
 

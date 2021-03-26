@@ -23,6 +23,8 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import styled from "styled-components";
 
+const { Text } = Typography;
+
 const HoverItem = styled(List.Item)`
   button.ant-btn-link {
     opacity: 0;
@@ -46,10 +48,13 @@ export function MetadataTemplatesList({ projectId }) {
   );
   const { canManage } = useSelector((state) => state.project);
 
+  const { fields } = useSelector((state) => state.fields);
+
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
+
 
   const setDefaultTemplate = async (templateId) => {
     await dispatch(setDefaultTemplateForProject({ projectId, templateId }))
@@ -125,6 +130,74 @@ export function MetadataTemplatesList({ projectId }) {
       .then(({ message }) => notification.success({ message }))
       .catch((message) => notification.error({ message }));
 
+  const addAllFieldsTemplate = () => {
+    const defaultTemplateFound = templates.find((templ) => templ.default)
+
+    return (
+      <HoverItem className="t-m-template" key={`hover-item-0`}>
+        <List.Item.Meta
+          title={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                className="t-t-name"
+                style={{ display: "block" }}
+              >
+                All Fields
+              </Text>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                { canManage &&
+                (!defaultTemplateFound ? (
+                  <Tag
+                    key={`default-0`}
+                    color={blue6}
+                    className="t-t-default-tag"
+                  >
+                    {i18n("MetadataTemplatesList.default")}
+                  </Tag>
+                ) : (
+                  <Button
+                    size="small"
+                    key={`set-default-0`}
+                    onClick={() => setDefaultTemplate(0)}
+                    type="link"
+                    className="t-t-set-default-button"
+                  >
+                    {i18n("MetadataTemplatesList.set-as-default")}
+                  </Button>
+                ))
+                }
+                <Tag key={`fields-0`}>
+                  {i18n("ProjectMetadataTemplates.fields", fields ? fields.length : 0)}
+                </Tag>
+              </div>
+            </div>
+          }
+        />
+          <Typography.Paragraph
+            ellipsis={{
+              rows: 2,
+              expandable: true,
+            }}
+          >
+            This template displays all metadata fields on the project. Note that setting this as the default template can have an adverse
+            effect on the linelist page performance. Therefore it is recommended setting a default template with only the fields that you require.
+          </Typography.Paragraph>
+      </HoverItem>
+    )
+  }
+
   return (
     <List
       loading={loading}
@@ -140,71 +213,75 @@ export function MetadataTemplatesList({ projectId }) {
         ),
       }}
       dataSource={templates}
-      renderItem={(item) => (
-        <HoverItem className="t-m-template" actions={getActionsForItem(item)}>
-          <List.Item.Meta
-            title={
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Link
-                  className="t-t-name"
-                  style={{ color: blue6, display: "block" }}
-                  to={`${item.identifier}`}
-                >
-                  {item.name}
-                </Link>
-                <div
-                  style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
+    >
+      { templates &&
+          [addAllFieldsTemplate(),
+          templates.map(item => (
+            <HoverItem className="t-m-template" actions={getActionsForItem(item)} key={`hover-item-${item.identifier}`}>
+              <List.Item.Meta
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Link
+                      className="t-t-name"
+                      style={{ color: blue6, display: "block" }}
+                      to={`${item.identifier}`}
+                    >
+                      {item.name}
+                    </Link>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                      }}
+                    >
+                      { canManage &&
+                      (item.default ? (
+                        <Tag
+                          key={`default-${item.identifier}`}
+                          color={blue6}
+                          className="t-t-default-tag"
+                        >
+                          {i18n("MetadataTemplatesList.default")}
+                        </Tag>
+                      ) : (
+                        <Button
+                          size="small"
+                          key={`set-default-${item.identifier}`}
+                          onClick={() => setDefaultTemplate(item.identifier)}
+                          type="link"
+                          className="t-t-set-default-button"
+                        >
+                          {i18n("MetadataTemplatesList.set-as-default")}
+                        </Button>
+                      ))
+                      }
+                      <Tag key={`fields-${item.identifier}`}>
+                        {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
+                      </Tag>
+                    </div>
+                  </div>
+                }
+              />
+              {item.description && (
+                <Typography.Paragraph
+                  ellipsis={{
+                    rows: 2,
+                    expandable: true,
                   }}
                 >
-                  { canManage &&
-                    (item.default ? (
-                      <Tag
-                        key={`default-${item.identifier}`}
-                        color={blue6}
-                        className="t-t-default-tag"
-                      >
-                        {i18n("MetadataTemplatesList.default")}
-                      </Tag>
-                    ) : (
-                      <Button
-                        size="small"
-                        key={`set-default-${item.identifier}`}
-                        onClick={() => setDefaultTemplate(item.identifier)}
-                        type="link"
-                        className="t-t-set-default-button"
-                      >
-                        {i18n("MetadataTemplatesList.set-as-default")}
-                      </Button>
-                    ))
-                  }
-                  <Tag key={`fields-${item.identifier}`}>
-                    {i18n("ProjectMetadataTemplates.fields", item.fields.length)}
-                  </Tag>
-                </div>
-              </div>
-            }
-          />
-          {item.description && (
-            <Typography.Paragraph
-              ellipsis={{
-                rows: 2,
-                expandable: true,
-              }}
-            >
-              {item.description}
-            </Typography.Paragraph>
-          )}
-        </HoverItem>
-      )}
-    />
+                  {item.description}
+                </Typography.Paragraph>
+              )}
+            </HoverItem>
+          ))]
+      }
+    </List>
   );
 }
