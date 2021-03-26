@@ -39,7 +39,7 @@ public class WebpackerScriptAttributeTagProcessor extends AbstractAttributeTagPr
 		if (jsResources != null) {
 			// Since this is specifically for un-chunked, we only need the second item in the array
 			// First item is always the runtime scripts which should already be on the page.
-			String path = String.format("@{/dist/%s}", jsResources.get(1));
+			String path = String.format("@{/dist/%s}", jsResources.get(0));
 			structureHandler.setAttribute("data:script", path);
 		}
 	}
