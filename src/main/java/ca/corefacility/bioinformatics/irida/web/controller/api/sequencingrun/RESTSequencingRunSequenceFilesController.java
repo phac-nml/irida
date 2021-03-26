@@ -7,6 +7,10 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import com.google.common.net.HttpHeaders;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -50,6 +54,10 @@ public class RESTSequencingRunSequenceFilesController {
 	 * @param response        a reference to the response.
 	 * @return a response indicating that the collection was modified.
 	 */
+	@Operation(operationId = "addSequenceFilesToSequencingRun", summary = "Add a relationship between a SequencingRun and a SequenceFile",
+			description = "Add a relationship between a SequencingRun and a SequenceFile.", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns the modified sequencing run.",
+			content = @Content(schema = @Schema(implementation = SequencingRunResponse.class)))
 	@RequestMapping(value = "/api/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
 	public ModelMap addSequenceFilesToSequencingRun(@PathVariable Long sequencingrunId,
 			@RequestBody Map<String, String> representation, HttpServletResponse response) {
@@ -75,4 +83,8 @@ public class RESTSequencingRunSequenceFilesController {
 		return modelMap;
 	}
 
+	// TODO: revisit these classes that define the response schemas for openapi
+	private class SequencingRunResponse {
+		public SequencingRun resource;
+	}
 }

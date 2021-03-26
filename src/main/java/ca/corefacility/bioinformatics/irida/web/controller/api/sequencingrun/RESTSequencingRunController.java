@@ -6,6 +6,11 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +34,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @Controller
 @RequestMapping(value = "/api/sequencingrun")
+@Tag(name = "sequencingrun")
 public class RESTSequencingRunController extends RESTGenericController<SequencingRun> {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSequencingRunController.class);
 
@@ -59,6 +65,10 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
+	@Operation(operationId = "createSequencingRun", summary = "Create a SequencingRun",
+			description = "Create a SequencingRun.", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns the modified sequencing run.",
+			content = @Content(schema = @Schema(implementation = SequencingRunResponse.class)))
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
 			HttpServletResponse response) {
@@ -86,6 +96,11 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 						MISEQ_REL));
 
 		return links;
+	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+	private class SequencingRunResponse {
+		public SequencingRun resource;
 	}
 
 }

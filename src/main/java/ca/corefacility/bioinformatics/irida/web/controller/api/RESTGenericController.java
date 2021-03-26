@@ -136,7 +136,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *            the identifier of the resource to retrieve from the database.
 	 * @return the model and view for the individual resource.
 	 */
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	public ModelMap getResource(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
 

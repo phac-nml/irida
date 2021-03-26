@@ -46,7 +46,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @Controller
 @RequestMapping(value = "/api/analysisSubmissions")
-@Tag(name = "Analysis Submission", description = "The Analysis Submission API")
+@Tag(name = "analysisSubmissions")
 public class RESTAnalysisSubmissionController extends RESTGenericController<AnalysisSubmission> {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private SampleService sampleService;
@@ -88,7 +88,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			description = "Get the AnalysisSubmission given the identifier.", tags = "analysisSubmissions")
 	@ApiResponse(responseCode = "200", description = "Returns an AnalysisSubmission containing the requested identifier.",
 			content = @Content(schema = @Schema(implementation = AnalysisSubmissionResponse.class)))
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
 	public ModelMap getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -105,7 +105,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			description = "Get all the AnalysisSubmission of a given type.", tags = "analysisSubmissions")
 	@ApiResponse(responseCode = "200", description = "Returns a list of AnalysisSubmission containing the requested type.",
 			content = @Content(schema = @Schema(implementation = AnalysisSubmissionsResponse.class)))
-	@RequestMapping(value = "/analysisType/{type}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/analysisType/{type}", method = RequestMethod.GET)
 	public ModelMap listOfType(@PathVariable String type) {
 		ModelMap model = new ModelMap();
 
@@ -166,7 +166,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			description = "Get all the SequenceFilePairs used for the given AnalysisSubmission.", tags = "analysisSubmissions")
 	@ApiResponse(responseCode = "200", description = "Returns list of SequenceFilePairs for the given AnalysisSubmission.",
 			content = @Content(schema = @Schema(implementation = SequenceFilePairsResponse.class)))
-	@RequestMapping(value = "/{identifier}/sequenceFiles/pairs", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{identifier}/sequenceFiles/pairs", method = RequestMethod.GET)
 	public ModelMap getAnalysisInputFilePairs(@PathVariable Long identifier) {
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
@@ -205,7 +205,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			description = "Get all the SequenceFiles not in the SequenceFilePairs used for the given AnalysisSubmission.", tags = "analysisSubmissions")
 	@ApiResponse(responseCode = "200", description = "Returns list of SequenceFiles not in the SequenceFilePairs used for the given AnalysisSubmission.",
 			content = @Content(schema = @Schema(implementation = SequencingObjectsResponse.class)))
-	@RequestMapping(value = "/{identifier}/sequenceFiles/unpaired", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{identifier}/sequenceFiles/unpaired", method = RequestMethod.GET)
 	public ModelMap getAnalysisInputUnpairedFiles(@PathVariable Long identifier) {
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
@@ -243,7 +243,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			description = "Get the Analysis for the given AnalysisSubmission.", tags = "analysisSubmissions")
 	@ApiResponse(responseCode = "200", description = "Returns the Analysis for the given AnalysisSubmission.",
 			content = @Content(schema = @Schema(implementation = AnalysisResponse.class)))
-	@RequestMapping(value = "/{identifier}/analysis", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{identifier}/analysis", method = RequestMethod.GET)
 	public ModelMap getAnalysisForSubmission(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
 		AnalysisSubmission read = analysisSubmissionService.read(identifier);
@@ -283,7 +283,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 			description = "Get the analysis output file for the given AnalysisSubmission.", tags = "analysisSubmissions")
 	@ApiResponse(responseCode = "200", description = "Returns the analysis output file for the given AnalysisSubmission.",
 			content = @Content(schema = @Schema(implementation = AnalysisOutputFileResponse.class)))
-	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET)
 	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
 		ModelMap model = new ModelMap();
 
