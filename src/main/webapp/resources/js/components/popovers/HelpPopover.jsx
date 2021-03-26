@@ -26,7 +26,7 @@ export function HelpPopover({
     >
       <IconQuestionCircle
         style={{
-          margin: "0 .5rem",
+          margin: "0 4px",
           cursor: "help",
           color: grey6,
         }}
