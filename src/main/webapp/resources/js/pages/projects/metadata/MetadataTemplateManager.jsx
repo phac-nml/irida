@@ -1,4 +1,5 @@
-import React from "react";
+import { navigate } from "@reach/router";
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Button,
   List,
@@ -9,16 +10,15 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { navigate } from "@reach/router";
-import DnDTable from "../../../components/ant.design/DnDTable";
-import { HelpPopover } from "../../../components/popovers";
-import { updateTemplate } from "../redux/templatesSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { addKeysToList } from "../../../utilities/http-utilities";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 import differenceBy from "lodash/differenceBy";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import DnDTable from "../../../components/ant.design/DnDTable";
 import { IconRemove } from "../../../components/icons/Icons";
+import { HelpPopover } from "../../../components/popovers";
+import { addKeysToList } from "../../../utilities/http-utilities";
+import { updateTemplate } from "../redux/templatesSlice";
+import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 
 const { Paragraph, Text } = Typography;
 
@@ -68,10 +68,10 @@ export function MetadataTemplateManager({ id }) {
   React.useEffect(() => {
     if (Array.isArray(fields) && Array.isArray(allFields)) {
       /*
-      Whenever the fields on the template are updated (or initial loaded), we
+      Whenever the fields on the template are updated (or initially loaded), we
       determine which fields from the project are not currently on the template.
       This allows us to be able to only display the fields that need to be displayed
-      when the user want to add a new field to the template.
+      when the user wants to add a new field to the template.
        */
       setNewFields(differenceBy(allFields, fields, "id"));
     }

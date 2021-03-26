@@ -1,5 +1,3 @@
-import React from "react";
-import { useSelector } from "react-redux";
 import { navigate } from "@reach/router";
 import {
   List,
@@ -9,9 +7,11 @@ import {
   Table,
   Typography,
 } from "antd";
+import React from "react";
+import { useSelector } from "react-redux";
 import { addKeysToList } from "../../../utilities/http-utilities";
 
-const { Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 /**
  * Component for viewing a metadata template.  This is for members who cannot
@@ -39,11 +39,15 @@ export function MetadataTemplateMember({ id }) {
         setTemplate(found);
       } else if (templates.length === 0) {
         navigate(`../fields`).then(() =>
-          notification.warn({ message: "__No templates found" })
+          notification.warn({
+            message: i18n("MetadataTemplateManager.no-templates"),
+          })
         );
       } else {
         navigate(`../templates`).then(() =>
-          notification.warn({ message: "__Template cannot be found" })
+          notification.warn({
+            message: i18n("MetadataTemplateManager.no-templates-exists"),
+          })
         );
       }
     }
@@ -62,8 +66,8 @@ export function MetadataTemplateMember({ id }) {
           <List.Item>
             <List.Item.Meta
               title={<Text strong>{i18n("MetadataTemplate.description")}</Text>}
-              description={template.description || ""}
             />
+            <Paragraph type="secondary">{template.description || ""}</Paragraph>
           </List.Item>
           <List.Item>
             <List.Item.Meta

@@ -1,12 +1,12 @@
-import React from "react";
-import { Form, Input, Modal, notification, Typography } from "antd";
 import { navigate } from "@reach/router";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Form, Input, Modal, notification, Typography } from "antd";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../components/popovers";
-import { useDispatch, useSelector } from "react-redux";
-import { createNewMetadataTemplate } from "../redux/templatesSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { addKeysToList } from "../../../utilities/http-utilities";
+import { createNewMetadataTemplate } from "../redux/templatesSlice";
 
 const { Text } = Typography;
 
@@ -36,7 +36,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   React.useEffect(() => {
     /*
     Need to get a list of template names so that there can only be distinct
-    names.
+    names within any given project.
      */
     if (templates) {
       const templateNames = new Set(
@@ -118,7 +118,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
                   <>
                     <Text strong>{i18n("MetadataTemplate.fields")}</Text>
                     <HelpPopover
-                      content={<div>{i18n("MetadataTemplateAdmin.drag")}</div>}
+                      content={
+                        <div>{i18n("MetadataTemplateManager.drag")}</div>
+                      }
                     />
                   </>
                 ),
