@@ -23,14 +23,12 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -84,16 +82,30 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "getResource", summary = "Find the AnalysisSubmission by identifier",
+			description = "Get the AnalysisSubmission given the identifier.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns an AnalysisSubmission containing the requested identifier.",
+			content = @Content(schema = @Schema(implementation = AnalysisSubmissionResponse.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET, produces = "application/json")
+	@Override
+	public ModelMap getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
+
+	/**
 	 * Get all analyses of a given type
 	 * 
 	 * @param type
 	 *            The type to request
 	 * @return ModelMap containing the requested type of resource
 	 */
-	@Operation(summary = "Find analyses by type", description = "Get all analyses of a given type.")
-	@ApiResponse(responseCode = "200", description = "ModelMap containing the requested type of resource.",
-			content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnalysisSubmission.class))))
-	@RequestMapping(value = "/analysisType/{type}", method = RequestMethod.GET)
+	@Operation(operationId = "listOfType", summary = "Find the AnalysisSubmissions by type",
+			description = "Get all the AnalysisSubmission of a given type.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns a list of AnalysisSubmission containing the requested type.",
+			content = @Content(schema = @Schema(implementation = AnalysisSubmissionsResponse.class)))
+	@RequestMapping(value = "/analysisType/{type}", method = RequestMethod.GET, produces = "application/json")
 	public ModelMap listOfType(@PathVariable String type) {
 		ModelMap model = new ModelMap();
 
@@ -132,11 +144,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Collection<Link> constructCollectionResourceLinks(ResourceCollection<AnalysisSubmission> list) {
-		Collection<Link> links = super.constructCollectionResourceLinks(list);
+	protected Collection<org.springframework.hateoas.Link> constructCollectionResourceLinks(ResourceCollection<AnalysisSubmission> list) {
+		Collection<org.springframework.hateoas.Link> links = super.constructCollectionResourceLinks(list);
 
 		for (String type : ANALYSIS_TYPES.keySet()) {
-			links.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type))
+			links.add((org.springframework.hateoas.Link) linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type))
 					.withRel(SUBMISSIONS_REL + "/" + type));
 		}
 
@@ -150,7 +162,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *            {@link AnalysisSubmission} id
 	 * @return list of {@link SequenceFilePair}s
 	 */
-	@RequestMapping(value = "/{identifier}/sequenceFiles/pairs", method = RequestMethod.GET, produces = { "application/json" })
+	@Operation(operationId = "getAnalysisInputFilePairs", summary = "Find the SequenceFilePairs of an AnalysisSubmission",
+			description = "Get all the SequenceFilePairs used for the given AnalysisSubmission.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns list of SequenceFilePairs for the given AnalysisSubmission.",
+			content = @Content(schema = @Schema(implementation = SequenceFilePairsResponse.class)))
+	@RequestMapping(value = "/{identifier}/sequenceFiles/pairs", method = RequestMethod.GET, produces = "application/json")
 	public ModelMap getAnalysisInputFilePairs(@PathVariable Long identifier) {
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
@@ -185,7 +201,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *            the {@link AnalysisSubmission} id
 	 * @return list of {@link SequenceFile}s
 	 */
-	@RequestMapping(value = "/{identifier}/sequenceFiles/unpaired", method = RequestMethod.GET, produces = { "application/json" })
+	@Operation(operationId = "getAnalysisInputUnpairedFiles", summary = "Find the SequenceFiles not in the SequenceFilePairs used for an AnalysisSubmission",
+			description = "Get all the SequenceFiles not in the SequenceFilePairs used for the given AnalysisSubmission.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns list of SequenceFiles not in the SequenceFilePairs used for the given AnalysisSubmission.",
+			content = @Content(schema = @Schema(implementation = SequencingObjectsResponse.class)))
+	@RequestMapping(value = "/{identifier}/sequenceFiles/unpaired", method = RequestMethod.GET, produces = "application/json")
 	public ModelMap getAnalysisInputUnpairedFiles(@PathVariable Long identifier) {
 		ModelMap map = new ModelMap();
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
@@ -219,7 +239,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *            {@link AnalysisSubmission} identifier to read
 	 * @return ModelMap containing the {@link Analysis}
 	 */
-	@RequestMapping(value = "/{identifier}/analysis", method = RequestMethod.GET, produces = { "application/json" })
+	@Operation(operationId = "getAnalysisForSubmission", summary = "Find the Analysis of an AnalysisSubmission",
+			description = "Get the Analysis for the given AnalysisSubmission.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns the Analysis for the given AnalysisSubmission.",
+			content = @Content(schema = @Schema(implementation = AnalysisResponse.class)))
+	@RequestMapping(value = "/{identifier}/analysis", method = RequestMethod.GET, produces = "application/json")
 	public ModelMap getAnalysisForSubmission(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
 		AnalysisSubmission read = analysisSubmissionService.read(identifier);
@@ -255,7 +279,11 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * @param fileId       The {@link AnalysisOutputFile} id
 	 * @return {@link ModelMap} containing the {@link AnalysisOutputFile}
 	 */
-	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET, produces = { "application/json" })
+	@Operation(operationId = "getAnalysisOutputFile", summary = "Find the analysis output file of an AnalysisSubmission",
+			description = "Get the analysis output file for the given AnalysisSubmission.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns the analysis output file for the given AnalysisSubmission.",
+			content = @Content(schema = @Schema(implementation = AnalysisOutputFileResponse.class)))
+	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET, produces = "application/json")
 	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
 		ModelMap model = new ModelMap();
 
@@ -276,6 +304,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * @param fileId       The {@link AnalysisOutputFile} id
 	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
 	 */
+	@Operation(operationId = "getAnalysisOutputFileContents", summary = "Find the file system resource for an analysis output file of an AnalysisSubmission",
+			description = "Get the file system resource for an analysis output file for the given AnalysisSubmission.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns the file system resource for an analysis output file for the given AnalysisSubmission.")
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
 	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
 			@PathVariable Long fileId) {
@@ -317,8 +348,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc} add analysis rel if available
 	 */
 	@Override
-	protected Collection<Link> constructCustomResourceLinks(AnalysisSubmission resource) {
-		Collection<Link> links = new HashSet<>();
+	protected Collection<org.springframework.hateoas.Link> constructCustomResourceLinks(AnalysisSubmission resource) {
+		Collection<org.springframework.hateoas.Link> links = new HashSet<>();
 		if (resource.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 			links.add(
 					linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisForSubmission(resource.getId()))
@@ -333,5 +364,31 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 				.withRel(INPUT_FILES_PAIRED_REL));
 
 		return links;
+	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class AnalysisOutputFileResponse {
+		public AnalysisOutputFile resource;
+	}
+
+	private class SequencingObjectsResponse {
+		public ResourceCollection<SequencingObject> resources;
+	}
+
+	private class SequenceFilePairsResponse{
+		public ResourceCollection<SequenceFilePair> resources;
+	}
+
+	private class AnalysisResponse {
+		public Analysis resource;
+	}
+
+	private class AnalysisSubmissionResponse {
+		public AnalysisSubmission resource;
+	}
+
+	private class AnalysisSubmissionsResponse {
+		public ResourceCollection<AnalysisSubmission> resource;
 	}
 }
