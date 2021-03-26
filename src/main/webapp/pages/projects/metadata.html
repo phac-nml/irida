@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{projects/_base}"
+>
+  <head>
+    <title th:text="#{project.settings.metadata-templates}">Basic</title>
+    <link rel="stylesheet" th:href="@{/dist/css/project-metadata.bundle.css}" />
+  </head>
+  <body>
+  <div id="templates-root" layout:fragment="settings-content">
+    <!-- React component: ./resources/js/pages/projects/metadata/index.js   -->
+  </div>
+  <div id="root" layout:fragment="main">
+  </div>
+  <th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/project-metadata.bundle.js}"></script>
+  </th:block>
+  </body>
+</html>
