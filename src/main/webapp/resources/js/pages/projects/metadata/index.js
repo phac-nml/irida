@@ -1,20 +1,21 @@
+import { Link, Router } from "@reach/router";
+import { Layout, Menu } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Link, Router } from "@reach/router";
-import { MetadataTemplatesList } from "./MetadataTemplatesList";
-import { MetadataTemplateManager } from "./MetadataTemplateManager";
-import { MetadataTemplates } from "./MetadataTemplates";
-import { Col, Layout, Menu, Row } from "antd";
-import { MetadataFieldsList } from "./MetadataFieldsList";
-
-import store from "./store";
 import { Provider, useDispatch, useSelector } from "react-redux";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_SM } from "../../../styles/spacing";
 import { fetchFieldsForProject } from "../redux/fieldsSlice";
 import { fetchTemplatesForProject } from "../redux/templatesSlice";
 import { MetadataFields } from "./MetadataFields";
+import { MetadataFieldsListMember } from "./MetadataFieldsListMember";
+import { MetadataFieldsListManager } from "./MetadataFieldsListManager";
+import { MetadataTemplateManager } from "./MetadataTemplateManager";
 import { MetadataTemplateMember } from "./MetadataTemplateMember";
-import { grey1 } from "../../../styles/colors";
-import { SPACE_SM } from "../../../styles/spacing";
+import { MetadataTemplates } from "./MetadataTemplates";
+import { MetadataTemplatesList } from "./MetadataTemplatesList";
+
+import store from "./store";
 
 const { Content, Sider } = Layout;
 
@@ -86,7 +87,11 @@ function ProjectMetadata() {
     <Router>
       <MetadataLayout path={"/projects/:projectId/metadata"}>
         <MetadataFields path="/fields">
-          <MetadataFieldsList path="/" />
+          {canManage ? (
+            <MetadataFieldsListManager path="/" />
+          ) : (
+            <MetadataFieldsListMember path="/" />
+          )}
         </MetadataFields>
         <MetadataTemplates path="/templates">
           <MetadataTemplatesList path="/" />
