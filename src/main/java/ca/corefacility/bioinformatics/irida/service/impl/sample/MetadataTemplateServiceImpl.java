@@ -16,8 +16,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -31,14 +33,16 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 	private ProjectMetadataTemplateJoinRepository pmtRepository;
 	private MetadataFieldRepository fieldRepository;
+	private MetadataRestrictionRepository metadataRestrictionRepository;
 
 	@Autowired
 	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,
 			ProjectMetadataTemplateJoinRepository pmtRepository, MetadataFieldRepository fieldRepository,
-			Validator validator) {
+			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository) {
 		super(repository, validator, MetadataTemplate.class);
 		this.pmtRepository = pmtRepository;
 		this.fieldRepository = fieldRepository;
+		this.metadataRestrictionRepository = metadataRestrictionRepository;
 	}
 
 	/**
@@ -94,7 +98,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("permitAll()")
 	@Override
 	public MetadataTemplateField readMetadataField(Long id) {
-		return fieldRepository.findById(id).orElse(null);
+		return fieldRepository.findById(id)
+				.orElse(null);
 	}
 
 	/**
@@ -114,7 +119,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			return fieldRepository.findMetadataFieldByStaticId(stripped);
 		} else {
 			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
-			return fieldRepository.findById(Long.parseLong(stripped)).orElse(null);
+			return fieldRepository.findById(Long.parseLong(stripped))
+					.orElse(null);
 		}
 	}
 
@@ -180,6 +186,32 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project project) {
 		return fieldRepository.getMetadataFieldsForProject(project);
+	}
+
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public MetadataRestriction getMetadataRestrictionForFieldAndProject(Project project, MetadataTemplateField field) {
+		return metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field);
+	}
+
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public List<MetadataRestriction> getMetadataRestrictionsForProject(Project project) {
+		return metadataRestrictionRepository.getRestrictionForProject(project);
+	}
+
+	@PreAuthorize("hasPermission(#metadataRestriction.project, 'isProjectOwner')")
+	@Override
+	@Transactional
+	public MetadataRestriction addMetadataRestriction(MetadataRestriction metadataRestriction) {
+		MetadataRestriction metadataRestrictionForFieldAndProject = getMetadataRestrictionForFieldAndProject(
+				metadataRestriction.getProject(), metadataRestriction.getField());
+
+		if (metadataRestrictionForFieldAndProject != null) {
+			metadataRestrictionRepository.delete(metadataRestrictionForFieldAndProject);
+		}
+
+		return metadataRestrictionRepository.save(metadataRestriction);
 	}
 
 }
