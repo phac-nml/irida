@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getMetadataFieldsForProject } from "../../../apis/metadata/field";
+import {
+  getMetadataFieldsForProject,
+  getMetadataRestrictions,
+} from "../../../apis/metadata/field";
 import { addKeysToList } from "../../../utilities/http-utilities";
 
 /**
@@ -11,6 +14,17 @@ export const fetchFieldsForProject = createAsyncThunk(
   async (projectId) => {
     const fields = await getMetadataFieldsForProject(projectId);
     return addKeysToList(fields, "field", "id");
+  }
+);
+
+export const fetchFieldsRestrictions = createAsyncThunk(
+  `fields/fetchFieldsRestrictions`,
+  async () => {
+    const restrictions = await getMetadataRestrictions();
+    console.log(restrictions);
+    return {
+      restrictions: addKeysToList(restrictions, "restriction", "value"),
+    };
   }
 );
 
@@ -32,6 +46,10 @@ export const fieldsSlice = createSlice({
       fields: action.payload,
       loading: false,
     }),
+    [fetchFieldsRestrictions.fulfilled]: (state, action) => {
+      console.log(action);
+      state.restrictions = action.payload.restrictions;
+    },
   },
 });
 

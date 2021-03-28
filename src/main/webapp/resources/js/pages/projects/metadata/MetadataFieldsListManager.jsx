@@ -1,8 +1,10 @@
 import React from "react";
 import { Button, Empty, Select, Space, Table } from "antd";
+import { getMetadataRestrictions } from "../../../apis/metadata/field";
 import { useTableSelect } from "../../../hooks";
+import { fetchFieldsRestrictions } from "../redux/fieldsSlice";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SPACE_MD } from "../../../styles/spacing";
 import { IconFolder } from "../../../components/icons/Icons";
 
@@ -12,25 +14,17 @@ import { IconFolder } from "../../../components/icons/Icons";
  * @returns {JSX.Element|string}
  */
 export function MetadataFieldsListManager({ projectId }) {
+  const dispatch = useDispatch();
   const { canManage } = useSelector((state) => state.project);
-  const { fields, loading } = useSelector((state) => state.fields);
+  const { fields, restrictions, loading } = useSelector(
+    (state) => state.fields
+  );
 
   const [{ selected, selectedItems }, { setSelected }] = useTableSelect(fields);
 
-  const restrictions = [
-    {
-      label: "RESTRICTED",
-      value: "RESTRICTED",
-    },
-    {
-      label: "SECRET",
-      value: "SECRET",
-    },
-    {
-      label: "NONE",
-      value: "NONE",
-    },
-  ];
+  React.useEffect(() => {
+    dispatch(fetchFieldsRestrictions());
+  }, [dispatch]);
 
   const columns = [
     {
@@ -49,13 +43,7 @@ export function MetadataFieldsListManager({ projectId }) {
       dataIndex: "restriction",
       key: "restriction",
       render() {
-        return (
-          <Select
-            defaultValue={"RESTRICTED"}
-            style={{ width: `100%` }}
-            options={restrictions}
-          />
-        );
+        return <Select style={{ width: `100%` }} options={restrictions} />;
       },
     },
   ];

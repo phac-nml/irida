@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -8,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -106,5 +109,11 @@ public class UIMetadataService {
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		return templateService.getMetadataFieldsForProject(project);
+	}
+
+	public List<SelectOption> getMetadataFieldRestrictions() {
+		return Arrays.stream(ProjectRole.values())
+				.map(role -> new SelectOption(role.toString(), role.toString()))
+				.collect(Collectors.toList());
 	}
 }

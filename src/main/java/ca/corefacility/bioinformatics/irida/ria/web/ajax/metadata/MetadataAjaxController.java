@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
@@ -99,5 +100,10 @@ public class MetadataAjaxController {
 	@GetMapping("/fields")
 	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);
+	}
+
+	@GetMapping("/fields/restrictions")
+	public List<SelectOption> getMetadataRestrictions(){
+		return service.getMetadataFieldRestrictions();
 	}
 }

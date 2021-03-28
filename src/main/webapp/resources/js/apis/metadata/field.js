@@ -36,3 +36,12 @@ export async function getMetadataFieldsForProject(projectId) {
     return e.response.data.message;
   }
 }
+
+export async function getMetadataRestrictions() {
+  try {
+    const { data } = await axios.get(`${URL}/restrictions`);
+    return data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
