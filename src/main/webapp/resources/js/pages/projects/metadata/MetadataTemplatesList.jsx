@@ -43,9 +43,7 @@ const HoverItem = styled(List.Item)`
  * @constructor
  */
 export function MetadataTemplatesList({ projectId }) {
-  const { templates, loading } = useSelector(
-    (state) => state.templates
-  );
+  const { templates, loading } = useSelector((state) => state.templates);
   const { canManage } = useSelector((state) => state.project);
 
   const { fields } = useSelector((state) => state.fields);
@@ -57,6 +55,11 @@ export function MetadataTemplatesList({ projectId }) {
 
   const [templatesModified, setTemplatesModified] = React.useState([{}]);
 
+  /**
+   * Set default metadata template for project.
+   *
+   * @param {number} templateId - identifier for the metadata template to set as default
+   */
   const setDefaultTemplate = async (templateId) => {
     await dispatch(setDefaultTemplateForProject({ projectId, templateId }))
       .then(unwrapResult)
@@ -67,9 +70,9 @@ export function MetadataTemplatesList({ projectId }) {
   };
 
   React.useEffect(() => {
-    if(templates != null && fields != null) {
+    if (templates != null && fields != null) {
       let defaultTemplateFound = templates.find((templ) => templ.default);
-      let templatesCopy = Object.assign([{}], templates)
+      let templatesCopy = Object.assign([{}], templates);
 
       /*
       We need to add the All Fields Template as
@@ -87,10 +90,10 @@ export function MetadataTemplatesList({ projectId }) {
       };
 
       // Add the All Fields template to the templatesCopy object
-      templatesCopy.unshift(allFieldsTemplate);
+      templatesCopy.push(allFieldsTemplate);
       setTemplatesModified(templatesCopy);
     }
-  }, [templates])
+  }, [templates]);
 
   /**
    * This creates the "actions" that appear at the right of every row in
@@ -117,7 +120,7 @@ export function MetadataTemplatesList({ projectId }) {
           placement="topLeft"
           title={
             template.default &&
-              i18n("MetadataTemplatesList.cannot-remove-default")
+            i18n("MetadataTemplatesList.cannot-remove-default")
           }
           arrowPointAtCenter
           key={`remove-tooltip-${template.identifier}`}
@@ -157,7 +160,6 @@ export function MetadataTemplatesList({ projectId }) {
       .then(({ message }) => notification.success({ message }))
       .catch((message) => notification.error({ message }));
 
-
   return (
     <List
       loading={loading}
@@ -174,42 +176,37 @@ export function MetadataTemplatesList({ projectId }) {
       }}
       dataSource={templatesModified}
     >
-      { templatesModified &&
-          templatesModified.map(item => (
-            <HoverItem className="t-m-template" actions={item.identifier != 0 && getActionsForItem(item)} key={`hover-item-${item.identifier}`}>
-              <List.Item.Meta
-                title={
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    { item.identifier != 0 ?
-                      <Link
-                        className="t-t-name"
-                        style={{ color: blue6, display: "block" }}
-                        to={`${item.identifier}`}
-                      >
-                        {item.name}
-                      </Link>
-                      :
-                      <Text
-                        className="t-t-name"
-                        style={{ display: "block" }}
-                      >
-                        {item.name}
-                      </Text>
-                    }
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                      }}
+      {templatesModified &&
+        templatesModified.map((item) => (
+          <HoverItem
+            className="t-m-template"
+            actions={item.identifier != 0 && getActionsForItem(item)}
+            key={`hover-item-${item.identifier}`}
+          >
+            <List.Item.Meta
+              title={
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {item.identifier != 0 ? (
+                    <Link
+                      className="t-t-name"
+                      style={{ color: blue6, display: "block" }}
+                      to={`${item.identifier}`}
                     >
-                      { canManage &&
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <Text className="t-t-name" style={{ display: "block" }}>
+                      {item.name}
+                    </Text>
+                  )}
+                  <div>
+                    {canManage &&
                       (item.default ? (
                         <Tag
                           key={`default-${item.identifier}`}
@@ -228,29 +225,29 @@ export function MetadataTemplatesList({ projectId }) {
                         >
                           {i18n("MetadataTemplatesList.set-as-default")}
                         </Button>
-                      ))
-                      }
-                      <Tag key={`fields-${item.identifier}`}>
-                        {i18n("ProjectMetadataTemplates.fields", item.fields ? item.fields.length : 0)}
-                      </Tag>
-
-                    </div>
+                      ))}
+                    <Tag key={`fields-${item.identifier}`}>
+                      {i18n(
+                        "ProjectMetadataTemplates.fields",
+                        item.fields ? item.fields.length : 0
+                      )}
+                    </Tag>
                   </div>
-                }
-              />
-              {item.description && (
-                <Typography.Paragraph
-                  ellipsis={{
-                    rows: 2,
-                    expandable: true,
-                  }}
-                >
-                  {item.description}
-                </Typography.Paragraph>
-              )}
-            </HoverItem>
-          ))
-      }
+                </div>
+              }
+            />
+            {item.description && (
+              <Typography.Paragraph
+                ellipsis={{
+                  rows: 2,
+                  expandable: true,
+                }}
+              >
+                {item.description}
+              </Typography.Paragraph>
+            )}
+          </HoverItem>
+        ))}
     </List>
   );
 }
