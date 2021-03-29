@@ -2,7 +2,10 @@ import { Button, Empty, Select, Space, Table } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTableSelect } from "../../../hooks";
-import { fetchFieldsRestrictions } from "../redux/fieldsSlice";
+import {
+  fetchFieldsRestrictions,
+  updateProjectFieldRestriction,
+} from "../redux/fieldsSlice";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
@@ -18,6 +21,16 @@ export function MetadataFieldsListManager({ projectId }) {
   );
 
   const [{ selected, selectedItems }, { setSelected }] = useTableSelect(fields);
+
+  const changeFieldRestriction = (field, restriction) => {
+    dispatch(
+      updateProjectFieldRestriction({
+        projectId,
+        fieldKey: field.fieldKey,
+        projectRole: restriction,
+      })
+    );
+  };
 
   React.useEffect(() => {
     dispatch(fetchFieldsRestrictions());
@@ -42,10 +55,10 @@ export function MetadataFieldsListManager({ projectId }) {
       render(restriction, field) {
         return (
           <Select
-            onChange={console.log}
+            onChange={(value) => changeFieldRestriction(field, value)}
             style={{ width: `100%` }}
             options={restrictions}
-            defaultValue={restriction}
+            value={restriction}
           />
         );
       },

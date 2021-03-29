@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getMetadataFieldsForProject,
   getMetadataRestrictions,
+  patchProjectMetadataFieldRestriction,
 } from "../../../apis/metadata/field";
 import { addKeysToList } from "../../../utilities/http-utilities";
 
@@ -21,10 +22,29 @@ export const fetchFieldsRestrictions = createAsyncThunk(
   `fields/fetchFieldsRestrictions`,
   async () => {
     const restrictions = await getMetadataRestrictions();
-    console.log(restrictions);
     return {
       restrictions: addKeysToList(restrictions, "restriction", "value"),
     };
+  },
+  {
+    condition: (_args, { getState }) => {
+      const { fields } = getState();
+      if ("restrictions" in fields) {
+        return false;
+      }
+    },
+  }
+);
+
+export const updateProjectFieldRestriction = createAsyncThunk(
+  `fields/updateProjectFieldRestriction`,
+  async ({ projectId, fieldKey, projectRole }) => {
+    const message = await patchProjectMetadataFieldRestriction({
+      projectId,
+      fieldKey,
+      projectRole,
+    });
+    return { message, fieldKey, projectRole };
   }
 );
 
@@ -49,6 +69,13 @@ export const fieldsSlice = createSlice({
     [fetchFieldsRestrictions.fulfilled]: (state, action) => {
       console.log(action);
       state.restrictions = action.payload.restrictions;
+    },
+    [updateProjectFieldRestriction.fulfilled]: (state, action) => {
+      const index = state.fields.findIndex(
+        (field) => field.key === action.payload.fieldKey
+      );
+      console.log(index);
+      state.fields[index].restriction = action.payload.restriction;
     },
   },
 });
