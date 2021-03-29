@@ -32,7 +32,9 @@ public class ProjectDetailsAjaxControllerTest {
 		service = mock(UIProjectsService.class);
 		controller = new ProjectDetailsAjaxController(projectService, service, messageSource);
 
-		when(projectService.read(anyLong())).thenReturn(TestDataFactory.constructProject());
+		Project project = TestDataFactory.constructProject();
+		when(projectService.read(anyLong())).thenReturn(project);
+		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID)).thenReturn(new ProjectInfoResponse(project, true, true));
 	}
 
 	@Test
