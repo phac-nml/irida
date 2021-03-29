@@ -10,6 +10,7 @@
 
 "use strict";
 
+const path = require("path");
 const Chunk = require("webpack/lib/Chunk.js");
 const ConcatenatedModule = require("webpack/lib/optimize/ConcatenatedModule");
 const { connectChunkGroupAndChunk } = require("webpack/lib/GraphHelpers");
@@ -256,7 +257,7 @@ class i18nThymeleafWebpackPlugin {
 
                 const html = template(keys, entrypointName);
                 compilation.emitAsset(
-                  `${this.templatePath}${filename}`,
+                  path.join(this.templatePath, filename),
                   new sources.RawSource(html)
                 );
               }

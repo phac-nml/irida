@@ -32,12 +32,11 @@ module.exports = (env, argv) => {
       symlinks: false,
     },
     output: {
-      filename: "js/[name].bundle.js",
       path: path.resolve(__dirname, "dist"),
       pathinfo: false,
       publicPath: `/dist/`,
-      filename: "js/[name]-[contenthash].js",
-      chunkFilename: "js/[name]-[contenthash].chunk.js",
+      filename: path.join("js", "[name]-[contenthash].js"),
+      chunkFilename: path.join("js", "[name]-[contenthash].chunk.js"),
     },
     /*
     Prevent bundling of jQuery, it will be added (and exposed) through the vendor bundle.
@@ -128,11 +127,13 @@ module.exports = (env, argv) => {
        */
       new i18nThymeleafWebpackPlugin({
         functionName: "i18n",
-        templatePath: "../pages/templates/",
+        templatePath: path.join("..", "pages", "templates"),
       }),
       new webpack.ProvidePlugin({
         // Provide the custom internationalization function.
-        i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
+        i18n: path.resolve(
+          path.join(__dirname, path.join("resources", "js", "i18n"))
+        ),
         process: "process/browser",
       }),
       new WebpackAssetsManifest({
