@@ -12,6 +12,7 @@ Due to the nature of webpack code splitting and file chunking to optimize file s
 ```json
 {
   "entrypoints": {
+    "assets: {
       "cart": {
             "js": [
               "js/runtime-b9a6010595ef63e39154.js",
@@ -28,6 +29,7 @@ Due to the nature of webpack code splitting and file chunking to optimize file s
             ]
           },
       ...
+    }
   }
 }
 ```
