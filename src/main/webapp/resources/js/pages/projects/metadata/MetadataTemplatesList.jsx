@@ -61,7 +61,7 @@ export function MetadataTemplatesList({ projectId }) {
    * @param {number} templateId - identifier for the metadata template to set as default
    */
   const setDefaultTemplate = async (templateId) => {
-    await dispatch(setDefaultTemplateForProject({ projectId, templateId }))
+    dispatch(setDefaultTemplateForProject({ projectId, templateId }))
       .then(unwrapResult)
       .then(({ message }) => {
         notification.success({ message });

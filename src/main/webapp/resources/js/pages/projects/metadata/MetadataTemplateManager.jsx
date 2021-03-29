@@ -18,7 +18,10 @@ import DnDTable from "../../../components/ant.design/DnDTable";
 import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
 import { HelpPopover } from "../../../components/popovers";
 import { addKeysToList } from "../../../utilities/http-utilities";
-import { setDefaultTemplateForProject, updateTemplate } from "../redux/templatesSlice";
+import {
+  setDefaultTemplateForProject,
+  updateTemplate,
+} from "../redux/templatesSlice";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 import { blue6 } from "../../../styles/colors";
 
@@ -53,9 +56,11 @@ export function MetadataTemplateManager({ id }) {
     if (!loading) {
       const found = templates.find((template) => template.identifier == id);
 
-      const defaultTemplateIndex = templates.findIndex((template) => template.default);
+      const defaultTemplateIndex = templates.findIndex(
+        (template) => template.default
+      );
 
-      if(defaultTemplateIndex >= 0) {
+      if (defaultTemplateIndex >= 0) {
         setDefaultTemplateId(templates[defaultTemplateIndex].identifier);
       }
 
@@ -154,7 +159,7 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the template to return component for
    */
   const displayHeaderExtras = (template) => {
-    if(template.identifier === defaultTemplateId) {
+    if (template.identifier === defaultTemplateId) {
       return [
         <Tag
           key={`default-template-${template.identifier}`}
@@ -163,7 +168,7 @@ export function MetadataTemplateManager({ id }) {
           className="t-t-default-tag"
         >
           {i18n("MetadataTemplateManager.default")}
-        </Tag>
+        </Tag>,
       ];
     }
     return [
@@ -173,8 +178,8 @@ export function MetadataTemplateManager({ id }) {
         className="t-t-set-default-button"
       >
         {i18n("MetadataTemplateManager.set-as-default")}
-      </Button>
-    ]
+      </Button>,
+    ];
   };
 
   /**
@@ -183,7 +188,12 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the template to set as default
    */
   const setDefaultTemplate = async (template) => {
-    await dispatch(setDefaultTemplateForProject({ projectId: window.project.id, templateId: template.identifier }))
+    dispatch(
+      setDefaultTemplateForProject({
+        projectId: window.project.id,
+        templateId: template.identifier,
+      })
+    )
       .then(unwrapResult)
       .then(({ message }) => {
         setDefaultTemplateId(template.identifier);

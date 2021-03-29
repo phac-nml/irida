@@ -134,14 +134,12 @@ export const templatesSlice = createSlice({
       );
 
       if (prevDefaultIndex >= 0) {
-        state.templates[prevDefaultIndex].default = false
+        state.templates[prevDefaultIndex].default = false;
       }
 
       if (newDefaultIndex >= 0) {
         state.templates[newDefaultIndex].default = true;
       }
-
-      return state;
     },
   },
 });
