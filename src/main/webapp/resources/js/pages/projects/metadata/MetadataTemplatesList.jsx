@@ -67,10 +67,15 @@ export function MetadataTemplatesList({ projectId }) {
   };
 
   React.useEffect(() => {
-    if(templates != null) {
+    if(templates != null && fields != null) {
       let defaultTemplateFound = templates.find((templ) => templ.default);
       let templatesCopy = Object.assign([{}], templates)
 
+      /*
+      We need to add the All Fields Template as
+      it is not stored in the db and is dynamically created to
+      be displayed
+       */
       let allFieldsTemplate = {
         name: i18n("MetadataTemplatesList.allFields"),
         label: i18n("MetadataTemplatesList.allFields"),
@@ -81,6 +86,7 @@ export function MetadataTemplatesList({ projectId }) {
         fields: fields ? fields : [],
       };
 
+      // Add the All Fields template to the templatesCopy object
       templatesCopy.unshift(allFieldsTemplate);
       setTemplatesModified(templatesCopy);
     }
