@@ -25,6 +25,8 @@ import styled from "styled-components";
 
 const { Text } = Typography;
 
+const ALL_FIELDS_TEMPLATE_ID = 0;
+
 const HoverItem = styled(List.Item)`
   button.ant-btn-link {
     opacity: 0;
@@ -175,79 +177,78 @@ export function MetadataTemplatesList({ projectId }) {
         ),
       }}
       dataSource={templatesModified}
-    >
-      {templatesModified &&
-        templatesModified.map((item) => (
-          <HoverItem
-            className="t-m-template"
-            actions={item.identifier != 0 && getActionsForItem(item)}
-            key={`hover-item-${item.identifier}`}
-          >
-            <List.Item.Meta
-              title={
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  {item.identifier != 0 ? (
-                    <Link
-                      className="t-t-name"
-                      style={{ color: blue6, display: "block" }}
-                      to={`${item.identifier}`}
-                    >
-                      {item.name}
-                    </Link>
-                  ) : (
-                    <Text className="t-t-name" style={{ display: "block" }}>
-                      {item.name}
-                    </Text>
-                  )}
-                  <div>
-                    {canManage &&
-                      (item.default ? (
-                        <Tag
-                          key={`default-${item.identifier}`}
-                          color={blue6}
-                          className="t-t-default-tag"
-                        >
-                          {i18n("MetadataTemplatesList.default")}
-                        </Tag>
-                      ) : (
-                        <Button
-                          size="small"
-                          key={`set-default-${item.identifier}`}
-                          onClick={() => setDefaultTemplate(item.identifier)}
-                          type="link"
-                          className="t-t-set-default-button"
-                        >
-                          {i18n("MetadataTemplatesList.set-as-default")}
-                        </Button>
-                      ))}
-                    <Tag key={`fields-${item.identifier}`}>
-                      {i18n(
-                        "ProjectMetadataTemplates.fields",
-                        item.fields ? item.fields.length : 0
-                      )}
-                    </Tag>
-                  </div>
-                </div>
-              }
-            />
-            {item.description && (
-              <Typography.Paragraph
-                ellipsis={{
-                  rows: 2,
-                  expandable: true,
+      renderItem={(item) => (
+        <List.Item
+          className="t-m-template"
+          actions={
+            item.identifier != ALL_FIELDS_TEMPLATE_ID && getActionsForItem(item)
+          }
+        >
+          <List.Item.Meta
+            title={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                {item.description}
-              </Typography.Paragraph>
-            )}
-          </HoverItem>
-        ))}
-    </List>
+                {item.identifier != ALL_FIELDS_TEMPLATE_ID ? (
+                  <Link
+                    className="t-t-name"
+                    style={{ color: blue6, display: "block" }}
+                    to={`${item.identifier}`}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <Text className="t-t-name" style={{ display: "block" }}>
+                    {item.name}
+                  </Text>
+                )}
+                <div>
+                  {canManage &&
+                    (item.default ? (
+                      <Tag
+                        key={`default-${item.identifier}`}
+                        color={blue6}
+                        className="t-t-default-tag"
+                      >
+                        {i18n("MetadataTemplatesList.default")}
+                      </Tag>
+                    ) : (
+                      <Button
+                        size="small"
+                        key={`set-default-${item.identifier}`}
+                        onClick={() => setDefaultTemplate(item.identifier)}
+                        type="link"
+                        className="t-t-set-default-button"
+                      >
+                        {i18n("MetadataTemplatesList.set-as-default")}
+                      </Button>
+                    ))}
+                  <Tag key={`fields-${item.identifier}`}>
+                    {i18n(
+                      "ProjectMetadataTemplates.fields",
+                      item.fields ? item.fields.length : 0
+                    )}
+                  </Tag>
+                </div>
+              </div>
+            }
+          />
+          {item.description && (
+            <Typography.Paragraph
+              ellipsis={{
+                rows: 2,
+                expandable: true,
+              }}
+            >
+              {item.description}
+            </Typography.Paragraph>
+          )}
+        </List.Item>
+      )}
+    />
   );
 }
