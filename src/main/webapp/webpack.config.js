@@ -128,6 +128,7 @@ module.exports = (env, argv) => {
        */
       new i18nThymeleafWebpackPlugin({
         functionName: "i18n",
+        templatePath: "../pages/templates/",
       }),
       new webpack.ProvidePlugin({
         // Provide the custom internationalization function.

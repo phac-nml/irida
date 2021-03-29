@@ -51,6 +51,7 @@ class i18nThymeleafWebpackPlugin {
   constructor(options) {
     this.options = options || {};
     this.functionName = this.options.functionName || "i18n";
+    this.templatePath = this.options.templatePath || "../pages/templates/";
   }
 
   /**
@@ -255,7 +256,7 @@ class i18nThymeleafWebpackPlugin {
 
                 const html = template(keys, entrypointName);
                 compilation.emitAsset(
-                  `../pages/templates/i18n/${entrypointName}.html`,
+                  `${this.templatePath}${filename}`,
                   new sources.RawSource(html)
                 );
               }
