@@ -109,6 +109,7 @@ public class MetadataAjaxController {
 	 *
 	 * @param templateId Identifier for the metadata template to set as default.
 	 * @param projectId  Identifier for the project to set the metadata template as default for.
+	 * @param locale     Current users {@link Locale}
 	 * @return {@link AjaxSuccessResponse} with the success message
 	 */
 	@PostMapping("/templates/{templateId}/set-project-default")
@@ -118,5 +119,4 @@ public class MetadataAjaxController {
 		return ResponseEntity.ok(new AjaxSuccessResponse(
 				messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale)));
 	}
-
 }
