@@ -7,7 +7,7 @@ Webpack
 
 [Webpack](https://webpack.js.org) is used to bundle front end assets, including JavaScript, CSS, SCSS, images and fonts into static assets to be consumed.  It is also an integral part of the IRIDA internationalization system. A webpack plugin, `i18nThymeleafWebpackPlugin`, developed in house is used to capture strings that need to be internationalized for each webpack entry, combining them into an html Thymeleaf template that will get processed and translated at runtime.
 
-Due to the nature of webpack code splitting and file chunking to optimize file size, an indeterminate amount of resource files (css and js) can be created for each entry.  Once this process is complete, webpack creates a `manifest.json` file (portion shown below) that contains a json object for teach of the entries that shows all assets that are required for css, js, and html (internationalizations):
+Due to the nature of webpack code splitting and file chunking to optimize file size, an indeterminate amount of resource files (css and js) can be created for each entry.  Once this process is complete, webpack creates a `assets-manifest.json` file (portion shown below) that contains a json object for teach of the entries that shows all assets that are required for css, js, and html (internationalizations):
 
 ```json
 {
@@ -34,7 +34,7 @@ Due to the nature of webpack code splitting and file chunking to optimize file s
 }
 ```
   
-We created a Thymeleaf dialect called `WebpackerDialect` which will look for the specific entry name based on html elements on the page.  It then parses this `manifest.json` file and dynamically creates all the CSS `link` tags and JavaScript `script` tags.   For each JavaScript entry, it will check to see if there are any translations to be loaded onto the page (based on if there is an `html` attribute on the manifest's entry object), and if so, will inject them onto the page immediate prior to the new `script` tag for that entry.
+We created a Thymeleaf dialect called `WebpackerDialect` which will look for the specific entry name based on html elements on the page.  It then parses this `assets-manifest.json` file and dynamically creates all the CSS `link` tags and JavaScript `script` tags.   For each JavaScript entry, it will check to see if there are any translations to be loaded onto the page (based on if there is an `html` attribute on the manifest's entry object), and if so, will inject them onto the page immediate prior to the new `script` tag for that entry.
 
 #### CSS
 
