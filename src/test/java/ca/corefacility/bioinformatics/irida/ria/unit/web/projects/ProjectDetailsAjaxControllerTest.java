@@ -29,6 +29,7 @@ public class ProjectDetailsAjaxControllerTest {
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		MessageSource messageSource = mock(MessageSource.class);
+		service = mock(UIProjectsService.class);
 		controller = new ProjectDetailsAjaxController(projectService, service, messageSource);
 
 		when(projectService.read(anyLong())).thenReturn(TestDataFactory.constructProject());
