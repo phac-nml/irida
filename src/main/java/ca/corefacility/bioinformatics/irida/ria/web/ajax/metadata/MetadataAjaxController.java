@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorRespo
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
@@ -98,12 +99,12 @@ public class MetadataAjaxController {
 	 * @return list of {@link MetadataTemplateField}s
 	 */
 	@GetMapping("/fields")
-	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam Long projectId) {
+	public List<ProjectMetadataField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);
 	}
 
 	@GetMapping("/fields/restrictions")
-	public List<SelectOption> getMetadataRestrictions(){
-		return service.getMetadataFieldRestrictions();
+	public List<SelectOption> getMetadataRestrictions(Locale locale){
+		return service.getMetadataFieldRestrictions(locale);
 	}
 }

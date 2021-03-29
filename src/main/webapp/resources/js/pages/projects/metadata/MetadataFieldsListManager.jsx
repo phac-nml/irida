@@ -1,12 +1,9 @@
-import React from "react";
 import { Button, Empty, Select, Space, Table } from "antd";
-import { getMetadataRestrictions } from "../../../apis/metadata/field";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTableSelect } from "../../../hooks";
 import { fetchFieldsRestrictions } from "../redux/fieldsSlice";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
-import { useDispatch, useSelector } from "react-redux";
-import { SPACE_MD } from "../../../styles/spacing";
-import { IconFolder } from "../../../components/icons/Icons";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -42,8 +39,15 @@ export function MetadataFieldsListManager({ projectId }) {
       title: "__Restriction [help]",
       dataIndex: "restriction",
       key: "restriction",
-      render() {
-        return <Select style={{ width: `100%` }} options={restrictions} />;
+      render(restriction, field) {
+        return (
+          <Select
+            onChange={console.log}
+            style={{ width: `100%` }}
+            options={restrictions}
+            defaultValue={restriction}
+          />
+        );
       },
     },
   ];
@@ -57,7 +61,7 @@ export function MetadataFieldsListManager({ projectId }) {
               className="t-create-template"
               disabled={selected.length === 0}
             >
-              {i18n("MetadataFieldsList.create")}
+              {i18n("CreateMetadataTemplate.title")}
             </Button>
           </MetadataTemplateCreate>
         </Space>

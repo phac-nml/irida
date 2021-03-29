@@ -14,7 +14,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -106,14 +108,26 @@ public class UIMetadataService {
 	 * @param projectId Identifier for a {@link Project}
 	 * @return List of {@link MetadataTemplateField}
 	 */
-	public List<MetadataTemplateField> getMetadataFieldsForProject(Long projectId) {
+	public List<ProjectMetadataField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
-		return templateService.getMetadataFieldsForProject(project);
+		List<MetadataTemplateField> fields = templateService.getMetadataFieldsForProject(project);
+		return fields.stream()
+				.map(field -> {
+					MetadataRestriction restriction = templateService.getMetadataRestrictionForFieldAndProject(project,
+							field);
+					String level = restriction == null ?
+							"PROJECT_USER" :
+							restriction.getLevel()
+									.toString();
+					return new ProjectMetadataField(field, level);
+				})
+				.collect(Collectors.toList());
 	}
 
-	public List<SelectOption> getMetadataFieldRestrictions() {
+	public List<SelectOption> getMetadataFieldRestrictions(Locale locale) {
 		return Arrays.stream(ProjectRole.values())
-				.map(role -> new SelectOption(role.toString(), role.toString()))
+				.map(role -> new SelectOption(role.toString(),
+						messageSource.getMessage("projectRole." + role, new Object[] {}, locale)))
 				.collect(Collectors.toList());
 	}
 }
