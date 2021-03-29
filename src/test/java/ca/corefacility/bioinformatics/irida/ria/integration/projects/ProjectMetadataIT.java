@@ -23,7 +23,8 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 
 		// TEMPLATES
 		page.gotoMetadataTemplates();
-		int numberOfMetadataTemplates = page.getNumberOfMetadataTemplates();
+		// The +1 is for the All Fields template which is dynamically displayed
+		int numberOfMetadataTemplates = page.getNumberOfMetadataTemplates() + 1;
 		Assert.assertEquals("Expect to display all metadata templates in the project", 1, numberOfMetadataTemplates);
 
 		// Test field selection & template creation
