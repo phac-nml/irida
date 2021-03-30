@@ -23,9 +23,10 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 
 		// TEMPLATES
 		page.gotoMetadataTemplates();
-		// The +1 is for the All Fields template which is dynamically displayed
-		int numberOfMetadataTemplates = page.getNumberOfMetadataTemplates() + 1;
-		Assert.assertEquals("Expect to display all metadata templates in the project", 1, numberOfMetadataTemplates);
+
+		int numberOfMetadataTemplates = page.getNumberOfMetadataTemplates();
+		// The All Fields template which is dynamically displayed + the one in the db
+		Assert.assertEquals("Expect to display all metadata templates in the project", 2, numberOfMetadataTemplates);
 
 		// Test field selection & template creation
 		page.gotoMetadataFields();
@@ -57,7 +58,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		Assert.assertFalse("Should not have a create template button", page.isCreateTemplateButtonVisible());
 		Assert.assertEquals("Should be able to see the metadata fields", 5, page.getNumberOfMetadataFields());
 		page.gotoMetadataTemplates();
-		Assert.assertEquals("Should be able to see the metadata templates", 1, page.getNumberOfMetadataTemplates());
+		Assert.assertEquals("Should be able to see the metadata templates", 2, page.getNumberOfMetadataTemplates());
 		Assert.assertFalse("Should not be able to delete a template", page.canDeleteTemplate());
 
 		page.gotoTemplate("test template");

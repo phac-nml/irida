@@ -20,7 +20,7 @@ export function TemplateSelectOption(props) {
           style={{
             maxWidth: 170,
             overflow: "hidden",
-            textOverflow: "ellipsis"
+            textOverflow: "ellipsis",
           }}
         >
           {name}
@@ -32,7 +32,8 @@ export function TemplateSelectOption(props) {
             </Tag>
           ) : null}
           <Tag className="templates-option--field-count">
-            {fields.filter(f => !f.hide).length - 2}
+            {/* We subtract 2 from the fields length as the Select box and sample name should not be included in this count */}
+            {fields.filter((f) => !f.hide).length - 2}
           </Tag>
         </span>
       </div>
@@ -45,5 +46,5 @@ TemplateSelectOption.propTypes = {
   saved: PropTypes.bool.isRequired,
   current: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
-  saveTemplate: PropTypes.func.isRequired
+  saveTemplate: PropTypes.func.isRequired,
 };

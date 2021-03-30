@@ -100,9 +100,9 @@ public class ProjectMetadataPage extends AbstractPage {
 					.equalsIgnoreCase(name)) {
 				element.click();
 				wait.until(ExpectedConditions.urlContains("/templates/"));
+				break;
 			}
 		}
-
 	}
 
 	public boolean canDeleteTemplate() {
