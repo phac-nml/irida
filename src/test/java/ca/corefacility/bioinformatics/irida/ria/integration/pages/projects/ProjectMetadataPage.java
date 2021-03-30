@@ -174,8 +174,16 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	public boolean removeButtonIsDisabled() {
 		// First template is set as the default so we get it
+		waitForTemplates();
 		WebElement currDefaultTemplate = metadataTemplateRow.get(0);
 		return !currDefaultTemplate.findElement(By.className("t-t-remove-button")).isEnabled();
+	}
+
+	public boolean defaultTemplateTagVisible() {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebElement defaultTag = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-default-tag")));
+		return defaultTag.isDisplayed();
 	}
 
 	private void waitForFields() {
