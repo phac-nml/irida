@@ -178,7 +178,7 @@ export function MetadataTemplatesList({ projectId }) {
       }}
       dataSource={templatesModified}
       renderItem={(item) => (
-        <List.Item
+        <HoverItem
           className="t-m-template"
           actions={
             item.identifier != ALL_FIELDS_TEMPLATE_ID && getActionsForItem(item)
@@ -247,7 +247,7 @@ export function MetadataTemplatesList({ projectId }) {
               {item.description}
             </Typography.Paragraph>
           )}
-        </List.Item>
+        </HoverItem>
       )}
     />
   );
