@@ -186,6 +186,13 @@ public class ProjectMetadataPage extends AbstractPage {
 		return defaultTag.isDisplayed();
 	}
 
+	public boolean setDefaultTemplateButtonVisible() {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebElement setDefaultTemplateBtn = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-set-default-button")));
+		return setDefaultTemplateBtn.isDisplayed();
+	}
+
 	private void waitForFields() {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		wait.until(ExpectedConditions.visibilityOfAllElements(metadataFieldRow));

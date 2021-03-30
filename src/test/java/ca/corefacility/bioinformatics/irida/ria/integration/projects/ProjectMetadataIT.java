@@ -59,13 +59,24 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		// The all fields template shouldn't be the default as we set the new template created above as the default
 		Assert.assertFalse(page.allFieldsTemplateIsDefault());
 
+		// The current default template
+		page.gotoTemplate("An awesome name");
+		Assert.assertTrue(page.defaultTemplateTagVisible());
+
+		page.gotoMetadataTemplates();
+
+		// The other previous template which is not the default
+		page.gotoTemplate("Test Template");
+		// Since it's not a default template it should have the Set as Default button visible
+		Assert.assertTrue(page.setDefaultTemplateButtonVisible());
+
+		page.gotoMetadataTemplates();
+
 		page.deleteTemplate("Test Template");
 		Assert.assertEquals("Should be the same number of template as there was initially", numberOfMetadataTemplates,
 				page.getNumberOfMetadataTemplates());
 
-		// The current default template
-		page.gotoTemplate("An awesome name");
-		Assert.assertTrue(page.defaultTemplateTagVisible());
+
 	}
 
 	@Test
