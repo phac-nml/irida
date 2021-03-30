@@ -2,6 +2,12 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import org.springframework.security.core.Authentication;
 
+/**
+ * Root interface for any permissions being built within IRIDA.  This interface defines the methods required for evaluating a permission in {@link IridaPermissionEvaluator}.
+ *
+ * @param <DomainObjectType>
+ * @see IridaPermissionEvaluator
+ */
 public interface BasePermission<DomainObjectType> {
 
 	/**
