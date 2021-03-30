@@ -53,8 +53,8 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	private int passwordExpiryInDays = -1;
 
 	/**
-	 * Loads all of the {@link RepositoryBackedPermission} sub-classes found in the security
-	 * package during component scan. {@link RepositoryBackedPermission} classes are used in
+	 * Loads all of the {@link BasePermission} sub-classes found in the security
+	 * package during component scan. {@link BasePermission} classes are used in
 	 * {@link @PreAuthorize} annotations for verifying that a user has
 	 * permission to invoke a method by the expression handler.
 	 */
