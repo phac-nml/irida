@@ -14,6 +14,7 @@ Changes
 * [UI]: Fixed bug where samples not rendering on project samples page when the config setting ngsarchive.linker.available is set to false.
 * [Developer]: Updated to Webpack v5 and Yarn v2.
 * [UI]: Updated create metadata template.
+* [Developer]: Cleaned up compile warnings related to deprecated Spring profile methods.
 
 20.09 to 21.01
 --------------
