@@ -158,6 +158,26 @@ public class ProjectMetadataPage extends AbstractPage {
 		return metadataTemplateName.getText();
 	}
 
+	public boolean allFieldsTemplateIsDefault() {
+		waitForTemplates();
+		// The All Fields template is the last template displayed on the page
+		WebElement allFieldsTemplate = metadataTemplateRow.get(metadataTemplateRow.size() - 1);
+		List<WebElement> defaultTag = allFieldsTemplate.findElements(By.className("t-t-default-tag"));
+		return defaultTag.size() == 1;
+	}
+
+	public void setDefaultTemplate() {
+		WebElement newDefaultTemplate = metadataTemplateRow.get(0);
+		WebElement setDefaultTemplate = newDefaultTemplate.findElement(By.className("t-t-set-default-button"));
+		setDefaultTemplate.click();
+	}
+
+	public boolean removeButtonIsDisabled() {
+		// First template is set as the default so we get it
+		WebElement currDefaultTemplate = metadataTemplateRow.get(0);
+		return !currDefaultTemplate.findElement(By.className("t-t-remove-button")).isEnabled();
+	}
+
 	private void waitForFields() {
 		WebDriverWait wait = new WebDriverWait(driver, 4);
 		wait.until(ExpectedConditions.visibilityOfAllElements(metadataFieldRow));

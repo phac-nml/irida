@@ -24,6 +24,12 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		// TEMPLATES
 		page.gotoMetadataTemplates();
 
+		/*
+		Check that the All Fields Template is the default template for the project on load as no default
+		template has been set yet for the project
+		 */
+		Assert.assertTrue(page.allFieldsTemplateIsDefault());
+
 		int numberOfMetadataTemplates = page.getNumberOfMetadataTemplates();
 		// The All Fields template which is dynamically displayed + the one in the db
 		Assert.assertEquals("Expect to display all metadata templates in the project", 2, numberOfMetadataTemplates);
@@ -44,6 +50,14 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 
 		Assert.assertEquals("Should be one more template than there was initially", numberOfMetadataTemplates + 1,
 				page.getNumberOfMetadataTemplates());
+
+		// Set the first template as the default for the project which is the template created above
+		page.setDefaultTemplate();
+		// The remove button for the default template should be disabled
+		page.removeButtonIsDisabled();
+
+		// The all fields template shouldn't be the default as we set the new template created above as the default
+		Assert.assertFalse(page.allFieldsTemplateIsDefault());
 
 		page.deleteTemplate("Test Template");
 		Assert.assertEquals("Should be the same number of template as there was initially", numberOfMetadataTemplates,
