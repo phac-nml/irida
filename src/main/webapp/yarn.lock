@@ -157,8 +157,8 @@ __metadata:
   linkType: hard
 
 "@antv/g-base@npm:^0.5.0, @antv/g-base@npm:^0.5.1, @antv/g-base@npm:^0.5.3, @antv/g-base@npm:~0.5.0":
-  version: 0.5.6
-  resolution: "@antv/g-base@npm:0.5.6"
+  version: 0.5.7
+  resolution: "@antv/g-base@npm:0.5.7"
   dependencies:
     "@antv/event-emitter": ^0.1.1
     "@antv/g-math": ^0.1.6
@@ -171,7 +171,7 @@ __metadata:
     d3-timer: ^1.0.9
     detect-browser: ^5.1.0
     tslib: ^2.0.3
-  checksum: 4801f2b6318cc2acef71dd9aef57d46c8de68fba0596b7eb8d9c312ee72bc5897c151ffcc48fbfec28a44dcdaf4190623228514657ca2b2c322d7012649a2857
+  checksum: 61e73fbe2cb1a4eb8f32945e676e19f6e8d2c3b454832953988dd0e157858d278a12f3d0ec9bd965bfa8c446f4523199ade2874bebb85e30f432dcc316694dad
   languageName: node
   linkType: hard
 
@@ -3637,7 +3637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-styled-components@npm:>= 1":
+"babel-plugin-styled-components@npm:>= 1.12.0":
   version: 1.12.0
   resolution: "babel-plugin-styled-components@npm:1.12.0"
   dependencies:
@@ -5468,9 +5468,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.649":
-  version: 1.3.701
-  resolution: "electron-to-chromium@npm:1.3.701"
-  checksum: d80bdedc8935d16fdaaaea28a0860bf085c47b4990d1b986c7b0a6de41a1e0dd0cf0cb79d6a65b99560a144b11e81007a4d5e9ebc755f8e3b9ce69c7fe97ce52
+  version: 1.3.702
+  resolution: "electron-to-chromium@npm:1.3.702"
+  checksum: 9722879569a09248062229794c247259c6c9e0ef14a3d82412376c17df7becd649e093bc001d76521db3d0a0245b229304c65740e58bf645f2fc51db835081e1
   languageName: node
   linkType: hard
 
@@ -11034,8 +11034,8 @@ fsevents@^2.1.2:
   linkType: hard
 
 "rc-menu@npm:^8.0.1, rc-menu@npm:^8.6.1, rc-menu@npm:~8.10.0":
-  version: 8.10.6
-  resolution: "rc-menu@npm:8.10.6"
+  version: 8.10.7
+  resolution: "rc-menu@npm:8.10.7"
   dependencies:
     "@babel/runtime": ^7.10.1
     classnames: 2.x
@@ -11048,7 +11048,7 @@ fsevents@^2.1.2:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 8b6ff36f355125683be71178e0ca38fe71d6f54bf2ab85f2715b372bb8727f84059d906f5867668cbc6de7e0fd750ad50cf934d441eec406a83a76249df534b0
+  checksum: a0471e027f663ebe3ad6cd78d6f2da4a4b604201822fef4aff376e89f97cc87bbd640d04a7ea89baa485f2a646908840701879e5f6b32e28cea66eef329da7fa
   languageName: node
   linkType: hard
 
@@ -12876,15 +12876,15 @@ resolve@^2.0.0-next.3:
   linkType: hard
 
 "styled-components@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "styled-components@npm:5.2.1"
+  version: 5.2.2
+  resolution: "styled-components@npm:5.2.2"
   dependencies:
     "@babel/helper-module-imports": ^7.0.0
     "@babel/traverse": ^7.4.5
     "@emotion/is-prop-valid": ^0.8.8
     "@emotion/stylis": ^0.8.4
     "@emotion/unitless": ^0.7.4
-    babel-plugin-styled-components: ">= 1"
+    babel-plugin-styled-components: ">= 1.12.0"
     css-to-react-native: ^3.0.0
     hoist-non-react-statics: ^3.0.0
     shallowequal: ^1.1.0
@@ -12893,7 +12893,7 @@ resolve@^2.0.0-next.3:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
     react-is: ">= 16.8.0"
-  checksum: c27911be08f2c6212d1f381d154cab5204c63b34d1b9ba56388b19654497a523ff466884fbf8914637c046ae8862387b0fc63f9ead67e1a8ab3a8af70b0d8089
+  checksum: e22ff50b0e6d53916ee393dc81a4ea415e573eba8a65f8eedeb4daea080d8bede3027c5ec3d9782cd3f08cf2e87babb50977bfac4f6de6ca26a9d68ea3bcef19
   languageName: node
   linkType: hard
 
@@ -12983,8 +12983,8 @@ resolve@^2.0.0-next.3:
   linkType: hard
 
 "table@npm:^6.0.4":
-  version: 6.0.8
-  resolution: "table@npm:6.0.8"
+  version: 6.0.9
+  resolution: "table@npm:6.0.9"
   dependencies:
     ajv: ^8.0.1
     is-boolean-object: ^1.1.0
@@ -12995,7 +12995,7 @@ resolve@^2.0.0-next.3:
     lodash.truncate: ^4.4.2
     slice-ansi: ^4.0.0
     string-width: ^4.2.0
-  checksum: 411ddc99521bd1f64eb87bae13c7127128525c2be3c9e64dea2318aa90cb7780670a0247a8c1338f239fd4f1e8b9a7ef9931ce800e508aa554546c92b6c6ba91
+  checksum: 7591f29ac667a5cf33d9564b5775f1778b1b0a346dadcedd190420c87c295c2f618520669ab10f906d017283f4f2ae1821382028845909ce88ce78d895572bc0
   languageName: node
   linkType: hard
 
@@ -13656,13 +13656,13 @@ resolve@^2.0.0-next.3:
   linkType: hard
 
 "v8-to-istanbul@npm:^7.0.0":
-  version: 7.1.0
-  resolution: "v8-to-istanbul@npm:7.1.0"
+  version: 7.1.1
+  resolution: "v8-to-istanbul@npm:7.1.1"
   dependencies:
     "@types/istanbul-lib-coverage": ^2.0.1
     convert-source-map: ^1.6.0
     source-map: ^0.7.3
-  checksum: decc2cc896de173adc27e5621f3d7e5d0d4018d6df12cc95c5de2d8eb1a1bab2ed4fe9a4e767dd469b81b3520024b9fec6b9b4beeefbfac2bbeebfc9937bf9ba
+  checksum: 12aad5bcaf3bdc9587eac86299313b677c53f3ad4c4663067d7ee456fb4c606b3abfef0b7d67b4a604b7f270e1ad4c00d31d1c6183d1cf023f348cff4f922e40
   languageName: node
   linkType: hard
 
