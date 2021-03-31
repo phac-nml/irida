@@ -93,9 +93,9 @@ public class GalaxyHistoriesServiceTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		when(okayResponse.getStatusInfo()).thenReturn(
+		when(okayResponse.getClientResponseStatus()).thenReturn(
 				ClientResponse.Status.OK);
-		when(invalidResponse.getStatusInfo()).thenReturn(
+		when(invalidResponse.getClientResponseStatus()).thenReturn(
 				ClientResponse.Status.FORBIDDEN);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
