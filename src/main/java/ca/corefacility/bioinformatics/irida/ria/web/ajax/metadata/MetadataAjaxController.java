@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
@@ -48,7 +47,7 @@ public class MetadataAjaxController {
 	 *
 	 * @param template   details about the template to create
 	 * @param projectId identifier for a project
-	 * @return the newly created {@link ProjectMetadataTemplate}
+	 * @return the newly created {@link MetadataTemplate}
 	 */
 	@PostMapping("/templates")
 	public ResponseEntity<MetadataTemplate> createNewMetadataTemplate(
