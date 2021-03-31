@@ -131,10 +131,11 @@ public class UIMetadataService {
 				.collect(Collectors.toList());
 	}
 
-	public String updateMetadataProjectField(Long projectId, Long fieldId, ProjectRole newRole) {
+	public String updateMetadataProjectField(Long projectId, Long fieldId, ProjectRole newRole, Locale locale) {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField field = templateService.readMetadataField(fieldId);
-		MetadataRestriction restriction = templateService.setMetadataRestriction(project,field,newRole);
-		return "__ SUCCESS __";
+		MetadataRestriction restriction = templateService.setMetadataRestriction(project, field, newRole);
+		return messageSource.getMessage("server.MetadataFieldsListManager.update", new Object[] { field.getLabel(),
+				messageSource.getMessage("projectRole." + newRole.toString(), new Object[] {}, locale) }, locale);
 	}
 }

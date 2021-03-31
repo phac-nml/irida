@@ -1,4 +1,5 @@
-import { Button, Empty, Select, Space, Table } from "antd";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Button, Empty, notification, Select, Space, Table } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HelpPopover } from "../../../components/popovers";
@@ -30,7 +31,9 @@ export function MetadataFieldsListManager({ projectId }) {
         fieldId: field.id,
         projectRole: restriction,
       })
-    );
+    )
+      .then(unwrapResult)
+      .then(({ message }) => notification.success({ message }));
   };
 
   React.useEffect(() => {

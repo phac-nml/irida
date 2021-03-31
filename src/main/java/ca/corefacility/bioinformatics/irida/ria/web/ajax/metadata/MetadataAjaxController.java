@@ -111,8 +111,8 @@ public class MetadataAjaxController {
 
 	@PatchMapping("/fields/restrictions")
 	public ResponseEntity<AjaxResponse> patchProjectMetadataFieldRestriction(@RequestParam Long projectId, @RequestParam Long fieldId, @RequestParam
-			ProjectRole projectRole) {
+			ProjectRole projectRole, Locale locale) {
 		return ResponseEntity.ok(
-				new AjaxSuccessResponse(service.updateMetadataProjectField(projectId, fieldId, projectRole)));
+				new AjaxSuccessResponse(service.updateMetadataProjectField(projectId, fieldId, projectRole, locale)));
 	}
 }
