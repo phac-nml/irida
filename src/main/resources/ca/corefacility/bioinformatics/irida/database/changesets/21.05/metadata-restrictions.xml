@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet id="metadata-restrictions" author="tom">
         <createTable tableName="metadata_restriction">
-            <column name="id" type="bigint(20)">
+            <column name="id" autoIncrement="true" type="bigint(20)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="project_id" type="bigint(20)">
