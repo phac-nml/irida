@@ -134,8 +134,7 @@ public class UIMetadataService {
 	public String updateMetadataProjectField(Long projectId, String fieldKey, ProjectRole newRole) {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField field = templateService.readMetadataFieldByKey(fieldKey);
-		MetadataRestriction restriction = new MetadataRestriction(project, field, newRole);
-		templateService.addMetadataRestriction(restriction);
+		MetadataRestriction restriction = templateService.setMetadataRestriction(project,field,newRole);
 		return "__ SUCCESS __";
 	}
 }

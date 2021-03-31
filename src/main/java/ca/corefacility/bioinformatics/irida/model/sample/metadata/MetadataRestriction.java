@@ -54,4 +54,8 @@ public class MetadataRestriction {
 	public ProjectRole getLevel() {
 		return level;
 	}
+
+	public void setLevel(ProjectRole level) {
+		this.level = level;
+	}
 }
