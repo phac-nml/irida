@@ -69,4 +69,11 @@ public class UIMetadataServiceTest {
 		Assert.assertEquals("Should have the same template name", template.getLabel(), newTemplate.getName());
 		Assert.assertEquals("Should have a new identifier", NEW_TEMPLATE_ID, newTemplate.getId());
 	}
+
+	@Test
+	public void testSetProjectDefaultMetadataTemplate() {
+		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID);
+		verify(templateService, times(1)).read(NEW_TEMPLATE_ID);
+		verify(projectService, times(1)).update(project);
+	}
 }
