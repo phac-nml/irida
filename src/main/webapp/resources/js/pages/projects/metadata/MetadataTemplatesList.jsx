@@ -78,6 +78,8 @@ export function MetadataTemplatesList({ projectId }) {
    * @returns {JSX.Element[]}
    */
   const getActionsForItem = (template) => {
+    let isDefaultTemplateForProject =
+      template.identifier == defaultMetadataTemplateId;
     const actions = [
       <Button
         size="small"
@@ -93,7 +95,7 @@ export function MetadataTemplatesList({ projectId }) {
         <Tooltip
           placement="topLeft"
           title={
-            template.default &&
+            isDefaultTemplateForProject &&
             i18n("MetadataTemplatesList.cannot-remove-default")
           }
           arrowPointAtCenter
@@ -106,13 +108,13 @@ export function MetadataTemplatesList({ projectId }) {
             okButtonProps={{
               className: "t-t-confirm-remove",
             }}
-            disabled={template.default}
+            disabled={isDefaultTemplateForProject}
           >
             <Button
               className="t-t-remove-button"
               size="small"
               icon={<IconRemove />}
-              disabled={template.default}
+              disabled={isDefaultTemplateForProject}
             >
               {i18n("MetadataTemplatesList.remove")}
             </Button>

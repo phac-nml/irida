@@ -145,8 +145,6 @@ public class LineListController {
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
 
-		MetadataTemplate defaultMetadataTemplate = project.getDefaultMetadataTemplate();
-
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
@@ -155,14 +153,7 @@ public class LineListController {
 			MetadataTemplate template = join.getObject();
 			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
 			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, canEdit);
-
-			if(defaultMetadataTemplate != null && defaultMetadataTemplate.getId() == template.getId()) {
-				// If project has default metadata template then set it to the beginning of the list
-				templates.add(new UIMetadataTemplate(defaultMetadataTemplate.getId(), defaultMetadataTemplate.getName(), fields));
-			} else {
-				templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
-			}
-
+			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
 
 		return templates;
