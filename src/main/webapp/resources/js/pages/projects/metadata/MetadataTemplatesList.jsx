@@ -46,16 +46,14 @@ const HoverItem = styled(List.Item)`
  */
 export function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);
-  const { canManage } = useSelector((state) => state.project);
-
-  const { fields } = useSelector((state) => state.fields);
+  const { canManage, defaultMetadataTemplateId } = useSelector(
+    (state) => state.project
+  );
 
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
-
-  const [templatesModified, setTemplatesModified] = React.useState([{}]);
 
   /**
    * Set default metadata template for project.
@@ -70,32 +68,6 @@ export function MetadataTemplatesList({ projectId }) {
       })
       .catch((message) => notification.error({ message }));
   };
-
-  React.useEffect(() => {
-    if (templates != null && fields != null) {
-      let defaultTemplateFound = templates.find((templ) => templ.default);
-      let templatesCopy = Object.assign([{}], templates);
-
-      /*
-      We need to add the All Fields Template as
-      it is not stored in the db and is dynamically created to
-      be displayed
-       */
-      let allFieldsTemplate = {
-        name: i18n("MetadataTemplatesList.allFields"),
-        label: i18n("MetadataTemplatesList.allFields"),
-        description: i18n("MetadataTemplatesList.allfields-description"),
-        identifier: 0,
-        key: "template-0",
-        default: !defaultTemplateFound,
-        fields: fields ? fields : [],
-      };
-
-      // Add the All Fields template to the templatesCopy object
-      templatesCopy.push(allFieldsTemplate);
-      setTemplatesModified(templatesCopy);
-    }
-  }, [templates]);
 
   /**
    * This creates the "actions" that appear at the right of every row in
@@ -176,7 +148,7 @@ export function MetadataTemplatesList({ projectId }) {
           />
         ),
       }}
-      dataSource={templatesModified}
+      dataSource={templates}
       renderItem={(item) => (
         <HoverItem
           className="t-m-template"
@@ -208,7 +180,7 @@ export function MetadataTemplatesList({ projectId }) {
                 )}
                 <div>
                   {canManage &&
-                    (item.default ? (
+                    (item.identifier == defaultMetadataTemplateId ? (
                       <Tag
                         key={`default-${item.identifier}`}
                         color={blue6}

@@ -39,11 +39,11 @@ public class UIMetadataService {
 	 * @param projectId Identifier for a {@link Project}
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
-	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
+	public List<MetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
 		return joins.stream()
-				.map(ProjectMetadataTemplate::new)
+				.map(ProjectMetadataTemplateJoin::getObject)
 				.collect(Collectors.toList());
 	}
 

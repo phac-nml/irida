@@ -39,7 +39,7 @@ public class MetadataAjaxController {
 	 * @return List of metadata templates with associated details.
 	 */
 	@GetMapping("/templates")
-	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
+	public ResponseEntity<List<MetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 

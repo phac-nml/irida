@@ -40,11 +40,11 @@ export function MetadataTemplateManager({ id }) {
 
   const { templates, loading } = useSelector((state) => state.templates);
   const { fields: allFields } = useSelector((state) => state.fields);
+  const { defaultMetadataTemplateId } = useSelector((state) => state.project);
+
   const [template, setTemplate] = React.useState({});
   const [fields, setFields] = React.useState();
   const [newFields, setNewFields] = React.useState();
-
-  const [defaultTemplateId, setDefaultTemplateId] = React.useState(0);
 
   React.useEffect(() => {
     /*
@@ -54,15 +54,7 @@ export function MetadataTemplateManager({ id }) {
     create one.
      */
     if (!loading) {
-      const found = templates.find((template) => template.identifier == id);
-
-      const defaultTemplateIndex = templates.findIndex(
-        (template) => template.default
-      );
-
-      if (defaultTemplateIndex >= 0) {
-        setDefaultTemplateId(templates[defaultTemplateIndex].identifier);
-      }
+      const found = templates.find((template) => template.identifier === id);
 
       if (found) {
         const { fields, ...newTemplate } = found;
@@ -159,7 +151,7 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the template to return component for
    */
   const displayHeaderExtras = (template) => {
-    if (template.identifier === defaultTemplateId) {
+    if (template.identifier === defaultMetadataTemplateId) {
       return [
         <Tag
           key={`default-template-${template.identifier}`}
@@ -196,7 +188,6 @@ export function MetadataTemplateManager({ id }) {
     )
       .then(unwrapResult)
       .then(({ message }) => {
-        setDefaultTemplateId(template.identifier);
         notification.success({ message });
       })
       .catch((message) => notification.error({ message }));

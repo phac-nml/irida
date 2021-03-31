@@ -7,6 +7,7 @@ import {
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../utilities/http-utilities";
+import { updateProjectDefaultMetadataTemplateId } from "./projectSlice";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.
@@ -73,9 +74,11 @@ export const createNewMetadataTemplate = createAsyncThunk(
  */
 export const setDefaultTemplateForProject = createAsyncThunk(
   `templates/setDefaultTemplateForProject`,
-  async ({ projectId, templateId }, { rejectWithValue }) => {
+  async ({ projectId, templateId }, { dispatch, rejectWithValue }) => {
     try {
       const message = await setDefaultMetadataTemplate(projectId, templateId);
+      // Update the defaultMetadataTemplateId within the project in the state
+      dispatch(updateProjectDefaultMetadataTemplateId(templateId));
       return { templateId, message };
     } catch (e) {
       return rejectWithValue(e);
@@ -86,11 +89,25 @@ export const setDefaultTemplateForProject = createAsyncThunk(
 export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
-    templates: undefined,
+    templates: [
+      {
+        name: i18n("MetadataTemplatesList.allFields"),
+        label: i18n("MetadataTemplatesList.allFields"),
+        description: i18n("MetadataTemplatesList.allfields-description"),
+        identifier: 0,
+        key: "template-0",
+        fields: [],
+      },
+    ],
     loading: true,
     template: undefined,
   },
-  reducers: {},
+  reducers: {
+    // Reducer to update the fields array for the All Fields Template
+    updateFieldsForAllFieldsTemplate(state, action) {
+      state.templates[state.templates.length - 1].fields = action.payload;
+    },
+  },
   extraReducers: {
     /*
     Successful fetching of metadata templates for the current project.
@@ -98,7 +115,7 @@ export const templatesSlice = createSlice({
     [fetchTemplatesForProject.fulfilled]: (state, { payload }) => {
       return {
         ...state,
-        templates: payload,
+        templates: [...payload, ...state.templates],
         loading: false,
       };
     },
@@ -124,26 +141,12 @@ export const templatesSlice = createSlice({
       }
       return state;
     },
-    [setDefaultTemplateForProject.fulfilled]: (state, action) => {
-      const prevDefaultIndex = state.templates.findIndex(
-        (template) => template.default
-      );
-
-      const newDefaultIndex = state.templates.findIndex(
-        (template) => template.identifier === action.payload.templateId
-      );
-
-      if (prevDefaultIndex >= 0) {
-        state.templates[prevDefaultIndex].default = false;
-      }
-
-      if (newDefaultIndex >= 0) {
-        state.templates[newDefaultIndex].default = true;
-      }
-    },
   },
 });
 
-export const { setTemplate } = templatesSlice.actions;
+export const {
+  setTemplate,
+  updateFieldsForAllFieldsTemplate,
+} = templatesSlice.actions;
 
 export default templatesSlice.reducer;

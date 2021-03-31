@@ -54,7 +54,7 @@ public class UIMetadataServiceTest {
 
 	@Test
 	public void testGetProjectMetadataTemplates() {
-		List<ProjectMetadataTemplate> join = service.getProjectMetadataTemplates(PROJECT_ID);
+		List<MetadataTemplate> join = service.getProjectMetadataTemplates(PROJECT_ID);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).getMetadataTemplatesForProject(project);
 		Assert.assertEquals("Should have 1 template", 1, join.size());

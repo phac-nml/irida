@@ -15,16 +15,14 @@ public class UIMetadataTemplate {
 	private Long id;
 	private String name;
 	private List<AgGridColumn> fields;
-	private boolean defaultTemplate;
 
 	public UIMetadataTemplate() {
 	}
 
-	public UIMetadataTemplate(Long id, String name, List<AgGridColumn> fields, boolean defaultTemplate) {
+	public UIMetadataTemplate(Long id, String name, List<AgGridColumn> fields) {
 		this.id = id;
 		this.name = name;
 		this.fields = fields;
-		this.defaultTemplate = defaultTemplate;
 	}
 
 	public Long getId() {
@@ -37,10 +35,6 @@ public class UIMetadataTemplate {
 
 	public List<AgGridColumn> getFields() {
 		return fields;
-	}
-
-	public boolean isDefaultTemplate() {
-		return defaultTemplate;
 	}
 
 }

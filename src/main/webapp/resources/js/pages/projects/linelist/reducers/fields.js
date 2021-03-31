@@ -104,7 +104,7 @@ export const reducer = (state = initialState, action = {}) => {
       Get the default template index if there is one
       */
       let defaultTemplateIndex = action.templates.findIndex(
-        (template) => template.defaultTemplate
+        (template) => template.id === window.project.defaultMetadataTemplateId
       );
 
       /*

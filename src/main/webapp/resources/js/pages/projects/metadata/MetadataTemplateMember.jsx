@@ -33,7 +33,7 @@ export function MetadataTemplateMember({ id }) {
     create one.
      */
     if (!loading) {
-      const found = templates.find((template) => template.identifier == id);
+      const found = templates.find((template) => template.identifier === id);
 
       if (found) {
         setTemplate(found);

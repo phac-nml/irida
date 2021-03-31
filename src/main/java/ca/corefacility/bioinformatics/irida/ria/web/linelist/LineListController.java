@@ -149,7 +149,7 @@ public class LineListController {
 
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
-				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields, false));
+				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
 			MetadataTemplate template = join.getObject();
@@ -158,9 +158,9 @@ public class LineListController {
 
 			if(defaultMetadataTemplate != null && defaultMetadataTemplate.getId() == template.getId()) {
 				// If project has default metadata template then set it to the beginning of the list
-				templates.add(new UIMetadataTemplate(defaultMetadataTemplate.getId(), defaultMetadataTemplate.getName(), fields, true));
+				templates.add(new UIMetadataTemplate(defaultMetadataTemplate.getId(), defaultMetadataTemplate.getName(), fields));
 			} else {
-				templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields, false));
+				templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 			}
 
 		}
@@ -295,7 +295,7 @@ public class LineListController {
 		}
 		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
 				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale),
-						canUserEdit(project)), false);
+						canUserEdit(project)));
 	}
 
 	/**
