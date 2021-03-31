@@ -1,6 +1,7 @@
 import { Button, Empty, Select, Space, Table } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { HelpPopover } from "../../../components/popovers";
 import { useTableSelect } from "../../../hooks";
 import {
   fetchFieldsRestrictions,
@@ -49,7 +50,16 @@ export function MetadataFieldsListManager({ projectId }) {
       key: "type",
     },
     {
-      title: "__Restriction [help]",
+      title: (
+        <span>
+          {i18n("MetadataFieldsListManager.restrictions")}
+          <HelpPopover
+            content={
+              <div>{i18n("MetadataFieldsListManager.restrictions-help")}</div>
+            }
+          />
+        </span>
+      ),
       dataIndex: "restriction",
       key: "restriction",
       render(restriction, field) {
@@ -91,7 +101,7 @@ export function MetadataFieldsListManager({ projectId }) {
         locale={{
           emptyText: (
             <Empty
-              description={i18n("MetadataFieldsList.empty")}
+              description={i18n("MetadataFieldsListMember.empty")}
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           ),

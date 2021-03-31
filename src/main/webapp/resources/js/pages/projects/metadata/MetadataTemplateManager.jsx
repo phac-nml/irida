@@ -201,6 +201,11 @@ export function MetadataTemplateManager({ id }) {
                     key: "text",
                   },
                   {
+                    title: i18n("MetadataFieldsListManager.restrictions"),
+                    dataIndex: "restriction",
+                    key: "restriction",
+                  },
+                  {
                     align: "right",
                     width: 50,
                     render(item) {
