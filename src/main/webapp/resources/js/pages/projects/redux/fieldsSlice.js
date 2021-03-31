@@ -38,13 +38,13 @@ export const fetchFieldsRestrictions = createAsyncThunk(
 
 export const updateProjectFieldRestriction = createAsyncThunk(
   `fields/updateProjectFieldRestriction`,
-  async ({ projectId, fieldKey, projectRole }) => {
-    const message = await patchProjectMetadataFieldRestriction({
+  async ({ projectId, fieldId, projectRole }) => {
+    const { message } = await patchProjectMetadataFieldRestriction({
       projectId,
-      fieldKey,
+      fieldId,
       projectRole,
     });
-    return { message, fieldKey, projectRole };
+    return { message, fieldId, projectRole };
   }
 );
 
@@ -67,15 +67,13 @@ export const fieldsSlice = createSlice({
       loading: false,
     }),
     [fetchFieldsRestrictions.fulfilled]: (state, action) => {
-      console.log(action);
       state.restrictions = action.payload.restrictions;
     },
     [updateProjectFieldRestriction.fulfilled]: (state, action) => {
       const index = state.fields.findIndex(
-        (field) => field.key === action.payload.fieldKey
+        (field) => field.id === action.payload.fieldId
       );
-      console.log(index);
-      state.fields[index].restriction = action.payload.restriction;
+      state.fields[index].restriction = action.payload.projectRole;
     },
   },
 });

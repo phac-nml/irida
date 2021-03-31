@@ -48,12 +48,12 @@ export async function getMetadataRestrictions() {
 
 export async function patchProjectMetadataFieldRestriction({
   projectId,
-  fieldKey,
+  fieldId,
   projectRole,
 }) {
   try {
     const { data } = await axios.patch(
-      `${URL}/restrictions?projectId=${projectId}&fieldKey=${fieldKey}&projectRole=${projectRole}`
+      `${URL}/restrictions?projectId=${projectId}&fieldId=${fieldId}&projectRole=${projectRole}`
     );
     return data;
   } catch (e) {

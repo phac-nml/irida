@@ -26,7 +26,7 @@ export function MetadataFieldsListManager({ projectId }) {
     dispatch(
       updateProjectFieldRestriction({
         projectId,
-        fieldKey: field.fieldKey,
+        fieldId: field.id,
         projectRole: restriction,
       })
     );
