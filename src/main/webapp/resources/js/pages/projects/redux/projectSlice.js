@@ -1,4 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { setDefaultMetadataTemplate } from "../../../apis/metadata/metadata-templates";
+
+/**
+ * Redux Async Thunk for setting a default template for a specific project.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
+export const setDefaultTemplateForProject = createAsyncThunk(
+  `templates/setDefaultTemplateForProject`,
+  async ({ projectId, templateId }, { rejectWithValue }) => {
+    try {
+      const message = await setDefaultMetadataTemplate(projectId, templateId);
+      return { templateId, message };
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
 
 export const projectSlice = createSlice({
   name: "project",
@@ -6,15 +23,12 @@ export const projectSlice = createSlice({
     canManage: window.project?.canManage || false,
     defaultMetadataTemplateId: window.project?.defaultMetadataTemplateId,
   },
-  reducers: {
-    // Reducer to update the project default metadata template id
-    updateProjectDefaultMetadataTemplateId(state, action) {
-      state.defaultMetadataTemplateId = action.payload;
+  reducers: {},
+  extraReducers: {
+    [setDefaultTemplateForProject.fulfilled]: (state, action) => {
+      state.defaultMetadataTemplateId = action.payload.templateId;
     },
   },
-  extraReducers: {},
 });
-
-export const { updateProjectDefaultMetadataTemplateId } = projectSlice.actions;
 
 export default projectSlice.reducer;

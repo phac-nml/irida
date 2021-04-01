@@ -3,11 +3,9 @@ import {
   createProjectMetadataTemplate,
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
-  setDefaultMetadataTemplate,
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../utilities/http-utilities";
-import { updateProjectDefaultMetadataTemplateId } from "./projectSlice";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.
@@ -68,24 +66,6 @@ export const createNewMetadataTemplate = createAsyncThunk(
   }
 );
 
-/**
- * Redux Async Thunk for setting a default template for a specific project.
- * @type {AsyncThunk<unknown, void, {}>}
- */
-export const setDefaultTemplateForProject = createAsyncThunk(
-  `templates/setDefaultTemplateForProject`,
-  async ({ projectId, templateId }, { dispatch, rejectWithValue }) => {
-    try {
-      const message = await setDefaultMetadataTemplate(projectId, templateId);
-      // Update the defaultMetadataTemplateId within the project in the state
-      dispatch(updateProjectDefaultMetadataTemplateId(templateId));
-      return { templateId, message };
-    } catch (e) {
-      return rejectWithValue(e);
-    }
-  }
-);
-
 export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
@@ -93,7 +73,7 @@ export const templatesSlice = createSlice({
       {
         name: i18n("MetadataTemplatesList.allFields"),
         label: i18n("MetadataTemplatesList.allFields"),
-        description: i18n("MetadataTemplatesList.allfields-description"),
+        description: i18n("MetadataTemplatesList.allFields-description"),
         identifier: 0,
         key: "template-0",
         fields: [],
@@ -140,9 +120,6 @@ export const templatesSlice = createSlice({
   },
 });
 
-export const {
-  setTemplate,
-  updateFieldsForAllFieldsTemplate,
-} = templatesSlice.actions;
+export const { updateFieldsForAllFieldsTemplate } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

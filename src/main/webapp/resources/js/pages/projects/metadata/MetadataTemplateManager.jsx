@@ -18,10 +18,8 @@ import DnDTable from "../../../components/ant.design/DnDTable";
 import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
 import { HelpPopover } from "../../../components/popovers";
 import { addKeysToList } from "../../../utilities/http-utilities";
-import {
-  setDefaultTemplateForProject,
-  updateTemplate,
-} from "../redux/templatesSlice";
+import { updateTemplate } from "../redux/templatesSlice";
+import { setDefaultTemplateForProject } from "../redux/projectSlice";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 import { blue6 } from "../../../styles/colors";
 
