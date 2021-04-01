@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
@@ -41,7 +42,7 @@ public class MetadataAjaxController {
 	 * @return List of metadata templates with associated details.
 	 */
 	@GetMapping("/templates")
-	public ResponseEntity<List<MetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
+	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 

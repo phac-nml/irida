@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -53,11 +54,11 @@ public class UIMetadataServiceTest {
 
 	@Test
 	public void testGetProjectMetadataTemplates() {
-		List<MetadataTemplate> join = service.getProjectMetadataTemplates(PROJECT_ID);
+		List<ProjectMetadataTemplate> join = service.getProjectMetadataTemplates(PROJECT_ID);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).getMetadataTemplatesForProject(project);
 		Assert.assertEquals("Should have 1 template", 1, join.size());
-		Assert.assertEquals("Should have the correct template name", TEMPLATE_NAME, join.get(0).getName());
+		Assert.assertEquals("Should have the correct template name", TEMPLATE_NAME, join.get(0).getLabel());
 	}
 
 	@Test

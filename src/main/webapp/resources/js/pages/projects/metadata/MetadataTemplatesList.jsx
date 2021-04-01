@@ -173,7 +173,7 @@ export function MetadataTemplatesList({ projectId }) {
                     style={{ color: blue6, display: "block" }}
                     to={`${item.identifier}`}
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 ) : (
                   <Text className="t-t-name" style={{ display: "block" }}>
@@ -201,7 +201,7 @@ export function MetadataTemplatesList({ projectId }) {
                         {i18n("MetadataTemplatesList.set-as-default")}
                       </Button>
                     ))}
-                  <Tag key={`fields-${item.identifier}`}>
+                  <Tag key={`fields-${item.id}`}>
                     {i18n(
                       "ProjectMetadataTemplates.fields",
                       item.fields ? item.fields.length : 0

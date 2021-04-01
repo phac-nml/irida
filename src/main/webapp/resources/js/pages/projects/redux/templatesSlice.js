@@ -17,7 +17,7 @@ export const fetchTemplatesForProject = createAsyncThunk(
   `templates/fetchTemplatesForProject`,
   async (projectId) => {
     const templates = await getProjectMetadataTemplates(projectId);
-    return addKeysToList(templates, "template", "identifier");
+    return addKeysToList(templates, "template", "id");
   }
 );
 
