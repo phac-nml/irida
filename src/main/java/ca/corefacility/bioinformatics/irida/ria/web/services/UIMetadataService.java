@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -43,11 +44,15 @@ public class UIMetadataService {
 	 * @param projectId Identifier for a {@link Project}
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
-	public List<MetadataTemplate> getProjectMetadataTemplates(Long projectId) {
+	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
-		return templateService.getMetadataTemplatesForProject(project)
-				.stream()
-				.map(ProjectMetadataTemplateJoin::getObject)
+		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
+		return joins.stream()
+				.map(join -> {
+					MetadataTemplate template = join.getObject();
+					List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, template.getFields());
+					return new ProjectMetadataTemplate(template, fields);
+				})
 				.collect(Collectors.toList());
 	}
 
@@ -58,10 +63,12 @@ public class UIMetadataService {
 	 * @param projectId Identifier for the {@link Project} to add them template to
 	 * @return {@link MetadataTemplate}
 	 */
-	public MetadataTemplate createMetadataTemplate(MetadataTemplate template, Long projectId) {
+	public ProjectMetadataTemplate createMetadataTemplate(MetadataTemplate template, Long projectId) {
 		Project project = projectService.read(projectId);
 		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
-		return join.getObject();
+		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, join.getObject()
+				.getFields());
+		return new ProjectMetadataTemplate(join.getObject(), fields);
 	}
 
 	/**
@@ -112,17 +119,7 @@ public class UIMetadataService {
 	public List<ProjectMetadataField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> fields = templateService.getMetadataFieldsForProject(project);
-		return fields.stream()
-				.map(field -> {
-					MetadataRestriction restriction = templateService.getMetadataRestrictionForFieldAndProject(project,
-							field);
-					String level = restriction == null ?
-							"PROJECT_USER" :
-							restriction.getLevel()
-									.toString();
-					return new ProjectMetadataField(field, level);
-				})
-				.collect(Collectors.toList());
+		return addRestrictionsToMetadataFields(project, fields);
 	}
 
 	public List<SelectOption> getMetadataFieldRestrictions(Locale locale) {
@@ -148,7 +145,7 @@ public class UIMetadataService {
 	 */
 	public void setDefaultMetadataTemplate(Long templateId, Long projectId) {
 		Project project = projectService.read(projectId);
-		if(templateId == 0) {
+		if (templateId == 0) {
 			project.setDefaultMetadataTemplate(null);
 		} else {
 			project.setDefaultMetadataTemplate(templateService.read(templateId));
@@ -156,4 +153,19 @@ public class UIMetadataService {
 		projectService.update(project);
 	}
 
+	private List<ProjectMetadataField> addRestrictionsToMetadataFields(Project project,
+			List<MetadataTemplateField> fields) {
+		return fields.stream()
+				.map(field -> createProjectMetadataField(project, field))
+				.collect(Collectors.toList());
+	}
+
+	private ProjectMetadataField createProjectMetadataField(Project project, MetadataTemplateField field) {
+		MetadataRestriction restriction = templateService.getMetadataRestrictionForFieldAndProject(project, field);
+		String level = restriction == null ?
+				"PROJECT_USER" :
+				restriction.getLevel()
+						.toString();
+		return new ProjectMetadataField(field, level);
+	}
 }

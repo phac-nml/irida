@@ -1,4 +1,6 @@
-import React from "react";
+import { Link } from "@reach/router";
+
+import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Button,
   Empty,
@@ -9,19 +11,17 @@ import {
   Tooltip,
   Typography,
 } from "antd";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
+import { blue6 } from "../../../styles/colors";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Link } from "@reach/router";
-import { blue6 } from "../../../styles/colors";
-import { useDispatch, useSelector } from "react-redux";
 import {
   removeTemplateFromProject,
   setDefaultTemplateForProject,
 } from "../../projects/redux/templatesSlice";
-
-import { unwrapResult } from "@reduxjs/toolkit";
-import styled from "styled-components";
 
 const { Text } = Typography;
 
@@ -104,7 +104,7 @@ export function MetadataTemplatesList({ projectId }) {
           <Popconfirm
             key={`remove-${template.id}`}
             title={i18n("MetadataTemplatesList.delete-confirm")}
-            onConfirm={() => deleteTemplate(template.identifier)}
+            onConfirm={() => deleteTemplate(template.id)}
             okButtonProps={{
               className: "t-t-confirm-remove",
             }}
