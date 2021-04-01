@@ -69,20 +69,36 @@ export const createNewMetadataTemplate = createAsyncThunk(
 export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
-    templates: undefined,
+    templates: [
+      {
+        name: i18n("MetadataTemplatesList.allFields"),
+        label: i18n("MetadataTemplatesList.allFields"),
+        description: i18n("MetadataTemplatesList.allFields-description"),
+        identifier: 0,
+        key: "template-0",
+        fields: [],
+      },
+    ],
     loading: true,
     template: undefined,
   },
-  reducers: {},
+  reducers: {
+    // Reducer to update the fields array for the All Fields Template
+    updateFieldsForAllFieldsTemplate(state, action) {
+      state.templates[state.templates.length - 1].fields = action.payload;
+    },
+  },
   extraReducers: {
     /*
     Successful fetching of metadata templates for the current project.
      */
-    [fetchTemplatesForProject.fulfilled]: (state, { payload }) => ({
-      ...state,
-      templates: payload,
-      loading: false,
-    }),
+    [fetchTemplatesForProject.fulfilled]: (state, { payload }) => {
+      return {
+        ...state,
+        templates: [...payload, ...state.templates],
+        loading: false,
+      };
+    },
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
@@ -108,6 +124,6 @@ export const templatesSlice = createSlice({
   },
 });
 
-export const { setTemplate } = templatesSlice.actions;
+export const { updateFieldsForAllFieldsTemplate } = templatesSlice.actions;
 
 export default templatesSlice.reducer;
