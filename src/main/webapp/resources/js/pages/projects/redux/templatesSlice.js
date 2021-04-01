@@ -3,9 +3,11 @@ import {
   createProjectMetadataTemplate,
   deleteMetadataTemplate,
   getProjectMetadataTemplates,
+  setDefaultMetadataTemplate,
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../utilities/http-utilities";
+import { updateProjectDefaultMetadataTemplateId } from "./projectSlice";
 
 /**
  * Redux Async Thunk for fetching all the templates for a specific project.
@@ -66,23 +68,57 @@ export const createNewMetadataTemplate = createAsyncThunk(
   }
 );
 
+/**
+ * Redux Async Thunk for setting a default template for a specific project.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
+export const setDefaultTemplateForProject = createAsyncThunk(
+  `templates/setDefaultTemplateForProject`,
+  async ({ projectId, templateId }, { dispatch, rejectWithValue }) => {
+    try {
+      const message = await setDefaultMetadataTemplate(projectId, templateId);
+      // Update the defaultMetadataTemplateId within the project in the state
+      dispatch(updateProjectDefaultMetadataTemplateId(templateId));
+      return { templateId, message };
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
 export const templatesSlice = createSlice({
   name: "templates",
   initialState: {
-    templates: undefined,
+    templates: [
+      {
+        name: i18n("MetadataTemplatesList.allFields"),
+        label: i18n("MetadataTemplatesList.allFields"),
+        description: i18n("MetadataTemplatesList.allfields-description"),
+        identifier: 0,
+        key: "template-0",
+        fields: [],
+      },
+    ],
     loading: true,
     template: undefined,
   },
-  reducers: {},
+  reducers: {
+    // Reducer to update the fields array for the All Fields Template
+    updateFieldsForAllFieldsTemplate(state, action) {
+      state.templates[state.templates.length - 1].fields = action.payload;
+    },
+  },
   extraReducers: {
     /*
     Successful fetching of metadata templates for the current project.
      */
-    [fetchTemplatesForProject.fulfilled]: (state, { payload }) => ({
-      ...state,
-      templates: payload,
-      loading: false,
-    }),
+    [fetchTemplatesForProject.fulfilled]: (state, { payload }) => {
+      return {
+        ...state,
+        templates: [...payload, ...state.templates],
+        loading: false,
+      };
+    },
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
@@ -108,6 +144,9 @@ export const templatesSlice = createSlice({
   },
 });
 
-export const { setTemplate } = templatesSlice.actions;
+export const {
+  setTemplate,
+  updateFieldsForAllFieldsTemplate,
+} = templatesSlice.actions;
 
 export default templatesSlice.reducer;

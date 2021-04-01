@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
@@ -26,10 +26,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 @RequestMapping("/ajax/metadata")
 public class MetadataAjaxController {
 	private final UIMetadataService service;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public MetadataAjaxController(UIMetadataService service) {
+	public MetadataAjaxController(UIMetadataService service, MessageSource messageSource) {
 		this.service = service;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -48,7 +50,7 @@ public class MetadataAjaxController {
 	 *
 	 * @param template   details about the template to create
 	 * @param projectId identifier for a project
-	 * @return the newly created {@link ProjectMetadataTemplate}
+	 * @return the newly created {@link MetadataTemplate}
 	 */
 	@PostMapping("/templates")
 	public ResponseEntity<MetadataTemplate> createNewMetadataTemplate(
@@ -102,6 +104,22 @@ public class MetadataAjaxController {
 	@GetMapping("/fields")
 	public List<ProjectMetadataField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);
+	}
+
+	/**
+	 * Set a default metadata template for a project
+	 *
+	 * @param templateId Identifier for the metadata template to set as default.
+	 * @param projectId  Identifier for the project to set the metadata template as default for.
+	 * @param locale     Current users {@link Locale}
+	 * @return {@link AjaxSuccessResponse} with the success message
+	 */
+	@PostMapping("/templates/{templateId}/set-project-default")
+	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@PathVariable Long templateId,
+			@RequestParam Long projectId, Locale locale) {
+		service.setDefaultMetadataTemplate(templateId, projectId);
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale)));
 	}
 
 	@GetMapping("/fields/restrictions")

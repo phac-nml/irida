@@ -94,6 +94,7 @@ public class UIMetadataService {
 	public String deleteMetadataTemplate(Long templateId, Long projectId, Locale locale) throws Exception {
 		try {
 			Project project = projectService.read(projectId);
+
 			templateService.deleteMetadataTemplateFromProject(project, templateId);
 			return messageSource.getMessage("server.MetadataTemplateManager.remove-success", new Object[] {}, locale);
 		} catch (Exception e) {
@@ -138,4 +139,21 @@ public class UIMetadataService {
 		return messageSource.getMessage("server.MetadataFieldsListManager.update", new Object[] { field.getLabel(),
 				messageSource.getMessage("projectRole." + newRole.toString(), new Object[] {}, locale) }, locale);
 	}
+
+	/**
+	 * Set the default {@link MetadataTemplate} for a {@link Project}
+	 *
+	 * @param templateId Identifier for a {@link MetadataTemplate}
+	 * @param projectId Identifier for a {@link Project}
+	 */
+	public void setDefaultMetadataTemplate(Long templateId, Long projectId) {
+		Project project = projectService.read(projectId);
+		if(templateId == 0) {
+			project.setDefaultMetadataTemplate(null);
+		} else {
+			project.setDefaultMetadataTemplate(templateService.read(templateId));
+		}
+		projectService.update(project);
+	}
+
 }
