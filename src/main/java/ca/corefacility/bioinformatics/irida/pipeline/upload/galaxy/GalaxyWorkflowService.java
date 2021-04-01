@@ -135,9 +135,9 @@ public class GalaxyWorkflowService {
 	public void deleteWorkflow(String workflowId) throws DeleteGalaxyObjectFailedException {
 		try {
 			ClientResponse response = workflowsClient.deleteWorkflowRequest(workflowId);
-			if (!ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
+			if (ClientResponse.Status.OK.getStatusCode() != response.getStatusInfo().getStatusCode()) {
 				throw new DeleteGalaxyObjectFailedException("Could not workflow with id " + workflowId + ", status="
-						+ response.getClientResponseStatus() + ", content=" + response.getEntity(String.class));
+						+ response.getStatusInfo() + ", content=" + response.getEntity(String.class));
 			}
 		} catch (RuntimeException e) {
 			throw new DeleteGalaxyObjectFailedException("Error while deleting workflow with id " + workflowId, e);
