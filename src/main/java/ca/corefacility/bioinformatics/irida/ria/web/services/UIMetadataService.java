@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -44,22 +43,11 @@ public class UIMetadataService {
 	 * @param projectId Identifier for a {@link Project}
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
-	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
+	public List<MetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
-		return joins.stream()
-				.map(join -> {
-					MetadataTemplate template = join.getObject();
-					List<ProjectMetadataField> fields = template.getFields().stream().map(field -> {
-						MetadataRestriction restriction = templateService.getMetadataRestrictionForFieldAndProject(project, field);
-						String level = restriction == null ?
-								"PROJECT_USER" :
-								restriction.getLevel()
-										.toString();
-						return new ProjectMetadataField(field, level);
-					}).collect(Collectors.toList());
-					return new ProjectMetadataTemplate(template, fields);
-				})
+		return templateService.getMetadataTemplatesForProject(project)
+				.stream()
+				.map(ProjectMetadataTemplateJoin::getObject)
 				.collect(Collectors.toList());
 	}
 
@@ -119,7 +107,7 @@ public class UIMetadataService {
 	 * Get all {@link MetadataTemplateField}s belonging to a {@link Project}
 	 *
 	 * @param projectId Identifier for a {@link Project}
-	 * @return List of {@link MetadataTemplateField}
+	 * @return List of {@link ProjectMetadataField}
 	 */
 	public List<ProjectMetadataField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
