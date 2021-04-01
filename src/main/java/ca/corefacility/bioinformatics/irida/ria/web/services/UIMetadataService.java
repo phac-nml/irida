@@ -115,6 +115,7 @@ public class UIMetadataService {
 	 * @param templateId Identifier for a {@link MetadataTemplate}
 	 * @param projectId Identifier for a {@link Project}
 	 * @param locale     Current users {@link Locale}
+       * @return text to display to user about the result of updating the default metadata template
 	 * @throws Exception if there is an error updating the default metadata template for a project
 	 */
 	public String setDefaultMetadataTemplate(Long templateId, Long projectId, Locale locale) throws Exception {
