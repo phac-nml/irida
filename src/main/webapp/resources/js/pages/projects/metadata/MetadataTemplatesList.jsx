@@ -78,14 +78,13 @@ export function MetadataTemplatesList({ projectId }) {
    * @returns {JSX.Element[]}
    */
   const getActionsForItem = (template) => {
-    let isDefaultTemplateForProject =
-      template.identifier == defaultMetadataTemplateId;
+    let isDefaultTemplateForProject = template.id == defaultMetadataTemplateId;
     const actions = [
       <Button
         size="small"
         icon={<IconDownloadFile />}
-        href={`${BASE_URL}/${template.identifier}/excel`}
-        key={`download-${template.identifier}`}
+        href={`${BASE_URL}/${template.id}/excel`}
+        key={`download-${template.id}`}
       >
         {i18n("MetadataTemplatesList.download")}
       </Button>,
@@ -99,7 +98,7 @@ export function MetadataTemplatesList({ projectId }) {
             i18n("MetadataTemplatesList.cannot-remove-default")
           }
           arrowPointAtCenter
-          key={`remove-tooltip-${template.identifier}`}
+          key={`remove-tooltip-${template.id}`}
         >
           <Popconfirm
             key={`remove-${template.id}`}
@@ -154,9 +153,7 @@ export function MetadataTemplatesList({ projectId }) {
       renderItem={(item) => (
         <HoverItem
           className="t-m-template"
-          actions={
-            item.identifier != ALL_FIELDS_TEMPLATE_ID && getActionsForItem(item)
-          }
+          actions={item.id != ALL_FIELDS_TEMPLATE_ID && getActionsForItem(item)}
         >
           <List.Item.Meta
             title={
@@ -167,11 +164,11 @@ export function MetadataTemplatesList({ projectId }) {
                   alignItems: "center",
                 }}
               >
-                {item.identifier != ALL_FIELDS_TEMPLATE_ID ? (
+                {item.id != ALL_FIELDS_TEMPLATE_ID ? (
                   <Link
                     className="t-t-name"
                     style={{ color: blue6, display: "block" }}
-                    to={`${item.identifier}`}
+                    to={`${item.id}`}
                   >
                     {item.label}
                   </Link>
@@ -182,9 +179,9 @@ export function MetadataTemplatesList({ projectId }) {
                 )}
                 <div>
                   {canManage &&
-                    (item.identifier == defaultMetadataTemplateId ? (
+                    (item.id == defaultMetadataTemplateId ? (
                       <Tag
-                        key={`default-${item.identifier}`}
+                        key={`default-${item.id}`}
                         color={blue6}
                         className="t-t-default-tag"
                       >
@@ -193,8 +190,8 @@ export function MetadataTemplatesList({ projectId }) {
                     ) : (
                       <Button
                         size="small"
-                        key={`set-default-${item.identifier}`}
-                        onClick={() => setDefaultTemplate(item.identifier)}
+                        key={`set-default-${item.id}`}
+                        onClick={() => setDefaultTemplate(item.id)}
                         type="link"
                         className="t-t-set-default-button"
                       >

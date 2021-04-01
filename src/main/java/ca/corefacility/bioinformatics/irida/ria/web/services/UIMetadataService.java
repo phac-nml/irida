@@ -142,15 +142,24 @@ public class UIMetadataService {
 	 *
 	 * @param templateId Identifier for a {@link MetadataTemplate}
 	 * @param projectId Identifier for a {@link Project}
+	 * @param locale     Current users {@link Locale}
+	 * @return text to display to user about the result of updating the default metadata template
+	 * @throws Exception if there is an error updating the default metadata template for a project
 	 */
-	public void setDefaultMetadataTemplate(Long templateId, Long projectId) {
-		Project project = projectService.read(projectId);
-		if (templateId == 0) {
-			project.setDefaultMetadataTemplate(null);
-		} else {
-			project.setDefaultMetadataTemplate(templateService.read(templateId));
+	public String setDefaultMetadataTemplate(Long templateId, Long projectId, Locale locale) throws Exception {
+		try {
+			Project project = projectService.read(projectId);
+			if (templateId == 0) {
+				project.setDefaultMetadataTemplate(null);
+			} else {
+				project.setDefaultMetadataTemplate(templateService.read(templateId));
+			}
+			projectService.update(project);
+			return messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale);
+		} catch (Exception e) {
+			throw new Exception(messageSource.getMessage("server.metadata-template.set-default-error",
+					new Object[] {}, locale));
 		}
-		projectService.update(project);
 	}
 
 	private List<ProjectMetadataField> addRestrictionsToMetadataFields(Project project,
