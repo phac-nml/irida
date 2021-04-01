@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -70,8 +71,8 @@ public class UIMetadataServiceTest {
 	}
 
 	@Test
-	public void testSetProjectDefaultMetadataTemplate() {
-		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID);
+	public void testSetProjectDefaultMetadataTemplate() throws Exception {
+		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID, Locale.ENGLISH);
 		verify(templateService, times(1)).read(NEW_TEMPLATE_ID);
 		verify(projectService, times(1)).update(project);
 	}

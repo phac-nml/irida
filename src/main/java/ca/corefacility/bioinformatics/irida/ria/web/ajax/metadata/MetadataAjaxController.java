@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +22,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 @RequestMapping("/ajax/metadata")
 public class MetadataAjaxController {
 	private final UIMetadataService service;
-	private final MessageSource messageSource;
 
 	@Autowired
-	public MetadataAjaxController(UIMetadataService service, MessageSource messageSource) {
+	public MetadataAjaxController(UIMetadataService service) {
 		this.service = service;
-		this.messageSource = messageSource;
 	}
 
 	/**
@@ -114,8 +111,12 @@ public class MetadataAjaxController {
 	@PostMapping("/templates/{templateId}/set-project-default")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@PathVariable Long templateId,
 			@RequestParam Long projectId, Locale locale) {
-		service.setDefaultMetadataTemplate(templateId, projectId);
-		return ResponseEntity.ok(new AjaxSuccessResponse(
-				messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale)));
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.setDefaultMetadataTemplate(templateId, projectId, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 }
