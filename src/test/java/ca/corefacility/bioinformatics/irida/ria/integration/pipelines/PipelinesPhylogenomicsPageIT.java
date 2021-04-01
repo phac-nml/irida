@@ -94,7 +94,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		assertTrue("Should display warning that a reference file is required", page.isReferenceFilesRequiredErrorDisplayed());
 
 		page.uploadReferenceFile();
-		assertFalse("Now a reference file should exist", page.isReferenceFilesRequiredErrorDisplayed());
+		assertFalse("Now a reference file should exist", page.isReferenceFilesRequiredDisplayed());
 		page.submit();
 		WebDriverWait wait = new WebDriverWait(driver(), 5);
 		wait.until(ExpectedConditions.urlMatches("/analysis/"));
