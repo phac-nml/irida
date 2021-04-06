@@ -8,6 +8,11 @@ import java.util.HashSet;
 
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectHashingService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Controller for managing {@link Project}s in the database.
  *
  */
+@Tag(name = "projects")
 @Controller
 @RequestMapping(value = "/api/projects")
 public class RESTProjectsController extends RESTGenericController<Project> {
@@ -82,6 +88,10 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * @param projectId the ID of the project to read the hash for
 	 * @return a modelmap containing the hash code
 	 */
+	@Operation(operationId = "getProjectHash", summary = "Get a hash for the given a project",
+			description = "Get a hash for the given a project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a hash of the given project.",
+			content = @Content(schema = @Schema(implementation = ProjectHashResourceSchema.class)))
 	@RequestMapping(value = "/{projectId}/hash", method = RequestMethod.GET)
 	public ModelMap getProjectHash(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
@@ -124,4 +134,11 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 		links.add(linkTo(methodOn(RESTProjectsController.class).getProjectHash(projectId)).withRel(PROJECT_HASH_REL));
 		return links;
 	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class ProjectHashResourceSchema {
+		public ProjectHashResource resource;
+	}
+
 }

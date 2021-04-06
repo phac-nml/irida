@@ -5,6 +5,11 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +50,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Controller for managing relationships between {@link Project} and
  * {@link Sample}.
  */
+@Tag(name = "projects")
 @Controller
 public class RESTProjectSamplesController {
 
@@ -94,6 +100,10 @@ public class RESTProjectSamplesController {
 	 * @return the response indicating that the sample was joined to the
 	 * project.
 	 */
+	@Operation(operationId = "copySampleToProject", summary = "Copy an existing sample to a given a project",
+			description = "Copy an existing sample to a given a project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a list of analysis submissions associated with the given project.",
+			content = @Content(schema = @Schema(implementation = LabelledRelationshipResourcesSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
 			@RequestParam(name = "ownership", defaultValue = "false") boolean ownership, HttpServletResponse response,
@@ -173,6 +183,10 @@ public class RESTProjectSamplesController {
 	 * @return a response indicating that the sample was created and appropriate
 	 * location information.
 	 */
+	@Operation(operationId = "addSampleToProject", summary = "Create a new sample and add it to the given project",
+			description = "Create a new sample and add it to the given project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns the newly created sample associated with the given project.",
+			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
 	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody @Valid Sample sample,
 			HttpServletResponse response) {
@@ -210,6 +224,10 @@ public class RESTProjectSamplesController {
 	 *                  {@link Sample}s for.
 	 * @return the list of {@link Sample}s associated with this {@link Project}.
 	 */
+	@Operation(operationId = "getProjectSamples", summary = "Get all samples for the given project",
+			description = "Get all samples for the given project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a list of samples associated with the given project.",
+			content = @Content(schema = @Schema(implementation = SamplesSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
 	public ModelMap getProjectSamples(@PathVariable Long projectId) {
 
@@ -263,6 +281,10 @@ public class RESTProjectSamplesController {
 	 * @param sampleId  the {@link Sample} identifier that we're looking for.
 	 * @return a representation of the specific sample.
 	 */
+	@Operation(operationId = "getProjectSample", summary = "Get a sample for the given project",
+			description = "Get a sample for the given project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a sample associated with the given project.",
+			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// read project/sample to verify sample exists in project
@@ -289,6 +311,10 @@ public class RESTProjectSamplesController {
 	 * @param sampleId the id of the {@link Sample} to read
 	 * @return representation of the sample
 	 */
+	@Operation(operationId = "getSample", summary = "Get a sample",
+			description = "Get a sample.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a sample.",
+			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getSample(@PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
@@ -344,6 +370,10 @@ public class RESTProjectSamplesController {
 	 * @return a response including links back to the specific {@link Project}
 	 * and collection of {@link Sample}.
 	 */
+	@Operation(operationId = "removeSampleFromProject", summary = "Remove a sample from a given project",
+			description = "Remove a sample from a given project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns the new list of samples associated with the given project.",
+			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
@@ -378,6 +408,10 @@ public class RESTProjectSamplesController {
 	 * @return a response including links to the {@link Project} and
 	 * {@link Sample}.
 	 */
+	@Operation(operationId = "updateSample", summary = "Update a sample",
+			description = "Update a sample.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns the updated sample.",
+			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
@@ -390,6 +424,24 @@ public class RESTProjectSamplesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
 
 		return modelMap;
+	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class LabelledRelationshipResourcesSchema {
+		public ResourceCollection<LabelledRelationshipResource<Project, Sample>> resource;
+	}
+
+	private class SampleSchema {
+		public Sample resource;
+	}
+
+	private class SamplesSchema {
+		public ResourceCollection<Sample> resource;
+	}
+
+	private class RootResourceSchema {
+		public RootResource resource;
 	}
 
 }

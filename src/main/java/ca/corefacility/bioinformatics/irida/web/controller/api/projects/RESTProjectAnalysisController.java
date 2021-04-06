@@ -5,6 +5,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmi
  * {@link AnalysisSubmission}.
  *
  */
+@Tag(name = "projects")
 @Controller
 public class RESTProjectAnalysisController {
 
@@ -64,6 +71,10 @@ public class RESTProjectAnalysisController {
 	 * @return the list of {@link AnalysisSubmission}s associated with this
 	 *         {@link Project}.
 	 */
+	@Operation(operationId = "getProjectAnalyses", summary = "Find all the analysis submissions given a project",
+			description = "Get all the analysis submissions given a project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a list of analysis submissions associated with the given project.",
+			content = @Content(schema = @Schema(implementation = AnalysisSubmissionsSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/analyses", method = RequestMethod.GET)
 	public ModelMap getProjectAnalyses(@PathVariable Long projectId) {
 		logger.debug("Loading analyses for project [" + projectId + "]");
@@ -106,6 +117,10 @@ public class RESTProjectAnalysisController {
 	 *             If the {@link AnalysisSubmission} is linked to a workflow not
 	 *             found in IRIDA.
 	 */
+	@Operation(operationId = "getProjectAnalysesByType", summary = "Find all the analysis submissions given a project by analysis type",
+			description = "Get all the analysis submissions given a project by analysis type.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns a list of analysis submissions associated with the given project by analysis type.",
+			content = @Content(schema = @Schema(implementation = AnalysisSubmissionsSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/analyses/{type}", method = RequestMethod.GET)
 	public ModelMap getProjectAnalysesByType(@PathVariable Long projectId, @PathVariable String type)
 			throws IridaWorkflowNotFoundException {
@@ -145,4 +160,11 @@ public class RESTProjectAnalysisController {
 
 		return modelMap;
 	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class AnalysisSubmissionsSchema {
+		public ResourceCollection<AnalysisSubmission> resource;
+	}
+
 }

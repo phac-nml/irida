@@ -8,6 +8,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -35,6 +40,7 @@ import com.google.common.net.HttpHeaders;
 /**
  * Controller for managing relationships between {@link Project} and {@link User}.
  */
+@Tag(name = "projects")
 @Controller
 public class RESTProjectUsersController {
 
@@ -78,6 +84,10 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException If removing a user will leave the project without an owner. Should NEVER be
 	 *                                      thrown in this method, but needs to be listed.
 	 */
+	@Operation(operationId = "getProjectHash", summary = "Get all users for the given a project",
+			description = "Get all users for the given a project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns list of users of the given project.",
+			content = @Content(schema = @Schema(implementation = UsersSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
 	public ModelMap getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
 		ResourceCollection<User> resources = new ResourceCollection<>();
@@ -120,6 +130,10 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException this cannot actually be thrown, it's an artifact of using spring HATEOAS
 	 *                                      {@code linkTo} and {@code methodOn}.
 	 */
+	@Operation(operationId = "addUserToProject", summary = "Add a user to the given project",
+			description = "Add a user to the given project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns the new relationship of the given user and project.",
+			content = @Content(schema = @Schema(implementation = LabelledRelationshipResourceSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
 	public ModelMap addUserToProject(@PathVariable Long projectId, @RequestBody Map<String, String> representation,
 			HttpServletResponse response) throws ProjectWithoutOwnerException {
@@ -176,6 +190,10 @@ public class RESTProjectUsersController {
 	 * Project}.
 	 * @throws ProjectWithoutOwnerException if removing this user will leave the project without an owner
 	 */
+	@Operation(operationId = "removeUserFromProject", summary = "Remove a user from a given project",
+			description = "Remove a user from a given project.", tags = "projects")
+	@ApiResponse(responseCode = "200", description = "Returns the new list of users of the given project.",
+			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
 	public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId)
 			throws ProjectWithoutOwnerException {
@@ -200,5 +218,19 @@ public class RESTProjectUsersController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
 
 		return modelMap;
+	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class UsersSchema {
+		public ResourceCollection<User> resource;
+	}
+
+	private class LabelledRelationshipResourceSchema {
+		public LabelledRelationshipResource<Project, User> resource;
+	}
+
+	private class RootResourceSchema {
+		public RootResource resource;
 	}
 }

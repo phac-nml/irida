@@ -240,7 +240,7 @@ public class RESTSampleAssemblyController {
 	}
 
 	private class GenomeAssembliesSchema {
-		public ResourceCollection<GenomeAssembly>  resource;
+		public ResourceCollection<GenomeAssembly> resource;
 	}
 
 }
