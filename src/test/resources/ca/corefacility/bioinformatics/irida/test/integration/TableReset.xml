@@ -24,6 +24,12 @@
 	
 	<sequencing_run />
 	<sequencing_run_properties />
+
+	<metadata_field/>
+	<metadata_entry/>
+	<pipeline_metadata_entry/>
+	<metadata_template/>
+
 	<project />
 	<related_project />
 
@@ -92,10 +98,6 @@
 	<announcement_user />
 	<qc_entry />
 
-	<metadata_field/>
-	<metadata_entry/>
-	<pipeline_metadata_entry/>
-	<metadata_template/>
 	<metadata_template_metadata_field/>
 	<project_metadata_template/>
 	<sequence_concatenation/>

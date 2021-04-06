@@ -365,7 +365,7 @@ public class JobError extends IridaResourceSupport implements IridaThing, Compar
 	 * Converts a string to a valid JSON string
 	 */
 	private String convertToValidJson(String parameter) {
-		JsonObject validJsonObject = new JsonParser().parse(parameter)
+		JsonObject validJsonObject = JsonParser.parseString(parameter)
 				.getAsJsonObject();
 		return validJsonObject.toString();
 	}

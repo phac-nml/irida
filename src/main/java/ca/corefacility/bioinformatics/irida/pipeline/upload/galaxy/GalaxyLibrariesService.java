@@ -279,9 +279,9 @@ public class GalaxyLibrariesService {
 	public void deleteLibrary(String libraryId) throws DeleteGalaxyObjectFailedException {
 		try {
 			ClientResponse response = librariesClient.deleteLibraryRequest(libraryId);
-			if (!ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
+			if (ClientResponse.Status.OK.getStatusCode() != response.getStatusInfo().getStatusCode()) {
 				throw new DeleteGalaxyObjectFailedException("Could not delete library with id " + libraryId
-						+ ", status=" + response.getClientResponseStatus() + ", content="
+						+ ", status=" + response.getStatusInfo() + ", content="
 						+ response.getEntity(String.class));
 			}
 		} catch (RuntimeException e) {

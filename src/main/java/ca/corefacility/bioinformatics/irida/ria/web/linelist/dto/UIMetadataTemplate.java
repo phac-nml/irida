@@ -36,4 +36,5 @@ public class UIMetadataTemplate {
 	public List<AgGridColumn> getFields() {
 		return fields;
 	}
+
 }

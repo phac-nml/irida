@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getMetadataFieldsForProject } from "../../../apis/metadata/field";
 import { addKeysToList } from "../../../utilities/http-utilities";
+import { updateFieldsForAllFieldsTemplate } from "./templatesSlice";
 
 /**
  * Redux Thunk for fetching all the metadata fields on a project.
@@ -8,8 +9,10 @@ import { addKeysToList } from "../../../utilities/http-utilities";
  */
 export const fetchFieldsForProject = createAsyncThunk(
   `fields/fetchFieldsForProject`,
-  async (projectId) => {
+  async (projectId, { dispatch }) => {
     const fields = await getMetadataFieldsForProject(projectId);
+    // Update the fields in the state for the All Fields Template
+    dispatch(updateFieldsForAllFieldsTemplate(fields));
     return addKeysToList(fields, "field", "id");
   }
 );

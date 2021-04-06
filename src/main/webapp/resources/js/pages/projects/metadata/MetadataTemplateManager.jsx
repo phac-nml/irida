@@ -1,3 +1,4 @@
+import React from "react";
 import { navigate } from "@reach/router";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
@@ -7,18 +8,20 @@ import {
   PageHeader,
   Skeleton,
   Space,
+  Tag,
   Tooltip,
   Typography,
 } from "antd";
 import differenceBy from "lodash/differenceBy";
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DnDTable from "../../../components/ant.design/DnDTable";
-import { IconRemove } from "../../../components/icons/Icons";
+import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
 import { HelpPopover } from "../../../components/popovers";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { updateTemplate } from "../redux/templatesSlice";
+import { setDefaultTemplateForProject } from "../redux/projectSlice";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
+import { blue6 } from "../../../styles/colors";
 
 const { Paragraph, Text } = Typography;
 
@@ -35,6 +38,8 @@ export function MetadataTemplateManager({ id }) {
 
   const { templates, loading } = useSelector((state) => state.templates);
   const { fields: allFields } = useSelector((state) => state.fields);
+  const { defaultMetadataTemplateId } = useSelector((state) => state.project);
+
   const [template, setTemplate] = React.useState({});
   const [fields, setFields] = React.useState();
   const [newFields, setNewFields] = React.useState();
@@ -137,10 +142,60 @@ export function MetadataTemplateManager({ id }) {
     await completeUpdate(updated);
   };
 
+  /**
+   * Returns either a default tag or a set default button depending
+   * on if template is project default or not
+   *
+   * @param {Object} template - the template to return component for
+   */
+  const displayHeaderExtras = (template) => {
+    if (template.identifier === defaultMetadataTemplateId) {
+      return [
+        <Tag
+          key={`default-template-${template.identifier}`}
+          color={blue6}
+          icon={<IconCheckCircle />}
+          className="t-t-default-tag"
+        >
+          {i18n("MetadataTemplateManager.default")}
+        </Tag>,
+      ];
+    }
+    return [
+      <Button
+        onClick={() => setDefaultTemplate(template)}
+        key={`set-default-template-${template.identifier}`}
+        className="t-t-set-default-button"
+      >
+        {i18n("MetadataTemplateManager.set-as-default")}
+      </Button>,
+    ];
+  };
+
+  /**
+   * Sets the default template for the project
+   *
+   * @param {Object} template - the template to set as default
+   */
+  const setDefaultTemplate = async (template) => {
+    dispatch(
+      setDefaultTemplateForProject({
+        projectId: window.project.id,
+        templateId: template.identifier,
+      })
+    )
+      .then(unwrapResult)
+      .then(({ message }) => {
+        notification.success({ message });
+      })
+      .catch((message) => notification.error({ message }));
+  };
+
   return (
     <PageHeader
       title={<span className="t-t-header-name">{template.name}</span>}
       onBack={() => navigate("./")}
+      extra={displayHeaderExtras(template)}
     >
       <Skeleton loading={loading}>
         <List itemLayout="vertical" size="small">
