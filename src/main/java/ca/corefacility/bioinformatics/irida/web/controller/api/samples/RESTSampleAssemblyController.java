@@ -50,8 +50,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Controller for viewing and downloading assemblies for samples
  */
-@Controller
 @Tag(name = "samples")
+@Controller
 public class RESTSampleAssemblyController {
 
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleAssemblyController.class);

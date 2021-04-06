@@ -59,8 +59,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * {@link SequenceFile}.
  * 
  */
-@Controller
 @Tag(name = "samples")
+@Controller
 public class RESTSampleSequenceFilesController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleSequenceFilesController.class);
 	/**

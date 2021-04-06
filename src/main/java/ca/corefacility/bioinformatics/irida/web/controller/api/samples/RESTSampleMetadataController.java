@@ -39,8 +39,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
  * REST controller to handle storing and retrieving metadata from a
  * {@link Sample}
  */
-@Controller
 @Tag(name = "samples")
+@Controller
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
 

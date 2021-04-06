@@ -44,9 +44,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * REST controller to manage sharing of {@link AnalysisSubmission},
  * {@link Analysis}, and {@link AnalysisOutputFile} classes.
  */
+@Tag(name = "analysisSubmissions")
 @Controller
 @RequestMapping(value = "/api/analysisSubmissions")
-@Tag(name = "analysisSubmissions")
 public class RESTAnalysisSubmissionController extends RESTGenericController<AnalysisSubmission> {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private SampleService sampleService;

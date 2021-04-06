@@ -32,9 +32,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  *
  */
+@Tag(name = "sequencingrun")
 @Controller
 @RequestMapping(value = "/api/sequencingrun")
-@Tag(name = "sequencingrun")
 public class RESTSequencingRunController extends RESTGenericController<SequencingRun> {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSequencingRunController.class);
 

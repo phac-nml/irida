@@ -30,8 +30,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 /**
  *
  */
-@Controller
 @Tag(name = "sequencingrun")
+@Controller
 public class RESTSequencingRunSequenceFilesController {
 
 	private SequencingRunService sequencingRunService;
