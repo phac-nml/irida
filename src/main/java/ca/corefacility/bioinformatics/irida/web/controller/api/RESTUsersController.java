@@ -5,8 +5,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,10 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -31,6 +34,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller for managing users.
@@ -98,13 +103,70 @@ public class RESTUsersController extends RESTGenericController<User> {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "listAllUsers", summary = "Lists all users",
+			description = "Lists all users.", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns a list all users.",
+			content = @Content(schema = @Schema(implementation = UsersSchema.class)))
+	@RequestMapping(method = RequestMethod.GET)
+	@Override
+	public ModelMap listAllResources() { return super.listAllResources(); }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "getUser", summary = "Find a user",
+			description = "Get the user given the identifier.", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns a user containing the requested identifier.",
+			content = @Content(schema = @Schema(implementation = UserSchema.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@Override
+	public ModelMap getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "createUser", summary = "Create a new user",
+			description = "Create a new user.", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns the newly created user.",
+			content = @Content(schema = @Schema(implementation = UserSchema.class)))
+	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Override
+	public ModelMap create(@RequestBody User resource, HttpServletResponse response) { return super.create(resource, response); }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "deleteUser", summary = "Delete a user",
+			description = "Delete a user given the identifier.", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns whether the user was deleted successfully.",
+			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@Override
+	public ModelMap delete(@PathVariable Long identifier) { return super.delete(identifier); }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "updateUser", summary = "Update a user",
+			description = "Update a user", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns whether the user was updated successfully.",
+			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Override
+	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
+
+	/**
 	 * Get the collection of projects for a specific user.
 	 * 
 	 * @param username
 	 *            the username for the desired user.
 	 * @return a model containing the collection of projects for that user.
 	 */
-	@Operation(operationId = "getUserProjects", summary = "Get the list of projects associated with a user",
+	@Operation(operationId = "getUserProjects", summary = "Find all the projects associated with a user",
 			description = "Get the list of projects associated with a user.", tags = "users")
 	@ApiResponse(responseCode = "200", description = "Returns a list of projects associated with the given user.",
 			content = @Content(schema = @Schema(implementation = ProjectsSchema.class)))
@@ -158,5 +220,17 @@ public class RESTUsersController extends RESTGenericController<User> {
 
 	private class ProjectsSchema {
 		public ResourceCollection<Project> resource;
+	}
+
+	private class UserSchema {
+		public User resource;
+	}
+
+	private class UsersSchema {
+		public ResourceCollection<User> resource;
+	}
+
+	private class RootResourceSchema {
+		public RootResource resource;
 	}
 }

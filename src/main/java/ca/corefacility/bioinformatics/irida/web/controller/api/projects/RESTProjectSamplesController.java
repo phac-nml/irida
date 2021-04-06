@@ -224,7 +224,7 @@ public class RESTProjectSamplesController {
 	 *                  {@link Sample}s for.
 	 * @return the list of {@link Sample}s associated with this {@link Project}.
 	 */
-	@Operation(operationId = "getProjectSamples", summary = "Get all samples for the given project",
+	@Operation(operationId = "getProjectSamples", summary = "Find all samples for the given project",
 			description = "Get all samples for the given project.", tags = "projects")
 	@ApiResponse(responseCode = "200", description = "Returns a list of samples associated with the given project.",
 			content = @Content(schema = @Schema(implementation = SamplesSchema.class)))
@@ -281,7 +281,7 @@ public class RESTProjectSamplesController {
 	 * @param sampleId  the {@link Sample} identifier that we're looking for.
 	 * @return a representation of the specific sample.
 	 */
-	@Operation(operationId = "getProjectSample", summary = "Get a sample for the given project",
+	@Operation(operationId = "getProjectSample", summary = "Find a sample for the given project",
 			description = "Get a sample for the given project.", tags = "projects")
 	@ApiResponse(responseCode = "200", description = "Returns a sample associated with the given project.",
 			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
@@ -311,7 +311,7 @@ public class RESTProjectSamplesController {
 	 * @param sampleId the id of the {@link Sample} to read
 	 * @return representation of the sample
 	 */
-	@Operation(operationId = "getSample", summary = "Get a sample",
+	@Operation(operationId = "getSample", summary = "Find a sample",
 			description = "Get a sample.", tags = "projects")
 	@ApiResponse(responseCode = "200", description = "Returns a sample.",
 			content = @Content(schema = @Schema(implementation = SampleSchema.class)))

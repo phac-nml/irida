@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -56,6 +58,64 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 		super(service, SequencingRun.class);
 
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "listAllSequencingRun", summary = "Lists all sequencing runs",
+			description = "Lists all sequencing runs.", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns a list all sequencing runs.",
+			content = @Content(schema = @Schema(implementation = SequencingRunsSchema.class)))
+	@RequestMapping(method = RequestMethod.GET)
+	@Override
+	public ModelMap listAllResources() { return super.listAllResources(); }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "getSequencingRun", summary = "Find a sequencing run",
+			description = "Get the sequencing run given the identifier.", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns a sequencing run containing the requested identifier.",
+			content = @Content(schema = @Schema(implementation = SequencingRunSchema.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@Override
+	public ModelMap getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "createSequencingRun", summary = "Create a new sequencing run",
+			description = "Create a new sequencing run.", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns the newly created sequencing run.",
+			content = @Content(schema = @Schema(implementation = SequencingRunSchema.class)))
+	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Override
+	public ModelMap create(@RequestBody SequencingRun resource, HttpServletResponse response) { return super.create(resource, response); }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "deleteSequencingRun", summary = "Delete a sequencing run",
+			description = "Delete a sequencing run given the identifier.", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns whether the sequencing run was deleted successfully.",
+			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@Override
+	public ModelMap delete(@PathVariable Long identifier) { return super.delete(identifier); }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "updateSequencingRun", summary = "Update a sequencing run",
+			description = "Update a sequencing run", tags = "sequencingrun")
+	@ApiResponse(responseCode = "200", description = "Returns whether the sequencing run was updated successfully.",
+			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Override
+	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
+
 
 	/**
 	 * Create a Sequencing run
@@ -103,4 +163,11 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 		public SequencingRun resource;
 	}
 
+	private class SequencingRunsSchema {
+		public ResourceCollection<SequencingRun> resource;
+	}
+
+	private class RootResourceSchema {
+		public RootResource resource;
+	}
 }

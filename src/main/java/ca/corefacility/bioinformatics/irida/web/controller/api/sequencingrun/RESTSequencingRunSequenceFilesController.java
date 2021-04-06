@@ -56,7 +56,7 @@ public class RESTSequencingRunSequenceFilesController {
 	 * @param response        a reference to the response.
 	 * @return a response indicating that the collection was modified.
 	 */
-	@Operation(operationId = "addSequenceFilesToSequencingRun", summary = "Add a relationship between a sequencing run and a sequence file",
+	@Operation(operationId = "addSequenceFilesToSequencingRun", summary = "Link a sequencing run with a sequence file",
 			description = "Add a relationship between a sequencing run and a sequence file.", tags = "sequencingrun")
 	@ApiResponse(responseCode = "200", description = "Returns the modified sequencing run.",
 			content = @Content(schema = @Schema(implementation = SequencingRunSchema.class)))
