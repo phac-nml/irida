@@ -6,6 +6,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
  * Controller for managing users.
  * 
  */
+@Tag(name = "users")
 @Controller
 @RequestMapping(value = "/api/users")
 public class RESTUsersController extends RESTGenericController<User> {
@@ -97,6 +104,10 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 *            the username for the desired user.
 	 * @return a model containing the collection of projects for that user.
 	 */
+	@Operation(operationId = "getUserProjects", summary = "Get the list of projects associated with a user",
+			description = "Get the list of projects associated with a user.", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns a list of projects associated with the given user.",
+			content = @Content(schema = @Schema(implementation = ProjectsSchema.class)))
 	@RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
 	public ModelMap getUserProjects(@PathVariable String username) {
 		logger.debug("Loading projects for user [" + username + "]");
@@ -141,5 +152,11 @@ public class RESTUsersController extends RESTGenericController<User> {
 		User u = userService.getUserByUsername(username);
 		// get the user from the database.
 		return getResource(u.getId());
+	}
+
+	// TODO: revisit these classes that define the response schemas for openapi
+
+	private class ProjectsSchema {
+		public ResourceCollection<Project> resource;
 	}
 }
