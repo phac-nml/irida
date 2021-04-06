@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { setDefaultMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import {
   getProjectDetails,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
-import { updateProcessingPriority, setDefaultMetadataTemplate } from "../../../apis/projects/settings";
+import { updateProcessingPriority } from "../../../apis/projects/settings";
 
 /**
  * Redux Async Thunk for fetching project details
