@@ -38,6 +38,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.core.io.Resource;
@@ -172,7 +173,7 @@ public class IridaApiServicesConfig {
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
-		if (!env.acceptsProfiles("prod")) {
+		if (!env.acceptsProfiles(Profiles.of("prod"))) {
 			source.setCacheSeconds(0);
 		}
 
