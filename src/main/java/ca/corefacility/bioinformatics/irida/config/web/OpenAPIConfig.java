@@ -25,7 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
                 scopes = {@OAuthScope(name = "read", description = "This is the read scope."), @OAuthScope(name = "write", description = "This is the write scope.")}),
                 password = @OAuthFlow(tokenUrl = "/api/oauth/token")))
 @OpenAPIDefinition(
-        info = @Info(title = "IRIDA REST API", version = "v1",
+        info = @Info(title = "IRIDA REST API", version = "${irida.version}",
                 description = "The IRIDA REST API follows a standard output format, regardless of the resource being accessed. Resources can be accessed as an individual resource or as part of a resource collection.",
                 contact = @Contact(name = "the Bioinformatics Team", email = "helpdesk@cscscience.ca")),
         security = @SecurityRequirement(name = "oauth2", scopes = {"read", "write"}))
