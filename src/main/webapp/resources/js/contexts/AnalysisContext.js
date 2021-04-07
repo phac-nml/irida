@@ -11,7 +11,7 @@ import { useInterval } from "../hooks";
 import {
   getAnalysisInfo,
   getUpdatedDetails,
-  updateAnalysis
+  updateAnalysis,
 } from "../apis/analysis/analysis";
 
 import { notification } from "antd";
@@ -31,7 +31,7 @@ export const stateMap = {
   POST_PROCESSING: 4,
   TRANSFERRING: 4,
   COMPLETING: 4,
-  COMPLETED: 5
+  COMPLETED: 5,
 };
 
 const initialContext = {
@@ -46,10 +46,11 @@ const initialContext = {
   duration: null,
   isCompleted: false,
   isError: false,
-  treeDefault: false
+  treeDefault: false,
+  loading: true,
 };
 
-const UPDATE_ANALYSIS_DELAY=60000;
+const UPDATE_ANALYSIS_DELAY = 60000;
 
 const AnalysisContext = React.createContext(initialContext);
 
@@ -60,39 +61,47 @@ function AnalysisProvider(props) {
   useEffect(() => {
     const analysisId = window.location.pathname.match(/analysis\/(\d+)/)[1];
     setAnalysisIdentifier(analysisId);
-    getAnalysisInfo(analysisId).then(res => {
-      setAnalysisContext(analysisContext => {
-        return {
-          ...analysisContext,
-          ...res,
-          isCompleted: res.completed,
-          isError: res.error,
-          isAdmin: res.admin,
-        }
+    getAnalysisInfo(analysisId)
+      .then((res) => {
+        setAnalysisContext((analysisContext) => {
+          return {
+            ...analysisContext,
+            ...res,
+            isCompleted: res.completed,
+            isError: res.error,
+            isAdmin: res.admin,
+            loading: false,
+          };
+        });
+      })
+      .catch((message) => {
+        notification.error({ message });
       });
-    }).catch((message) => {
-      notification.error({ message });
-    });
   }, []);
 
   /* Update the analysis details that are required
    * to display the progression using polling
    */
   const intervalId = useInterval(() => {
-    getUpdatedDetails(analysisIdentifier).then(res => {
-      updateAnalysisState(res.analysisState, res.previousState);
-      updateAnalysisDuration(res.duration);
-      /*
-       * If the analysis has completed or errored we want to clear the interval
-       * so we do not keep retrieving the analysis progress
-       */
-      if(res.analysisState === "COMPLETED" || res.analysisState.includes("ERROR")) {
+    getUpdatedDetails(analysisIdentifier)
+      .then((res) => {
+        updateAnalysisState(res.analysisState, res.previousState);
+        updateAnalysisDuration(res.duration);
+        /*
+         * If the analysis has completed or errored we want to clear the interval
+         * so we do not keep retrieving the analysis progress
+         */
+        if (
+          res.analysisState === "COMPLETED" ||
+          res.analysisState.includes("ERROR")
+        ) {
+          clearInterval(intervalId);
+        }
+      })
+      .catch((message) => {
+        notification.error({ message });
         clearInterval(intervalId);
-      }
-    }).catch((message) => {
-      notification.error({ message });
-      clearInterval(intervalId);
-    });
+      });
   }, UPDATE_ANALYSIS_DELAY);
 
   /* This function is used to update the AnalysisContext
@@ -100,11 +109,11 @@ function AnalysisProvider(props) {
    * load of the page
    */
   function updateAnalysisDuration(duration) {
-    if(duration !== analysisContext.duration) {
-      setAnalysisContext(analysisContext => {
+    if (duration !== analysisContext.duration) {
+      setAnalysisContext((analysisContext) => {
         return {
           ...analysisContext,
-          duration: duration
+          duration: duration,
         };
       });
     }
@@ -115,26 +124,32 @@ function AnalysisProvider(props) {
    * load of the page
    */
   function updateAnalysisState(analysisState, previousState) {
-    if(analysisState !== analysisContext.analysisState) {
-      setAnalysisContext(analysisContext => {
-        return {...analysisContext, analysisState: analysisState }
+    if (analysisState !== analysisContext.analysisState) {
+      setAnalysisContext((analysisContext) => {
+        return { ...analysisContext, analysisState: analysisState };
       });
 
-      if(analysisState === "COMPLETED" !== analysisContext.isCompleted) {
-        setAnalysisContext(analysisContext => {
-          return {...analysisContext, isCompleted: analysisState === "COMPLETED" }
+      if ((analysisState === "COMPLETED") !== analysisContext.isCompleted) {
+        setAnalysisContext((analysisContext) => {
+          return {
+            ...analysisContext,
+            isCompleted: analysisState === "COMPLETED",
+          };
         });
       }
 
-      if(analysisState.includes("ERROR") !== analysisContext.isError) {
-        setAnalysisContext(analysisContext => {
-          return {...analysisContext, isError: analysisState.includes("ERROR") }
+      if (analysisState.includes("ERROR") !== analysisContext.isError) {
+        setAnalysisContext((analysisContext) => {
+          return {
+            ...analysisContext,
+            isError: analysisState.includes("ERROR"),
+          };
         });
       }
 
-      if(previousState !== analysisContext.previousState) {
-        setAnalysisContext(analysisContext => {
-          return {...analysisContext, previousState: previousState }
+      if (previousState !== analysisContext.previousState) {
+        setAnalysisContext((analysisContext) => {
+          return { ...analysisContext, previousState: previousState };
         });
       }
     }
@@ -148,10 +163,10 @@ function AnalysisProvider(props) {
     updateAnalysis({
       submissionId: analysisIdentifier,
       analysisName: updatedAnalysisName,
-      priority: null
-    }).then(message => {
+      priority: null,
+    }).then((message) => {
       showNotification({ text: message });
-      setAnalysisContext(analysisContext => {
+      setAnalysisContext((analysisContext) => {
         return { ...analysisContext, analysisName: updatedAnalysisName };
       });
     });
@@ -162,7 +177,7 @@ function AnalysisProvider(props) {
       value={{
         analysisContext,
         analysisContextUpdateSubmissionName,
-        analysisIdentifier
+        analysisIdentifier,
       }}
     >
       {props.children}

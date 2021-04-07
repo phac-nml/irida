@@ -83,11 +83,11 @@ export default function Analysis() {
     : ANALYSIS.SETTINGS;
 
   /*
-   * The functions returns a set of tabs which
+   * Returns a set of tabs which
    * should be displayed to the user depending
    * on analysis states and types.
    */
-  function getTabLinks() {
+  const getTabLinks = () => {
     let tabLinks = [];
 
     if (analysisContext.isError) {
@@ -153,21 +153,20 @@ export default function Analysis() {
     );
 
     return tabLinks;
-  }
+  };
 
   /*
-   * The following renders the tabs, and selects the
-   * tab depending on the state and type of analysis.
-   * The steps the analysis has gone through or is
-   * currently running through are only displayed
-   * if the analysis has not completed. If successfully
-   * completed then a green check mark is displayed next
-   * to the analysis name.
+  Returns the analysis steps if it hasn't completed
    */
-  return (
-    <PageWrapper title={title}>
-      {!analysisContext.isCompleted ? <AnalysisSteps /> : null}
+  const analysisSteps = () => {
+    return !analysisContext.isCompleted ? <AnalysisSteps /> : null;
+  };
 
+  /*
+  Returns the tab menu links with the current page link highlighted
+   */
+  const menuItems = () => {
+    return (
       <Location>
         {(props) => {
           const keyname = props.location.pathname.match(pathRegx);
@@ -183,6 +182,14 @@ export default function Analysis() {
           );
         }}
       </Location>
+    );
+  };
+
+  /*
+  Returns the page content depending on state of analysis and type
+   */
+  const pageContent = () => {
+    return (
       <Suspense fallback={<ContentLoading />}>
         <AnalysisOutputsProvider>
           <Router style={{ paddingTop: SPACE_MD }}>
@@ -234,6 +241,20 @@ export default function Analysis() {
           </Router>
         </AnalysisOutputsProvider>
       </Suspense>
+    );
+  };
+
+  /*
+   * The following renders the analysis steps, tabs, and the page
+   * content.
+   */
+  return (
+    <PageWrapper title={!analysisContext.loading && title}>
+      {!analysisContext.loading ? (
+        [analysisSteps(), menuItems(), pageContent()]
+      ) : (
+        <ContentLoading />
+      )}
     </PageWrapper>
   );
 }
