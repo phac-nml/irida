@@ -100,9 +100,9 @@ public class ProjectMetadataPage extends AbstractPage {
 					.equalsIgnoreCase(name)) {
 				element.click();
 				wait.until(ExpectedConditions.urlContains("/templates/"));
+				break;
 			}
 		}
-
 	}
 
 	public boolean canDeleteTemplate() {
@@ -156,6 +156,41 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	public String getTemplateName() {
 		return metadataTemplateName.getText();
+	}
+
+	public boolean allFieldsTemplateIsDefault() {
+		waitForTemplates();
+		// The All Fields template is the last template displayed on the page
+		WebElement allFieldsTemplate = metadataTemplateRow.get(metadataTemplateRow.size() - 1);
+		List<WebElement> defaultTag = allFieldsTemplate.findElements(By.className("t-t-default-tag"));
+		return defaultTag.size() == 1;
+	}
+
+	public void setDefaultTemplate() {
+		WebElement newDefaultTemplate = metadataTemplateRow.get(0);
+		WebElement setDefaultTemplate = newDefaultTemplate.findElement(By.className("t-t-set-default-button"));
+		setDefaultTemplate.click();
+	}
+
+	public boolean removeButtonIsDisabled() {
+		// First template is set as the default so we get it
+		waitForTemplates();
+		WebElement currDefaultTemplate = metadataTemplateRow.get(0);
+		return !currDefaultTemplate.findElement(By.className("t-t-remove-button")).isEnabled();
+	}
+
+	public boolean defaultTemplateTagVisible() {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebElement defaultTag = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-default-tag")));
+		return defaultTag.isDisplayed();
+	}
+
+	public boolean setDefaultTemplateButtonVisible() {
+		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebElement setDefaultTemplateBtn = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-set-default-button")));
+		return setDefaultTemplateBtn.isDisplayed();
 	}
 
 	private void waitForFields() {

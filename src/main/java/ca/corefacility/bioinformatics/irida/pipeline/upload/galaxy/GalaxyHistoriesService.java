@@ -142,32 +142,32 @@ public class GalaxyHistoriesService {
 	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
 	 * 	in the history.
 	 */
-	@SuppressWarnings("deprecation")
-	public Dataset fileToHistory(Path path, InputFileType fileType, History history) throws UploadException, GalaxyDatasetException {
+	public Dataset fileToHistory(Path path, InputFileType fileType, History history)
+			throws UploadException, GalaxyDatasetException {
 		checkNotNull(path, "path is null");
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
 		checkNotNull(history.getId(), "history id is null");
-		checkState(path.toFile().exists(), "path " + path + " does not exist");
-		
+		checkState(path.toFile()
+				.exists(), "path " + path + " does not exist");
+
 		File file = path.toFile();
-				
+
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType(fileType.toString());
-		
-		ClientResponse clientResponse = 
-				toolsClient.uploadRequest(uploadRequest);
-		
+
+		ClientResponse clientResponse = toolsClient.uploadRequest(uploadRequest);
+
 		if (clientResponse == null) {
-			throw new UploadException("Could not upload " + file + " to history " + history.getId() +
-					" ClientResponse is null");
-		} else if (!ClientResponse.Status.OK.equals(clientResponse.getClientResponseStatus())) {
-			String message = "Could not upload " + file + " to history " + history.getId() +
-					" ClientResponse: " + clientResponse.getClientResponseStatus() + " " +
-					clientResponse.getEntity(String.class);
-			
+			throw new UploadException(
+					"Could not upload " + file + " to history " + history.getId() + " ClientResponse is null");
+		} else if (ClientResponse.Status.OK.getStatusCode() != clientResponse.getStatusInfo()
+				.getStatusCode()) {
+			String message = "Could not upload " + file + " to history " + history.getId() + " ClientResponse: "
+					+ clientResponse.getStatusInfo() + " " + clientResponse.getEntity(String.class);
+
 			logger.error(message);
-			
+
 			throw new UploadException(message);
 		} else {
 			return getDatasetForFileInHistory(file.getName(), history.getId());

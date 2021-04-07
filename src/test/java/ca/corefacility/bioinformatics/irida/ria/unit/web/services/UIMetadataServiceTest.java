@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,5 +68,12 @@ public class UIMetadataServiceTest {
 		verify(templateService, times(1)).createMetadataTemplateInProject(template, project);
 		Assert.assertEquals("Should have the same template name", template.getLabel(), newTemplate.getName());
 		Assert.assertEquals("Should have a new identifier", NEW_TEMPLATE_ID, newTemplate.getId());
+	}
+
+	@Test
+	public void testSetProjectDefaultMetadataTemplate() throws Exception {
+		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID, Locale.ENGLISH);
+		verify(templateService, times(1)).read(NEW_TEMPLATE_ID);
+		verify(projectService, times(1)).update(project);
 	}
 }
