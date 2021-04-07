@@ -1,5 +1,5 @@
-import React from "react";
 import { Checkbox, Form, Radio, Select } from "antd";
+import React from "react";
 
 function isTruthy(options) {
   if (options.length > 2) return false;
@@ -18,6 +18,7 @@ function isTruthy(options) {
  * @constructor
  */
 export function InputWithOptions({ item }) {
+  console.log(item);
   if (isTruthy(item.options)) {
     return (
       <Form.Item name={item.name} valuePropName="checked">

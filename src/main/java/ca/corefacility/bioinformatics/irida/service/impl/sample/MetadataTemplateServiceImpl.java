@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
@@ -25,8 +28,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplate
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
-import com.google.common.collect.Lists;
-
 /**
  * Service for storing and reading {@link MetadataTemplate}s
  */
@@ -34,9 +35,9 @@ import com.google.common.collect.Lists;
 public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataTemplate>
 		implements MetadataTemplateService {
 
-	private ProjectMetadataTemplateJoinRepository pmtRepository;
-	private MetadataFieldRepository fieldRepository;
-	private MetadataRestrictionRepository metadataRestrictionRepository;
+	private final ProjectMetadataTemplateJoinRepository pmtRepository;
+	private final MetadataFieldRepository fieldRepository;
+	private final MetadataRestrictionRepository metadataRestrictionRepository;
 
 	@Autowired
 	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,

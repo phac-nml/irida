@@ -5,6 +5,11 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 
+/**
+ * Used to represent a project metadata template in the UI.
+ * A special class was required for this since it needs the project specific metadata fields
+ * that include the permissions for that field on that project.
+ */
 public class ProjectMetadataTemplate {
 	private Long id;
 	private String label;

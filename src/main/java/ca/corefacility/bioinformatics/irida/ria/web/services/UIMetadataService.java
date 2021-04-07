@@ -122,6 +122,12 @@ public class UIMetadataService {
 		return addRestrictionsToMetadataFields(project, fields);
 	}
 
+	/**
+	 * Get the list of all metadata restrictions that belong to the current project.
+	 *
+	 * @param locale Current users {@link Locale}
+	 * @return List of metadata fields restrictions
+	 */
 	public List<SelectOption> getMetadataFieldRestrictions(Locale locale) {
 		return Arrays.stream(ProjectRole.values())
 				.map(role -> new SelectOption(role.toString(),
@@ -129,10 +135,19 @@ public class UIMetadataService {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Update a restriction level on a metadata field for a project
+	 *
+	 * @param projectId Identifier for the project
+	 * @param fieldId   Identifier for the metadata field
+	 * @param newRole   New project role to set the field to
+	 * @param locale    Current users {@link Locale}
+	 * @return Message to user on the status of the update
+	 */
 	public String updateMetadataProjectField(Long projectId, Long fieldId, ProjectRole newRole, Locale locale) {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField field = templateService.readMetadataField(fieldId);
-		MetadataRestriction restriction = templateService.setMetadataRestriction(project, field, newRole);
+		templateService.setMetadataRestriction(project, field, newRole);
 		return messageSource.getMessage("server.MetadataFieldsListManager.update", new Object[] { field.getLabel(),
 				messageSource.getMessage("projectRole." + newRole.toString(), new Object[] {}, locale) }, locale);
 	}
@@ -157,11 +172,18 @@ public class UIMetadataService {
 			projectService.update(project);
 			return messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale);
 		} catch (Exception e) {
-			throw new Exception(messageSource.getMessage("server.metadata-template.set-default-error",
-					new Object[] {}, locale));
+			throw new Exception(
+					messageSource.getMessage("server.metadata-template.set-default-error", new Object[] {}, locale));
 		}
 	}
 
+	/**
+	 * Utility function to update a list of {@link MetadataTemplateField}s with their restrictions for a project.
+	 *
+	 * @param project The {@link Project} the fields belong to.
+	 * @param fields  list of {@link MetadataTemplateField}s
+	 * @return list of {@link ProjectMetadataField}
+	 */
 	private List<ProjectMetadataField> addRestrictionsToMetadataFields(Project project,
 			List<MetadataTemplateField> fields) {
 		return fields.stream()
@@ -169,6 +191,13 @@ public class UIMetadataService {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Utility function to update a specific {@link MetadataTemplateField} with its security restcitions for a project.
+	 *
+	 * @param project The {@link Project} the fields belong to
+	 * @param field   the {@link MetadataTemplateField} to update
+	 * @return {@link ProjectMetadataField}
+	 */
 	private ProjectMetadataField createProjectMetadataField(Project project, MetadataTemplateField field) {
 		MetadataRestriction restriction = templateService.getMetadataRestrictionForFieldAndProject(project, field);
 		String level = restriction == null ?

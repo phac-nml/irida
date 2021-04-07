@@ -124,14 +124,29 @@ public class MetadataAjaxController {
 		}
 	}
 
+	/**
+	 * Get the list of all metadata restrictions that belong to the current project.
+	 *
+	 * @param locale Current users {@link Locale}
+	 * @return List of metadata fields restrictions
+	 */
 	@GetMapping("/fields/restrictions")
-	public List<SelectOption> getMetadataRestrictions(Locale locale){
+	public List<SelectOption> getMetadataRestrictions(Locale locale) {
 		return service.getMetadataFieldRestrictions(locale);
 	}
 
+	/**
+	 * Update a restriction level on a metadata field for a project
+	 *
+	 * @param projectId   Identifier for the project
+	 * @param fieldId     Identifier for the metadata field
+	 * @param projectRole New project role to set the field to
+	 * @param locale      Current users {@link Locale}
+	 * @return Message to user on the status of the update
+	 */
 	@PatchMapping("/fields/restrictions")
-	public ResponseEntity<AjaxResponse> patchProjectMetadataFieldRestriction(@RequestParam Long projectId, @RequestParam Long fieldId, @RequestParam
-			ProjectRole projectRole, Locale locale) {
+	public ResponseEntity<AjaxResponse> patchProjectMetadataFieldRestriction(@RequestParam Long projectId,
+			@RequestParam Long fieldId, @RequestParam ProjectRole projectRole, Locale locale) {
 		return ResponseEntity.ok(
 				new AjaxSuccessResponse(service.updateMetadataProjectField(projectId, fieldId, projectRole, locale)));
 	}
