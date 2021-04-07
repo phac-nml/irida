@@ -39,10 +39,7 @@ export async function createProjectMetadataTemplate(projectId, parameters) {
  */
 export async function updateMetadataTemplate(template) {
   try {
-    const { data } = await axios.put(
-      `${BASE_URL}/${template.identifier}`,
-      template
-    );
+    const { data } = await axios.put(`${BASE_URL}/${template.id}`, template);
     return data.message;
   } catch (e) {
     return Promise.reject(e.response.data.message);
@@ -82,4 +79,3 @@ export async function setDefaultMetadataTemplate(projectId, templateId) {
     return Promise.reject(e.response.data.message);
   }
 }
-

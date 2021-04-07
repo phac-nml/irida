@@ -11,36 +11,36 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
  * that include the permissions for that field on that project.
  */
 public class ProjectMetadataTemplate {
-	private Long id;
-	private String label;
+	private Long identifier;
+	private String name;
 	private String description;
 	private Date createdDate;
 	private Date modifiedDate;
 	private List<ProjectMetadataField> fields;
 
 	public ProjectMetadataTemplate(MetadataTemplate template, List<ProjectMetadataField> fields) {
-		this.id = template.getId();
-		this.label = template.getLabel();
+		this.identifier = template.getId();
+		this.name = template.getName();
 		this.description = template.getDescription();
 		this.createdDate = template.getCreatedDate();
 		this.modifiedDate = template.getModifiedDate();
 		this.fields = fields;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getIdentifier() {
+		return identifier;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setIdentifier(Long identifier) {
+		this.identifier = identifier;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {

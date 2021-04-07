@@ -15,7 +15,7 @@ export const fetchTemplatesForProject = createAsyncThunk(
   `templates/fetchTemplatesForProject`,
   async (projectId) => {
     const templates = await getProjectMetadataTemplates(projectId);
-    return addKeysToList(templates, "template", "id");
+    return addKeysToList(templates, "template", "identifier");
   }
 );
 
@@ -72,7 +72,6 @@ export const templatesSlice = createSlice({
     templates: [
       {
         name: i18n("MetadataTemplatesList.allFields"),
-        label: i18n("MetadataTemplatesList.allFields"),
         description: i18n("MetadataTemplatesList.allFields-description"),
         identifier: 0,
         key: "template-0",
@@ -98,7 +97,7 @@ export const templatesSlice = createSlice({
     },
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
       const templates = state.templates.filter(
-        (template) => template.id !== payload.templateId
+        (template) => template.identifier !== payload.templateId
       );
       state.templates = templates;
     },

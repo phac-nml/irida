@@ -6,7 +6,7 @@ import { setDefaultMetadataTemplate } from "../../../apis/metadata/metadata-temp
  * @type {AsyncThunk<unknown, void, {}>}
  */
 export const setDefaultTemplateForProject = createAsyncThunk(
-  `templates/setDefaultTemplateForProject`,
+  `project/setDefaultTemplateForProject`,
   async ({ projectId, templateId }, { rejectWithValue }) => {
     try {
       const message = await setDefaultMetadataTemplate(projectId, templateId);

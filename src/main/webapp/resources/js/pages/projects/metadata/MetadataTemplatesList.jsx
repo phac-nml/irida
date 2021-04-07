@@ -18,10 +18,8 @@ import { IconDownloadFile, IconRemove } from "../../../components/icons/Icons";
 import { blue6 } from "../../../styles/colors";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import {
-  removeTemplateFromProject,
-  setDefaultTemplateForProject,
-} from "../../projects/redux/templatesSlice";
+import { removeTemplateFromProject } from "../../projects/redux/templatesSlice";
+import { setDefaultTemplateForProject } from "../redux/projectSlice";
 
 const { Text } = Typography;
 
@@ -78,13 +76,14 @@ export function MetadataTemplatesList({ projectId }) {
    * @returns {JSX.Element[]}
    */
   const getActionsForItem = (template) => {
-    let isDefaultTemplateForProject = template.id == defaultMetadataTemplateId;
+    let isDefaultTemplateForProject =
+      template.identifier == defaultMetadataTemplateId;
     const actions = [
       <Button
         size="small"
         icon={<IconDownloadFile />}
-        href={`${BASE_URL}/${template.id}/excel`}
-        key={`download-${template.id}`}
+        href={`${BASE_URL}/${template.identifier}/excel`}
+        key={`download-${template.identifier}`}
       >
         {i18n("MetadataTemplatesList.download")}
       </Button>,
@@ -98,12 +97,12 @@ export function MetadataTemplatesList({ projectId }) {
             i18n("MetadataTemplatesList.cannot-remove-default")
           }
           arrowPointAtCenter
-          key={`remove-tooltip-${template.id}`}
+          key={`remove-tooltip-${template.identifier}`}
         >
           <Popconfirm
-            key={`remove-${template.id}`}
+            key={`remove-${template.identifier}`}
             title={i18n("MetadataTemplatesList.delete-confirm")}
-            onConfirm={() => deleteTemplate(template.id)}
+            onConfirm={() => deleteTemplate(template.identifier)}
             okButtonProps={{
               className: "t-t-confirm-remove",
             }}
@@ -168,9 +167,9 @@ export function MetadataTemplatesList({ projectId }) {
                   <Link
                     className="t-t-name"
                     style={{ color: blue6, display: "block" }}
-                    to={`${item.id}`}
+                    to={`${item.identifier}`}
                   >
-                    {item.label}
+                    {item.name}
                   </Link>
                 ) : (
                   <Text className="t-t-name" style={{ display: "block" }}>
@@ -179,9 +178,9 @@ export function MetadataTemplatesList({ projectId }) {
                 )}
                 <div>
                   {canManage &&
-                    (item.id == defaultMetadataTemplateId ? (
+                    (item.identifier == defaultMetadataTemplateId ? (
                       <Tag
-                        key={`default-${item.id}`}
+                        key={`default-${item.identifier}`}
                         color={blue6}
                         className="t-t-default-tag"
                       >
@@ -190,15 +189,15 @@ export function MetadataTemplatesList({ projectId }) {
                     ) : (
                       <Button
                         size="small"
-                        key={`set-default-${item.id}`}
-                        onClick={() => setDefaultTemplate(item.id)}
+                        key={`set-default-${item.identifier}`}
+                        onClick={() => setDefaultTemplate(item.identifier)}
                         type="link"
                         className="t-t-set-default-button"
                       >
                         {i18n("MetadataTemplatesList.set-as-default")}
                       </Button>
                     ))}
-                  <Tag key={`fields-${item.id}`}>
+                  <Tag key={`fields-${item.identifier}`}>
                     {i18n(
                       "ProjectMetadataTemplates.fields",
                       item.fields ? item.fields.length : 0
