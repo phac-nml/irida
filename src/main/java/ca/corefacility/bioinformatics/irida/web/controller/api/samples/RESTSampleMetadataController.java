@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
@@ -66,6 +68,36 @@ public class RESTSampleMetadataController {
 		SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
+		return modelMap;
+	}
+
+	/**
+	 * Get multiple sample metadata collections
+	 * @param sampleIds the ids of the samples to get metadata for
+	 * @return A collection of sample metadata for the given IDs
+	 */
+	@RequestMapping(value = "/api/samples/metadata", method = RequestMethod.POST, consumes = "application/idcollection+json")
+	public ModelMap getMultipleSampleMetadata(final @RequestBody List<Long> sampleIds) {
+		ModelMap modelMap = new ModelMap();
+
+		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
+
+		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
+
+		for (Sample s : samples) {
+
+			Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+
+			SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
+
+			resources.add(response);
+		}
+
+		resources.add(
+				linkTo(methodOn(RESTSampleMetadataController.class).getMultipleSampleMetadata(null)).withSelfRel());
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+
 		return modelMap;
 	}
 
