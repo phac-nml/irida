@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
@@ -52,9 +53,8 @@ public class RESTSampleMetadataController {
 
 	/**
 	 * Get the metadata for a given {@link Sample}
-	 * 
-	 * @param sampleId
-	 *            the id of the {@link Sample} to get metadata for
+	 *
+	 * @param sampleId the id of the {@link Sample} to get metadata for
 	 * @return the metadata for the sample
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
@@ -73,6 +73,7 @@ public class RESTSampleMetadataController {
 
 	/**
 	 * Get multiple sample metadata collections
+	 *
 	 * @param sampleIds the ids of the samples to get metadata for
 	 * @return A collection of sample metadata for the given IDs
 	 */
@@ -104,11 +105,9 @@ public class RESTSampleMetadataController {
 	/**
 	 * Save new metadata for a {@link Sample}. Note this will overwrite the
 	 * existing metadata
-	 * 
-	 * @param sampleId
-	 *            the id of the {@link Sample} to save new metadata
-	 * @param metadataMap
-	 *            the metadata to save to the {@link Sample}
+	 *
+	 * @param sampleId    the id of the {@link Sample} to save new metadata
+	 * @param metadataMap the metadata to save to the {@link Sample}
 	 * @return the updated {@link Sample}
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
@@ -118,7 +117,7 @@ public class RESTSampleMetadataController {
 
 		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
 
-		sampleService.updateSampleMetadata(s,metadata);
+		sampleService.updateSampleMetadata(s, metadata);
 
 		return getSampleMetadata(sampleId);
 	}
@@ -126,11 +125,9 @@ public class RESTSampleMetadataController {
 	/**
 	 * Add select new metadata fields to the {@link Sample}. Note this will only
 	 * overwrite duplicate terms. Existing metadata will not be affected.
-	 * 
-	 * @param sampleId
-	 *            the {@link Sample} to add metadata to
-	 * @param metadataMap
-	 *            the new metadata
+	 *
+	 * @param sampleId    the {@link Sample} to add metadata to
+	 * @param metadataMap the new metadata
 	 * @return the updated {@link Sample}
 	 */
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
@@ -139,7 +136,7 @@ public class RESTSampleMetadataController {
 		Sample s = sampleService.read(sampleId);
 
 		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
-		
+
 		sampleService.mergeSampleMetadata(s, metadata);
 
 		return getSampleMetadata(sampleId);
@@ -147,9 +144,8 @@ public class RESTSampleMetadataController {
 
 	/**
 	 * Build a {@link SampleMetadataResponse} object
-	 * 
-	 * @param s
-	 *            the {@link Sample} to build the object from
+	 *
+	 * @param s the {@link Sample} to build the object from
 	 * @return a constructed {@link SampleMetadataResponse}
 	 */
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s, Set<MetadataEntry> metadataEntries) {
@@ -157,34 +153,5 @@ public class RESTSampleMetadataController {
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
 		return response;
-	}
-
-	/**
-	 * Response class so we can add links to sample metadata
-	 */
-	private class SampleMetadataResponse extends IridaResourceSupport {
-		Map<MetadataTemplateField, MetadataEntry> metadata;
-
-		@Deprecated
-		public SampleMetadataResponse(Map<MetadataTemplateField, MetadataEntry> metadata) {
-			this.metadata = metadata;
-		}
-
-		public SampleMetadataResponse(Set<MetadataEntry> metadataEntrySet) {
-			metadata = new HashMap<>();
-			for (MetadataEntry entry : metadataEntrySet) {
-				metadata.put(entry.getField(), entry);
-			}
-		}
-
-		@JsonProperty
-		public Map<MetadataTemplateField, MetadataEntry> getMetadata() {
-			return metadata;
-		}
-
-		@JsonProperty
-		public void setMetadata(Map<MetadataTemplateField, MetadataEntry> metadata) {
-			this.metadata = metadata;
-		}
 	}
 }
