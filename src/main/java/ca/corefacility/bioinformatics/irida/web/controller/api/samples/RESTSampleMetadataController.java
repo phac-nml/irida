@@ -38,6 +38,8 @@ public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
 
 	public static final String METADATA_REL = "sample/metadata";
+	public static final String ALL_METADATA_REL = "samples/metadata";
+
 	public static final String SAMPLE_REL = "sample";
 
 	private SampleService sampleService;
