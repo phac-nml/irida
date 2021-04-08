@@ -333,3 +333,11 @@ ol.continue li:before {
   border: 1px solid hsl(116, 0%, 91%);
   border-radius: 2px;
 }
+
+/*
+This was added for Ant Design v4.15.0 due to checkbox not behaving properly
+TODO: check on future release of ant design.
+*/
+.ant-checkbox {
+  display: inline-block;
+}
