@@ -79,7 +79,7 @@ public class RESTSampleMetadataController {
 	 * @return A collection of sample metadata for the given project
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
-	public ModelMap getProjectMetadata(final @PathVariable Long projectId) {
+	public ModelMap getProjectSampleMetadata(final @PathVariable Long projectId) {
 		ModelMap modelMap = new ModelMap();
 
 		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
@@ -97,7 +97,8 @@ public class RESTSampleMetadataController {
 			resources.add(response);
 		}
 
-		resources.add(linkTo(methodOn(RESTSampleMetadataController.class).getProjectMetadata(projectId)).withSelfRel());
+		resources.add(
+				linkTo(methodOn(RESTSampleMetadataController.class).getProjectSampleMetadata(projectId)).withSelfRel());
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 

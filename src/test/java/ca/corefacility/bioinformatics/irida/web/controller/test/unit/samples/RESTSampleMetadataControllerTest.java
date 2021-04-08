@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -45,7 +44,7 @@ public class RESTSampleMetadataControllerTest {
 	}
 
 	@Test
-	public void testReadMultipleMetadata() {
+	public void testReadProjectSampleMetadata() {
 		Sample s1 = new Sample("s1");
 		s1.setId(1L);
 		Sample s2 = new Sample("s2");
@@ -65,7 +64,7 @@ public class RESTSampleMetadataControllerTest {
 		when(sampleService.getMetadataForSample(s1)).thenReturn(Sets.newHashSet(entry1));
 		when(sampleService.getMetadataForSample(s2)).thenReturn(Sets.newHashSet(entry2));
 
-		ModelMap modelMap = metadataController.getProjectMetadata(p1.getId());
+		ModelMap modelMap = metadataController.getProjectSampleMetadata(p1.getId());
 
 		ResourceCollection<SampleMetadataResponse> responses = (ResourceCollection) modelMap.get(
 				RESTGenericController.RESOURCE_NAME);
