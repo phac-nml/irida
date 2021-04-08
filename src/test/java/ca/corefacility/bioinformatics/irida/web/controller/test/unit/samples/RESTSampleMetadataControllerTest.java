@@ -1,11 +1,15 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -35,7 +39,7 @@ public class RESTSampleMetadataControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
-
+		projectService = mock(ProjectService.class);
 
 		metadataController = new RESTSampleMetadataController(sampleService, metadataTemplateService, projectService);
 	}
@@ -46,18 +50,22 @@ public class RESTSampleMetadataControllerTest {
 		s1.setId(1L);
 		Sample s2 = new Sample("s2");
 		s2.setId(2L);
+		Project p1 = new Project("p1");
+		p1.setId(3L);
 
 		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
 		MetadataEntry entry1 = new MetadataEntry("val1", "text", f1);
 		MetadataEntry entry2 = new MetadataEntry("val1", "text", f1);
 
-		ArrayList<Long> ids = Lists.newArrayList(s1.getId(), s2.getId());
+		List<Join<Project, Sample>> projectSampleJoins = Lists.newArrayList(new ProjectSampleJoin(p1, s1, true),
+				new ProjectSampleJoin(p1, s2, true));
 
-		when(sampleService.readMultiple(ids)).thenReturn(Lists.newArrayList(s1, s2));
+		when(projectService.read(p1.getId())).thenReturn(p1);
+		when(sampleService.getSamplesForProject(p1)).thenReturn(projectSampleJoins);
 		when(sampleService.getMetadataForSample(s1)).thenReturn(Sets.newHashSet(entry1));
 		when(sampleService.getMetadataForSample(s2)).thenReturn(Sets.newHashSet(entry2));
 
-		ModelMap modelMap = metadataController.getMultipleSampleMetadata(ids);
+		ModelMap modelMap = metadataController.getProjectMetadata(p1.getId());
 
 		ResourceCollection<SampleMetadataResponse> responses = (ResourceCollection) modelMap.get(
 				RESTGenericController.RESOURCE_NAME);
@@ -71,7 +79,8 @@ public class RESTSampleMetadataControllerTest {
 					.contains(f1));
 		}
 
-		verify(sampleService).readMultiple(ids);
+		verify(projectService).read(p1.getId());
+		verify(sampleService).getSamplesForProject(p1);
 		verify(sampleService).getMetadataForSample(s1);
 		verify(sampleService).getMetadataForSample(s2);
 	}
