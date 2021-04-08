@@ -15,11 +15,10 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlac
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -27,7 +26,7 @@ import static org.hamcrest.Matchers.hasItem;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sample/RESTSampleMetadataControllerIT.xml")
-//@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
+@DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class RESTSampleMetadataControllerIT {
 
 	@Test
@@ -50,9 +49,9 @@ public class RESTSampleMetadataControllerIT {
 		asUser().expect()
 				.statusCode(HttpStatus.OK.value())
 				.and()
-				.body("resource.resources.metadata", hasItem("field1"))
+				.body("resource.resources.metadata", hasKey("field1"))
 				.and()
-				.body("resource.resources.metadata", hasItem("field2"))
+				.body("resource.resources.metadata", hasKey("field2"))
 				.when()
 				.get(metadataUri)
 				.asString();
