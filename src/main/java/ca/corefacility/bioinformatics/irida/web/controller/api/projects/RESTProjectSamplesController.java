@@ -5,6 +5,7 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -102,14 +103,10 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "copySampleToProject", summary = "Copy an existing sample to a given a project",
 			description = "Copy an existing sample to a given a project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a list of analysis submissions associated with the given project.",
-			content = @Content(schema = @Schema(implementation = LabelledRelationshipResourcesSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
-	public ModelMap copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
+	public ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>> copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
 			@RequestParam(name = "ownership", defaultValue = "false") boolean ownership, HttpServletResponse response,
 			Locale locale) {
-
-		ModelMap modelMap = new ModelMap();
 
 		Project p = projectService.read(projectId);
 
@@ -161,15 +158,15 @@ public class RESTProjectSamplesController {
 		// add a link to the project that was copied to.
 		labeledProjectSampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
+		ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>>responseObject = new ResponseResource<>(labeledProjectSampleResources);
 
 		if (!errors.isEmpty()) {
-			modelMap.addAttribute("warnings", errors);
+			responseObject.setWarnings(errors);
 		}
 
 		response.setStatus(HttpStatus.CREATED.value());
 
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -185,12 +182,9 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "addSampleToProject", summary = "Create a new sample and add it to the given project",
 			description = "Create a new sample and add it to the given project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns the newly created sample associated with the given project.",
-			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody @Valid Sample sample,
+	public ResponseResource<Sample> addSampleToProject(@PathVariable Long projectId, @RequestBody @Valid Sample sample,
 			HttpServletResponse response) {
-		ModelMap model = new ModelMap();
 
 		// load the project that we're adding to
 		Project p = projectService.read(projectId);
@@ -208,13 +202,14 @@ public class RESTProjectSamplesController {
 		addLinksForSample(Optional.of(p), sample);
 
 		// add the resource to the model
-		model.addAttribute(RESTGenericController.RESOURCE_NAME, sample);
+		ResponseResource<Sample>responseObject = new ResponseResource<>(sample);
+
 
 		// set the response status and add a location header
 		response.setStatus(HttpStatus.CREATED.value());
 		response.addHeader(HttpHeaders.LOCATION, location);
 
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -226,12 +221,8 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "getProjectSamples", summary = "Find all samples for the given project",
 			description = "Get all samples for the given project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a list of samples associated with the given project.",
-			content = @Content(schema = @Schema(implementation = SamplesSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
-	public ModelMap getProjectSamples(@PathVariable Long projectId) {
-
-		ModelMap modelMap = new ModelMap();
+	public ResponseResource<ResourceCollection<Sample>> getProjectSamples(@PathVariable Long projectId) {
 		Project p = projectService.read(projectId);
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(p);
 
@@ -245,9 +236,8 @@ public class RESTProjectSamplesController {
 		sampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
-
-		return modelMap;
+		ResponseResource<ResourceCollection<Sample>>responseObject = new ResponseResource<>(sampleResources);
+		return responseObject;
 	}
 
 	/**
@@ -283,16 +273,12 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "getProjectSample", summary = "Find a sample for the given project",
 			description = "Get a sample for the given project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a sample associated with the given project.",
-			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
-	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+	public ResponseResource<Sample> getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// read project/sample to verify sample exists in project
 		Project project = projectService.read(projectId);
 		Sample s = sampleService.getSampleForProject(project, sampleId)
 				.getObject();
-
-		ModelMap modelMap = new ModelMap();
 
 		addLinksForSample(Optional.of(project), s);
 
@@ -300,9 +286,8 @@ public class RESTProjectSamplesController {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_PROJECT_SAMPLE));
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
-
-		return modelMap;
+		ResponseResource<Sample>responseObject = new ResponseResource<>(s);
+		return responseObject;
 	}
 
 	/**
@@ -313,17 +298,14 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "getSample", summary = "Find a sample",
 			description = "Get a sample.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a sample.",
-			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
-	public ModelMap getSample(@PathVariable Long sampleId) {
-		ModelMap modelMap = new ModelMap();
+	public ResponseResource<Sample> getSample(@PathVariable Long sampleId) {
 		Sample s = sampleService.read(sampleId);
 
 		addLinksForSample(Optional.empty(), s);
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
-		return modelMap;
+		ResponseResource<Sample>responseObject = new ResponseResource<>(s);
+		return responseObject;
 	}
 
 	/**
@@ -372,12 +354,8 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "removeSampleFromProject", summary = "Remove a sample from a given project",
 			description = "Remove a sample from a given project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns the new list of samples associated with the given project.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-	public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
-		ModelMap modelMap = new ModelMap();
-
+	public ResponseResource<RootResource> removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// load the sample and project
 		Project p = projectService.read(projectId);
 		Sample s = sampleService.read(sampleId);
@@ -395,9 +373,8 @@ public class RESTProjectSamplesController {
 				.withRel(RESTProjectsController.REL_PROJECT));
 
 		// add the links to the response.
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
-
-		return modelMap;
+		ResponseResource<RootResource>responseObject = new ResponseResource<>(resource);
+		return responseObject;
 	}
 
 	/**
@@ -410,38 +387,15 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "updateSample", summary = "Update a sample",
 			description = "Update a sample.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns the updated sample.",
-			content = @Content(schema = @Schema(implementation = SampleSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public ModelMap updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
-		ModelMap modelMap = new ModelMap();
-
+	public ResponseResource<Sample> updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
 		// issue an update request
 		final Sample s = sampleService.updateFields(sampleId, updatedFields);
 		addLinksForSample(Optional.empty(), s);
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, s);
-
-		return modelMap;
-	}
-
-	// TODO: revisit these classes that define the response schemas for openapi
-
-	private class LabelledRelationshipResourcesSchema {
-		public ResourceCollection<LabelledRelationshipResource<Project, Sample>> resource;
-	}
-
-	private class SampleSchema {
-		public Sample resource;
-	}
-
-	private class SamplesSchema {
-		public ResourceCollection<Sample> resource;
-	}
-
-	private class RootResourceSchema {
-		public RootResource resource;
+		ResponseResource<Sample>responseObject = new ResponseResource<>(s);
+		return responseObject;
 	}
 
 }
