@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -44,7 +45,11 @@ public class UIMetadataServiceTest {
 		when(projectService.read(PROJECT_ID)).thenReturn(project);
 
 		template.setName(TEMPLATE_NAME);
-		template.setFields(ImmutableList.of(new MetadataTemplateField("FIELD 1", "text")));
+		final MetadataTemplateField templateField = new MetadataTemplateField("FIELD 1", "text");
+
+		when(templateService.readMetadataField(anyLong())).thenReturn(templateField);
+
+		template.setFields(ImmutableList.of(templateField));
 		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = new ProjectMetadataTemplateJoin(project, template);
 		when(templateService.getMetadataTemplatesForProject(project)).thenReturn(
 				ImmutableList.of(projectMetadataTemplateJoin));
@@ -76,5 +81,12 @@ public class UIMetadataServiceTest {
 		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID, Locale.ENGLISH);
 		verify(templateService, times(1)).read(NEW_TEMPLATE_ID);
 		verify(projectService, times(1)).update(project);
+	}
+
+	@Test
+	public void testUpdateMetadataProjectField() {
+		service.updateMetadataProjectField(PROJECT_ID, 1L, ProjectRole.PROJECT_OWNER, Locale.ENGLISH);
+		verify(projectService, times(1)).read(PROJECT_ID);
+		verify(templateService, times(1)).readMetadataField(anyLong());
 	}
 }
