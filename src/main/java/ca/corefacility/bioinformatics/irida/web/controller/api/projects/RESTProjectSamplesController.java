@@ -199,7 +199,6 @@ public class RESTProjectSamplesController {
 		// add the resource to the model
 		ResponseResource<Sample>responseObject = new ResponseResource<>(sample);
 
-
 		// set the response status and add a location header
 		response.setStatus(HttpStatus.CREATED.value());
 		response.addHeader(HttpHeaders.LOCATION, location);

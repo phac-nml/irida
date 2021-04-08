@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
@@ -88,57 +89,45 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "listAllAnalysisSubmissions", summary = "Lists all analysis submissions",
 			description = "Lists all analysis submissions.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns a list all analysis submissions.",
-			content = @Content(schema = @Schema(implementation = AnalysisSubmissionsSchema.class)))
 	@RequestMapping(method = RequestMethod.GET)
 	@Override
-	public ModelMap listAllResources() { return super.listAllResources(); }
+	public ResponseResource<ResourceCollection<AnalysisSubmission>> listAllResources() { return super.listAllResources(); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getAnalysisSubmission", summary = "Find an analysis submission",
 			description = "Get the analysis submission given the identifier.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns an analysis submission containing the requested identifier.",
-			content = @Content(schema = @Schema(implementation = AnalysisSubmissionSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
-	public ModelMap getResource(@PathVariable Long identifier) {
-		return super.getResource(identifier);
-	}
+	public ResponseResource<AnalysisSubmission> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "createAnalysisSubmission", summary = "Create a new analysis submission",
 			description = "Create a new analysis submission.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns the newly created analysis submission.",
-			content = @Content(schema = @Schema(implementation = AnalysisSubmissionSchema.class)))
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ModelMap create(@RequestBody AnalysisSubmission resource, HttpServletResponse response) { return super.create(resource, response); }
+	public ResponseResource<AnalysisSubmission> create(@RequestBody AnalysisSubmission resource, HttpServletResponse response) { return super.create(resource, response); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteAnalysisSubmission", summary = "Delete an analysis submission",
 			description = "Delete an analysis submission given the identifier.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns whether the analysis was deleted successfully.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
-	public ModelMap delete(@PathVariable Long identifier) { return super.delete(identifier); }
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateAnalysisSubmission", summary = "Update an analysis submission",
 			description = "Update an analysis submission", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns whether the analysis was updated successfully.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
+	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
 
 	/**
 	 * Get all analyses of a given type
@@ -430,15 +419,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		public Analysis resource;
 	}
 
-	private class AnalysisSubmissionSchema {
-		public AnalysisSubmission resource;
-	}
-
 	private class AnalysisSubmissionsSchema {
 		public ResourceCollection<AnalysisSubmission> resource;
 	}
 
-	private class RootResourceSchema {
-		public RootResource resource;
-	}
 }

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -104,11 +105,10 @@ public class UserControllerTest {
         when(userService.findAll()).thenReturn(users);
         when(userService.count()).thenReturn(1L);
 
-        ModelMap output = controller.listAllResources();
+        ResponseResource<ResourceCollection<User>> output = controller.listAllResources();
 
         @SuppressWarnings("unchecked")
-		ResourceCollection<User> usersCollection = (ResourceCollection<User>) output.get(
-                RESTGenericController.RESOURCE_NAME);
+		ResourceCollection<User> usersCollection = (ResourceCollection<User>) output.getResource();
         assertEquals("users collection is the wrong size.", 1, usersCollection.size());
         User userResource = usersCollection.iterator().next();
         assertEquals("username is not correct.", username, userResource.getUsername());

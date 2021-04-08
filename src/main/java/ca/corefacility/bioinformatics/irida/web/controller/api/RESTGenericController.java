@@ -8,13 +8,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -107,7 +107,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *         application.
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelMap listAllResources() {
+	public ResponseResource<ResourceCollection<Type>> listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
 		ResourceCollection<Type> resources = new ResourceCollection<>();
 		for (Type entity : entities) {
@@ -118,14 +118,12 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 
 		resources.add(linkTo(getClass()).withSelfRel());
 
-		ModelMap model = new ModelMap();
-
 		// get custom links for the collection
 		Collection<Link> constructCollectionResourceLinks = constructCollectionResourceLinks(resources);
 		resources.add(constructCollectionResourceLinks);
-		
-		model.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
-		return model;
+
+		ResponseResource<ResourceCollection<Type>>responseObject = new ResponseResource<>(resources);
+		return responseObject;
 	}
 
 	/**
@@ -137,9 +135,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return the model and view for the individual resource.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
-	public ModelMap getResource(@PathVariable Long identifier) {
-		ModelMap model = new ModelMap();
-
+	public ResponseResource<Type> getResource(@PathVariable Long identifier) {
 		logger.trace("Getting resource with id [" + identifier + "]");
 		// construct a new instance of an identifier as specified by the client
 
@@ -155,10 +151,10 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		t.add(linkTo(getClass()).slash(identifier).withSelfRel());
 
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME, t);
+		ResponseResource<Type>responseObject = new ResponseResource<>(t);
 
 		// send the response back to the client.
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -174,8 +170,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *         resource.
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ModelMap create(@RequestBody Type resource, HttpServletResponse response) {
-		ModelMap model = new ModelMap();
+	public ResponseResource<Type> create(@RequestBody Type resource, HttpServletResponse response) {
 
 		// ask the subclass to map the de-serialized request to a concrete
 		// instance of the type managed by this controller.
@@ -207,7 +202,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		readType.add(linkTo(getClass()).slash(id).withSelfRel());
 		
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME,readType);
+		ResponseResource<Type>responseObject = new ResponseResource<>(readType);
 		
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);
@@ -216,7 +211,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		response.setStatus(HttpStatus.CREATED.value());
 
 		// send the response back to the client.
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -227,8 +222,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response indicating that the resource was deleted.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
-	public ModelMap delete(@PathVariable Long identifier) {
-		ModelMap modelMap = new ModelMap();
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 
 		// ask the service to delete the resource specified by the identifier
 		crudService.delete(identifier);
@@ -236,10 +230,10 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		RootResource rootResource = new RootResource();
 		rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
 
-		modelMap.addAttribute(RESOURCE_NAME, rootResource);
+		ResponseResource<RootResource>responseObject = new ResponseResource<>(rootResource);
 
 		// respond to the client with a successful message
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -255,7 +249,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
+	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
 		// update the resource specified by the client. clients *may* be able
 		// to update the identifier of some resources, and so we should get a
 		// handle on the updated resource so that we can respond with a
@@ -268,13 +262,12 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// of the resource as returned by the service after updating.
 
 		// create a response including the new location.
-		ModelMap modelMap = new ModelMap();
 		RootResource rootResource = new RootResource();
 		rootResource.add(linkTo(getClass()).slash(id).withSelfRel());
 		rootResource.add(linkTo(getClass()).withRel(REL_COLLECTION));
-		modelMap.addAttribute(RESOURCE_NAME, rootResource);
+		ResponseResource<RootResource>responseObject = new ResponseResource<>(rootResource);
 		// respond to the client
-		return modelMap;
+		return responseObject;
 	}
 	
 	

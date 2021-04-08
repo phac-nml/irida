@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -107,57 +108,45 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 */
 	@Operation(operationId = "listAllUsers", summary = "Lists all users",
 			description = "Lists all users.", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns a list all users.",
-			content = @Content(schema = @Schema(implementation = UsersSchema.class)))
 	@RequestMapping(method = RequestMethod.GET)
 	@Override
-	public ModelMap listAllResources() { return super.listAllResources(); }
+	public ResponseResource<ResourceCollection<User>> listAllResources() { return super.listAllResources(); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getUser", summary = "Find a user",
 			description = "Get the user given the identifier.", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns a user containing the requested identifier.",
-			content = @Content(schema = @Schema(implementation = UserSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
-	public ModelMap getResource(@PathVariable Long identifier) {
-		return super.getResource(identifier);
-	}
+	public ResponseResource<User> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "createUser", summary = "Create a new user",
 			description = "Create a new user.", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns the newly created user.",
-			content = @Content(schema = @Schema(implementation = UserSchema.class)))
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ModelMap create(@RequestBody User resource, HttpServletResponse response) { return super.create(resource, response); }
+	public ResponseResource<User> create(@RequestBody User resource, HttpServletResponse response) { return super.create(resource, response); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteUser", summary = "Delete a user",
 			description = "Delete a user given the identifier.", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns whether the user was deleted successfully.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
-	public ModelMap delete(@PathVariable Long identifier) { return super.delete(identifier); }
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateUser", summary = "Update a user",
 			description = "Update a user", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns whether the user was updated successfully.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
+	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
 
 	/**
 	 * Get the collection of projects for a specific user.
@@ -206,7 +195,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * @return a representation of the currently logged in user.
 	 */
 	@RequestMapping(value = "/current", method = RequestMethod.GET)
-	public ModelMap getCurrentUser() {
+	public ResponseResource<User> getCurrentUser() {
 		// get the current user from Spring Security.
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		logger.debug("Getting currently logged-in user: [" + username + "].");
@@ -222,15 +211,4 @@ public class RESTUsersController extends RESTGenericController<User> {
 		public ResourceCollection<Project> resource;
 	}
 
-	private class UserSchema {
-		public User resource;
-	}
-
-	private class UsersSchema {
-		public ResourceCollection<User> resource;
-	}
-
-	private class RootResourceSchema {
-		public RootResource resource;
-	}
 }

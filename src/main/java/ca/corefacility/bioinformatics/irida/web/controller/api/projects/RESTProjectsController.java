@@ -10,11 +10,9 @@ import java.util.Map;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectHashingService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,22 +91,18 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "listAllProjects", summary = "Lists all projects",
 			description = "Lists all projects.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a list all projects.",
-			content = @Content(schema = @Schema(implementation = ProjectsSchema.class)))
 	@RequestMapping(method = RequestMethod.GET)
 	@Override
-	public ModelMap listAllResources() { return super.listAllResources(); }
+	public ResponseResource<ResourceCollection<Project>> listAllResources() { return super.listAllResources(); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getProject", summary = "Find a project",
 			description = "Get the project given the identifier.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a project containing the requested identifier.",
-			content = @Content(schema = @Schema(implementation = ProjectSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
-	public ModelMap getResource(@PathVariable Long identifier) {
+	public ResponseResource<Project> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
 	}
 
@@ -118,34 +111,27 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "createProject", summary = "Create a new project",
 			description = "Create a new project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns the newly created project.",
-			content = @Content(schema = @Schema(implementation = ProjectSchema.class)))
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ModelMap create(@RequestBody Project resource, HttpServletResponse response) { return super.create(resource, response); }
+	public ResponseResource<Project> create(@RequestBody Project resource, HttpServletResponse response) { return super.create(resource, response); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteProject", summary = "Delete a project",
 			description = "Delete a project given the identifier.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns whether the project was deleted successfully.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
-	public ModelMap delete(@PathVariable Long identifier) { return super.delete(identifier); }
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateProject", summary = "Update a project",
 			description = "Update a project", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns whether the project was updated successfully.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
-
+	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
 
 	/**
 	 * Get the deep project hash for the requested project
@@ -155,23 +141,20 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "getProjectHash", summary = "Get a hash for the given a project",
 			description = "Get a hash for the given a project.", tags = "projects")
-	@ApiResponse(responseCode = "200", description = "Returns a hash of the given project.",
-			content = @Content(schema = @Schema(implementation = ProjectHashResourceSchema.class)))
 	@RequestMapping(value = "/{projectId}/hash", method = RequestMethod.GET)
-	public ModelMap getProjectHash(@PathVariable Long projectId) {
+	public ResponseResource<ProjectHashResource> getProjectHash(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 
 		Integer projectHash = projectHashingService.getProjectHash(project);
 
 		ProjectHashResource projectHashResource = new ProjectHashResource(projectHash);
 
-		ModelMap model = new ModelMap();
-		model.addAttribute(RESOURCE_NAME, projectHashResource);
+		ResponseResource<ProjectHashResource>responseObject = new ResponseResource<>(projectHashResource);
 
 		projectHashResource.add(linkTo(methodOn(RESTProjectsController.class).getProjectHash(projectId)).withSelfRel());
 		projectHashResource.add(linkTo(methodOn(RESTProjectsController.class).getResource(projectId)).withRel(REL_PROJECT));
 
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -198,24 +181,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 				.withRel(PROJECT_ANALYSES_REL));
 		links.add(linkTo(methodOn(RESTProjectsController.class).getProjectHash(projectId)).withRel(PROJECT_HASH_REL));
 		return links;
-	}
-
-	// TODO: revisit these classes that define the response schemas for openapi
-
-	private class ProjectHashResourceSchema {
-		public ProjectHashResource resource;
-	}
-
-	private class ProjectSchema {
-		public Project resource;
-	}
-
-	private class ProjectsSchema {
-		public ResourceCollection<Project> resource;
-	}
-
-	private class RootResourceSchema {
-		public RootResource resource;
 	}
 
 }

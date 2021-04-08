@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -73,9 +74,8 @@ public class GenericControllerTest {
 	public void testCreateGoodEntity() {
 		when(crudService.create(entity)).thenReturn(entity);
 		when(crudService.read(identifier)).thenReturn(entity);
-		ModelMap model = controller.create(entity,new MockHttpServletResponse());
-		assertTrue("Model should contain resource",model.containsKey("resource"));
-		IdentifiableTestEntity testResource = (IdentifiableTestEntity) model.get("resource");
+		ResponseResource<IdentifiableTestEntity> responseObject = controller.create(entity,new MockHttpServletResponse());
+		IdentifiableTestEntity testResource = (IdentifiableTestEntity) responseObject.getResource();
 		assertNotNull("Resource should not be null",testResource);
 		assertTrue("Resource from model should be equivalent to resource added to model",testResource.equals(entity));
 		assertTrue("Model should contain a self-reference",testResource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
@@ -83,8 +83,8 @@ public class GenericControllerTest {
 
 	@Test
 	public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
-		ModelMap modelMap = controller.delete(2L);
-		RootResource rootResource = (RootResource) modelMap.get(RESTGenericController.RESOURCE_NAME);
+		ResponseResource<RootResource> responseObject = controller.delete(2L);
+		RootResource rootResource = (RootResource) responseObject.getResource();
 		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION);
 		assertNotNull(l);
 		assertEquals("http://localhost/api/generic", l.getHref());
@@ -105,16 +105,15 @@ public class GenericControllerTest {
 	@Test
 	public void testGetResource() {
 		when(crudService.read(identifier)).thenReturn(entity);
-		ModelMap model = null;
+		ResponseResource<IdentifiableTestEntity> responseObject = null;
 
 		try {
-			model = controller.getResource(identifier);
+			responseObject = controller.getResource(identifier);
 		} catch (GenericsException e) {
 			fail();
 		}
 
-		assertTrue(model.containsKey("resource"));
-		IdentifiableTestEntity resource = (IdentifiableTestEntity) model.get("resource");
+		IdentifiableTestEntity resource = (IdentifiableTestEntity) responseObject.getResource();
 		assertTrue(resource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
 	}
 
@@ -132,8 +131,8 @@ public class GenericControllerTest {
 	@Test
 	public void testUpdate() throws InstantiationException, IllegalAccessException {
 		when(crudService.updateFields(identifier, updatedFields)).thenReturn(entity);
-		ModelMap response = controller.update(identifier, updatedFields);
-		RootResource r = (RootResource) response.get(RESTGenericController.RESOURCE_NAME);
+		ResponseResource<RootResource> responseObject = controller.update(identifier, updatedFields);
+		RootResource r = (RootResource) responseObject.getResource();
 		assertNotNull(r.getLink(Link.REL_SELF));
 		assertNotNull(r.getLink(RESTGenericController.REL_COLLECTION));
 	}
