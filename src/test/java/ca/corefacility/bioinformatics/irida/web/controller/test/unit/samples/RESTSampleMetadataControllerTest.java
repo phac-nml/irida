@@ -9,6 +9,7 @@ import org.springframework.ui.ModelMap;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -28,13 +29,15 @@ public class RESTSampleMetadataControllerTest {
 	private RESTSampleMetadataController metadataController;
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
+	private ProjectService projectService;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
 
-		metadataController = new RESTSampleMetadataController(sampleService, metadataTemplateService);
+
+		metadataController = new RESTSampleMetadataController(sampleService, metadataTemplateService, projectService);
 	}
 
 	@Test

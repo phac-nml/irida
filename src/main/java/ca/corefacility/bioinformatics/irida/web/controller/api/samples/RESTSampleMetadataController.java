@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -39,11 +42,14 @@ public class RESTSampleMetadataController {
 
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
+	private ProjectService projectService;
 
 	@Autowired
-	public RESTSampleMetadataController(SampleService sampleService, MetadataTemplateService metadataTemplateService) {
+	public RESTSampleMetadataController(SampleService sampleService, MetadataTemplateService metadataTemplateService,
+			ProjectService projectService) {
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
+		this.projectService = projectService;
 	}
 
 	/**
@@ -72,7 +78,7 @@ public class RESTSampleMetadataController {
 	 * @param sampleIds the ids of the samples to get metadata for
 	 * @return A collection of sample metadata for the given IDs
 	 */
-	@RequestMapping(value = "/api/samples/metadata", method = RequestMethod.POST, consumes = "application/idcollection+json")
+	@RequestMapping(value = "/api/samples/metadata")
 	public ModelMap getMultipleSampleMetadata(final @RequestBody List<Long> sampleIds) {
 		ModelMap modelMap = new ModelMap();
 
@@ -81,6 +87,33 @@ public class RESTSampleMetadataController {
 		Iterable<Sample> samples = sampleService.readMultiple(sampleIds);
 
 		for (Sample s : samples) {
+
+			Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+
+			SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
+
+			resources.add(response);
+		}
+
+		resources.add(
+				linkTo(methodOn(RESTSampleMetadataController.class).getMultipleSampleMetadata(null)).withSelfRel());
+
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+
+		return modelMap;
+	}
+
+	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
+	public ModelMap getProjectMetadata(final @PathVariable Long projectId) {
+		ModelMap modelMap = new ModelMap();
+
+		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
+
+		Project project = projectService.read(projectId);
+		List<Join<Project, Sample>> samples = sampleService.getSamplesForProject(project);
+
+		for (Join<Project, Sample> join : samples) {
+			Sample s = join.getObject();
 
 			Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
 
@@ -144,7 +177,7 @@ public class RESTSampleMetadataController {
 	 * @return a constructed {@link SampleMetadataResponse}
 	 */
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s, Set<MetadataEntry> metadataEntries) {
-		SampleMetadataResponse response = new SampleMetadataResponse(metadataEntries);
+		SampleMetadataResponse response = new SampleMetadataResponse(s, metadataEntries);
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
 		return response;
