@@ -156,102 +156,88 @@ export default function Analysis() {
   };
 
   /*
-  Returns the analysis steps if it hasn't completed
-   */
-  const analysisSteps = () => {
-    return !analysisContext.isCompleted ? <AnalysisSteps /> : null;
-  };
-
-  /*
-  Returns the tab menu links with the current page link highlighted
-   */
-  const menuItems = () => {
-    return (
-      <Location>
-        {(props) => {
-          const keyname = props.location.pathname.match(pathRegx);
-
-          return (
-            <Menu
-              className="t-analysis-menu"
-              mode="horizontal"
-              selectedKeys={[keyname ? keyname[1] : defaultKey]}
-            >
-              {getTabLinks()}
-            </Menu>
-          );
-        }}
-      </Location>
-    );
-  };
-
-  /*
-  Returns the page content depending on state of analysis and type
-   */
-  const pageContent = () => {
-    return (
-      <Suspense fallback={<ContentLoading />}>
-        <AnalysisOutputsProvider>
-          <Router style={{ paddingTop: SPACE_MD }}>
-            <AnalysisError
-              path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
-              default={analysisContext.isError}
-              key="error"
-            />
-            {analysisContext.isCompleted
-              ? [
-                  <AnalysisSistr
-                    path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
-                    default={analysisContext.analysisViewer === "sistr"}
-                    key="sistr"
-                  />,
-                  <AnalysisBioHansel
-                    path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
-                    default={analysisContext.analysisViewer === "biohansel"}
-                    key="biohansel"
-                  />,
-                  <AnalysisPhylogeneticTree
-                    path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
-                    default={
-                      analysisContext.analysisViewer === "tree" &&
-                      analysisContext.treeDefault
-                    }
-                    key="tree"
-                  />,
-                  <AnalysisProvenance
-                    path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
-                    key="provenance"
-                  />,
-                  <AnalysisOutputFiles
-                    path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
-                    default={
-                      analysisContext.analysisViewer === "none" ||
-                      (analysisContext.analysisViewer === "tree" &&
-                        !analysisContext.treeDefault)
-                    }
-                    key="output"
-                  />,
-                ]
-              : null}
-            <AnalysisSettingsContainer
-              path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/*`}
-              default={!analysisContext.isError && !analysisContext.isCompleted}
-              key="settings"
-            />
-          </Router>
-        </AnalysisOutputsProvider>
-      </Suspense>
-    );
-  };
-
-  /*
-   * The following renders the analysis steps, tabs, and the page
-   * content.
+   * Renders the analysis steps, tabs, and the page
+   * content depending on analysis state and type.
    */
   return (
-    <PageWrapper title={!analysisContext.loading && title}>
+    <PageWrapper title={!analysisContext.loading ? title : ""}>
       {!analysisContext.loading ? (
-        [analysisSteps(), menuItems(), pageContent()]
+        [
+          !analysisContext.isCompleted ? (
+            <AnalysisSteps key="analysis-steps" />
+          ) : null,
+          <Location key="analysis-router-location">
+            {(props) => {
+              const keyname = props.location.pathname.match(pathRegx);
+
+              return (
+                <Menu
+                  className="t-analysis-menu"
+                  mode="horizontal"
+                  selectedKeys={[keyname ? keyname[1] : defaultKey]}
+                >
+                  {getTabLinks()}
+                </Menu>
+              );
+            }}
+          </Location>,
+          <Suspense
+            fallback={<ContentLoading />}
+            key="analysis-content-suspense"
+          >
+            <AnalysisOutputsProvider>
+              <Router style={{ paddingTop: SPACE_MD }}>
+                <AnalysisError
+                  path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
+                  default={analysisContext.isError}
+                  key="error"
+                />
+                {analysisContext.isCompleted
+                  ? [
+                      <AnalysisSistr
+                        path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
+                        default={analysisContext.analysisViewer === "sistr"}
+                        key="sistr"
+                      />,
+                      <AnalysisBioHansel
+                        path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
+                        default={analysisContext.analysisViewer === "biohansel"}
+                        key="biohansel"
+                      />,
+                      <AnalysisPhylogeneticTree
+                        path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
+                        default={
+                          analysisContext.analysisViewer === "tree" &&
+                          analysisContext.treeDefault
+                        }
+                        key="tree"
+                      />,
+                      <AnalysisProvenance
+                        path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
+                        key="provenance"
+                      />,
+                      <AnalysisOutputFiles
+                        path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
+                        default={
+                          analysisContext.analysisViewer === "none" ||
+                          (analysisContext.analysisViewer === "tree" &&
+                            !analysisContext.treeDefault)
+                        }
+                        key="output"
+                      />,
+                    ]
+                  : null}
+                <AnalysisSettingsContainer
+                  path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/*`}
+                  default={
+                    !analysisContext.isError && !analysisContext.isCompleted
+                  }
+                  key="settings"
+                />
+              </Router>
+            </AnalysisOutputsProvider>
+          </Suspense>,
+        ]
       ) : (
         <ContentLoading />
       )}
