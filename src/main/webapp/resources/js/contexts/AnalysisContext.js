@@ -64,12 +64,18 @@ function AnalysisProvider(props) {
     getAnalysisInfo(analysisId)
       .then((res) => {
         setAnalysisContext((analysisContext) => {
+          const {
+            completed: isCompleted,
+            error: isError,
+            admin: isAdmin,
+            ...resData
+          } = res;
           return {
             ...analysisContext,
-            ...res,
-            isCompleted: res.completed,
-            isError: res.error,
-            isAdmin: res.admin,
+            ...resData,
+            isCompleted,
+            isError,
+            isAdmin,
             loading: false,
           };
         });
