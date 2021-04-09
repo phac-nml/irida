@@ -75,10 +75,10 @@ public class RESTSampleMetadataController {
 	}
 
 	/**
-	 * Get all the sample metadata for a given project
+	 * Get all the sample metadata for a given {@link Project}
 	 *
-	 * @param projectId the id of the project to get metadata for
-	 * @return A collection of sample metadata for the given project
+	 * @param projectId the id of the {@link Project} to get metadata for
+	 * @return A collection of metadata for all the {@link Sample}s in the {@link Project}
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
 	public ModelMap getProjectSampleMetadata(final @PathVariable Long projectId) {
@@ -86,19 +86,23 @@ public class RESTSampleMetadataController {
 
 		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
 
+		//get the project and samples for the project
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> samples = sampleService.getSamplesForProject(project);
 
+		//for each sample
 		for (Join<Project, Sample> join : samples) {
 			Sample s = join.getObject();
 
+			//get the metadata for that sample
 			Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
 
+			//build the response
 			SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
-
 			resources.add(response);
 		}
 
+		//add a link back to this collection
 		resources.add(
 				linkTo(methodOn(RESTSampleMetadataController.class).getProjectSampleMetadata(projectId)).withSelfRel());
 

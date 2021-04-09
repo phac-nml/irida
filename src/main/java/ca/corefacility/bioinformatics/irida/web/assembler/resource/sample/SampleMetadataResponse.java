@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Response class so we can add links to sample metadata
+ * Response class for grouping {@link MetadataEntry}s for response in the REST API
  */
 public class SampleMetadataResponse extends IridaResourceSupport {
 	Map<MetadataTemplateField, MetadataEntry> metadata;
