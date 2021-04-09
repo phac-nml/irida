@@ -20,6 +20,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -50,9 +51,11 @@ public class RESTSampleMetadataControllerIT {
 		asUser().expect()
 				.statusCode(HttpStatus.OK.value())
 				.and()
-				.body("resource.resources.metadata", hasKey("field1"))
+				.body("resource.resources.metadata", hasSize(2))
 				.and()
-				.body("resource.resources.metadata", hasKey("field2"))
+				.body("resource.resources.metadata[0]", hasKey("field1"))
+				.and()
+				.body("resource.resources.metadata[0]", hasKey("field2"))
 				.when()
 				.get(metadataUri)
 				.asString();
