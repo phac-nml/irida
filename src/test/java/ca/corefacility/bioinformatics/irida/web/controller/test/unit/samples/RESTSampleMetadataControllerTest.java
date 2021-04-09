@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.Sample
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -54,7 +57,7 @@ public class RESTSampleMetadataControllerTest {
 
 		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
 		MetadataEntry entry1 = new MetadataEntry("val1", "text", f1);
-		MetadataEntry entry2 = new MetadataEntry("val1", "text", f1);
+		MetadataEntry entry2 = new MetadataEntry("val2", "text", f1);
 
 		List<Join<Project, Sample>> projectSampleJoins = Lists.newArrayList(new ProjectSampleJoin(p1, s1, true),
 				new ProjectSampleJoin(p1, s2, true));
@@ -82,6 +85,75 @@ public class RESTSampleMetadataControllerTest {
 		verify(sampleService).getSamplesForProject(p1);
 		verify(sampleService).getMetadataForSample(s1);
 		verify(sampleService).getMetadataForSample(s2);
+	}
+
+	@Test
+	public void testGetSampleMetadata() {
+		Sample s1 = new Sample("s1");
+		s1.setId(1L);
+
+		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
+		MetadataEntry entry1 = new MetadataEntry("val1", "text", f1);
+
+		when(sampleService.read(s1.getId())).thenReturn(s1);
+		when(sampleService.getMetadataForSample(s1)).thenReturn(Sets.newHashSet(entry1));
+
+		ModelMap sampleMetadata = metadataController.getSampleMetadata(s1.getId());
+
+		SampleMetadataResponse response = (SampleMetadataResponse) sampleMetadata.get(
+				RESTGenericController.RESOURCE_NAME);
+
+		verify(sampleService).getMetadataForSample(s1);
+
+		Map<MetadataTemplateField, MetadataEntry> metadata = response.getMetadata();
+
+		assertTrue(metadata.containsKey(f1));
+	}
+
+	@Test
+	public void testAddSampleMetadata() {
+		Sample s1 = new Sample("s1");
+		s1.setId(1L);
+
+		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
+		MetadataEntry entry1 = new MetadataEntry("val1", "text", f1);
+		MetadataEntry entry2 = new MetadataEntry("val2", "text", f1);
+
+		ImmutableMap<String, MetadataEntry> updateMap = ImmutableMap.of(f1.getLabel(), entry2);
+
+		HashSet<MetadataEntry> originalSet = Sets.newHashSet(entry1);
+		HashSet<MetadataEntry> newSet = Sets.newHashSet(entry2);
+
+		when(sampleService.read(s1.getId())).thenReturn(s1);
+		when(sampleService.getMetadataForSample(s1)).thenReturn(originalSet);
+		when(metadataTemplateService.convertMetadataStringsToSet(updateMap)).thenReturn(newSet);
+
+		metadataController.addSampleMetadata(s1.getId(), updateMap);
+
+		verify(sampleService).mergeSampleMetadata(s1, newSet);
+	}
+
+	@Test
+	public void testSaveSampleMetadata() {
+		Sample s1 = new Sample("s1");
+		s1.setId(1L);
+
+		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
+		MetadataEntry entry1 = new MetadataEntry("val1", "text", f1);
+		MetadataEntry entry2 = new MetadataEntry("val2", "text", f1);
+
+		ImmutableMap<String, MetadataEntry> updateMap = ImmutableMap.of(f1.getLabel(), entry2);
+
+		HashSet<MetadataEntry> originalSet = Sets.newHashSet(entry1);
+		HashSet<MetadataEntry> newSet = Sets.newHashSet(entry2);
+
+		when(sampleService.read(s1.getId())).thenReturn(s1);
+		when(sampleService.getMetadataForSample(s1)).thenReturn(originalSet);
+		when(metadataTemplateService.convertMetadataStringsToSet(updateMap)).thenReturn(newSet);
+
+		metadataController.saveSampleMetadata(s1.getId(), updateMap);
+
+		verify(sampleService).updateSampleMetadata(s1, newSet);
 	}
 
 }
