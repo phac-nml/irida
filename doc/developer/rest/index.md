@@ -547,6 +547,7 @@ A sample corresponds to a single isolate and contains the sequencing data and me
 | Name | Description |
 |------|-------------|
 | `self` | The link back to this collection of samples. |
+| `samples/metadata` | Link to the metadata associated with this sample collection. |
 
 ##### Example Response
 {:.no_toc}
@@ -596,6 +597,10 @@ A sample corresponds to a single isolate and contains the sequencing data and me
     "links" : [ {
       "rel" : "self",
       "href" : "http://localhost:8080/api/projects/5/samples"
+    }, {
+      "rel" : "samples/metadata",
+      "href" : "http://localhost:8080/api/projects/5/samples/metadata"
+
     } ]
   }
 }
