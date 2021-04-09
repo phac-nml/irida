@@ -61,4 +61,28 @@ public class RESTSampleMetadataControllerIT {
 				.asString();
 
 	}
+
+	@Test
+	public void testGetMetadataForSample() {
+		Long sampleId = 1L;
+
+		final String sampleUri = "/api/samples/" + sampleId;
+		final String sampleJson = asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.get(sampleUri)
+				.asString();
+
+		final String metadataUri = from(sampleJson).get("resource.links.find{it.rel == 'sample/metadata'}.href");
+
+		asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.and()
+				.body("resource.metadata", hasKey("field1"))
+				.and()
+				.body("resource.metadata", hasKey("field2"))
+				.when()
+				.get(metadataUri)
+				.asString();
+
+	}
 }
