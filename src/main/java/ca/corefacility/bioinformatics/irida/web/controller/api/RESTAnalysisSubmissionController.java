@@ -25,15 +25,11 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -90,6 +86,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Operation(operationId = "listAllAnalysisSubmissions", summary = "Lists all analysis submissions",
 			description = "Lists all analysis submissions.", tags = "analysisSubmissions")
 	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
 	@Override
 	public ResponseResource<ResourceCollection<AnalysisSubmission>> listAllResources() { return super.listAllResources(); }
 
@@ -99,6 +96,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Operation(operationId = "getAnalysisSubmission", summary = "Find an analysis submission",
 			description = "Get the analysis submission given the identifier.", tags = "analysisSubmissions")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@ResponseBody
 	@Override
 	public ResponseResource<AnalysisSubmission> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
 
@@ -108,6 +106,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Operation(operationId = "createAnalysisSubmission", summary = "Create a new analysis submission",
 			description = "Create a new analysis submission.", tags = "analysisSubmissions")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
 	public ResponseResource<AnalysisSubmission> create(@RequestBody AnalysisSubmission resource, HttpServletResponse response) { return super.create(resource, response); }
 
@@ -117,6 +116,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Operation(operationId = "deleteAnalysisSubmission", summary = "Delete an analysis submission",
 			description = "Delete an analysis submission given the identifier.", tags = "analysisSubmissions")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
 
@@ -126,6 +126,7 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	@Operation(operationId = "updateAnalysisSubmission", summary = "Update an analysis submission",
 			description = "Update an analysis submission", tags = "analysisSubmissions")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
 
@@ -134,16 +135,13 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * 
 	 * @param type
 	 *            The type to request
-	 * @return ModelMap containing the requested type of resource
+	 * @return A list of {@link AnalysisSubmission}s
 	 */
 	@Operation(operationId = "listOfType", summary = "Find the analysis submissions by type",
 			description = "Get all the analysis submission of a given type.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns a list of analysis submission containing the requested type.",
-			content = @Content(schema = @Schema(implementation = AnalysisSubmissionsSchema.class)))
 	@RequestMapping(value = "/analysisType/{type}", method = RequestMethod.GET)
-	public ModelMap listOfType(@PathVariable String type) {
-		ModelMap model = new ModelMap();
-
+	@ResponseBody
+	public ResponseResource<ResourceCollection<AnalysisSubmission>> listOfType(@PathVariable String type) {
 		if (!ANALYSIS_TYPES.containsKey(type)) {
 			throw new EntityNotFoundException("Analysis type not found");
 		}
@@ -169,10 +167,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 		resourceCollection.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).listOfType(type)).withSelfRel());
 		resourceCollection.add(linkTo(RESTAnalysisSubmissionController.class).withRel(SUBMISSIONS_REL));
-		model.addAttribute(RESOURCE_NAME, resourceCollection);
+		ResponseResource<ResourceCollection<AnalysisSubmission>> responseObject = new ResponseResource<>(resourceCollection);
 
-		return model;
-
+		return responseObject;
 	}
 
 	/**
@@ -199,11 +196,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "getAnalysisInputFilePairs", summary = "Find the sequence file pairs of an analysis submission",
 			description = "Get all the sequence file pairs used for the given analysis submission.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns list of sequence file pairs for the given analysis submission.",
-			content = @Content(schema = @Schema(implementation = SequenceFilePairsSchema.class)))
 	@RequestMapping(value = "/{identifier}/sequenceFiles/pairs", method = RequestMethod.GET)
-	public ModelMap getAnalysisInputFilePairs(@PathVariable Long identifier) {
-		ModelMap map = new ModelMap();
+	@ResponseBody
+	public ResponseResource<ResourceCollection<SequenceFilePair>> getAnalysisInputFilePairs(@PathVariable Long identifier) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
 		Set<SequenceFilePair> pairs = sequencingObjectService
@@ -223,9 +218,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputFilePairs(identifier))
 				.withSelfRel());
-		map.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+		ResponseResource<ResourceCollection<SequenceFilePair>> responseObject = new ResponseResource<>(resources);
 
-		return map;
+		return responseObject;
 	}
 
 	/**
@@ -238,11 +233,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "getAnalysisInputUnpairedFiles", summary = "Find the sequence files not in the sequence file pairs used for an analysis submission",
 			description = "Get all the sequence files not in the sequence file pairs used for the given analysis submission.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns list of sequence files not in the sequence file pairs used for the given analysis submission.",
-			content = @Content(schema = @Schema(implementation = SequencingObjectsSchema.class)))
 	@RequestMapping(value = "/{identifier}/sequenceFiles/unpaired", method = RequestMethod.GET)
-	public ModelMap getAnalysisInputUnpairedFiles(@PathVariable Long identifier) {
-		ModelMap map = new ModelMap();
+	@ResponseBody
+	public ResponseResource<ResourceCollection<SequencingObject>> getAnalysisInputUnpairedFiles(@PathVariable Long identifier) {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(identifier);
 
 		Set<SingleEndSequenceFile> inputFilesSingleEnd = sequencingObjectService
@@ -262,9 +255,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 
 		resources.add(linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisInputUnpairedFiles(identifier))
 				.withSelfRel());
-		map.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+		ResponseResource<ResourceCollection<SequencingObject>> responseObject = new ResponseResource<>(resources);
 
-		return map;
+		return responseObject;
 	}
 
 	/**
@@ -272,15 +265,13 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * 
 	 * @param identifier
 	 *            {@link AnalysisSubmission} identifier to read
-	 * @return ModelMap containing the {@link Analysis}
+	 * @return An {@link Analysis}
 	 */
 	@Operation(operationId = "getAnalysisForSubmission", summary = "Find the analysis of an analysis submission",
 			description = "Get the analysis for the given analysis submission.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns the analysis for the given analysis submission.",
-			content = @Content(schema = @Schema(implementation = AnalysisSchema.class)))
 	@RequestMapping(value = "/{identifier}/analysis", method = RequestMethod.GET)
-	public ModelMap getAnalysisForSubmission(@PathVariable Long identifier) {
-		ModelMap model = new ModelMap();
+	@ResponseBody
+	public ResponseResource<Analysis> getAnalysisForSubmission(@PathVariable Long identifier) {
 		AnalysisSubmission read = analysisSubmissionService.read(identifier);
 
 		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
@@ -302,9 +293,9 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 							.getId())).withRel(FILE_REL + "/" + entry.getKey()));
 		}
 
-		model.addAttribute(RESOURCE_NAME, analysis);
+		ResponseResource<Analysis> responseObject = new ResponseResource<>(analysis);
 
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -312,24 +303,21 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *
 	 * @param submissionId The {@link AnalysisSubmission} id
 	 * @param fileId       The {@link AnalysisOutputFile} id
-	 * @return {@link ModelMap} containing the {@link AnalysisOutputFile}
+	 * @return An {@link AnalysisOutputFile}
 	 */
 	@Operation(operationId = "getAnalysisOutputFile", summary = "Find the analysis output file of an analysis submission",
 			description = "Get the analysis output file for the given analysis submission.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns the analysis output file for the given analysis submission.",
-			content = @Content(schema = @Schema(implementation = AnalysisOutputFileSchema.class)))
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET)
-	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
-		ModelMap model = new ModelMap();
-
+	@ResponseBody
+	public ResponseResource<AnalysisOutputFile> getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
 		analysisOutputFile.add(
 				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId,
 						analysisOutputFile.getId())).withSelfRel());
 
-		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
+		ResponseResource<AnalysisOutputFile> responseObject = new ResponseResource<>(analysisOutputFile);
 
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -341,10 +329,8 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "getAnalysisOutputFileContents", summary = "Find the file system resource for an analysis output file of an analysis submission",
 			description = "Get the file system resource for an analysis output file for the given analysis submission.", tags = "analysisSubmissions")
-	@ApiResponse(responseCode = "200", description = "Returns the file system resource for an analysis output file for the given analysis submission.")
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
-			@PathVariable Long fileId) {
+	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId, @PathVariable Long fileId) {
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
 		return new FileSystemResource(analysisOutputFile.getFile()
 				.toFile());
@@ -358,7 +344,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * @return the {@link AnalysisOutputFile} if available
 	 */
 	private AnalysisOutputFile getOutputFileForSubmission(Long submissionId, Long fileId) {
-		ModelMap model = new ModelMap();
 		AnalysisSubmission read = analysisSubmissionService.read(submissionId);
 
 		if (read.getAnalysisState() != AnalysisState.COMPLETED) {
@@ -399,28 +384,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 				.withRel(INPUT_FILES_PAIRED_REL));
 
 		return links;
-	}
-
-	// TODO: revisit these classes that define the response schemas for openapi
-
-	private class AnalysisOutputFileSchema {
-		public AnalysisOutputFile resource;
-	}
-
-	private class SequencingObjectsSchema {
-		public ResourceCollection<SequencingObject> resources;
-	}
-
-	private class SequenceFilePairsSchema{
-		public ResourceCollection<SequenceFilePair> resources;
-	}
-
-	private class AnalysisSchema {
-		public Analysis resource;
-	}
-
-	private class AnalysisSubmissionsSchema {
-		public ResourceCollection<AnalysisSubmission> resource;
 	}
 
 }

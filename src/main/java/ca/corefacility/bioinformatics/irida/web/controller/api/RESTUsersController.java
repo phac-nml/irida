@@ -23,10 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -109,6 +106,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	@Operation(operationId = "listAllUsers", summary = "Lists all users",
 			description = "Lists all users.", tags = "users")
 	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
 	@Override
 	public ResponseResource<ResourceCollection<User>> listAllResources() { return super.listAllResources(); }
 
@@ -118,6 +116,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	@Operation(operationId = "getUser", summary = "Find a user",
 			description = "Get the user given the identifier.", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@ResponseBody
 	@Override
 	public ResponseResource<User> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
 
@@ -127,6 +126,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	@Operation(operationId = "createUser", summary = "Create a new user",
 			description = "Create a new user.", tags = "users")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
 	public ResponseResource<User> create(@RequestBody User resource, HttpServletResponse response) { return super.create(resource, response); }
 
@@ -136,6 +136,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	@Operation(operationId = "deleteUser", summary = "Delete a user",
 			description = "Delete a user given the identifier.", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
 
@@ -145,6 +146,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 	@Operation(operationId = "updateUser", summary = "Update a user",
 			description = "Update a user", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
 

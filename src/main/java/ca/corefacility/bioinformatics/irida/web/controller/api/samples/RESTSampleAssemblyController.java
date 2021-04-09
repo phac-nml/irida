@@ -10,10 +10,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +20,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -39,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.net.HttpHeaders;
@@ -78,12 +71,9 @@ public class RESTSampleAssemblyController {
 	 */
 	@Operation(operationId = "listAssembliesForSample", summary = "Find all the genome assemblies for a given sample",
 			description = "Get all the genome assemblies for a given sample.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the list of genome assemblies associated with the given sample.",
-			content = @Content(schema = @Schema(implementation = GenomeAssembliesSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.GET)
-	public ModelMap listAssembliesForSample(@PathVariable Long sampleId) {
-		ModelMap modelMap = new ModelMap();
-
+	@ResponseBody
+	public ResponseResource<ResourceCollection<GenomeAssembly>> listAssembliesForSample(@PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(sample);
 
@@ -102,9 +92,9 @@ public class RESTSampleAssemblyController {
 		assemblyResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getSample(sampleId)).withRel(REL_SAMPLE));
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, assemblyResources);
+		ResponseResource<ResourceCollection<GenomeAssembly>> responseObject = new ResponseResource<>(assemblyResources);
 
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -116,12 +106,9 @@ public class RESTSampleAssemblyController {
 	 */
 	@Operation(operationId = "readAssemblyForSample", summary = "Find the genome assembly for a given sample",
 			description = "Get the genome assembly for a given sample.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the genome assembly associated with the given sample.",
-			content = @Content(schema = @Schema(implementation = GenomeAssemblySchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies/{assemblyId}", method = RequestMethod.GET)
-	public ModelMap readAssemblyForSample(@PathVariable Long sampleId, @PathVariable Long assemblyId) {
-		ModelMap modelMap = new ModelMap();
-
+	@ResponseBody
+	public ResponseResource<GenomeAssembly>  readAssemblyForSample(@PathVariable Long sampleId, @PathVariable Long assemblyId) {
 		Sample sample = sampleService.read(sampleId);
 		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(sample);
 
@@ -141,9 +128,9 @@ public class RESTSampleAssemblyController {
 
 		genomeAssembly.add(getLinksForAssembly(genomeAssembly, sampleId));
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, genomeAssembly);
+		ResponseResource<GenomeAssembly> responseObject = new ResponseResource<>(genomeAssembly);
 
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -157,12 +144,11 @@ public class RESTSampleAssemblyController {
 	 */
 	@Operation(operationId = "addNewAssemblyToSample", summary = "Upload a new genome assembly for a given sample",
 			description = "Upload a new genome assemblies for a given sample.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the saved genome assemblies associated with the given sample.",
-			content = @Content(schema = @Schema(implementation = GenomeAssemblySchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ModelMap addNewAssemblyToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
+	@ResponseBody
+	public ResponseResource<GenomeAssembly>  addNewAssemblyToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
 			HttpServletResponse response) throws IOException {
-		ModelMap modelMap = new ModelMap();
+		ResponseResource<GenomeAssembly> responseObject;
 		logger.debug("Adding assembly file to sample " + sampleId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
 
@@ -187,7 +173,7 @@ public class RESTSampleAssemblyController {
 			//get links for the assembly
 			Collection<Link> linksForAssembly = getLinksForAssembly(savedAssembly, sampleId);
 			savedAssembly.add(linksForAssembly);
-			modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, savedAssembly);
+			responseObject = new ResponseResource<>(savedAssembly);
 			String selfHref = savedAssembly.getSelfHref();
 
 			//set the response headers and status
@@ -204,7 +190,7 @@ public class RESTSampleAssemblyController {
 			Files.deleteIfExists(temp);
 		}
 
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -231,16 +217,6 @@ public class RESTSampleAssemblyController {
 		}
 
 		return links;
-	}
-
-	// TODO: revisit these classes that define the response schemas for openapi
-
-	private class GenomeAssemblySchema {
-		public GenomeAssembly resource;
-	}
-
-	private class GenomeAssembliesSchema {
-		public ResourceCollection<GenomeAssembly> resource;
 	}
 
 }

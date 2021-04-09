@@ -15,10 +15,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -107,6 +104,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *         application.
 	 */
 	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
 	public ResponseResource<ResourceCollection<Type>> listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
 		ResourceCollection<Type> resources = new ResourceCollection<>();
@@ -135,6 +133,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return the model and view for the individual resource.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@ResponseBody
 	public ResponseResource<Type> getResource(@PathVariable Long identifier) {
 		logger.trace("Getting resource with id [" + identifier + "]");
 		// construct a new instance of an identifier as specified by the client
@@ -170,6 +169,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *         resource.
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	public ResponseResource<Type> create(@RequestBody Type resource, HttpServletResponse response) {
 
 		// ask the subclass to map the de-serialized request to a concrete
@@ -222,6 +222,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response indicating that the resource was deleted.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@ResponseBody
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 
 		// ask the service to delete the resource specified by the identifier
@@ -247,8 +248,8 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *            the properties to be updated and their new values.
 	 * @return a response indicating that the resource was updated.
 	 */
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
 		// update the resource specified by the client. clients *may* be able
 		// to update the identifier of some resources, and so we should get a

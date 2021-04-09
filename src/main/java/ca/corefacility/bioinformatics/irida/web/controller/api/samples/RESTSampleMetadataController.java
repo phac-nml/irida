@@ -7,22 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -32,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 /**
@@ -65,20 +56,18 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "getSampleMetadata", summary = "Find the metadata for a given sample",
 			description = "Get the metadata for a given sample.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the metadata associated with the given sample.",
-			content = @Content(schema = @Schema(implementation = SampleMetadataSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
-	public ModelMap getSampleMetadata(@PathVariable Long sampleId) {
+	@ResponseBody
+	public ResponseResource<SampleMetadataResponse> getSampleMetadata(@PathVariable Long sampleId) {
 		logger.trace("Getting sample metadata for " + sampleId);
-		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
 
 		SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
-		return modelMap;
+		ResponseResource<SampleMetadataResponse> responseObject = new ResponseResource<>(response);
+		return responseObject;
 	}
 
 	/**
@@ -93,11 +82,9 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "saveSampleMetadata", summary = "Save the metadata for a given sample",
 			description = "Save the metadata for a given sample.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the saved metadata associated with the given sample.",
-			content = @Content(schema = @Schema(implementation = SampleMetadataSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
-	public ModelMap saveSampleMetadata(@PathVariable Long sampleId,
-			@RequestBody Map<String, MetadataEntry> metadataMap) {
+	@ResponseBody
+	public ResponseResource<SampleMetadataResponse> saveSampleMetadata(@PathVariable Long sampleId, @RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
 		Set<MetadataEntry> metadata = metadataTemplateService.convertMetadataStringsToSet(metadataMap);
@@ -119,10 +106,9 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "addSampleMetadata", summary = "Add new metadata fields for a given sample",
 			description = "Add new metadata fields for a given sample.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the metadata associated with the given sample.",
-			content = @Content(schema = @Schema(implementation = SampleMetadataSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
-	public ModelMap addSampleMetadata(@PathVariable Long sampleId,
+	@ResponseBody
+	public ResponseResource<SampleMetadataResponse> addSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
@@ -174,11 +160,5 @@ public class RESTSampleMetadataController {
 		public void setMetadata(Map<MetadataTemplateField, MetadataEntry> metadata) {
 			this.metadata = metadata;
 		}
-	}
-
-	// TODO: revisit these classes that define the response schemas for openapi
-
-	private class SampleMetadataSchema {
-		public SampleMetadataResponse resource;
 	}
 }

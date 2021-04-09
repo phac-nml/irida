@@ -18,6 +18,8 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -86,13 +88,13 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sequencingObjectService.getSequencingObjectsForSample(s)).thenReturn(relationships);
 
-		ModelMap modelMap = controller.getSampleSequenceFiles(s.getId());
+		ResponseResource<ResourceCollection<SequenceFile>> modelMap = controller.getSampleSequenceFiles(s.getId());
 
 		// verify that the service calls were used.
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).getSequencingObjectsForSample(s);
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
 		ResourceCollection<SequenceFile> resources = (ResourceCollection<SequenceFile>) o;
@@ -123,13 +125,13 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ModelMap modelMap = controller.removeSequenceFileFromSample(s.getId(), "unpaired", so.getId());
+		ResponseResource<RootResource> modelMap = controller.removeSequenceFileFromSample(s.getId(), "unpaired", so.getId());
 
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 		verify(sampleService, times(1)).removeSequencingObjectFromSample(s, so);
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertNotNull(o);
 		assertTrue(o instanceof RootResource);
 		RootResource resource = (RootResource) o;
@@ -153,14 +155,14 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ModelMap modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
+		ResponseResource<SequenceFile> modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
 						.getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertNotNull(o);
 		assertTrue(o instanceof SequenceFile);
 		SequenceFile sfr = (SequenceFile) o;
@@ -194,7 +196,7 @@ public class SampleSequenceFilesControllerTest {
 		when(analysisService.getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId()))
 				.thenReturn(analysisFastQC);
 
-		ModelMap readQCForSequenceFile = controller.readQCForSequenceFile(s.getId(),
+		ResponseResource<AnalysisFastQC> readQCForSequenceFile = controller.readQCForSequenceFile(s.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(),
 				so.getSequenceFile().getId());
 
@@ -202,8 +204,7 @@ public class SampleSequenceFilesControllerTest {
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 		verify(analysisService).getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId());
 
-		assertTrue(readQCForSequenceFile.containsKey(RESTGenericController.RESOURCE_NAME));
-		Object object = readQCForSequenceFile.get(RESTGenericController.RESOURCE_NAME);
+		Object object = readQCForSequenceFile.getResource();
 		assertTrue(object instanceof AnalysisFastQC);
 
 		AnalysisFastQC qc = (AnalysisFastQC) object;
@@ -246,13 +247,13 @@ public class SampleSequenceFilesControllerTest {
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 		
-		ModelMap modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+		ResponseResource<SequenceFile> modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService)
 				.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s));
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertNotNull("object must not be null", o);
 		assertTrue("object must be a SequenceFile", o instanceof SequenceFile);
 		SequenceFile sfr = (SequenceFile) o;
@@ -363,13 +364,13 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 
-		ModelMap modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2,
+		ResponseResource<SequencingObject> modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2,
 				response);
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s));
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertNotNull("Object should not be null", o);
 		assertTrue("Object should be an instance of SequenceFilePair", o instanceof SequenceFilePair);
 

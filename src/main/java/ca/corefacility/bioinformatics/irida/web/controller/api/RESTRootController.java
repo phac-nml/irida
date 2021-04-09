@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 
 import com.google.common.collect.Sets;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -91,10 +93,9 @@ public class RESTRootController {
 	 */
 	@Operation(operationId = "getLinks", summary = "Get the set of links used to discover the API",
 			description = "Get the set of links used to discover the API.", tags = "api")
-	@ApiResponse(responseCode = "200", description = "Returns a set of links used to discover the API.",
-			content = @Content(schema = @Schema(implementation = RootResourceSchema.class)))
 	@RequestMapping(method = RequestMethod.GET, value = "/api")
-	public ModelMap getLinks(final HttpServletRequest request) {
+	@ResponseBody
+	public ResponseResource<RootResource> getLinks(final HttpServletRequest request) {
 		logger.debug("Discovering application");
 		RootResource resource = new RootResource();
 		List<Link> links = new ArrayList<>();
@@ -114,11 +115,10 @@ public class RESTRootController {
 		// add all of the links to the response
 		resource.add(links);
 
-		ModelMap map = new ModelMap();
-		map.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+		ResponseResource<RootResource> responseObject = new ResponseResource<>(resource);
 
 		// respond to the client
-		return map;
+		return responseObject;
 	}
 
 	/**
@@ -155,11 +155,7 @@ public class RESTRootController {
 		return links;
 	}
 
-	// TODO: revisit these classes that define the response schemas for openapi
-
-	private class RootResourceSchema {
-		public RootResource version;
-	}
+	// TODO: revisit this class
 
 	private class VersionSchema {
 		public String version;

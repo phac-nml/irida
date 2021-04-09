@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -62,6 +59,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Operation(operationId = "listAllSequencingRun", summary = "Lists all sequencing runs",
 			description = "Lists all sequencing runs.", tags = "sequencingrun")
 	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
 	@Override
 	public ResponseResource<ResourceCollection<SequencingRun>> listAllResources() { return super.listAllResources(); }
 
@@ -71,6 +69,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Operation(operationId = "getSequencingRun", summary = "Find a sequencing run",
 			description = "Get the sequencing run given the identifier.", tags = "sequencingrun")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
+	@ResponseBody
 	@Override
 	public ResponseResource<SequencingRun> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
 
@@ -80,6 +79,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Operation(operationId = "createSequencingRun", summary = "Create a new sequencing run",
 			description = "Create a new sequencing run.", tags = "sequencingrun")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
 	public ResponseResource<SequencingRun> create(@RequestBody SequencingRun resource, HttpServletResponse response) { return super.create(resource, response); }
 
@@ -89,6 +89,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Operation(operationId = "deleteSequencingRun", summary = "Delete a sequencing run",
 			description = "Delete a sequencing run given the identifier.", tags = "sequencingrun")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
 
@@ -98,6 +99,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Operation(operationId = "updateSequencingRun", summary = "Update a sequencing run",
 			description = "Update a sequencing run", tags = "sequencingrun")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
 
@@ -112,6 +114,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	@Operation(operationId = "createSequencingRun", summary = "Create a sequencing run",
 			description = "Create a sequencing run.", tags = "sequencingrun")
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	public ResponseResource<SequencingRun> createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
 			HttpServletResponse response) {
 		logger.trace("creating sequencing run");

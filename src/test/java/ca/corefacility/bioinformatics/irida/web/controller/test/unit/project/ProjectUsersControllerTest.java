@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -67,12 +68,12 @@ public class ProjectUsersControllerTest {
 		when(userService.getUsersForProject(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
 
-		ModelMap map = controller.getUsersForProject(p.getId());
+		ResponseResource<ResourceCollection<User>> map = controller.getUsersForProject(p.getId());
 
 		verify(projectService, times(1)).read(p.getId());
 		verify(userService, times(1)).getUsersForProject(p);
 
-		Object o = map.get(RESTGenericController.RESOURCE_NAME);
+		Object o = map.getResource();
 		assertNotNull(o);
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked") ResourceCollection<User> users = (ResourceCollection<User>) o;
@@ -106,7 +107,7 @@ public class ProjectUsersControllerTest {
 		Map<String, String> userMap = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
 		// add the user to the project
-		ModelMap map = controller.addUserToProject(p.getId(), userMap, response);
+		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(), userMap, response);
 
 		// confirm that the service method was called
 		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
@@ -121,7 +122,7 @@ public class ProjectUsersControllerTest {
 		assertEquals("location must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
 		//check the ModelMap's resource type
-		Object o = map.get(RESTGenericController.RESOURCE_NAME);
+		Object o = map.getResource();
 		assertNotNull("object must not be null", o);
 		assertTrue("object must be an instance of LabelledRelationshipResource",
 				o instanceof LabelledRelationshipResource);
@@ -172,7 +173,7 @@ public class ProjectUsersControllerTest {
 				RESTProjectUsersController.USER_ROLE_KEY, r.toString());
 
 		// add the user to the project
-		ModelMap map = controller.addUserToProject(p.getId(), userMap, response);
+		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(), userMap, response);
 
 		// confirm that the service method was called
 		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
@@ -187,7 +188,7 @@ public class ProjectUsersControllerTest {
 		assertEquals("location must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
 		//check the ModelMap's resource type
-		Object o = map.get(RESTGenericController.RESOURCE_NAME);
+		Object o = map.getResource();
 		assertNotNull("object must not be null", o);
 		assertTrue("object must be an instance of LabelledRelationshipResource",
 				o instanceof LabelledRelationshipResource);
@@ -229,13 +230,13 @@ public class ProjectUsersControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
 
-		ModelMap modelMap = controller.removeUserFromProject(p.getId(), u.getUsername());
+		ResponseResource<RootResource> modelMap = controller.removeUserFromProject(p.getId(), u.getUsername());
 
 		verify(projectService).read(p.getId());
 		verify(userService).getUserByUsername(u.getUsername());
 		verify(projectService).removeUserFromProject(p, u);
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertTrue(o instanceof RootResource);
 		RootResource r = (RootResource) o;
 		// confirm that a project link exists

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -37,8 +38,8 @@ public class RootControllerTest {
     @Test
     public void testGetLinks() {
         Map<String, Class<?>> controllers = RESTRootController.PUBLIC_CONTROLLERS;
-        ModelMap map = controller.getLinks(new MockHttpServletRequest());
-        Object o = map.get(RESTGenericController.RESOURCE_NAME);
+        ResponseResource<RootResource> map = controller.getLinks(new MockHttpServletRequest());
+        Object o = map.getResource();
         assertNotNull(o);
         assertTrue(o instanceof RootResource);
         RootResource r = (RootResource) o;

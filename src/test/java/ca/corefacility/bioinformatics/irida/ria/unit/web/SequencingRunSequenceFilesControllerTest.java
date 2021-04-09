@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
@@ -55,12 +56,12 @@ public class SequencingRunSequenceFilesControllerTest {
 		when(objectService.read(seqId)).thenReturn(singleEndSequenceFile);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
 
-		ModelMap modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId, representation, response);
+		ResponseResource<SequencingRun> modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId, representation, response);
 
 		verify(objectService).read(seqId);
 		verify(miseqRunService).read(sequencingrunId);
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertNotNull("Object should not be null", o);
 		assertTrue("Object should be an instance of SequencingRun", o instanceof SequencingRun);
 		SequencingRun res = (SequencingRun) o;
