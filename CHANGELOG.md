@@ -18,7 +18,7 @@ Changes
 * [Developer]: Cleaned up compile warnings related to deprecated methods in Spring, JSON parsing, and Galaxy connectivity.
 * [UI] Updated And Design to v4.15.0.
 * [Database]: Removed `sample_metadata_entry` table which should have been dropped in 21.01 release. (21.01.3)
-* [REST]: Added endpoint to request multiple sample's metadata at the same time.
+* [REST]: Added endpoint to request a full project's sample metadata at the same time.
 
 20.09 to 21.01
 --------------
