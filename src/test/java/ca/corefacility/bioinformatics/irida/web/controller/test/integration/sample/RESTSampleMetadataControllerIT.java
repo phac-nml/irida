@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sample;
 
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
@@ -16,11 +18,12 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlac
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.jayway.restassured.response.Response;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -84,5 +87,109 @@ public class RESTSampleMetadataControllerIT {
 				.get(metadataUri)
 				.asString();
 
+	}
+
+	@Test
+	public void testPostMetadata() {
+		Long sampleId = 1L;
+
+		final String sampleUri = "/api/samples/" + sampleId;
+		final String sampleJson = asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.get(sampleUri)
+				.asString();
+
+		String newKeyName = "somethingnew";
+
+		final String metadataUri = from(sampleJson).get("resource.links.find{it.rel == 'sample/metadata'}.href");
+
+		Map<String, Map<String, String>> metadata = ImmutableMap.of(newKeyName,
+				ImmutableMap.of("type", "text", "value", "newval"));
+
+		asUser().body(metadata)
+				.expect()
+				.body("resource.metadata", hasKey(newKeyName))
+				.and()
+				.body("resource.metadata", not(hasKey("field1")))
+				.and()
+				.body("resource.metadata", not(hasKey("field2")))
+				.post(metadataUri);
+	}
+
+	@Test
+	public void testOverwritePost() {
+		Long sampleId = 1L;
+
+		final String sampleUri = "/api/samples/" + sampleId;
+		final String sampleJson = asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.get(sampleUri)
+				.asString();
+
+		final String metadataUri = from(sampleJson).get("resource.links.find{it.rel == 'sample/metadata'}.href");
+
+		Map<String, Map<String, String>> metadata = ImmutableMap.of("field1",
+				ImmutableMap.of("type", "text", "value", "newval"));
+
+		asUser().body(metadata)
+				.expect()
+				.body("resource.metadata", hasKey("field1"))
+				.and()
+				.body("resource.metadata", not(hasKey("field2")))
+				.and()
+				.body("resource.metadata.field1.value", equalTo("newval"))
+				.post(metadataUri);
+	}
+
+	@Test
+	public void testPutMetadata() {
+		Long sampleId = 1L;
+
+		final String sampleUri = "/api/samples/" + sampleId;
+		final String sampleJson = asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.get(sampleUri)
+				.asString();
+
+		String newKeyName = "somethingnew";
+
+		final String metadataUri = from(sampleJson).get("resource.links.find{it.rel == 'sample/metadata'}.href");
+
+		Map<String, Map<String, String>> metadata = ImmutableMap.of(newKeyName,
+				ImmutableMap.of("type", "text", "value", "newval"));
+
+		asUser().body(metadata)
+				.expect()
+				.body("resource.metadata", hasKey(newKeyName))
+				.and()
+				.body("resource.metadata", hasKey("field1"))
+				.and()
+				.body("resource.metadata", hasKey("field1"))
+				.put(metadataUri);
+	}
+
+	@Test
+	public void testOverwritePut() {
+		Long sampleId = 1L;
+
+		final String sampleUri = "/api/samples/" + sampleId;
+		final String sampleJson = asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.get(sampleUri)
+				.asString();
+
+		final String metadataUri = from(sampleJson).get("resource.links.find{it.rel == 'sample/metadata'}.href");
+
+		Map<String, Map<String, String>> metadata = ImmutableMap.of("field1",
+				ImmutableMap.of("type", "text", "value", "newval"));
+
+		asUser().body(metadata)
+				.expect()
+				.body("resource.metadata", hasKey("field1"))
+				.and()
+				.body("resource.metadata", hasKey("field2"))
+				.and()
+				.body("resource.metadata.field1.value", equalTo("newval"))
+				.put(metadataUri);
 	}
 }
