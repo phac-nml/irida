@@ -137,7 +137,7 @@ export function MetadataTemplateManager({ id }) {
   const removeField = async (item) => {
     const updated = {
       ...template,
-      fields: fields.filter((field) => field.id !== item.id),
+      fields: fields.filter((field) => field.identifier !== item.identifier),
     };
     await completeUpdate(updated);
   };
@@ -259,6 +259,14 @@ export function MetadataTemplateManager({ id }) {
                     title: i18n("MetadataFieldsListManager.restrictions"),
                     dataIndex: "restriction",
                     key: "restriction",
+                    render: (text) => {
+                      switch (text) {
+                        case "PROJECT_OWNER":
+                          return i18n("projectRole.PROJECT_OWNER");
+                        default:
+                          return i18n("projectRole.PROJECT_USER");
+                      }
+                    },
                   },
                   {
                     align: "right",

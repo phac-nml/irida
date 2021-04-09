@@ -69,7 +69,6 @@ export function MetadataFieldsListManager({ projectId }) {
         return (
           <Select
             className="t-field-restriction"
-            overlayClassName="t-restriction-menu"
             onChange={(value) => changeFieldRestriction(field, value)}
             style={{ width: `100%` }}
             options={restrictions}

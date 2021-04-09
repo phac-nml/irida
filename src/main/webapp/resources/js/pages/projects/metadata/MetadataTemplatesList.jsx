@@ -78,6 +78,7 @@ export function MetadataTemplatesList({ projectId }) {
   const getActionsForItem = (template) => {
     let isDefaultTemplateForProject =
       template.identifier == defaultMetadataTemplateId;
+
     const actions = [
       <Button
         size="small"
@@ -152,7 +153,9 @@ export function MetadataTemplatesList({ projectId }) {
       renderItem={(item) => (
         <HoverItem
           className="t-m-template"
-          actions={item.id != ALL_FIELDS_TEMPLATE_ID && getActionsForItem(item)}
+          actions={
+            item.identifier != ALL_FIELDS_TEMPLATE_ID && getActionsForItem(item)
+          }
         >
           <List.Item.Meta
             title={
@@ -163,7 +166,7 @@ export function MetadataTemplatesList({ projectId }) {
                   alignItems: "center",
                 }}
               >
-                {item.id != ALL_FIELDS_TEMPLATE_ID ? (
+                {item.identifier != ALL_FIELDS_TEMPLATE_ID ? (
                   <Link
                     className="t-t-name"
                     style={{ color: blue6, display: "block" }}
