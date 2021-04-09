@@ -33,7 +33,7 @@ public class ProjectDetailsPage extends AbstractPage {
 	}
 
 	public static ProjectDetailsPage goTo(WebDriver driver, Long projectId) {
-		get(driver, "projects/" + projectId + "/settings");
+		get(driver, "projects/" + projectId + "/settings/details");
 		return PageFactory.initElements(driver, ProjectDetailsPage.class);
 	}
 
