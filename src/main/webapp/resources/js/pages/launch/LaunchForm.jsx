@@ -60,7 +60,7 @@ export function LaunchForm() {
       onFinish={onFinish}
       name="details"
       layout="vertical"
-      initialValues={{ ...state.initialValues, checked: false }}
+      initialValues={state.initialValues}
       className="t-launch-form"
     >
       <Space direction="vertical" style={{ width: `100%` }}>
