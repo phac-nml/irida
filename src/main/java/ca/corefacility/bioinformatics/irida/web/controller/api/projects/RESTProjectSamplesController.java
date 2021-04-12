@@ -295,7 +295,7 @@ public class RESTProjectSamplesController {
 	 * @return representation of the sample
 	 */
 	@Operation(operationId = "getSample", summary = "Find a sample",
-			description = "Get a sample.", tags = "projects")
+			description = "Get a sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseResource<Sample> getSample(@PathVariable Long sampleId) {
@@ -386,7 +386,7 @@ public class RESTProjectSamplesController {
 	 * {@link Sample}.
 	 */
 	@Operation(operationId = "updateSample", summary = "Update a sample",
-			description = "Update a sample.", tags = "projects")
+			description = "Update a sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
