@@ -9,6 +9,9 @@ import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration for IRIDA REST API documentation.
+ */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"org.springdoc"})

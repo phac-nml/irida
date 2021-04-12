@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
+/**
+ * The resource for displaying the API responses.
+ *
+ * @param <Type> The type of the object to be displayed in the response
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseResource<Type> {
     private Type resource;
