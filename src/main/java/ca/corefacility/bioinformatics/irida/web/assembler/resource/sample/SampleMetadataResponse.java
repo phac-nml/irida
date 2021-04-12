@@ -16,11 +16,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SampleMetadataResponse extends IridaResourceSupport {
 	Map<MetadataTemplateField, MetadataEntry> metadata;
 
-	@Deprecated
-	public SampleMetadataResponse(Map<MetadataTemplateField, MetadataEntry> metadata) {
-		this.metadata = metadata;
-	}
-
 	public SampleMetadataResponse(Set<MetadataEntry> metadataEntrySet) {
 		metadata = new HashMap<>();
 		for (MetadataEntry entry : metadataEntrySet) {
