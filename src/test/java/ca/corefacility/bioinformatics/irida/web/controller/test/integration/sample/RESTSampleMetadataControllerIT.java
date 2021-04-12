@@ -49,7 +49,7 @@ public class RESTSampleMetadataControllerIT {
 		String samplesJson = asUser().get(samplesUri)
 				.asString();
 
-		final String metadataUri = from(samplesJson).get("resource.links.find{it.rel == 'samples/metadata'}.href");
+		final String metadataUri = from(samplesJson).get("resource.links.find{it.rel == 'project/samples/metadata'}.href");
 
 		asUser().expect()
 				.statusCode(HttpStatus.OK.value())

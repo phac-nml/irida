@@ -37,8 +37,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
 
+	//rel for getting an indiviual sample's metadata
 	public static final String METADATA_REL = "sample/metadata";
-	public static final String ALL_METADATA_REL = "samples/metadata";
+
+	//rel for getting all metadata for a project
+	public static final String ALL_METADATA_REL = "project/samples/metadata";
 
 	public static final String SAMPLE_REL = "sample";
 
