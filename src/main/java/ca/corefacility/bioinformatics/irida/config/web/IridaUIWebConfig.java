@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -171,7 +172,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
-		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+		if (env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))) {
 			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 			WebpackerManifestParser.setAutoUpdatable(false);
 		} else {
@@ -197,7 +198,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
-		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
+		if (env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))) {
 			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 			WebpackerManifestParser.setAutoUpdatable(false);
 		} else {

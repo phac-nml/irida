@@ -172,7 +172,8 @@ Each template listing contains:
   * Template name; clicking this will redirect to the template details page. 
   * Template description, the number of fields in the template.
   * Template actions, including (download Excel file of template fields, and remove template (managers only))
- 
+  * `Set as Default` button to set the template as the default for the project (displays if hovering on a template) or a `Default` tag if template is already set as default for the project.
+
 Template Details Page
 ---------------------
 
@@ -180,4 +181,4 @@ Clicking on a template name will redirect you to the template details page.
 
 ![Image displaying the metadata template details page](images/metadata-template-details.png)
 
-Project manager can edit/update the template name, description and fields on this page.
+Project manager can edit/update the template name, description and fields on this page. They can also set the template as the default for the project.
