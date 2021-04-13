@@ -54,7 +54,7 @@ export function ProcessingCoverage({ projectId, canManage }) {
     form.validateFields().then((coverage) => {
       dispatch(updateProcessingCoverage({ projectId, coverage }))
         .then(unwrapResult)
-        .then((message) => {
+        .then(({ message }) => {
           notification.success({ message });
           setVisible(false);
         })
