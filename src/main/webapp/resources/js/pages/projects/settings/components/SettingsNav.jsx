@@ -17,6 +17,9 @@ export default function SettingsNav({ path }) {
       <Menu.Item key="processing">
         <Link to="processing">{i18n("project.settings.page.processing")}</Link>
       </Menu.Item>
+      <Menu.Item key="members">
+        <Link to="members">{i18n("project.settings.page.members")}</Link>
+      </Menu.Item>
     </Menu>
   );
 }
