@@ -1,11 +1,10 @@
-import React from "react";
-import { render } from "react-dom";
 import { Typography } from "antd";
-import { PagedTableProvider } from "../../components/ant.design/PagedTable";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectMembersTable } from "../../components/project-members";
-import { RolesProvider } from "../../contexts/roles-context";
-import { getProjectRoles } from "../../apis/projects/projects";
+import React from "react";
+import { getProjectRoles } from "../../../../apis/projects/projects";
+import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
+import { ProjectMembersTable } from "../../../../components/project-members";
+import { RolesProvider } from "../../../../contexts/roles-context";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const { Title } = Typography;
 
@@ -14,7 +13,7 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-function ProjectMembersPage() {
+export default function ProjectMembersPage() {
   return (
     <PagedTableProvider
       url={setBaseUrl(`/ajax/projects/${window.project.id}/members`)}
@@ -28,5 +27,3 @@ function ProjectMembersPage() {
     </PagedTableProvider>
   );
 }
-
-render(<ProjectMembersPage />, document.querySelector("#users-root"));

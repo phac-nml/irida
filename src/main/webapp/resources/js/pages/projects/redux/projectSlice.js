@@ -70,6 +70,21 @@ export const setDefaultTemplateForProject = createAsyncThunk(
   }
 );
 
+export const fetchProjectRoles = createAsyncThunk(
+  `project/fetchProjectRoles`,
+  async () => {
+    console.log("HELLO");
+  },
+  {
+    condition(arg, { getState }) {
+      const { roles } = getState().projects;
+      if (roles) {
+        return false;
+      }
+    },
+  }
+);
+
 export const projectSlice = createSlice({
   name: "project",
   initialState: {

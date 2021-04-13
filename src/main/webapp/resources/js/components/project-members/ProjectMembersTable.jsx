@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
-import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectRole } from "../roles/ProjectRole";
-import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
+import { useSelector } from "react-redux";
 import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
   updateUserRoleOnProject,
 } from "../../apis/projects/members";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
+import { ProjectRole } from "../roles/ProjectRole";
 
 /**
  * React component to display a table of project users.
@@ -18,6 +19,7 @@ import {
  */
 export function ProjectMembersTable() {
   const { updateTable } = useContext(PagedTableContext);
+  const { canManage } = useSelector((state) => state.project);
 
   function userRemoved(user) {
     if (user.id === window.PAGE.user) {
@@ -53,7 +55,7 @@ export function ProjectMembersTable() {
     },
   ];
 
-  if (window.PAGE.canManage) {
+  if (canManage) {
     columns.push({
       align: "right",
       render(text, user) {
@@ -72,7 +74,7 @@ export function ProjectMembersTable() {
   return (
     <PagedTable
       buttons={[
-        window.PAGE.canManage ? (
+        canManage ? (
           <AddMemberButton
             key="add-members-btn"
             label={i18n("AddMemberButton.label")}

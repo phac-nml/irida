@@ -1,6 +1,8 @@
-import React, { useState } from "react";
 import { notification, Select } from "antd";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { RolesContext, useRoles } from "../../contexts/roles-context";
+import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -17,9 +19,14 @@ export function ProjectRole({
   // eslint-disable-next-line no-console
   updateFn = () => console.error("updateFn is required"),
 }) {
+  const { canManage, roles } = useSelector((state) => state.project);
   const [role, setRole] = useState(item.role);
   const [loading, setLoading] = useState(false);
   const { roles, getRoleFromKey } = useRoles();
+
+  React.useEffect(() => {
+    fetchProjectRoles();
+  }, []);
 
   const onChange = (value) => {
     setLoading(true);
@@ -39,7 +46,7 @@ export function ProjectRole({
       .finally(() => setLoading(false));
   };
 
-  return window.PAGE.canManage ? (
+  return canManage ? (
     <Select
       className="t-role-select"
       value={role}
