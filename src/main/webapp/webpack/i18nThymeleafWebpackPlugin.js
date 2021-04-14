@@ -16,6 +16,7 @@ const ConcatenatedModule = require("webpack/lib/optimize/ConcatenatedModule");
 const { connectChunkGroupAndChunk } = require("webpack/lib/GraphHelpers");
 
 /**
+ * Generates a thymeleaf templated translations html file.
  * @param {string[]} keys the translation keys required for the entry
  * @param {string} entry the name of the entry
  * @returns {string} the generated html
@@ -38,6 +39,8 @@ const template = (keys, entry) => `
 `;
 
 /**
+ * Checks that a requested javascript module is not an external
+ * dependency.
  * @param {string} request the path to the js file being requested
  * @returns {boolean} request is valid and is local
  */
@@ -56,6 +59,7 @@ class i18nThymeleafWebpackPlugin {
   }
 
   /**
+   * Apply the compiler
    * @param {compiler} compiler the compiler instance
    * @returns {void}
    */
@@ -67,6 +71,9 @@ class i18nThymeleafWebpackPlugin {
 
     let cacheGetPromise;
 
+    /**
+     * Load the i18nsByRequests dictionary from the webpack cache.
+     */
     compiler.hooks.beforeCompile.tap("i18nThymeleafWebpackPlugin", () => {
       if (!cacheGetPromise) {
         cacheGetPromise = cache.getPromise().then(
@@ -83,6 +90,9 @@ class i18nThymeleafWebpackPlugin {
       }
     });
 
+    /**
+     * Persist the i18nsByRequests dictionary to the webpack cache.
+     */
     compiler.hooks.afterCompile.tapPromise(
       "i18nThymeleafWebpackPlugin",
       (compilation) => {
@@ -106,6 +116,8 @@ class i18nThymeleafWebpackPlugin {
     );
 
     /**
+     * Get a set of translation keys that are required by the ConcatenatedModule or any of its
+     * dependencies.
      * @param {Compilation} compilation the Compilation object
      * @param {ConcatedModule} concatenatedModule the ConcatenatedModule to get translations keys from
      * @return {Set<string>} a set of the translations keys required by the concatenatedModule
@@ -146,6 +158,8 @@ class i18nThymeleafWebpackPlugin {
     };
 
     /**
+     * Get a set of translation keys that are required by any of the dependencies
+     * of the ChunkGroup.
      * @param {Compilation} compilation the Compilation object
      * @param {ChunkGroup} chunkGroup the ChunkGroup to get translations keys from
      * @return {Set<string>} a set of the translations keys required by the chunkGroup
@@ -212,6 +226,10 @@ class i18nThymeleafWebpackPlugin {
 
     const { sources, Compilation } = require("webpack");
 
+    /**
+     * Generate thymeleaf templated translation files at the end of the
+     * compilation
+     */
     compiler.hooks.thisCompilation.tap(
       "i18nThymeleafWebpackPlugin",
       (compilation) => {
