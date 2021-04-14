@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -132,10 +133,12 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	public List<MetadataRestriction> getMetadataRestrictionsForProject(Project project);
 
 	/**
-	 * Add a new {@link MetadataRestriction} for a project
+	 * Adds or updates the {@link MetadataRestriction} for a project and field
 	 *
-	 * @param metadataRestriction the new {@link MetadataRestriction} to create
+	 * @param project the {@link Project} to add a restriction for
+	 * @param field   the field to set a restriction on
+	 * @param role    the role level to set the restriction for
 	 * @return the created {@link MetadataRestriction}
 	 */
-	public MetadataRestriction addMetadataRestriction(MetadataRestriction metadataRestriction);
+	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role);
 }

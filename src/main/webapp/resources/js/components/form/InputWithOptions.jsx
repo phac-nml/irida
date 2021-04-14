@@ -1,5 +1,5 @@
-import React from "react";
 import { Checkbox, Form, Radio, Select } from "antd";
+import React from "react";
 
 function isTruthy(options) {
   if (options.length > 2) return false;

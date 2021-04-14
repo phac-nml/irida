@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getMetadataFieldsForProject } from "../../../apis/metadata/field";
+import {
+  getMetadataFieldsForProject,
+  getMetadataRestrictions,
+  updateProjectMetadataFieldRestriction,
+} from "../../../apis/metadata/field";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { updateFieldsForAllFieldsTemplate } from "./templatesSlice";
 
@@ -14,6 +18,44 @@ export const fetchFieldsForProject = createAsyncThunk(
     // Update the fields in the state for the All Fields Template
     dispatch(updateFieldsForAllFieldsTemplate(fields));
     return addKeysToList(fields, "field", "id");
+  }
+);
+
+/**
+ * Get the list of metadata field restrictions for the project.
+ * @type {AsyncThunk<{restrictions: *}, void, {}>}
+ */
+export const fetchFieldsRestrictions = createAsyncThunk(
+  `fields/fetchFieldsRestrictions`,
+  async () => {
+    const restrictions = await getMetadataRestrictions();
+    return {
+      restrictions: addKeysToList(restrictions, "restriction", "value"),
+    };
+  },
+  {
+    condition: (_args, { getState }) => {
+      const { fields } = getState();
+      if ("restrictions" in fields) {
+        return false;
+      }
+    },
+  }
+);
+
+/**
+ * Update metadata field restrictions for a field in a project.
+ * @type {AsyncThunk<{projectRole: *, message: *, fieldId: *}, {readonly fieldId?: *, readonly projectRole?: *, readonly projectId?: *}, {}>}
+ */
+export const updateProjectFieldRestriction = createAsyncThunk(
+  `fields/updateProjectFieldRestriction`,
+  async ({ projectId, fieldId, projectRole }) => {
+    const { message } = await updateProjectMetadataFieldRestriction({
+      projectId,
+      fieldId,
+      projectRole,
+    });
+    return { message, fieldId, projectRole };
   }
 );
 
@@ -35,6 +77,15 @@ export const fieldsSlice = createSlice({
       fields: action.payload,
       loading: false,
     }),
+    [fetchFieldsRestrictions.fulfilled]: (state, action) => {
+      state.restrictions = action.payload.restrictions;
+    },
+    [updateProjectFieldRestriction.fulfilled]: (state, action) => {
+      const index = state.fields.findIndex(
+        (field) => field.id === action.payload.fieldId
+      );
+      state.fields[index].restriction = action.payload.projectRole;
+    },
   },
 });
 

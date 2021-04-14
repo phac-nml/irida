@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
@@ -10,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -196,22 +200,25 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
+	@Transactional
 	public List<MetadataRestriction> getMetadataRestrictionsForProject(Project project) {
 		return metadataRestrictionRepository.getRestrictionForProject(project);
 	}
 
-	@PreAuthorize("hasPermission(#metadataRestriction.project, 'isProjectOwner')")
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Override
 	@Transactional
-	public MetadataRestriction addMetadataRestriction(MetadataRestriction metadataRestriction) {
-		MetadataRestriction metadataRestrictionForFieldAndProject = getMetadataRestrictionForFieldAndProject(
-				metadataRestriction.getProject(), metadataRestriction.getField());
+	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role) {
+		MetadataRestriction metadataRestrictionForFieldAndProject = getMetadataRestrictionForFieldAndProject(project,
+				field);
 
 		if (metadataRestrictionForFieldAndProject != null) {
-			metadataRestrictionRepository.delete(metadataRestrictionForFieldAndProject);
+			metadataRestrictionForFieldAndProject.setLevel(role);
+		} else {
+			metadataRestrictionForFieldAndProject = new MetadataRestriction(project, field, role);
 		}
 
-		return metadataRestrictionRepository.save(metadataRestriction);
+		return metadataRestrictionRepository.save(metadataRestrictionForFieldAndProject);
 	}
 
 }

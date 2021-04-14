@@ -72,7 +72,6 @@ export const templatesSlice = createSlice({
     templates: [
       {
         name: i18n("MetadataTemplatesList.allFields"),
-        label: i18n("MetadataTemplatesList.allFields"),
         description: i18n("MetadataTemplatesList.allFields-description"),
         identifier: 0,
         key: "template-0",
@@ -93,23 +92,20 @@ export const templatesSlice = createSlice({
     Successful fetching of metadata templates for the current project.
      */
     [fetchTemplatesForProject.fulfilled]: (state, { payload }) => {
-      return {
-        ...state,
-        templates: [...payload, ...state.templates],
-        loading: false,
-      };
+      state.templates = [...payload, ...state.templates];
+      state.loading = false;
     },
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
       );
-      return { ...state, templates };
+      state.templates = templates;
     },
     [createNewMetadataTemplate.fulfilled]: (state, action) => {
       if (state.templates !== undefined) {
         const templates = [...state.templates];
         templates.unshift(action.payload);
-        return { ...state, templates };
+        state.templates = templates;
       }
     },
     [updateTemplate.fulfilled]: (state, action) => {
@@ -119,7 +115,6 @@ export const templatesSlice = createSlice({
       if (index >= 0) {
         state.templates[index] = action.payload.template;
       }
-      return state;
     },
   },
 });

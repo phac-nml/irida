@@ -1,4 +1,3 @@
-import React from "react";
 import { navigate } from "@reach/router";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
@@ -13,15 +12,16 @@ import {
   Typography,
 } from "antd";
 import differenceBy from "lodash/differenceBy";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DnDTable from "../../../components/ant.design/DnDTable";
 import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
 import { HelpPopover } from "../../../components/popovers";
-import { addKeysToList } from "../../../utilities/http-utilities";
-import { updateTemplate } from "../redux/templatesSlice";
-import { setDefaultTemplateForProject } from "../redux/projectSlice";
-import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 import { blue6 } from "../../../styles/colors";
+import { addKeysToList } from "../../../utilities/http-utilities";
+import { setDefaultTemplateForProject } from "../redux/projectSlice";
+import { updateTemplate } from "../redux/templatesSlice";
+import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 
 const { Paragraph, Text } = Typography;
 
@@ -52,7 +52,7 @@ export function MetadataTemplateManager({ id }) {
     create one.
      */
     if (!loading) {
-      const found = templates.find((template) => template.identifier === id);
+      const found = templates.find((template) => template.identifier == id);
 
       if (found) {
         const { fields, ...newTemplate } = found;
@@ -137,7 +137,7 @@ export function MetadataTemplateManager({ id }) {
   const removeField = async (item) => {
     const updated = {
       ...template,
-      fields: fields.filter((field) => field.id !== item.id),
+      fields: fields.filter((field) => field.identifier !== item.identifier),
     };
     await completeUpdate(updated);
   };
@@ -254,6 +254,19 @@ export function MetadataTemplateManager({ id }) {
                     title: i18n("MetadataField.type"),
                     dataIndex: "type",
                     key: "text",
+                  },
+                  {
+                    title: i18n("MetadataFieldsListManager.restrictions"),
+                    dataIndex: "restriction",
+                    key: "restriction",
+                    render: (text) => {
+                      switch (text) {
+                        case "PROJECT_OWNER":
+                          return i18n("projectRole.PROJECT_OWNER");
+                        default:
+                          return i18n("projectRole.PROJECT_USER");
+                      }
+                    },
                   },
                   {
                     align: "right",

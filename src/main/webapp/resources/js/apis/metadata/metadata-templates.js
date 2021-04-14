@@ -82,4 +82,3 @@ export async function setDefaultMetadataTemplate(projectId, templateId) {
     return Promise.reject(e.response.data.message);
   }
 }
-

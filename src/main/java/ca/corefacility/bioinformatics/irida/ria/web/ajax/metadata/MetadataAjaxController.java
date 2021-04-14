@@ -8,11 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
@@ -35,7 +39,7 @@ public class MetadataAjaxController {
 	 * @return List of metadata templates with associated details.
 	 */
 	@GetMapping("/templates")
-	public ResponseEntity<List<MetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
+	public ResponseEntity<List<ProjectMetadataTemplate>> getProjectMetadataTemplates(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectMetadataTemplates(projectId));
 	}
 
@@ -47,7 +51,7 @@ public class MetadataAjaxController {
 	 * @return the newly created {@link MetadataTemplate}
 	 */
 	@PostMapping("/templates")
-	public ResponseEntity<MetadataTemplate> createNewMetadataTemplate(
+	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(
 			@RequestBody MetadataTemplate template, @RequestParam Long projectId) {
 		return ResponseEntity.ok(service.createMetadataTemplate(template, projectId));
 	}
@@ -96,7 +100,7 @@ public class MetadataAjaxController {
 	 * @return list of {@link MetadataTemplateField}s
 	 */
 	@GetMapping("/fields")
-	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam Long projectId) {
+	public List<ProjectMetadataField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);
 	}
 
@@ -118,5 +122,32 @@ public class MetadataAjaxController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new AjaxErrorResponse(e.getMessage()));
 		}
+	}
+
+	/**
+	 * Get the list of all metadata restrictions that belong to the current project.
+	 *
+	 * @param locale Current users {@link Locale}
+	 * @return List of metadata fields restrictions
+	 */
+	@GetMapping("/fields/restrictions")
+	public List<SelectOption> getMetadataRestrictions(Locale locale) {
+		return service.getMetadataFieldRestrictions(locale);
+	}
+
+	/**
+	 * Update a restriction level on a metadata field for a project
+	 *
+	 * @param projectId   Identifier for the project
+	 * @param fieldId     Identifier for the metadata field
+	 * @param projectRole New project role to set the field to
+	 * @param locale      Current users {@link Locale}
+	 * @return Message to user on the status of the update
+	 */
+	@PatchMapping("/fields/restrictions")
+	public ResponseEntity<AjaxResponse> updateProjectMetadataFieldRestriction(@RequestParam Long projectId,
+			@RequestParam Long fieldId, @RequestParam ProjectRole projectRole, Locale locale) {
+		return ResponseEntity.ok(
+				new AjaxSuccessResponse(service.updateMetadataProjectField(projectId, fieldId, projectRole, locale)));
 	}
 }

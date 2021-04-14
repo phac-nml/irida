@@ -99,9 +99,11 @@
 	<qc_entry />
 
 	<metadata_template_metadata_field/>
+	<metadata_restriction />
 	<project_metadata_template/>
 	<sequence_concatenation/>
 	<sequence_concatenation_sequencing_object/>
+
 
 	<!-- All auditing table references *only* refer to the Revisions table,
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
@@ -148,6 +150,7 @@
 	<remote_status_AUD />
 	<metadata_field_AUD/>
 	<metadata_template_AUD/>
+	<metadata_restriction_AUD />
 	<metadata_template_metadata_field_AUD/>
 	<project_metadata_template_AUD/>
 	<project_analysis_submission_AUD/>
