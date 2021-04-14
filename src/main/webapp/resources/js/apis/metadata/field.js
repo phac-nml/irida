@@ -37,6 +37,10 @@ export async function getMetadataFieldsForProject(projectId) {
   }
 }
 
+/**
+ * Get a list of a field restrictions
+ * @returns {Promise<any>}
+ */
 export async function getMetadataRestrictions() {
   try {
     const { data } = await axios.get(`${URL}/restrictions`);
@@ -46,6 +50,13 @@ export async function getMetadataRestrictions() {
   }
 }
 
+/**
+ * Update a metadata field restriction on a field within a project
+ * @param {number} projectId - identifier for a project
+ * @param {number} fieldId - identifier for a metadata field
+ * @param {string} projectRole - role to update the field to
+ * @returns {Promise<any>}
+ */
 export async function updateProjectMetadataFieldRestriction({
   projectId,
   fieldId,
