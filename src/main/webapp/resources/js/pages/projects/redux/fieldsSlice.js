@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getMetadataFieldsForProject,
   getMetadataRestrictions,
-  patchProjectMetadataFieldRestriction,
+  updateProjectMetadataFieldRestriction,
 } from "../../../apis/metadata/field";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { updateFieldsForAllFieldsTemplate } from "./templatesSlice";
@@ -42,7 +42,7 @@ export const fetchFieldsRestrictions = createAsyncThunk(
 export const updateProjectFieldRestriction = createAsyncThunk(
   `fields/updateProjectFieldRestriction`,
   async ({ projectId, fieldId, projectRole }) => {
-    const { message } = await patchProjectMetadataFieldRestriction({
+    const { message } = await updateProjectMetadataFieldRestriction({
       projectId,
       fieldId,
       projectRole,

@@ -46,7 +46,7 @@ export async function getMetadataRestrictions() {
   }
 }
 
-export async function patchProjectMetadataFieldRestriction({
+export async function updateProjectMetadataFieldRestriction({
   projectId,
   fieldId,
   projectRole,
