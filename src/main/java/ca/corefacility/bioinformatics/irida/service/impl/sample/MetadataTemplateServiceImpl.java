@@ -35,9 +35,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataTemplate>
 		implements MetadataTemplateService {
 
-	private final ProjectMetadataTemplateJoinRepository pmtRepository;
-	private final MetadataFieldRepository fieldRepository;
-	private final MetadataRestrictionRepository metadataRestrictionRepository;
+	private ProjectMetadataTemplateJoinRepository pmtRepository;
+	private MetadataFieldRepository fieldRepository;
+	private MetadataRestrictionRepository metadataRestrictionRepository;
 
 	@Autowired
 	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,
