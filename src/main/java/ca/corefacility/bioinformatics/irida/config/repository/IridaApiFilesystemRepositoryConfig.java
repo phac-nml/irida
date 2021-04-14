@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Profiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,7 +64,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
-		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
+		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test"))) {
 			return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 		}
 
@@ -72,7 +73,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectory() throws IOException {
-		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
+		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test"))) {
 			return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
 		}
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
@@ -80,7 +81,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Bean(name = "outputFileBaseDirectory")
 	public Path outputFileBaseDirectory() throws IOException {
-		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
+		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test"))) {
 			return configureDirectory(outputFileBaseDirectory, "output-file-dev");
 		}
 		return getExistingPathOrThrow(outputFileBaseDirectory);
@@ -88,7 +89,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Bean(name = "assemblyFileBaseDirectory")
 	public Path assemblyFileBaseDirectory() throws IOException {
-		if (applicationContext.getEnvironment().acceptsProfiles("dev", "it", "test")) {
+		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test"))) {
 			return configureDirectory(assemblyFileBaseDirectory, "assembly-file-dev");
 		}
 		return getExistingPathOrThrow(assemblyFileBaseDirectory);

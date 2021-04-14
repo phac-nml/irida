@@ -30,8 +30,9 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisW
 
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -42,21 +43,21 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 
-	private Object prepareAnalysesLock = new Object();
-	private Object executeAnalysesLock = new Object();
-	private Object monitorRunningAnalysesLock = new Object();
-	private Object postProcessingLock = new Object();
-	private Object transferAnalysesResultsLock = new Object();
-	private Object cleanupAnalysesResultsLock = new Object();
+	private final Object prepareAnalysesLock = new Object();
+	private final Object executeAnalysesLock = new Object();
+	private final Object monitorRunningAnalysesLock = new Object();
+	private final Object postProcessingLock = new Object();
+	private final Object transferAnalysesResultsLock = new Object();
+	private final Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionService analysisExecutionService;
-	private final CleanupAnalysisSubmissionCondition cleanupCondition;
+	private CleanupAnalysisSubmissionCondition cleanupCondition;
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
-	private final EmailController emailController;
+	private EmailController emailController;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisWorkspaceService analysisWorkspaceService;
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
@@ -329,8 +330,9 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			 and the user selected to be emailed on completion or error, then the following code
 			 will be executed.
 			 */
-			if (analysisSubmission.getEmailPipelineResultCompleted()
-					|| analysisSubmission.getEmailPipelineResultError()) {
+			if ((!analysisSubmission.getEmailPipelineResultCompleted()
+					&& analysisSubmission.getEmailPipelineResultError() && analysisSubmission.getAnalysisState()
+					.equals(AnalysisState.ERROR)) || analysisSubmission.getEmailPipelineResultCompleted()) {
 				emailController.sendPipelineStatusEmail(analysisSubmission);
 			}
 		}

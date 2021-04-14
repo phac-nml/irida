@@ -64,22 +64,13 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ![assembly-pipeline-page][]
 
-We will use the default parameters.  Please select the **Ready to Launch?** button to continue.
+We will use the default parameters.  Please select the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button][]
 
-Once the button is selected you should see a screen showing that your pipeline has been launched.
+Once the button is selected, the pipeline is initialized and you will be redirected to the analysis details page. From this page you can monitor the status of the workflow.
 
-![pipeline-launched][]
-
-Monitoring Pipeline Status
-==========================
-
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu or click the **Let's see how this pipeline is doing** button.
-
-![view-your-analyses][]
-
-The will bring you to a page where you can monitor the status of each launched workflow.
+You can also find your analyses any time through the main menu by clicking on the "Analyses" > "Your Analyses" link.
 
 ![monitor-analyses][]
 
