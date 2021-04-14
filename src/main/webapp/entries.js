@@ -4,22 +4,17 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: [
-    "core-js/stable",
-    "regenerator-runtime/runtime",
-    "expose-loader?$!jquery",
-    "./resources/js/vendors",
-  ],
+  vendor: ["expose-loader?exposes=$,jQuery!jquery", "./resources/js/vendors"],
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
   activities: "./resources/js/pages/activities/activities.js",
-  announcements: "./resources/js/pages/announcement/announcements.js",
-  analysis: "./resources/js/pages/analysis/index.js",
+  announcements: "./resources/js/pages/announcement",
+  analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard.js",
-  "pipeline-launch": "./resources/js/pages/pipelines/pipeline.launch.js",
+  launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-events": "./resources/js/pages/projects/project-events.js",
   projects: "./resources/js/pages/projects/list/index.js",
@@ -45,9 +40,8 @@ module.exports = {
   "project-remote": "./resources/js/pages/projects/remote/",
   "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
+  "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "create-metadata-template":
-    "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
@@ -73,8 +67,7 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
-  "project-metadata-templates":
-    "./resources/js/pages/projects/metadata-templates",
+  "project-metadata": "./resources/js/pages/projects/metadata",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
 };

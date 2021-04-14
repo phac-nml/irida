@@ -1,4 +1,3 @@
-import "./pages/search/irida.search";
 // Import css
 import "../css/app.css";
 // Font Awesome

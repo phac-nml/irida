@@ -38,6 +38,7 @@ function EditAnnouncementModal({ announcement, updateAnnouncement }) {
         visible={visible}
         width={640}
         footer={null}
+        maskClosable={false}
       >
         <AnnouncementForm
           announcement={announcement}

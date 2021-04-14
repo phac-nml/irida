@@ -40,4 +40,4 @@ function formatAntStyles() {
   return Object.assign({}, defaults, colourProperties);
 }
 
-module.exports = { formatAntStyles };
+module.exports = formatAntStyles;

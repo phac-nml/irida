@@ -41,3 +41,16 @@
   background-color: #ffffff;
   border-bottom: 2px solid #f0f0f0;
 }
+
+.announcements-dropdown {
+  padding: 20px;
+  cursor: pointer;
+}
+
+.announcements-dropdown:hover .anticon-bell {
+  color: #ffffff;
+}
+
+.announcements-dropdown .anticon-bell {
+  color: rgba(255, 255, 255, 0.65);
+}

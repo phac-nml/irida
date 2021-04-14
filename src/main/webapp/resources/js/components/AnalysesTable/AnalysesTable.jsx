@@ -16,8 +16,8 @@ import { getTextSearchProps } from "../ant.design/table-search-props";
 import { SPACE_MD } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysesQueue } from "./../AnalysesQueue";
-import { AnalysisDownloadButton} from "./AnalysisDownloadButton";
-import { IconTableFilter} from "../icons/Icons";
+import { AnalysisDownloadButton } from "./AnalysisDownloadButton";
+import { IconTableFilter } from "../icons/Icons";
 
 // Used to poll for changes in state and duration
 // Set to 1 minute

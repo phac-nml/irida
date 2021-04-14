@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.announcement;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -16,6 +17,18 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  */
 public interface AnnouncementUserJoinRepository extends PagingAndSortingRepository<AnnouncementUserJoin, Long>,
         JpaSpecificationExecutor<AnnouncementUserJoin>{
+
+    /**
+     * Get a collection of the {@link Announcement}s related to a {@link User},
+     * meaning the collection of {@link Announcement}s read and unread by the {@link User}
+     *
+     * @param user
+     *          The {@link User} to get read and unread announcements for
+     * @return A collection of {@link AnnouncementUserReadDetails}s representing the
+     *         read and unread announcements for a user
+     */
+    @Query ("select new ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails(a.id, a.title, a.priority, a.createdDate, j.createdDate) from Announcement a left join AnnouncementUserJoin j on a.id = j.announcement.id and j.user = ?1")
+    public List<AnnouncementUserReadDetails> getAnnouncementsForUser(User user);
 
     /**
      * Get a collection of the {@link Announcement}s related to a {@link User},

@@ -12,6 +12,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,8 @@ public class UserServiceImplIT {
 	private UserService userService;
 	@Autowired
 	private ProjectService projectService;
+	@Autowired
+	private AnnouncementService announcementService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -368,6 +373,37 @@ public class UserServiceImplIT {
 		search = "User";
 		searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
 		assertEquals(2,searchUser.getContent().size());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testReadOldAnnouncements() {
+		User u = new User("user", "user@user.us", "Password1!", "User", "User", "7029");
+
+		userService.create(u);
+
+		List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(u);
+		assertEquals(3, readAnnouncements.size());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testReadNewAnnouncements() {
+		User user = new User("user", "user@user.us", "Password1!", "User", "User", "7029");
+		User manager = userService.getUserByUsername("admin");
+		Announcement announcement1 = new Announcement("test 1", "this is a test message", true, manager);
+		Announcement announcement2 = new Announcement("test 2", "this is also a test message", false, manager);
+
+		announcementService.create(announcement1);
+		announcementService.create(announcement2);
+
+		List<Announcement> beforeAnnouncements = announcementService.getAllAnnouncements();
+		assertEquals(5, beforeAnnouncements.size());
+
+		userService.create(user);
+
+		List<AnnouncementUserJoin> afterAnnouncements = announcementService.getReadAnnouncementsForUser(user);
+		assertEquals(3, afterAnnouncements.size());
 	}
 
 	private UserServiceImplIT asAnonymous() {

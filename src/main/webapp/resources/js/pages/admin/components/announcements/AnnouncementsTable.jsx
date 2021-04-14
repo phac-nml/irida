@@ -24,7 +24,7 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
 
   const columns = [
     {
-      title: i18n("announcement.control.priority"),
+      title: i18n("AnnouncementsTable.priority"),
       align: "center",
       dataIndex: "priority",
       render(hasPriority) {
@@ -34,14 +34,14 @@ export const AnnouncementsTable = forwardRef((props, ref) => {
       width: 50,
     },
     {
-      title: i18n("announcement.control.title"),
+      title: i18n("AnnouncementsTable.title"),
       className: "t-announcement",
       align: "left",
       dataIndex: "title",
       sorter: true,
     },
     {
-      title: i18n("announcement.control.createdBy"),
+      title: i18n("AnnouncementsTable.createdBy"),
       dataIndex: "user",
       render(text, item) {
         return (

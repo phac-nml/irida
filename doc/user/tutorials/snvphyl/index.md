@@ -50,43 +50,41 @@ Once the pipeline is selected, the next page provides an overview of all the inp
 
 ## Select a reference genome
 
-SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` by clicking the **Upload New** button.
+SNVPhyl requires a reference genome to be used for mapping sequencing reads and calling variants.  This must be uploaded to the project containing the samples to use.  There is an example reference file in the sample data package (snvphyl-example-lm).  Please upload the file `CFSAN023463.fasta` by clicking the **Click or drag a new reference file to this area to upload.** button or by dragging and dropping the files in this area.
 
 ![snvphyl-pipeline-upload-ref-file][]
 
+## Optional parameters
+
+Next, selecting the **Modify** button brings up a page where parameters can be customized. The default parameters will often be appropriate, so we will use them for now.
+
+![snvphyl-pipeline-customize][]
+
 ## Required parameters (density filtering)
 
-One component of the SNVPhyl pipeline is to remove regions with high SNV density (which could suggest possible recombination). This component works well when all genomes under question are fairly closely-related, but when analyzing distantly-related genomes the **SNV density filtering** may remove too much data. The **SNV density filtering** can be enabled or disabled using the drop-down menu as shown.
+One component of the SNVPhyl pipeline is to remove regions with high SNV density (which could suggest possible recombination). This component works well when all genomes under question are fairly closely-related, but when analyzing distantly-related genomes the **SNV density filtering** may remove too much data. The **SNV density filtering** can be enabled or disabled using the checkbox provided.
 
 ![snvphyl-pipeline-snv-density.png][]
 
-Please select **Enable** if all the genomes are closely-related to each other and you wish to remove SNVs in high-density regions (that could be indicative of recombination). The thresholds for SNV removal can be set in the [optional parameters][] section.
+Select the checkbox if all the genomes are closely-related to each other and you wish to remove SNVs in high-density regions (that could be indicative of recombination). The thresholds for SNV removal can be set in the [optional parameters][] section.
 
-Please select **Disable** if you wish to turn off SNV density filtering. This is useful if you are analyzing genomes that are much more distantly related to each other (and so the SNV density filtering would be likely to remove non-recombinant SNVs).
+Leave the checkbox unchecked if you wish to turn off SNV density filtering. This is useful if you are analyzing genomes that are much more distantly related to each other (and so the SNV density filtering would be likely to remove non-recombinant SNVs).
 
 More information on SNV density filtering can be found in the [SNVPhyl documentation][].
-
-## Optional parameters
-
-Next, selecting **Customize** brings up a page where parameters can be customized. The default parameters will often be appropriate, so we will use them for now.
-
-![snvphyl-pipeline-customize][]
 
 Running the pipeline
 ====================
 
-Please use the **Ready to Launch?** button to start the pipeline.
+Please select the **Launch Pipeline** button to start the pipeline.
 
 ![launch-button][]
 
-Once the button is selected you should see a screen showing that your pipeline has been launched.
-
-![pipeline-launched][]
+Once the button is selected, you will be redirected to the pipeline details page.
 
 Monitoring Pipeline Status
 ==========================
 
-To monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
+At any point, to monitor the status of the launched pipeline, please select the **Analysis > Your Analyses** menu.
 
 ![view-your-analyses][]
 
