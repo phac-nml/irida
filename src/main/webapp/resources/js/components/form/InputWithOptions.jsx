@@ -18,7 +18,6 @@ function isTruthy(options) {
  * @constructor
  */
 export function InputWithOptions({ item }) {
-  console.log(item);
   if (isTruthy(item.options)) {
     return (
       <Form.Item name={item.name} valuePropName="checked">
