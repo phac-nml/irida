@@ -6,10 +6,11 @@
 >
   <head>
     <title th:text="#{project.settings.page.title.members}">Title</title>
-    <webpacker:css entry="project-users"/>
+    <webpacker:css entry="project-users" />
     <script th:inline="javascript">
       window.PAGE = {
-        canManage: /*[[${manageMembers}]]*/ false
+        user: /*[[${session.user.getId()}]]*/ 1,
+        canManage: /*[[${manageMembers}]]*/ false,
       };
     </script>
   </head>
@@ -18,7 +19,7 @@
       <!-- React component from src/main/webapp/resources/js/pages/projects/ProjectMembers.jsx -->
     </div>
     <th:block layout:fragment="scripts">
-        <webpacker:js entry="project-users"/>
+      <webpacker:js entry="project-users" />
     </th:block>
   </body>
 </html>
