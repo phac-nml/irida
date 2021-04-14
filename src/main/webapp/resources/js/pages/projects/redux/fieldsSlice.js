@@ -21,6 +21,10 @@ export const fetchFieldsForProject = createAsyncThunk(
   }
 );
 
+/**
+ * Get the list of metadata field restrictions for the project.
+ * @type {AsyncThunk<{restrictions: *}, void, {}>}
+ */
 export const fetchFieldsRestrictions = createAsyncThunk(
   `fields/fetchFieldsRestrictions`,
   async () => {
@@ -39,6 +43,10 @@ export const fetchFieldsRestrictions = createAsyncThunk(
   }
 );
 
+/**
+ * Update metadata field restrictions for a field in a project.
+ * @type {AsyncThunk<{projectRole: *, message: *, fieldId: *}, {readonly fieldId?: *, readonly projectRole?: *, readonly projectId?: *}, {}>}
+ */
 export const updateProjectFieldRestriction = createAsyncThunk(
   `fields/updateProjectFieldRestriction`,
   async ({ projectId, fieldId, projectRole }) => {
