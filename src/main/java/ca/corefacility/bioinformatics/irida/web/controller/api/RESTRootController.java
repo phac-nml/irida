@@ -155,8 +155,6 @@ public class RESTRootController {
 		return links;
 	}
 
-	// TODO: revisit this class
-
 	private class VersionSchema {
 		public String version;
 	}

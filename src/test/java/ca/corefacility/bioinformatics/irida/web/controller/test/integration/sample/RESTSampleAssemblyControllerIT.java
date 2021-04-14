@@ -20,7 +20,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.endsWith;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -50,7 +50,7 @@ import static org.hamcrest.Matchers.equalTo;
 		Response assemblyListResponse = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
 				.and()
-				.body("resource.resources[0].file", equalTo("/tmp/analysis-files/contigs.fasta"))
+				.body("resource.resources[0].file", endsWith("/tmp/analysis-files/contigs.fasta"))
 				.when()
 				.get(assembliesHref);
 
@@ -62,7 +62,7 @@ import static org.hamcrest.Matchers.equalTo;
 		asUser().expect()
 				.statusCode(HttpStatus.OK.value())
 				.and()
-				.body("resource.file", equalTo("/tmp/analysis-files/contigs.fasta"))
+				.body("resource.file", endsWith("/tmp/analysis-files/contigs.fasta"))
 				.when()
 				.get(singleAssemblyHref);
 

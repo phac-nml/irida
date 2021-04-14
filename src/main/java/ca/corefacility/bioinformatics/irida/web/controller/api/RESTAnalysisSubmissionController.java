@@ -25,11 +25,14 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -307,33 +310,20 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "getAnalysisOutputFile", summary = "Find the analysis output file of an analysis submission",
 			description = "Get the analysis output file for the given analysis submission.", tags = "analysisSubmissions")
+	@ApiResponse(responseCode = "200", description = "Returns the analysis output file.",
+			content = @Content(schema = @Schema(implementation = AnalysisOutputFileSchema.class)))
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET)
-	@ResponseBody
-	public ResponseResource<AnalysisOutputFile> getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
+	public ModelMap getAnalysisOutputFile(@PathVariable Long submissionId, @PathVariable Long fileId) {
+		ModelMap model = new ModelMap();
+
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
 		analysisOutputFile.add(
 				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId,
 						analysisOutputFile.getId())).withSelfRel());
 
-		ResponseResource<AnalysisOutputFile> responseObject = new ResponseResource<>(analysisOutputFile);
+		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 
-		return responseObject;
-	}
-
-	/**
-	 * Get the actual file contents for an analysis output file.
-	 *
-	 * @param submissionId The {@link AnalysisSubmission} id
-	 * @param fileId       The {@link AnalysisOutputFile} id
-	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
-	 */
-	@Operation(operationId = "getAnalysisOutputFileContents", summary = "Find the file system resource for an analysis output file of an analysis submission",
-			description = "Get the file system resource for an analysis output file for the given analysis submission.", tags = "analysisSubmissions")
-	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId, @PathVariable Long fileId) {
-		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
-		return new FileSystemResource(analysisOutputFile.getFile()
-				.toFile());
+		return model;
 	}
 
 	/**
@@ -384,6 +374,10 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 				.withRel(INPUT_FILES_PAIRED_REL));
 
 		return links;
+	}
+
+	private class AnalysisOutputFileSchema {
+		public AnalysisOutputFile resource;
 	}
 
 }
