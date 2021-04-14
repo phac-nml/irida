@@ -1,45 +1,21 @@
 <!DOCTYPE html>
 <html
-        lang="en"
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        data-layout-decorate="~{projects/settings/_base}"
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/settings/_base}"
 >
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title th:text="#{ReferenceFile.title}">Title</title>
-    <webpacker:css entry="project-reference-files"/>
-</head>
-<body>
-<div id="reference-files-root" layout:fragment="settings-content" >
-    <div th:text="#{ReferenceFile.loading}">LOADING ...</div>
-</div>
-<th:block layout:fragment="scripts"  th:inline="javascript">
-    <div th:replace="templates/_file.utils :: upload-progress"></div>
-    <div th:replace="templates/_file.utils :: upload-error"></div>
-    <script type="text/ng-template" id="/delete-modal.html">
-        <div id="delete-modal">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <span class="fa fa-trash fa-fw"></span>
-                    <span th:text="#{referenceFile.delete-modal.title}">Delete FIles</span>
-                </h3>
-            </div>
-            <div class="modal-body">
-                <h4 th:text="#{referenceFile.delete-modal.body}"></h4>
-                <ul>
-                    <li>{{dCtrl.file.label}}</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="dCtrl.close()"></button>
-                <button id="deleteBtn" class="btn btn-primary" th:text="#{form.btn.remove}" ng-click="dCtrl.delete()">
-                    __Remove File
-                </button>
-            </div>
-        </div>
-    </script>
-    <webpacker:js entry="project-reference-files"/>
-</th:block>
-</body>
+    <webpacker:css entry="project-reference-files" />
+  </head>
+  <body>
+    <div id="reference-files-root" layout:fragment="settings-content">
+      <div th:text="#{ReferenceFile.loading}">LOADING ...</div>
+    </div>
+    <th:block layout:fragment="scripts" th:inline="javascript">
+      <webpacker:js entry="project-reference-files" />
+    </th:block>
+  </body>
 </html>
