@@ -414,7 +414,6 @@ public class ProjectServiceImplTest {
 
 		projectService.addReferenceFileToProject(p, f);
 
-		verify(referenceFileRepository).save(f);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
 
