@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import projectReducer from "../redux/projectSlice";
 import coverageSlice from "../redux/coverageSlice";
+import membersSlice from "../redux/membersSlice";
 import pipelinesSlice from "../redux/pipelinesSlice";
+import projectReducer from "../redux/projectSlice";
 
 /*
 Redux Store for project metadata.
@@ -12,5 +13,6 @@ export default configureStore({
     project: projectReducer,
     coverage: coverageSlice,
     pipelines: pipelinesSlice,
+    members: membersSlice,
   },
 });

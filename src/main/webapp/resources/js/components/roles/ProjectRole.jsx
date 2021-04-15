@@ -1,7 +1,9 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Select } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RolesContext } from "../../contexts/roles-context";
+import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
 import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
 /**
@@ -14,17 +16,11 @@ import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({
-  item,
-  // eslint-disable-next-line no-console
-  updateFn = () => console.error("updateFn is required"), // TODO: replace this in slice
-}) {
+export function ProjectRole({ item }) {
   const dispatch = useDispatch();
   const { canManage, roles } = useSelector((state) => state.project);
-  const [role, setRole] = useState(item.role);
+  const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
-
-  console.log(roles);
 
   React.useEffect(() => {
     dispatch(fetchProjectRoles());
@@ -48,17 +44,15 @@ export function ProjectRole({
 
   const onChange = (value) => {
     setLoading(true);
-    updateFn({
-      id: item.id,
-      role: value,
-    })
-      .then((message) => {
+    dispatch(updateMemberRole({ id: item.id, role: value }))
+      .then(unwrapResult)
+      .then(({ message }) => {
         notification.success({ message });
         setRole(value);
       })
-      .catch((error) =>
+      .catch((message) =>
         notification.error({
-          message: error.response.data,
+          message,
         })
       )
       .finally(() => setLoading(false));

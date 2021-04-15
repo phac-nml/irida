@@ -4,7 +4,6 @@ import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
-  updateUserRoleOnProject,
 } from "../../apis/projects/members";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -43,7 +42,7 @@ export function ProjectMembersTable() {
       title: i18n("ProjectMembersTable.role"),
       dataIndex: "role",
       render(text, item) {
-        return <ProjectRole item={item} updateFn={updateUserRoleOnProject} />;
+        return <ProjectRole item={item} />;
       },
     },
     {
