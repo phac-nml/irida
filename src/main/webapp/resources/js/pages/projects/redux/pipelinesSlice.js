@@ -32,12 +32,12 @@ export const fetchAnalysisTemplates = createAsyncThunk(
  */
 export const deletePipeline = createAsyncThunk(
   `pipelines/deletePipeline`,
-  async ({ templateId, projectId }) => {
+  async ({ analysisTemplateId, projectId }) => {
     const message = await deleteAnalysisTemplateForProject(
-      templateId,
+      analysisTemplateId,
       projectId
     );
-    return { message, templateId };
+    return { message, templateId: analysisTemplateId };
   }
 );
 
