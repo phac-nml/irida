@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.*;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -31,6 +32,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         info = @Info(title = "IRIDA REST API", version = "${irida.version}",
                 description = "The IRIDA REST API follows a standard output format, regardless of the resource being accessed. Resources can be accessed as an individual resource or as part of a resource collection.",
                 contact = @Contact(name = "the Bioinformatics Team", email = "helpdesk@cscscience.ca")),
+        servers = {
+                @Server(url = "http://localhost:8080", description = "localhost"),
+                @Server(url = "https://irida-web-course.corefacility.ca/workshop-irida/", description = "course"),
+                @Server(url = "https://irida-web-development.corefacility.ca/irida/", description = "dev"),
+                @Server(url = "https://ngs-archive.corefacility.ca/irida/", description = "ngs")
+        },
         security = @SecurityRequirement(name = "oauth2", scopes = {"read", "write"}))
 public class OpenAPIConfig implements WebMvcConfigurer {
 }
