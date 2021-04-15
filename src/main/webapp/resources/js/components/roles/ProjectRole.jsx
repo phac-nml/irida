@@ -1,7 +1,7 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { RolesContext, useRoles } from "../../contexts/roles-context";
+import { RolesContext } from "../../contexts/roles-context";
 import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
 /**
@@ -22,7 +22,18 @@ export function ProjectRole({
   const { canManage, roles } = useSelector((state) => state.project);
   const [role, setRole] = useState(item.role);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useRoles();
+
+  /**
+   * Find the translation for any project role.  If the role is not found,
+   * just return "UNKnOWN"
+   *
+   * @param key
+   * @returns {*}
+   */
+  const getRoleFromKey = (key) => {
+    const role = roles.find((r) => r.value === key);
+    return role ? role.label : "UNKNOWN";
+  };
 
   React.useEffect(() => {
     fetchProjectRoles();
