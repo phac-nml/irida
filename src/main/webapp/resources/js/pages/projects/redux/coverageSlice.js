@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchProcessingCoverage, } from "../../../apis/projects/settings";
+import { fetchProcessingCoverage } from "../../../apis/projects/settings";
 
 /**
  * Internationalized term if the processing coverage is not set.
