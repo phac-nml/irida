@@ -1,6 +1,6 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RolesContext } from "../../contexts/roles-context";
 import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
@@ -17,15 +17,22 @@ import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 export function ProjectRole({
   item,
   // eslint-disable-next-line no-console
-  updateFn = () => console.error("updateFn is required"),
+  updateFn = () => console.error("updateFn is required"), // TODO: replace this in slice
 }) {
+  const dispatch = useDispatch();
   const { canManage, roles } = useSelector((state) => state.project);
   const [role, setRole] = useState(item.role);
   const [loading, setLoading] = useState(false);
 
+  console.log(roles);
+
+  React.useEffect(() => {
+    dispatch(fetchProjectRoles());
+  }, [dispatch]);
+
   /**
    * Find the translation for any project role.  If the role is not found,
-   * just return "UNKnOWN"
+   * just return "UNKNOWN"
    *
    * @param key
    * @returns {*}

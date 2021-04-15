@@ -41,7 +41,6 @@ module.exports = {
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
-  "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
   "project-user-groups": "./resources/js/pages/projects/ProjectUserGroups.jsx",
   "associated-projects":
     "./resources/js/pages/projects/associated-projects/index.js",
