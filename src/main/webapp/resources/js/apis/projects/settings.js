@@ -36,7 +36,10 @@ export const fetchProcessingCoverage = async (projectId) =>
  * @param {object} coverage - updated coverage for the project
  * @returns {Promise<*>}
  */
-export const updateProcessingCoverage = async (projectId, coverage) => {
+export const updateProcessingCoverageForProject = async (
+  projectId,
+  coverage
+) => {
   try {
     const { data } = await axios.put(
       setBaseUrl(`ajax/projects/${projectId}/settings/coverage`),

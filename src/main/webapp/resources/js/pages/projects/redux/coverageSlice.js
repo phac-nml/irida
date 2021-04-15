@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchProcessingCoverage } from "../../../apis/projects/settings";
+import {
+  fetchProcessingCoverage,
+  updateProcessingCoverageForProject,
+} from "../../../apis/projects/settings";
 
 /**
  * Internationalized term if the processing coverage is not set.
@@ -56,7 +59,10 @@ export const updateProcessingCoverage = createAsyncThunk(
    * @returns {Promise<{[p: string]: *}>}
    */
   async ({ projectId, coverage }) => {
-    const message = await updateProcessingCoverage(projectId, coverage);
+    const message = await updateProcessingCoverageForProject(
+      projectId,
+      coverage
+    );
     return {
       ...coverage,
       message,
