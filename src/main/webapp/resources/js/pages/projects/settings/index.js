@@ -63,7 +63,7 @@ const ProjectSettings = (props) => {
       <Layout>
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
           <Row>
-            <Col lg={24} xl={16} xxl={12}>
+            <Col lg={24} xxl={12}>
               <Suspense fallback={<Skeleton />}>
                 <Router>
                   <ProjectDetails path="/details" />
