@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   fetchProcessingCoverage,
-  putProcessingCoverage,
+  updateProcessingCoverageForProject,
 } from "../../../apis/projects/settings";
 
 /**
@@ -59,7 +59,10 @@ export const updateProcessingCoverage = createAsyncThunk(
    * @returns {Promise<{[p: string]: *}>}
    */
   async ({ projectId, coverage }) => {
-    const message = await putProcessingCoverage(projectId, coverage);
+    const message = await updateProcessingCoverageForProject(
+      projectId,
+      coverage
+    );
     return {
       ...coverage,
       message,

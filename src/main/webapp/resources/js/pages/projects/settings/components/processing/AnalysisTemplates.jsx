@@ -25,10 +25,10 @@ export function AnalysisTemplates({ projectId, canManage }) {
     dispatch(fetchAnalysisTemplates(projectId));
   }, []);
 
-  const removeAutomatedPipeline = (template) =>
+  const removeAutomatedPipeline = (analysisTemplate) =>
     dispatch(
       deletePipeline({
-        templateId: template.id,
+        analysisTemplateId: analysisTemplate.id,
         projectId,
       })
     )

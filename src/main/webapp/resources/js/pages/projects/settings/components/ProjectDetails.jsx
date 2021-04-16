@@ -1,13 +1,13 @@
-import React from "react";
-import { notification, Typography } from "antd";
-import { BasicList } from "../../../../components/lists";
-import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { EditableParagraph } from "../../../../components/ant.design";
-import { OntologySelect } from "../../../../components/ontology";
-import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
-import { useDispatch, useSelector } from "react-redux";
-import { updateProjectDetails } from "../../redux/projectSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { notification, Typography } from "antd";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
+import { EditableParagraph } from "../../../../components/ant.design";
+import { BasicList } from "../../../../components/lists";
+import { OntologySelect } from "../../../../components/ontology";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { updateProjectDetails } from "../../redux/projectSlice";
 
 const { Paragraph, Title } = Typography;
 
@@ -34,7 +34,7 @@ export default function ProjectDetails() {
      */
     if (project[field] === value) return;
 
-    dispatch(updateProjectDetails({ field, value }))
+    dispatch(updateProjectDetails({ field, value: value || "" }))
       .then(unwrapResult)
       .then(({ message }) => notification.success({ message }))
       .catch((message) => notification.error({ message }));
