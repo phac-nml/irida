@@ -588,6 +588,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
+		referenceFile = referenceFileRepository.save(referenceFile);
 		ProjectReferenceFileJoin j = new ProjectReferenceFileJoin(project, referenceFile);
 		return prfjRepository.save(j);
 	}
