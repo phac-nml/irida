@@ -17,6 +17,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Update
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
+import com.google.common.base.Strings;
+
 /**
  * Handle asynchronous requests for the UI project details page.
  */
@@ -75,8 +77,16 @@ public class ProjectDetailsAjaxController {
 								new Object[] { request.getField() }, locale));
 			}
 			projectService.update(project);
-			return ResponseEntity.ok(messageSource.getMessage("server.ProjectDetails.success",
-					new Object[] { request.getField(), request.getValue() }, locale));
+			String message;
+			if (Strings.isNullOrEmpty(request.getValue())) {
+				message = messageSource.getMessage("server.ProjectDetails.success-empty",
+						new Object[] { request.getField() }, locale);
+
+			} else {
+				message = messageSource.getMessage("server.ProjectDetails.success",
+						new Object[] { request.getField(), request.getValue() }, locale);
+			}
+			return ResponseEntity.ok(message);
 		} catch (ConstraintViolationException e) {
 			return ResponseEntity.badRequest()
 					.body(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
