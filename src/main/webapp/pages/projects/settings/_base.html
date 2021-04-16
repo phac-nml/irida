@@ -13,12 +13,6 @@
         <div class="col-md-2">
           <div class="list-group">
             <a
-              class="list-group-item"
-              th:classappend="${#strings.equalsIgnoreCase(page, 'details') ? 'active' : ''}"
-              th:href="@{/projects/{id}/settings(id=${project.getId()})}"
-              th:text="#{project.settings.page.details}"
-            ></a>
-            <a
               href=""
               th:href="@{/projects/{id}/settings/processing(id=${project.getId()})}"
               class="list-group-item"

@@ -92,7 +92,7 @@ export function ReferenceFiles() {
                 message: i18n(
                   "ReferenceFile.downloadingFileSuccess",
                   file.name,
-                  projectInfo.projectName
+                  projectInfo.name
                 ),
               });
             }}
@@ -113,7 +113,7 @@ export function ReferenceFiles() {
               confirmText={i18n(
                 "ReferenceFile.confirmText",
                 file.name,
-                projectInfo.projectName
+                projectInfo.name
               )}
             />
           ) : null,
@@ -164,7 +164,7 @@ export function ReferenceFiles() {
           message: `${i18n(
             "ReferenceFile.uploadFileSuccess",
             file.name,
-            projectInfo.projectName
+            projectInfo.name
           )}`,
         });
         updateReferenceFileTable();

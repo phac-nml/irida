@@ -15,6 +15,7 @@ import { MetadataFields } from "./MetadataFields";
 import { MetadataTemplateMember } from "./MetadataTemplateMember";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
+import { fetchProjectDetails } from "../redux/projectSlice";
 
 const { Content, Sider } = Layout;
 
@@ -37,6 +38,7 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
     /*
     Fetch all fields and templates.
      */
+    dispatch(fetchProjectDetails(projectId));
     dispatch(fetchFieldsForProject(projectId));
     dispatch(fetchTemplatesForProject(projectId));
   }, []);
@@ -51,7 +53,11 @@ const MetadataLayout = ({ projectId, children, ...props }) => {
   return (
     <Layout>
       <Sider width={200} style={{ backgroundColor: grey1 }}>
-        <Menu mode="inline" selectedKeys={[selectedKey]}>
+        <Menu
+          mode="inline"
+          selectedKeys={[selectedKey]}
+          style={{ height: `100%` }}
+        >
           <Menu.Item key="fields">
             <Link className="t-m-field-link" to="fields">
               {i18n("MetadataFields.title")}

@@ -35,12 +35,9 @@ module.exports = {
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
   "project-new": "./resources/js/pages/projects/projects-new.js",
-  "project-settings-basic":
-    "./resources/js/pages/projects/settings/project-settings-basic.js",
+  "project-settings": "./resources/js/pages/projects/settings",
   "project-remote": "./resources/js/pages/projects/remote/",
-  "project-details": "./resources/js/pages/projects/details/index.js",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
-  "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",

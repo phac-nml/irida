@@ -248,7 +248,7 @@ public class ProjectsController {
 			return getCreateProjectPage(useCartSamples, model, owner);
 		}
 
-		return "redirect:/projects/" + project.getId() + "/settings";
+		return "redirect:/projects/" + project.getId() + "/settings/details";
 	}
 
 	/**

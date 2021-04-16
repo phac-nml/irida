@@ -60,7 +60,7 @@ public class ProjectSettingsController {
 	 * @param locale    Locale of the logged in user
 	 * @return name of the project settings page
 	 */
-	@RequestMapping("")
+	@RequestMapping(value = { "", "/**" })
 	public String getProjectSettingsBasicPage(@PathVariable Long projectId, final Model model,
 			final Principal principal, Locale locale) {
 		Project project = projectService.read(projectId);
@@ -68,23 +68,7 @@ public class ProjectSettingsController {
 		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "details");
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/settings/pages/details";
-	}
-
-	/**
-	 * Request for a {@link Project} basic settings page
-	 *
-	 * @param projectId the ID of the {@link Project} to read
-	 * @param model     Model for the view
-	 * @param principal Logged in user
-	 * @return name of the project settings page
-	 */
-	@RequestMapping("/processing")
-	public String getProjectSettingsProcessingPage(@PathVariable Long projectId, final Model model,
-			final Principal principal) {
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/settings/pages/processing";
+		return "projects/project_settings";
 	}
 
 	/**

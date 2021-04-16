@@ -49,7 +49,9 @@ export function ProjectNav() {
             <a href={`${BASE_URL}activity`}>{i18n("project.nav.activity")}</a>
           </Item>
           <Item key="settings">
-            <a href={`${BASE_URL}settings`}>{i18n("project.nav.settings")}</a>
+            <a href={`${BASE_URL}settings/details`}>
+              {i18n("project.nav.settings")}
+            </a>
           </Item>
         </Menu>
       </Content>

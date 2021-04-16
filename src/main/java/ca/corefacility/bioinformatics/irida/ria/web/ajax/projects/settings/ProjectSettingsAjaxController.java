@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Priorities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
@@ -122,19 +121,6 @@ public class ProjectSettingsAjaxController {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedId);
 		projectService.addRelatedProject(project, associatedProject);
-	}
-
-	/**
-	 * Get information about the current {@link AnalysisSubmission.Priority} for the project as well as available
-	 * priorities to update to
-	 *
-	 * @param projectId identifier for the project
-	 * @return information about the current {@link AnalysisSubmission.Priority} for the project as well as available
-	 * priorities to update to
-	 */
-	@GetMapping("/priorities")
-	public Priorities getProcessingInformation(@PathVariable Long projectId) {
-		return settingsService.getProcessingInformation(projectId);
 	}
 
 	/**
