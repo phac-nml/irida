@@ -53,7 +53,7 @@ const ProjectSettings = (props) => {
 
   React.useEffect(() => {
     dispatch(fetchProjectDetails(props.projectId));
-  }, []);
+  }, [dispatch, props.projectId]);
 
   return (
     <Layout>
