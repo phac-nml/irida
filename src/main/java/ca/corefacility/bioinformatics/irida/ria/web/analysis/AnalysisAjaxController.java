@@ -469,8 +469,12 @@ public class AnalysisAjaxController {
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(aof.getFileInputStream(), "UTF-8"))) {
 			String firstLineText = reader.readLine();
 			info.setFirstLine(firstLineText);
-			// Set the pointer to the beginning of the next line.
-			info.setFilePointer(Long.valueOf(firstLineText.getBytes().length) + 1);
+			if(firstLineText != null ){
+				// Set the pointer to the beginning of the next line.
+				info.setFilePointer(Long.valueOf(firstLineText.getBytes().length) + 1);
+			} else {
+				info.setFilePointer(0L);
+			}
 		} catch (IOException e) {
 			logger.error("Could not get file input stream '" + aofFile + "' " + e);
 		}

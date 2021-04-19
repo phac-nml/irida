@@ -36,6 +36,7 @@ function CreateNewAnnouncementButton({ createAnnouncement }) {
         visible={visible}
         width={640}
         footer={null}
+        maskClosable={false}
       >
         <AnnouncementForm createAnnouncement={createAnnouncement} />
       </Modal>

@@ -44,14 +44,6 @@ public interface IridaFileStorageUtility {
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile);
 
 	/**
-	 * Get file size
-	 *
-	 * @param file The {@link Path} to the file
-	 * @return {@link String} size of file retrieved from path
-	 */
-	public String getFileSize(Path file);
-
-	/**
 	 * Write file to storage (azure, aws, or local)
 	 *
 	 * @param source The {@link Path} to the file
@@ -60,13 +52,6 @@ public interface IridaFileStorageUtility {
 	 * @param sequenceFileDirWithRevision The {@link Path} to sequence file revision directory
 	 */
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
-
-	/**
-	 * Returns if the storage type is local or not
-	 *
-	 * @return {@link Boolean#TRUE} if local, {@link Boolean#FALSE} if not.
-	 */
-	public boolean storageTypeIsLocal();
 
 	/**
 	 * Gets the file name from the storage type that the file
@@ -163,9 +148,9 @@ public interface IridaFileStorageUtility {
 	public boolean checkWriteAccess(Path baseDirectory);
 
 	/**
-	 * Get the storage type.
+	 * Check if the storage type is local
 	 *
-	 * @return {@link String} The storage type
+	 * @return if the storage type is local or not
 	 */
-	public String getStorageType();
+	public boolean isStorageTypeLocal();
 }

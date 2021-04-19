@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.Announcem
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
@@ -56,6 +58,19 @@ public class UIAnnouncementsService {
 	}
 
 	/**
+	 * Returns a list of read and unread announcements for a user.
+	 *
+	 * @param principal the currently logged in user
+	 * @return a {@link List} of {@link AnnouncementUserReadDetails} objects representing read and unread announcements for a user.
+	 */
+	public List<AnnouncementUserReadDetails> getAnnouncementsUser(Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		List<AnnouncementUserReadDetails> announcements = announcementService.getAnnouncementsForUser(user);
+		Collections.sort(announcements);
+		return announcements;
+	}
+
+	/**
 	 * Returns a list of read announcements for a user.
 	 *
 	 * @param principal the currently logged in user
@@ -64,6 +79,7 @@ public class UIAnnouncementsService {
 	public List<AnnouncementUserJoin> getReadAnnouncementsUser(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 		List<AnnouncementUserJoin> readAnnouncements = announcementService.getReadAnnouncementsForUser(user);
+		Collections.sort(readAnnouncements);
 		return readAnnouncements;
 	}
 
@@ -76,6 +92,7 @@ public class UIAnnouncementsService {
 	public List<Announcement> getUnreadAnnouncementsUser(Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 		List<Announcement> unreadAnnouncements = announcementService.getUnreadAnnouncementsForUser(user);
+		Collections.sort(unreadAnnouncements);
 		return unreadAnnouncements;
 	}
 
@@ -123,6 +140,17 @@ public class UIAnnouncementsService {
 	 */
 	public void deleteAnnouncement(AnnouncementRequest announcementRequest) {
 		announcementService.delete(announcementRequest.getId());
+	}
+
+	/**
+	 * Get an announcement.
+	 *
+	 * @param aID ID of the {@link Announcement}
+	 * @return the found {@link Announcement}.
+	 */
+	public Announcement getAnnouncement(Long aID) {
+		Announcement announcement = announcementService.read(aID);
+		return announcement;
 	}
 
 	/**

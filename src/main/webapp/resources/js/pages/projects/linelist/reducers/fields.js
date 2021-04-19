@@ -12,12 +12,12 @@ const dateColumn = {
     if (!params.value || isDate(params.value)) {
       return {
         paddingRight: 2,
-        backgroundColor: "transparent"
+        backgroundColor: "transparent",
       };
     }
     return {
       paddingRight: 2,
-      backgroundColor: "#FFF1F0"
+      backgroundColor: "#FFF1F0",
     };
   },
   comparator(d1, d2) {
@@ -28,7 +28,7 @@ const dateColumn = {
     } else {
       return new Date(d2) - new Date(d1);
     }
-  }
+  },
 };
 
 /**
@@ -44,14 +44,14 @@ function getColumnDefinition(col) {
   if (field === FIELDS.icons) {
     Object.assign(col, {
       filter: undefined,
-      cellRenderer: "IconCellRenderer"
+      cellRenderer: "IconCellRenderer",
     });
   } else if (type === TYPES.date) {
     Object.assign(col, dateColumn);
   } else if (field === FIELDS.sampleName) {
     Object.assign(col, {
       cellRenderer: "SampleNameRenderer",
-      filter: "agTextColumnFilter"
+      filter: "agTextColumnFilter",
     });
   } else {
     // Default to text filter
@@ -66,11 +66,11 @@ function getColumnDefinition(col) {
      */
   if (col.editable) {
     Object.assign(col, {
-      editable: params => {
+      editable: (params) => {
         return (
           JSON.parse(params.data.owner) && JSON.parse(params.data.editable)
         );
-      }
+      },
     });
   }
   return col;
@@ -81,37 +81,54 @@ function getColumnDefinition(col) {
  * @param {array} cols
  * @returns {*}
  */
-const formatColumns = cols => cols.map(getColumnDefinition);
+const formatColumns = (cols) => cols.map(getColumnDefinition);
 
 export const types = {
   LOAD: "METADATA/FIELDS/LOAD_REQUEST",
   LOAD_ERROR: "METADATA/FIELDS/LOAD_ERROR",
-  LOAD_SUCCESS: "METADATA/FIELDS/LOAD_SUCCESS"
+  LOAD_SUCCESS: "METADATA/FIELDS/LOAD_SUCCESS",
 };
 
 export const initialState = {
   initializing: true, // Is the API call currently being made
   error: false, // Was there an error making the api call}
-  fields: [] // List of metadata fields ==> used for table headers
+  fields: [], // List of metadata fields ==> used for table headers
 };
 
 export const reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case types.LOAD:
       return { ...state, initializing: true, error: false };
-    case templateActionTypes.LOAD_SUCCESS:
+    case templateActionTypes.LOAD_SUCCESS: {
+      /*
+      Get the default template index if there is one
+      */
+      let defaultTemplateIndex = action.templates.findIndex(
+        (template) => template.id === window.project.defaultMetadataTemplateId
+      );
+
+      /*
+      If a default template index is not found then it returns a -1,
+      in which case we set the defaultTemplateIndex to 0 which is the
+      "all fields" template
+      */
+      if (defaultTemplateIndex < 0) {
+        defaultTemplateIndex = 0;
+      }
+
       return {
         ...state,
         initializing: false,
         error: false,
-        fields: formatColumns(action.templates[0].fields)
+        fields: formatColumns(action.templates[defaultTemplateIndex].fields),
       };
+    }
     case types.LOAD_ERROR:
       return {
         ...state,
         initializing: false,
         error: true,
-        fields: []
+        fields: [],
       };
     default:
       return state;
@@ -120,6 +137,6 @@ export const reducer = (state = initialState, action = {}) => {
 
 export const actions = {
   load: () => ({ type: types.LOAD }),
-  success: fields => ({ type: types.LOAD_SUCCESS, fields }),
-  error: error => ({ type: types.LOAD_ERROR, error })
+  success: (fields) => ({ type: types.LOAD_SUCCESS, fields }),
+  error: (error) => ({ type: types.LOAD_ERROR, error }),
 };

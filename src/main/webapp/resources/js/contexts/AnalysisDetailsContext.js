@@ -5,14 +5,14 @@
  * pipeline result, priority).
  */
 
-import React, { useReducer, useContext, useEffect } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 
 // Functions required by context
 import {
   getVariablesForDetails,
   saveToRelatedSamples,
-  updateAnalysisEmailPipelineResult,
   updateAnalysis,
+  updateAnalysisEmailPipelineResult,
 } from "../apis/analysis/analysis";
 
 import { AnalysisContext } from "../contexts/AnalysisContext";

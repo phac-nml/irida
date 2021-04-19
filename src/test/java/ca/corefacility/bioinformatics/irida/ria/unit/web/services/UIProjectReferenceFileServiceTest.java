@@ -65,7 +65,8 @@ public class UIProjectReferenceFileServiceTest {
 		ReferenceFile file = new ReferenceFile(path);
 		when(referenceFileService.read(FILE_ID)).thenReturn(file);
 
-		uiProjectReferenceFileService = new UIProjectReferenceFileService(projectService, referenceFileService, messageSource);
+		uiProjectReferenceFileService = new UIProjectReferenceFileService(projectService, referenceFileService,
+				messageSource, iridaFileStorageUtility);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 

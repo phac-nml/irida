@@ -26,12 +26,19 @@ public final class IridaFiles {
 
 	/**
 	 * Gets the file size of the file from the iridaFileStorageUtility
+	 * and returns it as a human readable string
 	 *
 	 * @param file The path to the file
 	 * @return file size as a human readable string
 	 */
 	public static String getFileSize(Path file) {
-		return iridaFileStorageUtility.getFileSize(file);
+		String fileSize = "N/A";
+		Long fileSizeBytes = iridaFileStorageUtility.getFileSizeBytes(file);
+
+		if(fileSizeBytes > 0){
+			fileSize = FileUtils.humanReadableByteCount(fileSizeBytes, true);
+		}
+		return fileSize;
 	}
 
 	/**

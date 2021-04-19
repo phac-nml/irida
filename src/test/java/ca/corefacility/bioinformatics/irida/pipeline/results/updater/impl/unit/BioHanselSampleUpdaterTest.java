@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -16,6 +15,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -40,14 +41,13 @@ public class BioHanselSampleUpdaterTest {
 	private BioHanselSampleUpdater bioHanselSampleUpdater;
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Before
 	public void setUp() {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		sampleService = mock(SampleService.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
-		bioHanselSampleUpdater = new BioHanselSampleUpdater(metadataTemplateService, sampleService, iridaFileStorageUtility);
+		bioHanselSampleUpdater = new BioHanselSampleUpdater(metadataTemplateService, sampleService);
+		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl());
 	}
 
 	@SuppressWarnings("unchecked")

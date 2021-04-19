@@ -23,10 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -45,6 +45,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
@@ -52,6 +53,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 				.sasToken(sasToken)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+		this.storageType = StorageType.AZURE;
 	}
 
 	/**
@@ -145,24 +147,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try {
-			// We set the blobClient "path" to which we want to get a file size for
-			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties()
-					.getBlobSize(), true);
-		} catch (BlobStorageException e) {
-			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
-		}
-
-		return fileSize;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// We set the blobClient "path" to which we want to upload our file to
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
@@ -182,14 +166,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to clean up source file", e);
 			throw new StorageException("Unable to clean up source file", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean storageTypeIsLocal() {
-		return false;
 	}
 
 	/**
@@ -416,8 +392,11 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public String getStorageType() {
-		return "azure";
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
 	}
 }

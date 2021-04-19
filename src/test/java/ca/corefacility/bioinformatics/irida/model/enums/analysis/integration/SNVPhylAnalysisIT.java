@@ -183,7 +183,8 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
+				analysisSubmissionTempFileRepository);
 
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");

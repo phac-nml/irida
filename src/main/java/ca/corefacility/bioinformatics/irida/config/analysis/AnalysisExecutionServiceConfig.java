@@ -113,6 +113,7 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
+
 	private List<AnalysisSampleUpdater> loadPluginAnalysisSampleUpdaters() {
 		List<AnalysisSampleUpdater> pluginUpdaters = Lists.newLinkedList();
 
@@ -179,6 +180,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility,
+				analysisSubmissionTempFileRepository);
 	}
 }

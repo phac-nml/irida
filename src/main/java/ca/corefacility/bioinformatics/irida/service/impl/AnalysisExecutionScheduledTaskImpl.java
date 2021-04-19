@@ -30,8 +30,9 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisW
 
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -42,21 +43,21 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 
-	private Object prepareAnalysesLock = new Object();
-	private Object executeAnalysesLock = new Object();
-	private Object monitorRunningAnalysesLock = new Object();
-	private Object postProcessingLock = new Object();
-	private Object transferAnalysesResultsLock = new Object();
-	private Object cleanupAnalysesResultsLock = new Object();
+	private final Object prepareAnalysesLock = new Object();
+	private final Object executeAnalysesLock = new Object();
+	private final Object monitorRunningAnalysesLock = new Object();
+	private final Object postProcessingLock = new Object();
+	private final Object transferAnalysesResultsLock = new Object();
+	private final Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionService analysisExecutionService;
-	private final CleanupAnalysisSubmissionCondition cleanupCondition;
+	private CleanupAnalysisSubmissionCondition cleanupCondition;
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
-	private final EmailController emailController;
+	private EmailController emailController;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisWorkspaceService analysisWorkspaceService;
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
@@ -191,6 +192,10 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+
+					// Clean up any downloaded temp files
+					cleanupTemporaryDownloadedFiles(analysisSubmission);
+
 					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
 					}
@@ -317,29 +322,17 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 */
 		if (finalWorkflowStatusSet) {
 
-			/*
-			 Cleanup any files that were downloaded from an object store to run an analysis and
-			 remove the analysis submission temp file record from the database.
-			 */
-			if(!iridaFileStorageUtility.storageTypeIsLocal()) {
-			List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmissionId(
-					analysisSubmission.getId());
-				logger.debug("Cleaning up " + analysisSubmissionTempFiles.size() + " temporary files downloaded from object store.");
-				for (AnalysisSubmissionTempFile analysisSubmissionTempFile : analysisSubmissionTempFiles) {
-					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(
-							new IridaTemporaryFile(analysisSubmissionTempFile.getFilePath(),
-									analysisSubmissionTempFile.getFileDirectoryPath()));
-					analysisSubmissionTempFileRepository.delete(analysisSubmissionTempFile);
-				}
-			}
+			// Clean up any downloaded temp files
+			cleanupTemporaryDownloadedFiles(analysisSubmission);
 
 			/*
 			 If the analysis has finished with an error or completed successfully
 			 and the user selected to be emailed on completion or error, then the following code
 			 will be executed.
 			 */
-			if (analysisSubmission.getEmailPipelineResultCompleted()
-					|| analysisSubmission.getEmailPipelineResultError()) {
+			if ((!analysisSubmission.getEmailPipelineResultCompleted()
+					&& analysisSubmission.getEmailPipelineResultError() && analysisSubmission.getAnalysisState()
+					.equals(AnalysisState.ERROR)) || analysisSubmission.getEmailPipelineResultCompleted()) {
 				emailController.sendPipelineStatusEmail(analysisSubmission);
 			}
 		}
@@ -378,6 +371,32 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			}
 
 			return cleanedSubmissions;
+		}
+	}
+
+	/**
+	 * Cleanup any temporary downloaded files and cleanup associated {@link AnalysisSubmissionTempFile} objects
+	 *
+	 * @param submission The analysis submission to clean up temporary downloaded files for
+	 */
+	private void cleanupTemporaryDownloadedFiles(AnalysisSubmission submission) {
+		/*
+		 Cleanup any files that were downloaded from an object store to run an analysis and
+		 remove the analysis submission temp file record from the database.
+		 */
+		List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmission(
+				submission);
+
+		if (analysisSubmissionTempFiles.size() > 0) {
+			logger.debug("Cleaning up " + analysisSubmissionTempFiles.size()
+					+ " temporary files downloaded from object store.");
+		}
+
+		for (AnalysisSubmissionTempFile analysisSubmissionTempFile : analysisSubmissionTempFiles) {
+			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(
+					new IridaTemporaryFile(analysisSubmissionTempFile.getFilePath(),
+							analysisSubmissionTempFile.getFileDirectoryPath()));
+			analysisSubmissionTempFileRepository.delete(analysisSubmissionTempFile);
 		}
 	}
 }

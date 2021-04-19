@@ -4,18 +4,22 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +65,10 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 */
 	private static final String CREDENTIALS_NON_EXPIRED_PROPERTY = "credentialsNonExpired";
 	/**
+	 * The number of months announcements are marked as read for new {@link User}s.
+	 */
+	private static final int MARK_ANNOUNCEMENTS_READ_MONTHS = 1;
+	/**
 	 * logger
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -72,6 +80,10 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * A reference to the project user join repository.
 	 */
 	private ProjectUserJoinRepository pujRepository;
+	/**
+	 * A reference to the announcement user join repository.
+	 */
+	private AnnouncementUserJoinRepository announcementUserJoinRepository;
 	/**
 	 * A reference to the password encoder used by the system for storing
 	 * passwords.
@@ -125,11 +137,12 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 *            the password encoder.
 	 */
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, ProjectUserJoinRepository pujRepository, PasswordEncoder passwordEncoder, Validator validator) {
+	public UserServiceImpl(UserRepository userRepository, AnnouncementUserJoinRepository announcementUserJoinRepository, ProjectUserJoinRepository pujRepository, PasswordEncoder passwordEncoder, Validator validator) {
 		super(userRepository, validator, User.class);
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.pujRepository = pujRepository;
+		this.announcementUserJoinRepository = announcementUserJoinRepository;
 	}
 
 	/**
@@ -201,7 +214,21 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		String password = u.getPassword();
 		u.setPassword(passwordEncoder.encode(password));
 		try {
-			return super.create(u);
+			User user = super.create(u);
+			List<Announcement> announcements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
+			Date now = new Date();
+			/**
+			 * By default when a new user is created, every announcement would be displayed to the new user.
+			 * Here we mark all prior announcements older than one month as read, to prevent the new user
+			 * from being spammed with old and irrelevant announcements.
+			 */
+			for (Announcement announcement : announcements) {
+				if(DateUtils.addMonths(announcement.getCreatedDate(),MARK_ANNOUNCEMENTS_READ_MONTHS).before(now)){
+					AnnouncementUserJoin auj = new AnnouncementUserJoin(announcement, user);
+					announcementUserJoinRepository.save(auj);
+				}
+			}
+			return user;
 		} catch (DataIntegrityViolationException e) {
 			if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
 				RuntimeException translated = translateConstraintViolationException((org.hibernate.exception.ConstraintViolationException) e

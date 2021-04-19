@@ -18,12 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 /**
  * Component implementation of file utitlities for local storage
@@ -32,8 +32,11 @@ import ca.corefacility.bioinformatics.irida.util.FileUtils;
 public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 
+	private StorageType storageType;
+
 	@Autowired
 	public IridaFileStorageLocalUtilityImpl() {
+		this.storageType = StorageType.LOCAL;
 	}
 
 	/**
@@ -76,25 +79,6 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try {
-			if (file != null) {
-				fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
-			}
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file);
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
-
-		return fileSize;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		try {
 			if (!Files.exists(sequenceFileDir)) {
@@ -118,13 +102,6 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to move file into new directory", e);
 			throw new StorageException("Failed to move file into new directory.", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean storageTypeIsLocal() {
-		return true;
 	}
 
 	/**
@@ -312,7 +289,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getStorageType() {
-		return "local";
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
 	}
 }

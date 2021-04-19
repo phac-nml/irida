@@ -2,7 +2,9 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTempFile;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
@@ -15,8 +17,9 @@ public interface AnalysisSubmissionTempFileRepository extends IridaJpaRepository
 	/**
 	 * Get all {@link AnalysisSubmissionTempFile} objects by submission id.
 	 *
-	 * @param analysisSubmissionId The analysis submission id
+	 * @param analysisSubmission The {@link AnalysisSubmission}
 	 * @return a list of {@link AnalysisSubmissionTempFile}
 	 */
-	List<AnalysisSubmissionTempFile> findAllByAnalysisSubmissionId(Long analysisSubmissionId);
+	@Query("FROM AnalysisSubmissionTempFile f WHERE f.analysisSubmission = ?1")
+	List<AnalysisSubmissionTempFile> findAllByAnalysisSubmission(AnalysisSubmission analysisSubmission);
 }

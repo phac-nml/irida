@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -58,9 +60,9 @@ public class SISTRSampleUpdaterTest {
 		iridaWorkflowsService = mock(IridaWorkflowsService.class);
 		iridaWorkflow = mock(IridaWorkflow.class);
 		iridaWorkflowDescription = mock(IridaWorkflowDescription.class);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl());
 
-		updater = new SISTRSampleUpdater(metadataTemplateService, sampleService, iridaWorkflowsService, iridaFileStorageUtility);
+		updater = new SISTRSampleUpdater(metadataTemplateService, sampleService, iridaWorkflowsService);
 
 		when(iridaWorkflowsService.getIridaWorkflow(uuid)).thenReturn(iridaWorkflow);
 

@@ -60,81 +60,52 @@ Click on the "Select" button at the bottom of the pipeline that you'd like to la
 Running a pipeline
 ------------------
 
-**Note**: Some pipelines will require a reference sequence:
+After selecting a pipeline, you will be sent to the pipeline specific launch page where you can modify the pipeline's general information, parameters, reference file, and have a final look at the files that are going to be used.
 
-![Reference file required.](images/reference-file-required.png)
-
-If you have the ![](images/manager-icon.png) **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
-
-If you do not have the ![](images/manager-icon.png) **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload New" button. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
-
-When you select a pipeline that doesn't require a reference file (or you've already [uploaded one](../project/#reference-files)), you will be presented with a list of the samples that you've selected for analysis in the pipeline:
-
-![Pipeline samples.](images/pipeline-samples.png)
-
-### Removing samples from a pipeline submission
-
-You can remove a sample from a pipeline submission by clicking on the "Remove" button on the right-hand side of the sample:
-
-![Sample remove button.](images/sample-remove-button.png)
-
-### Multiple filesets per sample
-
-If a sample has been sequenced multiple times (a top-up run, for example), the pipeline submission page will display multiple filesets for that sample:
-
-![Multiple filesets per sample.](images/multiple-filesets-per-sample.png)
-
-You may only select one fileset for submission to the pipeline for analysis. You can select the fileset that you want to submit to the pipeline for analysis using the radio buttons on the left-hand side of the sample fileset display:
-
-![Multiple filesets per sample selection.](images/multiple-filesets-per-sample-radio-buttons.png)
-
-Modifying pipeline parameters
------------------------------
-
-IRIDA has pre-defined some default values for pipeline submissions, but you may change the default parameters for your analysis by clicking on the "Customize" button on the right-hand side of the parameters drop-down at the top of the pipeline submission page:
-
-![Customize parameters button.](images/customize-parameters-button.png)
-
-The dialog window that appears will allow you to change the parameters for the pipeline execution:
-
-![Default pipeline parameters.](images/default-pipeline-parameters.png)
-
-If you would like to reset a value that you modified back to the default value, click on the "Use Default" button on the right-hand side of the paramater:
-
-![Use Default button for pipeline parameters.](images/use-default-button.png)
-
-<blockquote>
-<p><b>Note</b>: customized pipeline parameters are not validated, please ensure that the values you are entering are valid for the parameter that you are modifying.</p>
-</blockquote>
-
-When you've finished customizing the pipeline parameters, you can click on the "Use these Parameters" button to return to the pipeline submission page.
-
-### Saving pipeline parameters
-
-You may save the [parameters that you modified](#modifying-pipeline-parameters) by clicking on the "Save these parameters for later?" checkbox at the bottom of the parameters dialog:
-
-![Save parameters for later checkbox.](images/save-parameters-for-later-checkbox.png)
-
-You should provide a name for the pipeline parameters that reflects the modifications that you've made to the parameters. When you've entered the name for the parameter set, you can click on the "Use these Parameters" button at the bottom of the parameter modification dialog to return to the pipeline submission page.
-
-### Using pre-saved pipeline parameters
-
-Parameter sets that [have been saved](#saving-pipeline-parameters) can be used on subsequent executions of the pipeline by using the parameters drop-down, just below the pipeline name:
-
-![Named parameters drop-down.](images/parameters-dropdown.png)
+1. General Details:
+   ![General Details](images/general-details.png)
+    * Pipeline Name: A custom pipeline name can be entered allowing you to easily identify the specific analysis at a later date.  By default, the name is given the pipeline name followed by the date ran (e.g. SNVPhyl__2-15-2021).
+    * Pipeline Description: Any custom text can be entered here.
+    * Email Pipeline Results: There are three options:
+        1. No email: don't send any emails about the pipeline outcome (default)
+        1. On Error: only send an email if the pipeline fails
+        1. On Completion: Send an email if the pipeline fails or when the pipeline successfully completes running.
+1. Parameters: parameters used to run the pipeline.
+    * There are default sets provided by the pipeline developer as well as any that have been saved.
+      ![Default Parameters](images/parameters-default.png)
+    * Parameters can be modified by clicking on the "Modify" button which will expose all available parameters:
+      ![Default Parameters](images/parameters-exposed.png)
+      
+   <blockquote>
+      <p><b>Note</b>: customized pipeline parameters are not validated, please ensure that the values you are entering are valid for the parameter that you are modifying.</p>
+   </blockquote>
+   
+    * If you modify one of the parameters you will be given the option to save the changes for future use.  In the yellow box, just click the "Save template as" button and you will be asked to enter the name for the parameter set.  Once saved they can be selected in the dropdown above for the current pipeline or any future pipelines.
+       ![Save Parameters](images/parameters-modified.png)
+    1. Below these parameters are other settings that can be set (but cannot be saved)
+1. Share Results:
+    1. Some pipelines will allow you to share the results back to either the project or sample. Checkbox will be visible here if this option is available on this pipeline
+        ![Share Results](images/share-results.png)
+1. Reference Files:
+    1. If the pipeline requires a reference file, you will be prompted to select a reference file from one of the projects that you have access to, or to upload a new one.
+       ![Reference file required.](images/reference-file-required.png)
+    2. If you have a **Manager** role on a project, you can [add a reference file to the project](../project/#reference-files). Reference files added to a project can be shared with all other project members.
+    3. If you do not have a **Manager** role on a project, or you would just like to upload a reference file for *this* pipeline, you can add a new reference file to the analysis by clicking on the "Upload Upload" area or dragging a reference file to it. If you upload a reference to the analysis instead of the project, no other users will be able to see or use the file you've uploaded.
+1. Samples are listed last.  Here you can see all the files selected to run the pipeline with.
+   ![Pipeline samples.](images/pipeline-samples.png)
+    * You can remove a sample by clicking on the remove button to the right of the sample.
+    * If the sample contains multiple files that could be run on the pipeline, the most recently added are selected by default.  If you want to run a different set, select them by clicking on the name.
 
 Running the pipeline
 --------------------
 
-Once you've [selected the files](#multiple-filesets-per-sample) and [selected](#using-pre-saved-pipeline-parameters) or [customized](#modifying-pipeline-parameters) the parameters, you can submit the pipeline for execution by clicking on the rocket ship button on the right-hand side of the page:
+Once you have made all the modifications to the pipeline and are ready to launch, select the "Launch Pipeline" button to start the pipeline.
 
-![Rocket ship launch icon.](images/ready-to-launch.png)
+![Launch Pipeline](images/pipeline-launch.png)
 
-Your pipeline submission will be prepared and launched, and you will see a confirmation dialog:
+Once the pipeline has been launched, you will be redirected to the analysis page where you can see the current state of the pipeline, as well as the settings for the pipeline:
 
-![Pipeline launch success.](images/launch-success.png)
-
-You can [monitor pipeline progress](#monitoring-pipeline-progress) by clicking on the "Let's see how this pipeline is doing" button, or you can empty your cart and start again by clicking on the "Let the pipeline run!" button.
+![Pipeline Running](images/pipeline-launch.png)
 
 Monitoring pipeline progress
 ----------------------------

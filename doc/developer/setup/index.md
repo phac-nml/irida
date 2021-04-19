@@ -147,7 +147,7 @@ Please refer to the [Galaxy Install Guide][galaxy-install] for information on se
 Front End Development Setup
 ---------------------------
 
-IRIDA uses [Yarn](https://yarnpkg.com) for front-end dependency management.  [Install yarn](https://yarnpkg.com/en/docs/install) by following the directions for your machine.  For production, it is automatically installed during the build process.
+IRIDA uses [Yarn 2](https://yarnpkg.com) for front-end dependency management.  [Install yarn](https://yarnpkg.com/getting-started/install) by following the directions for your machine.  For production, it is automatically installed during the build process.
 
 From within `src/main/webapp/`:
 

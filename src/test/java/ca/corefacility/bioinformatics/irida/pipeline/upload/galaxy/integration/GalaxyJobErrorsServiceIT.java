@@ -91,6 +91,7 @@ public class GalaxyJobErrorsServiceIT {
 	@Autowired
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
+
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
@@ -109,7 +110,8 @@ public class GalaxyJobErrorsServiceIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
+				analysisSubmissionTempFileRepository);
 
 	}
 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="project-default-metadata-template" author="deep">
+        <addColumn tableName="project">
+            <column name="default_metadata_template" type="bigint(20)">
+                <constraints referencedTableName="metadata_template"
+                             referencedColumnNames="id" foreignKeyName="FK_PROJECT_METADATA_TEMPLATE" />
+            </column>
+        </addColumn>
+        <addColumn tableName="project_AUD">
+            <column name="default_metadata_template" type="bigint(20)" />
+        </addColumn>
+
+    </changeSet>
+</databaseChangeLog>

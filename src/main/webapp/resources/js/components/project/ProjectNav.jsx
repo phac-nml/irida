@@ -5,7 +5,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
-const { Item } = Menu;
+const { Item, SubMenu } = Menu;
 const { Content } = Layout;
 
 /**
@@ -17,7 +17,7 @@ export function ProjectNav() {
   /*
   Get the current page from the global project object
    */
-  const [current, setCurrent] = useState(window.project.page);
+  const [current, setCurrent] = useState(() => window.project.page);
   const BASE_URL = setBaseUrl(`projects/${window.project.id}/`);
 
   return (
@@ -33,6 +33,11 @@ export function ProjectNav() {
           </Item>
           <Item key="linelist">
             <a href={`${BASE_URL}linelist`}>{i18n("project.nav.linelist")}</a>
+          </Item>
+          <Item key="metadata">
+            <a href={`${BASE_URL}metadata/fields`}>
+              {i18n("project.nav.metadata")}
+            </a>
           </Item>
           <Item key="analyses">
             <a href={`${BASE_URL}analyses`}>{i18n("project.nav.analysis")}</a>

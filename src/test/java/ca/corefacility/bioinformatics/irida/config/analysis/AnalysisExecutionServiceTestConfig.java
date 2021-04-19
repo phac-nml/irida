@@ -110,6 +110,7 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	
 	@Bean
 	public AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor() {
@@ -151,7 +152,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility,
+				analysisSubmissionTempFileRepository);
 	}
 
 	@Lazy

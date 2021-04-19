@@ -1,6 +1,23 @@
 Changes
 =======
 
+21.01 to 21.05
+--------------
+* [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)
+* [Developer]: Fixed webpack not outputting css bundle files.
+* [UI]: Updated to latest release of Ant Design (v4.12.3).
+* [Developer]: Fixed the advanced visualisation viewer for Phylogeny Tree with metadata.
+* [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
+* [UI]: Update to the pipeline launch process.
+* [UI]: Fixed bug where filter menu was missing from the Analsyis Outputs Table.
+* [Developer/REST/UI]: Added announcements bell icon to main nav bar, added priority announcements modal at login, and refreshed user announcements page.
+* [UI]: Fixed bug where samples not rendering on project samples page when the config setting ngsarchive.linker.available is set to false.
+* [Developer]: Updated to Webpack v5 and Yarn v2.
+* [UI]: Updated create metadata template.
+* [Developer]: Updated to Yarn v2.4.1.
+* [Developer]: Cleaned up compile warnings related to deprecated methods in Spring, JSON parsing, and Galaxy connectivity.
+* [UI] Updated And Design to v4.15.0.
+
 20.09 to 21.01
 --------------
 * [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)

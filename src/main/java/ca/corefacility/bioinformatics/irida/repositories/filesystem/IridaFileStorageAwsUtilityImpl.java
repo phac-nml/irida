@@ -19,10 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -44,6 +44,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
@@ -53,6 +54,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
 				.build();
 		this.bucketName = bucketName;
+		this.storageType = StorageType.AWS;
 	}
 
 	/**
@@ -154,23 +156,6 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
-			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
-					.getContentLength(), true);
-		} catch (AmazonServiceException e) {
-			logger.error("Unable to get file size from s3 bucket: " + e);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-		return fileSize;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		try {
 			logger.trace("Uploading file to s3 bucket: [" + target.getFileName() + "]");
@@ -189,14 +174,6 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			logger.error("Unable to clean up source file", e);
 			throw new StorageException("Unable to clean up source file", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean storageTypeIsLocal() {
-		return false;
 	}
 
 	/**
@@ -423,7 +400,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getStorageType() {
-		return "aws";
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
 	}
 }
