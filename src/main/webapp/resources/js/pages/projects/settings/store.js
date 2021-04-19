@@ -3,6 +3,7 @@ import coverageSlice from "../redux/coverageSlice";
 import membersSlice from "../redux/membersSlice";
 import pipelinesSlice from "../redux/pipelinesSlice";
 import projectReducer from "../redux/projectSlice";
+import userSlice from "../redux/userSlice";
 
 /*
 Redux Store for project metadata.
@@ -14,5 +15,6 @@ export default configureStore({
     coverage: coverageSlice,
     pipelines: pipelinesSlice,
     members: membersSlice,
+    user: userSlice,
   },
 });

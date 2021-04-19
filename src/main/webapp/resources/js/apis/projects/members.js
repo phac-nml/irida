@@ -4,7 +4,12 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 const BASE = setBaseUrl(`/ajax/projects/${window.project.id}/members`);
 
 export async function removeUserFromProject(id) {
-  return await axios.delete(`${BASE}?id=${id}`).then(({ data }) => data);
+  try {
+    const { data } = await axios.delete(`${BASE}?id=${id}`);
+    return Promise.resolve(data);
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
 }
 
 export async function updateUserRoleOnProject({ id, role }) {
