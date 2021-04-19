@@ -153,4 +153,11 @@ public interface IridaFileStorageUtility {
 	 * @return if the storage type is local or not
 	 */
 	public boolean isStorageTypeLocal();
+
+	/**
+	 * Get the storage type.
+	 *
+	 * @return {@link String} The storage type
+	 */
+	public String getStorageType();
 }

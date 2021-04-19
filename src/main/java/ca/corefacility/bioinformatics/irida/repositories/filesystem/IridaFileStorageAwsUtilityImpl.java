@@ -403,4 +403,12 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public boolean isStorageTypeLocal() {
 		return storageType.equals(StorageType.LOCAL);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getStorageType() {
+		return storageType.toString();
+	}
 }
