@@ -12,9 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.ProjectDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
+import com.google.common.base.Strings;
 
 /**
  * Handle asynchronous requests for the UI project details page.
@@ -23,11 +26,13 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 @RequestMapping("/ajax/projects/{projectId}/details")
 public class ProjectDetailsAjaxController {
 	private final ProjectService projectService;
+	private final UIProjectsService service;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public ProjectDetailsAjaxController(ProjectService projectService, MessageSource messageSource) {
+	public ProjectDetailsAjaxController(ProjectService projectService, UIProjectsService service, MessageSource messageSource) {
 		this.projectService = projectService;
+		this.service = service;
 		this.messageSource = messageSource;
 	}
 
@@ -38,9 +43,8 @@ public class ProjectDetailsAjaxController {
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
-	public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		return ResponseEntity.ok(new ProjectDetailsResponse(project));
+	public ResponseEntity<ProjectInfoResponse> getProjectDetails(@PathVariable Long projectId) {
+		return ResponseEntity.ok(service.getProjectInfo(projectId));
 	}
 
 	/**
@@ -73,8 +77,16 @@ public class ProjectDetailsAjaxController {
 								new Object[] { request.getField() }, locale));
 			}
 			projectService.update(project);
-			return ResponseEntity.ok(messageSource.getMessage("server.ProjectDetails.success",
-					new Object[] { request.getField(), request.getValue() }, locale));
+			String message;
+			if (Strings.isNullOrEmpty(request.getValue())) {
+				message = messageSource.getMessage("server.ProjectDetails.success-empty",
+						new Object[] { request.getField() }, locale);
+
+			} else {
+				message = messageSource.getMessage("server.ProjectDetails.success",
+						new Object[] { request.getField(), request.getValue() }, locale);
+			}
+			return ResponseEntity.ok(message);
 		} catch (ConstraintViolationException e) {
 			return ResponseEntity.badRequest()
 					.body(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));

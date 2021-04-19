@@ -114,8 +114,6 @@ public class UIProjectsService {
 		boolean isAdmin = user.getSystemRole()
 				.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
 
-		String projectName = project.getName();
-
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 
@@ -123,7 +121,7 @@ public class UIProjectsService {
 
 		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
 
-		return new ProjectInfoResponse(project.getId(), projectName, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
+		return new ProjectInfoResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
 	}
 
 }

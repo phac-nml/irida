@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, List, Modal, Typography } from "antd";
-import { fetchAutomatedIridaAnalysisWorkflows } from "../../../apis/pipelines/pipelines";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { fetchAutomatedIridaAnalysisWorkflows } from "../../../../../apis/pipelines/pipelines";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 /**
  * Display title for automated pipelines and if the user can add new templates
@@ -13,11 +13,13 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
  */
 export function AutomatedPipelineHeader({ projectId, canMange }) {
   const [visible, setVisible] = React.useState(false);
-  const [pipelines, setPipelines] = React.useState([]);
+  const [pipelines, setPipelines] = React.useState(undefined);
 
   React.useEffect(() => {
-    fetchAutomatedIridaAnalysisWorkflows().then(setPipelines);
-  }, []);
+    if (visible && !pipelines) {
+      fetchAutomatedIridaAnalysisWorkflows().then(setPipelines);
+    }
+  }, [visible]);
 
   return (
     <>

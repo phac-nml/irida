@@ -1,36 +1,71 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
+import java.util.Date;
+
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
 /**
  * Encapsulates information about the project as well as permissions.
  */
 
 public class ProjectInfoResponse {
-	private Long projectId;
-	private String projectName;
+	private Long id;
+	private String label;
+	private Date createdDate;
+	private Date modifiedDate;
+	private String organism;
+	private String description;
 	private boolean canManage;
 	private boolean canManageRemote;
+	private String priority;
 
-	public ProjectInfoResponse(Long projectId, String projectName, boolean canManage, boolean canManageRemote) {
-		this.projectId = projectId;
-		this.projectName = projectName;
+	public ProjectInfoResponse(Project project, boolean canManage, boolean canManageRemote) {
+		this.id = project.getId();
+		this.label = project.getName();
+		this.createdDate = project.getCreatedDate();
+		this.modifiedDate = project.getModifiedDate();
+		this.organism = project.getOrganism();
+		this.description = project.getProjectDescription();
 		this.canManage = canManage;
 		this.canManageRemote = canManageRemote;
+
+		AnalysisSubmission.Priority analysisPriority = project.getAnalysisPriority();
+		if (analysisPriority != null) {
+			priority = analysisPriority.name();
+		}
 	}
 
-	public Long getProjectId() {
-		return projectId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getProjectName() {
-		return projectName;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public boolean isCanManage() {
@@ -47,5 +82,29 @@ public class ProjectInfoResponse {
 
 	public void setCanManageRemote(boolean canManageRemote) {
 		this.canManageRemote = canManageRemote;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	public void setOrganism(String organism) {
+		this.organism = organism;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getPriority() {
+		return priority;
+	}
+
+	public void setPriority(String priority) {
+		this.priority = priority;
 	}
 }
