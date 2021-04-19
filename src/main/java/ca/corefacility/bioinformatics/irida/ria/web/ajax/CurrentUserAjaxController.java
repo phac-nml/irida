@@ -12,6 +12,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CurrentUser;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+/**
+ * UI Controller to get information about the current user
+ */
 @Controller
 @RequestMapping("/ajax/users/current")
 public class CurrentUserAjaxController {

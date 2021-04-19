@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+/**
+ * Details about the currently logged in user for use by the UI.
+ */
 public class CurrentUser {
 	private Long identifier;
 	private String username;
