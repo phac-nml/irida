@@ -20,7 +20,7 @@ import { ProjectRole } from "../roles/ProjectRole";
 export function ProjectMembersTable() {
   const dispatch = useDispatch();
   const { updateTable } = useContext(PagedTableContext);
-  const { canManage } = useSelector((state) => state.project);
+  const { id: projectId, canManage } = useSelector((state) => state.project);
   const { identifier: userId } = useSelector((state) => state.user);
 
   React.useEffect(() => {
@@ -67,7 +67,7 @@ export function ProjectMembersTable() {
       render(text, user) {
         return (
           <RemoveTableItemButton
-            onRemove={() => removeUserFromProject(user.id)}
+            onRemove={() => removeUserFromProject({ projectId, id: user.id })}
             onRemoveSuccess={() => userRemoved(user)}
             tooltipText={i18n("RemoveMemberButton.tooltip")}
             confirmText={i18n("RemoveMemberButton.confirm")}
