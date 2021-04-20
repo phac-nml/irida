@@ -25,9 +25,15 @@ public class CurrentUserAjaxController {
 		this.userService = userService;
 	}
 
+	/**
+	 * Get information about the current user
+	 *
+	 * @return {@link CurrentUser}
+	 */
 	@GetMapping("")
 	public ResponseEntity<CurrentUser> getCurrentUserDetails() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		User user = userService.getUserByUsername(authentication.getName());
 		return ResponseEntity.ok(new CurrentUser(user));
 	}
