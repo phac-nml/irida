@@ -17,15 +17,6 @@ export function RemoveTableItemButton({
   const [loading, setLoading] = useState(false);
 
   /**
-   * Handle the successful removal of the current item
-   * @param message
-   */
-  const removeSuccess = (message) => {
-    onRemoveSuccess();
-    notification.success({ message, className: "t-remove-success" });
-  };
-
-  /**
    * Make the request to remove the item from the project.
    */
   const removeItem = async () => {
@@ -33,11 +24,15 @@ export function RemoveTableItemButton({
     try {
       const message = await onRemove();
       onRemoveSuccess();
-      notification.success({ message });
-    } catch (e) {
-      notification.error({ message: e.response.data });
+      notification.success({ message, className: "t-remove-success" });
+    } catch (message) {
+      notification.error({
+        message,
+        className: "t-remove-error",
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
