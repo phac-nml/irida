@@ -8,6 +8,17 @@ const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin
 const entries = require("./entries");
 const formatAntStyles = require("./styles");
 
+/**
+ * @file Webpack Build configuration file.
+ * Directs webpack how to compile CSS and JavaScript assets.
+ * Run in development: `yarn start`
+ *  - Better source maps
+ *  - No minification
+ * Run for production: `yarn build`
+ *  - Assets will be chunked into proper sizes
+ *  - Hashes will be appended to break cache with older files.
+ */
+
 const antColours = formatAntStyles();
 
 module.exports = (env, argv) => {
@@ -136,6 +147,10 @@ module.exports = (env, argv) => {
         ),
         process: "process/browser",
       }),
+      /*
+      Webpack Manifest is used by the Webpacker Thymeleaf plugin to find assets required
+      for each entry point.
+       */
       new WebpackAssetsManifest({
         integrity: false,
         entrypoints: true,
