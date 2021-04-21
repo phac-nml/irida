@@ -2,8 +2,8 @@
  * @File component responsible for the layout of the associated projects page.
  */
 import React from "react";
-import ViewAssociatedProjects from "./ViewAssociatedProjects";
-import { TabPaneContent } from "../../../components/tabs";
+import { TabPaneContent } from "../../../../components/tabs";
+import ViewAssociatedProjects from "./associated/ViewAssociatedProjects";
 
 export default function AssociatedProjects() {
   return (

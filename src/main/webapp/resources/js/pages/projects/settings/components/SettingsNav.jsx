@@ -23,6 +23,9 @@ export default function SettingsNav({ path }) {
       <Menu.Item key="groups">
         <Link to="groups">{i18n("project.settings.page.groups")}</Link>
       </Menu.Item>
+      <Menu.Item key="associated">
+        <Link to="associated">{i18n("project.settings.page.associated")}</Link>
+      </Menu.Item>
     </Menu>
   );
 }

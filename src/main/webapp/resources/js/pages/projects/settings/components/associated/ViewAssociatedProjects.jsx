@@ -3,17 +3,18 @@
  * manager or admin, they will be shown all their available projects, with the
  * ability to add or remove them as associated projects.
  */
-import React, { useEffect, useState } from "react";
 import { Avatar, Switch, Table, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   addAssociatedProject,
   getAssociatedProjects,
   removeAssociatedProject,
-} from "../../../apis/projects/associated-projects";
-import { TextFilter } from "../../../components/Tables/fitlers";
-import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
-import { IconFolder } from "../../../components/icons/Icons";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+} from "../../../../../apis/projects/associated-projects";
+import { IconFolder } from "../../../../../components/icons/Icons";
+import { createListFilterByUniqueAttribute } from "../../../../../components/Tables/filter-utilities";
+import { TextFilter } from "../../../../../components/Tables/fitlers";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
@@ -21,9 +22,10 @@ export default function ViewAssociatedProjects() {
   const [projects, setProjects] = useState([]);
   const [organismFilters, setOrganismFilters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { canManage, id: projectId } = useSelector((state) => state.project);
 
   useEffect(() => {
-    getAssociatedProjects(window.project.id).then((data) => {
+    getAssociatedProjects(projectId).then((data) => {
       setProjects(data);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
@@ -39,9 +41,9 @@ export default function ViewAssociatedProjects() {
     setLoading(true);
     let promise;
     if (checked) {
-      promise = addAssociatedProject(window.project.id, project.id);
+      promise = addAssociatedProject(projectId, project.id);
     } else {
-      promise = removeAssociatedProject(window.project.id, project.id);
+      promise = removeAssociatedProject(projectId, project.id);
     }
     promise.then(() => {
       project.associated = checked;
@@ -51,7 +53,7 @@ export default function ViewAssociatedProjects() {
   }
 
   const columns = [
-    window.PAGE.permissions
+    canManage
       ? {
           key: "switch",
           width: 80,

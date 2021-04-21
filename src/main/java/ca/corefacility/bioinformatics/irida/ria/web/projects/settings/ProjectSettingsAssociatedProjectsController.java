@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
@@ -60,43 +59,6 @@ public class ProjectSettingsAssociatedProjectsController {
 		this.userService = userService;
 		this.messageSource = messageSource;
 		dateFormatter = new DateFormatter();
-	}
-
-	/**
-	 * Get the associated projects for the given project
-	 *
-	 * @param projectId
-	 * 		The ID of the project to get associated projects
-	 * @param model
-	 * 		A model for the view
-	 * @param principal
-	 * 		a reference to the logged in user.
-	 *
-	 * @return The view name of the associated projects view
-	 */
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String getAssociatedProjectsPage(@PathVariable Long projectId, Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-
-		User loggedInUser = userService.getUserByUsername(principal.getName());
-
-		// Determine if the user is an owner or admin.
-		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
-		model.addAttribute("isAdmin", isAdmin);
-
-		// Add any associated projects
-		User currentUser = userService.getUserByUsername(principal.getName());
-		List<Map<String, String>> associatedProjects = getAssociatedProjectsForProject(project, currentUser, isAdmin);
-		model.addAttribute("associatedProjects", associatedProjects);
-
-		model.addAttribute("noAssociated", associatedProjects.isEmpty());
-
-		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "associated");
-
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/settings/pages/associated";
 	}
 
 	/**

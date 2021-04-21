@@ -19,6 +19,9 @@ const ProjectMembers = React.lazy(() => import("./components/ProjectMembers"));
 const ProjectGroups = React.lazy(() =>
   import("./components/ProjectUserGroups")
 );
+const AssociatedProjects = React.lazy(() =>
+  import("./components/AssociatedProjects")
+);
 
 /*
 WEBPACK PUBLIC PATH:
@@ -75,6 +78,7 @@ const ProjectSettings = (props) => {
                     <ProjectProcessing path="/processing" />
                     <ProjectMembers path="/members" />
                     <ProjectGroups path="/groups" />
+                    <AssociatedProjects path="/associated" />
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>

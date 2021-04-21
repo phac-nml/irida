@@ -56,36 +56,6 @@ public class ProjectSettingsAssociatedProjectsControllerTest {
         RequestContextHolder.setRequestAttributes(ra);
 	}
 
-	@Test
-	public void testGetAssociatedProjectsPage() {
-
-		ExtendedModelMap model = new ExtendedModelMap();
-		Principal principal = () -> USER_NAME;
-		Long projectId = 1L;
-		User u = new User();
-		u.setSystemRole(Role.ROLE_ADMIN);
-		Project p = new Project("my project");
-		p.setId(projectId);
-		Project o = new Project("other project");
-		o.setId(2L);
-		List<RelatedProjectJoin> relatedProjects = Lists.newArrayList(new RelatedProjectJoin(p, o));
-
-
-		when(projectService.read(projectId)).thenReturn(p);
-
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
-		when(projectService.getRelatedProjects(p)).thenReturn(relatedProjects);
-
-		controller.getAssociatedProjectsPage(projectId, model, principal);
-
-		assertTrue(model.containsAttribute("isAdmin"));
-		assertTrue(model.containsAttribute("associatedProjects"));
-
-		verify(projectService).read(projectId);
-		verify(userService, times(2)).getUserByUsername(USER_NAME);
-		verify(projectService).getRelatedProjects(p);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetPotentialAssociatedProjectsAsAdmin() {
