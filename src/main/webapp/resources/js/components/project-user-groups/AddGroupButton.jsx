@@ -8,11 +8,11 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import {
   addUserGroupToProject,
   getAvailableGroupsForProject,
 } from "../../apis/projects/user-groups";
+import { useRoles } from "../../contexts/roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -36,7 +36,7 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   /*
   Get a list of project roles
    */
-  const { roles } = useSelector((state) => state.project);
+  const { roles } = useRoles();
 
   /*
   Whether the modal to add a user is visible

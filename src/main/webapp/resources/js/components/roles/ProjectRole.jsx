@@ -18,21 +18,9 @@ import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
 export function ProjectRole({ item }) {
   const dispatch = useDispatch();
   const { canManage } = useSelector((state) => state.project);
-  const { roles } = useRoles();
+  const { roles, getRoleFromKey } = useRoles();
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
-
-  /**
-   * Find the translation for any project role.  If the role is not found,
-   * just return "UNKNOWN"
-   *
-   * @param key
-   * @returns {*}
-   */
-  const getRoleFromKey = (key) => {
-    const role = roles.find((r) => r.value === key);
-    return role ? role.label : "UNKNOWN";
-  };
 
   const onChange = (value) => {
     setLoading(true);
