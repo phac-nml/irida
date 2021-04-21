@@ -17,6 +17,8 @@ Changes
 * [Developer]: Updated to Yarn v2.4.1.
 * [Developer]: Cleaned up compile warnings related to deprecated methods in Spring, JSON parsing, and Galaxy connectivity.
 * [UI] Updated And Design to v4.15.0.
+* [Database]: Removed `sample_metadata_entry` table which should have been dropped in 21.01 release. (21.01.3)
+* [REST]: Added endpoint to request a full project's sample metadata at the same time.
 * [UI/Developer]: Webpack does full bundle splitting to optimize loading time and thymeleaf injects the bundles onto template at compile time, see documentation for more details.
 
 20.09 to 21.01
