@@ -34,7 +34,16 @@ if not (result_dir.endswith('docs') or result_dir.endswith('docs/')) or not os.p
     print("The target directory doesn't appear to be the irida-documentation repository's `/docs` directory.")
     exit(1)
 
-# first run mvn site to build the javadoc
+# first generate the Open API file
+print("========== Generating the Open API file")
+retval = os.system('mvn verify -DskipTests=true')
+
+# ensure it generated correctly
+if retval != 0:
+    print("========== Open API file generation failed.  See above for error messages")
+    exit(1)
+
+# second run mvn site to build the javadoc
 print("========== Building documentation pages")
 retval = os.system('mvn clean site')
 
@@ -42,7 +51,6 @@ retval = os.system('mvn clean site')
 if retval != 0:
     print("========== Docs construction failed.  See above for error messages")
     exit(1)
-
 
 print("========== Documentation built successfully")
 

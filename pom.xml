@@ -1097,8 +1097,8 @@
 				</executions>
 				<configuration>
 					<apiDocsUrl>http://localhost:${jetty.port}/v3/api-docs</apiDocsUrl>
-					<outputFileName>openapi.json</outputFileName>
-					<outputDir>doc/open-api</outputDir>
+					<outputFileName>open-api.json</outputFileName>
+					<outputDir>doc/swagger-ui</outputDir>
 					<skip>false</skip>
 				</configuration>
 			</plugin>
