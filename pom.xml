@@ -1098,7 +1098,7 @@
 				<configuration>
 					<apiDocsUrl>http://localhost:${jetty.port}/v3/api-docs</apiDocsUrl>
 					<outputFileName>openapi.json</outputFileName>
-					<outputDir>.</outputDir>
+					<outputDir>doc/open-api</outputDir>
 					<skip>false</skip>
 				</configuration>
 			</plugin>
