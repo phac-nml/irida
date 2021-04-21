@@ -30,9 +30,8 @@ export function AddMemberButton({
    */
   const userRef = useRef();
 
-  const { roles } = useRoles();
-
   const { id: projectId } = useSelector((state) => state.project);
+  const { roles } = useRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -87,7 +86,7 @@ export function AddMemberButton({
     } else {
       setResults([]);
     }
-  }, [debouncedQuery]);
+  }, [debouncedQuery, getAvailableMembersFn, projectId]);
 
   /*
   Watch for changes to the forms visibility, when it becomes visible

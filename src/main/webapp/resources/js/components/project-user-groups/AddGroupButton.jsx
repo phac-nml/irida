@@ -1,4 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Form,
@@ -8,12 +7,13 @@ import {
   Select,
   Typography,
 } from "antd";
-import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
-import { useRoles } from "../../contexts/roles-context";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   addUserGroupToProject,
   getAvailableGroupsForProject,
 } from "../../apis/projects/user-groups";
+import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 
 const { Option } = Select;
@@ -36,7 +36,7 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   /*
   Get a list of project roles
    */
-  const { roles } = useRoles();
+  const { roles } = useSelector((state) => state.project);
 
   /*
   Whether the modal to add a user is visible

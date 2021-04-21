@@ -2,9 +2,8 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Select } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RolesContext } from "../../contexts/roles-context";
+import { useRoles } from "../../contexts/roles-context";
 import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
-import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -18,13 +17,10 @@ import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
  */
 export function ProjectRole({ item }) {
   const dispatch = useDispatch();
-  const { canManage, roles } = useSelector((state) => state.project);
+  const { canManage } = useSelector((state) => state.project);
+  const { roles } = useRoles();
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
-
-  React.useEffect(() => {
-    dispatch(fetchProjectRoles());
-  }, [dispatch]);
 
   /**
    * Find the translation for any project role.  If the role is not found,
@@ -37,10 +33,6 @@ export function ProjectRole({ item }) {
     const role = roles.find((r) => r.value === key);
     return role ? role.label : "UNKNOWN";
   };
-
-  React.useEffect(() => {
-    fetchProjectRoles();
-  }, []);
 
   const onChange = (value) => {
     setLoading(true);
@@ -67,7 +59,7 @@ export function ProjectRole({ item }) {
       loading={loading}
       disabled={loading}
     >
-      {roles.map((role) => (
+      {roles?.map((role) => (
         <Select.Option
           className={`t-${role.value}`}
           value={role.value}

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getProjectRoles } from "../apis/projects/projects";
 
 const RolesContext = createContext();
 
@@ -10,15 +11,15 @@ const RolesContext = createContext();
  * @returns {*}
  * @constructor
  */
-function RolesProvider({ children, rolesFn }) {
+function RolesProvider({ children }) {
   const [roles, setRoles] = useState([]);
 
   /*
   When the component is mounted, get the list up current roles from the server.
    */
   useEffect(() => {
-    rolesFn().then((data) => setRoles(data));
-  }, [rolesFn]);
+    getProjectRoles().then((data) => setRoles(data));
+  }, []);
 
   /**
    * Find the translation for any project role.  If the role is not found,
