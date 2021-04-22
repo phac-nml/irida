@@ -114,6 +114,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param project the Project to get fields for
 	 * @return a list of fields
 	 */
+	@Deprecated
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project project);
 
 	/**
