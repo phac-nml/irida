@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
@@ -298,9 +299,13 @@ public class LineListController {
 	 */
 	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
+
+		List<MetadataFieldResponse> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project);
-		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
+
+		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
+				.map(MetadataFieldResponse::getField)
+				.collect(Collectors.toSet());
 
 		// Need to get all the fields from the templates too!
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
