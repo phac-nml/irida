@@ -79,11 +79,19 @@ public class LineListController {
 				.getAuthentication();
 		Project project = projectService.read(projectId);
 
+		List<MetadataFieldResponse> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+				project);
+
+		List<MetadataTemplateField> metadataTemplateFields = permittedFieldsForCurrentUser.stream()
+				.map(MetadataFieldResponse::getField)
+				.collect(Collectors.toList());
+
 		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
 		return projectSamples.stream()
 				.map(join -> {
 					ProjectSampleJoin psj = (ProjectSampleJoin)join;
-					Set<MetadataEntry> metadata = sampleService.getMetadataForSample(psj.getObject());
+					Set<MetadataEntry> metadata = sampleService.getMetadataForSample(psj.getObject(),
+							metadataTemplateFields);
 					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()), metadata);
 				})
 				.collect(Collectors.toList());
