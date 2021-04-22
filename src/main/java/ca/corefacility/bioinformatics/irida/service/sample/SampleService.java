@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -76,6 +77,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the metadata associated with the given sample
 	 */
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
+
+	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
