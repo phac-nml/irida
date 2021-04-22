@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateF
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -282,7 +283,15 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		User loggedInUser = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, loggedInUser);
 
-		ProjectRole projectRole = projectJoinForUser.getProjectRole();
+		ProjectRole projectRole;
+
+		//if the user isn't on the project and the user is an admin, give them project owner powers
+		if (projectJoinForUser == null && loggedInUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN)) {
+			projectRole = ProjectRole.PROJECT_OWNER;
+		} else {
+			projectRole = projectJoinForUser.getProjectRole();
+		}
 
 		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole);
 
