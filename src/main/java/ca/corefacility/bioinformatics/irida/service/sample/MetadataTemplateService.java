@@ -144,6 +144,20 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role);
 
+	/**
+	 * Get all {@link MetadataTemplateField} that are permitted to be read by a given {@link ProjectRole}
+	 *
+	 * @param project the {@link Project} to get fields for
+	 * @param role    the {@link ProjectRole} to request
+	 * @return the {@link MetadataTemplateField} the given role can read
+	 */
 	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role);
+
+	/**
+	 * Get all {@link MetadataTemplateField} that the currently logged in user is allowed to read
+	 *
+	 * @param project the {@link Project} to request fields from
+	 * @return a {@link MetadataFieldResponse} collecting the allowed {@link MetadataTemplateField}
+	 */
 	public List<MetadataFieldResponse> getPermittedFieldsForCurrentUser(Project project);
 }

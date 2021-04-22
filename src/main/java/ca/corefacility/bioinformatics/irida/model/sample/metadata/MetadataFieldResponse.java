@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 
+/**
+ * A collection of {@link MetadataTemplateField} for a given {@link Project}
+ */
 public class MetadataFieldResponse {
 	private Project project;
 	private MetadataTemplateField field;
