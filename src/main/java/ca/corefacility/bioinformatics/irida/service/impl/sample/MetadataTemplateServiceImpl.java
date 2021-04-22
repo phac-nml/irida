@@ -4,27 +4,35 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -38,15 +46,20 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	private ProjectMetadataTemplateJoinRepository pmtRepository;
 	private MetadataFieldRepository fieldRepository;
 	private MetadataRestrictionRepository metadataRestrictionRepository;
+	private UserRepository userRepository;
+	private ProjectUserJoinRepository pujRepository;
 
 	@Autowired
 	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,
 			ProjectMetadataTemplateJoinRepository pmtRepository, MetadataFieldRepository fieldRepository,
-			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository) {
+			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository,
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
 		super(repository, validator, MetadataTemplate.class);
 		this.pmtRepository = pmtRepository;
 		this.fieldRepository = fieldRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
+		this.userRepository = userRepository;
+		this.pujRepository = pujRepository;
 	}
 
 	/**
@@ -219,6 +232,65 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		}
 
 		return metadataRestrictionRepository.save(metadataRestrictionForFieldAndProject);
+	}
+
+	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role) {
+		//get all fields for the project
+		List<MetadataTemplateField> metadataFieldsForProject = fieldRepository.getMetadataFieldsForProject(project);
+
+		//get all restrictions for the project
+		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository.getRestrictionForProject(
+				project);
+
+		//collect the fields into a map
+		Map<MetadataTemplateField, MetadataRestriction> restrictionMap = restrictionForProject.stream()
+				.collect(Collectors.toMap(MetadataRestriction::getField, field -> field));
+
+		//for each field to check
+		List<MetadataTemplateField> filteredFields = metadataFieldsForProject.stream()
+				.filter(field -> {
+					//if the restriction map contains the field
+					if (restrictionMap.containsKey(field)) {
+						MetadataRestriction metadataRestriction = restrictionMap.get(field);
+						ProjectRole level = metadataRestriction.getLevel();
+
+						//compare the restriction level to the given role.  If it's greater or equal, we're good
+						if (role.compareTo(level) >= 0) {
+							return true;
+						}
+
+						//if it's less, filter out the field
+						return false;
+					} else {
+						//if there's no restriction set for the field, all users can view
+						return true;
+					}
+
+				})
+				.collect(Collectors.toList());
+
+		return filteredFields;
+	}
+
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public List<MetadataFieldResponse> getPermittedFieldsForCurrentUser(Project project) {
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+
+		User loggedInUser = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, loggedInUser);
+
+		ProjectRole projectRole = projectJoinForUser.getProjectRole();
+
+		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole);
+
+		List<MetadataFieldResponse> fieldResponses = permittedFieldsForRole.stream()
+				.map(f -> new MetadataFieldResponse(project, f))
+				.collect(Collectors.toList());
+
+		return fieldResponses;
 	}
 
 }

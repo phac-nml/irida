@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -141,4 +142,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return the created {@link MetadataRestriction}
 	 */
 	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role);
+
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role);
+	public List<MetadataFieldResponse> getPermittedFieldsForCurrentUser(Project project);
 }
