@@ -2,9 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Select } from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RolesContext } from "../../contexts/roles-context";
 import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
-import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -21,10 +19,6 @@ export function ProjectRole({ item }) {
   const { canManage, roles } = useSelector((state) => state.project);
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
-
-  React.useEffect(() => {
-    dispatch(fetchProjectRoles());
-  }, [dispatch]);
 
   /**
    * Find the translation for any project role.  If the role is not found,
