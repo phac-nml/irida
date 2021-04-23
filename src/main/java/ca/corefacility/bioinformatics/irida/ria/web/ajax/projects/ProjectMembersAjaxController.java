@@ -71,7 +71,7 @@ public class ProjectMembersAjaxController {
 	 * @return message to display to the user about the outcome of the change in role.
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
-	public ResponseEntity<String> updateUserRoleOnProject(@PathVariable Long projectId, @RequestParam Long id,
+	public ResponseEntity<String> updateUserRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
 			String role, Locale locale) {
 		try {
 			return ResponseEntity.ok(projectMembersService.updateUserRoleOnProject(projectId, id, role, locale));
