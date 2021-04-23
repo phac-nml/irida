@@ -10,7 +10,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * context
  * @type {string|*}
  */
-const BASE = setBaseUrl(`/ajax/projects/members`);
+const BASE_URL = setBaseUrl(`/ajax/projects/members`);
 
 /**
  * Remove a user from a project
@@ -22,7 +22,7 @@ const BASE = setBaseUrl(`/ajax/projects/members`);
 export async function removeUserFromProject({ projectId, id }) {
   const params = new URLSearchParams({ projectId, id });
   try {
-    const { data } = await axios.delete(`${BASE}?${params.toString()}`);
+    const { data } = await axios.delete(`${BASE_URL}?${params.toString()}`);
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);
@@ -41,7 +41,7 @@ export async function updateUserRoleOnProject({ projectId, id, role }) {
   const params = new URLSearchParams({ role, id, projectId });
   try {
     return await axios
-      .put(`${BASE}/role?${params.toString()}`)
+      .put(`${BASE_URL}/role?${params.toString()}`)
       .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(e.response.data);
@@ -58,7 +58,7 @@ export async function updateUserRoleOnProject({ projectId, id, role }) {
 export async function getAvailableUsersForProject({ projectId, query }) {
   const params = new URLSearchParams({ projectId, query });
   return await axios
-    .get(`${BASE}/available?${params.toString()}`)
+    .get(`${BASE_URL}/available?${params.toString()}`)
     .then(({ data }) => data || []);
 }
 
@@ -72,7 +72,7 @@ export async function getAvailableUsersForProject({ projectId, query }) {
  */
 export async function addMemberToProject({ projectId, id, role }) {
   return await axios
-    .post(`${BASE}/add?projectId=${projectId}`, {
+    .post(`${BASE_URL}/add?projectId=${projectId}`, {
       id,
       role,
     })
