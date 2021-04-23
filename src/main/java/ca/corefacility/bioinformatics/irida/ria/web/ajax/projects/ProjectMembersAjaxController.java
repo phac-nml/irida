@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectMembersSer
  * Controller for all asynchronous request from the UI for Project Members
  */
 @RestController
-@RequestMapping("/ajax/projects/{projectId}/members")
+@RequestMapping("/ajax/projects/members")
 public class ProjectMembersAjaxController {
 	private final UIProjectMembersService projectMembersService;
 
@@ -37,7 +37,7 @@ public class ProjectMembersAjaxController {
 	 * @return sorted and filtered list of project members
 	 */
 	@RequestMapping("")
-	public ResponseEntity<TableResponse<ProjectMemberTableModel>> getProjectMembers(@PathVariable Long projectId,
+	public ResponseEntity<TableResponse<ProjectMemberTableModel>> getProjectMembers(@RequestParam Long projectId,
 			@RequestBody TableRequest tableRequest) {
 		return ResponseEntity.ok(projectMembersService.getProjectMembers(projectId, tableRequest));
 	}
@@ -51,7 +51,7 @@ public class ProjectMembersAjaxController {
 	 * @return message to display to the user about the outcome of the removal.
 	 */
 	@RequestMapping(value = "", method = RequestMethod.DELETE)
-	public ResponseEntity<String> removeUserFromProject(@PathVariable Long projectId, @RequestParam Long id,
+	public ResponseEntity<String> removeUserFromProject(@RequestParam Long projectId, @RequestParam Long id,
 			Locale locale) {
 		try {
 			return ResponseEntity.ok(projectMembersService.removeUserFromProject(projectId, id, locale));
@@ -89,7 +89,7 @@ public class ProjectMembersAjaxController {
 	 * @return List of filtered users.
 	 */
 	@RequestMapping("/available")
-	public ResponseEntity<List<User>> getAvailableMembersForProject(@PathVariable Long projectId,
+	public ResponseEntity<List<User>> getAvailableMembersForProject(@RequestParam Long projectId,
 			@RequestParam String query) {
 		return ResponseEntity.ok(projectMembersService.getAvailableUsersForProject(projectId, query));
 	}
@@ -103,7 +103,7 @@ public class ProjectMembersAjaxController {
 	 * @return message to display to the user about the outcome of adding the user to the project
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ResponseEntity<String> addMemberToProject(@PathVariable Long projectId,
+	public ResponseEntity<String> addMemberToProject(@RequestParam Long projectId,
 			@RequestBody NewMemberRequest request, Locale locale) {
 		return ResponseEntity.ok(projectMembersService.addMemberToProject(projectId, request, locale));
 	}

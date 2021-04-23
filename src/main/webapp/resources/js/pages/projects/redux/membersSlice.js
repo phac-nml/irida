@@ -5,7 +5,6 @@ export const updateMemberRole = createAsyncThunk(
   `members/updateMemberRole`,
   async ({ id, role }, { rejectWithValue, getState }) => {
     const { project } = getState();
-    console.log(project);
     try {
       const message = await updateUserRoleOnProject({
         projectId: project.id,
@@ -14,7 +13,7 @@ export const updateMemberRole = createAsyncThunk(
       });
       return { message };
     } catch (e) {
-      return rejectWithValue(e.response.data);
+      return rejectWithValue(e);
     }
   }
 );

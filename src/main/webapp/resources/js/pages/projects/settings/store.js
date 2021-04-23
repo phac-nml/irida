@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import coverageSlice from "../redux/coverageSlice";
 import membersSlice from "../redux/membersSlice";
 import pipelinesSlice from "../redux/pipelinesSlice";
-import projectReducer from "../redux/projectSlice";
+import projectSlice from "../redux/projectSlice";
 import userSlice from "../redux/userSlice";
 
 /*
@@ -11,7 +11,7 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
  */
 export default configureStore({
   reducer: {
-    project: projectReducer,
+    project: projectSlice,
     coverage: coverageSlice,
     pipelines: pipelinesSlice,
     members: membersSlice,

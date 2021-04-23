@@ -73,9 +73,8 @@ export const setDefaultTemplateForProject = createAsyncThunk(
 export const projectSlice = createSlice({
   name: "project",
   initialState: {
-    canManage: window.project?.canManage || false,
+    canManage: false,
     loading: true,
-    defaultMetadataTemplateId: window.project?.defaultMetadataTemplateId,
     roles: [],
   },
   reducers: {},
