@@ -42,6 +42,12 @@ export function ProjectRole({ item }) {
     fetchProjectRoles();
   }, []);
 
+  /**
+   * When the project role for the user is updated, update the new value on
+   * the server as well.
+   *
+   * @param {string} value - updated role
+   */
   const onChange = (value) => {
     setLoading(true);
     dispatch(updateMemberRole({ id: item.id, role: value }))
