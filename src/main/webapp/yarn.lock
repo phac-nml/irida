@@ -761,7 +761,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-wrap-function@npm:^7.12.13, @babel/helper-wrap-function@npm:^7.13.0":
+"@babel/helper-wrap-function@npm:^7.13.0":
   version: 7.13.0
   resolution: "@babel/helper-wrap-function@npm:7.13.0"
   dependencies:
@@ -875,19 +875,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 831dcc6711b9181978a62a5955104ef3f23de0c9a6740af0ca7395153cd4d481665fd557aa178ac53146cdbf49cf95f3ab06e51f2c79343a69639ed09877f7db
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-proposal-function-sent@npm:^7.12.13":
-  version: 7.12.13
-  resolution: "@babel/plugin-proposal-function-sent@npm:7.12.13"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.12.13
-    "@babel/helper-wrap-function": ^7.12.13
-    "@babel/plugin-syntax-function-sent": ^7.12.13
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 5fc86acf677985085ecff4fa4a2e1f766f9f91609fbdb4d9baafdcdc23635da5cae33e1f7e5c0a9734d7a55ccd726e5d8086703b2398b5315a0ec62ffde5af11
   languageName: node
   linkType: hard
 
@@ -1066,17 +1053,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 832e007319bc5040818012d51eb91c3ad4c38a1ea696e9a9805df4d601d8c4f061032cb61494946e7bdaa5db0422a6bb6f39577cd0e5c8323b6bb2c364406dcb
-  languageName: node
-  linkType: hard
-
-"@babel/plugin-syntax-function-sent@npm:^7.12.13":
-  version: 7.12.13
-  resolution: "@babel/plugin-syntax-function-sent@npm:7.12.13"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.12.13
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 60d04a80a055f02dfaf0f084102c17cbd537f5b35fc2ee26b2829b3b37b0a4415bec393e861e0e5e67a885ba39817632ebbbdd60e14720c717ecb7b0d1908ae5
   languageName: node
   linkType: hard
 
@@ -7105,7 +7081,6 @@ fsevents@^2.1.2:
     "@babel/core": ^7.12.13
     "@babel/plugin-proposal-class-properties": ^7.12.13
     "@babel/plugin-proposal-export-default-from": ^7.12.13
-    "@babel/plugin-proposal-function-sent": ^7.12.13
     "@babel/plugin-proposal-optional-chaining": ^7.12.13
     "@babel/plugin-syntax-dynamic-import": ^7.8.3
     "@babel/plugin-transform-react-jsx-self": ^7.12.13
