@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import coverageReducer from "../redux/coverageSlice";
-import memberReducer from "../redux/membersSlice";
 import pipelineReducer from "../redux/pipelinesSlice";
 import projectReducer from "../redux/projectSlice";
 import userReducer from "../redux/userSlice";
@@ -14,7 +13,6 @@ export default configureStore({
     project: projectReducer,
     coverage: coverageReducer,
     pipelines: pipelineReducer,
-    members: memberReducer,
     user: userReducer,
   },
 });

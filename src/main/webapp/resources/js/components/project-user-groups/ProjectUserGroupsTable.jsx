@@ -20,7 +20,7 @@ import { AddGroupButton } from "./AddGroupButton";
  */
 export function ProjectUserGroupsTable() {
   const { updateTable } = useContext(PagedTableContext);
-  const { canManage } = useSelector((state) => state.project);
+  const { id: projectId, canManage } = useSelector((state) => state.project);
 
   const columns = [
     {
@@ -39,7 +39,10 @@ export function ProjectUserGroupsTable() {
       title: i18n("ProjectUserGroupsTable.role"),
       render(text, group) {
         return (
-          <ProjectRole item={group} updateFn={updateUserGroupRoleOnProject} />
+          <ProjectRole
+            item={group}
+            updateRoleFn={updateUserGroupRoleOnProject}
+          />
         );
       },
     },
@@ -60,7 +63,9 @@ export function ProjectUserGroupsTable() {
           <RemoveTableItemButton
             confirmText={i18n("usergroups.remove.confirm")}
             tooltipText={i18n("usergroups.remove.tooltip")}
-            onRemove={() => removeUserGroupFromProject({ groupId: group.id })}
+            onRemove={() =>
+              removeUserGroupFromProject({ projectId, groupId: group.id })
+            }
             onRemoveSuccess={updateTable}
           />
         );
@@ -76,6 +81,7 @@ export function ProjectUserGroupsTable() {
             key="add-group-btn"
             defaultRole="PROJECT_USER"
             onGroupAdded={updateTable}
+            projectId={projectId}
           />
         ) : null,
       ]}

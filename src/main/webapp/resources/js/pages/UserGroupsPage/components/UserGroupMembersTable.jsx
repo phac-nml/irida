@@ -1,18 +1,19 @@
-import { UserGroupRole } from "../../../components/roles/UserGroupRole";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { Button, Table } from "antd";
 import React from "react";
-import { SPACE_XS } from "../../../styles/spacing";
-import { stringSorter } from "../../../utilities/table-utilities";
-import {
-  AddMemberButton,
-  RemoveTableItemButton
-} from "../../../components/Buttons";
+import { updateUserGroupRoleOnProject } from "../../../apis/projects/user-groups";
 import {
   addMemberToUserGroup,
   getAvailableUsersForUserGroup,
   removeMemberFromUserGroup,
 } from "../../../apis/users/groups";
-import { Button, Table } from "antd";
+import {
+  AddMemberButton,
+  RemoveTableItemButton,
+} from "../../../components/Buttons";
+import { ProjectRole } from "../../../components/roles/ProjectRole";
+import { SPACE_XS } from "../../../styles/spacing";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { stringSorter } from "../../../utilities/table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /**
@@ -55,7 +56,10 @@ export default function UserGroupMembersTable({
       width: 200,
       render(text, user) {
         return (
-          <UserGroupRole user={user} canManage={canManage} groupId={groupId} />
+          <ProjectRole
+            item={user}
+            updateRoleFn={updateUserGroupRoleOnProject}
+          />
         );
       },
     },
