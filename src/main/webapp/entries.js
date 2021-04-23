@@ -42,8 +42,6 @@ module.exports = {
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "create-metadata-template":
-    "./resources/js/pages/projects/metadata-template/create-metadata-template.js",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
@@ -69,8 +67,7 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
-  "project-metadata-templates":
-    "./resources/js/pages/projects/metadata-templates",
+  "project-metadata": "./resources/js/pages/projects/metadata",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
 };

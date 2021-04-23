@@ -141,7 +141,7 @@ public class RESTProjectSamplesControllerTest {
 		@SuppressWarnings("unchecked") ResourceCollection<Sample> samples = (ResourceCollection<Sample>) o;
 		assertEquals(1, samples.size());
 		List<Link> resourceLinks = samples.getLinks();
-		assertEquals(1, resourceLinks.size());
+		assertEquals(2, resourceLinks.size());
 		Link self = resourceLinks.iterator()
 				.next();
 		assertEquals("self", self.getRel());

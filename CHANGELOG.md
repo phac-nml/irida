@@ -13,6 +13,13 @@ Changes
 * [Developer/REST/UI]: Added announcements bell icon to main nav bar, added priority announcements modal at login, and refreshed user announcements page.
 * [UI]: Fixed bug where samples not rendering on project samples page when the config setting ngsarchive.linker.available is set to false.
 * [Developer]: Updated to Webpack v5 and Yarn v2.
+* [UI]: Updated create metadata template.
+* [Developer]: Updated to Yarn v2.4.1.
+* [Developer]: Cleaned up compile warnings related to deprecated methods in Spring, JSON parsing, and Galaxy connectivity.
+* [UI] Updated And Design to v4.15.0.
+* [Database]: Removed `sample_metadata_entry` table which should have been dropped in 21.01 release. (21.01.3)
+* [REST]: Added endpoint to request a full project's sample metadata at the same time.
+* [Developer]: Chromedriver updated to 90.
 
 20.09 to 21.01
 --------------
