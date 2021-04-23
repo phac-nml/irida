@@ -235,7 +235,11 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return metadataRestrictionRepository.save(metadataRestrictionForFieldAndProject);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
+	@Override
 	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role) {
 		//get all fields for the project
 		List<MetadataTemplateField> metadataFieldsForProject = fieldRepository.getMetadataFieldsForProject(project);
@@ -274,7 +278,11 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return filteredFields;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
 	public List<MetadataFieldResponse> getPermittedFieldsForCurrentUser(Project project) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
