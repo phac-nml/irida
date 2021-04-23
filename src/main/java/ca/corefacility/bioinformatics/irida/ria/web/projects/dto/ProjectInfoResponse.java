@@ -20,7 +20,7 @@ public class ProjectInfoResponse {
 	private boolean canManage;
 	private boolean canManageRemote;
 	private String priority;
-	private Long defaultMetadataTemplate;
+	private Long defaultMetadataTemplateId = 0L;
 
 	public ProjectInfoResponse(Project project, boolean canManage, boolean canManageRemote) {
 		this.id = project.getId();
@@ -34,7 +34,7 @@ public class ProjectInfoResponse {
 
 		MetadataTemplate defaultTemplate = project.getDefaultMetadataTemplate();
 		if (defaultTemplate != null) {
-			defaultMetadataTemplate = defaultTemplate.getId();
+			defaultMetadataTemplateId = defaultTemplate.getId();
 		}
 
 		AnalysisSubmission.Priority analysisPriority = project.getAnalysisPriority();
@@ -115,11 +115,11 @@ public class ProjectInfoResponse {
 		this.priority = priority;
 	}
 
-	public Long getDefaultMetadataTemplate() {
-		return defaultMetadataTemplate;
+	public Long getDefaultMetadataTemplateId() {
+		return defaultMetadataTemplateId;
 	}
 
-	public void setDefaultMetadataTemplate(Long defaultMetadataTemplate) {
-		this.defaultMetadataTemplate = defaultMetadataTemplate;
+	public void setDefaultMetadataTemplateId(Long defaultMetadataTemplateId) {
+		this.defaultMetadataTemplateId = defaultMetadataTemplateId;
 	}
 }
