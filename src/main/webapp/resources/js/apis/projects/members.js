@@ -37,9 +37,13 @@ export async function removeUserFromProject({ projectId, id }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateUserRoleOnProject({ projectId, id, role }) {
-  return await axios
-    .put(`${BASE}${projectId}/members/role?id=${id}&role=${role}`)
-    .then(({ data }) => data);
+  try {
+    return await axios
+      .put(`${BASE}${projectId}/members/role?id=${id}&role=${role}`)
+      .then(({ data }) => data);
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
 }
 
 /**
