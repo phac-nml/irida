@@ -1,18 +1,20 @@
+import { Redirect, Router } from "@reach/router";
+import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Router, Redirect } from "@reach/router";
-import { Col, Layout, Row, Skeleton } from "antd";
+import { Provider, useDispatch } from "react-redux";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
-import { Provider, useDispatch } from "react-redux";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { fetchProjectDetails } from "../redux/projectSlice";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
-import { fetchProjectDetails } from "../redux/projectSlice";
+
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
 const ProjectProcessing = React.lazy(() =>
   import("./components/ProjectProcessing")
 );
+const ProjectMembers = React.lazy(() => import("./components/ProjectMembers"));
 
 /*
 WEBPACK PUBLIC PATH:
@@ -51,7 +53,7 @@ const ProjectSettings = (props) => {
 
   React.useEffect(() => {
     dispatch(fetchProjectDetails(props.projectId));
-  }, []);
+  }, [dispatch, props.projectId]);
 
   return (
     <Layout>
@@ -61,11 +63,12 @@ const ProjectSettings = (props) => {
       <Layout>
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
           <Row>
-            <Col lg={24} xl={16} xxl={12}>
+            <Col lg={24} xxl={12}>
               <Suspense fallback={<Skeleton />}>
                 <Router>
                   <ProjectDetails path="/details" />
                   <ProjectProcessing path="/processing" />
+                  <ProjectMembers path="/members" />
                   <Redirect from="/" to="/details" />
                 </Router>
               </Suspense>

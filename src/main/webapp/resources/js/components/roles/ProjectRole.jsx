@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Select } from "antd";
-import { RolesContext, useRoles } from "../../contexts/roles-context";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RolesContext } from "../../contexts/roles-context";
+import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
+import { fetchProjectRoles } from "../../pages/projects/redux/projectSlice";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -12,34 +16,55 @@ import { RolesContext, useRoles } from "../../contexts/roles-context";
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({
-  item,
-  // eslint-disable-next-line no-console
-  updateFn = () => console.error("updateFn is required"),
-}) {
-  const [role, setRole] = useState(item.role);
+export function ProjectRole({ item }) {
+  const dispatch = useDispatch();
+  const { canManage, roles } = useSelector((state) => state.project);
+  const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useRoles();
 
+  React.useEffect(() => {
+    dispatch(fetchProjectRoles());
+  }, [dispatch]);
+
+  /**
+   * Find the translation for any project role.  If the role is not found,
+   * just return "UNKNOWN"
+   *
+   * @param key
+   * @returns {*}
+   */
+  const getRoleFromKey = (key) => {
+    const role = roles.find((r) => r.value === key);
+    return role ? role.label : "UNKNOWN";
+  };
+
+  React.useEffect(() => {
+    fetchProjectRoles();
+  }, []);
+
+  /**
+   * When the project role for the user is updated, update the new value on
+   * the server as well.
+   *
+   * @param {string} value - updated role
+   */
   const onChange = (value) => {
     setLoading(true);
-    updateFn({
-      id: item.id,
-      role: value,
-    })
-      .then((message) => {
+    dispatch(updateMemberRole({ id: item.id, role: value }))
+      .then(unwrapResult)
+      .then(({ message }) => {
         notification.success({ message });
         setRole(value);
       })
-      .catch((error) =>
+      .catch((message) =>
         notification.error({
-          message: error.response.data,
+          message,
         })
       )
       .finally(() => setLoading(false));
   };
 
-  return window.PAGE.canManage ? (
+  return canManage ? (
     <Select
       className="t-role-select"
       value={role}

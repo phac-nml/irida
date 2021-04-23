@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
-import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { ProjectRole } from "../roles/ProjectRole";
-import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
-  updateUserRoleOnProject,
 } from "../../apis/projects/members";
+import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
+import { ProjectRole } from "../roles/ProjectRole";
 
 /**
  * React component to display a table of project users.
@@ -17,10 +18,17 @@ import {
  * @constructor
  */
 export function ProjectMembersTable() {
+  const dispatch = useDispatch();
   const { updateTable } = useContext(PagedTableContext);
+  const { id: projectId, canManage } = useSelector((state) => state.project);
+  const { identifier: userId } = useSelector((state) => state.user);
+
+  React.useEffect(() => {
+    dispatch(getCurrentUserDetails());
+  }, [dispatch]);
 
   function userRemoved(user) {
-    if (user.id === window.PAGE.user) {
+    if (user.id === userId) {
       // If the user can remove themselves from the project, then when they
       // are removed redirect them to their project page since they cannot
       // use this project anymore.
@@ -41,7 +49,7 @@ export function ProjectMembersTable() {
       title: i18n("ProjectMembersTable.role"),
       dataIndex: "role",
       render(text, item) {
-        return <ProjectRole item={item} updateFn={updateUserRoleOnProject} />;
+        return <ProjectRole item={item} />;
       },
     },
     {
@@ -53,13 +61,13 @@ export function ProjectMembersTable() {
     },
   ];
 
-  if (window.PAGE.canManage) {
+  if (canManage) {
     columns.push({
       align: "right",
       render(text, user) {
         return (
           <RemoveTableItemButton
-            onRemove={() => removeUserFromProject(user.id)}
+            onRemove={() => removeUserFromProject({ projectId, id: user.id })}
             onRemoveSuccess={() => userRemoved(user)}
             tooltipText={i18n("RemoveMemberButton.tooltip")}
             confirmText={i18n("RemoveMemberButton.confirm")}
@@ -72,7 +80,7 @@ export function ProjectMembersTable() {
   return (
     <PagedTable
       buttons={[
-        window.PAGE.canManage ? (
+        canManage ? (
           <AddMemberButton
             key="add-members-btn"
             label={i18n("AddMemberButton.label")}

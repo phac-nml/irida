@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import coverageReducer from "../redux/coverageSlice";
+import memberReducer from "../redux/membersSlice";
+import pipelineReducer from "../redux/pipelinesSlice";
 import projectReducer from "../redux/projectSlice";
-import coverageSlice from "../redux/coverageSlice";
-import pipelinesSlice from "../redux/pipelinesSlice";
+import userReducer from "../redux/userSlice";
 
 /*
 Redux Store for project metadata.
@@ -10,7 +12,9 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
 export default configureStore({
   reducer: {
     project: projectReducer,
-    coverage: coverageSlice,
-    pipelines: pipelinesSlice,
+    coverage: coverageReducer,
+    pipelines: pipelineReducer,
+    members: memberReducer,
+    user: userReducer,
   },
 });
