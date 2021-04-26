@@ -37,7 +37,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
 
-	//rel for getting an indiviual sample's metadata
+	//rel for getting an individual sample's metadata
 	public static final String METADATA_REL = "sample/metadata";
 
 	//rel for getting all metadata for a project
@@ -85,7 +85,10 @@ public class RESTSampleMetadataController {
 	 * @param projectId the id of the {@link Project} to get metadata for
 	 * @return A collection of metadata for all the {@link Sample}s in the {@link Project}
 	 */
+	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project",
+			description = "Get all the sample metadata for a given project.", tags = "samples")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
+	@ResponseBody
 	public ResponseResource<ResourceCollection<SampleMetadataResponse>> getProjectSampleMetadata(final @PathVariable Long projectId) {
 		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
 
