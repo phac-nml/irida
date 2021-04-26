@@ -61,7 +61,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file) {
-		String perm = "rwxrwxr-x";
 		try {
 			// We set the blobClient "path" to which file we want to get
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
@@ -71,8 +70,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 				Path tempFile = tempDirectory.resolve(file.getFileName()
 						.toString());
 				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
-				Set<PosixFilePermission> permissions = PosixFilePermissions.fromString(perm);
-				Files.setPosixFilePermissions(tempDirectory, permissions);
 				return new IridaTemporaryFile(tempFile, tempDirectory);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
@@ -89,7 +86,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
-		String perm = "rwxrwxr-x";
 		try {
 			// We set the blobClient "path" to which file we want to get
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
@@ -99,8 +95,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 				Path tempFile = tempDirectory.resolve(file.getFileName()
 						.toString());
 				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
-				Set<PosixFilePermission> permissions = PosixFilePermissions.fromString(perm);
-				Files.setPosixFilePermissions(tempDirectory, permissions);
 				return new IridaTemporaryFile(tempFile, tempDirectory);
 			} catch (IOException e) {
 				logger.error(e.getMessage());

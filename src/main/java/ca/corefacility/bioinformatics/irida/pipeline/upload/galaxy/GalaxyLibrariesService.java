@@ -151,21 +151,42 @@ public class GalaxyLibrariesService {
 		File file = path.toFile();
 
 		try {
-			LibraryContent rootContent = librariesClient.getRootFolder(library
-					.getId());
-			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
-			upload.setFolderId(rootContent.getId());
+			LibraryContent rootContent = librariesClient.getRootFolder(library.getId());
+			if(dataStorage.equals(DataStorage.LOCAL)) {
+				FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
+				upload.setFolderId(rootContent.getId());
 
-			upload.setContent(file.getAbsolutePath());
-			upload.setName(file.getName());
-			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
-			upload.setFileType(fileType.toString());
+				upload.setContent(file.getAbsolutePath());
+				upload.setName(file.getName());
+				upload.setLinkData(true);
+				upload.setFileType(fileType.toString());
 
-			GalaxyObject uploadObject = librariesClient.uploadFilesystemPaths(
-					library.getId(), upload);
+				GalaxyObject uploadObject = librariesClient.uploadFilesystemPaths(library.getId(), upload);
+				return uploadObject.getId();
+			} else {
+				// If the dataStorage isn't local we upload the file to the library instead of linking
+				FileLibraryUpload fileLibraryUpload = new FileLibraryUpload();
+				fileLibraryUpload.setContent(file.getAbsolutePath());
+				fileLibraryUpload.setName(file.getName());
+				fileLibraryUpload.setFolderId(rootContent.getId());
+				fileLibraryUpload.setFile(path.toFile());
+				fileLibraryUpload.setFileType(fileType.toString());
 
+				ClientResponse clientResponse = librariesClient.uploadFile(library.getId(), fileLibraryUpload);
 
-			return uploadObject.getId();
+				if (clientResponse == null) {
+					throw new UploadException(
+							"Could not upload " + file + " to library " + library.getId() + " ClientResponse is null");
+				} else if (ClientResponse.Status.OK.getStatusCode() != clientResponse.getStatusInfo()
+						.getStatusCode()) {
+					String message = "Could not upload " + file + " to library " + library.getId() + " ClientResponse: "
+							+ clientResponse.getStatusInfo() + " " + clientResponse.getEntity(String.class);
+					logger.error(message);
+					throw new UploadException(message);
+				} else {
+					return library.getId();
+				}
+			}
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
 		}
