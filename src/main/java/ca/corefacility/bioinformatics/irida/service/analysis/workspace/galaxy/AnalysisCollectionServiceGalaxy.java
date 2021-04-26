@@ -45,6 +45,7 @@ public class AnalysisCollectionServiceGalaxy {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
+	private DataStorage dataStorageType;
 
 	/**
 	 * Builds a new {@link AnalysisCollectionServiceGalaxy} with the given
@@ -61,6 +62,7 @@ public class AnalysisCollectionServiceGalaxy {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;
+		this.dataStorageType = iridaFileStorageUtility.isStorageTypeLocal() ? DataStorage.LOCAL : DataStorage.REMOTE;
 	}
 
 	/**
@@ -105,7 +107,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		// upload files to library and then to a history
 		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(samplesMap.keySet(),
-				workflowHistory, workflowLibrary, DataStorage.LOCAL);
+				workflowHistory, workflowLibrary, dataStorageType);
 
 		for (Path sequenceFilePath : samplesMap.keySet()) {
 			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
@@ -183,7 +185,7 @@ public class AnalysisCollectionServiceGalaxy {
 
 		// upload files to library and then to a history
 		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL);
+				workflowHistory, workflowLibrary, dataStorageType);
 
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			Path fileForward = samplesMapPairForward.get(sample);

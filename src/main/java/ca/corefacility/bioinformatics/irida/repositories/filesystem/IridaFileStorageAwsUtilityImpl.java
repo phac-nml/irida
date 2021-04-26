@@ -62,14 +62,11 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file) {
-		String perm = "rwxrwxr-x";
 		try {
 			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
 			Path tempDirectory = Files.createTempDirectory("aws-tmp-");
 			Path tempFile = tempDirectory.resolve(file.getFileName()
 					.toString());
-			Set<PosixFilePermission> permissions = PosixFilePermissions.fromString(perm);
-			Files.setPosixFilePermissions(tempDirectory, permissions);
 
 			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
@@ -94,14 +91,11 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
-		String perm = "rwxrwxr-x";
 		try {
 			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
 			Path tempDirectory = Files.createTempDirectory(prefix + "-aws-tmp-");
 			Path tempFile = tempDirectory.resolve(file.getFileName()
 					.toString());
-			Set<PosixFilePermission> permissions = PosixFilePermissions.fromString(perm);
-			Files.setPosixFilePermissions(tempDirectory, permissions);
 
 			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {

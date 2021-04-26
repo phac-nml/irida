@@ -38,8 +38,7 @@ public class UIReferenceFile {
 		this.projectId = null;
 		this.projectName = null;
 		this.createdDate = file.getCreatedDate();
-		Path path = file.getFile();
-		this.size = FileUtilities.humanReadableByteCount(Files.size(path), true);
+		this.size = file.getFileSize();
 	}
 
 	public Long getId() {
