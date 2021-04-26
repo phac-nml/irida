@@ -985,6 +985,18 @@
 							<!--<daemon>true</daemon>-->
 							<systemProperties>
 								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also
+										done in failsafe plugin -->
+									<name>spring.profiles.active</name>
+									<value>it</value>
+								</systemProperty>
+								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also
+										done in failsafe plugin -->
+									<name>irida.db.profile</name>
+									<value>it</value>
+								</systemProperty>
+								<systemProperty>
 									<name>jetty.port</name>
 									<value>${jetty.port}</value>
 								</systemProperty>
