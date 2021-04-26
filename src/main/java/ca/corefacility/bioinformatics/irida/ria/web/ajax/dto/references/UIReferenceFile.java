@@ -1,14 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 /**
  * Represents a reference file in the UI.
