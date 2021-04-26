@@ -36,7 +36,7 @@ if not (result_dir.endswith('docs') or result_dir.endswith('docs/')) or not os.p
 
 # first generate the Open API file
 print("========== Generating the Open API file")
-retval = os.system('mvn verify -DskipTests=true')
+retval = os.system('mvn verify -DskipTests=true -Dliquibase.update.database.schema=false')
 
 # ensure it generated correctly
 if retval != 0:
