@@ -12,11 +12,6 @@ This document describes the REST API for IRIDA.
 * This comment becomes the toc
 {:toc}
 
-Swagger
-=======
-
-The IRIDA REST API definition can be found [here](../../swagger-ui/index.html).
-
 Formats
 =======
 
