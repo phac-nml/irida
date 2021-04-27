@@ -59,12 +59,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			// We set the blobClient "path" to which file we want to get
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
 
-			try (InputStream initialStream = blobClient.openInputStream()) {
+			try {
 				logger.trace("Getting file from azure [" + file.toString() + "]");
 				Path tempDirectory = Files.createTempDirectory("azure-tmp-");
 				Path tempFile = tempDirectory.resolve(file.getFileName()
 						.toString());
-				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
+				blobClient.downloadToFile(tempFile.toString());
 				return new IridaTemporaryFile(tempFile, tempDirectory);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
@@ -84,12 +84,12 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try {
 			// We set the blobClient "path" to which file we want to get
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			try (InputStream initialStream = blobClient.openInputStream()) {
+			try {
 				logger.trace("Getting file from azure [" + file.toString() + "]");
 				Path tempDirectory = Files.createTempDirectory(prefix + "-azure-tmp-");
 				Path tempFile = tempDirectory.resolve(file.getFileName()
 						.toString());
-				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
+				blobClient.downloadToFile(tempFile.toString());
 				return new IridaTemporaryFile(tempFile, tempDirectory);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
