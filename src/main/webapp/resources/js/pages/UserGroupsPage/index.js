@@ -45,7 +45,7 @@ export function UserGroups() {
       }
     >
       <UserGroupsProvider>
-        <RolesProvider rolesFn={getUserGroupRoles}>
+        <RolesProvider getRolesFn={getUserGroupRoles}>
           <Router style={{ height: "100%" }}>
             <UserGroupsPage baseUrl={DEFAULT_URL} path={DEFAULT_URL} />
             <UserGroupsDetailsPage

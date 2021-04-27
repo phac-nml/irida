@@ -1,16 +1,16 @@
 import { Button, Table } from "antd";
 import React from "react";
-import { updateUserGroupRoleOnProject } from "../../../apis/projects/user-groups";
 import {
   addMemberToUserGroup,
   getAvailableUsersForUserGroup,
   removeMemberFromUserGroup,
+  updateUserRoleOnUserGroups,
 } from "../../../apis/users/groups";
 import {
   AddMemberButton,
   RemoveTableItemButton,
 } from "../../../components/Buttons";
-import { ProjectRole } from "../../../components/roles/ProjectRole";
+import { GroupRole } from "../../../components/roles/GroupRole";
 import { SPACE_XS } from "../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { stringSorter } from "../../../utilities/table-utilities";
@@ -56,9 +56,10 @@ export default function UserGroupMembersTable({
       width: 200,
       render(text, user) {
         return (
-          <ProjectRole
+          <GroupRole
             item={user}
-            updateRoleFn={updateUserGroupRoleOnProject}
+            canManage={canManage}
+            updateRoleFn={updateMemberRole}
           />
         );
       },
@@ -98,6 +99,10 @@ export default function UserGroupMembersTable({
   const addMember = ({ id, role }) => {
     return addMemberToUserGroup({ groupId, userId: id, role });
   };
+
+  async function updateMemberRole({ userId, role }) {
+    return updateUserRoleOnUserGroups({ groupId, userId, role });
+  }
 
   return (
     <>

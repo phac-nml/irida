@@ -77,6 +77,14 @@ export function ProjectMembersTable() {
     });
   }
 
+  async function addMember({ id, role }) {
+    return addMemberToProject({ projectId, id, role });
+  }
+
+  async function getAvailableUsers(query) {
+    return getAvailableUsersForProject({ projectId, query });
+  }
+
   return (
     <PagedTable
       buttons={[
@@ -85,9 +93,9 @@ export function ProjectMembersTable() {
             key="add-members-btn"
             label={i18n("AddMemberButton.label")}
             modalTitle={i18n("AddMemberButton.modal.title")}
-            addMemberFn={addMemberToProject}
+            addMemberFn={addMember}
             addMemberSuccessFn={updateTable}
-            getAvailableMembersFn={getAvailableUsersForProject}
+            getAvailableMembersFn={getAvailableUsers}
             defaultRole="PROJECT_USER"
           />
         ) : null,

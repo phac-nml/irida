@@ -1,9 +1,9 @@
-import React, { lazy } from "react";
 import { Router } from "@reach/router";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { RolesProvider } from "../../../contexts/roles-context";
+import React, { lazy } from "react";
 import { getUserGroupRoles } from "../../../apis/users/groups";
+import { RolesProvider } from "../../../contexts/roles-context";
 import { UserGroupsProvider } from "../../../contexts/UserGroupsContext";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const UserGroupsPage = lazy(() =>
   import("../../UserGroupsPage/components/UserGroupsPage")
@@ -23,7 +23,7 @@ export default function AdminUserGroupsPage() {
 
   return (
     <UserGroupsProvider>
-      <RolesProvider rolesFn={getUserGroupRoles}>
+      <RolesProvider getRolesFn={getUserGroupRoles}>
         <Router>
           <UserGroupsPage baseUrl={DEFAULT_URL} path={"/"} />
           <UserGroupsDetailsPage baseUrl={DEFAULT_URL} path={"/:id"} />
