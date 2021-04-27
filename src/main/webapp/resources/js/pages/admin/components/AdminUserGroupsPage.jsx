@@ -1,11 +1,13 @@
 import React, { lazy } from "react";
 import { Router } from "@reach/router";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { RolesProvider } from "../../../contexts";
+import { RolesProvider } from "../../../contexts/roles-context";
 import { getUserGroupRoles } from "../../../apis/users/groups";
 import { UserGroupsProvider } from "../../../contexts/UserGroupsContext";
 
-const UserGroupsPage = lazy(() => import("../../UserGroupsPage/components/UserGroupsPage"));
+const UserGroupsPage = lazy(() =>
+  import("../../UserGroupsPage/components/UserGroupsPage")
+);
 const UserGroupsDetailsPage = lazy(() =>
   import("../../UserGroupsPage/components/UserGroupDetailsPage")
 );
