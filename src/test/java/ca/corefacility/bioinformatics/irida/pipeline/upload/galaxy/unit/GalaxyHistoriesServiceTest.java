@@ -33,8 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -63,7 +61,6 @@ public class GalaxyHistoriesServiceTest {
 	@Mock private ClientResponse invalidResponse;
 	@Mock private ClientResponse okayResponse;
 	@Mock private GalaxyLibrariesService galaxyLibrariesService;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 	
 	private GalaxyHistoriesService galaxyHistory;
 	
@@ -100,10 +97,9 @@ public class GalaxyHistoriesServiceTest {
 				ClientResponse.Status.OK);
 		when(invalidResponse.getStatusInfo()).thenReturn(
 				ClientResponse.Status.FORBIDDEN);
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
-				galaxyLibrariesService, iridaFileStorageUtility);
+				galaxyLibrariesService);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
 

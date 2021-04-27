@@ -146,7 +146,7 @@ public class AnalysisExecutionServiceTestConfig {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
 				analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy,
-				sequencingObjectService);
+				sequencingObjectService, iridaFileStorageUtility);
 	}
 
 	@Lazy

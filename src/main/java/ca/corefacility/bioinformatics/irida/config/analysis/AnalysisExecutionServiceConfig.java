@@ -168,7 +168,7 @@ public class AnalysisExecutionServiceConfig {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
 				analysisProvenanceService(), analysisParameterServiceGalaxy,
-				sequencingObjectService);
+				sequencingObjectService, iridaFileStorageUtility);
 	}
 
 	@Lazy

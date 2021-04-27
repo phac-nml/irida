@@ -47,8 +47,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Gala
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -96,7 +94,6 @@ public class GalaxyWorkflowsIT {
 	private LibrariesClient librariesClient;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	private GalaxyHistoriesService galaxyHistory;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
@@ -156,10 +153,9 @@ public class GalaxyWorkflowsIT {
 		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
-		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService, iridaFileStorageUtility);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}

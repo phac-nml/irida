@@ -8,7 +8,6 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -21,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -65,9 +63,6 @@ import com.sun.jersey.api.client.ClientResponse;
 public class IridaApiNoGalaxyTestConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiNoGalaxyTestConfig.class);
 
-	@Autowired
-	private IridaFileStorageUtility iridaFileStorageUtility;
-
 	/**
 	 * @return An ExecutorService executing code in the same thread for testing
 	 *         purposes.
@@ -93,7 +88,7 @@ public class IridaApiNoGalaxyTestConfig {
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService(HistoriesClient historiesClient, ToolsClient toolsClient,
 			GalaxyLibrariesService librariesService) {
-		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService, iridaFileStorageUtility);
+		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesService);
 	}
 
 	@Bean

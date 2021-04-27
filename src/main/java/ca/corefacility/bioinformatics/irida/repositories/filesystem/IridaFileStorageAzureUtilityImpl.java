@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -25,12 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.blob.models.BlobRange;
-import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.*;
+import com.azure.storage.blob.models.*;
 import com.azure.storage.blob.specialized.BlobInputStream;
 
 /**
@@ -61,6 +58,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try {
 			// We set the blobClient "path" to which file we want to get
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+
 			try (InputStream initialStream = blobClient.openInputStream()) {
 				logger.trace("Getting file from azure [" + file.toString() + "]");
 				Path tempDirectory = Files.createTempDirectory("azure-tmp-");
@@ -143,7 +141,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
 		try {
 			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
-			blobClient.uploadFromFile(source.toString(), false);
+
+			// Upload the file in blocks rather than all at once to prevent a timeout if the file is large.
+			int blockSize = 2 * 1024 * 1024; //2MB
+			ParallelTransferOptions parallelTransferOptions = new ParallelTransferOptions(blockSize, 8, null);
+			blobClient.uploadFromFile(source.toString(), parallelTransferOptions, new BlobHttpHeaders(), null, AccessTier.HOT,
+					new BlobRequestConditions(), Duration.ofMinutes(10));
+
 			logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
 		} catch (BlobStorageException e) {
 			logger.error("Unable to upload file to azure [" + e + "]");
