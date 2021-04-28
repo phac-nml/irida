@@ -2,6 +2,15 @@ import { notification, Select } from "antd";
 import React from "react";
 import { useRoles } from "../../contexts/roles-context";
 
+/**
+ * React component for selecting a user group role for a member of a group
+ *
+ * @param item
+ * @param canManage
+ * @param updateRoleFn
+ * @returns {JSX.Element|*}
+ * @constructor
+ */
 export function GroupRole({ item, canManage, updateRoleFn }) {
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = React.useState(false);
