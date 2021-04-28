@@ -77,10 +77,23 @@ export function ProjectMembersTable() {
     });
   }
 
+  /**
+   * Add a new member to the current project
+   *
+   * @param {number} id - identifier for the user to add to the project
+   * @param {string} role - project role for the user
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   async function addMember({ id, role }) {
     return addMemberToProject({ projectId, id, role });
   }
 
+  /**
+   * Get available users for the current project based on a search query
+   *
+   * @param {string} query - term to search for user by
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   async function getAvailableUsers(query) {
     return getAvailableUsersForProject({ projectId, query });
   }
