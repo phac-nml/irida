@@ -14,6 +14,7 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
 import {
   IconDownloadFile,
   IconRemove,
@@ -24,10 +25,7 @@ import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
 
 import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
-import {
-  fetchTemplatesForProject,
-  removeTemplateFromProject,
-} from "../../../redux/templatesSlice";
+import { removeTemplateFromProject } from "../../../redux/templatesSlice";
 
 const { Text } = Typography;
 
@@ -51,9 +49,12 @@ const HoverItem = styled(List.Item)`
  * @constructor
  */
 export function MetadataTemplatesList({ projectId }) {
-  const { templates, loading } = useSelector((state) => state.templates);
   const { canManage, defaultMetadataTemplateId } = useSelector(
     (state) => state.project
+  );
+
+  const { data: templates, error, isLoading } = useGetTemplatesForProjectQuery(
+    projectId
   );
 
   const dispatch = useDispatch();
@@ -63,7 +64,6 @@ export function MetadataTemplatesList({ projectId }) {
 
   React.useEffect(() => {
     dispatch(fetchFieldsForProject(projectId));
-    dispatch(fetchTemplatesForProject(projectId));
   }, [dispatch, projectId]);
 
   /**
@@ -153,7 +153,7 @@ export function MetadataTemplatesList({ projectId }) {
         {i18n("ProjectMetadataTemplates.title")}
       </Typography.Title>
       <List
-        loading={loading}
+        loading={isLoading}
         bordered
         itemLayout="vertical"
         size="large"

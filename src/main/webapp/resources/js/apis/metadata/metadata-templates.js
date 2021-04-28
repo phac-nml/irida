@@ -1,18 +1,24 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
+import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
 
-/**
- * Get all metadata templates associated with a project
- * @param projectId
- * @returns {Promise<AxiosResponse<any>>}
- */
-export function getProjectMetadataTemplates(projectId) {
-  return axios
-    .get(`${BASE_URL}?projectId=${projectId}`)
-    .then(({ data }) => data);
-}
+export const templateApi = createApi({
+  reducerPath: `templateApi`,
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  endpoints: (build) => ({
+    getTemplatesForProject: build.query({
+      query: (projectId) => `/?projectId=${projectId}`,
+      transformResponse(response, meta) {
+        return addKeysToList(response, "template", "identifier");
+      },
+    }),
+  }),
+});
+
+export const { useGetTemplatesForProjectQuery } = templateApi;
 
 /**
  * Create a new metadata template within a project
@@ -82,4 +88,3 @@ export async function setDefaultMetadataTemplate(projectId, templateId) {
     return Promise.reject(e.response.data.message);
   }
 }
-

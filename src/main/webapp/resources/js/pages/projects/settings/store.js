@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+
+import { templateApi } from "../../../apis/metadata/metadata-templates";
 import coverageReducer from "../redux/coverageSlice";
 import fieldsReducer from "../redux/fieldsSlice";
 import pipelineReducer from "../redux/pipelinesSlice";
@@ -18,5 +20,6 @@ export default configureStore({
     user: userReducer,
     fields: fieldsReducer,
     templates: templateReducer,
+    [templateApi.reducerPath]: templateApi.reducer,
   },
 });

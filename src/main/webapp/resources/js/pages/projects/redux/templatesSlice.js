@@ -2,31 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   createProjectMetadataTemplate,
   deleteMetadataTemplate,
-  getProjectMetadataTemplates,
   updateMetadataTemplate,
 } from "../../../apis/metadata/metadata-templates";
-import { addKeysToList } from "../../../utilities/http-utilities";
-
-/**
- * Redux Async Thunk for fetching all the templates for a specific project.
- * @type {AsyncThunk<unknown, void, {}>}
- */
-export const fetchTemplatesForProject = createAsyncThunk(
-  `templates/fetchTemplatesForProject`,
-  async (projectId) => {
-    const templates = await getProjectMetadataTemplates(projectId);
-    return addKeysToList(templates, "template", "identifier");
-  },
-  {
-    condition(projectId, { getState }) {
-      const { templates } = getState();
-      if (templates.requests[projectId]) {
-        // Already fetched or in progress, don't need to re-fetch
-        return false;
-      }
-    },
-  }
-);
 
 /**
  * Redux Async Thunk for removing a template from a specific project.
@@ -99,22 +76,6 @@ export const templatesSlice = createSlice({
     },
   },
   extraReducers: {
-    /*
-    Successful fetching of metadata templates for the current project.
-     */
-    [fetchTemplatesForProject.fulfilled]: (state, { meta, payload }) => {
-      const requests = { ...state.requests };
-      delete requests[meta.args];
-      return {
-        ...state,
-        templates: [...payload, ...state.templates],
-        loading: false,
-        requests,
-      };
-    },
-    [fetchTemplatesForProject.pending]: (state, { meta }) => {
-      state.requests[meta.arg] = meta.requestId;
-    },
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
       const templates = state.templates.filter(
         (template) => template.identifier !== payload.templateId
