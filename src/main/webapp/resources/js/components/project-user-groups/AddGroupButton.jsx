@@ -21,8 +21,10 @@ const { Text } = Typography;
 
 /**
  * React component to add render a Button to add a user group to a project.
- * @param {string} defaultRole button default
- * @param {function} onGroupAdded what to do after the group is added
+ *
+ * @param {string} defaultRole - button default
+ * @param {function} onGroupAdded - what to do after the group is added
+ * @param {number} projectId - identifier for the project to add the group to.
  * @returns {*}
  * @constructor
  */
