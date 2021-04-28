@@ -93,13 +93,33 @@ export default function UserGroupMembersTable({
     });
   }
 
+  /**
+   * Get the available users for a group based on a search parameter
+   *
+   * @param {string} query - search parameter for the user
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   const getAvailableMembers = (query) =>
     getAvailableUsersForUserGroup({ id: groupId, query });
 
+  /**
+   * Add a member to this groups
+   *
+   * @param {number} id - identifier for the user to add
+   * @param {string} role - group role to set the user to
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   const addMember = ({ id, role }) => {
     return addMemberToUserGroup({ groupId, userId: id, role });
   };
 
+  /**
+   * Update a member role on this group
+   *
+   * @param {number} userId - identifier for the member to update
+   * @param {string} role - group role to update the user to
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   async function updateMemberRole({ userId, role }) {
     return updateUserRoleOnUserGroups({ groupId, userId, role });
   }
