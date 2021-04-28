@@ -29,8 +29,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -66,17 +64,15 @@ public class GalaxyHistoriesService {
 	
 	private GalaxyLibrariesService librariesService;
 
-	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
 	 * @param librariesService  A service for dealing with Galaxy libraries.
-	 * @param iridaFileStorageUtility The file storage implementation
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, GalaxyLibrariesService librariesService, IridaFileStorageUtility iridaFileStorageUtility) {
+			ToolsClient toolsClient, GalaxyLibrariesService librariesService) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
 		checkNotNull(librariesService, "librariesService is null");
@@ -84,7 +80,6 @@ public class GalaxyHistoriesService {
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
 		this.librariesService = librariesService;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -154,10 +149,9 @@ public class GalaxyHistoriesService {
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
 		checkNotNull(history.getId(), "history id is null");
-		checkState(iridaFileStorageUtility.fileExists(path), "path " + path + " does not exist");
+		checkState(path.toFile().exists(), "path " + path + " does not exist");
 
-		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(path);
-		File file = iridaTemporaryFile.getFile().toFile();
+		File file = path.toFile();
 
 		FileUploadRequest uploadRequest = new FileUploadRequest(history.getId(), file);
 		uploadRequest.setFileType(fileType.toString());
@@ -177,7 +171,6 @@ public class GalaxyHistoriesService {
 			throw new UploadException(message);
 		} else {
 			Dataset dataset = getDatasetForFileInHistory(file.getName(), history.getId());
-			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 			return dataset;
 		}
 	}

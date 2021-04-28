@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -108,9 +107,6 @@ public class AnalysisExecutionServiceConfig {
 	private List<AnalysisSampleUpdater> defaultAnalysisSampleUpdaters;
 
 	@Autowired
-	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
-
-	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
 
@@ -168,7 +164,7 @@ public class AnalysisExecutionServiceConfig {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
 				analysisProvenanceService(), analysisParameterServiceGalaxy,
-				sequencingObjectService);
+				sequencingObjectService, iridaFileStorageUtility);
 	}
 
 	@Lazy
@@ -180,7 +176,6 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository);
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService, iridaFileStorageUtility);
 	}
 }

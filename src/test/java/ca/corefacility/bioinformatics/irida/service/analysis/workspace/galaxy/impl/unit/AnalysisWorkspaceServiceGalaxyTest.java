@@ -20,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
@@ -86,6 +88,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private SequencingObjectService sequencingObjectService;
 
 	private AnalysisWorkspaceServiceGalaxy workflowPreparation;
+
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	private Set<SequencingObject> inputFiles;
 	private ReferenceFile referenceFile;
@@ -196,10 +200,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowDetails = new WorkflowDetails();
 		workflowDetails.setId(WORKFLOW_ID);
 
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
 				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy,
 				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy,
-				sequencingObjectService);
+				sequencingObjectService, iridaFileStorageUtility);
 
 		output1Dataset = new Dataset();
 		output1Dataset.setId("1");
@@ -298,9 +304,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				.thenReturn(REFERENCE_FILE_ID);
 
 		when(analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(any(Map.class), eq(workflowHistory),
-				eq(workflowLibrary), any(AnalysisSubmission.class))).thenReturn(collectionResponseSingle);
+				eq(workflowLibrary))).thenReturn(collectionResponseSingle);
 		when(analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(any(Map.class), eq(workflowHistory),
-				eq(workflowLibrary), any(AnalysisSubmission.class))).thenReturn(collectionResponsePaired);
+				eq(workflowLibrary))).thenReturn(collectionResponsePaired);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 
@@ -318,9 +324,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertTrue("workflow inputs should contain sequence file paired entry",
 				workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesSingleEnd(any(Map.class), any(History.class),
-				any(Library.class), any(AnalysisSubmission.class));
+				any(Library.class));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesPaired(any(Map.class), any(History.class),
-				any(Library.class), any(AnalysisSubmission.class));
+				any(Library.class));
 	}
 
 	/**
@@ -363,7 +369,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				.thenReturn(REFERENCE_FILE_ID);
 
 		when(analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(any(Map.class), eq(workflowHistory),
-				eq(workflowLibrary), any(AnalysisSubmission.class))).thenReturn(collectionResponseSingle);
+				eq(workflowLibrary))).thenReturn(collectionResponseSingle);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 
@@ -380,9 +386,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertTrue("workflow inputs should contain sequence file single entry",
 				workflowInputsMap.containsKey(SEQUENCE_FILE_SINGLE_ID));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesSingleEnd(any(Map.class), any(History.class),
-				any(Library.class), any(AnalysisSubmission.class));
+				any(Library.class));
 		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesPaired(any(Map.class), any(History.class),
-				any(Library.class), any(AnalysisSubmission.class));
+				any(Library.class));
 	}
 
 	/**
@@ -426,7 +432,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				.thenReturn(REFERENCE_FILE_ID);
 
 		when(analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(any(Map.class), eq(workflowHistory),
-				eq(workflowLibrary), any(AnalysisSubmission.class))).thenReturn(collectionResponsePaired);
+				eq(workflowLibrary))).thenReturn(collectionResponsePaired);
 
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 
@@ -443,9 +449,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertTrue("workflow inputs should contain sequence file paired entry",
 				workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
 		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesSingleEnd(any(Map.class),
-				any(History.class), any(Library.class), any(AnalysisSubmission.class));
+				any(History.class), any(Library.class));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesPaired(any(Map.class), any(History.class),
-				any(Library.class), any(AnalysisSubmission.class));
+				any(Library.class));
 	}
 
 	/**

@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
@@ -137,7 +136,6 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private static final String FORWARD_NAME = "forward";
 	private static final String REVERSE_NAME = "reverse";
 
-	private AnalysisSubmission analysisSubmission;
 	private SingleEndSequenceFile singleEndFile;
 	private SequenceFile sequenceFile;
 	private UUID workflowId = UUID.randomUUID();
@@ -218,13 +216,6 @@ public class AnalysisCollectionServiceGalaxyIT {
 		sequenceFile = singleEndFile.getFileWithId(1L);
 		assertNotNull(sequenceFile);
 		Set<SequencingObject> singleFiles = Sets.newHashSet(singleEndFile);
-
-		analysisSubmission = AnalysisSubmission.builder(workflowId).name(analysisName).inputFiles(singleFiles)
-				.referenceFile(referenceFile).build();
-		analysisSubmission.setRemoteAnalysisId(analysisId);
-		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
-		analysisSubmission.setSubmitter(submitter1);
-		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.NOT_CLEANED);
 	}
 
 	/**
@@ -327,7 +318,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample1 = sampleRepository.findById(1L).orElse(null);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
-				.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory, createdLibrary, analysisSubmission);
+				.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -391,7 +382,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesSingleEnd(sampleSequenceFiles, createdHistory,
-				createdLibrary, analysisSubmission);
+				createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -439,7 +430,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample1 = sampleRepository.findById(1L).orElse(null);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy
-				.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory, createdLibrary, analysisSubmission);
+				.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory, createdLibrary);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -538,7 +529,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
-				createdLibrary, analysisSubmission);
+				createdLibrary);
 
 		SequenceFilePair pairedSequenceFile = sequenceFiles.iterator().next();
 		for (SequenceFile file : pairedSequenceFile.getFiles()) {
@@ -594,7 +585,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
-				createdLibrary, analysisSubmission);
+				createdLibrary);
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {

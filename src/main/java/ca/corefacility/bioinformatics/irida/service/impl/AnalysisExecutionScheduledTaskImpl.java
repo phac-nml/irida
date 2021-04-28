@@ -19,20 +19,15 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTempFile;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -58,9 +53,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private GalaxyJobErrorsService galaxyJobErrorsService;
 	private JobErrorRepository jobErrorRepository;
 	private EmailController emailController;
-	private IridaFileStorageUtility iridaFileStorageUtility;
 	private AnalysisWorkspaceService analysisWorkspaceService;
-	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -74,24 +67,19 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @param jobErrorRepository                   {@link JobErrorRepository} for {@link JobError} objects
 	 * @param emailController                      {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
 	 * @param analysisWorkspaceService             {@link AnalysisWorkspaceService}
-	 * @param iridaFileStorageUtility              The irida file storage utility implementation
-	 * @param analysisSubmissionTempFileRepository {@link AnalysisSubmissionTempFileRepository} for {@link AnalysisSubmissionTempFile} objects
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository, EmailController emailController, AnalysisWorkspaceService analysisWorkspaceService, IridaFileStorageUtility iridaFileStorageUtility,
-			AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository) {
+			JobErrorRepository jobErrorRepository, EmailController emailController, AnalysisWorkspaceService analysisWorkspaceService) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
 		this.galaxyJobErrorsService = galaxyJobErrorsService;
 		this.jobErrorRepository = jobErrorRepository;
 		this.emailController = emailController;
-		this.iridaFileStorageUtility = iridaFileStorageUtility;
 		this.analysisWorkspaceService = analysisWorkspaceService;
-		this.analysisSubmissionTempFileRepository = analysisSubmissionTempFileRepository;
 	}
 
 	/**
@@ -192,9 +180,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
-
-					// Clean up any downloaded temp files
-					cleanupTemporaryDownloadedFiles(analysisSubmission);
 
 					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
@@ -322,9 +307,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		 */
 		if (finalWorkflowStatusSet) {
 
-			// Clean up any downloaded temp files
-			cleanupTemporaryDownloadedFiles(analysisSubmission);
-
 			/*
 			 If the analysis has finished with an error or completed successfully
 			 and the user selected to be emailed on completion or error, then the following code
@@ -371,32 +353,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			}
 
 			return cleanedSubmissions;
-		}
-	}
-
-	/**
-	 * Cleanup any temporary downloaded files and cleanup associated {@link AnalysisSubmissionTempFile} objects
-	 *
-	 * @param submission The analysis submission to clean up temporary downloaded files for
-	 */
-	private void cleanupTemporaryDownloadedFiles(AnalysisSubmission submission) {
-		/*
-		 Cleanup any files that were downloaded from an object store to run an analysis and
-		 remove the analysis submission temp file record from the database.
-		 */
-		List<AnalysisSubmissionTempFile> analysisSubmissionTempFiles = analysisSubmissionTempFileRepository.findAllByAnalysisSubmission(
-				submission);
-
-		if (analysisSubmissionTempFiles.size() > 0) {
-			logger.debug("Cleaning up " + analysisSubmissionTempFiles.size()
-					+ " temporary files downloaded from object store.");
-		}
-
-		for (AnalysisSubmissionTempFile analysisSubmissionTempFile : analysisSubmissionTempFiles) {
-			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(
-					new IridaTemporaryFile(analysisSubmissionTempFile.getFilePath(),
-							analysisSubmissionTempFile.getFileDirectoryPath()));
-			analysisSubmissionTempFileRepository.delete(analysisSubmissionTempFile);
 		}
 	}
 }
