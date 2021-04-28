@@ -40,9 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
@@ -99,12 +97,6 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
-	@Autowired
-	private IridaFileStorageUtility iridaFileStorageUtility;
-
-	@Autowired
-	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
-
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
@@ -129,8 +121,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository);
+				jobErrorRepository, emailController, analysisWorkspaceService);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -197,8 +188,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	public void testFullAnalysisRunSuccessNoCleanupAge() throws Exception {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1)),
-				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService,
-				iridaFileStorageUtility, analysisSubmissionTempFileRepository);
+				galaxyJobErrorsService, jobErrorRepository, emailController, analysisWorkspaceService);
 		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);

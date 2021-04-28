@@ -29,9 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -85,12 +83,6 @@ public class GalaxyJobErrorsServiceIT {
 	@Autowired
 	private AnalysisWorkspaceService analysisWorkspaceService;
 
-	@Autowired
-	private IridaFileStorageUtility iridaFileStorageUtility;
-
-	@Autowired
-	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
-
 
 	@Before
 	public void setup() throws URISyntaxException, IOException {
@@ -110,8 +102,7 @@ public class GalaxyJobErrorsServiceIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository);
+				jobErrorRepository, emailController, analysisWorkspaceService);
 
 	}
 

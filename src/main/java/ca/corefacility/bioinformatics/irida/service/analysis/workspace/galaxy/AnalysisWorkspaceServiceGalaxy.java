@@ -226,7 +226,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelSingle);
 			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy
-					.uploadSequenceFilesSingleEnd(singleFiles, workflowHistory, workflowLibrary, analysisSubmission);
+					.uploadSequenceFilesSingleEnd(singleFiles, workflowHistory, workflowLibrary);
 			inputs.setInput(workflowSequenceFileSingleInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
 					collectionResponseSingle.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}
@@ -236,7 +236,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String workflowSequenceFilePairedInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelPaired);
 			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy
-					.uploadSequenceFilesPaired(pairedFiles, workflowHistory, workflowLibrary, analysisSubmission);
+					.uploadSequenceFilesPaired(pairedFiles, workflowHistory, workflowLibrary);
 			inputs.setInput(workflowSequenceFilePairedInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
 					collectionResponsePaired.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}

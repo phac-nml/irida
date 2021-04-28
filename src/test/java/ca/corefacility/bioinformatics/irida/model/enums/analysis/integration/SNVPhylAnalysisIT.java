@@ -58,9 +58,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionTempFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
@@ -131,13 +129,6 @@ public class SNVPhylAnalysisIT {
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
-	@Autowired
-	private IridaFileStorageUtility iridaFileStorageUtility;
-
-	@Autowired
-	private AnalysisSubmissionTempFileRepository analysisSubmissionTempFileRepository;
-
-
 	private Path sequenceFilePathA1;
 	private Path sequenceFilePathA2;
 	private Path sequenceFilePathB1;
@@ -183,8 +174,7 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
-				jobErrorRepository, emailController, analysisWorkspaceService, iridaFileStorageUtility,
-				analysisSubmissionTempFileRepository);
+				jobErrorRepository, emailController, analysisWorkspaceService);
 
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");

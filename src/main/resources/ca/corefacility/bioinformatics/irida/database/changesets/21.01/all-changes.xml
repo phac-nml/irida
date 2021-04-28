@@ -12,7 +12,5 @@
              relativeToChangelogFile="true"/>
     <include file="remove-sample-metadata-entry.xml"
              relativeToChangelogFile="true"/>
-    <include file="analysis-submission-cloud-temp-files.xml"
-             relativeToChangelogFile="true"/>
 </databaseChangeLog>
 
