@@ -14,13 +14,16 @@ import {
 import differenceBy from "lodash/differenceBy";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import DnDTable from "../../../components/ant.design/DnDTable";
-import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
-import { HelpPopover } from "../../../components/popovers";
-import { blue6 } from "../../../styles/colors";
-import { addKeysToList } from "../../../utilities/http-utilities";
-import { setDefaultTemplateForProject } from "../redux/projectSlice";
-import { updateTemplate } from "../redux/templatesSlice";
+import DnDTable from "../../../../../components/ant.design/DnDTable";
+import {
+  IconCheckCircle,
+  IconRemove,
+} from "../../../../../components/icons/Icons";
+import { HelpPopover } from "../../../../../components/popovers";
+import { blue6 } from "../../../../../styles/colors";
+import { addKeysToList } from "../../../../../utilities/http-utilities";
+import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
+import { updateTemplate } from "../../../redux/templatesSlice";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 
 const { Paragraph, Text } = Typography;
