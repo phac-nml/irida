@@ -11,18 +11,28 @@ export const templateApi = createApi({
   tagTypes: ["MetadataTemplates"],
   endpoints: (build) => ({
     getTemplatesForProject: build.query({
-      query: (projectId) => `/?projectId=${projectId}`,
-      provides: (_, id) => [{ type: "MetadataTemplate", id }], // TODO: this and tagTypes seems wrong.
-      transformResponse(response, meta) {
+      query: (projectId) => ({
+        url: "",
+        params: { projectId },
+      }),
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "MetadataTemplates", id }))
+          : ["MetadataTemplates"],
+      transformResponse(response) {
         return addKeysToList(response, "template", "identifier");
       },
     }),
     deleteTemplate: build.mutation({
       query: ({ projectId, templateId }) => ({
-        url: `/${templateId}?projectId=${projectId}`,
+        url: `/${templateId}`,
+        params: { projectId },
         method: `DELETE`,
       }),
-      invalidates: ["MetadataTemplate"],
+      transformResponse(response) {
+        return response.message;
+      },
+      invalidates: ["MetadataTemplates"],
     }),
   }),
 });

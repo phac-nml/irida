@@ -2,7 +2,8 @@ import { navigate } from "@reach/router";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Form, Input, Modal, notification, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
 import DnDTable from "../../../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../../../components/popovers";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
@@ -21,11 +22,13 @@ const { Text } = Typography;
  */
 export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const dispatch = useDispatch();
-  const { templates } = useSelector((state) => state.templates);
   const [names, setNames] = React.useState(undefined);
   const [visible, setVisible] = React.useState(false);
   const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
+  const { data: templates, error, isLoading } = useGetTemplatesForProjectQuery(
+    projectId
+  );
 
   React.useEffect(() => {
     if (fields.length) {

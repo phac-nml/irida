@@ -2,7 +2,6 @@ import { Button, Empty, Space, Table, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
-import { fetchTemplatesForProject } from "../../../redux/templatesSlice";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
@@ -20,7 +19,6 @@ export function MetadataFieldsList({ projectId }) {
 
   React.useEffect(() => {
     dispatch(fetchFieldsForProject(projectId));
-    dispatch(fetchTemplatesForProject(projectId));
   }, [dispatch, projectId]);
 
   React.useEffect(() => {

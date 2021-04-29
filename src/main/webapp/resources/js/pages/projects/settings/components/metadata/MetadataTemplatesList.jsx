@@ -146,7 +146,7 @@ export function MetadataTemplatesList({ projectId }) {
    */
   const deleteTemplate = async (templateId) =>
     deleteMetadataTemplate({ projectId, templateId })
-      .then(({ message }) => notification.success({ message }))
+      .then(({ data }) => notification.success({ message: data }))
       .catch((message) => notification.error({ message }));
 
   return (
