@@ -55,7 +55,7 @@ export function MetadataTemplatesList({ projectId }) {
     (state) => state.project
   );
 
-  const { data: templates, error, isLoading } = useGetTemplatesForProjectQuery(
+  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );
   const [deleteMetadataTemplate] = useDeleteTemplateMutation();
@@ -146,8 +146,9 @@ export function MetadataTemplatesList({ projectId }) {
    */
   const deleteTemplate = async (templateId) =>
     deleteMetadataTemplate({ projectId, templateId })
-      .then(({ data }) => notification.success({ message: data }))
-      .catch((message) => notification.error({ message }));
+      .unwrap()
+      .then(({ message }) => notification.success({ message }))
+      .catch(({ data }) => notification.error({ message: data.error }));
 
   return (
     <>

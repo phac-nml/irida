@@ -8,7 +8,7 @@ const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
 export const templateApi = createApi({
   reducerPath: `templateApi`,
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
-  tagTypes: ["MetadataTemplates"],
+  tagTypes: ["MetadataTemplate"],
   endpoints: (build) => ({
     getTemplatesForProject: build.query({
       query: (projectId) => ({
@@ -17,11 +17,31 @@ export const templateApi = createApi({
       }),
       providesTags: (result) =>
         result
-          ? result.map(({ id }) => ({ type: "MetadataTemplates", id }))
-          : ["MetadataTemplates"],
+          ? result.map(({ identifier }) => ({
+              type: "MetadataTemplate",
+              id: identifier,
+            }))
+          : ["MetadataTemplate"],
       transformResponse(response) {
         return addKeysToList(response, "template", "identifier");
       },
+    }),
+    createMetadataTemplate: build.mutation({
+      query: ({ projectId, template }) => ({
+        url: `/`,
+        params: { projectId },
+        method: "POST",
+        body: template,
+      }),
+      invalidatesTags: ["MetadataTemplates"],
+    }),
+    updateMetadataTemplate: build.mutation({
+      query: (template) => ({
+        url: `/${template.identifier}`,
+        method: `PUT`,
+        body: template,
+      }),
+      invalidatesTags: ["MetadataTemplate"],
     }),
     deleteTemplate: build.mutation({
       query: ({ projectId, templateId }) => ({
@@ -29,10 +49,7 @@ export const templateApi = createApi({
         params: { projectId },
         method: `DELETE`,
       }),
-      transformResponse(response) {
-        return response.message;
-      },
-      invalidates: ["MetadataTemplates"],
+      invalidatesTags: ["MetadataTemplate"],
     }),
   }),
 });
@@ -41,6 +58,8 @@ console.log(templateApi);
 
 export const {
   useGetTemplatesForProjectQuery,
+  useCreateMetadataTemplateMutation,
+  useUpdateMetadataTemplateMutation,
   useDeleteTemplateMutation,
 } = templateApi;
 
@@ -59,40 +78,6 @@ export async function createProjectMetadataTemplate(projectId, parameters) {
     return data;
   } catch (e) {
     return Promise.reject(e.response.data.message);
-  }
-}
-
-/**
- * Update the details in a metadata template
- * @param {Object} template - the template to update
- * @returns {Promise<*>}
- */
-export async function updateMetadataTemplate(template) {
-  try {
-    const { data } = await axios.put(
-      `${BASE_URL}/${template.identifier}`,
-      template
-    );
-    return data.message;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
-}
-
-/**
- * Remove a metadata template from within a project
- * @param {number} projectId - identifier for a project
- * @param {number} templateId - identifier for a metadata template
- * @returns {Promise<*>}
- */
-export async function deleteMetadataTemplate(projectId, templateId) {
-  try {
-    const { data } = await axios.delete(
-      `${BASE_URL}/${templateId}?projectId=${projectId}`
-    );
-    return data.message;
-  } catch (e) {
-    return Promise.reject(e.response.data.error);
   }
 }
 

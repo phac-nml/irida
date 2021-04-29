@@ -1,13 +1,13 @@
 import { navigate } from "@reach/router";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { Form, Input, Modal, notification, Typography } from "antd";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
+import {
+  useCreateMetadataTemplateMutation,
+  useGetTemplatesForProjectQuery,
+} from "../../../../../apis/metadata/metadata-templates";
 import DnDTable from "../../../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../../../components/popovers";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
-import { createNewMetadataTemplate } from "../../../redux/templatesSlice";
 
 const { Text } = Typography;
 
@@ -21,14 +21,12 @@ const { Text } = Typography;
  * @constructor
  */
 export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
-  const dispatch = useDispatch();
+  const [createMetadataTemplate] = useCreateMetadataTemplateMutation();
   const [names, setNames] = React.useState(undefined);
   const [visible, setVisible] = React.useState(false);
   const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
-  const { data: templates, error, isLoading } = useGetTemplatesForProjectQuery(
-    projectId
-  );
+  const { data: templates } = useGetTemplatesForProjectQuery(projectId);
 
   React.useEffect(() => {
     if (fields.length) {
@@ -56,15 +54,14 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const onOk = async () => {
     const values = await form.validateFields();
     values.fields = fieldsState;
-    dispatch(createNewMetadataTemplate({ projectId, template: values }))
-      .then(unwrapResult)
+    createMetadataTemplate({ projectId, template: values })
+      .unwrap()
       .then((template) => {
         form.resetFields(Object.keys(values));
         setVisible(false);
-        navigate(`metadata-templates/${template.identifier}`);
-        setVisible(false);
+        navigate(`../settings/metadata-templates/${template.identifier}`);
       })
-      .catch((message) => notification.error({ message }));
+      .catch(({ data }) => notification.info({ message: data.error }));
   };
 
   return (

@@ -5,7 +5,6 @@ import coverageReducer from "../redux/coverageSlice";
 import fieldsReducer from "../redux/fieldsSlice";
 import pipelineReducer from "../redux/pipelinesSlice";
 import projectReducer from "../redux/projectSlice";
-import templateReducer from "../redux/templatesSlice";
 import userReducer from "../redux/userSlice";
 
 /*
@@ -19,7 +18,6 @@ export default configureStore({
     pipelines: pipelineReducer,
     user: userReducer,
     fields: fieldsReducer,
-    templates: templateReducer,
     [templateApi.reducerPath]: templateApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
