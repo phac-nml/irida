@@ -3,6 +3,8 @@ import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Provider, useDispatch } from "react-redux";
+import { getProjectRoles } from "../../../apis/projects/projects";
+import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -15,6 +17,9 @@ const ProjectProcessing = React.lazy(() =>
   import("./components/ProjectProcessing")
 );
 const ProjectMembers = React.lazy(() => import("./components/ProjectMembers"));
+const ProjectGroups = React.lazy(() =>
+  import("./components/ProjectUserGroups")
+);
 
 /*
 WEBPACK PUBLIC PATH:
@@ -64,14 +69,17 @@ const ProjectSettings = (props) => {
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
           <Row>
             <Col lg={24} xxl={12}>
-              <Suspense fallback={<Skeleton />}>
-                <Router>
-                  <ProjectDetails path="/details" />
-                  <ProjectProcessing path="/processing" />
-                  <ProjectMembers path="/members" />
-                  <Redirect from="/" to="/details" />
-                </Router>
-              </Suspense>
+              <RolesProvider getRolesFn={getProjectRoles}>
+                <Suspense fallback={<Skeleton />}>
+                  <Router>
+                    <ProjectDetails path="/details" />
+                    <ProjectProcessing path="/processing" />
+                    <ProjectMembers path="/members" />
+                    <ProjectGroups path="/groups" />
+                    <Redirect from="/" to="/details" />
+                  </Router>
+                </Suspense>
+              </RolesProvider>
             </Col>
           </Row>
         </Content>

@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.security.Principal;
 import java.util.Locale;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -14,12 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -69,31 +63,6 @@ public class ProjectSettingsController {
 		model.addAttribute("page", "details");
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/project_settings";
-	}
-
-	/**
-	 * Convert a analysis template to {@link AnalysisTemplate}
-	 *
-	 * @param template the {@link AnalysisSubmissionTemplate}
-	 * @param locale   User's logged in locale
-	 * @return a list of {@link AnalysisTemplate}
-	 */
-	private AnalysisTemplate templatesToResponse(AnalysisSubmissionTemplate template, Locale locale) {
-		UUID workflowId = template.getWorkflowId();
-		String typeString;
-
-		try {
-			IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
-			AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
-					.getAnalysisType();
-
-			typeString = messageSource.getMessage("workflow." + analysisType.getType() + ".title", null, locale);
-		} catch (IridaWorkflowNotFoundException e) {
-			typeString = messageSource.getMessage("workflow.UNKNOWN.title", null, locale);
-		}
-
-		return new AnalysisTemplate(template.getId(), template.getName(), typeString, template.isEnabled(),
-				template.getStatusMessage());
 	}
 
 	/**

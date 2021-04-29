@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setDefaultMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import {
   getProjectDetails,
-  getProjectRoles,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
 import { updateProcessingPriority } from "../../../apis/projects/settings";
@@ -71,24 +70,6 @@ export const setDefaultTemplateForProject = createAsyncThunk(
   }
 );
 
-/**
- * Fetch the options for project roles.  This will occur only once.
- * @type {AsyncThunk<{roles: AxiosResponse<*>}, void, {}>}
- */
-export const fetchProjectRoles = createAsyncThunk(
-  `project/fetchProjectRoles`,
-  async () => {
-    const roles = await getProjectRoles();
-    return { roles };
-  },
-  {
-    condition: (arg, { getState }) => {
-      const { project } = getState();
-      return !project.rolesRequested;
-    },
-  }
-);
-
 export const projectSlice = createSlice({
   name: "project",
   initialState: {
@@ -114,15 +95,6 @@ export const projectSlice = createSlice({
     },
     [setDefaultTemplateForProject.fulfilled]: (state, action) => {
       state.defaultMetadataTemplateId = action.payload.templateId;
-    },
-    [fetchProjectRoles.fulfilled]: (state, action) => {
-      state.roles = action.payload.roles;
-    },
-    [fetchProjectRoles.pending]: (state) => {
-      /*
-      Ensures that there is ever only one request to get the project roles
-       */
-      state.rolesRequested = true;
     },
   },
 });

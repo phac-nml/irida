@@ -8,7 +8,6 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { useRoles } from "../../contexts/roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
@@ -31,8 +30,6 @@ export function AddMemberButton({
   const userRef = useRef();
 
   const { roles } = useRoles();
-
-  const { id: projectId } = useSelector((state) => state.project);
 
   /*
   Whether the modal to add a user is visible
@@ -81,13 +78,11 @@ export function AddMemberButton({
    */
   useEffect(() => {
     if (debouncedQuery) {
-      getAvailableMembersFn({ projectId, query: debouncedQuery }).then((data) =>
-        setResults(data)
-      );
+      getAvailableMembersFn(debouncedQuery).then((data) => setResults(data));
     } else {
       setResults([]);
     }
-  }, [debouncedQuery]);
+  }, [debouncedQuery, getAvailableMembersFn]);
 
   /*
   Watch for changes to the forms visibility, when it becomes visible
@@ -100,7 +95,7 @@ export function AddMemberButton({
   }, [visible]);
 
   const addMember = () => {
-    addMemberFn({ projectId, id: userId, role })
+    addMemberFn({ id: userId, role })
       .then((message) => {
         addMemberSuccessFn();
         notification.success({ message });
