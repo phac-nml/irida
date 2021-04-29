@@ -308,6 +308,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new EntityNotFoundException(
 					"Join between this project and group does not exist. Group: " + userGroup + " Project: " + project);
 		}
+		if (!allowRoleChange(project, j.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+		}
 		j.setProjectRole(projectRole);
 		return ugpjRepository.save(j);
 	}
