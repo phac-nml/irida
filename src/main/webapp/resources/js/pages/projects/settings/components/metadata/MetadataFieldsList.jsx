@@ -1,7 +1,7 @@
 import { Button, Empty, Space, Table, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
+import { useSelector } from "react-redux";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
@@ -11,15 +11,12 @@ import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
  */
 export function MetadataFieldsList({ projectId }) {
   const { canManage } = useSelector((state) => state.project);
-  const dispatch = useDispatch();
-  const { fields, loading } = useSelector((state) => state.fields);
+  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
+    projectId
+  );
 
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
-
-  React.useEffect(() => {
-    dispatch(fetchFieldsForProject(projectId));
-  }, [dispatch, projectId]);
 
   React.useEffect(() => {
     /*
@@ -64,7 +61,7 @@ export function MetadataFieldsList({ projectId }) {
         </Space>
       )}
       <Table
-        loading={loading}
+        loading={isLoading}
         pagination={false}
         rowClassName={() => `t-m-field`}
         rowSelection={

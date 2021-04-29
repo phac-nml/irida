@@ -14,6 +14,7 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
   useDeleteTemplateMutation,
   useGetTemplatesForProjectQuery,
@@ -25,7 +26,6 @@ import {
 import { blue6 } from "../../../../../styles/colors";
 
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
-import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
 
 import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
 
@@ -51,23 +51,38 @@ const HoverItem = styled(List.Item)`
  * @constructor
  */
 export function MetadataTemplatesList({ projectId }) {
+  const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
+  const [templates, setTemplates] = React.useState([]);
+
   const { canManage, defaultMetadataTemplateId } = useSelector(
     (state) => state.project
   );
 
-  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
+  const { data: existingTemplates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );
   const [deleteMetadataTemplate] = useDeleteTemplateMutation();
+
+  React.useEffect(() => {
+    if (existingTemplates) {
+      setTemplates([
+        ...existingTemplates,
+        {
+          name: i18n("MetadataTemplatesList.allFields"),
+          label: i18n("MetadataTemplatesList.allFields"),
+          description: i18n("MetadataTemplatesList.allFields-description"),
+          identifier: 0,
+          key: "template-0",
+          fields,
+        },
+      ]);
+    }
+  }, [existingTemplates, fields]);
 
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
-
-  React.useEffect(() => {
-    dispatch(fetchFieldsForProject(projectId));
-  }, [dispatch, projectId]);
 
   /**
    * Set default metadata template for project.

@@ -28,7 +28,7 @@ export const templateApi = createApi({
     }),
     createMetadataTemplate: build.mutation({
       query: ({ projectId, template }) => ({
-        url: `/`,
+        url: "",
         params: { projectId },
         method: "POST",
         body: template,
@@ -54,32 +54,12 @@ export const templateApi = createApi({
   }),
 });
 
-console.log(templateApi);
-
 export const {
   useGetTemplatesForProjectQuery,
   useCreateMetadataTemplateMutation,
   useUpdateMetadataTemplateMutation,
   useDeleteTemplateMutation,
 } = templateApi;
-
-/**
- * Create a new metadata template within a project
- * @param {number} projectId - identifier for the project to create the template within.
- * @param {Object} parameters - details about the template (name, desc, and fields)
- * @returns {Promise<any>}
- */
-export async function createProjectMetadataTemplate(projectId, parameters) {
-  try {
-    const { data } = await axios.post(
-      `${BASE_URL}?projectId=${projectId}`,
-      parameters
-    );
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
-}
 
 /**
  * Set a default metadata template for a project

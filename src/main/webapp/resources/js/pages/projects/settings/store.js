@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { fieldsApi } from "../../../apis/metadata/field";
 
 import { templateApi } from "../../../apis/metadata/metadata-templates";
 import coverageReducer from "../redux/coverageSlice";
-import fieldsReducer from "../redux/fieldsSlice";
 import pipelineReducer from "../redux/pipelinesSlice";
 import projectReducer from "../redux/projectSlice";
 import userReducer from "../redux/userSlice";
@@ -17,9 +17,9 @@ export default configureStore({
     coverage: coverageReducer,
     pipelines: pipelineReducer,
     user: userReducer,
-    fields: fieldsReducer,
     [templateApi.reducerPath]: templateApi.reducer,
+    [fieldsApi.reducerPath]: fieldsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(templateApi.middleware),
+    getDefaultMiddleware().concat(templateApi.middleware, fieldsApi.middleware),
 });
