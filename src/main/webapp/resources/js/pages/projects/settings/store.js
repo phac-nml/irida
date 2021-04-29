@@ -22,4 +22,6 @@ export default configureStore({
     templates: templateReducer,
     [templateApi.reducerPath]: templateApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(templateApi.middleware),
 });

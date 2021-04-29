@@ -14,7 +14,10 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
+import {
+  useDeleteTemplateMutation,
+  useGetTemplatesForProjectQuery,
+} from "../../../../../apis/metadata/metadata-templates";
 import {
   IconDownloadFile,
   IconRemove,
@@ -25,7 +28,6 @@ import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
 
 import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
-import { removeTemplateFromProject } from "../../../redux/templatesSlice";
 
 const { Text } = Typography;
 
@@ -56,6 +58,7 @@ export function MetadataTemplatesList({ projectId }) {
   const { data: templates, error, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );
+  const [deleteMetadataTemplate] = useDeleteTemplateMutation();
 
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
@@ -142,8 +145,7 @@ export function MetadataTemplatesList({ projectId }) {
    * @param {number} templateId - identifier for the metadata template to delete
    */
   const deleteTemplate = async (templateId) =>
-    dispatch(removeTemplateFromProject({ projectId, templateId }))
-      .then(unwrapResult)
+    deleteMetadataTemplate({ projectId, templateId })
       .then(({ message }) => notification.success({ message }))
       .catch((message) => notification.error({ message }));
 

@@ -8,17 +8,31 @@ const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
 export const templateApi = createApi({
   reducerPath: `templateApi`,
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  tagTypes: ["MetadataTemplates"],
   endpoints: (build) => ({
     getTemplatesForProject: build.query({
       query: (projectId) => `/?projectId=${projectId}`,
+      provides: (_, id) => [{ type: "MetadataTemplate", id }], // TODO: this and tagTypes seems wrong.
       transformResponse(response, meta) {
         return addKeysToList(response, "template", "identifier");
       },
     }),
+    deleteTemplate: build.mutation({
+      query: ({ projectId, templateId }) => ({
+        url: `/${templateId}?projectId=${projectId}`,
+        method: `DELETE`,
+      }),
+      invalidates: ["MetadataTemplate"],
+    }),
   }),
 });
 
-export const { useGetTemplatesForProjectQuery } = templateApi;
+console.log(templateApi);
+
+export const {
+  useGetTemplatesForProjectQuery,
+  useDeleteTemplateMutation,
+} = templateApi;
 
 /**
  * Create a new metadata template within a project
