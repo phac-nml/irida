@@ -1,7 +1,6 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { updateUserRoleOnProject } from "../../apis/projects/members";
 import { useRoles } from "../../contexts/roles-context";
 
 /**
@@ -14,7 +13,7 @@ import { useRoles } from "../../contexts/roles-context";
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ item }) {
+export function ProjectRole({ item, updateRoleFn }) {
   const { id: projectId, canManage } = useSelector((state) => state.project);
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
@@ -28,7 +27,7 @@ export function ProjectRole({ item }) {
    */
   const onChange = (value) => {
     setLoading(true);
-    updateUserRoleOnProject({ projectId, id: item.id, role: value })
+    updateRoleFn({ projectId, id: item.id, role: value })
       .then((message) => {
         notification.success({ message });
         setRole(value);

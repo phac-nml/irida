@@ -4,6 +4,7 @@ import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
+  updateUserRoleOnProject,
 } from "../../apis/projects/members";
 import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
@@ -49,7 +50,9 @@ export function ProjectMembersTable() {
       title: i18n("ProjectMembersTable.role"),
       dataIndex: "role",
       render(text, item) {
-        return <ProjectRole item={item} />;
+        return (
+          <ProjectRole item={item} updateRoleFn={updateUserRoleOnProject} />
+        );
       },
     },
     {
