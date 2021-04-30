@@ -14,6 +14,7 @@ import {
 import differenceBy from "lodash/differenceBy";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
   useGetTemplatesForProjectQuery,
   useUpdateMetadataTemplateMutation,
@@ -46,8 +47,8 @@ export function MetadataTemplateManager({ id, projectId }) {
     projectId
   );
   const [updateMetadataTemplate] = useUpdateMetadataTemplateMutation();
+  const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
 
-  const { fields: allFields } = useSelector((state) => state.fields);
   const { defaultMetadataTemplateId } = useSelector((state) => state.project);
 
   const [template, setTemplate] = React.useState({});
