@@ -5,7 +5,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
-const { Item, SubMenu } = Menu;
+const { Item } = Menu;
 const { Content } = Layout;
 
 /**
