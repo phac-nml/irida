@@ -12,8 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
@@ -27,12 +31,15 @@ import com.google.common.base.Strings;
 public class ProjectDetailsAjaxController {
 	private final ProjectService projectService;
 	private final UIProjectsService service;
+	private final UIMetadataService metadataService;
 	private final MessageSource messageSource;
 
 	@Autowired
-	public ProjectDetailsAjaxController(ProjectService projectService, UIProjectsService service, MessageSource messageSource) {
+	public ProjectDetailsAjaxController(ProjectService projectService, UIProjectsService service,
+			UIMetadataService metadataService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.service = service;
+		this.metadataService = metadataService;
 		this.messageSource = messageSource;
 	}
 
@@ -90,6 +97,26 @@ public class ProjectDetailsAjaxController {
 		} catch (ConstraintViolationException e) {
 			return ResponseEntity.badRequest()
 					.body(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
+		}
+	}
+
+	/**
+	 * Set a default metadata template for a project
+	 *
+	 * @param templateId Identifier for the metadata template to set as default.
+	 * @param projectId  Identifier for the project to set the metadata template as default for.
+	 * @param locale     Current users {@link Locale}
+	 * @return {@link AjaxSuccessResponse} with the success message
+	 */
+	@PostMapping("/set-project-default")
+	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@RequestParam Long templateId,
+			@PathVariable Long projectId, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(metadataService.setDefaultMetadataTemplate(templateId, projectId, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 }

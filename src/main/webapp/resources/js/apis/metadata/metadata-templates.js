@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import axios from "axios";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -16,12 +15,10 @@ export const templateApi = createApi({
         params: { projectId },
       }),
       providesTags: (result) =>
-        result
-          ? result.map(({ identifier }) => ({
-              type: "MetadataTemplate",
-              id: identifier,
-            }))
-          : ["MetadataTemplate"],
+        result.map(({ identifier }) => ({
+          type: "MetadataTemplate",
+          id: identifier,
+        })),
       transformResponse(response) {
         return addKeysToList(response, "template", "identifier");
       },
@@ -60,20 +57,3 @@ export const {
   useUpdateMetadataTemplateMutation,
   useDeleteTemplateMutation,
 } = templateApi;
-
-/**
- * Set a default metadata template for a project
- * @param templateIdId Identifier of the metadata template
- * @param projectId Identifier of the project
- * @returns {Promise<AxiosResponse<any>>}
- */
-export async function setDefaultMetadataTemplate(projectId, templateId) {
-  try {
-    const { data } = await axios.post(
-      `${BASE_URL}/${templateId}/set-project-default?projectId=${projectId}`
-    );
-    return data.message;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
-}

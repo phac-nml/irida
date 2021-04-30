@@ -14,30 +14,6 @@
           <div class="list-group">
             <a
               href=""
-              th:href="@{/projects/{id}/settings/processing(id=${project.getId()})}"
-              class="list-group-item"
-              th:classappend="${#strings.equalsIgnoreCase(page, 'processing') ? 'active' : ''}"
-              th:text="#{project.settings.page.processing}"
-              >_Basic Settings_</a
-            >
-            <a
-              href=""
-              th:href="@{/projects/{id}/settings/members(id=${project.getId()})}"
-              class="list-group-item"
-              th:classappend="${#strings.equalsIgnoreCase(page, 'members') ? 'active' : ''}"
-              th:text="#{project.settings.page.members}"
-              >_Members_</a
-            >
-            <a
-              href=""
-              th:href="@{/projects/{id}/settings/user-groups(id=${project.getId()})}"
-              class="list-group-item"
-              th:classappend="${#strings.equalsIgnoreCase(page, 'groups') ? 'active' : ''}"
-              th:text="#{project.settings.page.groups}"
-              >_Groups_</a
-            >
-            <a
-              href=""
               th:href="@{/projects/{id}/settings/associated(id=${project.getId()})}"
               class="list-group-item"
               th:classappend="${#strings.equalsIgnoreCase(page, 'associated') or #strings.equalsIgnoreCase(page, 'associated-edit') ? 'active' : ''}"
