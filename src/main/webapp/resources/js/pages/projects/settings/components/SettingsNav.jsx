@@ -24,10 +24,12 @@ export default function SettingsNav({ path }) {
         <Link to="groups">{i18n("project.settings.page.groups")}</Link>
       </Menu.Item>
       <Menu.Item key="metadata-fields">
-        <Link to="metadata-fields">{i18n("MetadataFields.title")}</Link>
+        <Link className="t-m-field-link" to="metadata-fields">
+          {i18n("MetadataFields.title")}
+        </Link>
       </Menu.Item>
       <Menu.Item key="metadata-templates">
-        <Link to="metadata-templates">
+        <Link className="t-m-template-link" to="metadata-templates">
           {i18n("ProjectMetadataTemplates.title")}
         </Link>
       </Menu.Item>
