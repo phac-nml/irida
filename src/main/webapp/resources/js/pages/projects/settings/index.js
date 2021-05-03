@@ -26,9 +26,6 @@ const ProjectMembers = React.lazy(() => import("./components/ProjectMembers"));
 const ProjectGroups = React.lazy(() =>
   import("./components/ProjectUserGroups")
 );
-// const MetadataFields = React.lazy(() =>
-//   import("./components/metadata/MetadataFields")
-// );
 
 /*
 WEBPACK PUBLIC PATH:
