@@ -93,7 +93,7 @@ export default function UserGroupMembersTable({
     });
   }
 
-  /**
+  /*
    * Get the available users for a group based on a search parameter
    *
    * @param {string} query - search parameter for the user
