@@ -36,7 +36,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplateManager({ id }) {
+export default function MetadataTemplateManager({ id }) {
   const dispatch = useDispatch();
 
   const { templates, loading } = useSelector((state) => state.templates);

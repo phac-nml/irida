@@ -21,7 +21,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function MetadataTemplateMember({ id }) {
+export default function MetadataTemplateMember({ id }) {
   const { templates, loading } = useSelector((state) => state.templates);
   const [template, setTemplate] = React.useState({});
 

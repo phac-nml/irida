@@ -50,7 +50,7 @@ const HoverItem = styled(List.Item)`
  * @returns {JSX.Element}
  * @constructor
  */
-export function MetadataTemplatesList({ projectId }) {
+export default function MetadataTemplatesList({ projectId }) {
   const { templates, loading } = useSelector((state) => state.templates);
   const { canManage, defaultMetadataTemplateId } = useSelector(
     (state) => state.project
