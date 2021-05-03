@@ -78,7 +78,13 @@ These compiled files change during development so it would become a futile effor
 
 Due to webpack optimizing and chunking CSS and JavaScript files for faster loading, the IRIDA team created a Thymeleaf extension that parses a [webpack manifest file](https://webpack.js.org/concepts/manifest/) to handle adding the chunks onto the HTML entry page at runtime.
 
-How this works:
+For entries:
+* CSS: use `<webpacker:css entry="[ENTRY_NAME]" />` in the page header
+* JS: use `<webpacker:js entry="[ENTRY_NAME]" />` before the closing html tag
+
+#### How it works
+
+##### Webpack
 
 - `yarn build`: runs webpack in production mode
     * Compilation, minification, and chunking of CSS and JavaScript assets.
@@ -88,3 +94,22 @@ How this works:
 This is an excerpt from the assets-manifest.json file:
 
 ![Excerpt from assets-manifest.json](./images/assets-manifest.png)
+
+  - Each entry is broken down into 3 parts: js, css, and html:
+    * **js**: JavaScript chunks
+    * **css**: CSS chunks
+    * **html**: Internationalization fragments
+  
+##### Thymeleaf
+
+At compile time:
+1. Parses the `assets-manifest.json` file to create an in memory object of the assets required for each entry point.
+
+At runtime, Thymeleaf will intercept the HTML page request:
+1. See if there is a cached version of this page (for the requested internationalization)
+    * If cahced, return cached page, else continue
+2. Scan the page for the `webpacker` tags
+    * For CSS, it will create and add the required link tags for all CSS chunks to the HTML template
+    * For JavaScript, it will:
+      * create and add the required script tags for all JavaScript chunks to the HTML template
+      * see if there are HTML (internationalization) assets, and if there are it will inject the HTML fragment found on the asset path (in this case the markup found in  `i18n/cart.html`) will be added directly before the script tag for that entry
