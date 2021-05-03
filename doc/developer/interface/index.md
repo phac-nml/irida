@@ -70,8 +70,21 @@ module.exports = {
 
 When webpack compiles all the assets found for that entry (CSS and JavaScript) it will output them in optimized chunks for faster loading and shared code between different entry points (e.g. code for displaying a modal window). This allows for faster loading between entries since this file would not need to be re-downloaded.
 
-These compiled files change during development so it would become a futile effort to keep maintaining all the new links statically on their respective HTML pages.  To get around this, we have created a system connecting Webpack and Thymeleaf to allow the dynamic addition of these links to their HTML page at runtime.
+These compiled files change during development so it would become a futile effort to keep maintaining all the new links statically on their respective HTML pages. To get around this, we have created a system connecting Webpack and Thymeleaf to allow the dynamic addition of these links to their HTML page at runtime.
 
 ### Custom HTML Tags
 
-**Do not add CSS `link` and JavaScript `script` tags for any Webpack entry**
+**Do not add CSS `link` and JavaScript `script` tags for any Webpack entry or dependencies**
+
+Due to webpack optimizing and chunking CSS and JavaScript files for faster loading, the IRIDA team created a Thymeleaf extension that parses a [webpack manifest file](https://webpack.js.org/concepts/manifest/) to handle adding the chunks onto the HTML entry page at runtime.
+
+How this works:
+
+- `yarn build`: runs webpack in production mode
+    * Compilation, minification, and chunking of CSS and JavaScript assets.
+    * Extraction for internationalization strings.
+    * Creation of webpack manifest file
+
+This is an excerpt from the assets-manifest.json file:
+
+![Excerpt from assets-manifest.json](./images/assets-manifest.png)

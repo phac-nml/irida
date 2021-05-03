@@ -48,6 +48,7 @@ module.exports = (env, argv) => {
       publicPath: `/dist/`,
       filename: path.join("js", "[name]-[contenthash].js"),
       chunkFilename: path.join("js", "[name]-[contenthash].chunk.js"),
+      clean: true,
     },
     /*
     Prevent bundling of jQuery, it will be added (and exposed) through the vendor bundle.
