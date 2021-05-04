@@ -2,19 +2,13 @@ import { Redirect, Router } from "@reach/router";
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { fetchProjectDetails } from "../redux/projectSlice";
-import { MetadataFields } from "./components/metadata/MetadataFields";
-import { MetadataFieldsList } from "./components/metadata/MetadataFieldsList";
-import { MetadataTemplateManager } from "./components/metadata/MetadataTemplateManager";
-import { MetadataTemplateMember } from "./components/metadata/MetadataTemplateMember";
-import { MetadataTemplates } from "./components/metadata/MetadataTemplates";
-import { MetadataTemplatesList } from "./components/metadata/MetadataTemplatesList";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 
@@ -25,6 +19,10 @@ const ProjectProcessing = React.lazy(() =>
 const ProjectMembers = React.lazy(() => import("./components/ProjectMembers"));
 const ProjectGroups = React.lazy(() =>
   import("./components/ProjectUserGroups")
+);
+
+const MetadataLayout = React.lazy(() =>
+  import("./components/metadata/MetadataLayout")
 );
 
 /*
@@ -61,7 +59,6 @@ const SettingsLayout = () => (
  */
 const ProjectSettings = (props) => {
   const dispatch = useDispatch();
-  const { canManage } = useSelector((state) => state.project);
 
   React.useEffect(() => {
     dispatch(fetchProjectDetails(props.projectId));
@@ -83,17 +80,7 @@ const ProjectSettings = (props) => {
                     <ProjectProcessing path="/processing" />
                     <ProjectMembers path="/members" />
                     <ProjectGroups path="/groups" />
-                    <MetadataFields path="/metadata-fields">
-                      <MetadataFieldsList path="/" />
-                    </MetadataFields>
-                    <MetadataTemplates path="/metadata-templates">
-                      <MetadataTemplatesList path="/" />
-                      {canManage ? (
-                        <MetadataTemplateManager path="/:id" />
-                      ) : (
-                        <MetadataTemplateMember path="/:id" />
-                      )}
-                    </MetadataTemplates>
+                    <MetadataLayout path="/metadata/*" />
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>

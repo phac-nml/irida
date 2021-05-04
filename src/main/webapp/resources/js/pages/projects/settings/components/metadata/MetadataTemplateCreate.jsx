@@ -59,7 +59,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
       .then((template) => {
         form.resetFields(Object.keys(values));
         setVisible(false);
-        navigate(`../settings/metadata-templates/${template.identifier}`);
+        navigate(`templates/${template.identifier}`);
       })
       .catch(({ data }) => notification.info({ message: data.error }));
   };
