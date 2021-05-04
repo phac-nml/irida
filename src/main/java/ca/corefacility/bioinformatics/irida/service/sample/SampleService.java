@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
@@ -76,6 +73,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the metadata associated with the given sample
 	 */
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
+
+	public Map<Sample, Set<MetadataEntry>> getMetadataForProject(Project project);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

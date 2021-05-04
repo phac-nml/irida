@@ -1,0 +1,113 @@
+package ca.corefacility.bioinformatics.irida.repositories.sample;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
+public class MetadataEntryRepositoryImpl {
+	private final DataSource dataSource;
+	private final EntityManager entityManager;
+
+	@Autowired
+	public MetadataEntryRepositoryImpl(DataSource dataSource, EntityManager entityManager) {
+		this.dataSource = dataSource;
+		this.entityManager = entityManager;
+	}
+
+	public Map<Sample, Set<MetadataEntry>> getMetadataForProject(Project project) {
+
+		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
+		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
+
+		nativeQuery.setParameter("project", project.getId());
+
+		List<MetadataTemplateField> fields = nativeQuery.getResultList();
+
+		Map<Long, MetadataTemplateField> fieldMap = fields.stream()
+				.collect(Collectors.toMap(MetadataTemplateField::getId, field -> field));
+
+		String sampleSql = "FROM ProjectSampleJoin j WHERE j.project = :project";
+
+		TypedQuery<ProjectSampleJoin> sampleQuery = entityManager.createQuery(sampleSql, ProjectSampleJoin.class);
+		sampleQuery.setParameter("project", project);
+		List<ProjectSampleJoin> sampleJoinList = sampleQuery.getResultList();
+
+		Map<Long, Sample> samplesById = sampleJoinList.stream()
+				.collect(Collectors.toMap(j -> j.getObject()
+						.getId(), j -> j.getObject()));
+
+		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
+		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("project", project.getId());
+
+		List<SampleMetadataEntry> samplEntryCollection = tmpl.query(entityQueryString, parameters,
+				new RowMapper<SampleMetadataEntry>() {
+					@Override
+					public SampleMetadataEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
+						String type = rs.getString("e.type");
+						String value = rs.getString("e.value");
+						long entryId = rs.getLong("e.id");
+						long fieldId = rs.getLong("e.field_id");
+						long sampleId = rs.getLong("e.sample_id");
+
+						MetadataTemplateField metadataTemplateField = fieldMap.get(fieldId);
+
+						MetadataEntry entry = new MetadataEntry(value, type, metadataTemplateField);
+						entry.setId(entryId);
+
+						Sample sample = samplesById.get(sampleId);
+
+						return new SampleMetadataEntry(sample, entry);
+					}
+				});
+
+		Map<Sample, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
+		for (Sample s : samplesById.values()) {
+			sampleMetadata.put(s, new HashSet<>());
+		}
+
+		for (SampleMetadataEntry entries : samplEntryCollection) {
+			sampleMetadata.get(entries.getSample())
+					.add(entries.getEntry());
+		}
+
+		return sampleMetadata;
+
+	}
+
+	private class SampleMetadataEntry {
+		Sample sample;
+		MetadataEntry entry;
+
+		SampleMetadataEntry(Sample sample, MetadataEntry entry) {
+			this.sample = sample;
+			this.entry = entry;
+		}
+
+		public Sample getSample() {
+			return sample;
+		}
+
+		public MetadataEntry getEntry() {
+			return entry;
+		}
+	}
+}
