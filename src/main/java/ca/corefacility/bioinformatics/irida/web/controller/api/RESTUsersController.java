@@ -213,9 +213,9 @@ public class RESTUsersController extends RESTGenericController<User> {
 		// get the user from the database.
 		return getResource(u.getId());
 	}
-	
+
 	private class ProjectsSchema {
-		public ResourceCollection<Project> resource;
+		public ResourceCollection<Project> projectResources;
 	}
 
 }
