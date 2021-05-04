@@ -191,7 +191,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
   const setDefaultTemplate = async (template) => {
     dispatch(
       setDefaultTemplateForProject({
-        projectId: window.project.id,
+        projectId,
         templateId: template.identifier,
       })
     )

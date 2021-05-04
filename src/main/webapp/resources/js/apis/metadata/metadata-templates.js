@@ -20,7 +20,11 @@ export const templateApi = createApi({
           id: identifier,
         })),
       transformResponse(response) {
-        return addKeysToList(response, "template", "identifier");
+        return addKeysToList(
+          response.sort((a, b) => b.createdDate - a.createdDate),
+          "template",
+          "identifier"
+        );
       },
     }),
     createMetadataTemplate: build.mutation({
