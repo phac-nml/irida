@@ -20,7 +20,11 @@ export const templateApi = createApi({
           id: identifier,
         })),
       transformResponse(response) {
-        return addKeysToList(response, "template", "identifier");
+        return addKeysToList(
+          response.sort((a, b) => b.createdDate - a.createdDate),
+          "template",
+          "identifier"
+        );
       },
     }),
     createMetadataTemplate: build.mutation({
@@ -30,7 +34,7 @@ export const templateApi = createApi({
         method: "POST",
         body: template,
       }),
-      invalidatesTags: ["MetadataTemplates"],
+      invalidatesTags: ["MetadataTemplate"],
     }),
     updateMetadataTemplate: build.mutation({
       query: (template) => ({

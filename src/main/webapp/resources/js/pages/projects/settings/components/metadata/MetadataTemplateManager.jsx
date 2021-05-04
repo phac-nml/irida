@@ -40,7 +40,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplateManager({ id, projectId }) {
+export default function MetadataTemplateManager({ id, projectId }) {
   const dispatch = useDispatch();
 
   const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
@@ -191,7 +191,7 @@ export function MetadataTemplateManager({ id, projectId }) {
   const setDefaultTemplate = async (template) => {
     dispatch(
       setDefaultTemplateForProject({
-        projectId: window.project.id,
+        projectId,
         templateId: template.identifier,
       })
     )

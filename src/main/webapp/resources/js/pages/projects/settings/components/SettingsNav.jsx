@@ -9,8 +9,14 @@ import React from "react";
  * @constructor
  */
 export default function SettingsNav({ path }) {
+  const [key, setKey] = React.useState();
+
+  React.useEffect(() => {
+    setKey(path.split("/")[0]);
+  }, [path]);
+
   return (
-    <Menu selectedKeys={[path]} style={{ height: `100%` }}>
+    <Menu selectedKeys={[key]} style={{ height: `100%` }}>
       <Menu.Item key="details">
         <Link to="details">{i18n("project.settings.page.details")}</Link>
       </Menu.Item>

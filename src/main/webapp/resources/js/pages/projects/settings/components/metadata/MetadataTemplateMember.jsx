@@ -18,10 +18,11 @@ const { Paragraph, Text } = Typography;
  * manage the current project.
  *
  * @param {number} id - identifier for the current template
+ * @param {number} projectId - identifier for the current project
  * @returns {JSX.Element}
  * @constructor
  */
-export function MetadataTemplateMember({ id, projectId }) {
+export default function MetadataTemplateMember({ id, projectId }) {
   const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );

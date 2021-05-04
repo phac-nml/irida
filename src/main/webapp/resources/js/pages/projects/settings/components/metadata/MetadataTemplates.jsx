@@ -50,7 +50,7 @@ const HoverItem = styled(List.Item)`
  * @returns {JSX.Element}
  * @constructor
  */
-export function MetadataTemplates({ projectId }) {
+export default function MetadataTemplates({ projectId }) {
   const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
   const [templates, setTemplates] = React.useState([]);
 
