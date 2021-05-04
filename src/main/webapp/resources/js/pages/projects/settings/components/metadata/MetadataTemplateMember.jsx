@@ -21,7 +21,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function MetadataTemplateMember({ id, projectId }) {
+export default function MetadataTemplateMember({ id, projectId }) {
   const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );

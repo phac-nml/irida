@@ -40,7 +40,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplateManager({ id, projectId }) {
+export default function MetadataTemplateManager({ id, projectId }) {
   const dispatch = useDispatch();
 
   const { data: templates, isLoading } = useGetTemplatesForProjectQuery(

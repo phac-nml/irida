@@ -30,7 +30,7 @@ export const templateApi = createApi({
         method: "POST",
         body: template,
       }),
-      invalidatesTags: ["MetadataTemplates"],
+      invalidatesTags: ["MetadataTemplate"],
     }),
     updateMetadataTemplate: build.mutation({
       query: (template) => ({
