@@ -10,7 +10,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * context
  * @type {string|*}
  */
-const BASE = setBaseUrl(`/ajax/projects/`);
+const BASE_URL = setBaseUrl(`/ajax/projects/members`);
 
 /**
  * Remove a user from a project
@@ -20,8 +20,9 @@ const BASE = setBaseUrl(`/ajax/projects/`);
  * @returns {Promise<unknown>}
  */
 export async function removeUserFromProject({ projectId, id }) {
+  const params = new URLSearchParams({ projectId, id });
   try {
-    const { data } = await axios.delete(`${BASE}${projectId}/members?id=${id}`);
+    const { data } = await axios.delete(`${BASE_URL}?${params.toString()}`);
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);
@@ -37,9 +38,14 @@ export async function removeUserFromProject({ projectId, id }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateUserRoleOnProject({ projectId, id, role }) {
-  return await axios
-    .put(`${BASE}${projectId}/members/role?id=${id}&role=${role}`)
-    .then(({ data }) => data);
+  const params = new URLSearchParams({ role, id, projectId });
+  try {
+    return await axios
+      .put(`${BASE_URL}/role?${params.toString()}`)
+      .then(({ data }) => data);
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
 }
 
 /**
@@ -50,8 +56,9 @@ export async function updateUserRoleOnProject({ projectId, id, role }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function getAvailableUsersForProject({ projectId, query }) {
+  const params = new URLSearchParams({ projectId, query });
   return await axios
-    .get(`${BASE}${projectId}/members/available?query=${query}`)
+    .get(`${BASE_URL}/available?${params.toString()}`)
     .then(({ data }) => data || []);
 }
 
@@ -65,7 +72,7 @@ export async function getAvailableUsersForProject({ projectId, query }) {
  */
 export async function addMemberToProject({ projectId, id, role }) {
   return await axios
-    .post(`${BASE}${projectId}/members/add`, {
+    .post(`${BASE_URL}/add?projectId=${projectId}`, {
       id,
       role,
     })

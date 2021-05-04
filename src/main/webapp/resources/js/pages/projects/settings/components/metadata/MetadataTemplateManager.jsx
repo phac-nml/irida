@@ -1,4 +1,3 @@
-import React from "react";
 import { navigate } from "@reach/router";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
@@ -13,15 +12,23 @@ import {
   Typography,
 } from "antd";
 import differenceBy from "lodash/differenceBy";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import DnDTable from "../../../components/ant.design/DnDTable";
-import { IconCheckCircle, IconRemove } from "../../../components/icons/Icons";
-import { HelpPopover } from "../../../components/popovers";
-import { addKeysToList } from "../../../utilities/http-utilities";
-import { updateTemplate } from "../redux/templatesSlice";
-import { setDefaultTemplateForProject } from "../redux/projectSlice";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
+import {
+  useGetTemplatesForProjectQuery,
+  useUpdateMetadataTemplateMutation,
+} from "../../../../../apis/metadata/metadata-templates";
+import DnDTable from "../../../../../components/ant.design/DnDTable";
+import {
+  IconCheckCircle,
+  IconRemove,
+} from "../../../../../components/icons/Icons";
+import { HelpPopover } from "../../../../../components/popovers";
+import { blue6 } from "../../../../../styles/colors";
+import { addKeysToList } from "../../../../../utilities/http-utilities";
+import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
-import { blue6 } from "../../../styles/colors";
 
 const { Paragraph, Text } = Typography;
 
@@ -33,11 +40,15 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function MetadataTemplateManager({ id }) {
+export function MetadataTemplateManager({ id, projectId }) {
   const dispatch = useDispatch();
 
-  const { templates, loading } = useSelector((state) => state.templates);
-  const { fields: allFields } = useSelector((state) => state.fields);
+  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
+    projectId
+  );
+  const [updateMetadataTemplate] = useUpdateMetadataTemplateMutation();
+  const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
+
   const { defaultMetadataTemplateId } = useSelector((state) => state.project);
 
   const [template, setTemplate] = React.useState({});
@@ -51,24 +62,24 @@ export function MetadataTemplateManager({ id }) {
     are found then we redirect to the metadata fields page so the user can
     create one.
      */
-    if (!loading) {
-      const found = templates.find((template) => template.identifier === id);
+    if (!isLoading) {
+      const found = templates.find((template) => template.identifier == id);
 
       if (found) {
         const { fields, ...newTemplate } = found;
         setTemplate(newTemplate);
         setFields(addKeysToList(fields, "field"));
       } else if (templates.length === 0) {
-        navigate(`../fields`).then(() =>
+        navigate(`../metadata-fields`).then(() =>
           notification.warn({ message: i18n("MetadataTemplate.no-templates") })
         );
       } else {
-        navigate(`../templates`).then(() =>
+        navigate(`../metadata-templates`).then(() =>
           notification.warn({ message: i18n("MetadataTemplate.not-found") })
         );
       }
     }
-  }, [id, templates]);
+  }, [id, isLoading, templates]);
 
   React.useEffect(() => {
     if (Array.isArray(fields) && Array.isArray(allFields)) {
@@ -88,10 +99,10 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the updated template to save and re-render
    */
   const completeUpdate = async (template) =>
-    dispatch(updateTemplate(template))
-      .then(unwrapResult)
+    updateMetadataTemplate(template)
+      .unwrap()
       .then(({ message }) => notification.info({ message }))
-      .catch((message) => notification.info({ message }));
+      .catch(({ data }) => notification.info({ message: data.error }));
 
   /**
    * Update an attribute on the current metadata template (except fields)
@@ -149,7 +160,7 @@ export function MetadataTemplateManager({ id }) {
    * @param {Object} template - the template to return component for
    */
   const displayHeaderExtras = (template) => {
-    if (template.identifier === defaultMetadataTemplateId) {
+    if (template.identifier == defaultMetadataTemplateId) {
       return [
         <Tag
           key={`default-template-${template.identifier}`}
@@ -197,7 +208,7 @@ export function MetadataTemplateManager({ id }) {
       onBack={() => navigate("./")}
       extra={displayHeaderExtras(template)}
     >
-      <Skeleton loading={loading}>
+      <Skeleton loading={isLoading}>
         <List itemLayout="vertical" size="small">
           <List.Item>
             <List.Item.Meta

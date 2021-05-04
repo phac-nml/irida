@@ -1,9 +1,7 @@
-import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Select } from "antd";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useRoles } from "../../contexts/roles-context";
-import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -11,22 +9,26 @@ import { updateMemberRole } from "../../pages/projects/redux/membersSlice";
  * any member.  If the user cannot manage, just the label for the project role
  * will be rendered
  *
- * @param {object} user - the current user to be rendered
+ * @param {object} item - the current item to be rendered
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ item }) {
-  const dispatch = useDispatch();
-  const { canManage } = useSelector((state) => state.project);
-  const { roles, getRoleFromKey } = useRoles();
+export function ProjectRole({ item, updateRoleFn }) {
+  const { id: projectId, canManage } = useSelector((state) => state.project);
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
+  const { roles, getRoleFromKey } = useRoles();
 
+  /**
+   * When the project role for the user is updated, update the new value on
+   * the server as well.
+   *
+   * @param {string} value - updated role
+   */
   const onChange = (value) => {
     setLoading(true);
-    dispatch(updateMemberRole({ id: item.id, role: value }))
-      .then(unwrapResult)
-      .then(({ message }) => {
+    updateRoleFn({ projectId, id: item.id, role: value })
+      .then((message) => {
         notification.success({ message });
         setRole(value);
       })
@@ -47,7 +49,7 @@ export function ProjectRole({ item }) {
       loading={loading}
       disabled={loading}
     >
-      {roles?.map((role) => (
+      {roles.map((role) => (
         <Select.Option
           className={`t-${role.value}`}
           value={role.value}

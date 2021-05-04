@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { setDefaultMetadataTemplate } from "../../../apis/metadata/metadata-templates";
 import {
   getProjectDetails,
+  setDefaultMetadataTemplate,
   updateProjectAttribute,
 } from "../../../apis/projects/projects";
 import { updateProcessingPriority } from "../../../apis/projects/settings";
@@ -59,7 +59,7 @@ export const putPriorityUpdate = createAsyncThunk(
  * @type {AsyncThunk<unknown, void, {}>}
  */
 export const setDefaultTemplateForProject = createAsyncThunk(
-  `templates/setDefaultTemplateForProject`,
+  `project/setDefaultTemplateForProject`,
   async ({ projectId, templateId }, { rejectWithValue }) => {
     try {
       const message = await setDefaultMetadataTemplate(projectId, templateId);
@@ -73,9 +73,8 @@ export const setDefaultTemplateForProject = createAsyncThunk(
 export const projectSlice = createSlice({
   name: "project",
   initialState: {
-    canManage: window.project?.canManage || false,
+    canManage: false,
     loading: true,
-    defaultMetadataTemplateId: window.project?.defaultMetadataTemplateId,
     roles: [],
   },
   reducers: {},

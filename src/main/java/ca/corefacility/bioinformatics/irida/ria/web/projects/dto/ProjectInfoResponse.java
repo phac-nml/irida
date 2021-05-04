@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -19,6 +20,7 @@ public class ProjectInfoResponse {
 	private boolean canManage;
 	private boolean canManageRemote;
 	private String priority;
+	private Long defaultMetadataTemplateId = 0L;
 
 	public ProjectInfoResponse(Project project, boolean canManage, boolean canManageRemote) {
 		this.id = project.getId();
@@ -29,6 +31,11 @@ public class ProjectInfoResponse {
 		this.description = project.getProjectDescription();
 		this.canManage = canManage;
 		this.canManageRemote = canManageRemote;
+
+		MetadataTemplate defaultTemplate = project.getDefaultMetadataTemplate();
+		if (defaultTemplate != null) {
+			defaultMetadataTemplateId = defaultTemplate.getId();
+		}
 
 		AnalysisSubmission.Priority analysisPriority = project.getAnalysisPriority();
 		if (analysisPriority != null) {
@@ -106,5 +113,13 @@ public class ProjectInfoResponse {
 
 	public void setPriority(String priority) {
 		this.priority = priority;
+	}
+
+	public Long getDefaultMetadataTemplateId() {
+		return defaultMetadataTemplateId;
+	}
+
+	public void setDefaultMetadataTemplateId(Long defaultMetadataTemplateId) {
+		this.defaultMetadataTemplateId = defaultMetadataTemplateId;
 	}
 }

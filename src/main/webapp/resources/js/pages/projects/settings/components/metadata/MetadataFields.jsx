@@ -1,18 +1,19 @@
-import React from "react";
 import { Button, Empty, Space, Table } from "antd";
-import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
+import React from "react";
 import { useSelector } from "react-redux";
-import { SPACE_MD } from "../../../styles/spacing";
-import { IconFolder } from "../../../components/icons/Icons";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
+import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
  * Component for showing metadata fields associated with a project.
  *
  * @returns {JSX.Element|string}
  */
-export function MetadataFieldsList({ projectId }) {
+export default function MetadataFields({ projectId }) {
   const { canManage } = useSelector((state) => state.project);
-  const { fields, loading } = useSelector((state) => state.fields);
+  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
+    projectId
+  );
 
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
@@ -57,7 +58,7 @@ export function MetadataFieldsList({ projectId }) {
         </Space>
       )}
       <Table
-        loading={loading}
+        loading={isLoading}
         pagination={false}
         rowClassName={() => `t-m-field`}
         rowSelection={

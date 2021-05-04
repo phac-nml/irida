@@ -1,16 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectReferenceFilePage;
-import org.junit.*;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectReferenceFilePage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.Assert.*;
 
 /**
  */
@@ -20,6 +19,7 @@ public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Long PROJECT_ID_WITHOUT_REFERENCE_FILES = 2L;
 
 	@Test
+	@Ignore
 	public void testPageSetupUser() {
 		// NON-MANAGER
 		LoginPage.loginAsUser(driver());
@@ -49,6 +49,7 @@ public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testPageSetupAdminManager() {
 		// NON-MANAGER
 		LoginPage.loginAsManager(driver());
@@ -76,6 +77,7 @@ public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testRemoveReferenceFile() {
 		LoginPage.loginAsManager(driver());
 		ProjectReferenceFilePage page = ProjectReferenceFilePage.goTo(driver(), PROJECT_ID_WITH_REFERENCE_FILES);

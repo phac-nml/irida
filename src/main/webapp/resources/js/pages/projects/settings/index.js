@@ -3,7 +3,8 @@ import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Provider, useDispatch } from "react-redux";
-import { RolesProvider } from "../../../contexts";
+import { getProjectRoles } from "../../../apis/projects/projects";
+import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -21,6 +22,10 @@ const ProjectGroups = React.lazy(() =>
 );
 const AssociatedProjects = React.lazy(() =>
   import("./components/AssociatedProjects")
+);
+
+const MetadataLayout = React.lazy(() =>
+  import("./components/metadata/MetadataLayout")
 );
 
 /*
@@ -71,13 +76,14 @@ const ProjectSettings = (props) => {
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
           <Row>
             <Col lg={24} xxl={12}>
-              <RolesProvider>
+              <RolesProvider getRolesFn={getProjectRoles}>
                 <Suspense fallback={<Skeleton />}>
                   <Router>
                     <ProjectDetails path="/details" />
                     <ProjectProcessing path="/processing" />
                     <ProjectMembers path="/members" />
                     <ProjectGroups path="/groups" />
+                    <MetadataLayout path="/metadata/*" />
                     <AssociatedProjects path="/associated" />
                     <Redirect from="/" to="/details" />
                   </Router>
