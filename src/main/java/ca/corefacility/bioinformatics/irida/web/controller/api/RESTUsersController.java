@@ -213,9 +213,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 		// get the user from the database.
 		return getResource(u.getId());
 	}
-
-	// TODO: revisit these classes that define the response schemas for openapi
-
+	
 	private class ProjectsSchema {
 		public ResourceCollection<Project> resource;
 	}
