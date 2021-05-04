@@ -9,11 +9,13 @@ import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller for managing users.
- * 
  */
 @Tag(name = "users")
 @Controller
@@ -73,11 +74,9 @@ public class RESTUsersController extends RESTGenericController<User> {
 	/**
 	 * Constructor, requires a reference to a {@link UserService} and a
 	 * {@link ProjectService}.
-	 * 
-	 * @param userService
-	 *            the {@link UserService} that this controller uses.
-	 * @param projectService
-	 *            the {@link ProjectService} that this controller uses.
+	 *
+	 * @param userService    the {@link UserService} that this controller uses.
+	 * @param projectService the {@link ProjectService} that this controller uses.
 	 */
 	@Autowired
 	public RESTUsersController(UserService userService, ProjectService projectService) {
@@ -88,79 +87,84 @@ public class RESTUsersController extends RESTGenericController<User> {
 
 	/**
 	 * A collection of custom links for a specific {@link User}.
-	 * 
-	 * @param u
-	 *            the {@link User} to create links for.
+	 *
+	 * @param u the {@link User} to create links for.
 	 * @return the links for this {@link User}.
 	 */
 	@Override
 	protected Collection<Link> constructCustomResourceLinks(User u) {
 		Collection<Link> links = new HashSet<>();
-		links.add(linkTo(RESTUsersController.class).slash(u.getUsername()).slash("projects").withRel(REL_USER_PROJECTS));
+		links.add(linkTo(RESTUsersController.class).slash(u.getUsername())
+				.slash("projects")
+				.withRel(REL_USER_PROJECTS));
 		return links;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "listAllUsers", summary = "Lists all users",
-			description = "Lists all users.", tags = "users")
+	@Operation(operationId = "listAllUsers", summary = "Lists all users", description = "Lists all users.", tags = "users")
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@Override
-	public ResponseResource<ResourceCollection<User>> listAllResources() { return super.listAllResources(); }
+	public ResponseResource<ResourceCollection<User>> listAllResources() {
+		return super.listAllResources();
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "getUser", summary = "Find a user",
-			description = "Get the user given the identifier.", tags = "users")
+	@Operation(operationId = "getUser", summary = "Find a user", description = "Get the user given the identifier.", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@ResponseBody
 	@Override
-	public ResponseResource<User> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
+	public ResponseResource<User> getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "createUser", summary = "Create a new user",
-			description = "Create a new user.", tags = "users")
+	@Operation(operationId = "createUser", summary = "Create a new user", description = "Create a new user.", tags = "users")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	@Override
-	public ResponseResource<User> create(@RequestBody User resource, HttpServletResponse response) { return super.create(resource, response); }
+	public ResponseResource<User> create(@RequestBody User resource, HttpServletResponse response) {
+		return super.create(resource, response);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "deleteUser", summary = "Delete a user",
-			description = "Delete a user given the identifier.", tags = "users")
+	@Operation(operationId = "deleteUser", summary = "Delete a user", description = "Delete a user given the identifier.", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@ResponseBody
 	@Override
-	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
+		return super.delete(identifier);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "updateUser", summary = "Update a user",
-			description = "Update a user", tags = "users")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Operation(operationId = "updateUser", summary = "Update a user", description = "Update a user", tags = "users")
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	@Override
-	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
+	public ResponseResource<RootResource> update(@PathVariable Long identifier,
+			@RequestBody Map<String, Object> representation) {
+		return super.update(identifier, representation);
+	}
 
 	/**
 	 * Get the collection of projects for a specific user.
-	 * 
-	 * @param username
-	 *            the username for the desired user.
+	 *
+	 * @param username the username for the desired user.
 	 * @return a model containing the collection of projects for that user.
 	 */
-	@Operation(operationId = "getUserProjects", summary = "Find all the projects associated with a user",
-			description = "Get the list of projects associated with a user.", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns a list of projects associated with the given user.",
-			content = @Content(schema = @Schema(implementation = ProjectsSchema.class)))
+	@Operation(operationId = "getUserProjects", summary = "Find all the projects associated with a user", description = "Get the list of projects associated with a user.", tags = "users")
+	@ApiResponse(responseCode = "200", description = "Returns a list of projects associated with the given user.", content = @Content(schema = @Schema(implementation = ProjectsSchema.class)))
 	@RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
 	public ModelMap getUserProjects(@PathVariable String username) {
 		logger.debug("Loading projects for user [" + username + "]");
@@ -177,7 +181,8 @@ public class RESTUsersController extends RESTGenericController<User> {
 		// add the project and a self-rel link to the project representation
 		for (Join<Project, User> join : projects) {
 			Project project = join.getSubject();
-			project.add(linkBuilder.slash(project.getId()).withSelfRel());
+			project.add(linkBuilder.slash(project.getId())
+					.withSelfRel());
 			resources.add(project);
 		}
 
@@ -193,13 +198,15 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * user interface client to the REST API can display more details about the
 	 * current user than just username. This endpoint is *not* documented in the
 	 * REST API.
-	 * 
+	 *
 	 * @return a representation of the currently logged in user.
 	 */
 	@RequestMapping(value = "/current", method = RequestMethod.GET)
 	public ResponseResource<User> getCurrentUser() {
 		// get the current user from Spring Security.
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		String username = SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName();
 		logger.debug("Getting currently logged-in user: [" + username + "].");
 
 		User u = userService.getUserByUsername(username);

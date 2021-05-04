@@ -11,8 +11,10 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +71,7 @@ public class RESTSampleAssemblyController {
 	 * @param sampleId the id of the sample
 	 * @return a list of details about the assemblies
 	 */
-	@Operation(operationId = "listAssembliesForSample", summary = "Find all the genome assemblies for a given sample",
-			description = "Get all the genome assemblies for a given sample.", tags = "samples")
+	@Operation(operationId = "listAssembliesForSample", summary = "Find all the genome assemblies for a given sample", description = "Get all the genome assemblies for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseResource<ResourceCollection<GenomeAssembly>> listAssembliesForSample(@PathVariable Long sampleId) {
@@ -104,11 +105,11 @@ public class RESTSampleAssemblyController {
 	 * @param assemblyId the id of the assembly
 	 * @return details about the requested assembly
 	 */
-	@Operation(operationId = "readAssemblyForSample", summary = "Find the genome assembly for a given sample",
-			description = "Get the genome assembly for a given sample.", tags = "samples")
+	@Operation(operationId = "readAssemblyForSample", summary = "Find the genome assembly for a given sample", description = "Get the genome assembly for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies/{assemblyId}", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseResource<GenomeAssembly>  readAssemblyForSample(@PathVariable Long sampleId, @PathVariable Long assemblyId) {
+	public ResponseResource<GenomeAssembly> readAssemblyForSample(@PathVariable Long sampleId,
+			@PathVariable Long assemblyId) {
 		Sample sample = sampleService.read(sampleId);
 		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(sample);
 
@@ -142,12 +143,11 @@ public class RESTSampleAssemblyController {
 	 * @return a model with links to the created assembly
 	 * @throws IOException if the upload fails
 	 */
-	@Operation(operationId = "addNewAssemblyToSample", summary = "Upload a new genome assembly for a given sample",
-			description = "Upload a new genome assemblies for a given sample.", tags = "samples")
+	@Operation(operationId = "addNewAssemblyToSample", summary = "Upload a new genome assembly for a given sample", description = "Upload a new genome assemblies for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseBody
-	public ResponseResource<GenomeAssembly>  addNewAssemblyToSample(@PathVariable Long sampleId, @RequestPart("file") MultipartFile file,
-			HttpServletResponse response) throws IOException {
+	public ResponseResource<GenomeAssembly> addNewAssemblyToSample(@PathVariable Long sampleId,
+			@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
 		ResponseResource<GenomeAssembly> responseObject;
 		logger.debug("Adding assembly file to sample " + sampleId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
@@ -166,7 +166,8 @@ public class RESTSampleAssemblyController {
 			UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
 
 			//save the new assembly
-			SampleGenomeAssemblyJoin assemblyInSample = assemblyService.createAssemblyInSample(sample, uploadedAssembly);
+			SampleGenomeAssemblyJoin assemblyInSample = assemblyService.createAssemblyInSample(sample,
+					uploadedAssembly);
 
 			GenomeAssembly savedAssembly = assemblyInSample.getObject();
 

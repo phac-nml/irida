@@ -6,8 +6,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +72,7 @@ public class RESTProjectSamplesController {
 	 * Reference to {@link SampleService}.
 	 */
 	private SampleService sampleService;
-
+ 
 	private MessageSource messageSource;
 
 	protected RESTProjectSamplesController() {
@@ -95,12 +97,12 @@ public class RESTProjectSamplesController {
 	 * @return the response indicating that the sample was joined to the
 	 * project.
 	 */
-	@Operation(operationId = "copySampleToProject", summary = "Copy an existing sample to a given a project",
-			description = "Copy an existing sample to a given a project.", tags = "projects")
+	@Operation(operationId = "copySampleToProject", summary = "Copy an existing sample to a given a project", description = "Copy an existing sample to a given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	@Tag(name = "projects")
 	@ResponseBody
-	public ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>> copySampleToProject(final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
+	public ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>> copySampleToProject(
+			final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
 			@RequestParam(name = "ownership", defaultValue = "false") boolean ownership, HttpServletResponse response,
 			Locale locale) {
 
@@ -154,7 +156,8 @@ public class RESTProjectSamplesController {
 		// add a link to the project that was copied to.
 		labeledProjectSampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-		ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>>responseObject = new ResponseResource<>(labeledProjectSampleResources);
+		ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>> responseObject = new ResponseResource<>(
+				labeledProjectSampleResources);
 
 		if (!errors.isEmpty()) {
 			responseObject.setWarnings(errors);
@@ -176,8 +179,7 @@ public class RESTProjectSamplesController {
 	 * @return a response indicating that the sample was created and appropriate
 	 * location information.
 	 */
-	@Operation(operationId = "addSampleToProject", summary = "Create a new sample and add it to the given project",
-			description = "Create a new sample and add it to the given project.", tags = "projects")
+	@Operation(operationId = "addSampleToProject", summary = "Create a new sample and add it to the given project", description = "Create a new sample and add it to the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
 	@Tag(name = "projects")
 	@ResponseBody
@@ -200,7 +202,7 @@ public class RESTProjectSamplesController {
 		addLinksForSample(Optional.of(p), sample);
 
 		// add the resource to the model
-		ResponseResource<Sample>responseObject = new ResponseResource<>(sample);
+		ResponseResource<Sample> responseObject = new ResponseResource<>(sample);
 
 		// set the response status and add a location header
 		response.setStatus(HttpStatus.CREATED.value());
@@ -216,8 +218,7 @@ public class RESTProjectSamplesController {
 	 *                  {@link Sample}s for.
 	 * @return the list of {@link Sample}s associated with this {@link Project}.
 	 */
-	@Operation(operationId = "getProjectSamples", summary = "Find all samples for the given project",
-			description = "Get all samples for the given project.", tags = "projects")
+	@Operation(operationId = "getProjectSamples", summary = "Find all samples for the given project", description = "Get all samples for the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
 	@Tag(name = "projects")
 	@ResponseBody
@@ -234,10 +235,11 @@ public class RESTProjectSamplesController {
 
 		sampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-		sampleResources.add(linkTo(methodOn(RESTSampleMetadataController.class).getProjectSampleMetadata(projectId)).withRel(
-				RESTSampleMetadataController.ALL_METADATA_REL));
+		sampleResources.add(
+				linkTo(methodOn(RESTSampleMetadataController.class).getProjectSampleMetadata(projectId)).withRel(
+						RESTSampleMetadataController.ALL_METADATA_REL));
 
-		ResponseResource<ResourceCollection<Sample>>responseObject = new ResponseResource<>(sampleResources);
+		ResponseResource<ResourceCollection<Sample>> responseObject = new ResponseResource<>(sampleResources);
 		return responseObject;
 	}
 
@@ -272,8 +274,7 @@ public class RESTProjectSamplesController {
 	 * @param sampleId  the {@link Sample} identifier that we're looking for.
 	 * @return a representation of the specific sample.
 	 */
-	@Operation(operationId = "getProjectSample", summary = "Find a sample for the given project",
-			description = "Get a sample for the given project.", tags = "projects")
+	@Operation(operationId = "getProjectSample", summary = "Find a sample for the given project", description = "Get a sample for the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	@Tag(name = "projects")
 	@ResponseBody
@@ -289,7 +290,7 @@ public class RESTProjectSamplesController {
 		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_PROJECT_SAMPLE));
 
-		ResponseResource<Sample>responseObject = new ResponseResource<>(s);
+		ResponseResource<Sample> responseObject = new ResponseResource<>(s);
 		return responseObject;
 	}
 
@@ -299,8 +300,7 @@ public class RESTProjectSamplesController {
 	 * @param sampleId the id of the {@link Sample} to read
 	 * @return representation of the sample
 	 */
-	@Operation(operationId = "getSample", summary = "Find a sample",
-			description = "Get a sample.", tags = "samples")
+	@Operation(operationId = "getSample", summary = "Find a sample", description = "Get a sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
 	@Tag(name = "samples")
 	@ResponseBody
@@ -309,7 +309,7 @@ public class RESTProjectSamplesController {
 
 		addLinksForSample(Optional.empty(), s);
 
-		ResponseResource<Sample>responseObject = new ResponseResource<>(s);
+		ResponseResource<Sample> responseObject = new ResponseResource<>(s);
 		return responseObject;
 	}
 
@@ -357,12 +357,12 @@ public class RESTProjectSamplesController {
 	 * @return a response including links back to the specific {@link Project}
 	 * and collection of {@link Sample}.
 	 */
-	@Operation(operationId = "removeSampleFromProject", summary = "Remove a sample from a given project",
-			description = "Remove a sample from a given project.", tags = "projects")
+	@Operation(operationId = "removeSampleFromProject", summary = "Remove a sample from a given project", description = "Remove a sample from a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	@Tag(name = "projects")
 	@ResponseBody
-	public ResponseResource<RootResource> removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
+	public ResponseResource<RootResource> removeSampleFromProject(@PathVariable Long projectId,
+			@PathVariable Long sampleId) {
 		// load the sample and project
 		Project p = projectService.read(projectId);
 		Sample s = sampleService.read(sampleId);
@@ -380,7 +380,7 @@ public class RESTProjectSamplesController {
 				.withRel(RESTProjectsController.REL_PROJECT));
 
 		// add the links to the response.
-		ResponseResource<RootResource>responseObject = new ResponseResource<>(resource);
+		ResponseResource<RootResource> responseObject = new ResponseResource<>(resource);
 		return responseObject;
 	}
 
@@ -392,18 +392,18 @@ public class RESTProjectSamplesController {
 	 * @return a response including links to the {@link Project} and
 	 * {@link Sample}.
 	 */
-	@Operation(operationId = "updateSample", summary = "Update a sample",
-			description = "Update a sample.", tags = "samples")
+	@Operation(operationId = "updateSample", summary = "Update a sample", description = "Update a sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@Tag(name = "samples")
 	@ResponseBody
-	public ResponseResource<Sample> updateSample(@PathVariable Long sampleId, @RequestBody Map<String, Object> updatedFields) {
+	public ResponseResource<Sample> updateSample(@PathVariable Long sampleId,
+			@RequestBody Map<String, Object> updatedFields) {
 		// issue an update request
 		final Sample s = sampleService.updateFields(sampleId, updatedFields);
 		addLinksForSample(Optional.empty(), s);
 
-		ResponseResource<Sample>responseObject = new ResponseResource<>(s);
+		ResponseResource<Sample> responseObject = new ResponseResource<>(s);
 		return responseObject;
 	}
 

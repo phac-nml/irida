@@ -14,8 +14,6 @@ import ca.corefacility.bioinformatics.irida.web.filter.SlashFilter;
 
 /**
  * REST API initializer with security.
- *
- *
  */
 public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
@@ -30,10 +28,10 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 		// install the spring security filter chain.
 		final DelegatingFilterProxy springSecurityFilterChain = new DelegatingFilterProxy("springSecurityFilterChain");
-		springSecurityFilterChain
-				.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
-		servletContext.addFilter("springSecurityFilterChain", springSecurityFilterChain).addMappingForUrlPatterns(null,
-				false, "/*");
+		springSecurityFilterChain.setContextAttribute(
+				"org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
+		servletContext.addFilter("springSecurityFilterChain", springSecurityFilterChain)
+				.addMappingForUrlPatterns(null, false, "/*");
 	}
 
 	@Override
@@ -53,6 +51,7 @@ public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDisp
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class[] {OpenAPIConfig.class, IridaRestApiWebConfig.class, IridaUIWebConfig.class, IridaWebSecurityConfig.class };
+		return new Class[] { OpenAPIConfig.class, IridaRestApiWebConfig.class, IridaUIWebConfig.class,
+				IridaWebSecurityConfig.class };
 	}
 }

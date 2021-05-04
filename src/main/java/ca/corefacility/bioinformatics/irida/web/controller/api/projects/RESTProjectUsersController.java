@@ -9,8 +9,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -75,11 +77,11 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException If removing a user will leave the project without an owner. Should NEVER be
 	 *                                      thrown in this method, but needs to be listed.
 	 */
-	@Operation(operationId = "getProjectHash", summary = "Get all users for the given a project",
-			description = "Get all users for the given a project.", tags = "projects")
+	@Operation(operationId = "getProjectHash", summary = "Get all users for the given a project", description = "Get all users for the given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseResource<ResourceCollection<User>> getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
+	public ResponseResource<ResourceCollection<User>> getUsersForProject(@PathVariable Long projectId)
+			throws ProjectWithoutOwnerException {
 		ResourceCollection<User> resources = new ResourceCollection<>();
 
 		// get all of the users belonging to this project
@@ -119,12 +121,12 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException this cannot actually be thrown, it's an artifact of using spring HATEOAS
 	 *                                      {@code linkTo} and {@code methodOn}.
 	 */
-	@Operation(operationId = "addUserToProject", summary = "Add a user to the given project",
-			description = "Add a user to the given project.", tags = "projects")
+	@Operation(operationId = "addUserToProject", summary = "Add a user to the given project", description = "Add a user to the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseResource<LabelledRelationshipResource<Project, User>> addUserToProject(@PathVariable Long projectId, @RequestBody Map<String, String> representation,
-			HttpServletResponse response) throws ProjectWithoutOwnerException {
+	public ResponseResource<LabelledRelationshipResource<Project, User>> addUserToProject(@PathVariable Long projectId,
+			@RequestBody Map<String, String> representation, HttpServletResponse response)
+			throws ProjectWithoutOwnerException {
 		// first, get the project
 		Project p = projectService.read(projectId);
 		String username = representation.get(USER_ID_KEY);
@@ -177,12 +179,11 @@ public class RESTProjectUsersController {
 	 * Project}.
 	 * @throws ProjectWithoutOwnerException if removing this user will leave the project without an owner
 	 */
-	@Operation(operationId = "removeUserFromProject", summary = "Remove a user from a given project",
-			description = "Remove a user from a given project.", tags = "projects")
+	@Operation(operationId = "removeUserFromProject", summary = "Remove a user from a given project", description = "Remove a user from a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public ResponseResource<RootResource> removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId)
-			throws ProjectWithoutOwnerException {
+	public ResponseResource<RootResource> removeUserFromProject(@PathVariable Long projectId,
+			@PathVariable String userId) throws ProjectWithoutOwnerException {
 		// Read the project and user from the database
 		Project p = projectService.read(projectId);
 		User u = userService.getUserByUsername(userId);

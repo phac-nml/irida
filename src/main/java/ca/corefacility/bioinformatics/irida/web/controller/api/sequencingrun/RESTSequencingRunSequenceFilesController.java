@@ -6,9 +6,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import com.google.common.net.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -49,11 +52,10 @@ public class RESTSequencingRunSequenceFilesController {
 	 * @param response        a reference to the response.
 	 * @return a response indicating that the collection was modified.
 	 */
-	@Operation(operationId = "addSequenceFilesToSequencingRun", summary = "Link a sequencing run with a sequence file",
-			description = "Add a relationship between a sequencing run and a sequence file.", tags = "sequencingrun")
+	@Operation(operationId = "addSequenceFilesToSequencingRun", summary = "Link a sequencing run with a sequence file", description = "Add a relationship between a sequencing run and a sequence file.", tags = "sequencingrun")
 	@RequestMapping(value = "/api/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseResource<SequencingRun>  addSequenceFilesToSequencingRun(@PathVariable Long sequencingrunId,
+	public ResponseResource<SequencingRun> addSequenceFilesToSequencingRun(@PathVariable Long sequencingrunId,
 			@RequestBody Map<String, String> representation, HttpServletResponse response) {
 		String stringId = representation.get(SEQUENCEFILE_ID_KEY);
 		long seqId = Long.parseLong(stringId);

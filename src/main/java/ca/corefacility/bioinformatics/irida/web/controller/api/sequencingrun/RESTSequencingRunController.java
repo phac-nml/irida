@@ -8,8 +8,10 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -56,52 +59,59 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "listAllSequencingRun", summary = "Lists all sequencing runs",
-			description = "Lists all sequencing runs.", tags = "sequencingrun")
+	@Operation(operationId = "listAllSequencingRun", summary = "Lists all sequencing runs", description = "Lists all sequencing runs.", tags = "sequencingrun")
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@Override
-	public ResponseResource<ResourceCollection<SequencingRun>> listAllResources() { return super.listAllResources(); }
+	public ResponseResource<ResourceCollection<SequencingRun>> listAllResources() {
+		return super.listAllResources();
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "getSequencingRun", summary = "Find a sequencing run",
-			description = "Get the sequencing run given the identifier.", tags = "sequencingrun")
+	@Operation(operationId = "getSequencingRun", summary = "Find a sequencing run", description = "Get the sequencing run given the identifier.", tags = "sequencingrun")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@ResponseBody
 	@Override
-	public ResponseResource<SequencingRun> getResource(@PathVariable Long identifier) { return super.getResource(identifier); }
+	public ResponseResource<SequencingRun> getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "createSequencingRun", summary = "Create a new sequencing run",
-			description = "Create a new sequencing run.", tags = "sequencingrun")
+	@Operation(operationId = "createSequencingRun", summary = "Create a new sequencing run", description = "Create a new sequencing run.", tags = "sequencingrun")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	@Override
-	public ResponseResource<SequencingRun> create(@RequestBody SequencingRun resource, HttpServletResponse response) { return super.create(resource, response); }
+	public ResponseResource<SequencingRun> create(@RequestBody SequencingRun resource, HttpServletResponse response) {
+		return super.create(resource, response);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "deleteSequencingRun", summary = "Delete a sequencing run",
-			description = "Delete a sequencing run given the identifier.", tags = "sequencingrun")
+	@Operation(operationId = "deleteSequencingRun", summary = "Delete a sequencing run", description = "Delete a sequencing run given the identifier.", tags = "sequencingrun")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@ResponseBody
 	@Override
-	public ResponseResource<RootResource> delete(@PathVariable Long identifier) { return super.delete(identifier); }
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
+		return super.delete(identifier);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "updateSequencingRun", summary = "Update a sequencing run",
-			description = "Update a sequencing run", tags = "sequencingrun")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Operation(operationId = "updateSequencingRun", summary = "Update a sequencing run", description = "Update a sequencing run", tags = "sequencingrun")
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
+			MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	@Override
-	public ResponseResource<RootResource> update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) { return super.update(identifier, representation); }
+	public ResponseResource<RootResource> update(@PathVariable Long identifier,
+			@RequestBody Map<String, Object> representation) {
+		return super.update(identifier, representation);
+	}
 
 	/**
 	 * Create a Sequencing run
@@ -111,12 +121,11 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
-	@Operation(operationId = "createSequencingRun", summary = "Create a sequencing run",
-			description = "Create a sequencing run.", tags = "sequencingrun")
+	@Operation(operationId = "createSequencingRun", summary = "Create a sequencing run", description = "Create a sequencing run.", tags = "sequencingrun")
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
-	public ResponseResource<SequencingRun> createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
-			HttpServletResponse response) {
+	public ResponseResource<SequencingRun> createSequencingRun(@PathVariable String runType,
+			@RequestBody SequencingRun representation, HttpServletResponse response) {
 		logger.trace("creating sequencing run");
 
 		//Legacy for ensuring old uploaders pointing to /miseqrun get a sequencer type of 'miseq'

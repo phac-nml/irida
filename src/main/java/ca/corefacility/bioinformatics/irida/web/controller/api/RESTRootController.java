@@ -11,11 +11,13 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 
 import com.google.common.collect.Sets;
+
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -91,8 +94,7 @@ public class RESTRootController {
 	 * @param request Incoming HTTP request object to check the user's role.
 	 * @return a response to the client.
 	 */
-	@Operation(operationId = "getLinks", summary = "Get the set of links used to discover the API",
-			description = "Get the set of links used to discover the API.", tags = "api")
+	@Operation(operationId = "getLinks", summary = "Get the set of links used to discover the API", description = "Get the set of links used to discover the API.", tags = "api")
 	@RequestMapping(method = RequestMethod.GET, value = "/api")
 	@ResponseBody
 	public ResponseResource<RootResource> getLinks(final HttpServletRequest request) {
@@ -126,10 +128,8 @@ public class RESTRootController {
 	 *
 	 * @return a response to the client
 	 */
-	@Operation(operationId = "version", summary = "Get the current API build version",
-			description = "Get the current API build version.", tags = "api")
-	@ApiResponse(responseCode = "200", description = "Returns the current API build version.",
-			content = @Content(schema = @Schema(implementation = VersionSchema.class)))
+	@Operation(operationId = "version", summary = "Get the current API build version", description = "Get the current API build version.", tags = "api")
+	@ApiResponse(responseCode = "200", description = "Returns the current API build version.", content = @Content(schema = @Schema(implementation = VersionSchema.class)))
 	@RequestMapping(method = RequestMethod.GET, value = "/api/version")
 	public ModelMap version() {
 		ModelMap mm = new ModelMap();
