@@ -1,5 +1,5 @@
 import { Link, Router } from "@reach/router";
-import { Menu, Space } from "antd";
+import { Menu, Space, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 
@@ -23,6 +23,9 @@ export default function MetadataLayout() {
   const [selected, setSelected] = React.useState("fields");
   return (
     <Space style={{ width: `100%` }} direction="vertical">
+      <Typography.Title level={2}>
+        {i18n("project.settings.page.metadata")}
+      </Typography.Title>
       <Menu
         mode="horizontal"
         selectedKeys={[selected]}
