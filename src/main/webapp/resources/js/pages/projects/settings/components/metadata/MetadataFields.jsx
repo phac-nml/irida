@@ -1,21 +1,27 @@
-import React from "react";
 import { Button, Empty, Space, Table } from "antd";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
+import { fetchTemplatesForProject } from "../../../redux/templatesSlice";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
-import { useSelector } from "react-redux";
-import { SPACE_MD } from "../../../styles/spacing";
-import { IconFolder } from "../../../components/icons/Icons";
 
 /**
  * Component for showing metadata fields associated with a project.
  *
  * @returns {JSX.Element|string}
  */
-export function MetadataFieldsList({ projectId }) {
+export default function MetadataFields({ projectId }) {
   const { canManage } = useSelector((state) => state.project);
+  const dispatch = useDispatch();
   const { fields, loading } = useSelector((state) => state.fields);
 
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
+
+  React.useEffect(() => {
+    dispatch(fetchFieldsForProject(projectId));
+    dispatch(fetchTemplatesForProject(projectId));
+  }, [dispatch, projectId]);
 
   React.useEffect(() => {
     /*

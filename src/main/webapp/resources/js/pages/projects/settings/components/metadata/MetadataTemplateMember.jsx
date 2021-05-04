@@ -9,7 +9,7 @@ import {
 } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { addKeysToList } from "../../../utilities/http-utilities";
+import { addKeysToList } from "../../../../../utilities/http-utilities";
 
 const { Paragraph, Text } = Typography;
 
@@ -21,7 +21,7 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function MetadataTemplateMember({ id }) {
+export default function MetadataTemplateMember({ id }) {
   const { templates, loading } = useSelector((state) => state.templates);
   const [template, setTemplate] = React.useState({});
 

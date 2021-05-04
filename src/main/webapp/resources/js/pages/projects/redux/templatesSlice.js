@@ -16,6 +16,15 @@ export const fetchTemplatesForProject = createAsyncThunk(
   async (projectId) => {
     const templates = await getProjectMetadataTemplates(projectId);
     return addKeysToList(templates, "template", "identifier");
+  },
+  {
+    condition(projectId, { getState }) {
+      const { templates } = getState();
+      if (templates.requests[projectId]) {
+        // Already fetched or in progress, don't need to re-fetch
+        return false;
+      }
+    },
   }
 );
 
@@ -71,9 +80,9 @@ export const templatesSlice = createSlice({
   initialState: {
     templates: [
       {
-        name: i18n("MetadataTemplatesList.allFields"),
-        label: i18n("MetadataTemplatesList.allFields"),
-        description: i18n("MetadataTemplatesList.allFields-description"),
+        name: i18n("MetadataTemplates.allFields"),
+        label: i18n("MetadataTemplates.allFields"),
+        description: i18n("MetadataTemplates.allFields-description"),
         identifier: 0,
         key: "template-0",
         fields: [],
@@ -81,6 +90,7 @@ export const templatesSlice = createSlice({
     ],
     loading: true,
     template: undefined,
+    requests: {},
   },
   reducers: {
     // Reducer to update the fields array for the All Fields Template
@@ -92,12 +102,18 @@ export const templatesSlice = createSlice({
     /*
     Successful fetching of metadata templates for the current project.
      */
-    [fetchTemplatesForProject.fulfilled]: (state, { payload }) => {
+    [fetchTemplatesForProject.fulfilled]: (state, { meta, payload }) => {
+      const requests = { ...state.requests };
+      delete requests[meta.args];
       return {
         ...state,
         templates: [...payload, ...state.templates],
         loading: false,
+        requests,
       };
+    },
+    [fetchTemplatesForProject.pending]: (state, { meta }) => {
+      state.requests[meta.arg] = meta.requestId;
     },
     [removeTemplateFromProject.fulfilled]: (state, { payload }) => {
       const templates = state.templates.filter(

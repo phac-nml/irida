@@ -14,6 +14,15 @@ export const fetchFieldsForProject = createAsyncThunk(
     // Update the fields in the state for the All Fields Template
     dispatch(updateFieldsForAllFieldsTemplate(fields));
     return addKeysToList(fields, "field", "id");
+  },
+  {
+    condition(projectId, { getState }) {
+      const { fields } = getState();
+      if (fields.requests[projectId]) {
+        // Already fetched or in progress, don't need to re-fetch
+        return false;
+      }
+    },
   }
 );
 
@@ -24,17 +33,23 @@ export const fetchFieldsForProject = createAsyncThunk(
 export const fieldsSlice = createSlice({
   name: "fields",
   initialState: {
-    fields: undefined,
     selected: [],
     loading: true,
+    requests: {},
   },
   reducers: {},
   extraReducers: {
-    [fetchFieldsForProject.fulfilled]: (state, action) => ({
-      ...state,
-      fields: action.payload,
-      loading: false,
-    }),
+    [fetchFieldsForProject.fulfilled]: (state, { meta, payload }) => {
+      const requests = { ...state.requests };
+      delete requests[meta.args];
+
+      state.requests = requests;
+      state.fields = payload;
+      state.loading = false;
+    },
+    [fetchFieldsForProject.pending]: (state, { meta }) => {
+      state.requests[meta.arg] = meta.requestId;
+    },
   },
 });
 

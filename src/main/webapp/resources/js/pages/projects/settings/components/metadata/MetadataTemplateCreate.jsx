@@ -3,10 +3,10 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Form, Input, Modal, notification, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import DnDTable from "../../../components/ant.design/DnDTable";
-import { HelpPopover } from "../../../components/popovers";
-import { addKeysToList } from "../../../utilities/http-utilities";
-import { createNewMetadataTemplate } from "../redux/templatesSlice";
+import DnDTable from "../../../../../components/ant.design/DnDTable";
+import { HelpPopover } from "../../../../../components/popovers";
+import { addKeysToList } from "../../../../../utilities/http-utilities";
+import { createNewMetadataTemplate } from "../../../redux/templatesSlice";
 
 const { Text } = Typography;
 

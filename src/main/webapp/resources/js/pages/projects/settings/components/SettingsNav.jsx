@@ -9,8 +9,14 @@ import React from "react";
  * @constructor
  */
 export default function SettingsNav({ path }) {
+  const [key, setKey] = React.useState();
+
+  React.useEffect(() => {
+    setKey(path.split("/")[0]);
+  }, [path]);
+
   return (
-    <Menu selectedKeys={[path]} style={{ height: `100%` }}>
+    <Menu selectedKeys={[key]} style={{ height: `100%` }}>
       <Menu.Item key="details">
         <Link to="details">{i18n("project.settings.page.details")}</Link>
       </Menu.Item>
@@ -22,6 +28,11 @@ export default function SettingsNav({ path }) {
       </Menu.Item>
       <Menu.Item key="groups">
         <Link to="groups">{i18n("project.settings.page.groups")}</Link>
+      </Menu.Item>
+      <Menu.Item key="metadata">
+        <Link className="t-m-field-link" to="metadata/fields">
+          {i18n("project.settings.page.metadata")}
+        </Link>
       </Menu.Item>
     </Menu>
   );
