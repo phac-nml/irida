@@ -2,7 +2,7 @@ import { Redirect, Router } from "@reach/router";
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
@@ -23,6 +23,18 @@ const ProjectGroups = React.lazy(() =>
 
 const MetadataLayout = React.lazy(() =>
   import("./components/metadata/MetadataLayout")
+);
+const MetadataFields = React.lazy(() =>
+  import("./components/metadata/MetadataFields")
+);
+const MetadataTemplateManager = React.lazy(() =>
+  import("./components/metadata/MetadataTemplateManager")
+);
+const MetadataTemplateMember = React.lazy(() =>
+  import("./components/metadata/MetadataTemplateMember")
+);
+const MetadataTemplates = React.lazy(() =>
+  import("./components/metadata/MetadataTemplates")
 );
 
 /*
@@ -58,6 +70,7 @@ const SettingsLayout = () => (
  * @constructor
  */
 const ProjectSettings = (props) => {
+  const { canManage } = useSelector((state) => state.project);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -80,7 +93,15 @@ const ProjectSettings = (props) => {
                     <ProjectProcessing path="/processing" />
                     <ProjectMembers path="/members" />
                     <ProjectGroups path="/groups" />
-                    <MetadataLayout path="/metadata/*" />
+                    <MetadataLayout path="/metadata">
+                      <MetadataFields path="/fields" />
+                      <MetadataTemplates path="/templates" />
+                      {canManage ? (
+                        <MetadataTemplateManager path="/templates/:id" />
+                      ) : (
+                        <MetadataTemplateMember path="/templates/:id" />
+                      )}
+                    </MetadataLayout>
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>
