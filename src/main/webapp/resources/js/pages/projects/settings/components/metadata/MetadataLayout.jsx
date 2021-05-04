@@ -10,9 +10,7 @@ const MetadataTemplateManager = React.lazy(() =>
 const MetadataTemplateMember = React.lazy(() =>
   import("./MetadataTemplateMember")
 );
-const MetadataTemplatesList = React.lazy(() =>
-  import("./MetadataTemplatesList")
-);
+const MetadataTemplates = React.lazy(() => import("./MetadataTemplates"));
 
 /**
  * Component for rendering the metadata fields and templates
@@ -31,7 +29,7 @@ export default function MetadataLayout() {
         onClick={(e) => setSelected(e.key)}
       >
         <Menu.Item key="fields" className="t-m-field-link">
-          <Link to="../metadata/fields">FIELDS</Link>
+          <Link to="../metadata/fields">{i18n("MetadataFields.title")}</Link>
         </Menu.Item>
         <Menu.Item key="templates" className="t-m-template-link">
           <Link to="../metadata/templates">
@@ -41,7 +39,7 @@ export default function MetadataLayout() {
       </Menu>
       <Router>
         <MetadataFields path="/fields" />
-        <MetadataTemplatesList path="/templates" />
+        <MetadataTemplates path="/templates" />
         {canManage ? (
           <MetadataTemplateManager path="/templates/:id" />
         ) : (

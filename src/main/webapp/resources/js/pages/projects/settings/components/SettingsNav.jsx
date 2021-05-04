@@ -25,7 +25,7 @@ export default function SettingsNav({ path }) {
       </Menu.Item>
       <Menu.Item key="metadata">
         <Link className="t-m-field-link" to="metadata/fields">
-          {i18n("MetadataFields.title")}
+          {i18n("project.settings.page.metadata")}
         </Link>
       </Menu.Item>
     </Menu>

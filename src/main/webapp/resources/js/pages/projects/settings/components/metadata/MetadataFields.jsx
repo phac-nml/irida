@@ -1,4 +1,4 @@
-import { Button, Empty, Space, Table, Typography } from "antd";
+import { Button, Empty, Space, Table } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
@@ -50,9 +50,9 @@ export default function MetadataFields({ projectId }) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      <Typography.Title level={2}>
-        {i18n("MetadataFields.title")}
-      </Typography.Title>
+      {/*<Typography.Title level={2}>*/}
+      {/*  {i18n("MetadataFields.title")}*/}
+      {/*</Typography.Title>*/}
       {canManage && (
         <Space>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>

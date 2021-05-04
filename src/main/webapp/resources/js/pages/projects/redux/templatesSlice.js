@@ -80,9 +80,9 @@ export const templatesSlice = createSlice({
   initialState: {
     templates: [
       {
-        name: i18n("MetadataTemplatesList.allFields"),
-        label: i18n("MetadataTemplatesList.allFields"),
-        description: i18n("MetadataTemplatesList.allFields-description"),
+        name: i18n("MetadataTemplates.allFields"),
+        label: i18n("MetadataTemplates.allFields"),
+        description: i18n("MetadataTemplates.allFields-description"),
         identifier: 0,
         key: "template-0",
         fields: [],
