@@ -32,7 +32,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * REST controller to handle storing and retrieving metadata from a
  * {@link Sample}
  */
-@Tag(name = "samples")
 @Controller
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
@@ -66,6 +65,7 @@ public class RESTSampleMetadataController {
 	@Operation(operationId = "getSampleMetadata", summary = "Find the metadata for a given sample",
 			description = "Get the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
+	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> getSampleMetadata(@PathVariable Long sampleId) {
 		logger.trace("Getting sample metadata for " + sampleId);
@@ -88,6 +88,7 @@ public class RESTSampleMetadataController {
 	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project",
 			description = "Get all the sample metadata for a given project.", tags = "samples")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
+	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<ResourceCollection<SampleMetadataResponse>> getProjectSampleMetadata(final @PathVariable Long projectId) {
 		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
@@ -127,6 +128,7 @@ public class RESTSampleMetadataController {
 	@Operation(operationId = "saveSampleMetadata", summary = "Save the metadata for a given sample",
 			description = "Save the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
+	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> saveSampleMetadata(@PathVariable Long sampleId, @RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
@@ -149,6 +151,7 @@ public class RESTSampleMetadataController {
 	@Operation(operationId = "addSampleMetadata", summary = "Add new metadata fields for a given sample",
 			description = "Add new metadata fields for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
+	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> addSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
