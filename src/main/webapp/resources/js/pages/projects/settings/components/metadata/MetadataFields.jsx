@@ -50,9 +50,6 @@ export default function MetadataFields({ projectId }) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      {/*<Typography.Title level={2}>*/}
-      {/*  {i18n("MetadataFields.title")}*/}
-      {/*</Typography.Title>*/}
       {canManage && (
         <Space>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
