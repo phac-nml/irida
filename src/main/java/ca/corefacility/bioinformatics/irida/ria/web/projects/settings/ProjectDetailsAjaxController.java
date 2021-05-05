@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.Locale;
 
@@ -12,10 +12,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
@@ -50,7 +53,7 @@ public class ProjectDetailsAjaxController {
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
-	public ResponseEntity<ProjectInfoResponse> getProjectDetails(@RequestParam Long projectId) {
+	public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectInfo(projectId));
 	}
 
@@ -116,6 +119,55 @@ public class ProjectDetailsAjaxController {
 					new AjaxSuccessResponse(metadataService.setDefaultMetadataTemplate(templateId, projectId, locale)));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
+	 * Update the priority for analyses for a project.
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @param priority  the new priority for analyses
+	 * @param locale    current users locale
+	 * @return message to user about the update ot the priority
+	 */
+	@PutMapping("/priority")
+	public ResponseEntity<AjaxResponse> updateProcessingPriority(@RequestParam long projectId,
+			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.updateProcessingPriority(projectId, priority, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}	/**
+	 * Get the minimum/maximum coverage and genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @return {@link Coverage}
+	 */
+	@GetMapping("/coverage")
+	public Coverage getProcessingCoverage(@RequestParam Long projectId) {
+		return service.getProcessingCoverageForProject(projectId);
+	}
+
+	/**
+	 * Update the minimum/maximum coverage or genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @param coverage  minimum/maximum coverage or genome size for the project
+	 * @param locale    current users locale
+	 * @return Message to user about the update
+	 */
+	@PutMapping("/coverage")
+	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@RequestParam long projectId,
+			@RequestBody Coverage coverage, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.updateProcessingCoverage(coverage, projectId, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}

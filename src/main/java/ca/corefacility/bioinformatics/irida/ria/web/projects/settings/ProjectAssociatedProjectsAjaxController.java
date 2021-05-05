@@ -11,10 +11,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIAssociatedProject
 
 @Controller
 @RequestMapping("/ajax/projects/associated")
-public class ProjectAjaxAssociatedProjectsController {
+public class ProjectAssociatedProjectsAjaxController {
 	private final UIAssociatedProjectsService service;
 
-	public ProjectAjaxAssociatedProjectsController(UIAssociatedProjectsService service) {
+	public ProjectAssociatedProjectsAjaxController(UIAssociatedProjectsService service) {
 		this.service = service;
 	}
 

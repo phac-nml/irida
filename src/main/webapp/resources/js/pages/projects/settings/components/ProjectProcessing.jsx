@@ -1,6 +1,6 @@
 import { Divider, Space, Typography } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { ProcessingAutomatedPipelines } from "./processing/ProcessingAutomatedPipelines";
 import { ProcessingCoverage } from "./processing/ProcessingCoverage";
 
@@ -10,17 +10,21 @@ import { ProcessingCoverage } from "./processing/ProcessingCoverage";
  * @constructor
  */
 export default function ProjectProcessing({ projectId }) {
-  const { canManage } = useSelector((state) => state.project);
+  const { data: project } = useGetProjectDetailsQuery(projectId);
+  console.log(project);
 
   return (
     <>
       <Typography.Title level={2}>{i18n("Processing.title")}</Typography.Title>
       <Space style={{ width: `100%` }} direction="vertical">
-        <ProcessingCoverage projectId={projectId} canManage={canManage} />
+        <ProcessingCoverage
+          projectId={projectId}
+          canManage={project?.canManage}
+        />
         <Divider />
         <ProcessingAutomatedPipelines
           projectId={projectId}
-          canManage={canManage}
+          canManage={project?.canManage}
         />
       </Space>
     </>

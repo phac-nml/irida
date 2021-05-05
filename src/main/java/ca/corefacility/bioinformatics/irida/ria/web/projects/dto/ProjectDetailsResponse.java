@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Encapsulates information about the project as well as permissions.
  */
 
-public class ProjectInfoResponse {
+public class ProjectDetailsResponse {
 	private Long id;
 	private String label;
 	private Date createdDate;
@@ -22,7 +22,7 @@ public class ProjectInfoResponse {
 	private String priority;
 	private Long defaultMetadataTemplateId = 0L;
 
-	public ProjectInfoResponse(Project project, boolean canManage, boolean canManageRemote) {
+	public ProjectDetailsResponse(Project project, boolean canManage, boolean canManageRemote) {
 		this.id = project.getId();
 		this.label = project.getName();
 		this.createdDate = project.getCreatedDate();

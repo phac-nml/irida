@@ -4,20 +4,13 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.AnalysisTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineService;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSettingsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -32,93 +25,14 @@ public class ProjectSettingsAjaxController {
 	private final UserService userService;
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final UIPipelineService pipelineService;
-	private final UIProjectSettingsService settingsService;
 
 	@Autowired
 	public ProjectSettingsAjaxController(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
-			UserService userService, UIPipelineService pipelineService, UIProjectSettingsService settingsService) {
+			UserService userService, UIPipelineService pipelineService) {
 		this.projectService = projectService;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.userService = userService;
 		this.pipelineService = pipelineService;
-		this.settingsService = settingsService;
-	}
-
-	/**
-	 * Remove an associated project from the currently active project
-	 *
-	 * @param projectId    project identifier for the currently active project
-	 * @param associatedId project identifier for the associated project to remove
-	 */
-	@PostMapping("/associated/remove")
-	public void removeAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
-		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedId);
-		projectService.removeRelatedProject(project, associatedProject);
-	}
-
-	/**
-	 * Create a new associated project within the currently active project
-	 *
-	 * @param projectId    project identifier for the currently active project
-	 * @param associatedId project identifier for the  project to add association
-	 */
-	@PostMapping("/associated/add")
-	public void addAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
-		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedId);
-		projectService.addRelatedProject(project, associatedProject);
-	}
-
-	/**
-	 * Update the priority for analyses for a project.
-	 *
-	 * @param projectId identifier for a {@link Project}
-	 * @param priority  the new priority for analyses
-	 * @param locale    current users locale
-	 * @return message to user about the update ot the priority
-	 */
-	@PutMapping("/priority")
-	public ResponseEntity<AjaxResponse> updateProcessingPriority(@PathVariable long projectId,
-			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
-		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(settingsService.updateProcessingPriority(projectId, priority, locale)));
-		} catch (UpdateException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
-		}
-	}
-
-	/**
-	 * Get the minimum/maximum coverage and genome size for the project
-	 *
-	 * @param projectId identifier for the project
-	 * @return {@link Coverage}
-	 */
-	@GetMapping("/coverage")
-	public Coverage getProcessingCoverage(@PathVariable Long projectId) {
-		return settingsService.getProcessingCoverageForProject(projectId);
-	}
-
-	/**
-	 * Update the minimum/maximum coverage or genome size for the project
-	 *
-	 * @param projectId identifier for the project
-	 * @param coverage  minimum/maximum coverage or genome size for the project
-	 * @param locale    current users locale
-	 * @return Message to user about the update
-	 */
-	@PutMapping("/coverage")
-	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@PathVariable long projectId,
-			@RequestBody Coverage coverage, Locale locale) {
-		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(settingsService.updateProcessingCoverage(coverage, projectId, locale)));
-		} catch (UpdateException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
-		}
 	}
 
 	/**
