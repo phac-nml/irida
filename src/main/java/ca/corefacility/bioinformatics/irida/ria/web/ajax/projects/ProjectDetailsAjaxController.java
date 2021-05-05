@@ -62,9 +62,9 @@ public class ProjectDetailsAjaxController {
 	 * @param locale    {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
-	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
+	@PutMapping("")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public ResponseEntity<String> updateProjectDetails(@PathVariable Long projectId,
+	public ResponseEntity<AjaxResponse> updateProjectDetails(@RequestParam Long projectId,
 			@RequestBody UpdateProjectAttributeRequest request, Locale locale) {
 		try {
 			Project project = projectService.read(projectId);
@@ -80,8 +80,8 @@ public class ProjectDetailsAjaxController {
 				break;
 			default:
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(messageSource.getMessage("server.ProjectDetails.error",
-								new Object[] { request.getField() }, locale));
+						.body(new AjaxErrorResponse(messageSource.getMessage("server.ProjectDetails.error",
+								new Object[] { request.getField() }, locale)));
 			}
 			projectService.update(project);
 			String message;
@@ -93,10 +93,10 @@ public class ProjectDetailsAjaxController {
 				message = messageSource.getMessage("server.ProjectDetails.success",
 						new Object[] { request.getField(), request.getValue() }, locale);
 			}
-			return ResponseEntity.ok(message);
+			return ResponseEntity.ok(new AjaxSuccessResponse(message));
 		} catch (ConstraintViolationException e) {
 			return ResponseEntity.badRequest()
-					.body(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
+					.body(new AjaxErrorResponse(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale)));
 		}
 	}
 

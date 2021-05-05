@@ -2,7 +2,8 @@ import { Redirect, Router } from "@reach/router";
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
@@ -73,7 +74,7 @@ const SettingsLayout = () => (
  * @constructor
  */
 const ProjectSettings = (props) => {
-  const { canManage } = useSelector((state) => state.project);
+  const { project } = useGetProjectDetailsQuery(props.projectId);
 
   return (
     <Layout>
@@ -94,7 +95,7 @@ const ProjectSettings = (props) => {
                     <MetadataLayout path="/metadata">
                       <MetadataFields path="/fields" />
                       <MetadataTemplates path="/templates" />
-                      {canManage ? (
+                      {project?.canManage ? (
                         <MetadataTemplateManager path="/templates/:id" />
                       ) : (
                         <MetadataTemplateMember path="/templates/:id" />

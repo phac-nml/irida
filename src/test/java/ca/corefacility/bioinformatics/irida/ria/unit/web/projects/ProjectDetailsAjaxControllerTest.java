@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.ProjectDetailsAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
@@ -54,7 +55,7 @@ public class ProjectDetailsAjaxControllerTest {
 	@Test
 	public void testUpdateProjectDetails() {
 		UpdateProjectAttributeRequest request = new UpdateProjectAttributeRequest("organism", "Salmonella");
-		ResponseEntity<String> response = controller.updateProjectDetails(TestDataFactory.TEST_PROJECT_ID, request, Locale.ENGLISH);
+		ResponseEntity<AjaxResponse> response = controller.updateProjectDetails(TestDataFactory.TEST_PROJECT_ID, request, Locale.ENGLISH);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 		verify(projectService, times(1)).update(any(Project.class));
 	}

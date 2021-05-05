@@ -15,7 +15,19 @@ export const projectApi = createApi({
       }),
       providesTags: ["Project"],
     }),
+    updateProjectDetails: build.mutation({
+      query: ({ projectId, field, value }) => ({
+        url: "/details",
+        params: { projectId },
+        body: { field, value },
+        method: "PUT",
+      }),
+      invalidatesTags: ["Project"],
+    }),
   }),
 });
 
-export const { useGetProjectDetailsQuery } = projectApi;
+export const {
+  useGetProjectDetailsQuery,
+  useUpdateProjectDetailsMutation,
+} = projectApi;
