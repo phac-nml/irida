@@ -24,6 +24,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 	public static final String EDITABLE = "editable";
 	public static final String OWNER = "owner";
 
+	@Deprecated
 	public UISampleMetadata(ProjectSampleJoin join, boolean canModifySample, Set<MetadataEntry> metadata) {
 		Project project = join.getSubject();
 		Sample sample = join.getObject();
@@ -53,13 +54,15 @@ public class UISampleMetadata extends HashMap<String, String> {
 				.toString());
 		this.putAll(getAllMetadataForSample(metadata));
 		this.put(EDITABLE, String.valueOf(canModifySample));
+
+		//TODO: Remove this and use the canModifySample for access
 		this.put(OWNER, String.valueOf(true));
 	}
 
 	/**
 	 * Convert the sample metadata into a format that can be consumed by Ag Grid.
 	 *
-	 * @param sample {@link Sample}
+	 * @param metadataEntries the Metadata entries
 	 * @return {@link Map} of {@link String} field and {@link String} value
 	 */
 	private Map<String, String> getAllMetadataForSample(Set<MetadataEntry> metadataEntries) {
