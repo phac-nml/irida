@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatu
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -72,7 +73,8 @@ public class SampleSequenceFilesControllerTest {
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
 
-		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,analysisService);
+		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,
+				analysisService);
 	}
 
 	@Test
@@ -94,27 +96,27 @@ public class SampleSequenceFilesControllerTest {
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).getSequencingObjectsForSample(s);
 
-		Object o = modelMap.getResource();
-		assertTrue(o instanceof ResourceCollection);
-		@SuppressWarnings("unchecked")
-		ResourceCollection<SequenceFile> resources = (ResourceCollection<SequenceFile>) o;
+		ResourceCollection<SequenceFile> resources = modelMap.getResource();
 		assertNotNull(resources);
 		assertEquals(1, resources.size());
 
 		Link selfCollection = resources.getLink(Link.REL_SELF);
 		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/"
-				+ so.getSequenceFile().getId();
+		String sequenceFileLocation =
+				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile()
+						.getId();
 
 		assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
 		assertEquals(sampleLocation, sample.getHref());
 
 		// confirm that the self rel for an individual sequence file exists
-		SequenceFile sfr = resources.iterator().next();
+		SequenceFile sfr = resources.iterator()
+				.next();
 		Link self = sfr.getLink(Link.REL_SELF);
 		assertEquals(sequenceFileLocation, self.getHref());
-		assertEquals(so.getSequenceFile().getFile(), sfr.getFile());
+		assertEquals(so.getSequenceFile()
+				.getFile(), sfr.getFile());
 	}
 
 	@Test
@@ -125,16 +127,15 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ResponseResource<RootResource> modelMap = controller.removeSequenceFileFromSample(s.getId(), "unpaired", so.getId());
+		ResponseResource<RootResource> modelMap = controller.removeSequenceFileFromSample(s.getId(), "unpaired",
+				so.getId());
 
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 		verify(sampleService, times(1)).removeSequencingObjectFromSample(s, so);
 
-		Object o = modelMap.getResource();
-		assertNotNull(o);
-		assertTrue(o instanceof RootResource);
-		RootResource resource = (RootResource) o;
+		RootResource resource = modelMap.getResource();
+		assertNotNull(resource);
 
 		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
@@ -162,19 +163,19 @@ public class SampleSequenceFilesControllerTest {
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 
-		Object o = modelMap.getResource();
-		assertNotNull(o);
-		assertTrue(o instanceof SequenceFile);
-		SequenceFile sfr = (SequenceFile) o;
-		assertEquals(so.getSequenceFile().getFile(), sfr.getFile());
+		SequenceFile sfr = modelMap.getResource();
+		assertNotNull(sfr);
+		assertEquals(so.getSequenceFile()
+				.getFile(), sfr.getFile());
 
 		Link self = sfr.getLink(Link.REL_SELF);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/"
-				+ so.getSequenceFile().getId();
+		String sequenceFileLocation =
+				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile()
+						.getId();
 
 		assertNotNull(self);
 		assertEquals(sequenceFileLocation, self.getHref());
@@ -183,7 +184,7 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull(sample);
 		assertEquals(sampleLocation, sample.getHref());
 	}
-	
+
 	@Test
 	public void testGetQcForFile() throws IOException {
 		Sample s = TestDataFactory.constructSample();
@@ -193,16 +194,17 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
-		when(analysisService.getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId()))
-				.thenReturn(analysisFastQC);
+		when(analysisService.getFastQCAnalysisForSequenceFile(so, so.getSequenceFile()
+				.getId())).thenReturn(analysisFastQC);
 
 		ResponseResource<AnalysisFastQC> readQCForSequenceFile = controller.readQCForSequenceFile(s.getId(),
-				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(),
-				so.getSequenceFile().getId());
+				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
+						.getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
-		verify(analysisService).getFastQCAnalysisForSequenceFile(so, so.getSequenceFile().getId());
+		verify(analysisService).getFastQCAnalysisForSequenceFile(so, so.getSequenceFile()
+				.getId());
 
 		Object object = readQCForSequenceFile.getResource();
 		assertTrue(object instanceof AnalysisFastQC);
@@ -236,27 +238,26 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFileResource resource = new SequenceFileResource();
 		resource.setMiseqRunId(6L);
 		Path f = Files.createTempFile(null, null);
-		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
-				.toFile()));
+		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh",
+				FileCopyUtils.copyToByteArray(f.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
+				Matchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
-		
-		ResponseResource<SequenceFile> modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+
+		ResponseResource<SequenceFile> modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource,
+				response);
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
-		verify(sequencingObjectService)
-				.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s));
+		verify(sequencingObjectService).createSequencingObjectInSample(any(SingleEndSequenceFile.class),
+				Matchers.eq(s));
 
-		Object o = modelMap.getResource();
-		assertNotNull("object must not be null", o);
-		assertTrue("object must be a SequenceFile", o instanceof SequenceFile);
-		SequenceFile sfr = (SequenceFile) o;
+		SequenceFile sfr = modelMap.getResource();
+		assertNotNull("sequence file must not be null", sfr);
 
 		assertEquals("response must have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 		Link self = sfr.getLink(Link.REL_SELF);
@@ -286,12 +287,12 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFileResource resource = new SequenceFileResource();
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
-		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
-				.toFile()));
+		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh",
+				FileCopyUtils.copyToByteArray(f.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
+				Matchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
@@ -310,12 +311,12 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFileResource resource = new SequenceFileResource();
 		resource.setMiseqRunId(8L);
 		Path f = Files.createTempFile(null, null);
-		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
-				.toFile()));
+		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh",
+				FileCopyUtils.copyToByteArray(f.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
+				Matchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
@@ -332,7 +333,8 @@ public class SampleSequenceFilesControllerTest {
 		String file2Name = "file2_R2_01.fastq.gz";
 
 		SequenceFilePair pair = TestDataFactory.constructSequenceFilePair();
-		Iterator<SequenceFile> iterator = pair.getFiles().iterator();
+		Iterator<SequenceFile> iterator = pair.getFiles()
+				.iterator();
 		SequenceFile sf1 = iterator.next();
 		SequenceFile sf2 = iterator.next();
 
@@ -357,24 +359,21 @@ public class SampleSequenceFilesControllerTest {
 		// mock out the service calls
 		when(sampleService.read(s.getId())).thenReturn(s);
 
-		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
+				Matchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 
-		ResponseResource<SequencingObject> modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2,
-				response);
+		ResponseResource<SequencingObject> modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1,
+				resource1, mmf2, resource2, response);
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s));
 
-		Object o = modelMap.getResource();
-		assertNotNull("Object should not be null", o);
-		assertTrue("Object should be an instance of SequenceFilePair", o instanceof SequenceFilePair);
-
-		SequenceFilePair returnVal = (SequenceFilePair) o;
+		SequenceFilePair returnVal = (SequenceFilePair) modelMap.getResource();
+		assertNotNull("sequence file pair should not be null", returnVal);
 
 		Link selfCollection = returnVal.getLink(Link.REL_SELF);
 		Link sampleRC = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
@@ -395,7 +394,8 @@ public class SampleSequenceFilesControllerTest {
 
 		assertEquals("The location header should have the self rel", pairLocation, locationHeader);
 
-		Iterator<SequenceFile> filesIterator = returnVal.getFiles().iterator();
+		Iterator<SequenceFile> filesIterator = returnVal.getFiles()
+				.iterator();
 
 		for (int i = 0; i < 2; i++) {
 			SequenceFile returnedFile = filesIterator.next();
@@ -428,10 +428,10 @@ public class SampleSequenceFilesControllerTest {
 		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
-		
-		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
+				Matchers.eq(s))).thenReturn(sso);
 		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
 	}
 
@@ -454,10 +454,10 @@ public class SampleSequenceFilesControllerTest {
 		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
-		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
+				Matchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
@@ -484,10 +484,10 @@ public class SampleSequenceFilesControllerTest {
 		MockMultipartFile mmf2 = new MockMultipartFile("filename2", "filename2", "blurgh2",
 				FileCopyUtils.copyToByteArray(f2.toFile()));
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p,s,true));
+		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
-		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s)))
-				.thenReturn(sso);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
+				Matchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 

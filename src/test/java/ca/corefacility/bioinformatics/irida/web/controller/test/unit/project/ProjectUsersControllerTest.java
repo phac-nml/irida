@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -63,7 +64,7 @@ public class ProjectUsersControllerTest {
 		u.setId(1L);
 		Project p = TestDataFactory.constructProject();
 		Join<Project, User> join = new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER);
-		@SuppressWarnings("unchecked") List<Join<Project, User>> relationships = Lists.newArrayList(join);
+		List<Join<Project, User>> relationships = Lists.newArrayList(join);
 
 		when(userService.getUsersForProject(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
@@ -73,10 +74,8 @@ public class ProjectUsersControllerTest {
 		verify(projectService, times(1)).read(p.getId());
 		verify(userService, times(1)).getUsersForProject(p);
 
-		Object o = map.getResource();
-		assertNotNull(o);
-		assertTrue(o instanceof ResourceCollection);
-		@SuppressWarnings("unchecked") ResourceCollection<User> users = (ResourceCollection<User>) o;
+		ResourceCollection<User> users = map.getResource();
+		assertNotNull(users);
 		assertEquals(1, users.size());
 		User ur = users.iterator()
 				.next();
@@ -107,7 +106,8 @@ public class ProjectUsersControllerTest {
 		Map<String, String> userMap = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
 		// add the user to the project
-		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(), userMap, response);
+		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(),
+				userMap, response);
 
 		// confirm that the service method was called
 		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
@@ -122,19 +122,12 @@ public class ProjectUsersControllerTest {
 		assertEquals("location must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
 		//check the ModelMap's resource type
-		Object o = map.getResource();
-		assertNotNull("object must not be null", o);
-		assertTrue("object must be an instance of LabelledRelationshipResource",
-				o instanceof LabelledRelationshipResource);
-		@SuppressWarnings("unchecked") LabelledRelationshipResource<Project, User> lrr = (LabelledRelationshipResource<Project, User>) o;
-		Object o2 = lrr.getResource();
-		assertNotNull("object must not be null", o2);
-		assertTrue("object must be an instance of ProjectUserJoin", o2 instanceof ProjectUserJoin);
-		ProjectUserJoin pj = (ProjectUserJoin) o2;
-		Object o3 = pj.getObject();
-		assertNotNull("object must not be null", o3);
-		assertTrue("object must be an instance of User", o3 instanceof User);
-		User user = (User) o3;
+		LabelledRelationshipResource<Project, User> lrr = map.getResource();
+		assertNotNull("labelled resource must not be null", lrr);
+		ProjectUserJoin pj = (ProjectUserJoin) lrr.getResource();
+		assertNotNull("project must not be null", pj);
+		User user = pj.getObject();
+		assertNotNull("user must not be null", user);
 		assertEquals("Username must be correct", user.getUsername(), u.getUsername());
 		//check for a correct relationship link
 		assertTrue("relationship link must be correct", lrr.getLink("self")
@@ -173,7 +166,8 @@ public class ProjectUsersControllerTest {
 				RESTProjectUsersController.USER_ROLE_KEY, r.toString());
 
 		// add the user to the project
-		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(), userMap, response);
+		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(),
+				userMap, response);
 
 		// confirm that the service method was called
 		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
@@ -188,19 +182,12 @@ public class ProjectUsersControllerTest {
 		assertEquals("location must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
 		//check the ModelMap's resource type
-		Object o = map.getResource();
-		assertNotNull("object must not be null", o);
-		assertTrue("object must be an instance of LabelledRelationshipResource",
-				o instanceof LabelledRelationshipResource);
-		@SuppressWarnings("unchecked") LabelledRelationshipResource<Project, User> lrr = (LabelledRelationshipResource<Project, User>) o;
-		Object o2 = lrr.getResource();
-		assertNotNull("object must not be null", o2);
-		assertTrue("object must be an instance of ProjectUserJoin", o2 instanceof ProjectUserJoin);
-		ProjectUserJoin pj = (ProjectUserJoin) o2;
-		Object o3 = pj.getObject();
-		assertNotNull("object must not be null", o3);
-		assertTrue("object must be an instance of User", o3 instanceof User);
-		User user = (User) o3;
+		LabelledRelationshipResource<Project, User> lrr = map.getResource();
+		assertNotNull("labelled resource must not be null", lrr);
+		ProjectUserJoin pj = (ProjectUserJoin) lrr.getResource();
+		assertNotNull("project must not be null", pj);
+		User user = pj.getObject();
+		assertNotNull("user must not be null", user);
 		assertEquals("Username must be correct", user.getUsername(), u.getUsername());
 		//check for a correct relationship link
 		assertTrue("relationship link must be correct", lrr.getLink("self")
@@ -236,9 +223,7 @@ public class ProjectUsersControllerTest {
 		verify(userService).getUserByUsername(u.getUsername());
 		verify(projectService).removeUserFromProject(p, u);
 
-		Object o = modelMap.getResource();
-		assertTrue(o instanceof RootResource);
-		RootResource r = (RootResource) o;
+		RootResource r = modelMap.getResource();
 		// confirm that a project link exists
 		Link projectLink = r.getLink(RESTProjectsController.REL_PROJECT);
 		assertNotNull(projectLink);
