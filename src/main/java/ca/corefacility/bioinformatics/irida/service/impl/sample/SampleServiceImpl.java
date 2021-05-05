@@ -197,8 +197,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		return metadataEntryRepository.getMetadataForSample(sample);
 	}
 
-	@PreAuthorize("permitAll()")
-	public Map<Sample, Set<MetadataEntry>> getMetadataForProject(Project project){
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
 		return metadataEntryRepository.getMetadataForProject(project);
 	}
 

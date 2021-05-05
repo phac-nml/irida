@@ -9,5 +9,5 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 public interface MetadataEntryRepositoryCustom {
 
-	Map<Sample, Set<MetadataEntry>> getMetadataForProject(Project project);
+	Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
 }

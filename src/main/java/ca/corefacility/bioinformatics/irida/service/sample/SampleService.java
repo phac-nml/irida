@@ -74,7 +74,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 
-	public Map<Sample, Set<MetadataEntry>> getMetadataForProject(Project project);
+	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

@@ -31,7 +31,7 @@ public class MetadataEntryRepositoryImpl {
 		this.entityManager = entityManager;
 	}
 
-	public Map<Sample, Set<MetadataEntry>> getMetadataForProject(Project project) {
+	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
 
 		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
 		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
@@ -45,7 +45,7 @@ public class MetadataEntryRepositoryImpl {
 
 		String sampleSql = "FROM ProjectSampleJoin j WHERE j.project = :project";
 
-		TypedQuery<ProjectSampleJoin> sampleQuery = entityManager.createQuery(sampleSql, ProjectSampleJoin.class);
+		/*TypedQuery<ProjectSampleJoin> sampleQuery = entityManager.createQuery(sampleSql, ProjectSampleJoin.class);
 		sampleQuery.setParameter("project", project);
 		List<ProjectSampleJoin> sampleJoinList = sampleQuery.getResultList();
 
@@ -53,12 +53,14 @@ public class MetadataEntryRepositoryImpl {
 				.collect(Collectors.toMap(j -> j.getObject()
 						.getId(), j -> j.getObject()));
 
+		 */
+
 		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());
 
-		List<SampleMetadataEntry> samplEntryCollection = tmpl.query(entityQueryString, parameters,
+		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters,
 				new RowMapper<SampleMetadataEntry>() {
 					@Override
 					public SampleMetadataEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -73,18 +75,21 @@ public class MetadataEntryRepositoryImpl {
 						MetadataEntry entry = new MetadataEntry(value, type, metadataTemplateField);
 						entry.setId(entryId);
 
-						Sample sample = samplesById.get(sampleId);
+						//Sample sample = samplesById.get(sampleId);
 
-						return new SampleMetadataEntry(sample, entry);
+						return new SampleMetadataEntry(sampleId, entry);
 					}
 				});
 
-		Map<Sample, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
-		for (Sample s : samplesById.values()) {
+		Set<Long> sampleIdSet = sampleEntryCollection.stream()
+				.map(SampleMetadataEntry::getSample)
+				.collect(Collectors.toSet());
+		Map<Long, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
+		for (Long s : sampleIdSet) {
 			sampleMetadata.put(s, new HashSet<>());
 		}
 
-		for (SampleMetadataEntry entries : samplEntryCollection) {
+		for (SampleMetadataEntry entries : sampleEntryCollection) {
 			sampleMetadata.get(entries.getSample())
 					.add(entries.getEntry());
 		}
@@ -94,15 +99,15 @@ public class MetadataEntryRepositoryImpl {
 	}
 
 	private class SampleMetadataEntry {
-		Sample sample;
+		Long sample;
 		MetadataEntry entry;
 
-		SampleMetadataEntry(Sample sample, MetadataEntry entry) {
+		SampleMetadataEntry(Long sample, MetadataEntry entry) {
 			this.sample = sample;
 			this.entry = entry;
 		}
 
-		public Sample getSample() {
+		public Long getSample() {
 			return sample;
 		}
 
