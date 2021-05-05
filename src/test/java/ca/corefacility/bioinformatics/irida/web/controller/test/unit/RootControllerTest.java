@@ -11,13 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
 
 /**
@@ -38,8 +36,8 @@ public class RootControllerTest {
 	@Test
 	public void testGetLinks() {
 		Map<String, Class<?>> controllers = RESTRootController.PUBLIC_CONTROLLERS;
-		ResponseResource<RootResource> map = controller.getLinks(new MockHttpServletRequest());
-		RootResource r = map.getResource();
+		ResponseResource<RootResource> responseResource = controller.getLinks(new MockHttpServletRequest());
+		RootResource r = responseResource.getResource();
 		assertNotNull(r);
 		for (Link l : r.getLinks()) {
 			if (!l.getRel()

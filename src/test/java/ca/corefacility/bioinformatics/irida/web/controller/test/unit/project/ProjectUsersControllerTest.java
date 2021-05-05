@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -69,12 +68,12 @@ public class ProjectUsersControllerTest {
 		when(userService.getUsersForProject(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
 
-		ResponseResource<ResourceCollection<User>> map = controller.getUsersForProject(p.getId());
+		ResponseResource<ResourceCollection<User>> responseResource = controller.getUsersForProject(p.getId());
 
 		verify(projectService, times(1)).read(p.getId());
 		verify(userService, times(1)).getUsersForProject(p);
 
-		ResourceCollection<User> users = map.getResource();
+		ResourceCollection<User> users = responseResource.getResource();
 		assertNotNull(users);
 		assertEquals(1, users.size());
 		User ur = users.iterator()
@@ -106,8 +105,8 @@ public class ProjectUsersControllerTest {
 		Map<String, String> userMap = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
 		// add the user to the project
-		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(),
-				userMap, response);
+		ResponseResource<LabelledRelationshipResource<Project, User>> responseResource = controller.addUserToProject(
+				p.getId(), userMap, response);
 
 		// confirm that the service method was called
 		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
@@ -122,7 +121,7 @@ public class ProjectUsersControllerTest {
 		assertEquals("location must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
 		//check the ModelMap's resource type
-		LabelledRelationshipResource<Project, User> lrr = map.getResource();
+		LabelledRelationshipResource<Project, User> lrr = responseResource.getResource();
 		assertNotNull("labelled resource must not be null", lrr);
 		ProjectUserJoin pj = (ProjectUserJoin) lrr.getResource();
 		assertNotNull("project must not be null", pj);
@@ -166,8 +165,8 @@ public class ProjectUsersControllerTest {
 				RESTProjectUsersController.USER_ROLE_KEY, r.toString());
 
 		// add the user to the project
-		ResponseResource<LabelledRelationshipResource<Project, User>> map = controller.addUserToProject(p.getId(),
-				userMap, response);
+		ResponseResource<LabelledRelationshipResource<Project, User>> responseResource = controller.addUserToProject(
+				p.getId(), userMap, response);
 
 		// confirm that the service method was called
 		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
@@ -182,7 +181,7 @@ public class ProjectUsersControllerTest {
 		assertEquals("location must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
 		//check the ModelMap's resource type
-		LabelledRelationshipResource<Project, User> lrr = map.getResource();
+		LabelledRelationshipResource<Project, User> lrr = responseResource.getResource();
 		assertNotNull("labelled resource must not be null", lrr);
 		ProjectUserJoin pj = (ProjectUserJoin) lrr.getResource();
 		assertNotNull("project must not be null", pj);
@@ -217,13 +216,13 @@ public class ProjectUsersControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
 
-		ResponseResource<RootResource> modelMap = controller.removeUserFromProject(p.getId(), u.getUsername());
+		ResponseResource<RootResource> responseResource = controller.removeUserFromProject(p.getId(), u.getUsername());
 
 		verify(projectService).read(p.getId());
 		verify(userService).getUserByUsername(u.getUsername());
 		verify(projectService).removeUserFromProject(p, u);
 
-		RootResource r = modelMap.getResource();
+		RootResource r = responseResource.getResource();
 		// confirm that a project link exists
 		Link projectLink = r.getLink(RESTProjectsController.REL_PROJECT);
 		assertNotNull(projectLink);

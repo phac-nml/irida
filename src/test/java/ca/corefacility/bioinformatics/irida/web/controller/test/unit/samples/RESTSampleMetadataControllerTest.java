@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleMetadataResponse;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 
 import com.google.common.collect.ImmutableMap;
@@ -68,9 +67,10 @@ public class RESTSampleMetadataControllerTest {
 		when(sampleService.getMetadataForSample(s1)).thenReturn(Sets.newHashSet(entry1));
 		when(sampleService.getMetadataForSample(s2)).thenReturn(Sets.newHashSet(entry2));
 
-		ResponseResource<ResourceCollection<SampleMetadataResponse>> modelMap = metadataController.getProjectSampleMetadata(p1.getId());
+		ResponseResource<ResourceCollection<SampleMetadataResponse>> responseResource = metadataController.getProjectSampleMetadata(
+				p1.getId());
 
-		ResourceCollection<SampleMetadataResponse> responses = (ResourceCollection) modelMap.getResource();
+		ResourceCollection<SampleMetadataResponse> responses = responseResource.getResource();
 
 		assertEquals(2, responses.size());
 		for (SampleMetadataResponse response : responses) {
@@ -100,7 +100,7 @@ public class RESTSampleMetadataControllerTest {
 
 		ResponseResource<SampleMetadataResponse> sampleMetadata = metadataController.getSampleMetadata(s1.getId());
 
-		SampleMetadataResponse response = (SampleMetadataResponse) sampleMetadata.getResource();
+		SampleMetadataResponse response = sampleMetadata.getResource();
 
 		verify(sampleService).getMetadataForSample(s1);
 

@@ -28,7 +28,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
 import com.google.common.collect.Lists;
@@ -50,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
@@ -90,13 +88,14 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sequencingObjectService.getSequencingObjectsForSample(s)).thenReturn(relationships);
 
-		ResponseResource<ResourceCollection<SequenceFile>> modelMap = controller.getSampleSequenceFiles(s.getId());
+		ResponseResource<ResourceCollection<SequenceFile>> responseResource = controller.getSampleSequenceFiles(
+				s.getId());
 
 		// verify that the service calls were used.
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).getSequencingObjectsForSample(s);
 
-		ResourceCollection<SequenceFile> resources = modelMap.getResource();
+		ResourceCollection<SequenceFile> resources = responseResource.getResource();
 		assertNotNull(resources);
 		assertEquals(1, resources.size());
 
@@ -127,14 +126,14 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ResponseResource<RootResource> modelMap = controller.removeSequenceFileFromSample(s.getId(), "unpaired",
+		ResponseResource<RootResource> responseResource = controller.removeSequenceFileFromSample(s.getId(), "unpaired",
 				so.getId());
 
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 		verify(sampleService, times(1)).removeSequencingObjectFromSample(s, so);
 
-		RootResource resource = modelMap.getResource();
+		RootResource resource = responseResource.getResource();
 		assertNotNull(resource);
 
 		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
@@ -156,14 +155,14 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ResponseResource<SequenceFile> modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
+		ResponseResource<SequenceFile> responseResource = controller.readSequenceFileForSequencingObject(s.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
 						.getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 
-		SequenceFile sfr = modelMap.getResource();
+		SequenceFile sfr = responseResource.getResource();
 		assertNotNull(sfr);
 		assertEquals(so.getSequenceFile()
 				.getFile(), sfr.getFile());
@@ -249,14 +248,14 @@ public class SampleSequenceFilesControllerTest {
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 
-		ResponseResource<SequenceFile> modelMap = controller.addNewSequenceFileToSample(s.getId(), mmf, resource,
-				response);
+		ResponseResource<SequenceFile> responseResource = controller.addNewSequenceFileToSample(s.getId(), mmf,
+				resource, response);
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService).createSequencingObjectInSample(any(SingleEndSequenceFile.class),
 				Matchers.eq(s));
 
-		SequenceFile sfr = modelMap.getResource();
+		SequenceFile sfr = responseResource.getResource();
 		assertNotNull("sequence file must not be null", sfr);
 
 		assertEquals("response must have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
@@ -366,13 +365,13 @@ public class SampleSequenceFilesControllerTest {
 
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.UPLOADING);
 
-		ResponseResource<SequencingObject> modelMap = controller.addNewSequenceFilePairToSample(s.getId(), mmf1,
+		ResponseResource<SequencingObject> responseResource = controller.addNewSequenceFilePairToSample(s.getId(), mmf1,
 				resource1, mmf2, resource2, response);
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s));
 
-		SequenceFilePair returnVal = (SequenceFilePair) modelMap.getResource();
+		SequenceFilePair returnVal = (SequenceFilePair) responseResource.getResource();
 		assertNotNull("sequence file pair should not be null", returnVal);
 
 		Link selfCollection = returnVal.getLink(Link.REL_SELF);

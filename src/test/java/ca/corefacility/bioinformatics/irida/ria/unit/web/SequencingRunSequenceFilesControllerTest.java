@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
@@ -18,7 +17,6 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ModelMap;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,13 +56,13 @@ public class SequencingRunSequenceFilesControllerTest {
 		when(objectService.read(seqId)).thenReturn(singleEndSequenceFile);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
 
-		ResponseResource<SequencingRun> modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId,
+		ResponseResource<SequencingRun> responseResource = controller.addSequenceFilesToSequencingRun(sequencingrunId,
 				representation, response);
 
 		verify(objectService).read(seqId);
 		verify(miseqRunService).read(sequencingrunId);
 
-		SequencingRun res = modelMap.getResource();
+		SequencingRun res = responseResource.getResource();
 		assertNotNull("Sequencing run should not be null", res);
 		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId)
 				.slash("sequenceFiles")
