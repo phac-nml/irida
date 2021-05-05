@@ -45,32 +45,6 @@ public class ProjectSettingsAjaxController {
 	}
 
 	/**
-	 * Remove an associated project from the currently active project
-	 *
-	 * @param projectId    project identifier for the currently active project
-	 * @param associatedId project identifier for the associated project to remove
-	 */
-	@PostMapping("/associated/remove")
-	public void removeAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
-		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedId);
-		projectService.removeRelatedProject(project, associatedProject);
-	}
-
-	/**
-	 * Create a new associated project within the currently active project
-	 *
-	 * @param projectId    project identifier for the currently active project
-	 * @param associatedId project identifier for the  project to add association
-	 */
-	@PostMapping("/associated/add")
-	public void addAssociatedProject(@PathVariable long projectId, @RequestParam Long associatedId) {
-		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedId);
-		projectService.addRelatedProject(project, associatedProject);
-	}
-
-	/**
 	 * Update the priority for analyses for a project.
 	 *
 	 * @param projectId identifier for a {@link Project}
