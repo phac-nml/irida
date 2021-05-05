@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAssociatedProjectsService;
 
+/**
+ * Ajax Controller for handling associated projects
+ */
 @Controller
 @RequestMapping("/ajax/projects/associated")
 public class ProjectAjaxAssociatedProjectsController {
