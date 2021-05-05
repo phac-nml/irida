@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
-public class MetadataEntryRepositoryImpl {
+public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCustom {
 	private final DataSource dataSource;
 	private final EntityManager entityManager;
 
@@ -43,43 +43,25 @@ public class MetadataEntryRepositoryImpl {
 		Map<Long, MetadataTemplateField> fieldMap = fields.stream()
 				.collect(Collectors.toMap(MetadataTemplateField::getId, field -> field));
 
-		String sampleSql = "FROM ProjectSampleJoin j WHERE j.project = :project";
-
-		/*TypedQuery<ProjectSampleJoin> sampleQuery = entityManager.createQuery(sampleSql, ProjectSampleJoin.class);
-		sampleQuery.setParameter("project", project);
-		List<ProjectSampleJoin> sampleJoinList = sampleQuery.getResultList();
-
-		Map<Long, Sample> samplesById = sampleJoinList.stream()
-				.collect(Collectors.toMap(j -> j.getObject()
-						.getId(), j -> j.getObject()));
-
-		 */
-
 		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());
 
-		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters,
-				new RowMapper<SampleMetadataEntry>() {
-					@Override
-					public SampleMetadataEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
-						String type = rs.getString("e.type");
-						String value = rs.getString("e.value");
-						long entryId = rs.getLong("e.id");
-						long fieldId = rs.getLong("e.field_id");
-						long sampleId = rs.getLong("e.sample_id");
+		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters, (rs, rowNum) -> {
+			String type = rs.getString("e.type");
+			String value = rs.getString("e.value");
+			long entryId = rs.getLong("e.id");
+			long fieldId = rs.getLong("e.field_id");
+			long sampleId = rs.getLong("e.sample_id");
 
-						MetadataTemplateField metadataTemplateField = fieldMap.get(fieldId);
+			MetadataTemplateField metadataTemplateField = fieldMap.get(fieldId);
 
-						MetadataEntry entry = new MetadataEntry(value, type, metadataTemplateField);
-						entry.setId(entryId);
+			MetadataEntry entry = new MetadataEntry(value, type, metadataTemplateField);
+			entry.setId(entryId);
 
-						//Sample sample = samplesById.get(sampleId);
-
-						return new SampleMetadataEntry(sampleId, entry);
-					}
-				});
+			return new SampleMetadataEntry(sampleId, entry);
+		});
 
 		Set<Long> sampleIdSet = sampleEntryCollection.stream()
 				.map(SampleMetadataEntry::getSample)

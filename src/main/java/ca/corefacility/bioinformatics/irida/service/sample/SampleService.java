@@ -74,6 +74,12 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 
+	/**
+	 * Get the metadata collections for an entire project.  This will return a Map of {@link Sample} ID with a Set of the {@link MetadataEntry}s
+	 *
+	 * @param project the {@link Project} to get metadata for
+	 * @return a map of metadata
+	 */
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
 	
 	/**
