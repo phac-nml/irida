@@ -41,6 +41,21 @@ public class UISampleMetadata extends HashMap<String, String> {
 		this.put(OWNER, String.valueOf(join.isOwner()));
 	}
 
+	public UISampleMetadata(Project project, Sample sample, boolean canModifySample, Set<MetadataEntry> metadata) {
+
+		this.put(SAMPLE_ID, String.valueOf(sample.getId()));
+		this.put(SAMPLE_NAME, sample.getLabel());
+		this.put(PROJECT_ID, String.valueOf(project.getId()));
+		this.put(PROJECT_NAME, project.getLabel());
+		this.put(CREATED_DATE, sample.getCreatedDate()
+				.toString());
+		this.put(MODIFIED_DATE, sample.getModifiedDate()
+				.toString());
+		this.putAll(getAllMetadataForSample(metadata));
+		this.put(EDITABLE, String.valueOf(canModifySample));
+		this.put(OWNER, String.valueOf(true));
+	}
+
 	/**
 	 * Convert the sample metadata into a format that can be consumed by Ag Grid.
 	 *

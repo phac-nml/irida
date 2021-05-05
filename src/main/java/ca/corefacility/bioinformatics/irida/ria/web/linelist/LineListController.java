@@ -80,16 +80,18 @@ public class LineListController {
 
 		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
 
-		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
+		//List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
+
+		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
 		return projectSamples.stream()
-				.map(join -> {
-					ProjectSampleJoin psj = (ProjectSampleJoin) join;
-					Set<MetadataEntry> metadata = metadataForProject.get(psj.getObject().getId());
+				.map(sample -> {
+					//ProjectSampleJoin psj = (ProjectSampleJoin) sample;
+					Set<MetadataEntry> metadata = metadataForProject.get(sample.getId());
 					if(metadata==null){
 						metadata = new HashSet<>();
 					}
-					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()),
-							metadata);
+					return new UISampleMetadata(project, sample,
+							updateSamplePermission.isAllowed(authentication, sample), metadata);
 				})
 				.collect(Collectors.toList());
 	}
