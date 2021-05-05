@@ -1,10 +1,18 @@
 /**
  * @file API the ProjectAjaxController
  */
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`ajax/projects`);
+
+const projectsApi = createApi({
+  reducerPath: `projectsApi`,
+  baseQuery: fetchBaseQuery({
+    baseUrl: setBaseUrl(`ajax/projects`),
+  }),
+});
 
 /**
  * Returns the projects on the current page of the projects table.
