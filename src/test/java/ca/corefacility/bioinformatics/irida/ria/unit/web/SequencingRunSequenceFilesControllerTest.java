@@ -10,7 +10,9 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
+
 import com.google.common.net.HttpHeaders;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -56,15 +58,14 @@ public class SequencingRunSequenceFilesControllerTest {
 		when(objectService.read(seqId)).thenReturn(singleEndSequenceFile);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
 
-		ResponseResource<SequencingRun> modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId, representation, response);
+		ResponseResource<SequencingRun> modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId,
+				representation, response);
 
 		verify(objectService).read(seqId);
 		verify(miseqRunService).read(sequencingrunId);
 
-		Object o = modelMap.getResource();
-		assertNotNull("Object should not be null", o);
-		assertTrue("Object should be an instance of SequencingRun", o instanceof SequencingRun);
-		SequencingRun res = (SequencingRun) o;
+		SequencingRun res = modelMap.getResource();
+		assertNotNull("Sequencing run should not be null", res);
 		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId)
 				.slash("sequenceFiles")
 				.slash(seqId)
