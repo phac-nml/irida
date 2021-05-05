@@ -1,8 +1,9 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
+import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { EditableParagraph } from "../../../../components/ant.design";
 import { BasicList } from "../../../../components/lists";
 import { OntologySelect } from "../../../../components/ontology";
@@ -16,8 +17,8 @@ const { Paragraph, Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ProjectDetails() {
-  const project = useSelector((state) => state.project);
+export default function ProjectDetails({ projectId }) {
+  const { data: project, isLoading } = useGetProjectDetailsQuery(projectId);
   const dispatch = useDispatch();
 
   /**
@@ -40,7 +41,7 @@ export default function ProjectDetails() {
       .catch((message) => notification.error({ message }));
   };
 
-  const details = project.loading
+  const details = isLoading
     ? []
     : [
         {

@@ -27,7 +27,7 @@ import com.google.common.base.Strings;
  * Handle asynchronous requests for the UI project details page.
  */
 @RestController
-@RequestMapping("/ajax/projects/{projectId}/details")
+@RequestMapping("/ajax/project/details")
 public class ProjectDetailsAjaxController {
 	private final ProjectService projectService;
 	private final UIProjectsService service;
@@ -50,7 +50,7 @@ public class ProjectDetailsAjaxController {
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
-	public ResponseEntity<ProjectInfoResponse> getProjectDetails(@PathVariable Long projectId) {
+	public ResponseEntity<ProjectInfoResponse> getProjectDetails(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectInfo(projectId));
 	}
 

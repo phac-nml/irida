@@ -2,13 +2,12 @@ import { Redirect, Router } from "@reach/router";
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { fetchProjectDetails } from "../redux/projectSlice";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 
@@ -75,11 +74,6 @@ const SettingsLayout = () => (
  */
 const ProjectSettings = (props) => {
   const { canManage } = useSelector((state) => state.project);
-  const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    dispatch(fetchProjectDetails(props.projectId));
-  }, [dispatch, props.projectId]);
 
   return (
     <Layout>
