@@ -1,26 +1,26 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
+/**
+ * Implementation of the custom methods for retrieving {@link MetadataEntry}
+ */
 public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCustom {
 	private final DataSource dataSource;
 	private final EntityManager entityManager;
@@ -31,46 +31,53 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		this.entityManager = entityManager;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
 
+		//get the metadata fields available in the project
 		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
 		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
-
 		nativeQuery.setParameter("project", project.getId());
-
 		List<MetadataTemplateField> fields = nativeQuery.getResultList();
 
+		//Collect the fields into a map from ID to field for use later
 		Map<Long, MetadataTemplateField> fieldMap = fields.stream()
 				.collect(Collectors.toMap(MetadataTemplateField::getId, field -> field));
 
+		//query for all metadata entries used in the project
 		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());
 
+		//map the results into a MetadataTemplateField
 		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters, (rs, rowNum) -> {
+			//get the request columns
 			String type = rs.getString("e.type");
 			String value = rs.getString("e.value");
 			long entryId = rs.getLong("e.id");
 			long fieldId = rs.getLong("e.field_id");
 			long sampleId = rs.getLong("e.sample_id");
 
+			//get the field associated with this entry
 			MetadataTemplateField metadataTemplateField = fieldMap.get(fieldId);
 
+			// build a MetadataEntry for the object
 			MetadataEntry entry = new MetadataEntry(value, type, metadataTemplateField);
 			entry.setId(entryId);
 
 			return new SampleMetadataEntry(sampleId, entry);
 		});
 
-		Set<Long> sampleIdSet = sampleEntryCollection.stream()
+		//build a map of sample ID some empty sets for us to add the metadata
+		Map<Long, Set<MetadataEntry>> sampleMetadata = sampleEntryCollection.stream()
 				.map(SampleMetadataEntry::getSample)
-				.collect(Collectors.toSet());
-		Map<Long, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
-		for (Long s : sampleIdSet) {
-			sampleMetadata.put(s, new HashSet<>());
-		}
+				.distinct()
+				.collect(Collectors.toMap(s -> s, s -> new HashSet<>()));
 
+		//for each sample id, add the associated metadata
 		for (SampleMetadataEntry entries : sampleEntryCollection) {
 			sampleMetadata.get(entries.getSample())
 					.add(entries.getEntry());
@@ -80,6 +87,9 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 
 	}
 
+	/**
+	 * A convenience class for collecting the results of the above metadata query.  It will be used after to convert into the sample/metadata map.
+	 */
 	private class SampleMetadataEntry {
 		Long sample;
 		MetadataEntry entry;
