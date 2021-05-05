@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
- 
+
 /**
  * Configuration for IRIDA REST API documentation.
  */
@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2, flows = @OAuthFlows(authorizationCode = @OAuthFlow(authorizationUrl = "/api/oauth/authorize", tokenUrl = "/api/oauth/token", scopes = {
 		@OAuthScope(name = "read", description = "This is the read scope."),
 		@OAuthScope(name = "write", description = "This is the write scope.") }), password = @OAuthFlow(tokenUrl = "/api/oauth/token")))
-@OpenAPIDefinition(info = @Info(title = "IRIDA REST API", version = "${irida.version}", description = "The IRIDA REST API follows a standard output format, regardless of the resource being accessed. Resources can be accessed as an individual resource or as part of a resource collection.", contact = @Contact(name = "the Bioinformatics Team", email = "helpdesk@cscscience.ca")), tags = {
+@OpenAPIDefinition(info = @Info(title = "IRIDA REST API", version = "${irida.version}", description = "The IRIDA REST API follows a standard output format, regardless of the resource being accessed. Resources can be accessed as an individual resource or as part of a resource collection.", contact = @Contact(name = "the IRIDA Team", email = "IRIDA-mail@sfu.ca")), tags = {
 		@Tag(name = "api", description = "Access to API details"),
 		@Tag(name = "analysisSubmissions", description = "Everything about analysis submissions"),
 		@Tag(name = "projects", description = "Everything about projects"),
