@@ -7,9 +7,9 @@ import { Avatar, Switch, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  addAssociatedProject,
-  getAssociatedProjects,
-  removeAssociatedProject,
+  useAddAssociatedProjectMutation,
+  useGetAssociatedProjectsQuery,
+  useRemoveAssociatedProjectMutation,
 } from "../../../../../apis/projects/associated-projects";
 import { IconFolder } from "../../../../../components/icons/Icons";
 import { createListFilterByUniqueAttribute } from "../../../../../components/Tables/filter-utilities";
@@ -19,37 +19,35 @@ import { setBaseUrl } from "../../../../../utilities/url-utilities";
 const { Text } = Typography;
 
 export default function ViewAssociatedProjects() {
-  const [projects, setProjects] = useState([]);
   const [organismFilters, setOrganismFilters] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { canManage, id: projectId } = useSelector((state) => state.project);
+  const [switches, setSwitches] = React.useState({});
+
+  const { data: projects, isLoading } = useGetAssociatedProjectsQuery(
+    projectId
+  );
+  const [addAssociatedProject] = useAddAssociatedProjectMutation();
+  const [removeAssociatedProject] = useRemoveAssociatedProjectMutation();
 
   useEffect(() => {
-    getAssociatedProjects(projectId).then((data) => {
-      setProjects(data);
+    if (projects?.length) {
+      console.log(projects);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
-          list: data,
+          list: projects,
           attr: "organism",
         })
       );
-      setLoading(false);
-    });
-  }, [getAssociatedProjects]);
+    }
+  }, [projects]);
 
   function updateProject(checked, project) {
-    setLoading(true);
-    let promise;
-    if (checked) {
-      promise = addAssociatedProject(projectId, project.id);
-    } else {
-      promise = removeAssociatedProject(projectId, project.id);
-    }
-    promise.then(() => {
-      project.associated = checked;
-      setProjects([...projects]);
-      setLoading(false);
-    });
+    const updateFn = checked ? addAssociatedProject : removeAssociatedProject;
+    setSwitches({ ...switches, [project.id]: true });
+    updateFn({
+      projectId,
+      associatedProjectId: project.id,
+    }).then(() => setSwitches({ ...switches, [project.id]: false }));
   }
 
   const columns = [
@@ -64,7 +62,7 @@ export default function ViewAssociatedProjects() {
               <Switch
                 className="t-selection"
                 checked={project.associated}
-                loading={project.updating}
+                loading={switches[project.id]}
                 onClick={(checked) => updateProject(checked, project)}
               />
             );
@@ -115,7 +113,7 @@ export default function ViewAssociatedProjects() {
     <Table
       bordered
       rowKey="id"
-      loading={loading}
+      loading={isLoading}
       columns={columns}
       dataSource={projects}
     />

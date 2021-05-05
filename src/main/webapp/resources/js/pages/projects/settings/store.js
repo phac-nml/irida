@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { fieldsApi } from "../../../apis/metadata/field";
 
 import { templateApi } from "../../../apis/metadata/metadata-templates";
+import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
 import coverageReducer from "../redux/coverageSlice";
 import pipelineReducer from "../redux/pipelinesSlice";
 import projectReducer from "../redux/projectSlice";
@@ -19,7 +20,12 @@ export default configureStore({
     user: userReducer,
     [templateApi.reducerPath]: templateApi.reducer,
     [fieldsApi.reducerPath]: fieldsApi.reducer,
+    [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(templateApi.middleware, fieldsApi.middleware),
+    getDefaultMiddleware().concat(
+      templateApi.middleware,
+      fieldsApi.middleware,
+      associatedProjectsApi.middleware
+    ),
 });

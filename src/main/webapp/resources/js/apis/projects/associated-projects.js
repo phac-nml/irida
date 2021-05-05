@@ -1,46 +1,49 @@
 /**
  * @file API the ProjectSettingsAssociatedProjectsController
  */
-import axios from "axios";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = setBaseUrl(`ajax/projects`);
-
 /**
- * Returns a list of associated projects for the current project.  If the user
- * is the project manager or admin, the list will include available projects.
- * @param {number} id
- * @returns {Promise<{associatedProjectList: []}>}
+ * API for CRUD operations for Associated projects
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getAssociatedProjects: *, addAssociatedProject: *, removeAssociatedProject: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getAssociatedProjects: *, addAssociatedProject: *, removeAssociatedProject: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
-export async function getAssociatedProjects(id) {
-  try {
-    const { data } = await axios.get(`${URL}/${id}/settings/associated`);
-    return data;
-  } catch (e) {
-    return { associatedProjectList: [] };
-  }
-}
+export const associatedProjectsApi = createApi({
+  reducerPath: `associatedProjectsApi`,
+  baseQuery: fetchBaseQuery({
+    baseUrl: setBaseUrl(`/ajax/projects/associated`),
+  }),
+  tagTypes: ["AssociatedProject"],
+  endpoints: (build) => ({
+    getAssociatedProjects: build.query({
+      query: (projectId) => ({ url: "", params: { projectId } }),
+      providesTags: (result) =>
+        result.map(({ id }) => ({
+          type: "AssociatedProject",
+          id,
+        })),
+    }),
+    addAssociatedProject: build.mutation({
+      query: ({ projectId, associatedProjectId }) => ({
+        url: "",
+        params: { projectId, associatedProjectId },
+        method: "POST",
+      }),
+      invalidatesTags: ["AssociatedProject"],
+    }),
+    removeAssociatedProject: build.mutation({
+      query: ({ projectId, associatedProjectId }) => ({
+        url: "",
+        params: { projectId, associatedProjectId },
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AssociatedProject"],
+    }),
+  }),
+});
 
-/**
- * Removes the project with the assoicatedId from the current project.
- * @param {number} id
- * @param {number} associatedId
- * @returns {Promise<void>}
- */
-export async function removeAssociatedProject(id, associatedId) {
-  await axios.post(
-    `${URL}/${id}/settings/associated/remove?associatedId=${associatedId}`
-  );
-}
-
-/**
- * Adds the project with the assoicatedId from the current project.
- * @param {number} id
- * @param {number} associatedId
- * @returns {Promise<void>}
- */
-export async function addAssociatedProject(id, associatedId) {
-  await axios.post(
-    `${URL}/${id}/settings/associated/add?associatedId=${associatedId}`
-  );
-}
+export const {
+  useGetAssociatedProjectsQuery,
+  useAddAssociatedProjectMutation,
+  useRemoveAssociatedProjectMutation,
+} = associatedProjectsApi;
