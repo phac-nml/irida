@@ -46,6 +46,7 @@ export const projectApi = createApi({
           priority,
         },
       }),
+      invalidatesTags: ["Project"],
     }),
   }),
 });
@@ -55,4 +56,5 @@ export const {
   useUpdateProjectDetailsMutation,
   useGetProjectCoverageQuery,
   useUpdateProjectCoverageMutation,
+  useUpdateProjectPriorityMutation,
 } = projectApi;

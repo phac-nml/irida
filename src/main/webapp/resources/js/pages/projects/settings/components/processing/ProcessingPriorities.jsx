@@ -1,8 +1,9 @@
-import { unwrapResult } from "@reduxjs/toolkit";
 import { Form, notification, Select } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { putPriorityUpdate } from "../../../redux/projectSlice";
+import {
+  useGetProjectDetailsQuery,
+  useUpdateProjectPriorityMutation,
+} from "../../../../../apis/projects/project";
 
 /**
  * Allow the user to modify the priority of pipeline process.
@@ -12,8 +13,8 @@ import { putPriorityUpdate } from "../../../redux/projectSlice";
  * @constructor
  */
 export function ProcessingPriorities({ projectId }) {
-  const dispatch = useDispatch();
-  const { priority } = useSelector((state) => state.project);
+  const [updateProjectPriority] = useUpdateProjectPriorityMutation();
+  const { data: project } = useGetProjectDetailsQuery(projectId);
   const PRIORITIES = [
     { value: "LOW", label: i18n("AnalysisDetailsPriority.LOW") },
     { value: "MEDIUM", label: i18n("AnalysisDetailsPriority.MEDIUM") },
@@ -25,15 +26,22 @@ export function ProcessingPriorities({ projectId }) {
    * @param {string} value - new priority
    */
   const update = (value) =>
-    dispatch(putPriorityUpdate({ projectId, priority: value }))
-      .then(unwrapResult)
-      .then(({ message }) => notification.success({ message }))
-      .catch((message) => notification.error({ message }));
+    updateProjectPriority({ projectId, priority: value })
+      .then((response) =>
+        notification.success({ message: response.data.message })
+      )
+      .catch((error) =>
+        notification.error({ message: error.response.data.errror })
+      );
 
   return (
     <Form layout="vertical">
       <Form.Item label={i18n("ProcessingPriorities.title")}>
-        <Select value={priority} onChange={update} options={PRIORITIES} />
+        <Select
+          value={project.priority}
+          onChange={update}
+          options={PRIORITIES}
+        />
       </Form.Item>
     </Form>
   );
