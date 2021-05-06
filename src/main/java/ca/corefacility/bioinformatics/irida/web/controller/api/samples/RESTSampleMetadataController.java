@@ -87,7 +87,7 @@ public class RESTSampleMetadataController {
 	 * @return A collection of metadata for all the {@link Sample}s in the {@link Project}
 	 */
 	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project", description = "Get all the sample metadata for a given project.", tags = "samples")
-	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
+	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata", method = RequestMethod.GET)
 	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<ResourceCollection<SampleMetadataResponse>> getProjectSampleMetadata(
