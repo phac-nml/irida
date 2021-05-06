@@ -5,12 +5,12 @@
  */
 import { Avatar, Switch, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import {
   useAddAssociatedProjectMutation,
   useGetAssociatedProjectsQuery,
   useRemoveAssociatedProjectMutation,
 } from "../../../../../apis/projects/associated-projects";
+import { useGetProjectDetailsQuery } from "../../../../../apis/projects/project";
 import { IconFolder } from "../../../../../components/icons/Icons";
 import { createListFilterByUniqueAttribute } from "../../../../../components/Tables/filter-utilities";
 import { TextFilter } from "../../../../../components/Tables/fitlers";
@@ -18,9 +18,9 @@ import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
-export default function ViewAssociatedProjects() {
+export default function ViewAssociatedProjects({ projectId }) {
   const [organismFilters, setOrganismFilters] = useState([]);
-  const { canManage, id: projectId } = useSelector((state) => state.project);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [switches, setSwitches] = React.useState({});
 
   const { data: projects, isLoading } = useGetAssociatedProjectsQuery(
@@ -31,7 +31,6 @@ export default function ViewAssociatedProjects() {
 
   useEffect(() => {
     if (projects?.length) {
-      console.log(projects);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
           list: projects,
@@ -51,7 +50,7 @@ export default function ViewAssociatedProjects() {
   }
 
   const columns = [
-    canManage
+    project.canManage
       ? {
           key: "switch",
           width: 80,
