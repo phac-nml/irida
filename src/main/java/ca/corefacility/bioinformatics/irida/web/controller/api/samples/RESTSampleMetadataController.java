@@ -7,7 +7,6 @@ import java.util.Set;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +65,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "getSampleMetadata", summary = "Find the metadata for a given sample", description = "Get the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
-	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> getSampleMetadata(@PathVariable Long sampleId) {
 		logger.trace("Getting sample metadata for " + sampleId);
@@ -86,9 +84,8 @@ public class RESTSampleMetadataController {
 	 * @param projectId the id of the {@link Project} to get metadata for
 	 * @return A collection of metadata for all the {@link Sample}s in the {@link Project}
 	 */
-	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project", description = "Get all the sample metadata for a given project.", tags = "samples")
+	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project", description = "Get all the sample metadata for a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata", method = RequestMethod.GET)
-	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<ResourceCollection<SampleMetadataResponse>> getProjectSampleMetadata(
 			final @PathVariable Long projectId) {
@@ -128,7 +125,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "saveSampleMetadata", summary = "Save the metadata for a given sample", description = "Save the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
-	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> saveSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
@@ -151,7 +147,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "addSampleMetadata", summary = "Add new metadata fields for a given sample", description = "Add new metadata fields for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
-	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> addSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {

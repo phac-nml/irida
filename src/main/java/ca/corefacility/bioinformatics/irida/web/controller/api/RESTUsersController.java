@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Controller for managing users.
  */
-@Tag(name = "users")
 @Controller
 @RequestMapping(value = "/api/users")
 public class RESTUsersController extends RESTGenericController<User> {

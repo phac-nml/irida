@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +71,7 @@ public class RESTProjectSamplesController {
 	 * Reference to {@link SampleService}.
 	 */
 	private SampleService sampleService;
- 
+
 	private MessageSource messageSource;
 
 	protected RESTProjectSamplesController() {
@@ -99,7 +98,6 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "copySampleToProject", summary = "Copy an existing sample to a given a project", description = "Copy an existing sample to a given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
-	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<ResourceCollection<LabelledRelationshipResource<Project, Sample>>> copySampleToProject(
 			final @PathVariable Long projectId, final @RequestBody List<Long> sampleIds,
@@ -181,7 +179,6 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "addSampleToProject", summary = "Create a new sample and add it to the given project", description = "Create a new sample and add it to the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<Sample> addSampleToProject(@PathVariable Long projectId, @RequestBody @Valid Sample sample,
 			HttpServletResponse response) {
@@ -220,7 +217,6 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "getProjectSamples", summary = "Find all samples for the given project", description = "Get all samples for the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
-	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<ResourceCollection<Sample>> getProjectSamples(@PathVariable Long projectId) {
 		Project p = projectService.read(projectId);
@@ -276,7 +272,6 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "getProjectSample", summary = "Find a sample for the given project", description = "Get a sample for the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
-	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<Sample> getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		// read project/sample to verify sample exists in project
@@ -302,7 +297,6 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "getSample", summary = "Find a sample", description = "Get a sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.GET)
-	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<Sample> getSample(@PathVariable Long sampleId) {
 		Sample s = sampleService.read(sampleId);
@@ -359,7 +353,6 @@ public class RESTProjectSamplesController {
 	 */
 	@Operation(operationId = "removeSampleFromProject", summary = "Remove a sample from a given project", description = "Remove a sample from a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-	@Tag(name = "projects")
 	@ResponseBody
 	public ResponseResource<RootResource> removeSampleFromProject(@PathVariable Long projectId,
 			@PathVariable Long sampleId) {
@@ -395,7 +388,6 @@ public class RESTProjectSamplesController {
 	@Operation(operationId = "updateSample", summary = "Update a sample", description = "Update a sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
-	@Tag(name = "samples")
 	@ResponseBody
 	public ResponseResource<Sample> updateSample(@PathVariable Long sampleId,
 			@RequestBody Map<String, Object> updatedFields) {

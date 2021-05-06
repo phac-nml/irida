@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.*;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,6 @@ import com.google.common.net.HttpHeaders;
 /**
  * Controller for managing relationships between {@link Project} and {@link User}.
  */
-@Tag(name = "projects")
 @Controller
 public class RESTProjectUsersController {
 

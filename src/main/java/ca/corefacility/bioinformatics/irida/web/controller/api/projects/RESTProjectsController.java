@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Controller for managing {@link Project}s in the database.
  */
-@Tag(name = "projects")
 @Controller
 @RequestMapping(value = "/api/projects")
 public class RESTProjectsController extends RESTGenericController<Project> {

@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  *
  */
-@Tag(name = "sequencingrun")
 @Controller
 @RequestMapping(value = "/api/sequencingrun")
 public class RESTSequencingRunController extends RESTGenericController<SequencingRun> {

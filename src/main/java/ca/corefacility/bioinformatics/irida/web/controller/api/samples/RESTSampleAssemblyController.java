@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Controller for viewing and downloading assemblies for samples
  */
-@Tag(name = "samples")
 @Controller
 public class RESTSampleAssemblyController {
 

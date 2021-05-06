@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 
 import com.google.common.net.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -26,7 +25,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 /**
  *
  */
-@Tag(name = "sequencingrun")
 @Controller
 public class RESTSequencingRunSequenceFilesController {
 

@@ -8,7 +8,6 @@ import java.util.Collection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Controller for managing relationships between {@link Project} and
  * {@link AnalysisSubmission}.
  */
-@Tag(name = "projects")
 @Controller
 public class RESTProjectAnalysisController {
 
