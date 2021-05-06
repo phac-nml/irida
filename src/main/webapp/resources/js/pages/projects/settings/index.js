@@ -41,6 +41,8 @@ const AssociatedProjects = React.lazy(() =>
   import("./components/AssociatedProjects")
 );
 
+const ReferenceFiles = React.lazy(() => import("./components/ReferenceFiles"));
+
 /*
 WEBPACK PUBLIC PATH:
 Webpack does not know what the servlet context path is.  To fix this, webpack exposed
@@ -102,6 +104,7 @@ const ProjectSettings = (props) => {
                       )}
                     </MetadataLayout>
                     <AssociatedProjects path="/associated" />
+                    <ReferenceFiles path="/references" />
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>

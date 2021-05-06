@@ -1,21 +1,21 @@
-import React from "react";
 import { notification, Space, Table, Typography } from "antd";
-import { InfoAlert } from "../../../components/alerts";
-import { getProjectInfo } from "../../../apis/projects/projects";
-
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { ContentLoading } from "../../../components/loader";
-import {
-  DownloadTableItemButton,
-  RemoveTableItemButton,
-} from "../../../components/Buttons";
+import React from "react";
+import { getProjectInfo } from "../../../../apis/projects/projects";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
   removeProjectReferenceFile,
   uploadProjectReferenceFiles,
-} from "../../../apis/references/reference-files";
-import { DragUpload } from "../../../components/files/DragUpload";
+} from "../../../../apis/references/reference-files";
+import { InfoAlert } from "../../../../components/alerts";
+import {
+  DownloadTableItemButton,
+  RemoveTableItemButton,
+} from "../../../../components/Buttons";
+import { DragUpload } from "../../../../components/files/DragUpload";
+import { ContentLoading } from "../../../../components/loader";
+
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
 const { Title } = Typography;
 
@@ -24,14 +24,11 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export function ReferenceFiles() {
+export default function ReferenceFiles({ projectId }) {
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [projectInfo, setProjectInfo] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [, setProgress] = React.useState(0);
-
-  const pathRegx = new RegExp(/projects\/(\d+)/);
-  const projectId = window.location.pathname.match(pathRegx)[1];
 
   // On first load of page call method to get the reference files for the project
   // as well as get info about the project and permissions

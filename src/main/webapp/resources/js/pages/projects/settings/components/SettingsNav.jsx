@@ -37,6 +37,11 @@ export default function SettingsNav({ path }) {
       <Menu.Item key="associated">
         <Link to="associated">{i18n("project.settings.page.associated")}</Link>
       </Menu.Item>
+      <Menu.Item key="references">
+        <Link to="references">
+          {i18n("project.settings.page.referenceFiles")}
+        </Link>
+      </Menu.Item>
     </Menu>
   );
 }
