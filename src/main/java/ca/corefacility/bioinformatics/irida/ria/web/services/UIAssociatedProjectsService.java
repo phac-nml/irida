@@ -20,6 +20,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Associ
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
+/**
+ * Service to handle associated projects
+ */
 @Component
 public class UIAssociatedProjectsService {
 	private final ProjectService projectService;
