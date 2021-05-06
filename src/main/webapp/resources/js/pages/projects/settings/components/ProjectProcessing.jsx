@@ -10,8 +10,7 @@ import { ProcessingCoverage } from "./processing/ProcessingCoverage";
  * @constructor
  */
 export default function ProjectProcessing({ projectId }) {
-  const { data: project } = useGetProjectDetailsQuery(projectId);
-  console.log(project);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
 
   return (
     <>
@@ -19,12 +18,12 @@ export default function ProjectProcessing({ projectId }) {
       <Space style={{ width: `100%` }} direction="vertical">
         <ProcessingCoverage
           projectId={projectId}
-          canManage={project?.canManage}
+          canManage={project.canManage}
         />
         <Divider />
         <ProcessingAutomatedPipelines
           projectId={projectId}
-          canManage={project?.canManage}
+          canManage={project.canManage}
         />
       </Space>
     </>

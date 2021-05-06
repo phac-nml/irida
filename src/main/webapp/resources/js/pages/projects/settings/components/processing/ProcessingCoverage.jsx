@@ -82,7 +82,12 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
             >
               <Form
                 layout="vertical"
-                initialValues={{ ...coverage }}
+                initialValues={{
+                  minimum: coverage.minimum > -1 ? coverage.minimum : null,
+                  maximum: coverage.maximum > -1 ? coverage.maximum : null,
+                  genomeSize:
+                    coverage.genomeSize > -1 ? coverage.genomeSize : null,
+                }}
                 form={form}
               >
                 <Form.Item

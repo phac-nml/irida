@@ -18,7 +18,9 @@ const { Paragraph, Title } = Typography;
  * @constructor
  */
 export default function ProjectDetails({ projectId }) {
-  const { data: project, isLoading } = useGetProjectDetailsQuery(projectId);
+  const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
+    projectId
+  );
   const [updateProjectDetails] = useUpdateProjectDetailsMutation();
 
   /**
