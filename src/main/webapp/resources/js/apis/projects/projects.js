@@ -40,20 +40,3 @@ export async function getProjectRoles() {
 export async function getProjectInfo(projectId) {
   return axios.get(`${URL}/${projectId}/info`).then(({ data }) => data);
 }
-
-/**
- * Set a default metadata template for a project
- * @param templateId Identifier of the metadata template
- * @param projectId Identifier of the project
- * @returns {Promise<AxiosResponse<any>>}
- */
-export async function setDefaultMetadataTemplate(projectId, templateId) {
-  try {
-    const { data } = await axios.post(
-      `${URL}/${projectId}/details/set-project-default?templateId=${templateId}`
-    );
-    return data.message;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
-}

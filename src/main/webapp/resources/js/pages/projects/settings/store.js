@@ -4,9 +4,7 @@ import { templateApi } from "../../../apis/metadata/metadata-templates";
 import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
 
 import { projectApi } from "../../../apis/projects/project";
-import coverageReducer from "../redux/coverageSlice";
 import pipelineReducer from "../redux/pipelinesSlice";
-import projectReducer from "../redux/projectSlice";
 import userReducer from "../redux/userSlice";
 
 /*
@@ -15,8 +13,6 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
  */
 export default configureStore({
   reducer: {
-    project: projectReducer,
-    coverage: coverageReducer,
     pipelines: pipelineReducer,
     user: userReducer,
     [projectApi.reducerPath]: projectApi.reducer,

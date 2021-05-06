@@ -74,7 +74,7 @@ const SettingsLayout = () => (
  * @constructor
  */
 const ProjectSettings = (props) => {
-  const { project } = useGetProjectDetailsQuery(props.projectId);
+  const { data: project = {} } = useGetProjectDetailsQuery(props.projectId);
 
   return (
     <Layout>
@@ -95,7 +95,7 @@ const ProjectSettings = (props) => {
                     <MetadataLayout path="/metadata">
                       <MetadataFields path="/fields" />
                       <MetadataTemplates path="/templates" />
-                      {project?.canManage ? (
+                      {project.canManage ? (
                         <MetadataTemplateManager path="/templates/:id" />
                       ) : (
                         <MetadataTemplateMember path="/templates/:id" />

@@ -1,6 +1,4 @@
 import { Link } from "@reach/router";
-
-import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Button,
   Empty,
@@ -12,7 +10,6 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
@@ -20,14 +17,16 @@ import {
   useGetTemplatesForProjectQuery,
 } from "../../../../../apis/metadata/metadata-templates";
 import {
+  useGetProjectDetailsQuery,
+  useUpdateDefaultMetadataTemplateMutation,
+} from "../../../../../apis/projects/project";
+import {
   IconDownloadFile,
   IconRemove,
 } from "../../../../../components/icons/Icons";
 import { blue6 } from "../../../../../styles/colors";
 
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
-
-import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
 
 const { Text } = Typography;
 
@@ -54,14 +53,13 @@ export default function MetadataTemplates({ projectId }) {
   const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
   const [templates, setTemplates] = React.useState([]);
 
-  const { canManage, defaultMetadataTemplateId } = useSelector(
-    (state) => state.project
-  );
+  const { data: project } = useGetProjectDetailsQuery(projectId);
 
   const { data: existingTemplates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );
   const [deleteMetadataTemplate] = useDeleteTemplateMutation();
+  const [updateDefaultTemplate] = useUpdateDefaultMetadataTemplateMutation();
 
   React.useEffect(() => {
     if (existingTemplates) {
@@ -79,7 +77,6 @@ export default function MetadataTemplates({ projectId }) {
     }
   }, [existingTemplates, fields]);
 
-  const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
@@ -90,12 +87,13 @@ export default function MetadataTemplates({ projectId }) {
    * @param {number} templateId - identifier for the metadata template to set as default
    */
   const setDefaultTemplate = async (templateId) => {
-    dispatch(setDefaultTemplateForProject({ projectId, templateId }))
-      .then(unwrapResult)
-      .then(({ message }) => {
-        notification.success({ message });
+    updateDefaultTemplate({ projectId, templateId })
+      .then((response) => {
+        notification.success({ message: response.data.message });
       })
-      .catch((message) => notification.error({ message }));
+      .catch((error) =>
+        notification.error({ message: error.response.data.error })
+      );
   };
 
   /**
@@ -108,7 +106,7 @@ export default function MetadataTemplates({ projectId }) {
    */
   const getActionsForItem = (template) => {
     let isDefaultTemplateForProject =
-      template.identifier == defaultMetadataTemplateId;
+      template.identifier == project.defaultMetadataTemplateId;
     const actions = [
       <Button
         size="small"
@@ -119,7 +117,7 @@ export default function MetadataTemplates({ projectId }) {
         {i18n("MetadataTemplates.download")}
       </Button>,
     ];
-    if (canManage) {
+    if (project.canManage) {
       actions.push(
         <Tooltip
           placement="topLeft"
@@ -161,9 +159,12 @@ export default function MetadataTemplates({ projectId }) {
    */
   const deleteTemplate = async (templateId) =>
     deleteMetadataTemplate({ projectId, templateId })
-      .unwrap()
-      .then(({ message }) => notification.success({ message }))
-      .catch(({ data }) => notification.error({ message: data.error }));
+      .then((response) =>
+        notification.success({ message: response.data.message })
+      )
+      .catch((error) =>
+        notification.error({ message: error.response.data.error })
+      );
 
   return (
     <>
@@ -215,8 +216,9 @@ export default function MetadataTemplates({ projectId }) {
                       </Text>
                     )}
                     <div>
-                      {canManage &&
-                        (item.identifier == defaultMetadataTemplateId ? (
+                      {project.canManage &&
+                        (item.identifier ==
+                        project.defaultMetadataTemplateId ? (
                           <Tag
                             key={`default-${item.identifier}`}
                             color={blue6}

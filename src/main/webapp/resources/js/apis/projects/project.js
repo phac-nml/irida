@@ -6,7 +6,7 @@ export const projectApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(`ajax/project/details`),
   }),
-  tagTypes: ["Project"],
+  tagTypes: ["Project", "MetadataTemplate"],
   endpoints: (build) => ({
     getProjectDetails: build.query({
       query: (projectId) => ({
@@ -48,6 +48,17 @@ export const projectApi = createApi({
       }),
       invalidatesTags: ["Project"],
     }),
+    updateDefaultMetadataTemplate: build.mutation({
+      query: ({ projectId, templateId }) => ({
+        url: "/set-project-default",
+        method: "POST",
+        params: {
+          projectId,
+          templateId,
+        },
+      }),
+      invalidatesTags: ["Project"],
+    }),
   }),
 });
 
@@ -57,4 +68,5 @@ export const {
   useGetProjectCoverageQuery,
   useUpdateProjectCoverageMutation,
   useUpdateProjectPriorityMutation,
+  useUpdateDefaultMetadataTemplateMutation,
 } = projectApi;

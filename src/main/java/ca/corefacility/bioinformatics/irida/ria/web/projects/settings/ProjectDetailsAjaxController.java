@@ -113,7 +113,7 @@ public class ProjectDetailsAjaxController {
 	 */
 	@PostMapping("/set-project-default")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@RequestParam Long templateId,
-			@PathVariable Long projectId, Locale locale) {
+			@RequestParam Long projectId, Locale locale) {
 		try {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(metadataService.setDefaultMetadataTemplate(templateId, projectId, locale)));
