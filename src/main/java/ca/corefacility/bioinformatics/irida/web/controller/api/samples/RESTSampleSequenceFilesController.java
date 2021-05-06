@@ -8,9 +8,13 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
@@ -20,6 +24,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +44,8 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTUsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Objects;
@@ -282,10 +289,12 @@ public class RESTSampleSequenceFilesController {
 	 * @return a {@link SequenceFile}
 	 */
 	@Operation(operationId = "readSequenceFileForSequencingObject", summary = "Find the sequence file for a given sample and sequencing object", description = "Get the sequence file for a given sample and sequencing object.", tags = "samples")
+	@ApiResponse(responseCode = "200", description = "Returns the file for a given sample and sequencing object.", content = @Content(schema = @Schema(implementation = SequenceFileSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.GET)
-	@ResponseBody
-	public ResponseResource<SequenceFile> readSequenceFileForSequencingObject(@PathVariable Long sampleId,
-			@PathVariable String objectType, @PathVariable Long objectId, @PathVariable Long fileId) {
+	public ModelMap readSequenceFileForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
+			@PathVariable Long objectId, @PathVariable Long fileId) {
+		ModelMap modelMap = new ModelMap();
+
 		Sample sample = sampleService.read(sampleId);
 
 		SequencingObject readSequenceFilePairForSample = sequencingObjectService.readSequencingObjectForSample(sample,
@@ -316,9 +325,9 @@ public class RESTSampleSequenceFilesController {
 		file.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
 				objectType, objectId, fileId)).withSelfRel());
 
-		ResponseResource<SequenceFile> responseObject = new ResponseResource<>(file);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, file);
 
-		return responseObject;
+		return modelMap;
 	}
 
 	/**
@@ -794,6 +803,10 @@ public class RESTSampleSequenceFilesController {
 		}
 
 		return sequencingObject;
+	}
+
+	private class SequenceFileSchema {
+		public SequenceFile resource;
 	}
 
 }

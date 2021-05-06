@@ -28,6 +28,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
 import com.google.common.collect.Lists;
@@ -49,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
@@ -155,15 +157,17 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ResponseResource<SequenceFile> responseResource = controller.readSequenceFileForSequencingObject(s.getId(),
+		ModelMap modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
 						.getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 
-		SequenceFile sfr = responseResource.getResource();
-		assertNotNull(sfr);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		assertNotNull(o);
+		assertTrue(o instanceof SequenceFile);
+		SequenceFile sfr = (SequenceFile) o;
 		assertEquals(so.getSequenceFile()
 				.getFile(), sfr.getFile());
 
