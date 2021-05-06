@@ -84,7 +84,7 @@ public class LineListController {
 		return projectSamples.stream()
 				.map(sample -> {
 					Set<MetadataEntry> metadata = metadataForProject.get(sample.getId());
-					if(metadata==null){
+					if (metadata == null) {
 						metadata = new HashSet<>();
 					}
 					return new UISampleMetadata(project, sample,
