@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,14 +92,19 @@ public class RESTSampleMetadataController {
 
 		//get the project and samples for the project
 		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> samples = sampleService.getSamplesForProject(project);
+
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
+		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
 
 		//for each sample
-		for (Join<Project, Sample> join : samples) {
-			Sample s = join.getObject();
-
+		for (Sample s : samples) {
 			//get the metadata for that sample
-			Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+			Set<MetadataEntry> metadataForSample = metadataForProject.get(s.getId());
+
+			//if we dont' have any metadata, return an empty collection
+			if (metadataForSample == null) {
+				metadataForSample = new HashSet<>();
+			}
 
 			//build the response
 			SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
