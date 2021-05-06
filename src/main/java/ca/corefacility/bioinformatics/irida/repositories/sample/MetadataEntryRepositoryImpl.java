@@ -52,7 +52,7 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());
 
-		//map the results into a MetadataTemplateField
+		//map the results into a SampleMetadataEntry
 		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters, (rs, rowNum) -> {
 			//get the request columns
 			String type = rs.getString("e.type");
@@ -73,13 +73,13 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 
 		//build a map of sample ID some empty sets for us to add the metadata
 		Map<Long, Set<MetadataEntry>> sampleMetadata = sampleEntryCollection.stream()
-				.map(SampleMetadataEntry::getSample)
+				.map(SampleMetadataEntry::getSampleId)
 				.distinct()
 				.collect(Collectors.toMap(s -> s, s -> new HashSet<>()));
 
 		//for each sample id, add the associated metadata
 		for (SampleMetadataEntry entries : sampleEntryCollection) {
-			sampleMetadata.get(entries.getSample())
+			sampleMetadata.get(entries.getSampleId())
 					.add(entries.getEntry());
 		}
 
@@ -91,16 +91,16 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 	 * A convenience class for collecting the results of the above metadata query.  It will be used after to convert into the sample/metadata map.
 	 */
 	private class SampleMetadataEntry {
-		Long sample;
+		Long sampleId;
 		MetadataEntry entry;
 
-		SampleMetadataEntry(Long sample, MetadataEntry entry) {
-			this.sample = sample;
+		SampleMetadataEntry(Long sampleId, MetadataEntry entry) {
+			this.sampleId = sampleId;
 			this.entry = entry;
 		}
 
-		public Long getSample() {
-			return sample;
+		public Long getSampleId() {
+			return sampleId;
 		}
 
 		public MetadataEntry getEntry() {
