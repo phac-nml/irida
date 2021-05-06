@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTUsersController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Objects;
