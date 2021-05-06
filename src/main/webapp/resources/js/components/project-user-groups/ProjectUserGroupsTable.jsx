@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import {
   removeUserGroupFromProject,
   updateUserGroupRoleOnProject,
@@ -18,9 +18,9 @@ import { AddGroupButton } from "./AddGroupButton";
  * @returns {string|*}
  * @constructor
  */
-export function ProjectUserGroupsTable() {
+export function ProjectUserGroupsTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
-  const { id: projectId, canManage } = useSelector((state) => state.project);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
 
   const columns = [
     {
@@ -40,6 +40,7 @@ export function ProjectUserGroupsTable() {
       render(text, group) {
         return (
           <ProjectRole
+            projectId={projectId}
             item={group}
             updateRoleFn={updateUserGroupRoleOnProject}
           />
@@ -55,7 +56,7 @@ export function ProjectUserGroupsTable() {
     },
   ];
 
-  if (canManage) {
+  if (project.canManage) {
     columns.push({
       align: "right",
       render(text, group) {
@@ -76,7 +77,7 @@ export function ProjectUserGroupsTable() {
   return (
     <PagedTable
       buttons={[
-        canManage ? (
+        project.canManage ? (
           <AddGroupButton
             key="add-group-btn"
             defaultRole="PROJECT_USER"
