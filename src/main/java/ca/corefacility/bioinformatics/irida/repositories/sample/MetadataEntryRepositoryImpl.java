@@ -35,6 +35,9 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 	 * {@inheritDoc}
 	 */
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
+		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("project", project.getId());
 
 		//get the metadata fields available in the project
 		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
@@ -46,11 +49,13 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		Map<Long, MetadataTemplateField> fieldMap = fields.stream()
 				.collect(Collectors.toMap(MetadataTemplateField::getId, field -> field));
 
+		//get all the sample IDs in the project for mapping
+		String sampleIdQueryString = "SELECT DISTINCT p.sample_id FROM project_sample p WHERE p.project_id=:project";
+		List<Long> allSampleIds = tmpl.query(sampleIdQueryString, parameters,
+				(rs, rowNum) -> rs.getLong("p.sample_id"));
+
 		//query for all metadata entries used in the project
 		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
-		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
-		MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("project", project.getId());
 
 		//map the results into a SampleMetadataEntry
 		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters, (rs, rowNum) -> {
@@ -72,9 +77,7 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		});
 
 		//build a map of sample ID some empty sets for us to add the metadata
-		Map<Long, Set<MetadataEntry>> sampleMetadata = sampleEntryCollection.stream()
-				.map(SampleMetadataEntry::getSampleId)
-				.distinct()
+		Map<Long, Set<MetadataEntry>> sampleMetadata = allSampleIds.stream()
 				.collect(Collectors.toMap(s -> s, s -> new HashSet<>()));
 
 		//for each sample id, add the associated metadata

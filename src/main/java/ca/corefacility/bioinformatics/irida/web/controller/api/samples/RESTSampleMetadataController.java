@@ -100,11 +100,6 @@ public class RESTSampleMetadataController {
 			//get the metadata for that sample
 			Set<MetadataEntry> metadataForSample = metadataForProject.get(s.getId());
 
-			//if we dont' have any metadata, return an empty collection
-			if (metadataForSample == null) {
-				metadataForSample = new HashSet<>();
-			}
-
 			//build the response
 			SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
 			resources.add(response);
