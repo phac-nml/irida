@@ -100,6 +100,7 @@ public class LineListControllerTest {
 		//note only metadata for sample 1
 
 		when(projectService.read(projectId)).thenReturn(project);
+		when(sampleService.getLockedSamplesInProject(project)).thenReturn(Lists.newArrayList());
 		when(sampleService.getMetadataForProject(project)).thenReturn(metadata);
 		when(sampleService.getSamplesForProjectShallow(project)).thenReturn(Lists.newArrayList(s1, s2));
 		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController.getProjectSamplesMetadataEntries(
@@ -126,6 +127,7 @@ public class LineListControllerTest {
 		Map<Long, Set<MetadataEntry>> metadata = new HashMap<>();
 
 		when(projectService.read(projectId)).thenReturn(project);
+		when(sampleService.getLockedSamplesInProject(project)).thenReturn(Lists.newArrayList());
 		when(sampleService.getMetadataForProject(project)).thenReturn(metadata);
 		when(sampleService.getSamplesForProjectShallow(project)).thenReturn(Lists.newArrayList(s1, s2));
 		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController.getProjectSamplesMetadataEntries(

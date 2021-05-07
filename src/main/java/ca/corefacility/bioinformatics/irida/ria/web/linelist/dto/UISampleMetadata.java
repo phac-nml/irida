@@ -38,6 +38,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 		this.put(MODIFIED_DATE, sample.getModifiedDate()
 				.toString());
 		this.putAll(getAllMetadataForSample(metadata));
+		//TODO: this should be refactored out
 		this.put(EDITABLE, String.valueOf(canModifySample));
 		this.put(OWNER, String.valueOf(join.isOwner()));
 	}
@@ -53,6 +54,8 @@ public class UISampleMetadata extends HashMap<String, String> {
 		this.put(MODIFIED_DATE, sample.getModifiedDate()
 				.toString());
 		this.putAll(getAllMetadataForSample(metadata));
+
+		//TODO: this should be refactored out
 		this.put(EDITABLE, String.valueOf(true));
 
 		this.put(OWNER, String.valueOf(ownership));
