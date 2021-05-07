@@ -6,6 +6,7 @@ import {
   removeUserFromProject,
   updateUserRoleOnProject,
 } from "../../apis/projects/members";
+import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -18,10 +19,10 @@ import { ProjectRole } from "../roles/ProjectRole";
  * @returns {string|*}
  * @constructor
  */
-export function ProjectMembersTable() {
+export function ProjectMembersTable({ projectId }) {
   const dispatch = useDispatch();
   const { updateTable } = useContext(PagedTableContext);
-  const { id: projectId, canManage } = useSelector((state) => state.project);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { identifier: userId } = useSelector((state) => state.user);
 
   React.useEffect(() => {
@@ -51,7 +52,11 @@ export function ProjectMembersTable() {
       dataIndex: "role",
       render(text, item) {
         return (
-          <ProjectRole item={item} updateRoleFn={updateUserRoleOnProject} />
+          <ProjectRole
+            projectId={projectId}
+            item={item}
+            updateRoleFn={updateUserRoleOnProject}
+          />
         );
       },
     },
@@ -64,7 +69,7 @@ export function ProjectMembersTable() {
     },
   ];
 
-  if (canManage) {
+  if (project.canManage) {
     columns.push({
       align: "right",
       render(text, user) {
@@ -104,7 +109,7 @@ export function ProjectMembersTable() {
   return (
     <PagedTable
       buttons={[
-        canManage ? (
+        project.canManage ? (
           <AddMemberButton
             key="add-members-btn"
             label={i18n("AddMemberButton.label")}

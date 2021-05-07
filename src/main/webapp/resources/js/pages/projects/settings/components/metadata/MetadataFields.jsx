@@ -1,7 +1,7 @@
 import { Button, Empty, Space, Table } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
+import { useGetProjectDetailsQuery } from "../../../../../apis/projects/project";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
@@ -10,7 +10,7 @@ import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
  * @returns {JSX.Element|string}
  */
 export default function MetadataFields({ projectId }) {
-  const { canManage } = useSelector((state) => state.project);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
     projectId
   );
@@ -45,7 +45,7 @@ export default function MetadataFields({ projectId }) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      {canManage && (
+      {project.canManage && (
         <Space>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>
             <Button
@@ -62,7 +62,7 @@ export default function MetadataFields({ projectId }) {
         pagination={false}
         rowClassName={() => `t-m-field`}
         rowSelection={
-          canManage
+          project.canManage
             ? { selectedRowKeys: selected, onChange: setSelected }
             : false
         }
