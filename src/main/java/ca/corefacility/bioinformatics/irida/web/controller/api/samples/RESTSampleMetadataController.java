@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
