@@ -66,25 +66,6 @@ public class ProjectSettingsController {
 	}
 
 	/**
-	 * Request for a {@link Project} deletion page
-	 *
-	 * @param projectId the ID of the {@link Project} to read
-	 * @param model     Model for the view
-	 * @param principal Logged in user
-	 * @return name of the project deletion page
-	 */
-	@RequestMapping("/delete")
-	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public String getProjectDeletionPage(@PathVariable Long projectId, final Model model, final Principal principal) {
-		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		model.addAttribute(ProjectsController.ACTIVE_NAV, ACTIVE_NAV_SETTINGS);
-		model.addAttribute("page", "delete");
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/settings/pages/delete";
-	}
-
-	/**
 	 * Delete a project from the UI. Will redirect to user's projects page on completion.
 	 *
 	 * @param projectId the {@link Project} id to delete

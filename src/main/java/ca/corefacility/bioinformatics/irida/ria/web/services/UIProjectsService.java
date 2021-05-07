@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -197,4 +198,7 @@ public class UIProjectsService {
 		return messageSource.getMessage("server.ProcessingCoverage.updated", new Object[] {}, locale);
 	}
 
+	public void deleteProject(Long projectId) throws EntityNotFoundException {
+		projectService.delete(projectId);
+	}
 }

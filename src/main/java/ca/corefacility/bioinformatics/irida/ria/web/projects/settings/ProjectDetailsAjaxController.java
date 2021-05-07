@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -169,6 +170,18 @@ public class ProjectDetailsAjaxController {
 		} catch (UpdateException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	@PostMapping("/delete")
+	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
+	public ResponseEntity<AjaxResponse> deleteProject(@RequestParam long projectId) {
+		try {
+			service.deleteProject(projectId);
+			return ResponseEntity.ok(new AjaxSuccessResponse(""));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse("Could not delete the project"));
 		}
 	}
 }

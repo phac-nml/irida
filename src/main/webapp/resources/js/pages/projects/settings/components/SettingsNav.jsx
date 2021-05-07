@@ -16,7 +16,7 @@ export default function SettingsNav({ path }) {
   }, [path]);
 
   return (
-    <Menu selectedKeys={[key]} style={{ height: `100%` }}>
+    <Menu selectedKeys={[key]}>
       <Menu.Item key="details">
         <Link to="details">{i18n("project.settings.page.details")}</Link>
       </Menu.Item>
@@ -41,6 +41,9 @@ export default function SettingsNav({ path }) {
         <Link to="references">
           {i18n("project.settings.page.referenceFiles")}
         </Link>
+      </Menu.Item>
+      <Menu.Item danger key="delete">
+        <Link to="delete">{i18n("DELETE PROJECT")}</Link>
       </Menu.Item>
     </Menu>
   );

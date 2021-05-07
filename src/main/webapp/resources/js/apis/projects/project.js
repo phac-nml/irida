@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+const BASE_URL = setBaseUrl(`ajax/project/details`);
+
 export const projectApi = createApi({
   reducerPath: `projectsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`ajax/project/details`),
+    baseUrl: BASE_URL,
   }),
   tagTypes: ["Project", "MetadataTemplate"],
   endpoints: (build) => ({
@@ -70,3 +72,15 @@ export const {
   useUpdateProjectPriorityMutation,
   useUpdateDefaultMetadataTemplateMutation,
 } = projectApi;
+
+export async function deleteProject(projectId) {
+  try {
+    await fetch(`${BASE_URL}/delete?projectId=${projectId}`, {
+      method: "POST",
+      redirect: "follow",
+    });
+    window.location.href = setBaseUrl("/projects");
+  } catch (e) {
+    return Promise.reject(e.response.data.error);
+  }
+}

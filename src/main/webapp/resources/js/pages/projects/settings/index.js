@@ -43,6 +43,8 @@ const AssociatedProjects = React.lazy(() =>
 
 const ReferenceFiles = React.lazy(() => import("./components/ReferenceFiles"));
 
+const DeleteProject = React.lazy(() => import("./components/DeleteProject"));
+
 /*
 WEBPACK PUBLIC PATH:
 Webpack does not know what the servlet context path is.  To fix this, webpack exposed
@@ -105,6 +107,7 @@ const ProjectSettings = (props) => {
                     </MetadataLayout>
                     <AssociatedProjects path="/associated" />
                     <ReferenceFiles path="/references" />
+                    <DeleteProject path="/delete" />
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>
