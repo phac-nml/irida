@@ -76,6 +76,8 @@ public class LineListController {
 				.getAuthentication();
 		Project project = projectService.read(projectId);
 
+		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
+
 		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
 
 		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
@@ -83,8 +85,10 @@ public class LineListController {
 				.map(sample -> {
 					Set<MetadataEntry> metadata = metadataForProject.get(sample.getId());
 
-					return new UISampleMetadata(project, sample,
-							updateSamplePermission.isAllowed(authentication, sample), metadata);
+					//check if the project owns the sample
+					boolean ownership = !lockedSamplesInProject.contains(sample.getId());
+
+					return new UISampleMetadata(project, sample, ownership, metadata);
 				})
 				.collect(Collectors.toList());
 	}

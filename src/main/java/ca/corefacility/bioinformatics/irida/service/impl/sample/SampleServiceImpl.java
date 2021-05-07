@@ -200,6 +200,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public List<Long> getLockedSamplesInProject(Project project) {
+		return psjRepository.getLockedSamplesForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {

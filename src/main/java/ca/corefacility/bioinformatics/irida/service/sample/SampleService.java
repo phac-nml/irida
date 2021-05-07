@@ -75,6 +75,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 
 	/**
+	 * Get a list of {@link Sample} ids that are locked in this project.  This method exists as a faster way of determining ownership than getting the full {@link ProjectSampleJoin}
+	 *
+	 * @param project the {@link Project} to check
+	 * @return a List of locked sample IDs.
+	 */
+	public List<Long> getLockedSamplesInProject(Project project);
+
+	/**
 	 * Get the metadata collections for an entire project.  This will return a Map of {@link Sample} ID with a Set of the {@link MetadataEntry}s
 	 *
 	 * @param project the {@link Project} to get metadata for
