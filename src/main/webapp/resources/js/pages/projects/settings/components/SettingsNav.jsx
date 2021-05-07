@@ -42,8 +42,8 @@ export default function SettingsNav({ path }) {
           {i18n("project.settings.page.referenceFiles")}
         </Link>
       </Menu.Item>
-      <Menu.Item danger key="delete">
-        <Link to="delete">{i18n("DELETE PROJECT")}</Link>
+      <Menu.Item key="delete">
+        <Link to="delete">{i18n("DeleteProject.title")}</Link>
       </Menu.Item>
     </Menu>
   );
