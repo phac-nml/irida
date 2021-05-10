@@ -14,6 +14,11 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
+import {
+  useDeleteTemplateMutation,
+  useGetTemplatesForProjectQuery,
+} from "../../../../../apis/metadata/metadata-templates";
 import {
   IconDownloadFile,
   IconRemove,
@@ -21,13 +26,8 @@ import {
 import { blue6 } from "../../../../../styles/colors";
 
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
-import { fetchFieldsForProject } from "../../../redux/fieldsSlice";
 
 import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
-import {
-  fetchTemplatesForProject,
-  removeTemplateFromProject,
-} from "../../../redux/templatesSlice";
 
 const { Text } = Typography;
 
@@ -51,20 +51,38 @@ const HoverItem = styled(List.Item)`
  * @constructor
  */
 export default function MetadataTemplates({ projectId }) {
-  const { templates, loading } = useSelector((state) => state.templates);
+  const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
+  const [templates, setTemplates] = React.useState([]);
+
   const { canManage, defaultMetadataTemplateId } = useSelector(
     (state) => state.project
   );
+
+  const { data: existingTemplates, isLoading } = useGetTemplatesForProjectQuery(
+    projectId
+  );
+  const [deleteMetadataTemplate] = useDeleteTemplateMutation();
+
+  React.useEffect(() => {
+    if (existingTemplates) {
+      setTemplates([
+        ...existingTemplates,
+        {
+          name: i18n("MetadataTemplates.allFields"),
+          label: i18n("MetadataTemplates.allFields"),
+          description: i18n("MetadataTemplates.allFields-description"),
+          identifier: 0,
+          key: "template-0",
+          fields,
+        },
+      ]);
+    }
+  }, [existingTemplates, fields]);
 
   const dispatch = useDispatch();
   const [BASE_URL] = React.useState(() =>
     setBaseUrl(`/projects/${projectId}/metadata-templates`)
   );
-
-  React.useEffect(() => {
-    dispatch(fetchFieldsForProject(projectId));
-    dispatch(fetchTemplatesForProject(projectId));
-  }, [dispatch, projectId]);
 
   /**
    * Set default metadata template for project.
@@ -142,15 +160,18 @@ export default function MetadataTemplates({ projectId }) {
    * @param {number} templateId - identifier for the metadata template to delete
    */
   const deleteTemplate = async (templateId) =>
-    dispatch(removeTemplateFromProject({ projectId, templateId }))
-      .then(unwrapResult)
+    deleteMetadataTemplate({ projectId, templateId })
+      .unwrap()
       .then(({ message }) => notification.success({ message }))
-      .catch((message) => notification.error({ message }));
+      .catch(({ data }) => notification.error({ message: data.error }));
 
   return (
     <>
+      <Typography.Title level={2}>
+        {i18n("ProjectMetadataTemplates.title")}
+      </Typography.Title>
       <List
-        loading={loading}
+        loading={isLoading}
         bordered
         itemLayout="vertical"
         size="large"

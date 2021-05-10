@@ -8,7 +8,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
 
 const { Paragraph, Text } = Typography;
@@ -18,11 +18,14 @@ const { Paragraph, Text } = Typography;
  * manage the current project.
  *
  * @param {number} id - identifier for the current template
+ * @param {number} projectId - identifier for the current project
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MetadataTemplateMember({ id }) {
-  const { templates, loading } = useSelector((state) => state.templates);
+export default function MetadataTemplateMember({ id, projectId }) {
+  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
+    projectId
+  );
   const [template, setTemplate] = React.useState({});
 
   React.useEffect(() => {
@@ -32,7 +35,7 @@ export default function MetadataTemplateMember({ id }) {
     are found then we redirect to the metadata fields page so the user can
     create one.
      */
-    if (!loading) {
+    if (!isLoading) {
       const found = templates.find((template) => template.identifier === id);
 
       if (found) {
@@ -55,7 +58,7 @@ export default function MetadataTemplateMember({ id }) {
 
   return (
     <PageHeader title={template.name} onBack={() => navigate("./")}>
-      <Skeleton loading={loading}>
+      <Skeleton loading={isLoading}>
         <List itemLayout="vertical" size="small">
           <List.Item>
             <List.Item.Meta
