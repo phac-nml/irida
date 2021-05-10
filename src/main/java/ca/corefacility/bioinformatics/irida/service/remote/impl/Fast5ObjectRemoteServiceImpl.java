@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
@@ -39,6 +40,9 @@ public class Fast5ObjectRemoteServiceImpl extends SequencingObjectRemoteServiceI
 	 */
 	@Override
 	public List<Fast5Object> getFast5FilesForSample(Sample sample) {
+		if (!sample.hasLink(REL_SAMPLE_SEQUENCE_FILE_FAST5)) {
+			throw new LinkNotFoundException("No link for rel: " + REL_SAMPLE_SEQUENCE_FILE_FAST5);
+		}
 		Link link = sample.getLink(REL_SAMPLE_SEQUENCE_FILE_FAST5);
 		String href = link.getHref();
 
