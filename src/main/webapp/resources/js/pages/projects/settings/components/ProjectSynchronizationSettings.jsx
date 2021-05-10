@@ -50,12 +50,10 @@ export default function ProjectSynchronizationSettings({ projectId }) {
                     type="primary"
                     onClick={() => updateSyncSettings({ markSync: true })}
                     disabled={
-                      (disableSyncNow ? true : false) ||
-                      (syncNowEnabledStates.includes(
+                      disableSyncNow ||
+                      !syncNowEnabledStates.includes(
                         remoteProjectData.remoteStatus.syncStatus
                       )
-                        ? false
-                        : true)
                     }
                     className="t-sync-now-btn"
                   >
@@ -66,12 +64,10 @@ export default function ProjectSynchronizationSettings({ projectId }) {
                     type="primary"
                     onClick={() => updateSyncSettings({ forceSync: true })}
                     disabled={
-                      (disableSyncNow ? true : false) ||
-                      (syncNowEnabledStates.includes(
+                      disableSyncNow ||
+                      !syncNowEnabledStates.includes(
                         remoteProjectData.remoteStatus.syncStatus
                       )
-                        ? false
-                        : true)
                     }
                     className="t-sync-force-btn"
                   >

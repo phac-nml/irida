@@ -88,7 +88,7 @@ const ProjectSettings = (props) => {
       <Sider width={200} style={{ backgroundColor: grey1 }}>
         <SettingsNav
           path={props["*"]}
-          showRemote={project.canManage && project.isRemote}
+          showRemote={project.canManage && project.remote}
         />
       </Sider>
       <Layout>
