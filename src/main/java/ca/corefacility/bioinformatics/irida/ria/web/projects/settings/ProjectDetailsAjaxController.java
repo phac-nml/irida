@@ -173,6 +173,12 @@ public class ProjectDetailsAjaxController {
 		}
 	}
 
+	/**
+	 * Delete a project
+	 *
+	 * @param projectId identifier for a project
+	 * @return an indication to the user about the result of the update
+	 */
 	@PostMapping("/delete")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
 	public ResponseEntity<AjaxResponse> deleteProject(@RequestParam long projectId) {
