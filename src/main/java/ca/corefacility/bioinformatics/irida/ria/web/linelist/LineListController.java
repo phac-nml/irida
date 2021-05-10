@@ -72,8 +72,6 @@ public class LineListController {
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
 		Project project = projectService.read(projectId);
 
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
