@@ -107,9 +107,97 @@ At compile time:
 
 At runtime, Thymeleaf will intercept the HTML page request:
 1. See if there is a cached version of this page (for the requested internationalization)
-    * If cahced, return cached page, else continue
+    * If cached, it will return cached page, else continue
 2. Scan the page for the `webpacker` tags
-    * For CSS, it will create and add the required link tags for all CSS chunks to the HTML template
-    * For JavaScript, it will:
+    * For CSS (`<webpacker:css entry="cart" />`), it will create and add the required link tags for all CSS chunks to the HTML template
+    * For JavaScript (`<webpacker:js entry="cart" />`), it will:
       * create and add the required script tags for all JavaScript chunks to the HTML template
       * see if there are HTML (internationalization) assets, and if there are it will inject the HTML fragment found on the asset path (in this case the markup found in  `i18n/cart.html`) will be added directly before the script tag for that entry
+    
+Example:
+
+##### Template
+
+```html
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="#{ProjectRemoteSettings.title}">Title</title>
+    <webpacker:css entry="cart"/>
+  </head>
+  <body>
+    <div id="cart">LOADING ...</div>
+    <webpacker:js entry="cart"/>
+  </body>
+</html>
+```
+
+##### After Thymeleaf Webpacker
+
+```html
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="#{ProjectRemoteSettings.title}">Title</title>
+      <link rel="stylesheet" href="/dist/css/cart.bundle.css" />
+      <link rel="stylesheet" href="/dist/css/268.bundle.css" />
+  </head>
+  <body>
+    <div id="cart">LOADING ...</div>
+    <script id="cart-translations" th:inline="javascript" th:fragment="i18n">
+        window.translations = window.translations || [];
+        window.translations.unshift({
+            "SampleDetailsSidebar.removeFromCart": /*[[#{SampleDetailsSidebar.removeFromCart}]]*/ "",
+            "SampleDetails.metadata": /*[[#{SampleDetails.metadata}]]*/ "",
+            "SampleDetails.files": /*[[#{SampleDetails.files}]]*/ "",
+            "SampleFiles.singles": /*[[#{SampleFiles.singles}]]*/ "",
+            "SampleFiles.paired": /*[[#{SampleFiles.paired}]]*/ ""
+        });
+    </script>
+    <script src="/dist/js/cart.bundle.js"></script>
+    <script src="/dist/js/144-e0f48175ce0ec34d860f.js"></script>
+    <script src="/dist/js/245-f59a9ead959e5e722bf0.js"></script>
+  </body>
+</html>
+```
+
+##### After Thymeleaf Internationalization (cached template)
+
+```html
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="#{ProjectRemoteSettings.title}">Title</title>
+      <link rel="stylesheet" href="/dist/css/cart.bundle.css" />
+      <link rel="stylesheet" href="/dist/css/268.bundle.css" />
+  </head>
+  <body>
+    <div id="cart">LOADING ...</div>
+    <script id="cart-translations">
+        window.translations = window.translations || [];
+        window.translations.unshift({
+            "SampleDetailsSidebar.removeFromCart": "Remove From Cart",
+            "SampleDetails.metadata": "Metadata",
+            "SampleDetails.files": "Files",
+            "SampleFiles.singles": "Single End Data",
+            "SampleFiles.paired": "Paired End Date"
+        });
+    </script>
+    <script src="/dist/js/cart.bundle.js"></script>
+    <script src="/dist/js/144-e0f48175ce0ec34d860f.js"></script>
+    <script src="/dist/js/245-f59a9ead959e5e722bf0.js"></script>
+  </body>
+</html>
+```
