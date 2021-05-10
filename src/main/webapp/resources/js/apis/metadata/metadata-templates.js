@@ -4,11 +4,18 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
 
+/**
+ * API to get information about metadata templates
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getTemplatesForProject: *, updateMetadataTemplate: *, deleteTemplate: *, createMetadataTemplate: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getTemplatesForProject: *, updateMetadataTemplate: *, deleteTemplate: *, createMetadataTemplate: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
+ */
 export const templateApi = createApi({
   reducerPath: `templateApi`,
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ["MetadataTemplate"],
   endpoints: (build) => ({
+    /*
+    Get all metadata templates for a project
+     */
     getTemplatesForProject: build.query({
       query: (projectId) => ({
         url: "",
@@ -27,6 +34,9 @@ export const templateApi = createApi({
         );
       },
     }),
+    /*
+    Create a new metadata template
+     */
     createMetadataTemplate: build.mutation({
       query: ({ projectId, template }) => ({
         url: "",
@@ -36,6 +46,9 @@ export const templateApi = createApi({
       }),
       invalidatesTags: ["MetadataTemplate"],
     }),
+    /*
+    Update an existing metadata template
+     */
     updateMetadataTemplate: build.mutation({
       query: (template) => ({
         url: `/${template.identifier}`,
@@ -44,6 +57,9 @@ export const templateApi = createApi({
       }),
       invalidatesTags: ["MetadataTemplate"],
     }),
+    /*
+    Delete a metadata template
+     */
     deleteTemplate: build.mutation({
       query: ({ projectId, templateId }) => ({
         url: `/${templateId}`,

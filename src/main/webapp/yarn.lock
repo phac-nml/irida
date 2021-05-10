@@ -2248,7 +2248,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:next":
+"@reduxjs/toolkit@npm:1.6.0-alpha.2":
   version: 1.6.0-alpha.2
   resolution: "@reduxjs/toolkit@npm:1.6.0-alpha.2"
   dependencies:
@@ -7093,7 +7093,7 @@ fsevents@^2.1.2:
     "@fortawesome/free-solid-svg-icons": ^5.13.1
     "@reach/router": ^1.3.3
     "@react-dnd/invariant": ^2.0.0
-    "@reduxjs/toolkit": next
+    "@reduxjs/toolkit": 1.6.0-alpha.2
     "@yarnpkg/pnpify": ^2.4.0
     ag-grid-community: ^22.1.1
     ag-grid-react: ^22.1.1
