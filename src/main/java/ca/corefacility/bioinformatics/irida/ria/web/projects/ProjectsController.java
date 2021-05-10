@@ -308,6 +308,16 @@ public class ProjectsController {
 		return "projects/analyses/pages/outputs.html";
 	}
 
+	@GetMapping("/projects/{projectId}/settings/**")
+	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, "settings");
+		model.addAttribute("page", "details");
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/project_settings";
+	}
+
 	/**
 	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
 	 * <p>

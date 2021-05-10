@@ -21,6 +21,7 @@ public class ProjectDetailsResponse {
 	private boolean canManageRemote;
 	private String priority;
 	private Long defaultMetadataTemplateId = 0L;
+	private boolean isRemote;
 
 	public ProjectDetailsResponse(Project project, boolean canManage, boolean canManageRemote) {
 		this.id = project.getId();
@@ -31,6 +32,7 @@ public class ProjectDetailsResponse {
 		this.description = project.getProjectDescription();
 		this.canManage = canManage;
 		this.canManageRemote = canManageRemote;
+		this.isRemote = project.isRemote();
 
 		MetadataTemplate defaultTemplate = project.getDefaultMetadataTemplate();
 		if (defaultTemplate != null) {
@@ -113,6 +115,10 @@ public class ProjectDetailsResponse {
 
 	public void setPriority(String priority) {
 		this.priority = priority;
+	}
+
+	public boolean isRemote() {
+		return isRemote;
 	}
 
 	public Long getDefaultMetadataTemplateId() {
