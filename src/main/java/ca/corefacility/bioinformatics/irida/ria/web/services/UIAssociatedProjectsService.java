@@ -2,10 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -21,17 +23,20 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 /**
- * Service to handle associated projects
+ * Service for handling associated projects
  */
 @Component
 public class UIAssociatedProjectsService {
 	private final ProjectService projectService;
 	private final ProjectOwnerPermission projectOwnerPermission;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public UIAssociatedProjectsService(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission) {
+	public UIAssociatedProjectsService(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.projectOwnerPermission = projectOwnerPermission;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -79,10 +84,15 @@ public class UIAssociatedProjectsService {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 */
-	public void addAssociatedProject(long projectId, long associatedProjectId) {
-		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedProjectId);
-		projectService.addRelatedProject(project, associatedProject);
+	public void addAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
+		try {
+			Project project = projectService.read(projectId);
+			Project associatedProject = projectService.read(associatedProjectId);
+			projectService.addRelatedProject(project, associatedProject);
+		} catch (EntityNotFoundException e) {
+			throw new Exception(
+					messageSource.getMessage("server.ViewAssociatedProjects.add-error", new Object[] {}, locale));
+		}
 	}
 
 	/**
@@ -90,10 +100,17 @@ public class UIAssociatedProjectsService {
 	 *
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
+	 * @param locale              current users locale
+	 * @throws Exception if there is an issue removing the associated project
 	 */
-	public void removeAssociatedProject(long projectId, long associatedProjectId) {
-		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedProjectId);
-		projectService.removeRelatedProject(project, associatedProject);
+	public void removeAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
+		try {
+			Project project = projectService.read(projectId);
+			Project associatedProject = projectService.read(associatedProjectId);
+			projectService.removeRelatedProject(project, associatedProject);
+		} catch (EntityNotFoundException e) {
+			throw new Exception(
+					messageSource.getMessage("server.ViewAssociatedProjects.remove-error", new Object[] {}, locale));
+		}
 	}
 }

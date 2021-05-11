@@ -25,6 +25,7 @@ public class ProjectSettingsAjaxController {
 	private final UserService userService;
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final UIPipelineService pipelineService;
+	private final UIProjectSettingsService settingsService;
 
 	@Autowired
 	public ProjectSettingsAjaxController(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
@@ -33,6 +34,58 @@ public class ProjectSettingsAjaxController {
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.userService = userService;
 		this.pipelineService = pipelineService;
+		this.settingsService = settingsService;
+	}
+
+	/**
+	 * Update the priority for analyses for a project.
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @param priority  the new priority for analyses
+	 * @param locale    current users locale
+	 * @return message to user about the update ot the priority
+	 */
+	@PutMapping("/priority")
+	public ResponseEntity<AjaxResponse> updateProcessingPriority(@PathVariable long projectId,
+			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(settingsService.updateProcessingPriority(projectId, priority, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
+	 * Get the minimum/maximum coverage and genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @return {@link Coverage}
+	 */
+	@GetMapping("/coverage")
+	public Coverage getProcessingCoverage(@PathVariable Long projectId) {
+		return settingsService.getProcessingCoverageForProject(projectId);
+	}
+
+	/**
+	 * Update the minimum/maximum coverage or genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @param coverage  minimum/maximum coverage or genome size for the project
+	 * @param locale    current users locale
+	 * @return Message to user about the update
+	 */
+	@PutMapping("/coverage")
+	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@PathVariable long projectId,
+			@RequestBody Coverage coverage, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(settingsService.updateProcessingCoverage(coverage, projectId, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**
