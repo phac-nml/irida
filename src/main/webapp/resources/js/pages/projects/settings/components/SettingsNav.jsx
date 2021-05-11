@@ -34,6 +34,9 @@ export default function SettingsNav({ path }) {
           {i18n("project.settings.page.metadata")}
         </Link>
       </Menu.Item>
+      <Menu.Item key="associated">
+        <Link to="associated">{i18n("project.settings.page.associated")}</Link>
+      </Menu.Item>
     </Menu>
   );
 }

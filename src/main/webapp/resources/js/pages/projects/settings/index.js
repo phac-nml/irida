@@ -37,6 +37,10 @@ const MetadataTemplates = React.lazy(() =>
   import("./components/metadata/MetadataTemplates")
 );
 
+const AssociatedProjects = React.lazy(() =>
+  import("./components/AssociatedProjects")
+);
+
 /*
 WEBPACK PUBLIC PATH:
 Webpack does not know what the servlet context path is.  To fix this, webpack exposed
@@ -102,6 +106,7 @@ const ProjectSettings = (props) => {
                         <MetadataTemplateMember path="/templates/:id" />
                       )}
                     </MetadataLayout>
+                    <AssociatedProjects path="/associated" />
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>

@@ -3,55 +3,67 @@
  * manager or admin, they will be shown all their available projects, with the
  * ability to add or remove them as associated projects.
  */
+import { Alert, Avatar, notification, Switch, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { Avatar, Switch, Table, Typography } from "antd";
+import { useSelector } from "react-redux";
 import {
-  addAssociatedProject,
-  getAssociatedProjects,
-  removeAssociatedProject,
-} from "../../../apis/projects/associated-projects";
-import { TextFilter } from "../../../components/Tables/fitlers";
-import { createListFilterByUniqueAttribute } from "../../../components/Tables/filter-utilities";
-import { IconFolder } from "../../../components/icons/Icons";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+  useAddAssociatedProjectMutation,
+  useGetAssociatedProjectsQuery,
+  useRemoveAssociatedProjectMutation,
+} from "../../../../../apis/projects/associated-projects";
+import { IconFolder } from "../../../../../components/icons/Icons";
+import { createListFilterByUniqueAttribute } from "../../../../../components/Tables/filter-utilities";
+import { TextFilter } from "../../../../../components/Tables/fitlers";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
 export default function ViewAssociatedProjects() {
-  const [projects, setProjects] = useState([]);
   const [organismFilters, setOrganismFilters] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { canManage, id: projectId } = useSelector((state) => state.project);
+  const [switches, setSwitches] = React.useState({});
+
+  const {
+    data: associatedProjects,
+    isLoading,
+    error: loadingAssociatedError,
+  } = useGetAssociatedProjectsQuery(projectId);
+  const [
+    addAssociatedProject,
+    { error: addError },
+  ] = useAddAssociatedProjectMutation();
+  const [
+    removeAssociatedProject,
+    { error: removeError },
+  ] = useRemoveAssociatedProjectMutation();
 
   useEffect(() => {
-    getAssociatedProjects(window.project.id).then((data) => {
-      setProjects(data);
+    if (associatedProjects?.length) {
       setOrganismFilters(
         createListFilterByUniqueAttribute({
-          list: data,
+          list: associatedProjects,
           attr: "organism",
         })
       );
-      setLoading(false);
-    });
-  }, [getAssociatedProjects]);
+    }
+  }, [associatedProjects]);
+
+  React.useEffect(() => {
+    const error = removeError?.data.error || addError?.data.error;
+    error && notification.error({ message: error });
+  }, [removeError, addError]);
 
   function updateProject(checked, project) {
-    setLoading(true);
-    let promise;
-    if (checked) {
-      promise = addAssociatedProject(window.project.id, project.id);
-    } else {
-      promise = removeAssociatedProject(window.project.id, project.id);
-    }
-    promise.then(() => {
-      project.associated = checked;
-      setProjects([...projects]);
-      setLoading(false);
-    });
+    const updateFn = checked ? addAssociatedProject : removeAssociatedProject;
+    setSwitches({ ...switches, [project.id]: true });
+    updateFn({
+      projectId,
+      associatedProjectId: project.id,
+    }).then(() => setSwitches({ ...switches, [project.id]: false }));
   }
 
   const columns = [
-    window.PAGE.permissions
+    canManage
       ? {
           key: "switch",
           width: 80,
@@ -62,7 +74,7 @@ export default function ViewAssociatedProjects() {
               <Switch
                 className="t-selection"
                 checked={project.associated}
-                loading={project.updating}
+                loading={switches[project.id]}
                 onClick={(checked) => updateProject(checked, project)}
               />
             );
@@ -109,13 +121,20 @@ export default function ViewAssociatedProjects() {
     },
   ];
 
-  return (
+  return !loadingAssociatedError ? (
     <Table
       bordered
       rowKey="id"
-      loading={loading}
+      loading={isLoading}
       columns={columns}
-      dataSource={projects}
+      dataSource={associatedProjects}
+    />
+  ) : (
+    <Alert
+      message={i18n("ViewAssociatedProjects.loadingError-title")}
+      description={i18n("ViewAssociatedProjects.loadingError-body")}
+      type="error"
+      showIcon
     />
   );
 }
