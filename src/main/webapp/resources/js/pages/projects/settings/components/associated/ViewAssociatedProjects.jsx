@@ -23,23 +23,22 @@ export default function ViewAssociatedProjects() {
   const { canManage, id: projectId } = useSelector((state) => state.project);
   const [switches, setSwitches] = React.useState({});
 
-  const { data: projects, isLoading } = useGetAssociatedProjectsQuery(
+  const { data: associatedProjects, isLoading } = useGetAssociatedProjectsQuery(
     projectId
   );
   const [addAssociatedProject] = useAddAssociatedProjectMutation();
   const [removeAssociatedProject] = useRemoveAssociatedProjectMutation();
 
   useEffect(() => {
-    if (projects?.length) {
-      console.log(projects);
+    if (associatedProjects?.length) {
       setOrganismFilters(
         createListFilterByUniqueAttribute({
-          list: projects,
+          list: associatedProjects,
           attr: "organism",
         })
       );
     }
-  }, [projects]);
+  }, [associatedProjects]);
 
   function updateProject(checked, project) {
     const updateFn = checked ? addAssociatedProject : removeAssociatedProject;
@@ -115,7 +114,7 @@ export default function ViewAssociatedProjects() {
       rowKey="id"
       loading={isLoading}
       columns={columns}
-      dataSource={projects}
+      dataSource={associatedProjects}
     />
   );
 }
