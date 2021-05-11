@@ -3,7 +3,7 @@
  * manager or admin, they will be shown all their available projects, with the
  * ability to add or remove them as associated projects.
  */
-import { Avatar, Switch, Table, Typography } from "antd";
+import { Alert, Avatar, notification, Switch, Table, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -23,11 +23,19 @@ export default function ViewAssociatedProjects() {
   const { canManage, id: projectId } = useSelector((state) => state.project);
   const [switches, setSwitches] = React.useState({});
 
-  const { data: associatedProjects, isLoading } = useGetAssociatedProjectsQuery(
-    projectId
-  );
-  const [addAssociatedProject] = useAddAssociatedProjectMutation();
-  const [removeAssociatedProject] = useRemoveAssociatedProjectMutation();
+  const {
+    data: associatedProjects,
+    isLoading,
+    error: loadingAssociatedError,
+  } = useGetAssociatedProjectsQuery(projectId);
+  const [
+    addAssociatedProject,
+    { error: addError },
+  ] = useAddAssociatedProjectMutation();
+  const [
+    removeAssociatedProject,
+    { error: removeError },
+  ] = useRemoveAssociatedProjectMutation();
 
   useEffect(() => {
     if (associatedProjects?.length) {
@@ -39,6 +47,11 @@ export default function ViewAssociatedProjects() {
       );
     }
   }, [associatedProjects]);
+
+  React.useEffect(() => {
+    const error = removeError?.data.error || addError?.data.error;
+    error && notification.error({ message: error });
+  }, [removeError, addError]);
 
   function updateProject(checked, project) {
     const updateFn = checked ? addAssociatedProject : removeAssociatedProject;
@@ -108,13 +121,20 @@ export default function ViewAssociatedProjects() {
     },
   ];
 
-  return (
+  return !loadingAssociatedError ? (
     <Table
       bordered
       rowKey="id"
       loading={isLoading}
       columns={columns}
       dataSource={associatedProjects}
+    />
+  ) : (
+    <Alert
+      message={i18n("ViewAssociatedProjects.loadingError-title")}
+      description={i18n("ViewAssociatedProjects.loadingError-body")}
+      type="error"
+      showIcon
     />
   );
 }
