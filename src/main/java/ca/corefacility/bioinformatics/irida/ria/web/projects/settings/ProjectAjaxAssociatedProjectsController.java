@@ -44,6 +44,7 @@ public class ProjectAjaxAssociatedProjectsController {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 * @param locale              current users locale
+	 * @return The result of adding the associated project
 	 */
 	@PostMapping("")
 	public ResponseEntity<AjaxResponse> addAssociatedProject(@RequestParam long projectId,
@@ -63,6 +64,7 @@ public class ProjectAjaxAssociatedProjectsController {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 * @param locale              current users locale
+	 * @return the result of removing the project
 	 */
 	@DeleteMapping("")
 	public ResponseEntity<AjaxResponse> removeAssociatedProject(@RequestParam long projectId,
