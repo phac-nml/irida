@@ -1,4 +1,10 @@
-import angular from "angular";
-import { EventsModule } from "../../modules/events/events";
+import { Layout, PageHeader } from "antd";
+import React from "react";
+import { render } from "react-dom";
 
-angular.module("irida.project.events", [EventsModule]);
+render(
+  <PageHeader title={"PROJECT EVENTS"}>
+    <Layout.Content>HEELO</Layout.Content>
+  </PageHeader>,
+  document.querySelector("#root")
+);

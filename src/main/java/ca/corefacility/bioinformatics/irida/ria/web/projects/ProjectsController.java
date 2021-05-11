@@ -20,8 +20,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -62,18 +60,14 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_ACTIVITY = "activity";
+	private static final String ACTIVE_NAV_EVENTS = "events";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
-	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
-	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
 	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
 	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
-	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
-	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
 	private final ProjectService projectService;
@@ -149,14 +143,13 @@ public class ProjectsController {
 	 * @param principal a reference to the logged in user.
 	 * @return The name of the project details page.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/activity")
+	@RequestMapping(value = "/projects/{projectId}/events")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
-		logger.debug("Getting project information for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
-		return SPECIFIC_PROJECT_PAGE;
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_EVENTS);
+		return "projects/project_events";
 	}
 
 	/**
