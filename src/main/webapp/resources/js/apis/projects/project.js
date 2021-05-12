@@ -69,8 +69,8 @@ export const projectApi = createApi({
      */
     updateDefaultMetadataTemplate: build.mutation({
       query: ({ projectId, templateId }) => ({
-        url: "/set-project-default",
-        method: "POST",
+        url: "/default-template",
+        method: "PUT",
         params: {
           projectId,
           templateId,
