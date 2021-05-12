@@ -5,6 +5,7 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
 
 /**
  * Encapsulates information about the project as well as permissions.
@@ -21,6 +22,7 @@ public class ProjectDetailsResponse {
 	private boolean canManageRemote;
 	private String priority;
 	private Long defaultMetadataTemplateId = 0L;
+	private Coverage coverage;
 	private boolean isRemote;
 
 	public ProjectDetailsResponse(Project project, boolean canManage, boolean canManageRemote) {
@@ -43,6 +45,11 @@ public class ProjectDetailsResponse {
 		if (analysisPriority != null) {
 			priority = analysisPriority.name();
 		}
+
+		var minimum = project.getMinimumCoverage() == null ? -1 : project.getMinimumCoverage();
+		var maximum = project.getMaximumCoverage() == null ? -1 : project.getMaximumCoverage();
+		var genomeSize = project.getGenomeSize() == null ? -1 : project.getGenomeSize();
+		this.coverage = new Coverage(minimum, maximum, genomeSize);
 	}
 
 	public Long getId() {
@@ -127,5 +134,13 @@ public class ProjectDetailsResponse {
 
 	public void setDefaultMetadataTemplateId(Long defaultMetadataTemplateId) {
 		this.defaultMetadataTemplateId = defaultMetadataTemplateId;
+	}
+
+	public Coverage getCoverage() {
+		return coverage;
+	}
+
+	public void setCoverage(Coverage coverage) {
+		this.coverage = coverage;
 	}
 }
