@@ -168,6 +168,7 @@ public class ProjectDetailsAjaxController {
 	 * Delete a project
 	 *
 	 * @param projectId identifier for a project
+	 * @param locale    Current users locale
 	 * @return an indication to the user about the result of the update
 	 */
 	@DeleteMapping("")
