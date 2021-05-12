@@ -1,6 +1,17 @@
+import { configureStore } from "@reduxjs/toolkit";
 import { Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { projectApi } from "../../apis/projects/project";
+
+const store = configureStore({
+  reducer: {
+    [projectApi.reducerPath]: projectApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(projectApi.middleware),
+});
 
 function ProjectActivity() {
   return (
@@ -10,4 +21,9 @@ function ProjectActivity() {
   );
 }
 
-render(<ProjectActivity />, document.querySelector("#root"));
+render(
+  <Provider store={store}>
+    <ProjectActivity />
+  </Provider>,
+  document.querySelector("#root")
+);
