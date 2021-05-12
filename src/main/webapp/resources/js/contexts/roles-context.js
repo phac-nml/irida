@@ -7,18 +7,19 @@ const RolesContext = createContext();
  * without having to make multiple requests, or passing through props.
  *
  * @param children - a React component
+ * @param {function} getRolesFn - function to get roles (whether project or group)
  * @returns {*}
  * @constructor
  */
-function RolesProvider({ children, rolesFn }) {
+function RolesProvider({ children, getRolesFn }) {
   const [roles, setRoles] = useState([]);
 
   /*
   When the component is mounted, get the list up current roles from the server.
    */
   useEffect(() => {
-    rolesFn().then((data) => setRoles(data));
-  }, [rolesFn]);
+    getRolesFn().then((data) => setRoles(data));
+  }, [getRolesFn]);
 
   /**
    * Find the translation for any project role.  If the role is not found,

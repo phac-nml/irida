@@ -241,7 +241,7 @@ public class ProjectsController {
 			return getCreateProjectPage(useCartSamples, model, owner);
 		}
 
-		return "redirect:/projects/" + project.getId() + "/settings";
+		return "redirect:/projects/" + project.getId() + "/settings/details";
 	}
 
 	/**
@@ -299,6 +299,16 @@ public class ProjectsController {
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		model.addAttribute("page", "automated");
 		return "projects/analyses/pages/outputs.html";
+	}
+
+	@GetMapping("/projects/{projectId}/settings/**")
+	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, "settings");
+		model.addAttribute("page", "details");
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/project_settings";
 	}
 
 	/**

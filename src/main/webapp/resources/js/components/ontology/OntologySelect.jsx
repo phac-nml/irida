@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
 import { Select } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { searchOntology } from "../../apis/ontology/taxonomy";
 import { useDebounce } from "../../hooks";
 
@@ -68,12 +68,14 @@ export function OntologySelect({ term, onTermSelected, ontology }) {
 
   return (
     <Select
+      allowClear={true}
       ref={selectRef}
       showSearch
       defaultValue={term || ""}
       notFoundContent={null}
       onSearch={setQuery}
       onSelect={onTermSelected}
+      onClear={onTermSelected}
       style={{ width: "100%" }}
     >
       {options}

@@ -5,7 +5,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
-const { Item, SubMenu } = Menu;
+const { Item } = Menu;
 const { Content } = Layout;
 
 /**
@@ -34,11 +34,6 @@ export function ProjectNav() {
           <Item key="linelist">
             <a href={`${BASE_URL}linelist`}>{i18n("project.nav.linelist")}</a>
           </Item>
-          <Item key="metadata">
-            <a href={`${BASE_URL}metadata/fields`}>
-              {i18n("project.nav.metadata")}
-            </a>
-          </Item>
           <Item key="analyses">
             <a href={`${BASE_URL}analyses`}>{i18n("project.nav.analysis")}</a>
           </Item>
@@ -49,7 +44,9 @@ export function ProjectNav() {
             <a href={`${BASE_URL}activity`}>{i18n("project.nav.events")}</a>
           </Item>
           <Item key="settings">
-            <a href={`${BASE_URL}settings`}>{i18n("project.nav.settings")}</a>
+            <a href={`${BASE_URL}settings/details`}>
+              {i18n("project.nav.settings")}
+            </a>
           </Item>
         </Menu>
       </Content>

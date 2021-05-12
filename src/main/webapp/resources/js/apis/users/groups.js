@@ -52,10 +52,15 @@ export function getUserGroupRoles() {
  * @param {string} role role to update the user to
  * @returns {Promise<AxiosResponse<any>>}
  */
-export function updateUserRoleOnUserGroups({ groupId, userId, role }) {
-  return axios
-    .put(`${BASE_URL}/${groupId}/member/role?userId=${userId}&role=${role}`)
-    .then(({ data }) => data);
+export async function updateUserRoleOnUserGroups({ groupId, userId, role }) {
+  try {
+    const { data } = await axios.put(
+      `${BASE_URL}/${groupId}/member/role?userId=${userId}&role=${role}`
+    );
+    return Promise.resolve(data);
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
 }
 
 /**

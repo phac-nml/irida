@@ -33,27 +33,6 @@ export async function getProjectRoles() {
 }
 
 /**
- * Get information about the current project
- * @param {number} projectId - identifier for a project
- * @returns {Promise<AxiosResponse<any>>}
- */
-export async function getProjectDetails(projectId) {
-  return axios.get(`${URL}/${projectId}/details`).then(({ data }) => data);
-}
-
-/**
- * Update an attribute on a project
- * @param {number} projectId - identifier for a project
- * @param {string} field - attribute to update
- * @param {string} value - new value of the attribute
- * @returns {Promise<AxiosResponse<any>>}
- */
-export async function updateProjectAttribute({ projectId, field, value }) {
-  return axios.put(`${URL}/${projectId}/details/edit`, { field, value });
-}
-
-
-/**
  * Get project info (name, permissions)
  * @param {number} projectId - identifier for a project
  * @returns {Promise<AxiosResponse<any>>}

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { Button, notification, Popconfirm, Tooltip } from "antd";
+import React, { useState } from "react";
 import { IconRemove } from "../icons/Icons";
 
 /**
@@ -10,35 +10,29 @@ import { IconRemove } from "../icons/Icons";
  */
 export function RemoveTableItemButton({
   onRemove,
-  onRemoveSuccess = () => {},
+  onRemoveSuccess = () => Function.prototype,
   tooltipText = "",
   confirmText = "",
 }) {
   const [loading, setLoading] = useState(false);
 
   /**
-   * Handle the successful removal of the current item
-   * @param message
-   */
-  const removeSuccess = (message) => {
-    onRemoveSuccess();
-    notification.success({message, className: "t-remove-success"})
-  };
-
-  /**
    * Make the request to remove the item from the project.
    */
-  const removeItem = () => {
+  const removeItem = async () => {
     setLoading(true);
-    onRemove()
-      .then(removeSuccess)
-      .catch((error) =>
-        notification.error({
-          message: error.response.data,
-          className: "t-remove-error",
-        })
-      )
-      .finally(() => setLoading(false));
+    try {
+      const message = await onRemove();
+      onRemoveSuccess();
+      notification.success({ message, className: "t-remove-success" });
+    } catch (message) {
+      notification.error({
+        message,
+        className: "t-remove-error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
