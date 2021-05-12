@@ -172,13 +172,14 @@ public class ProjectDetailsAjaxController {
 	 */
 	@DeleteMapping("/delete")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public ResponseEntity<AjaxResponse> deleteProject(@RequestParam long projectId) {
+	public ResponseEntity<AjaxResponse> deleteProject(@RequestParam long projectId, Locale locale) {
 		try {
 			service.deleteProject(projectId);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse("Could not delete the project"));
+					.body(new AjaxErrorResponse(
+							messageSource.getMessage("server.DeleteProject.error", new Object[] {}, locale)));
 		}
 	}
 }
