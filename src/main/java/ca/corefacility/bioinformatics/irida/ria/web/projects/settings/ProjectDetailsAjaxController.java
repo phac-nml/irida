@@ -112,7 +112,7 @@ public class ProjectDetailsAjaxController {
 	 * @param locale     Current users {@link Locale}
 	 * @return {@link AjaxSuccessResponse} with the success message
 	 */
-	@PostMapping("/set-project-default")
+	@PutMapping("/default-template")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@RequestParam Long templateId,
 			@RequestParam Long projectId, Locale locale) {
 		try {
@@ -168,17 +168,19 @@ public class ProjectDetailsAjaxController {
 	 * Delete a project
 	 *
 	 * @param projectId identifier for a project
+	 * @param locale    Current users locale
 	 * @return an indication to the user about the result of the update
 	 */
-	@PostMapping("/delete")
+	@DeleteMapping("")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public ResponseEntity<AjaxResponse> deleteProject(@RequestParam long projectId) {
+	public ResponseEntity<AjaxResponse> deleteProject(@RequestParam long projectId, Locale locale) {
 		try {
 			service.deleteProject(projectId);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse("Could not delete the project"));
+					.body(new AjaxErrorResponse(
+							messageSource.getMessage("server.DeleteProject.error", new Object[] {}, locale)));
 		}
 	}
 }

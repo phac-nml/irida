@@ -1,4 +1,4 @@
-import { Button, Checkbox, notification, Space, Typography } from "antd";
+import { Alert, Button, Checkbox, notification, Space, Typography } from "antd";
 import React from "react";
 import { deleteProject } from "../../../../apis/projects/project";
 
@@ -27,17 +27,22 @@ export default function DeleteProject({ projectId }) {
       </Typography.Title>
 
       <Space direction="vertical" size={"middle"}>
-        <Typography.Text type="danger" underline>
-          {i18n("DeleteProject.warning")}
-        </Typography.Text>
-        <ul>
-          <li>{i18n("DeleteProject.consequences.samples")}</li>
-          <li>{i18n("DeleteProject.consequences.copied")}</li>
-          <li>{i18n("DeleteProject.consequences.reference")}</li>
-          <li>{i18n("DeleteProject.consequences.associated")}</li>
-          <li>{i18n("DeleteProject.consequences.analyses")}</li>
-          <li>{i18n("DeleteProject.consequences.ncbi")}</li>
-        </ul>
+        <Alert
+          showIcon
+          type={"warning"}
+          message={i18n("DeleteProject.warning")}
+          description={
+            <ul>
+              <li>{i18n("DeleteProject.consequences.samples")}</li>
+              <li>{i18n("DeleteProject.consequences.copied")}</li>
+              <li>{i18n("DeleteProject.consequences.reference")}</li>
+              <li>{i18n("DeleteProject.consequences.associated")}</li>
+              <li>{i18n("DeleteProject.consequences.analyses")}</li>
+              <li>{i18n("DeleteProject.consequences.ncbi")}</li>
+            </ul>
+          }
+        />
+
         <Checkbox onChange={(e) => setDisabled(!e.target.checked)}>
           {i18n("DeleteProject.confirm")}
         </Checkbox>

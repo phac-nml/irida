@@ -14,7 +14,7 @@ import {
  */
 export function ProcessingPriorities({ projectId }) {
   const [updateProjectPriority] = useUpdateProjectPriorityMutation();
-  const { data: project } = useGetProjectDetailsQuery(projectId);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const PRIORITIES = [
     { value: "LOW", label: i18n("AnalysisDetailsPriority.LOW") },
     { value: "MEDIUM", label: i18n("AnalysisDetailsPriority.MEDIUM") },

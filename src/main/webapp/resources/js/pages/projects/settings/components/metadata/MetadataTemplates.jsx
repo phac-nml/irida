@@ -53,7 +53,7 @@ export default function MetadataTemplates({ projectId }) {
   const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
   const [templates, setTemplates] = React.useState([]);
 
-  const { data: project } = useGetProjectDetailsQuery(projectId);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
 
   const { data: existingTemplates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
