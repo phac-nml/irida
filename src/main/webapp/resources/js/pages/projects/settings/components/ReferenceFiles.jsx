@@ -1,21 +1,21 @@
-import React from "react";
 import { notification, Space, Table, Typography } from "antd";
-import { InfoAlert } from "../../../components/alerts";
-import { getProjectInfo } from "../../../apis/projects/projects";
-
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { ContentLoading } from "../../../components/loader";
-import {
-  DownloadTableItemButton,
-  RemoveTableItemButton,
-} from "../../../components/Buttons";
+import React from "react";
+import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import {
   downloadProjectReferenceFile,
   getProjectReferenceFiles,
   removeProjectReferenceFile,
   uploadProjectReferenceFiles,
-} from "../../../apis/references/reference-files";
-import { DragUpload } from "../../../components/files/DragUpload";
+} from "../../../../apis/references/reference-files";
+import { InfoAlert } from "../../../../components/alerts";
+import {
+  DownloadTableItemButton,
+  RemoveTableItemButton,
+} from "../../../../components/Buttons";
+import { DragUpload } from "../../../../components/files/DragUpload";
+import { ContentLoading } from "../../../../components/loader";
+
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
 const { Title } = Typography;
 
@@ -24,27 +24,14 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export function ReferenceFiles() {
+export default function ReferenceFiles({ projectId }) {
+  const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
+    projectId
+  );
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
-  const [projectInfo, setProjectInfo] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
   const [, setProgress] = React.useState(0);
 
-  const pathRegx = new RegExp(/projects\/(\d+)/);
-  const projectId = window.location.pathname.match(pathRegx)[1];
-
-  // On first load of page call method to get the reference files for the project
-  // as well as get info about the project and permissions
-  React.useEffect(() => {
-    getProjectInfo(projectId)
-      .then((data) => {
-        setProjectInfo(data);
-      })
-      .catch((message) => {
-        notification.error({ message });
-      });
-    updateReferenceFileTable();
-  }, []);
+  React.useEffect(updateReferenceFileTable, [projectId]);
 
   // Object to hold alert messages for if a user can manage the project or not
   const alertMessage = {
@@ -92,7 +79,7 @@ export function ReferenceFiles() {
                 message: i18n(
                   "ReferenceFile.downloadingFileSuccess",
                   file.name,
-                  projectInfo.name
+                  project.label
                 ),
               });
             }}
@@ -102,7 +89,7 @@ export function ReferenceFiles() {
             }
           />,
           // Only display remove button for reference files if user can manage project
-          projectInfo.canManage ? (
+          project.canManage ? (
             <RemoveTableItemButton
               key={`remove-btn-${file.id}`}
               onRemove={() => removeProjectReferenceFile(projectId, file.id)}
@@ -113,7 +100,7 @@ export function ReferenceFiles() {
               confirmText={i18n(
                 "ReferenceFile.confirmText",
                 file.name,
-                projectInfo.name
+                project.label
               )}
             />
           ) : null,
@@ -129,7 +116,6 @@ export function ReferenceFiles() {
     getProjectReferenceFiles(projectId)
       .then((files) => {
         setProjectReferenceFiles(files);
-        setLoading(false);
       })
       .catch((message) => {
         notification.error({ message });
@@ -164,7 +150,7 @@ export function ReferenceFiles() {
           message: `${i18n(
             "ReferenceFile.uploadFileSuccess",
             file.name,
-            projectInfo.name
+            project.label
           )}`,
         });
         updateReferenceFileTable();
@@ -196,7 +182,7 @@ export function ReferenceFiles() {
     <>
       <Title level={2}>{i18n("ReferenceFile.title")}</Title>
       <Space direction="vertical" style={{ width: `100%` }}>
-        {projectInfo && projectInfo.canManage ? (
+        {project.canManage ? (
           <DragUpload
             options={referenceFileUploadOptions}
             uploadText={i18n("ReferenceFile.clickorDrag")}
@@ -204,7 +190,7 @@ export function ReferenceFiles() {
           />
         ) : null}
 
-        {loading ? (
+        {isLoading ? (
           <ContentLoading />
         ) : projectReferenceFiles.length ? (
           <Table
@@ -215,8 +201,8 @@ export function ReferenceFiles() {
           />
         ) : (
           <InfoAlert
-            message={alertMessage[projectInfo.canManage].text}
-            className={alertMessage[projectInfo.canManage].alertClass}
+            message={alertMessage[project.canManage].text}
+            className={alertMessage[project.canManage].alertClass}
           />
         )}
       </Space>

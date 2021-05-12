@@ -43,7 +43,6 @@ module.exports = {
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-reference-files": "./resources/js/pages/projects/reference-files/",
   "project-analyses":
     "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":

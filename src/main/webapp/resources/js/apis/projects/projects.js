@@ -31,12 +31,3 @@ export async function getPagedProjectsForUser(params) {
 export async function getProjectRoles() {
   return await axios.get(`${URL}/roles`).then(({ data }) => data);
 }
-
-/**
- * Get project info (name, permissions)
- * @param {number} projectId - identifier for a project
- * @returns {Promise<AxiosResponse<any>>}
- */
-export async function getProjectInfo(projectId) {
-  return axios.get(`${URL}/${projectId}/info`).then(({ data }) => data);
-}
