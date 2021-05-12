@@ -1,9 +1,14 @@
+import { Router } from "@reach/router";
 import { configureStore } from "@reduxjs/toolkit";
 import { Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import { projectApi } from "../../apis/projects/project";
+import {
+  projectApi,
+  useGetProjectDetailsQuery,
+} from "../../apis/projects/project";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const store = configureStore({
   reducer: {
@@ -13,7 +18,17 @@ const store = configureStore({
     getDefaultMiddleware().concat(projectApi.middleware),
 });
 
-function ProjectActivity() {
+function ActivityLayout() {
+  return (
+    <Router>
+      <ProjectActivity path={setBaseUrl("/projects/:projectId/activity")} />
+    </Router>
+  );
+}
+
+function ProjectActivity({ projectId }) {
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
+  console.log(project);
   return (
     <>
       <Typography.Title level={2}>Project Activity</Typography.Title>
@@ -23,7 +38,7 @@ function ProjectActivity() {
 
 render(
   <Provider store={store}>
-    <ProjectActivity />
+    <ActivityLayout />
   </Provider>,
   document.querySelector("#root")
 );
