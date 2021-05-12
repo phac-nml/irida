@@ -14,7 +14,7 @@ import { useRoles } from "../../contexts/roles-context";
  * @constructor
  */
 export function ProjectRole({ projectId, item, updateRoleFn }) {
-  const { data: project } = useGetProjectDetailsQuery(projectId);
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
   const { roles, getRoleFromKey } = useRoles();

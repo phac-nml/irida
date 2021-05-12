@@ -111,7 +111,7 @@ public class ProjectDetailsAjaxController {
 	 * @param locale     Current users {@link Locale}
 	 * @return {@link AjaxSuccessResponse} with the success message
 	 */
-	@PostMapping("/set-project-default")
+	@PutMapping("/default-template")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@RequestParam Long templateId,
 			@RequestParam Long projectId, Locale locale) {
 		try {
