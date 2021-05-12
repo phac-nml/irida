@@ -1,13 +1,14 @@
-import { unwrapResult } from "@reduxjs/toolkit";
 import { notification, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
+import {
+  useGetProjectDetailsQuery,
+  useUpdateProjectDetailsMutation,
+} from "../../../../apis/projects/project";
 import { EditableParagraph } from "../../../../components/ant.design";
 import { BasicList } from "../../../../components/lists";
 import { OntologySelect } from "../../../../components/ontology";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { updateProjectDetails } from "../../redux/projectSlice";
 
 const { Paragraph, Title } = Typography;
 
@@ -16,9 +17,11 @@ const { Paragraph, Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ProjectDetails() {
-  const project = useSelector((state) => state.project);
-  const dispatch = useDispatch();
+export default function ProjectDetails({ projectId }) {
+  const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
+    projectId
+  );
+  const [updateProjectDetails] = useUpdateProjectDetailsMutation();
 
   /**
    * When a field is updated, submitted it to the server to be saved.
@@ -34,13 +37,14 @@ export default function ProjectDetails() {
      */
     if (project[field] === value) return;
 
-    dispatch(updateProjectDetails({ field, value: value || "" }))
-      .then(unwrapResult)
-      .then(({ message }) => notification.success({ message }))
+    updateProjectDetails({ projectId, field, value: value || "" })
+      .then((response) =>
+        notification.success({ message: response.data.message })
+      )
       .catch((message) => notification.error({ message }));
   };
 
-  const details = project.loading
+  const details = isLoading
     ? []
     : [
         {

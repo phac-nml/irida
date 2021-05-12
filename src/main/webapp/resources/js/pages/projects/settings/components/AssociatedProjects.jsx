@@ -5,7 +5,7 @@ import { Space, Typography } from "antd";
 import React from "react";
 import ViewAssociatedProjects from "./associated/ViewAssociatedProjects";
 
-export default function AssociatedProjects() {
+export default function AssociatedProjects({ projectId }) {
   return (
     <>
       <Typography.Title level={2}>
@@ -15,7 +15,7 @@ export default function AssociatedProjects() {
         <Typography.Text type="secondary">
           {i18n("AssociatedProjects.subTitle")}
         </Typography.Text>
-        <ViewAssociatedProjects />
+        <ViewAssociatedProjects projectId={projectId} />
       </Space>
     </>
   );

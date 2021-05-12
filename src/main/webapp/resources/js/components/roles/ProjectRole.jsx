@@ -1,6 +1,6 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import { useRoles } from "../../contexts/roles-context";
 
 /**
@@ -13,8 +13,8 @@ import { useRoles } from "../../contexts/roles-context";
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ item, updateRoleFn }) {
-  const { id: projectId, canManage } = useSelector((state) => state.project);
+export function ProjectRole({ projectId, item, updateRoleFn }) {
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
   const { roles, getRoleFromKey } = useRoles();
@@ -40,7 +40,7 @@ export function ProjectRole({ item, updateRoleFn }) {
       .finally(() => setLoading(false));
   };
 
-  return canManage ? (
+  return project.canManage ? (
     <Select
       className="t-role-select"
       value={role}

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 
@@ -55,10 +55,10 @@ public class ProjectsAjaxController {
 	 * Get project info abd permissions
 	 *
 	 * @param projectId - the project to get info for
-	 * @return {@link ProjectInfoResponse}
+	 * @return {@link ProjectDetailsResponse}
 	 */
 	@RequestMapping("/{projectId}/info")
-	public ResponseEntity<ProjectInfoResponse> getProjectInfo(@PathVariable Long projectId) {
+	public ResponseEntity<ProjectDetailsResponse> getProjectInfo(@PathVariable Long projectId) {
 		return ResponseEntity.ok(UIProjectsService.getProjectInfo(projectId));
 	}
 }

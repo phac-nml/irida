@@ -1,5 +1,4 @@
 import { navigate } from "@reach/router";
-import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Button,
   List,
@@ -13,12 +12,15 @@ import {
 } from "antd";
 import differenceBy from "lodash/differenceBy";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
   useGetTemplatesForProjectQuery,
   useUpdateMetadataTemplateMutation,
 } from "../../../../../apis/metadata/metadata-templates";
+import {
+  useGetProjectDetailsQuery,
+  useUpdateDefaultMetadataTemplateMutation,
+} from "../../../../../apis/projects/project";
 import DnDTable from "../../../../../components/ant.design/DnDTable";
 import {
   IconCheckCircle,
@@ -27,7 +29,6 @@ import {
 import { HelpPopover } from "../../../../../components/popovers";
 import { blue6 } from "../../../../../styles/colors";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
-import { setDefaultTemplateForProject } from "../../../redux/projectSlice";
 import { MetadataAddTemplateField } from "./MetadataAddTemplateField";
 
 const { Paragraph, Text } = Typography;
@@ -41,15 +42,14 @@ const { Paragraph, Text } = Typography;
  * @constructor
  */
 export default function MetadataTemplateManager({ id, projectId }) {
-  const dispatch = useDispatch();
+  const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
 
   const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [updateMetadataTemplate] = useUpdateMetadataTemplateMutation();
-  const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
-
-  const { defaultMetadataTemplateId } = useSelector((state) => state.project);
+  const [updateDefaultTemplate] = useUpdateDefaultMetadataTemplateMutation();
 
   const [template, setTemplate] = React.useState({});
   const [fields, setFields] = React.useState();
@@ -100,9 +100,10 @@ export default function MetadataTemplateManager({ id, projectId }) {
    */
   const completeUpdate = async (template) =>
     updateMetadataTemplate(template)
-      .unwrap()
-      .then(({ message }) => notification.info({ message }))
-      .catch(({ data }) => notification.info({ message: data.error }));
+      .then((response) => notification.info({ message: response.data.message }))
+      .catch((error) =>
+        notification.info({ message: error.response.data.error })
+      );
 
   /**
    * Update an attribute on the current metadata template (except fields)
@@ -160,7 +161,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
    * @param {Object} template - the template to return component for
    */
   const displayHeaderExtras = (template) => {
-    if (template.identifier == defaultMetadataTemplateId) {
+    if (template.identifier == project.defaultMetadataTemplateId) {
       return [
         <Tag
           key={`default-template-${template.identifier}`}
@@ -189,17 +190,16 @@ export default function MetadataTemplateManager({ id, projectId }) {
    * @param {Object} template - the template to set as default
    */
   const setDefaultTemplate = async (template) => {
-    dispatch(
-      setDefaultTemplateForProject({
-        projectId,
-        templateId: template.identifier,
+    updateDefaultTemplate({
+      projectId,
+      templateId: template.identifier,
+    })
+      .then((response) => {
+        notification.success({ message: response.data.message });
       })
-    )
-      .then(unwrapResult)
-      .then(({ message }) => {
-        notification.success({ message });
-      })
-      .catch((message) => notification.error({ message }));
+      .catch((error) =>
+        notification.error({ message: error.response.data.message })
+      );
   };
 
   return (

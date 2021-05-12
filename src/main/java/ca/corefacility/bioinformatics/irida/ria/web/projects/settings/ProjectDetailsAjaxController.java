@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.Locale;
 
@@ -12,10 +12,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
@@ -27,7 +30,7 @@ import com.google.common.base.Strings;
  * Handle asynchronous requests for the UI project details page.
  */
 @RestController
-@RequestMapping("/ajax/projects/{projectId}/details")
+@RequestMapping("/ajax/project/details")
 public class ProjectDetailsAjaxController {
 	private final ProjectService projectService;
 	private final UIProjectsService service;
@@ -50,7 +53,7 @@ public class ProjectDetailsAjaxController {
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
-	public ResponseEntity<ProjectInfoResponse> getProjectDetails(@PathVariable Long projectId) {
+	public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getProjectInfo(projectId));
 	}
 
@@ -62,9 +65,9 @@ public class ProjectDetailsAjaxController {
 	 * @param locale    {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
-	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
+	@PutMapping("")
 	@PreAuthorize("hasPermission(#projectId, 'canManageLocalProjectSettings')")
-	public ResponseEntity<String> updateProjectDetails(@PathVariable Long projectId,
+	public ResponseEntity<AjaxResponse> updateProjectDetails(@RequestParam Long projectId,
 			@RequestBody UpdateProjectAttributeRequest request, Locale locale) {
 		try {
 			Project project = projectService.read(projectId);
@@ -80,8 +83,8 @@ public class ProjectDetailsAjaxController {
 				break;
 			default:
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(messageSource.getMessage("server.ProjectDetails.error",
-								new Object[] { request.getField() }, locale));
+						.body(new AjaxErrorResponse(messageSource.getMessage("server.ProjectDetails.error",
+								new Object[] { request.getField() }, locale)));
 			}
 			projectService.update(project);
 			String message;
@@ -93,10 +96,10 @@ public class ProjectDetailsAjaxController {
 				message = messageSource.getMessage("server.ProjectDetails.success",
 						new Object[] { request.getField(), request.getValue() }, locale);
 			}
-			return ResponseEntity.ok(message);
+			return ResponseEntity.ok(new AjaxSuccessResponse(message));
 		} catch (ConstraintViolationException e) {
 			return ResponseEntity.badRequest()
-					.body(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
+					.body(new AjaxErrorResponse(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale)));
 		}
 	}
 
@@ -108,14 +111,54 @@ public class ProjectDetailsAjaxController {
 	 * @param locale     Current users {@link Locale}
 	 * @return {@link AjaxSuccessResponse} with the success message
 	 */
-	@PostMapping("/set-project-default")
+	@PutMapping("/default-template")
 	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@RequestParam Long templateId,
-			@PathVariable Long projectId, Locale locale) {
+			@RequestParam Long projectId, Locale locale) {
 		try {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(metadataService.setDefaultMetadataTemplate(templateId, projectId, locale)));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
+	 * Update the priority for analyses for a project.
+	 *
+	 * @param projectId identifier for a {@link Project}
+	 * @param priority  the new priority for analyses
+	 * @param locale    current users locale
+	 * @return message to user about the update ot the priority
+	 */
+	@PutMapping("/priority")
+	public ResponseEntity<AjaxResponse> updateProcessingPriority(@RequestParam long projectId,
+			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.updateProcessingPriority(projectId, priority, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
+	 * Update the minimum/maximum coverage or genome size for the project
+	 *
+	 * @param projectId identifier for the project
+	 * @param coverage  minimum/maximum coverage or genome size for the project
+	 * @param locale    current users locale
+	 * @return Message to user about the update
+	 */
+	@PutMapping("/coverage")
+	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@RequestParam long projectId,
+			@RequestBody Coverage coverage, Locale locale) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.updateProcessingCoverage(coverage, projectId, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}

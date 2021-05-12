@@ -2,13 +2,13 @@ import { Redirect, Router } from "@reach/router";
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { fetchProjectDetails } from "../redux/projectSlice";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 
@@ -74,12 +74,7 @@ const SettingsLayout = () => (
  * @constructor
  */
 const ProjectSettings = (props) => {
-  const { canManage } = useSelector((state) => state.project);
-  const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    dispatch(fetchProjectDetails(props.projectId));
-  }, [dispatch, props.projectId]);
+  const { data: project = {} } = useGetProjectDetailsQuery(props.projectId);
 
   return (
     <Layout>
@@ -100,7 +95,7 @@ const ProjectSettings = (props) => {
                     <MetadataLayout path="/metadata">
                       <MetadataFields path="/fields" />
                       <MetadataTemplates path="/templates" />
-                      {canManage ? (
+                      {project.canManage ? (
                         <MetadataTemplateManager path="/templates/:id" />
                       ) : (
                         <MetadataTemplateMember path="/templates/:id" />

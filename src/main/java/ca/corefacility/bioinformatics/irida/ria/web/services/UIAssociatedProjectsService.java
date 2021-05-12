@@ -84,8 +84,8 @@ public class UIAssociatedProjectsService {
 	 *
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
-	 * @param locale              current users locale
-	 * @throws Exception if there is an issue adding the associated projecet
+	 * @param locale              currently logged in users locale
+	 * @throws Exception if the project or associated project cannot be found
 	 */
 	public void addAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
 		try {

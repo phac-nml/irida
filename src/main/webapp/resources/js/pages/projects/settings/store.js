@@ -1,11 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { fieldsApi } from "../../../apis/metadata/field";
-
 import { templateApi } from "../../../apis/metadata/metadata-templates";
 import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
-import coverageReducer from "../redux/coverageSlice";
+
+import { projectApi } from "../../../apis/projects/project";
 import pipelineReducer from "../redux/pipelinesSlice";
-import projectReducer from "../redux/projectSlice";
 import userReducer from "../redux/userSlice";
 
 /*
@@ -14,16 +13,16 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
  */
 export default configureStore({
   reducer: {
-    project: projectReducer,
-    coverage: coverageReducer,
     pipelines: pipelineReducer,
     user: userReducer,
+    [projectApi.reducerPath]: projectApi.reducer,
     [templateApi.reducerPath]: templateApi.reducer,
     [fieldsApi.reducerPath]: fieldsApi.reducer,
     [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
+      projectApi.middleware,
       templateApi.middleware,
       fieldsApi.middleware,
       associatedProjectsApi.middleware

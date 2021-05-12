@@ -11,14 +11,14 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ProjectMembersPage(props) {
+export default function ProjectMembersPage({ projectId }) {
   return (
     <PagedTableProvider
-      url={setBaseUrl(`/ajax/projects/members?projectId=${props.projectId}`)}
+      url={setBaseUrl(`/ajax/projects/members?projectId=${projectId}`)}
     >
       <>
         <Title level={2}>{i18n("project.settings.page.title.members")}</Title>
-        <ProjectMembersTable />
+        <ProjectMembersTable projectId={projectId} />
       </>
     </PagedTableProvider>
   );

@@ -1,4 +1,3 @@
-import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Button,
   Card,
@@ -13,11 +12,10 @@ import {
 } from "antd";
 import isNumeric from "antd/es/_util/isNumeric";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchProjectCoverage,
-  updateProcessingCoverage,
-} from "../../../redux/coverageSlice";
+  useGetProjectDetailsQuery,
+  useUpdateProjectCoverageMutation,
+} from "../../../../../apis/projects/project";
 
 /**
  * Display and allow managers to be able to modify the minimum and maximum
@@ -27,19 +25,16 @@ import {
  * @returns {JSX.Element}
  * @constructor
  */
-export function ProcessingCoverage({ projectId, canManage }) {
-  const { minimum, maximum, genomeSize, loading } = useSelector(
-    (state) => state.coverage
-  );
+export function ProcessingCoverage({ projectId, canManage = false }) {
+  const {
+    data: { coverage = {} },
+    isLoading,
+  } = useGetProjectDetailsQuery(projectId);
+  const [updateProjectCoverage] = useUpdateProjectCoverageMutation();
 
-  const dispatch = useDispatch();
   const NOT_SET = i18n("ProcessingCoverage.not-set");
   const [visible, setVisible] = React.useState(false);
   const [form] = Form.useForm();
-
-  React.useEffect(() => {
-    dispatch(fetchProjectCoverage(projectId));
-  }, []);
 
   const numericValidator = () => ({
     validator(rule, value) {
@@ -52,16 +47,14 @@ export function ProcessingCoverage({ projectId, canManage }) {
 
   const update = () =>
     form.validateFields().then((coverage) => {
-      dispatch(updateProcessingCoverage({ projectId, coverage }))
-        .then(unwrapResult)
-        .then(({ message }) => {
-          notification.success({ message });
-          setVisible(false);
+      updateProjectCoverage({ projectId, coverage })
+        .then((response) => {
+          notification.success({ message: response.data.message });
         })
-        .catch((message) => {
-          notification.error({ message });
-          setVisible(false);
-        });
+        .catch((error) => {
+          notification.error({ message: error.response.data.error });
+        })
+        .finally(() => setVisible(false));
     });
 
   return (
@@ -90,9 +83,10 @@ export function ProcessingCoverage({ projectId, canManage }) {
               <Form
                 layout="vertical"
                 initialValues={{
-                  minimum: isNumeric(minimum) ? minimum : null,
-                  maximum: isNumeric(maximum) ? maximum : null,
-                  genomeSize: isNumeric(genomeSize) ? genomeSize : null,
+                  minimum: coverage.minimum > -1 ? coverage.minimum : null,
+                  maximum: coverage.maximum > -1 ? coverage.maximum : null,
+                  genomeSize:
+                    coverage.genomeSize > -1 ? coverage.genomeSize : null,
                 }}
                 form={form}
               >
@@ -127,30 +121,30 @@ export function ProcessingCoverage({ projectId, canManage }) {
         <Col span={8}>
           <Card>
             <Statistic
-              loading={loading}
+              loading={isLoading}
               title={i18n("ProcessingCoverage.minimum")}
-              value={isNumeric(minimum) ? minimum : NOT_SET}
-              suffix={isNumeric(minimum) ? "X" : ""}
+              value={coverage.minimum > -1 ? coverage.minimum : NOT_SET}
+              suffix={coverage.minimum > -1 ? "X" : ""}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card>
             <Statistic
-              loading={loading}
+              loading={isLoading}
               title={i18n("ProcessingCoverage.maximum")}
-              value={isNumeric(maximum) ? maximum : NOT_SET}
-              suffix={isNumeric(maximum) ? "X" : ""}
+              value={coverage.maximum > -1 ? coverage.maximum : NOT_SET}
+              suffix={coverage.maximum > -1 ? "X" : ""}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card>
             <Statistic
-              loading={loading}
+              loading={isLoading}
               title={i18n("ProcessingCoverage.genomeSize")}
-              value={isNumeric(genomeSize) ? genomeSize : NOT_SET}
-              suffix={isNumeric(genomeSize) ? "BP" : ""}
+              value={coverage.genomeSize > -1 ? coverage.genomeSize : NOT_SET}
+              suffix={coverage.genomeSize > -1 ? "BP" : ""}
             />
           </Card>
         </Col>

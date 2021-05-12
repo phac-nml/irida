@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.ProjectDetailsAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectInfoResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.ProjectDetailsAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
@@ -37,14 +38,14 @@ public class ProjectDetailsAjaxControllerTest {
 
 		Project project = TestDataFactory.constructProject();
 		when(projectService.read(anyLong())).thenReturn(project);
-		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID)).thenReturn(new ProjectInfoResponse(project, true, true));
+		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID)).thenReturn(new ProjectDetailsResponse(project, true, true));
 	}
 
 	@Test
 	public void testGetProjectDetails() {
-		ResponseEntity<ProjectInfoResponse> response = controller.getProjectDetails(TestDataFactory.TEST_PROJECT_ID);
+		ResponseEntity<ProjectDetailsResponse> response = controller.getProjectDetails(TestDataFactory.TEST_PROJECT_ID);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
-		ProjectInfoResponse content = response.getBody();
+		ProjectDetailsResponse content = response.getBody();
 		assert content != null;
 		assertEquals(TestDataFactory.TEST_PROJECT_DESCRIPTION, content.getDescription());
 		assertEquals(TestDataFactory.TEST_PROJECT_LABEL, content.getLabel());
@@ -54,7 +55,7 @@ public class ProjectDetailsAjaxControllerTest {
 	@Test
 	public void testUpdateProjectDetails() {
 		UpdateProjectAttributeRequest request = new UpdateProjectAttributeRequest("organism", "Salmonella");
-		ResponseEntity<String> response = controller.updateProjectDetails(TestDataFactory.TEST_PROJECT_ID, request, Locale.ENGLISH);
+		ResponseEntity<AjaxResponse> response = controller.updateProjectDetails(TestDataFactory.TEST_PROJECT_ID, request, Locale.ENGLISH);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 		verify(projectService, times(1)).update(any(Project.class));
 	}
