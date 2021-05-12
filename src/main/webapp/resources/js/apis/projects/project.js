@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+const BASE_URL = `ajax/project/details`;
 /**
  * Redux API for all things project
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {updateProjectCoverage: *, getProjectDetails: *, getProjectCoverage: *, updateProjectDetails: *, updateProjectPriority: *, updateDefaultMetadataTemplate: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {updateProjectCoverage: *, getProjectDetails: *, getProjectCoverage: *, updateProjectDetails: *, updateProjectPriority: *, updateDefaultMetadataTemplate: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
@@ -8,7 +10,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 export const projectApi = createApi({
   reducerPath: `projectsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`ajax/project/details`),
+    baseUrl: setBaseUrl(BASE_URL),
   }),
   tagTypes: ["Project", "MetadataTemplate"],
   endpoints: (build) => ({
@@ -88,3 +90,12 @@ export const {
   useUpdateProjectPriorityMutation,
   useUpdateDefaultMetadataTemplateMutation,
 } = projectApi;
+
+export async function deleteProject(projectId) {
+  try {
+    await axios.delete(`${BASE_URL}?projectId=${projectId}`);
+    window.location.href = setBaseUrl("/projects");
+  } catch (e) {
+    return Promise.reject(e.response.data.error);
+  }
+}
