@@ -60,7 +60,7 @@ import com.google.common.collect.ImmutableMap;
 public class ProjectsController {
 	// Sub Navigation Strings
 	public static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_EVENTS = "events";
+	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 	private static final String ACTIVE_NAV_ANALYSES = "analyses";
 
 	// Page Names
@@ -143,13 +143,13 @@ public class ProjectsController {
 	 * @param principal a reference to the logged in user.
 	 * @return The name of the project details page.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/events")
-	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
+	@RequestMapping(value = "/projects/{projectId}/activity")
+	public String getProjectActivityPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_EVENTS);
-		return "projects/project_events";
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
+		return "projects/project_activity";
 	}
 
 	/**

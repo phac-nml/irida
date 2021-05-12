@@ -41,7 +41,7 @@ export function ProjectNav() {
             <a href={`${BASE_URL}export`}>{i18n("project.nav.exports")}</a>
           </Item>
           <Item key="events">
-            <a href={`${BASE_URL}activity`}>{i18n("project.nav.events")}</a>
+            <a href={`${BASE_URL}activity`}>{i18n("project.nav.activity")}</a>
           </Item>
           <Item key="settings">
             <a href={`${BASE_URL}settings/details`}>
