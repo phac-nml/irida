@@ -151,20 +151,6 @@ public class UIProjectsService {
 	}
 
 	/**
-	 * Get the coverage and genome size for a project
-	 *
-	 * @param projectId identifier for a {@link Project}
-	 * @return The minimum and maximum coverage as well as the genome size.
-	 */
-	public Coverage getProcessingCoverageForProject(Long projectId) {
-		Project project = projectService.read(projectId);
-		var minimum = project.getMinimumCoverage() == null ? -1 : project.getMinimumCoverage();
-		var maximum = project.getMaximumCoverage() == null ? -1 : project.getMaximumCoverage();
-		var genomeSize = project.getGenomeSize() == null ? - 1 : project.getGenomeSize();
-		return new Coverage(minimum, maximum, genomeSize);
-	}
-
-	/**
 	 * Update the minimum, maximum coverage or genome size for a project.
 	 *
 	 * @param coverage  Details about the update to either the minimum/maximum coverage or genome size
@@ -196,5 +182,4 @@ public class UIProjectsService {
 		projectService.updateProjectSettings(project, updates);
 		return messageSource.getMessage("server.ProcessingCoverage.updated", new Object[] {}, locale);
 	}
-
 }

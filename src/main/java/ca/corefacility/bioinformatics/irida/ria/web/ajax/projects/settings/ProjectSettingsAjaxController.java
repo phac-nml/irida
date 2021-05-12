@@ -54,17 +54,6 @@ public class ProjectSettingsAjaxController {
 	}
 
 	/**
-	 * Get the minimum/maximum coverage and genome size for the project
-	 *
-	 * @param projectId identifier for the project
-	 * @return {@link Coverage}
-	 */
-	@GetMapping("/coverage")
-	public Coverage getProcessingCoverage(@PathVariable Long projectId) {
-		return projectsService.getProcessingCoverageForProject(projectId);
-	}
-
-	/**
 	 * Update the minimum/maximum coverage or genome size for the project
 	 *
 	 * @param projectId identifier for the project

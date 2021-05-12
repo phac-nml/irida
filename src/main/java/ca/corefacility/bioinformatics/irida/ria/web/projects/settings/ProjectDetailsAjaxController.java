@@ -141,15 +141,6 @@ public class ProjectDetailsAjaxController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));
 		}
-	}	/**
-	 * Get the minimum/maximum coverage and genome size for the project
-	 *
-	 * @param projectId identifier for the project
-	 * @return {@link Coverage}
-	 */
-	@GetMapping("/coverage")
-	public Coverage getProcessingCoverage(@RequestParam Long projectId) {
-		return service.getProcessingCoverageForProject(projectId);
 	}
 
 	/**

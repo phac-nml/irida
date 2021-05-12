@@ -35,23 +35,20 @@ export const projectApi = createApi({
       invalidatesTags: ["Project"],
     }),
     /*
-    Get the processing coverage (min / max, and genome size)
-     */
-    getProjectCoverage: build.query({
-      query: (projectId) => ({
-        url: "/coverage",
-        params: { projectId },
-      }),
-    }),
-    /*
     Update the processing coverage
      */
     updateProjectCoverage: build.mutation({
-      query: ({ projectId, coverage }) => ({
-        url: "/coverage",
-        params: { projectId },
-        body: { coverage },
-      }),
+      query: ({ projectId, coverage }) => {
+        return {
+          url: "/coverage",
+          method: "PUT",
+          params: {
+            projectId,
+          },
+          body: coverage,
+        };
+      },
+      invalidatesTags: ["Project"],
     }),
     /*
     Update the priority of the project pipelines
@@ -87,7 +84,6 @@ export const projectApi = createApi({
 export const {
   useGetProjectDetailsQuery,
   useUpdateProjectDetailsMutation,
-  useGetProjectCoverageQuery,
   useUpdateProjectCoverageMutation,
   useUpdateProjectPriorityMutation,
   useUpdateDefaultMetadataTemplateMutation,
