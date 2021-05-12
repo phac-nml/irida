@@ -18,10 +18,12 @@ export const associatedProjectsApi = createApi({
     getAssociatedProjects: build.query({
       query: (projectId) => ({ url: "", params: { projectId } }),
       providesTags: (result) =>
-        result.map(({ id }) => ({
-          type: "AssociatedProject",
-          id,
-        })),
+        result
+          ? result.map(({ id }) => ({
+              type: "AssociatedProject",
+              id,
+            }))
+          : [],
     }),
     addAssociatedProject: build.mutation({
       query: ({ projectId, associatedProjectId }) => ({

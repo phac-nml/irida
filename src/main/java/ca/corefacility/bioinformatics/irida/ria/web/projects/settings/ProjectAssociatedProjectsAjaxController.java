@@ -1,16 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAssociatedProjectsService;
 
 /**
- * Controller to handle associated projects
+ * Ajax Controller for handling associated projects
  */
 @Controller
 @RequestMapping("/ajax/projects/associated")
@@ -38,10 +43,19 @@ public class ProjectAssociatedProjectsAjaxController {
 	 *
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
+	 * @param locale              current users locale
+	 * @return The result of adding the associated project
 	 */
 	@PostMapping("")
-	public void addAssociatedProject(@RequestParam long projectId, @RequestParam long associatedProjectId) {
-		service.addAssociatedProject(projectId, associatedProjectId);
+	public ResponseEntity<AjaxResponse> addAssociatedProject(@RequestParam long projectId,
+			@RequestParam long associatedProjectId, Locale locale) {
+		try {
+			service.addAssociatedProject(projectId, associatedProjectId, locale);
+			return ResponseEntity.ok(new AjaxSuccessResponse(""));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**
@@ -49,9 +63,18 @@ public class ProjectAssociatedProjectsAjaxController {
 	 *
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
+	 * @param locale              current users locale
+	 * @return the result of removing the project
 	 */
 	@DeleteMapping("")
-	public void removeAssociatedProject(@RequestParam long projectId, @RequestParam long associatedProjectId) {
-		service.removeAssociatedProject(projectId, associatedProjectId);
+	public ResponseEntity<AjaxResponse> removeAssociatedProject(@RequestParam long projectId,
+			@RequestParam long associatedProjectId, Locale locale) {
+		try {
+			service.removeAssociatedProject(projectId, associatedProjectId, locale);
+			return ResponseEntity.ok(new AjaxSuccessResponse(""));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 }
