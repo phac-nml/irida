@@ -28,7 +28,13 @@ function ActivityLayout() {
 
 function ProjectActivity({ projectId }) {
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  console.log(project);
+
+  React.useEffect(() => {
+    fetch(`/events/project/${projectId}`)
+      .then((response) => response.json())
+      .then(console.log);
+  }, []);
+
   return (
     <>
       <Typography.Title level={2}>Project Activity</Typography.Title>

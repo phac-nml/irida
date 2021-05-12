@@ -1,11 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -20,13 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
@@ -87,17 +77,12 @@ public class ProjectEventsController {
 	 * @return The name of the events view
 	 */
 	@RequestMapping("/project/{projectId}")
-	public String getRecentEventsForProject(@PathVariable Long projectId, Model model,
+	public Page<ProjectEvent> getRecentEventsForProject(@PathVariable Long projectId, Model model,
 			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
 		Project project = projectService.read(projectId);
 
-		Page<ProjectEvent> events = eventService.getEventsForProject(project,
+		return  eventService.getEventsForProject(project,
 				PageRequest.of(0, size, Direction.DESC, "createdDate"));
-		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
-
-		model.addAttribute("events", eventInfo);
-
-		return EVENTS_VIEW;
 	}
 
 	/**
