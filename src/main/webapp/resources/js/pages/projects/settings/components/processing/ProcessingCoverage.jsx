@@ -13,7 +13,7 @@ import {
 import isNumeric from "antd/es/_util/isNumeric";
 import React from "react";
 import {
-  useGetProjectCoverageQuery,
+  useGetProjectDetailsQuery,
   useUpdateProjectCoverageMutation,
 } from "../../../../../apis/projects/project";
 
@@ -26,9 +26,11 @@ import {
  * @constructor
  */
 export function ProcessingCoverage({ projectId, canManage = false }) {
-  const { data: coverage = {}, isLoading } = useGetProjectCoverageQuery(
-    projectId
-  );
+  const {
+    data: { coverage = {} },
+    isLoading,
+  } = useGetProjectDetailsQuery(projectId);
+  console.log({ coverage });
   const [updateProjectCoverage] = useUpdateProjectCoverageMutation();
 
   const NOT_SET = i18n("ProcessingCoverage.not-set");
@@ -47,14 +49,13 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
   const update = () =>
     form.validateFields().then((coverage) => {
       updateProjectCoverage({ projectId, coverage })
-        .then(({ message }) => {
-          notification.success({ message });
-          setVisible(false);
+        .then((response) => {
+          notification.success({ message: response.data.message });
         })
-        .catch((message) => {
-          notification.error({ message });
-          setVisible(false);
-        });
+        .catch((error) => {
+          notification.error({ message: error.response.data.error });
+        })
+        .finally(() => setVisible(false));
     });
 
   return (
