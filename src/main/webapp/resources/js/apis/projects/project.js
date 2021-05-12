@@ -93,7 +93,7 @@ export const {
 
 export async function deleteProject(projectId) {
   try {
-    await axios.delete(`${BASE_URL}/delete?projectId=${projectId}`);
+    await axios.delete(`${BASE_URL}?projectId=${projectId}`);
     window.location.href = setBaseUrl("/projects");
   } catch (e) {
     return Promise.reject(e.response.data.error);
