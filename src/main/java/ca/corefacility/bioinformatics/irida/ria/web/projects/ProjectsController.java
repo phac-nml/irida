@@ -309,6 +309,24 @@ public class ProjectsController {
 	}
 
 	/**
+	 * Get the project settings page
+	 *
+	 * @param projectId - identifier for the {@link Project} currently being viewed
+	 * @param principal - Currently logged in used
+	 * @param model     Spring UI model
+	 * @return path to the html settings page
+	 */
+	@GetMapping("/projects/{projectId}/settings/**")
+	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		model.addAttribute(ProjectsController.ACTIVE_NAV, "settings");
+		model.addAttribute("page", "details");
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/project_settings";
+	}
+
+	/**
 	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
 	 * <p>
 	 * Note: If the search term was not included in the results, it will be added as an option

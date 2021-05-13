@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
 import { Button, Form, notification, Space, Typography } from "antd";
-import { BasicList } from "../../../components/lists";
-import { RemoteApiStatus } from "../../admin/components/remote-connections/RemoteApiStatus";
+import React, { useEffect, useState } from "react";
 import {
   getRemoteProjectSyncSettings,
   updateRemoteProjectSyncSettings,
-} from "../../../apis/projects/remote-projects";
-import { formatDate } from "../../../utilities/date-utilities";
-import { SyncFrequencySelect } from "../../../components/remote-api/SyncFrequencySelect";
-import { HelpPopover } from "../../../components/popovers";
+} from "../../../../apis/projects/remote-projects";
+import { BasicList } from "../../../../components/lists";
+import { HelpPopover } from "../../../../components/popovers";
+import { SyncFrequencySelect } from "../../../../components/remote-api/SyncFrequencySelect";
+import { formatDate } from "../../../../utilities/date-utilities";
+import { RemoteApiStatus } from "../../../admin/components/remote-connections/RemoteApiStatus";
 
 const { Title } = Typography;
 
@@ -17,8 +17,7 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export function ProjectSynchronizationSettings() {
-  const projectId = window.location.pathname.match(/projects\/(\d+)/)[1];
+export default function ProjectSynchronizationSettings({ projectId }) {
   const syncNowEnabledStates = ["SYNCHRONIZED", "ERROR", "UNAUTHORIZED"];
   const [remoteProjectData, setRemoteProjectData] = useState(null);
   const [disableSyncNow, setDisableSyncNow] = useState(false);
@@ -35,7 +34,7 @@ export function ProjectSynchronizationSettings() {
       .catch(({ message }) => {
         notification.error({ message });
       });
-  }, []);
+  }, [projectId]);
 
   const syncSettings =
     remoteProjectData === null
@@ -51,12 +50,10 @@ export function ProjectSynchronizationSettings() {
                     type="primary"
                     onClick={() => updateSyncSettings({ markSync: true })}
                     disabled={
-                      (disableSyncNow ? true : false) ||
-                      (syncNowEnabledStates.includes(
+                      disableSyncNow ||
+                      !syncNowEnabledStates.includes(
                         remoteProjectData.remoteStatus.syncStatus
                       )
-                        ? false
-                        : true)
                     }
                     className="t-sync-now-btn"
                   >
@@ -67,12 +64,10 @@ export function ProjectSynchronizationSettings() {
                     type="primary"
                     onClick={() => updateSyncSettings({ forceSync: true })}
                     disabled={
-                      (disableSyncNow ? true : false) ||
-                      (syncNowEnabledStates.includes(
+                      disableSyncNow ||
+                      !syncNowEnabledStates.includes(
                         remoteProjectData.remoteStatus.syncStatus
                       )
-                        ? false
-                        : true)
                     }
                     className="t-sync-force-btn"
                   >
@@ -145,7 +140,12 @@ export function ProjectSynchronizationSettings() {
         ];
 
   // Used to update sync user, sync frequency, and force to sync now
-  function updateSyncSettings({ forceSync, markSync, changeUser, projectSyncFrequency }) {
+  function updateSyncSettings({
+    forceSync,
+    markSync,
+    changeUser,
+    projectSyncFrequency,
+  }) {
     updateRemoteProjectSyncSettings(projectId, {
       forceSync,
       markSync,

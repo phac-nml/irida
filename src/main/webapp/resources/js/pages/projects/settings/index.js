@@ -43,6 +43,10 @@ const AssociatedProjects = React.lazy(() =>
 
 const ReferenceFiles = React.lazy(() => import("./components/ReferenceFiles"));
 
+const ProjectSynchronizationSettings = React.lazy(() =>
+  import("./components/ProjectSynchronizationSettings")
+);
+
 const DeleteProject = React.lazy(() => import("./components/DeleteProject"));
 
 /*
@@ -79,11 +83,13 @@ const SettingsLayout = () => (
  */
 const ProjectSettings = (props) => {
   const { data: project = {} } = useGetProjectDetailsQuery(props.projectId);
-
   return (
     <Layout>
       <Sider width={200} style={{ backgroundColor: grey1 }}>
-        <SettingsNav path={props["*"]} />
+        <SettingsNav
+          path={props["*"]}
+          showRemote={project.canManage && project.remote}
+        />
       </Sider>
       <Layout>
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
@@ -107,6 +113,7 @@ const ProjectSettings = (props) => {
                     </MetadataLayout>
                     <AssociatedProjects path="/associated" />
                     <ReferenceFiles path="/references" />
+                    <ProjectSynchronizationSettings path="/remote" />
                     <DeleteProject path="/delete" />
                     <Redirect from="/" to="/details" />
                   </Router>
