@@ -1,15 +1,14 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -56,16 +55,15 @@ public class RESTSampleMetadataControllerTest {
 		p1.setId(3L);
 
 		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
-		MetadataEntry entry1 = new MetadataEntry("val1", "text", f1);
-		MetadataEntry entry2 = new MetadataEntry("val2", "text", f1);
 
-		List<Join<Project, Sample>> projectSampleJoins = Lists.newArrayList(new ProjectSampleJoin(p1, s1, true),
-				new ProjectSampleJoin(p1, s2, true));
+		Map<Long, Set<MetadataEntry>> metadata = new HashMap<>();
+		metadata.put(s1.getId(), Sets.newHashSet(new MetadataEntry("value", "text", f1)));
+		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", f1)));
 
 		when(projectService.read(p1.getId())).thenReturn(p1);
-		when(sampleService.getSamplesForProject(p1)).thenReturn(projectSampleJoins);
-		when(sampleService.getMetadataForSample(s1)).thenReturn(Sets.newHashSet(entry1));
-		when(sampleService.getMetadataForSample(s2)).thenReturn(Sets.newHashSet(entry2));
+		when(sampleService.getSamplesForProjectShallow(p1)).thenReturn(Lists.newArrayList(s1, s2));
+
+		when(sampleService.getMetadataForProject(p1)).thenReturn(metadata);
 
 		ModelMap modelMap = metadataController.getProjectSampleMetadata(p1.getId());
 
@@ -82,9 +80,8 @@ public class RESTSampleMetadataControllerTest {
 		}
 
 		verify(projectService).read(p1.getId());
-		verify(sampleService).getSamplesForProject(p1);
-		verify(sampleService).getMetadataForSample(s1);
-		verify(sampleService).getMetadataForSample(s2);
+		verify(sampleService).getSamplesForProjectShallow(p1);
+		verify(sampleService).getMetadataForProject(p1);
 	}
 
 	@Test

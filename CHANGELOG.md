@@ -21,6 +21,7 @@ Changes
 * [REST]: Added endpoint to request a full project's sample metadata at the same time.
 * [Developer]: Chromedriver updated to 90.
 * [Developer]: Updated `lodash` to v4.17.21 to fix security vulnerability.
+* [UI/REST]: Improved querying performance of metadata for line list and REST API.
 
 20.09 to 21.01
 --------------
