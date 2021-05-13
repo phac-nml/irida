@@ -119,6 +119,7 @@ public class UIRemoteAPIService {
         project.getRemoteStatus()
                 .setSyncStatus(RemoteStatus.SyncStatus.MARKED);
         project.setSyncFrequency(request.getFrequency());
+        project.setDefaultMetadataTemplate(null);
         project = projectService.create(project);
         return new AjaxCreateItemSuccessResponse(project.getId());
     }
