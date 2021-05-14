@@ -264,6 +264,24 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
+	public void testSyncSampleNoFast5() {
+		Sample sample = new Sample();
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
+		sample.setRemoteStatus(sampleStatus);
+
+		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
+		when(fast5ObjectRemoteService.getFast5FilesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
+
+		syncService.syncSample(sample, expired, Maps.newHashMap());
+
+		verify(projectService).addSampleToProject(expired, sample, true);
+		verify(assemblyRemoteService, times(0)).mirrorAssembly(any(UploadedAssembly.class));
+
+		assertEquals(SyncStatus.SYNCHRONIZED, sample.getRemoteStatus().getSyncStatus());
+	}
+
+	@Test
 	public void testSyncAssemblies() {
 		Sample sample = new Sample();
 

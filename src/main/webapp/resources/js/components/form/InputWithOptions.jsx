@@ -1,15 +1,6 @@
-import { Checkbox, Form, Radio, Select } from "antd";
 import React from "react";
-
-function isTruthy(options) {
-  if (options.length > 2) return false;
-  return (
-    (typeof options[0].value === "boolean" &&
-      typeof options[1].value === "boolean") ||
-    options[0].value === "true" ||
-    options[1].value === "true"
-  );
-}
+import { Checkbox, Form, Radio, Select } from "antd";
+import { isTruthy } from "../../utilities/form-utilities";
 
 /**
  * React component to render an input that has pre-defined options.

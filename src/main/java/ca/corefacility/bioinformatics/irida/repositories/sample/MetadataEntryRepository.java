@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * Repository for saving and reading {@link MetadataEntry}
  */
-public interface MetadataEntryRepository extends IridaJpaRepository<MetadataEntry, Long> {
+public interface MetadataEntryRepository extends IridaJpaRepository<MetadataEntry, Long>, MetadataEntryRepositoryCustom {
 
 	/**
 	 * Get all the {@link MetadataEntry} attached to the given {@link Sample}
