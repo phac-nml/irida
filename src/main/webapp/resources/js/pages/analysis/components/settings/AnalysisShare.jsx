@@ -19,7 +19,7 @@ import { WarningAlert } from "../../../../components/alerts/WarningAlert";
 
 import {
   getSharedProjects,
-  updateSharedProject
+  updateSharedProject,
 } from "../../../../apis/analysis/analysis";
 import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 
@@ -38,7 +38,7 @@ export default function AnalysisShare() {
   const {
     analysisShareContext,
     storeSharedProjects,
-    updateSharedProjectShareStatus
+    updateSharedProjectShareStatus,
   } = useContext(AnalysisShareContext);
 
   // Local state variable which stores the shared projects
@@ -53,7 +53,7 @@ export default function AnalysisShare() {
       <List
         bordered
         dataSource={sharedProjects}
-        renderItem={item => {
+        renderItem={(item) => {
           return (
             <List.Item>
               <List.Item.Meta
@@ -116,12 +116,12 @@ export default function AnalysisShare() {
     updateSharedProject({
       submissionId: analysisIdentifier,
       projectId: e.target.value,
-      shareStatus: e.target.checked
-    }).then(res => {
+      shareStatus: e.target.checked,
+    }).then((res) => {
       showNotification({ text: res.message });
       updateSharedProjectShareStatus({
         projectId: e.target.value,
-        shareStatus: e.target.checked
+        shareStatus: e.target.checked,
       });
     });
   }
@@ -129,7 +129,7 @@ export default function AnalysisShare() {
   // On load gets the projects which the analysis can be shared with
   useEffect(() => {
     if (analysisShareContext.sharedProjects != sharedProjects) {
-      getSharedProjects(analysisIdentifier).then(data => {
+      getSharedProjects(analysisIdentifier).then((data) => {
         //List of projects which results can be shared with (local state)
         setSharedProjects(data);
         storeSharedProjects({ sharedProjects: data });
@@ -145,7 +145,7 @@ export default function AnalysisShare() {
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
           <section style={{ marginTop: SPACE_MD }}>
-            <Title level={2}>
+            <Title level={4}>
               {i18n("AnalysisShare.shareResultsWithProjects")}
             </Title>
             {renderSharedProjectsList()}
@@ -160,7 +160,7 @@ export default function AnalysisShare() {
       {analysisDetailsContext.canShareToSamples &&
       analysisContext.isCompleted ? (
         <section style={{ marginTop: SPACE_MD }}>
-          <Title level={2}>{i18n("AnalysisShare.saveResults")}</Title>
+          <Title level={4}>{i18n("AnalysisShare.saveResults")}</Title>
           {renderSaveToRelatedSamples()}
         </section>
       ) : null}

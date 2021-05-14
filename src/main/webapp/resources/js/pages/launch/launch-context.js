@@ -6,6 +6,7 @@ import {
   formatSavedParameterSets,
   PIPELINE_ID,
 } from "./launch-utilities";
+import { isTruthy } from "../../utilities/form-utilities";
 
 /**
  * @file React Context for providing to access to shared data and actions for the
@@ -107,6 +108,18 @@ function LaunchProvider({ children }) {
           dynamicSources.forEach((parameter) => {
             initialValues[parameter.name] =
               parameter.value || parameter.options[0].value;
+          });
+        }
+
+        /*
+         For parameters with options that are true/false we set the initialvalue to the value
+         if its set by the developer otherwise we set it to false
+         */
+        if (parameterWithOptions) {
+          parameterWithOptions.forEach((parameter) => {
+            if (isTruthy(parameter.options)) {
+              initialValues[parameter.name] = parameter.value === "true";
+            }
           });
         }
 

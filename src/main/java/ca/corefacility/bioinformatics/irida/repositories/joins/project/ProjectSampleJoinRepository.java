@@ -83,4 +83,13 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	@Query("select count(j.id) from ProjectSampleJoin j where j.project = ?1")
 	public Long countSamplesForProject(Project project);
 
+	/**
+	 * Get a list of the {@link Sample} ids that are not owned by the given project
+	 *
+	 * @param project the {@link Project} to check
+	 * @return a List of the sample IDs that are locked
+	 */
+	@Query("SELECT j.sample.id FROM ProjectSampleJoin j where j.owner=false AND j.project=?1")
+	public List<Long> getLockedSamplesForProject(Project project);
+
 }
