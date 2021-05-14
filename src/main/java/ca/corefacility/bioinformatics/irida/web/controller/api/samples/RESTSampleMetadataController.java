@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
@@ -91,14 +90,14 @@ public class RESTSampleMetadataController {
 
 		//get the project and samples for the project
 		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> samples = sampleService.getSamplesForProject(project);
+
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
+		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
 
 		//for each sample
-		for (Join<Project, Sample> join : samples) {
-			Sample s = join.getObject();
-
+		for (Sample s : samples) {
 			//get the metadata for that sample
-			Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
+			Set<MetadataEntry> metadataForSample = metadataForProject.get(s.getId());
 
 			//build the response
 			SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
