@@ -65,7 +65,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "getSampleMetadata", summary = "Find the metadata for a given sample", description = "Get the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> getSampleMetadata(@PathVariable Long sampleId) {
 		logger.trace("Getting sample metadata for " + sampleId);
 		Sample s = sampleService.read(sampleId);
@@ -86,7 +85,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project", description = "Get all the sample metadata for a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<SampleMetadataResponse>> getProjectSampleMetadata(
 			final @PathVariable Long projectId) {
 		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
@@ -125,7 +123,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "saveSampleMetadata", summary = "Save the metadata for a given sample", description = "Save the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
-	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> saveSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
@@ -147,7 +144,6 @@ public class RESTSampleMetadataController {
 	 */
 	@Operation(operationId = "addSampleMetadata", summary = "Add new metadata fields for a given sample", description = "Add new metadata fields for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
-	@ResponseBody
 	public ResponseResource<SampleMetadataResponse> addSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);

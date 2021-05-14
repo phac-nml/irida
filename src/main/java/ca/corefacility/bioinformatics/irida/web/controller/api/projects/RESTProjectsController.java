@@ -86,7 +86,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "listAllProjects", summary = "Lists all projects", description = "Lists all projects.", tags = "projects")
 	@RequestMapping(method = RequestMethod.GET)
-	@ResponseBody
 	@Override
 	public ResponseResource<ResourceCollection<Project>> listAllResources() {
 		return super.listAllResources();
@@ -97,7 +96,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "getProject", summary = "Find a project", description = "Get the project given the identifier.", tags = "projects")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
-	@ResponseBody
 	@Override
 	public ResponseResource<Project> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -108,7 +106,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "createProject", summary = "Create a new project", description = "Create a new project.", tags = "projects")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	@Override
 	public ResponseResource<Project> create(@RequestBody Project resource, HttpServletResponse response) {
 		return super.create(resource, response);
@@ -119,7 +116,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 */
 	@Operation(operationId = "deleteProject", summary = "Delete a project", description = "Delete a project given the identifier.", tags = "projects")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
-	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 		return super.delete(identifier);
@@ -131,7 +127,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	@Operation(operationId = "updateProject", summary = "Update a project", description = "Update a project", tags = "projects")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {
@@ -142,11 +137,10 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * Get the deep project hash for the requested project
 	 *
 	 * @param projectId the ID of the project to read the hash for
-	 * @return a modelmap containing the hash code
+	 * @return a response containing the {@link ProjectHashResource}
 	 */
 	@Operation(operationId = "getProjectHash", summary = "Get a hash for the given a project", description = "Get a hash for the given a project.", tags = "projects")
 	@RequestMapping(value = "/{projectId}/hash", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ProjectHashResource> getProjectHash(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 

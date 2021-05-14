@@ -39,7 +39,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	/**
 	 * name of objects sent back to the client for all generic resources.
 	 */
-	public static final String RESOURCE_NAME = "resource";
+	public static final String RESOURCE_NAME = "responseResource";
 	/**
 	 * name of related resources sent back to the client.
 	 */
@@ -100,7 +100,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * application.
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<Type>> listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
 		ResourceCollection<Type> resources = new ResourceCollection<>();
@@ -129,7 +128,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return the model and view for the individual resource.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<Type> getResource(@PathVariable Long identifier) {
 		logger.trace("Getting resource with id [" + identifier + "]");
 		// construct a new instance of an identifier as specified by the client
@@ -164,7 +162,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * resource.
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	public ResponseResource<Type> create(@RequestBody Type resource, HttpServletResponse response) {
 
 		// ask the subclass to map the de-serialized request to a concrete
@@ -219,7 +216,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @return a response indicating that the resource was deleted.
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
-	@ResponseBody
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 
 		// ask the service to delete the resource specified by the identifier
@@ -245,7 +241,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 */
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {
 		// update the resource specified by the client. clients *may* be able

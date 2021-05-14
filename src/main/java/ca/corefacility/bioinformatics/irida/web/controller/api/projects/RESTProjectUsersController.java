@@ -77,7 +77,6 @@ public class RESTProjectUsersController {
 	 */
 	@Operation(operationId = "getProjectHash", summary = "Get all users for the given a project", description = "Get all users for the given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<User>> getUsersForProject(@PathVariable Long projectId)
 			throws ProjectWithoutOwnerException {
 		ResourceCollection<User> resources = new ResourceCollection<>();
@@ -121,7 +120,6 @@ public class RESTProjectUsersController {
 	 */
 	@Operation(operationId = "addUserToProject", summary = "Add a user to the given project", description = "Add a user to the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
-	@ResponseBody
 	public ResponseResource<LabelledRelationshipResource<Project, User>> addUserToProject(@PathVariable Long projectId,
 			@RequestBody Map<String, String> representation, HttpServletResponse response)
 			throws ProjectWithoutOwnerException {
@@ -179,7 +177,6 @@ public class RESTProjectUsersController {
 	 */
 	@Operation(operationId = "removeUserFromProject", summary = "Remove a user from a given project", description = "Remove a user from a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
-	@ResponseBody
 	public ResponseResource<RootResource> removeUserFromProject(@PathVariable Long projectId,
 			@PathVariable String userId) throws ProjectWithoutOwnerException {
 		// Read the project and user from the database

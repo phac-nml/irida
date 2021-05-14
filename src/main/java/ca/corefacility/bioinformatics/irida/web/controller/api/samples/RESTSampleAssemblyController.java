@@ -71,7 +71,6 @@ public class RESTSampleAssemblyController {
 	 */
 	@Operation(operationId = "listAssembliesForSample", summary = "Find all the genome assemblies for a given sample", description = "Get all the genome assemblies for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<GenomeAssembly>> listAssembliesForSample(@PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 		Collection<SampleGenomeAssemblyJoin> assembliesForSample = assemblyService.getAssembliesForSample(sample);
@@ -105,7 +104,6 @@ public class RESTSampleAssemblyController {
 	 */
 	@Operation(operationId = "readAssemblyForSample", summary = "Find the genome assembly for a given sample", description = "Get the genome assembly for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies/{assemblyId}", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<GenomeAssembly> readAssemblyForSample(@PathVariable Long sampleId,
 			@PathVariable Long assemblyId) {
 		Sample sample = sampleService.read(sampleId);
@@ -143,7 +141,6 @@ public class RESTSampleAssemblyController {
 	 */
 	@Operation(operationId = "addNewAssemblyToSample", summary = "Upload a new genome assembly for a given sample", description = "Upload a new genome assemblies for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/assemblies", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@ResponseBody
 	public ResponseResource<GenomeAssembly> addNewAssemblyToSample(@PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file, HttpServletResponse response) throws IOException {
 		ResponseResource<GenomeAssembly> responseObject;

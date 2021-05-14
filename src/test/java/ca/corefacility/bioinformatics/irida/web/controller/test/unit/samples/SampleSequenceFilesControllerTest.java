@@ -157,14 +157,14 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.readSequencingObjectForSample(s, so.getId())).thenReturn(so);
 
-		ModelMap modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
+		ResponseResource<SequenceFile> modelMap = controller.readSequenceFileForSequencingObject(s.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(so.getClass()), so.getId(), so.getSequenceFile()
 						.getId());
 
 		verify(sampleService).read(s.getId());
 		verify(sequencingObjectService).readSequencingObjectForSample(s, so.getId());
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Object o = modelMap.getResource();
 		assertNotNull(o);
 		assertTrue(o instanceof SequenceFile);
 		SequenceFile sfr = (SequenceFile) o;

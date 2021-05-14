@@ -73,6 +73,7 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 	private List<View> defaultViews() {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
+		jsonView.setExtractValueFromSingleKeyModel(true);
 		jsonView.setPrettyPrint(true);
 
 		// add support for serializing Path data

@@ -9,13 +9,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -67,9 +67,8 @@ public class UserControllerTest {
 		when(userService.getUserByUsername(username)).thenReturn(u);
 		when(projectService.getProjectsForUser(u)).thenReturn(projects);
 		// run the test
-		ModelMap output = controller.getUserProjects(username);
-		@SuppressWarnings("unchecked") ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output.get(
-				"projectResources");
+		ResponseProjectResource<ResourceCollection<Project>> output = controller.getUserProjects(username);
+		@SuppressWarnings("unchecked") ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output.getProjectResources();
 		List<Project> projectResources = pulledProjects.getResources();
 		assertEquals(1, projectResources.size());
 		Project resource = projectResources.get(0);

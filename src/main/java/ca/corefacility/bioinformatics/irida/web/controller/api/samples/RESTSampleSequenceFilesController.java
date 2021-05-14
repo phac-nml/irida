@@ -11,9 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,7 +38,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceColle
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import com.google.common.base.Objects;
@@ -158,7 +153,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "getSampleSequenceFiles", summary = "Find the sequence files for a given sample", description = "Get the sequence files for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<SequenceFile>> getSampleSequenceFiles(@PathVariable Long sampleId) {
 		logger.trace("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
@@ -217,7 +211,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "listSequencingObjectsOfTypeForSample", summary = "Find all the sequencing objects for a given sample", description = "Get the sequencing objects for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<SequencingObject>> listSequencingObjectsOfTypeForSample(
 			@PathVariable Long sampleId, @PathVariable String objectType) {
 		logger.trace("Reading seq file for sample " + sampleId);
@@ -261,7 +254,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "readSequencingObject", summary = "Find the sequencing object for a given sample", description = "Get the sequencing object for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<SequencingObject> readSequencingObject(@PathVariable Long sampleId,
 			@PathVariable String objectType, @PathVariable Long objectId) {
 		Sample sample = sampleService.read(sampleId);
@@ -285,11 +277,9 @@ public class RESTSampleSequenceFilesController {
 	 * @return a {@link SequenceFile}
 	 */
 	@Operation(operationId = "readSequenceFileForSequencingObject", summary = "Find the sequence file for a given sample and sequencing object", description = "Get the sequence file for a given sample and sequencing object.", tags = "samples")
-	@ApiResponse(responseCode = "200", description = "Returns the file for a given sample and sequencing object.", content = @Content(schema = @Schema(implementation = SequenceFileSchema.class)))
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}", method = RequestMethod.GET)
-	public ModelMap readSequenceFileForSequencingObject(@PathVariable Long sampleId, @PathVariable String objectType,
-			@PathVariable Long objectId, @PathVariable Long fileId) {
-		ModelMap modelMap = new ModelMap();
+	public ResponseResource<SequenceFile> readSequenceFileForSequencingObject(@PathVariable Long sampleId,
+			@PathVariable String objectType, @PathVariable Long objectId, @PathVariable Long fileId) {
 
 		Sample sample = sampleService.read(sampleId);
 
@@ -321,9 +311,9 @@ public class RESTSampleSequenceFilesController {
 		file.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
 				objectType, objectId, fileId)).withSelfRel());
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, file);
+		ResponseResource<SequenceFile> responseObject = new ResponseResource<>(file);
 
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -337,7 +327,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "readQCForSequenceFile", summary = "Find the fastqc metrics for a given sequence file", description = "Get the fastqc metrics for a given sequence file.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}/files/{fileId}/qc", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<AnalysisFastQC> readQCForSequenceFile(@PathVariable Long sampleId,
 			@PathVariable String objectType, @PathVariable Long objectId, @PathVariable Long fileId) {
 		Sample sample = sampleService.read(sampleId);
@@ -376,7 +365,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "addNewSequenceFileToSample", summary = "Add a new sequence file to the given sample", description = "Add a new sequence file to the given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@ResponseBody
 	public ResponseResource<SequenceFile> addNewSequenceFileToSample(@PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file,
 			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource,
@@ -492,7 +480,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "addNewFast5FileToSample", summary = "Add a new fast5 file to the given sample", description = "Add a new fast5 file to the given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/fast5", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@ResponseBody
 	public ResponseResource<SequenceFile> addNewFast5FileToSample(@PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file,
 			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource,
@@ -609,7 +596,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "addNewSequenceFilePairToSample", summary = "Add a new pair of sequence files to the given sample", description = "Add a new pair of sequence files to the given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/pairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@ResponseBody
 	public ResponseResource<SequencingObject> addNewSequenceFilePairToSample(@PathVariable Long sampleId,
 			@RequestPart("file1") MultipartFile file1,
 			@RequestPart(value = "parameters1") SequenceFileResource fileResource1,
@@ -706,7 +692,6 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@Operation(operationId = "removeSequenceFileFromSample", summary = "Remove a sequencing object from a given sample", description = "Delete the sequencing object from a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.DELETE)
-	@ResponseBody
 	public ResponseResource<RootResource> removeSequenceFileFromSample(@PathVariable Long sampleId,
 			@PathVariable String objectType, @PathVariable Long objectId) {
 		// load the project, sample and sequence file from the database

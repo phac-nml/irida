@@ -7,13 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,6 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -103,7 +100,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 */
 	@Operation(operationId = "listAllUsers", summary = "Lists all users", description = "Lists all users.", tags = "users")
 	@RequestMapping(method = RequestMethod.GET)
-	@ResponseBody
 	@Override
 	public ResponseResource<ResourceCollection<User>> listAllResources() {
 		return super.listAllResources();
@@ -114,7 +110,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 */
 	@Operation(operationId = "getUser", summary = "Find a user", description = "Get the user given the identifier.", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
-	@ResponseBody
 	@Override
 	public ResponseResource<User> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -125,7 +120,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 */
 	@Operation(operationId = "createUser", summary = "Create a new user", description = "Create a new user.", tags = "users")
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	@Override
 	public ResponseResource<User> create(@RequestBody User resource, HttpServletResponse response) {
 		return super.create(resource, response);
@@ -136,7 +130,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 */
 	@Operation(operationId = "deleteUser", summary = "Delete a user", description = "Delete a user given the identifier.", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
-	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 		return super.delete(identifier);
@@ -148,7 +141,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	@Operation(operationId = "updateUser", summary = "Update a user", description = "Update a user", tags = "users")
 	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
-	@ResponseBody
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {
@@ -162,11 +154,9 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * @return a model containing the collection of projects for that user.
 	 */
 	@Operation(operationId = "getUserProjects", summary = "Find all the projects associated with a user", description = "Get the list of projects associated with a user.", tags = "users")
-	@ApiResponse(responseCode = "200", description = "Returns a list of projects associated with the given user.", content = @Content(schema = @Schema(implementation = ProjectsSchema.class)))
 	@RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
-	public ModelMap getUserProjects(@PathVariable String username) {
+	public ResponseProjectResource<ResourceCollection<Project>> getUserProjects(@PathVariable String username) {
 		logger.debug("Loading projects for user [" + username + "]");
-		ModelMap mav = new ModelMap();
 
 		// get the appropriate user from the database
 		User u = userService.getUserByUsername(username);
@@ -184,11 +174,10 @@ public class RESTUsersController extends RESTGenericController<User> {
 			resources.add(project);
 		}
 
-		// add the resources to the response
-		mav.addAttribute("projectResources", resources);
+		ResponseProjectResource<ResourceCollection<Project>> responseObject = new ResponseProjectResource<>(resources);
 
 		// respond to the user
-		return mav;
+		return responseObject;
 	}
 
 	/**
@@ -210,10 +199,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 		User u = userService.getUserByUsername(username);
 		// get the user from the database.
 		return getResource(u.getId());
-	}
-
-	private class ProjectsSchema {
-		public ResourceCollection<Project> projectResources;
 	}
 
 }

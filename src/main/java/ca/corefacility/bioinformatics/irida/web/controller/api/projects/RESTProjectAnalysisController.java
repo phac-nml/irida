@@ -29,8 +29,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 
-import org.springframework.web.bind.annotation.ResponseBody;
-
 /**
  * Controller for managing relationships between {@link Project} and
  * {@link AnalysisSubmission}.
@@ -69,7 +67,6 @@ public class RESTProjectAnalysisController {
 	 */
 	@Operation(operationId = "getProjectAnalyses", summary = "Find all the analysis submissions given a project", description = "Get all the analysis submissions given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/analyses", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<AnalysisSubmission>> getProjectAnalyses(@PathVariable Long projectId) {
 		logger.debug("Loading analyses for project [" + projectId + "]");
 
@@ -108,7 +105,6 @@ public class RESTProjectAnalysisController {
 	 */
 	@Operation(operationId = "getProjectAnalysesByType", summary = "Find all the analysis submissions given a project by analysis type", description = "Get all the analysis submissions given a project by analysis type.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/analyses/{type}", method = RequestMethod.GET)
-	@ResponseBody
 	public ResponseResource<ResourceCollection<AnalysisSubmission>> getProjectAnalysesByType(
 			@PathVariable Long projectId, @PathVariable String type) throws IridaWorkflowNotFoundException {
 		logger.debug("Loading analyses for project [" + projectId + "] by type [" + type + "]");

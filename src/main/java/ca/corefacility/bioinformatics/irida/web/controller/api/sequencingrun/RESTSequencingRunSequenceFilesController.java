@@ -52,7 +52,6 @@ public class RESTSequencingRunSequenceFilesController {
 	 */
 	@Operation(operationId = "addSequenceFilesToSequencingRun", summary = "Link a sequencing run with a sequence file", description = "Add a relationship between a sequencing run and a sequence file.", tags = "sequencingrun")
 	@RequestMapping(value = "/api/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
-	@ResponseBody
 	public ResponseResource<SequencingRun> addSequenceFilesToSequencingRun(@PathVariable Long sequencingrunId,
 			@RequestBody Map<String, String> representation, HttpServletResponse response) {
 		String stringId = representation.get(SEQUENCEFILE_ID_KEY);
