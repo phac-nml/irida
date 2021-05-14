@@ -301,6 +301,14 @@ public class ProjectsController {
 		return "projects/analyses/pages/outputs.html";
 	}
 
+	/**
+	 * Get the project settings page
+	 *
+	 * @param projectId - identifier for the {@link Project} currently being viewed
+	 * @param principal - Currently logged in used
+	 * @param model     Spring UI model
+	 * @return path to the html settings page
+	 */
 	@GetMapping("/projects/{projectId}/settings/**")
 	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
