@@ -4,10 +4,12 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.jayway.restassured.response.Response;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
-import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -50,7 +52,7 @@ import static org.hamcrest.Matchers.endsWith;
 		Response assemblyListResponse = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
 				.and()
-				.body("resource.resources[0].file", endsWith("/tmp/analysis-files/contigs.fasta"))
+				.body("resource.resources[0].file", equalTo("/tmp/analysis-files/contigs.fasta"))
 				.when()
 				.get(assembliesHref);
 
@@ -62,7 +64,7 @@ import static org.hamcrest.Matchers.endsWith;
 		asUser().expect()
 				.statusCode(HttpStatus.OK.value())
 				.and()
-				.body("resource.file", endsWith("/tmp/analysis-files/contigs.fasta"))
+				.body("resource.file", equalTo("/tmp/analysis-files/contigs.fasta"))
 				.when()
 				.get(singleAssemblyHref);
 
