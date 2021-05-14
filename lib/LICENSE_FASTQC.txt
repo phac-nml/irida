@@ -188,7 +188,7 @@ the Program or works based on it.
 
   6. Each time you redistribute the Program (or any work based on the
 Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
+original licensor to copy, distribute or modify the Program activityItem to
 these terms and conditions.  You may not impose any further
 restrictions on the recipients' exercise of the rights granted herein.
 You are not responsible for enforcing compliance by third parties to

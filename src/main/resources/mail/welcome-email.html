@@ -1,49 +1,75 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-3.dtd">
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<title th:text="#{email.welcome.subject}">_Welcome to the IRIDA Platform_</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width"/>
-<style type="text/css">
-</style>
-</head>
-<body>
-	<h1 th:text="#{email.welcome.subject}">_Welcome to the IRIDA Platform_</h1>
-	<p th:text="#{email.welcome.createdBy(${creator.label})}">_An account has been created for you by Some Guy._</p>
-	<p><span th:text="#{email.welcome.homepagedescription}">_The IRIDA Platform home page can be found at_</span> 
-	<a href="#" th:href="${serverURL}" th:text="${serverURL}">_http://localhost:8080_</a></p>
-<div>
-	<p th:text="#{email.welcome.infoheader}">_Your account has been created with the following information:_</p>
-	<table>
-		<tr>
-			<td><span th:text="#{user.name}">_Name_</span>:</td>
-			<td th:text="${user.label}">_Bob Bobberson_</td>
-		</tr>
-		<tr>
-			<td><span th:text="#{users.username}">_Username_</span>:</td>
-			<td th:text="${user.username}">_bob_</td>
-		</tr>
-		<tr>
-			<td><span th:text="#{users.email}">_Email_</span>:</td>
-			<td th:text="${user.email}">_bob@bobco.com_</td>
-		</tr>
-	</table>
-</div>
-<div th:if="${passwordReset}">
-	<p>
-		<span th:text="#{email.welcome.verifydescription}">_To verify your account, please click on the following link: _</span>
-		<a href="#" th:text="#{email.welcome.activate}" th:href="${serverURL}+'/password_reset/'+${passwordReset.id}">_Activate Account_</a>
-	</p>
-	<p>
-		<span th:text="#{email.welcome.verifykeydescription}">_If the above link is not working, please go to the IRIDA Platform home page, click the Activate Account link, and enter the following key: _</span>
-		<strong th:text="${passwordReset.id}">_XXXXX_</strong>
-	</p>
-</div>
+  <head>
+    <title th:text="#{email.welcome.activityItem}">
+      _Welcome to the IRIDA Platform_
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <style type="text/css"></style>
+  </head>
+  <body>
+    <h1 th:text="#{email.welcome.activityItem}">
+      _Welcome to the IRIDA Platform_
+    </h1>
+    <p th:text="#{email.welcome.createdBy(${creator.label})}">
+      _An account has been created for you by Some Guy._
+    </p>
+    <p>
+      <span th:text="#{email.welcome.homepagedescription}"
+        >_The IRIDA Platform home page can be found at_</span
+      >
+      <a href="#" th:href="${serverURL}" th:text="${serverURL}"
+        >_http://localhost:8080_</a
+      >
+    </p>
+    <div>
+      <p th:text="#{email.welcome.infoheader}">
+        _Your account has been created with the following information:_
+      </p>
+      <table>
+        <tr>
+          <td><span th:text="#{user.name}">_Name_</span>:</td>
+          <td th:text="${user.label}">_Bob Bobberson_</td>
+        </tr>
+        <tr>
+          <td><span th:text="#{users.username}">_Username_</span>:</td>
+          <td th:text="${user.username}">_bob_</td>
+        </tr>
+        <tr>
+          <td><span th:text="#{users.email}">_Email_</span>:</td>
+          <td th:text="${user.email}">_bob@bobco.com_</td>
+        </tr>
+      </table>
+    </div>
+    <div th:if="${passwordReset}">
+      <p>
+        <span th:text="#{email.welcome.verifydescription}"
+          >_To verify your account, please click on the following link: _</span
+        >
+        <a
+          href="#"
+          th:text="#{email.welcome.activate}"
+          th:href="${serverURL}+'/password_reset/'+${passwordReset.id}"
+          >_Activate Account_</a
+        >
+      </p>
+      <p>
+        <span th:text="#{email.welcome.verifykeydescription}"
+          >_If the above link is not working, please go to the IRIDA Platform
+          home page, click the Activate Account link, and enter the following
+          key: _</span
+        >
+        <strong th:text="${passwordReset.id}">_XXXXX_</strong>
+      </p>
+    </div>
 
-<div th:if="not ${passwordReset}">
-	<p>
-		<span th:text="#{email.welcome.passwordcreator(${creator.label})}">_Your password has been set for you by CREATOR._</span>
-	</p>
-</div>
-</body>
+    <div th:if="not ${passwordReset}">
+      <p>
+        <span th:text="#{email.welcome.passwordcreator(${creator.label})}"
+          >_Your password has been set for you by CREATOR._</span
+        >
+      </p>
+    </div>
+  </body>
 </html>
