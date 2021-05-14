@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 /**
@@ -17,5 +19,5 @@ public interface MetadataEntryRepositoryCustom {
 	 * @param project the {@link Project} to get metadata for
 	 * @return The Map of the Project's metadata
 	 */
-	Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
+	Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project, List<MetadataTemplateField> fields);
 }

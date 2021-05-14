@@ -83,7 +83,7 @@ public class LineListController {
 				.map(MetadataFieldResponse::getField)
 				.collect(Collectors.toList());
 
-		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
+		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project, metadataTemplateFields);
 
 		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
 
