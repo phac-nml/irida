@@ -94,29 +94,6 @@ From these tables you can select which files you wish to download by filtering b
 
 For more information on using the single analysis output file tables, see the [pipeline documentation page](../pipelines/#downloading-single-sample-analysis-output-files-in-batch).
 
-
-Project details
----------------
-
-To view project details, click the **Details** tab on the project page:
-
-![Project details tab](images/project-details-tab.png) 
-
-This view will display basic information about the project such as:
-
-* Project name - The given name of the project which will show up in the projects table.
-* Project description - A general description of the project.
-* Project organism - The organism expected to be stored within this project.
-* Project Wiki URL - An external URL where users can go to view more details about the project.
-
-![Project details view](images/project-details-details.png) 
-
-To edit project details, from the project details page click on the "Edit" button:
-
-![Project metadata edit button.](images/project-details-edit-button.png)
-
-The project details editing page provides the same form as when you [created the project](#creating-a-new-project), and all of the same descriptions apply. When you've finished editing the project details, you can click on the "Update" button at the bottom of the form.
-
 Project NCBI Exports
 --------------------
 
@@ -142,17 +119,47 @@ Recent activities include adding or modifying project members and adding new sam
 Managing project settings
 -------------------------
 
-If you are a manager on a project you can manage settings on individual projects.  These settings can be found in the **Settings** tab at the top of the project page.
+Project managers can manage settings on individual projects. These settings are found in the **Settings** tab at the top of the project page.
 
 ![Project settings tab.](images/project-settings-tab.png)
 
-### Processing
+### Project Details
+
+Project details include:
+- Project name (required)
+- Project description
+- Project organism
+- As well as the non-modifiable information including project identifier, created date, and the last modified date
+
+![Project settings detail layout.](images/project-settings-details.png)
+
+Managers can edit the modifiable fields by clicking on the edit (pencil) icon within the field.  Updates will be saved immediately after exiting the field.  If you want to cancel the update, just press the `esc` key and the original value will be displayed.
+
+### Coverage, Processing and Automated Pipelines
 
 Project processing settings can be found in the **Processing** tab in the project settings page.
 
 ![Processing tab](images/project-settings-processing.png)
 
-#### Automated pipelines
+#### Project coverage
+
+IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project in the project settings page.
+
+![Coverage](images/project-settings-coverate.png)
+
+* **Minimum Coverage** - The minimum coverage expected by any sequencing data being uploaded to the project.
+* **Maximum Coverage** - The maximum coverage expected by any sequencing data being uploaded to the project.
+* **Genome Size** - The size of the genome of the organism being targeted by the project.
+
+To edit coverage settings, click the `Edit` button.
+
+![Coverage Edit Button](images/project-settings-coverage-edit-button.png)
+
+You can then enter your coverage settings and click `Ok`.
+
+When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files).
+
+#### Automated Pipelines
 
 A project can be setup to automatically trigger the execution of a pipeline on upload of new data.  Any installed pipeline that analyzes individual sample files may be launched on upload (including plugin pipelines).  This setting is enabled on a project-by-project basis and must be enabled by a project **manager**.
 
@@ -166,29 +173,11 @@ When you have successfully set up your automated analysis pipeline, you'll be re
 
 ![Automated pipelines check](images/project-settings-with-auto-pipeline.png)
 
-To remove an automated pipeline, click the *Remove* button below the pipeline description and confirm.  Automated pipelines can only be removed by a project **manager**.
+To remove an automated pipeline, click the *X* button to the right of the pipeline description and confirm.  Automated pipelines can only be removed by a project **manager**.
 
 Note that automated pipeline parameters cannot currently be modified after the pipeline has been created.  To modify the parameters for an automated pipeline, you should remove the original automated pipeline and create a new one with the new desired parameters.
 
 Administrators can change the priority of automated pipelines for a given project.  The default setting for a project is "LOW".
-
-#### Project coverage
-
-IRIDA can calculate the coverage of uploaded sequencing data for a sample.  To enable this a genome size and expected coverage must be set for a project in the project settings page.
-
-* **Minimum Coverage** - The minimum coverage expected by any sequencing data being uploaded to the project.
-* **Maximum Coverage** - The maximum coverage expected by any sequencing data being uploaded to the project.
-* **Genome Size** - The size of the genome of the organism being targeted by the project.
-
-To edit coverage settings, click the `Edit` button.
-
-![Coverage Edit Button](images/project-settings-coverage-edit-button.png)
-
-You can then enter your coverage settings and click `Update`.
-
-![Coverage Update](images/project-settings-coverage-update.png) 
-
-When these options are set IRIDA will flag any samples which do not meet the expected coverage requirement in the [project/samples list](../samples/#viewing-samples-in-a-project).  It will also display the coverage for a sample when you [view sequence files for a sample](../samples/#viewing-sequence-files).
 
 ### Project members
 
