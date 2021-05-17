@@ -133,7 +133,7 @@ Project details include:
 
 ![Project settings detail layout.](images/project-settings-details.png)
 
-Managers can edit the modifiable fields by clicking on the edit (pencil) icon within the field.  Updates will be saved immediately after exiting the field.  If you want to cancel the update, just press the `esc` key and the original value will be displayed.
+Managers can edit the modifiable fields by clicking on the edit (pencil) icon within the field.  Updates will be saved immediately after hitting the enter key or clicking anywhere outside the field.  If you want to cancel the update, just press the `esc` key and the original value will be displayed.
 
 ### Coverage, Processing and Automated Pipelines
 
