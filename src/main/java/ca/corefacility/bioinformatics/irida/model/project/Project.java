@@ -100,7 +100,7 @@ public class Project extends IridaResourceSupport
 	@Enumerated(EnumType.STRING)
 	private AnalysisSubmission.Priority analysisPriority;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE })
 	@JoinColumn(name = "default_metadata_template")
 	private MetadataTemplate defaultMetadataTemplate;
 
