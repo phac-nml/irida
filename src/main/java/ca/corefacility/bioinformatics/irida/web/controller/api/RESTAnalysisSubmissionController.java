@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -26,14 +27,21 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -309,17 +317,15 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "getAnalysisOutputFile", summary = "Find the analysis output file of an analysis submission", description = "Get the analysis output file for the given analysis submission.", tags = "analysisSubmissions")
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET)
+	@ApiResponse(responseCode = "200", description = "Returns the analysis output file.", content = @Content(schema = @Schema(implementation = AnalysisOutputFileSchema.class)))
 	public ResponseResource<AnalysisOutputFile> getAnalysisOutputFile(@PathVariable Long submissionId,
 			@PathVariable Long fileId) {
-
-		//		ModelMap model = new ModelMap();
 
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
 		analysisOutputFile.add(
 				linkTo(methodOn(RESTAnalysisSubmissionController.class).getAnalysisOutputFile(submissionId,
 						analysisOutputFile.getId())).withSelfRel());
 
-		//		model.addAttribute(RESOURCE_NAME, analysisOutputFile);
 		ResponseResource<AnalysisOutputFile> responseObject = new ResponseResource<>(analysisOutputFile);
 
 		return responseObject;
@@ -372,6 +378,29 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 				resource.getId())).withRel(INPUT_FILES_PAIRED_REL));
 
 		return links;
+	}
+
+	/**
+	 * A convenient class for describing the schema for an api response.
+	 */
+	public class AnalysisOutputFileSchema {
+
+		public ResourceSchema resource;
+
+		public class ResourceSchema {
+			public Long identifier;
+			public String file;
+			public Date createdDate;
+			public Date modifiedDate;
+			public String uploadSha256;
+			public String fileName;
+			public String label;
+			public String executionManagerFileId;
+			public Long fileRevisionNumber;
+			public byte[] bytesForFile;
+			public List<Link> links;
+		}
+
 	}
 
 }
