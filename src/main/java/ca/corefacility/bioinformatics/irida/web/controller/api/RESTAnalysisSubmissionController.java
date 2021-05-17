@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -37,11 +36,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.*;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -381,12 +377,15 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	}
 
 	/**
-	 * A convenient class for describing the schema for an api response.
+	 * A convenient class for describing the analysis output file schema for an api response.
 	 */
 	public class AnalysisOutputFileSchema {
 
 		public ResourceSchema resource;
 
+		/**
+		 * A convenient class for describing the resource schema for an api response.
+		 */
 		public class ResourceSchema {
 			public Long identifier;
 			public String file;
