@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectUserGroups
  * UI Ajax Controller for handling project user groups
  */
 @RestController
-@RequestMapping("/ajax/projects/{projectId}/user-groups")
+@RequestMapping("/ajax/projects/groups")
 public class ProjectUserGroupsAjaxController {
 	private final UIProjectUserGroupsService service;
 
@@ -37,7 +37,7 @@ public class ProjectUserGroupsAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping("")
-	public ResponseEntity<TableResponse<ProjectUserGroupsTableModel>> getProjectUserGroups(@PathVariable Long projectId,
+	public ResponseEntity<TableResponse<ProjectUserGroupsTableModel>> getProjectUserGroups(@RequestParam Long projectId,
 			@RequestBody TableRequest request) {
 		return ResponseEntity.ok(service.getUserGroupsForProject(projectId, request));
 	}
@@ -51,7 +51,7 @@ public class ProjectUserGroupsAjaxController {
 	 * @return message to user about the result of removing the user group
 	 */
 	@RequestMapping(value = "", method = RequestMethod.DELETE)
-	public ResponseEntity<String> removeUserGroupFromProject(@PathVariable long projectId, @RequestParam long groupId,
+	public ResponseEntity<String> removeUserGroupFromProject(@RequestParam long projectId, @RequestParam long groupId,
 			Locale locale) {
 		return ResponseEntity.ok(service.removeUserGroupFromProject(projectId, groupId, locale));
 	}
@@ -64,7 +64,7 @@ public class ProjectUserGroupsAjaxController {
 	 * @return List of user groups
 	 */
 	@RequestMapping("/available")
-	public ResponseEntity<List<UserGroup>> getAvailableUserGroupsForProject(@PathVariable Long projectId,
+	public ResponseEntity<List<UserGroup>> getAvailableUserGroupsForProject(@RequestParam Long projectId,
 			@RequestParam String query) {
 		return ResponseEntity.ok(service.getAvailableUserGroupsForProject(projectId, query));
 	}
@@ -78,7 +78,7 @@ public class ProjectUserGroupsAjaxController {
 	 * @return message to user about the outcome of adding the user group to the project
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ResponseEntity<String> addUserGroupToProject(@PathVariable Long projectId,
+	public ResponseEntity<String> addUserGroupToProject(@RequestParam Long projectId,
 			@RequestBody NewMemberRequest request, Locale locale) {
 		return ResponseEntity.ok(service.addUserGroupToProject(projectId, request, locale));
 	}
@@ -93,7 +93,7 @@ public class ProjectUserGroupsAjaxController {
 	 * @return message to user about the result of the update
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
-	public ResponseEntity<String> updateUserGroupRoleOnProject(@PathVariable Long projectId, @RequestParam Long id,
+	public ResponseEntity<String> updateUserGroupRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
 			@RequestParam String role, Locale locale) {
 		try {
 			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, role, locale));
