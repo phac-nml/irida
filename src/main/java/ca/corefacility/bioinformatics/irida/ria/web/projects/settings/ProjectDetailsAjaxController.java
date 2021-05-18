@@ -51,6 +51,7 @@ public class ProjectDetailsAjaxController {
 	 * Get general details about the project.
 	 *
 	 * @param projectId {@link Long} identifier for the project
+	 * @param locale Locale of the current user
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
