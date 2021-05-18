@@ -5,13 +5,14 @@ import java.util.Date;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
 
 /**
  * Encapsulates information about the project as well as permissions.
  */
 
-public class ProjectDetailsResponse {
+public class ProjectDetailsResponse extends AjaxResponse {
 	private Long id;
 	private String label;
 	private Date createdDate;
