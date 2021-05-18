@@ -1,6 +1,6 @@
-import { types as templateActionTypes } from "./templates";
 import { isDate } from "../../../../utilities/date-utilities";
 import { FIELDS, TYPES } from "../constants";
+import { types as templateActionTypes } from "./templates";
 
 /*
 Formatting for date fields
@@ -67,9 +67,7 @@ function getColumnDefinition(col) {
   if (col.editable) {
     Object.assign(col, {
       editable: (params) => {
-        return (
-          JSON.parse(params.data.owner) && JSON.parse(params.data.editable)
-        );
+        return JSON.parse(params.data.owner) && window.project.canManage;
       },
     });
   }

@@ -33,22 +33,13 @@ module.exports = {
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
   "project-new": "./resources/js/pages/projects/projects-new.js",
-  "project-settings-basic":
-    "./resources/js/pages/projects/settings/project-settings-basic.js",
-  "project-remote": "./resources/js/pages/projects/remote/",
-  "project-details": "./resources/js/pages/projects/details/index.js",
+  "project-settings": "./resources/js/pages/projects/settings",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
-  "project-processing": "./resources/js/pages/projects/processing/index.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
-  "project-users": "./resources/js/pages/projects/ProjectMembers.jsx",
-  "project-user-groups": "./resources/js/pages/projects/ProjectUserGroups.jsx",
-  "associated-projects":
-    "./resources/js/pages/projects/associated-projects/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-reference-files": "./resources/js/pages/projects/reference-files/",
   "project-analyses":
     "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
   "analysis-outputs-table":
@@ -67,7 +58,6 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
-  "project-metadata": "./resources/js/pages/projects/metadata",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
 };

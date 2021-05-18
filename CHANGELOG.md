@@ -20,7 +20,9 @@ Changes
 * [Database]: Removed `sample_metadata_entry` table which should have been dropped in 21.01 release. (21.01.3)
 * [REST]: Added endpoint to request a full project's sample metadata at the same time.
 * [Developer]: Chromedriver updated to 90.
-* [UI/Developer]: Webpack does full bundle splitting to optimize loading time and thymeleaf injects the bundles onto template at compile time, see documentation for more details.
+* [Developer]: Updated `lodash` to v4.17.21 to fix security vulnerability.
+* [UI/REST]: Improved querying performance of metadata for line list and REST API.
+* [UI]: Complete upgrade of project settings to use Ant Design.
 
 20.09 to 21.01
 --------------

@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Repository for saving and reading {@link MetadataEntry}
  */
-public interface MetadataEntryRepository extends IridaJpaRepository<MetadataEntry, Long> {
+public interface MetadataEntryRepository extends IridaJpaRepository<MetadataEntry, Long>, MetadataEntryRepositoryCustom {
 
 	/**
 	 * Get all the {@link MetadataEntry} attached to the given {@link Sample}

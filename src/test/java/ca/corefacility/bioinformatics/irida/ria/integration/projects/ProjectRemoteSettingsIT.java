@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
-import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.Assert.*;
@@ -61,8 +60,6 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 		ProjectRemoteSettingsPage remoteSettingsPage = ProjectRemoteSettingsPage.initElements(driver());
 		final Long projectId = remoteSettingsPage.getProjectId();
 		ProjectRemoteSettingsPage.goTo(driver(), projectId);
-
-		checkTranslations(remoteSettingsPage, ImmutableList.of("project-remote"), "Project Synchronization Settings");
 
 		assertTrue("Sync Now button should be displayed", remoteSettingsPage.syncNowButtonDisplayed());
 
