@@ -99,24 +99,4 @@ public class MetadataAjaxController {
 	public List<MetadataTemplateField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);
 	}
-
-	/**
-	 * Set a default metadata template for a project
-	 *
-	 * @param templateId Identifier for the metadata template to set as default.
-	 * @param projectId  Identifier for the project to set the metadata template as default for.
-	 * @param locale     Current users {@link Locale}
-	 * @return {@link AjaxSuccessResponse} with the success message
-	 */
-	@PostMapping("/templates/{templateId}/set-project-default")
-	public ResponseEntity<AjaxResponse> setDefaultMetadataTemplate(@PathVariable Long templateId,
-			@RequestParam Long projectId, Locale locale) {
-		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(service.setDefaultMetadataTemplate(templateId, projectId, locale)));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
-		}
-	}
 }
