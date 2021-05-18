@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -17,12 +18,13 @@ import static org.junit.Assert.*;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 
-	private static Long PROJECT_ID = 6L;
-	private static String PROJECT_NAME = "project ABCD";
+	private static final Long PROJECT_ID = 6L;
+	private static final String PROJECT_NAME = "project ABCD";
 
 	private ProjectDeletePage page;
 
 	@Test
+	@Ignore
 	public void deleteProjectAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 
@@ -46,6 +48,7 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void deleteProjectAsOwner() {
 		LoginPage.loginAsManager(driver());
 
