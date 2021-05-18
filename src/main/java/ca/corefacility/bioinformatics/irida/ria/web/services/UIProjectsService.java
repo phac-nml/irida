@@ -134,7 +134,7 @@ public class UIProjectsService {
 
 			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
 		} catch (EntityNotFoundException e) {
-			throw new AjaxItemNotFoundException(messageSource.getMessage("server.ProjectDetails.project-not-fount", new Object[]{}, locale));
+			throw new AjaxItemNotFoundException(messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[]{}, locale));
 		}
 	}
 
