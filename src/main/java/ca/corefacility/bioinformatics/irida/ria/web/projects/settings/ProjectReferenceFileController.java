@@ -2,9 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.security.Principal;
 
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 
@@ -48,7 +46,6 @@ public class ProjectReferenceFileController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		model.addAttribute("project", project);
-		model.addAttribute(ProjectsController.ACTIVE_NAV, ProjectSettingsController.ACTIVE_NAV_SETTINGS);
 		model.addAttribute("page", "referenceFiles");
 		return "projects/settings/pages/references";
 	}
