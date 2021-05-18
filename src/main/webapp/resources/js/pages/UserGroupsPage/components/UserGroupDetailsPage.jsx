@@ -1,18 +1,17 @@
-import React, { useContext, useEffect, useReducer } from "react";
-import { PageWrapper } from "../../../components/page/PageWrapper";
 import { useNavigate } from "@reach/router";
+import { Button, Popconfirm, Tabs, Typography } from "antd";
+import React, { useContext, useEffect, useReducer } from "react";
 import {
   getUserGroupDetails,
   updateUserGroupDetails,
 } from "../../../apis/users/groups";
-import { Button, Popconfirm, Tabs, Typography } from "antd";
-import { BasicList } from "../../../components/lists";
-import { UserGroupRolesProvider } from "../../../contexts/UserGroupRolesContext";
-import { UserGroupsContext } from "../../../contexts/UserGroupsContext";
-import UserGroupMembersTable from "./UserGroupMembersTable";
 import { WarningAlert } from "../../../components/alerts";
-import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
+import { BasicList } from "../../../components/lists";
+import { PageWrapper } from "../../../components/page/PageWrapper";
+import { UserGroupsContext } from "../../../contexts/UserGroupsContext";
 import { SPACE_SM } from "../../../styles/spacing";
+import UserGroupMembersTable from "./UserGroupMembersTable";
+import { UserGroupProjectsTable } from "./UserGroupProjectsTable";
 
 const { Paragraph, Title } = Typography;
 const { TabPane } = Tabs;
@@ -118,14 +117,12 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
         {
           title: i18n("UserGroupDetailsPage.members"),
           desc: (
-            <UserGroupRolesProvider>
-              <UserGroupMembersTable
-                updateTable={updateTable}
-                members={state.members}
-                canManage={state.canManage}
-                groupId={id}
-              />
-            </UserGroupRolesProvider>
+            <UserGroupMembersTable
+              updateTable={updateTable}
+              members={state.members}
+              canManage={state.canManage}
+              groupId={id}
+            />
           ),
         },
       ];

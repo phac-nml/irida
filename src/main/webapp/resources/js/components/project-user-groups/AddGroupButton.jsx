@@ -1,4 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Form,
@@ -8,12 +7,13 @@ import {
   Select,
   Typography,
 } from "antd";
-import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
-import { useRoles } from "../../contexts/roles-context";
+import React, { useEffect, useRef, useState } from "react";
 import {
   addUserGroupToProject,
   getAvailableGroupsForProject,
 } from "../../apis/projects/user-groups";
+import { useRoles } from "../../contexts/roles-context";
+import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 
 const { Option } = Select;
@@ -21,12 +21,18 @@ const { Text } = Typography;
 
 /**
  * React component to add render a Button to add a user group to a project.
- * @param {string} defaultRole button default
- * @param {function} onGroupAdded what to do after the group is added
+ *
+ * @param {string} defaultRole - button default
+ * @param {function} onGroupAdded - what to do after the group is added
+ * @param {number} projectId - identifier for the project to add the group to.
  * @returns {*}
  * @constructor
  */
-export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
+export function AddGroupButton({
+  defaultRole,
+  onGroupAdded = () => Function.prototype,
+  projectId,
+}) {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
@@ -85,13 +91,14 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
    */
   useEffect(() => {
     if (debouncedQuery) {
-      getAvailableGroupsForProject(debouncedQuery).then((data) =>
-        setResults(data)
-      );
+      getAvailableGroupsForProject({
+        projectId,
+        query: debouncedQuery,
+      }).then((data) => setResults(data));
     } else {
       setResults([]);
     }
-  }, [debouncedQuery]);
+  }, [debouncedQuery, projectId]);
 
   /*
   Watch for changes to the forms visibility, when it becomes visible
@@ -108,7 +115,7 @@ export function AddGroupButton({ defaultRole, onGroupAdded = () => {} }) {
   Add the user group
    */
   const addUserGroup = () => {
-    addUserGroupToProject({ groupId, role }).then((message) => {
+    addUserGroupToProject({ projectId, groupId, role }).then((message) => {
       onGroupAdded();
       notification.success({ message });
       form.resetFields();
