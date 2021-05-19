@@ -23,6 +23,18 @@ public enum AnalysisState {
 	NEW("NEW"),
 
 	/**
+	 * Occurs when an analysis is downloading remote files
+	 */
+	@Deprecated
+	DOWNLOADING("DOWNLOADING"),
+
+	/**
+	 * Occurs when an analysis has completed downloading remote files
+	 */
+	@Deprecated
+	FINISHED_DOWNLOADING("FINISHED_DOWNLOADING"),
+
+	/**
 	 * Occurs when an analysis is starting to be submitted.
 	 */
 	PREPARING("PREPARING"),

@@ -7,6 +7,7 @@ Changes
 * [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
 * [Database]: Removed `sample_metadata_entry` table which should have been dropped in 21.01 release. (21.01.3)
 * [REST]: Added handling for synchronizing data from older IRIDA instances.  It was failing for APIs without fast5 functionality (21.01.4)
+* [UI]: Fixed issue where analyses page was not displaying for some IRIDA instances due to deprecated analysis states in their audit tables (21.01.5)
 
 20.09 to 21.01
 --------------
