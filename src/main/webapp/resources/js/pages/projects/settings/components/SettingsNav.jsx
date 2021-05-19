@@ -8,7 +8,11 @@ import React from "react";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function SettingsNav({ path, showRemote = false }) {
+export default function SettingsNav({
+  path,
+  showRemote = false,
+  canManage = false,
+}) {
   const [key, setKey] = React.useState();
 
   React.useEffect(() => {
@@ -47,9 +51,11 @@ export default function SettingsNav({ path, showRemote = false }) {
           <Link to="remote">{i18n("project.settings.page.remote")}</Link>
         </Menu.Item>
       )}
-      <Menu.Item key="delete">
-        <Link to="delete">{i18n("DeleteProject.title")}</Link>
-      </Menu.Item>
+      {canManage && (
+        <Menu.Item key="delete">
+          <Link to="delete">{i18n("DeleteProject.title")}</Link>
+        </Menu.Item>
+      )}
     </Menu>
   );
 }
