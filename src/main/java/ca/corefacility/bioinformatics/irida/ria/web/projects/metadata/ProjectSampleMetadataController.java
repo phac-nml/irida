@@ -80,6 +80,21 @@ public class ProjectSampleMetadataController {
 	}
 
 	/**
+	 * Handle the page request to upload {@link Sample} metadata
+	 *
+	 * @param model     {@link Model}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param principal {@link Principal} currently logged in use
+	 * @return {@link String} the path to the metadata import page
+	 */
+	@RequestMapping(value = "upload2", method = RequestMethod.GET)
+	public String getProjectSamplesMetadataUploadPage2(final Model model, @PathVariable long projectId,
+			Principal principal) {
+		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
+		return "projects/project_samples_metadata_upload2";
+	}
+
+	/**
 	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
 	 * the column that corresponds to a {@link Sample} identifier has been sent.
 	 *
