@@ -10,10 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.activities.ActivityType;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.Activity;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.ActivityItem;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
@@ -49,12 +53,30 @@ public class UIActivitiesService {
 			UserRoleSetProjectEvent type = (UserRoleSetProjectEvent) event;
 			User user = type.getUser();
 			Project project = type.getProject();
-			String sentence = messageSource.getMessage("event.user_added", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("event.project.user_added", new Object[] {}, locale);
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
 			ActivityItem roleItem = new ActivityItem(null, messageSource.getMessage("projectRole." + type.getRole()
 					.toString(), new Object[] {}, locale));
-			ActivityItem projectItem = new ActivityItem("/projects/" + project.getId(), project.getLabel());
-			return new Activity(sentence, event.getCreatedDate(), ImmutableList.of(userItem, roleItem, projectItem));
+			return new Activity(type.getId(), ActivityType.PROJECT_USER_ROLE.label, sentence, event.getCreatedDate(),
+					ImmutableList.of(userItem, roleItem));
+		} else if (event instanceof SampleAddedProjectEvent) {
+			SampleAddedProjectEvent type = (SampleAddedProjectEvent) event;
+			Sample sample = type.getSample();
+			Project project = type.getProject();
+			ActivityItem sampleItem = new ActivityItem("/projects/" + project.getId() + "/samples/" + sample.getId(),
+					sample.getLabel());
+			String sentence = messageSource.getMessage("event.project.sample_added", new Object[] {}, locale);
+			return new Activity(type.getId(), ActivityType.PROJECT_SAMPLE_ADDED.label, sentence, event.getCreatedDate(),
+					ImmutableList.of(sampleItem));
+		} else if (event instanceof DataAddedToSampleProjectEvent) {
+			DataAddedToSampleProjectEvent type = (DataAddedToSampleProjectEvent) event;
+			Sample sample = type.getSample();
+			Project project = type.getProject();
+			ActivityItem sampleItem = new ActivityItem("/projects/" + project.getId() + "/samples/" + sample.getId() +"/sequenceFiles",
+					sample.getLabel());
+			String sentence = messageSource.getMessage("event.project.sample_data_added", new Object[] {}, locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_SAMPLE_DATA_ADDED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(sampleItem));
 		}
 		return null;
 	}
