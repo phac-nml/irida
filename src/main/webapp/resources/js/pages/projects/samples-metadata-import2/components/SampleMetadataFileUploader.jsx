@@ -5,7 +5,6 @@ import {
 
 const { Title } = Typography
 
-export function FileUploader() {
-    return <Title>This is a test</Title>;
-  }
-  
+export function SampleMetadataFileUploader() {
+  return <Title>This is a test</Title>;
+}

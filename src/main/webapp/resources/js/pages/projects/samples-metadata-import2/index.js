@@ -1,5 +1,5 @@
 import React from "react";
 import { render } from "react-dom";
-import { FileUploader } from "./components/FileUploader";
+import { SampleMetadataFileUploader } from "./components/SampleMetadataFileUploader";
 
-render(<FileUploader />, document.querySelector("#samples-metadata-import-root"));
+render(<SampleMetadataFileUploader />, document.querySelector("#samples-metadata-import-root"));
