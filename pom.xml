@@ -915,7 +915,12 @@
 				<version>${maven.war.plugin.version}</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<packagingExcludes>node_modules/**/*</packagingExcludes>
+					<packagingExcludes>
+						node_modules/,
+						.yarn/,
+						resources/css/,
+						resources/js/
+					</packagingExcludes>
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
