@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -28,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.Lists;
 
@@ -72,6 +74,7 @@ public class AnalysisAjaxControllerTest {
 	private HttpServletResponse httpServletResponseMock;
 	private AnalysisTypesService analysisTypesServiceMock;
 	private EmailController emailControllerMock;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
@@ -96,11 +99,14 @@ public class AnalysisAjaxControllerTest {
 		httpServletResponseMock = mock(HttpServletResponse.class);
 		analysisTypesServiceMock = mock(AnalysisTypesService.class);
 		emailControllerMock = mock(EmailController.class);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
+				sequencingObjectService, analysisSubmissionSampleProcessor, analysisOutputFileDownloadManager,
+				messageSourceMock, configFileMock, analysisAuditMock, analysisTypesServiceMock, emailControllerMock,
+				iridaFileStorageUtility);
 
 	}
 

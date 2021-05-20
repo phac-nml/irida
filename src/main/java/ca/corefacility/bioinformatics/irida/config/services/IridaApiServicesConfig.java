@@ -318,6 +318,7 @@ public class IridaApiServicesConfig {
 	 * as well as set the implementation in the IridaFiles static class
 	 * which uses the this implementation.
 	 *
+	 * @param storageType The {@link StorageType}
 	 * @return A new {@link IridaFileStorageUtility} implementation.
 	 */
 	@Bean(name = "iridaFileStorageUtility")

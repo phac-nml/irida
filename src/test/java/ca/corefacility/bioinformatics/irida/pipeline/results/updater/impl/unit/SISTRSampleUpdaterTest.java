@@ -13,9 +13,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.SISTRSampleUpdater;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -44,6 +49,7 @@ public class SISTRSampleUpdaterTest {
 	private IridaWorkflowsService iridaWorkflowsService;
 	private IridaWorkflow iridaWorkflow;
 	private IridaWorkflowDescription iridaWorkflowDescription;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	private UUID uuid = UUID.randomUUID();
 
@@ -54,6 +60,7 @@ public class SISTRSampleUpdaterTest {
 		iridaWorkflowsService = mock(IridaWorkflowsService.class);
 		iridaWorkflow = mock(IridaWorkflow.class);
 		iridaWorkflowDescription = mock(IridaWorkflowDescription.class);
+		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl());
 
 		updater = new SISTRSampleUpdater(metadataTemplateService, sampleService, iridaWorkflowsService);
 
@@ -211,7 +218,7 @@ public class SISTRSampleUpdaterTest {
 		updater.update(Lists.newArrayList(sample), submission);
 	}
 
-	@Test(expected = PostProcessingException.class)
+	@Test(expected = FileProcessorException.class)
 	public void testUpdaterNoFile() throws PostProcessingException, AnalysisAlreadySetException {
 		Path outputPath = Paths.get("src/test/resources/files/not_really_a_file.txt");
 

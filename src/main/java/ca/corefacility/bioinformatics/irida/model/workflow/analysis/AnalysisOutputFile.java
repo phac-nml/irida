@@ -219,4 +219,14 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	public boolean fileExists() {
 		return IridaFiles.fileExists(file);
 	}
+
+	/**
+	 * Get file size in bytes
+	 *
+	 * @return if file exists or not
+	 */
+	public Long getFileSizeBytes() {
+		return IridaFiles.getFileSizeBytes(getFile());
+	}
+
 }

@@ -176,6 +176,7 @@ public class SNVPhylAnalysisIT {
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.NEVER_CLEANUP, galaxyJobErrorsService,
 				jobErrorRepository, emailController, analysisWorkspaceService);
 
+
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
 		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(

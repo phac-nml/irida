@@ -16,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -26,6 +27,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
@@ -39,6 +41,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
@@ -48,6 +51,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
 				.build();
 		this.bucketName = bucketName;
+		this.storageType = StorageType.AWS;
 	}
 
 	/**
@@ -58,6 +62,35 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try {
 			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
 			Path tempDirectory = Files.createTempDirectory("aws-tmp-");
+			Path tempFile = tempDirectory.resolve(file.getFileName()
+					.toString());
+
+			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
+				org.apache.commons.io.FileUtils.copyInputStreamToFile(s3ObjectInputStream, tempFile.toFile());
+			} catch (AmazonServiceException e) {
+				logger.error(e.getMessage());
+				throw new StorageException("Unable to read object from aws s3 bucket", e);
+			}
+
+			return new IridaTemporaryFile(tempFile, tempDirectory);
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage());
+			throw new StorageException("Unable to resolve temp file in temp directory", e);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			throw new StorageException("Unable to create temp directory", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
+		try {
+			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
+			Path tempDirectory = Files.createTempDirectory(prefix + "-aws-tmp-");
 			Path tempFile = tempDirectory.resolve(file.getFileName()
 					.toString());
 
@@ -114,23 +147,6 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
-			fileSize = FileUtils.humanReadableByteCount(s3Object.getObjectMetadata()
-					.getContentLength(), true);
-		} catch (AmazonServiceException e) {
-			logger.error("Unable to get file size from s3 bucket: " + e);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-		return fileSize;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		try {
 			logger.trace("Uploading file to s3 bucket: [" + target.getFileName() + "]");
@@ -149,14 +165,6 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			logger.error("Unable to clean up source file", e);
 			throw new StorageException("Unable to clean up source file", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean storageTypeIsLocal() {
-		return false;
 	}
 
 	/**
@@ -314,6 +322,46 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Long getFileSizeBytes(Path file) {
+		Long fileSize = 0L;
+
+		try(S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
+			fileSize = s3Object.getObjectMetadata().getContentLength();
+		} catch (AmazonServiceException e) {
+			logger.error("Unable to get file size from s3 bucket: " + e);
+		} catch (IOException e) {
+			logger.error("Unable to close connection to s3object: " + e);
+		}
+
+		return fileSize;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
+		/*
+		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
+		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
+		 */
+		GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(
+				seek, chunk);
+		try (S3Object s3Object = s3.getObject(rangeObjectRequest);
+				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
+			// Read the bytes of the retrieved s3ObjectInputStream chunk
+			byte[] bytes = s3ObjectInputStream.readAllBytes();
+			return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
+		} catch (IOException e) {
+			logger.error("Couldn't get chunk from s3 bucket", e);
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
 		// get list of bucket permission
 		List<String> bucketPermissions = s3.getBucketAcl(bucketName)
@@ -337,5 +385,21 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 					"Unable to locate bucket " + bucketName + ". Please check your credentials and that the bucket "
 							+ bucketName + " exists.");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStorageTypeLocal() {
+		return storageType.equals(StorageType.LOCAL);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getStorageType() {
+		return storageType.toString();
 	}
 }

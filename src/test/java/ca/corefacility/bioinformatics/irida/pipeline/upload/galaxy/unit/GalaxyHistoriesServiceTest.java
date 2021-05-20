@@ -97,7 +97,7 @@ public class GalaxyHistoriesServiceTest {
 				ClientResponse.Status.OK);
 		when(invalidResponse.getStatusInfo()).thenReturn(
 				ClientResponse.Status.FORBIDDEN);
-		
+
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);
 		
