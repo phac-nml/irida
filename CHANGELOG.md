@@ -23,6 +23,7 @@ Changes
 * [Developer]: Updated `lodash` to v4.17.21 to fix security vulnerability.
 * [UI/REST]: Improved querying performance of metadata for line list and REST API.
 * [UI]: Complete upgrade of project settings to use Ant Design.
+* [Developer]: Removing many unnecessary files from the `.war` file build to reduce build size.
 
 20.09 to 21.01
 --------------
