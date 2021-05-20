@@ -24,6 +24,7 @@ Changes
 * [UI/REST]: Improved querying performance of metadata for line list and REST API.
 * [UI]: Complete upgrade of project settings to use Ant Design.
 * [Developer]: Removing many unnecessary files from the `.war` file build to reduce build size.
+* [UI]: Fixed issue where analyses page was not displaying for some IRIDA instances due to deprecated analysis states in their audit tables.
 
 20.09 to 21.01
 --------------
