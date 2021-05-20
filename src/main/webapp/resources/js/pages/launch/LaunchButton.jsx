@@ -4,7 +4,7 @@ import {
   IconPlusCircle,
 } from "../../components/icons/Icons";
 import { SPACE_LG } from "../../styles/spacing";
-import { Button } from "antd";
+import { Button, Checkbox, Form, Space } from "antd";
 import { useLaunch } from "./launch-context";
 
 /**
@@ -30,17 +30,21 @@ export function LaunchButton({ disabled, loading }) {
     : i18n("LaunchButton.submit");
 
   return (
-    <Button
-      type="primary"
-      className="t-submit-btn"
-      size="large"
-      htmlType="submit"
-      loading={loading}
-      disabled={disabled}
-      style={{ marginTop: SPACE_LG }}
-      {...props}
-    >
-      {label}
-    </Button>
+    <Space direction="vertical" style={{ marginTop: SPACE_LG }}>
+      <Form.Item name="keepSamples" valuePropName="checked" noStyle>
+        <Checkbox>Keep samples after launch</Checkbox>
+      </Form.Item>
+      <Button
+        type="primary"
+        className="t-submit-btn"
+        size="large"
+        htmlType="submit"
+        loading={loading}
+        disabled={disabled}
+        {...props}
+      >
+        {label}
+      </Button>
+    </Space>
   );
 }

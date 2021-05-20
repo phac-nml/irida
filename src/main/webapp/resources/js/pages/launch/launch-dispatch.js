@@ -54,6 +54,7 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     projects,
     updateSamples,
     reference,
+    keepSamples,
     ...parameters
   } = formValues;
   const { files: fileIds, automatedId: automatedProjectId } = state;
@@ -68,6 +69,7 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     reference,
     parameters,
     automatedProjectId,
+    keepSamples,
   };
   return launchPipeline(PIPELINE_ID, params);
 }

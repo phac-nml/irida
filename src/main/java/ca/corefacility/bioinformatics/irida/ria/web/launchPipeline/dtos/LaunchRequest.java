@@ -61,6 +61,8 @@ public class LaunchRequest {
 	 */
 	private Long automatedProjectId;
 
+	private boolean keepSamples;
+
 	public LaunchRequest() {
 	}
 
@@ -154,5 +156,13 @@ public class LaunchRequest {
 
 	public void setAutomatedProjectId(Long automatedProjectId) {
 		this.automatedProjectId = automatedProjectId;
+	}
+
+	public boolean isKeepSamples() {
+		return keepSamples;
+	}
+
+	public void setKeepSamples(boolean keepSamples) {
+		this.keepSamples = keepSamples;
 	}
 }

@@ -85,6 +85,7 @@ function LaunchProvider({ children }) {
           shareResultsWithProjects: true,
           updateSamples: false,
           emailPipelineResult: "none", // default to not sending emails
+          keepSamples: false,
           ["projects"]: details.projects.map((project) => project.value),
         };
 

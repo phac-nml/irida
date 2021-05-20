@@ -126,6 +126,10 @@ public class UIPipelineStartService {
 
 			IridaWorkflowInput inputs = description.getInputs();
 
+			if(!request.isKeepSamples()) {
+				cartService.emptyCart();
+			}
+
 			if (inputs.requiresSingleSample()) {
 				submissionService.createSingleSampleSubmission(workflow, request.getReference(), singles, pairs,
 						request.getParameters(), namedParameters, request.getName(), request.getDescription(), projects,
