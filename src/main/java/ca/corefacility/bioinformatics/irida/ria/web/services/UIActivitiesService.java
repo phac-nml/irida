@@ -10,10 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -59,6 +56,15 @@ public class UIActivitiesService {
 					.toString(), new Object[] {}, locale));
 			return new Activity(type.getId(), ActivityType.PROJECT_USER_ROLE.label, sentence, event.getCreatedDate(),
 					ImmutableList.of(userItem, roleItem));
+		} else if (event instanceof UserRemovedProjectEvent) {
+			// TODO: This does not seem to be hit?
+			UserRemovedProjectEvent type = (UserRemovedProjectEvent) event;
+			User user = type.getUser();
+			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
+			String sentence = messageSource.getMessage("event.project.user_removed", new Object[] {}, locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_USER_REMOVED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(userItem));
+
 		} else if (event instanceof SampleAddedProjectEvent) {
 			SampleAddedProjectEvent type = (SampleAddedProjectEvent) event;
 			Sample sample = type.getSample();
