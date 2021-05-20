@@ -32,7 +32,7 @@ export function LaunchButton({ disabled, loading }) {
   return (
     <Space direction="vertical" style={{ marginTop: SPACE_LG }}>
       <Form.Item name="keepSamples" valuePropName="checked" noStyle>
-        <Checkbox>Keep samples after launch</Checkbox>
+        <Checkbox>{i18n("LaunchButton.keepSamples")}</Checkbox>
       </Form.Item>
       <Button
         type="primary"
