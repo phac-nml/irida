@@ -226,6 +226,8 @@ public class RESTProjectSamplesController {
 
 		sampleResources.add(
 				linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+		sampleResources.add(linkTo(methodOn(RESTSampleMetadataController.class).getProjectSampleMetadata(projectId)).withRel(
+				RESTSampleMetadataController.ALL_METADATA_REL));
 
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
 

@@ -11,7 +11,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 export default function AnnouncementUserTable() {
   const columns = [
     {
-      title: i18n("announcement.control.details.username"),
+      title: i18n("AnnouncementUserTable.username"),
       dataIndex: "username",
       width: 400,
       render(text, item) {
@@ -24,7 +24,7 @@ export default function AnnouncementUserTable() {
       sorter: true,
     },
     {
-      title: i18n("announcement.control.details.dateRead"),
+      title: i18n("AnnouncementUserTable.dateRead"),
       dataIndex: "dateRead",
       render(date) {
         return <time>{date ? formatDate({ date: date }) : ""}</time>;

@@ -1,5 +1,3 @@
-import { CART } from "../../utilities/events-utilities";
-
 export const types = {
   INITIALIZED: "CART/INITIALIZED",
   ADD: "CART/ADD",

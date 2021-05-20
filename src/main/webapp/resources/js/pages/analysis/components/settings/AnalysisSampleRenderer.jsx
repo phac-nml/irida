@@ -25,7 +25,7 @@ export function AnalysisSampleRenderer() {
   const {
     analysisSamplesContext,
     sampleDisplayHeight,
-    getAnalysisInputSamples
+    getAnalysisInputSamples,
   } = useContext(AnalysisSamplesContext);
 
   useLayoutEffect(() => {
@@ -51,7 +51,7 @@ export function AnalysisSampleRenderer() {
             : analysisSamplesContext.samples
         }
         style={{ maxHeight: sampleDisplayHeight, overflowY: "auto" }}
-        renderItem={item => {
+        renderItem={(item) => {
           return (
             <List.Item>
               <List.Item.Meta
@@ -114,7 +114,7 @@ export function AnalysisSampleRenderer() {
             : analysisSamplesContext.singleEndSamples
         }
         style={{ maxHeight: sampleDisplayHeight, overflowY: "auto" }}
-        renderItem={item => {
+        renderItem={(item) => {
           return (
             <List.Item>
               <List.Item.Meta
@@ -163,7 +163,7 @@ export function AnalysisSampleRenderer() {
    * if search value is empty display all the samples otherwise
    * find samples with sample name or files that contain the search string
    */
-  const searchSamples = searchStr => {
+  const searchSamples = (searchStr) => {
     if (
       searchStr.trim() === "" ||
       searchStr === "undefined" ||
@@ -174,14 +174,14 @@ export function AnalysisSampleRenderer() {
     } else {
       searchStr = String(searchStr).toLowerCase();
       const samplesContainingSearchValue = analysisSamplesContext.samples.filter(
-        sample =>
+        (sample) =>
           sample.sampleName.toLowerCase().includes(searchStr) ||
           sample.forward.fileName.toLowerCase().includes(searchStr) ||
           sample.reverse.fileName.toLowerCase().includes(searchStr)
       );
 
       const singleEndSamplesContainingSearchValue = analysisSamplesContext.singleEndSamples.filter(
-        sample =>
+        (sample) =>
           sample.sampleName.toLowerCase().includes(searchStr) ||
           sample.forward.fileName.toLowerCase().includes(searchStr) ||
           sample.reverse.fileName.toLowerCase().includes(searchStr)
@@ -205,10 +205,10 @@ export function AnalysisSampleRenderer() {
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
-            onChange={event => searchSamples(event.target.value)}
+            onChange={(event) => searchSamples(event.target.value)}
             style={{ width: "100%", marginBottom: SPACE_MD }}
             allowClear={true}
-            id="t-sample-search-input"
+            className="t-sample-search-input"
           />
           {analysisSamplesContext.samples.length > 0
             ? renderPairedEndSamples()

@@ -1,7 +1,8 @@
 import React from "react";
 import {
-  AppstoreOutlined,
+  BellOutlined,
   BoldOutlined,
+  CalendarTwoTone,
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -32,9 +33,11 @@ import {
   MenuUnfoldOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
+  RocketOutlined,
   QuestionCircleOutlined,
   QuestionOutlined,
   SearchOutlined,
+  SettingOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -45,10 +48,8 @@ import {
   TableOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined,
   UploadOutlined,
-  CalendarTwoTone,
-  SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
@@ -133,11 +134,13 @@ export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
 
-export const IconMetadataTemplate = ({ ...props }) => (
-  <AppstoreOutlined {...props} />
-);
-
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
+
+export const IconBell = ({ ...props }) => <BellOutlined {...props} />;
+
+export const IconLaunchPipeline = ({ ...props }) => (
+  <RocketOutlined {...props} />
+);
 
 /*
 Editor Icons
@@ -210,3 +213,5 @@ export const IconCheckCircle = ({ ...props }) => (
 );
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
+
+

@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
-import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.Assert.*;
@@ -36,8 +35,7 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 
 		//create the oauth client
-		String redirectLocation = RemoteApiUtilities.getRedirectLocation
-				();
+		String redirectLocation = RemoteApiUtilities.getRedirectLocation();
 		createClientPage = new CreateClientPage(driver());
 		createClientPage.goTo();
 		createClientPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, true, false);
@@ -61,9 +59,7 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectRemoteSettingsPage remoteSettingsPage = ProjectRemoteSettingsPage.initElements(driver());
 		final Long projectId = remoteSettingsPage.getProjectId();
-		remoteSettingsPage.goTo(driver(), projectId);
-
-		checkTranslations(remoteSettingsPage, ImmutableList.of("project-remote"), "Project Synchronization Settings");
+		ProjectRemoteSettingsPage.goTo(driver(), projectId);
 
 		assertTrue("Sync Now button should be displayed", remoteSettingsPage.syncNowButtonDisplayed());
 

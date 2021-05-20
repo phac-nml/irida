@@ -54,14 +54,11 @@ export function AnalysisTabularPreview({ output }) {
           loading={loading}
           dataSource={fileRows}
           scroll={{ x: "max-content" }}
-          pagination={
-            fileRows.length <= MAX_TABLE_ROWS_PER_PAGE
-              ? false
-              : {
-                  defaultPageSize: MAX_TABLE_ROWS_PER_PAGE,
-                  pageSizeOptions: [5, 10, 20, 50, 100],
-                }
-          }
+          pagination={{
+            pageSizeOptions: [5, 10, 20, 50, 100],
+            defaultPageSize: MAX_TABLE_ROWS_PER_PAGE,
+            hideOnSinglePage: true,
+          }}
         />
       </TabularOutputWrapper>
       <Divider />

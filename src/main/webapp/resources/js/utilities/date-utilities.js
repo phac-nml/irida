@@ -13,9 +13,8 @@ export function formatInternationalizedDateTime(
   }
 ) {
   if (!isDate(date)) return "";
-  return new Intl.DateTimeFormat(window.TL.LANGUAGE_TAG, options).format(
-    new Date(date)
-  );
+  const LOCALE = window.TL?.LANGUAGE_TAG || "en";
+  return new Intl.DateTimeFormat(LOCALE, options).format(new Date(date));
 }
 
 /**
