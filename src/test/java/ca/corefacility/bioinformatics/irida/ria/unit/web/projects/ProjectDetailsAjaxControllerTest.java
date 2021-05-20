@@ -38,14 +38,14 @@ public class ProjectDetailsAjaxControllerTest {
 
 		Project project = TestDataFactory.constructProject();
 		when(projectService.read(anyLong())).thenReturn(project);
-		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID)).thenReturn(new ProjectDetailsResponse(project, true, true));
+		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID, Locale.ENGLISH)).thenReturn(new ProjectDetailsResponse(project, true, true));
 	}
 
 	@Test
 	public void testGetProjectDetails() {
-		ResponseEntity<ProjectDetailsResponse> response = controller.getProjectDetails(TestDataFactory.TEST_PROJECT_ID);
+		ResponseEntity<AjaxResponse> response = controller.getProjectDetails(TestDataFactory.TEST_PROJECT_ID, Locale.ENGLISH);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
-		ProjectDetailsResponse content = response.getBody();
+		ProjectDetailsResponse content = (ProjectDetailsResponse) response.getBody();
 		assert content != null;
 		assertEquals(TestDataFactory.TEST_PROJECT_DESCRIPTION, content.getDescription());
 		assertEquals(TestDataFactory.TEST_PROJECT_LABEL, content.getLabel());

@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.C
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.errors.AjaxItemNotFoundException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
@@ -110,25 +111,31 @@ public class UIProjectsService {
 	 * Get information about a project as well as permissions
 	 *
 	 * @param projectId - The project to get info for
+	 * @param locale Current users locale
 	 * @return {@link ProjectDetailsResponse}
+	 * @throws AjaxItemNotFoundException if project cannot be found
 	 */
-	public ProjectDetailsResponse getProjectInfo(Long projectId) {
-		Project project = projectService.read(projectId);
+	public ProjectDetailsResponse getProjectInfo(Long projectId, Locale locale) throws AjaxItemNotFoundException {
+		try {
+			Project project = projectService.read(projectId);
 
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
-		boolean isAdmin = user.getSystemRole()
-				.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
+			User user = (User) SecurityContextHolder.getContext()
+					.getAuthentication()
+					.getPrincipal();
+			boolean isAdmin = user.getSystemRole()
+					.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
 
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+			Authentication authentication = SecurityContextHolder.getContext()
+					.getAuthentication();
 
-		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
+			boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 
-		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
+			boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
 
-		return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
+			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
+		} catch (EntityNotFoundException e) {
+			throw new AjaxItemNotFoundException(messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[]{}, locale));
+		}
 	}
 
 	/**

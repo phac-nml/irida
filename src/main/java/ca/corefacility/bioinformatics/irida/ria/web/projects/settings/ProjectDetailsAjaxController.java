@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.exceptions.UpdateException;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.errors.AjaxItemNotFoundException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
@@ -51,11 +51,17 @@ public class ProjectDetailsAjaxController {
 	 * Get general details about the project.
 	 *
 	 * @param projectId {@link Long} identifier for the project
+	 * @param locale Locale of the current user
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
-	public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@RequestParam Long projectId) {
-		return ResponseEntity.ok(service.getProjectInfo(projectId));
+	public ResponseEntity<AjaxResponse> getProjectDetails(@RequestParam Long projectId, Locale locale) {
+		try {
+			return ResponseEntity.ok(service.getProjectInfo(projectId, locale));
+		} catch (AjaxItemNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**

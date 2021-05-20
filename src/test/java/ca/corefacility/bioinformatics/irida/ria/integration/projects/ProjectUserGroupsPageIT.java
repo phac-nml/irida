@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -15,7 +14,6 @@ import static org.junit.Assert.*;
 public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
-	@Ignore
 	public void testPageAsCollaborator() {
 		LoginPage.loginAsUser(driver());
 		ProjectUserGroupsPage page = ProjectUserGroupsPage.goToPage(driver(), 1L);
@@ -24,7 +22,6 @@ public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testPageAsAManager() {
 		LoginPage.loginAsManager(driver());
 		ProjectUserGroupsPage page = ProjectUserGroupsPage.goToPage(driver(), 1L);

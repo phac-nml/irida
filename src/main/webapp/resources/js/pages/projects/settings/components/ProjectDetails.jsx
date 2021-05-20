@@ -18,10 +18,19 @@ const { Paragraph, Title } = Typography;
  * @constructor
  */
 export default function ProjectDetails({ projectId }) {
-  const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
-    projectId
-  );
+  const {
+    data: project = {},
+    isLoading,
+    error: loadingError,
+  } = useGetProjectDetailsQuery(projectId);
   const [updateProjectDetails] = useUpdateProjectDetailsMutation();
+
+  React.useEffect(() => {
+    if (loadingError) {
+      // Should only hit this is the project cannot be found
+      notification.error({ message: loadingError.data.error });
+    }
+  }, [loadingError]);
 
   /**
    * When a field is updated, submitted it to the server to be saved.

@@ -88,6 +88,7 @@ const ProjectSettings = (props) => {
       <Sider width={200} style={{ backgroundColor: grey1 }}>
         <SettingsNav
           path={props["*"]}
+          canManage={project.canManage}
           showRemote={project.canManage && project.remote}
         />
       </Sider>
@@ -114,7 +115,7 @@ const ProjectSettings = (props) => {
                     <AssociatedProjects path="/associated" />
                     <ReferenceFiles path="/references" />
                     <ProjectSynchronizationSettings path="/remote" />
-                    <DeleteProject path="/delete" />
+                    {project.canManage && <DeleteProject path="/delete" />}
                     <Redirect from="/" to="/details" />
                   </Router>
                 </Suspense>
