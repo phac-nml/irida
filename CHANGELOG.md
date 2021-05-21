@@ -159,7 +159,7 @@ Changes
 * [UI]: Fixed bug preventing display of execution tools for first file if a provenance for another file had been viewed.
 * [Documentation]: Updated Getting Started docs to include IRIDA log in info and an updated install-libs.sh run command.
 * [Developer/UI]: Upgraded to FastQC 0.11.9.
-* [UI]: Added FAST5 format support.  FAST5 support is in beta and is activityItem to change.  See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
+* [UI]: Added FAST5 format support.  FAST5 support is in beta and is subject to change.  See more in our upgrade notes at <https://irida.corefacility.ca/documentation/administrator/upgrades/#2005>.
 * [UI]: Updated user groups to use Ant Design.
 * [UI]: Fixed bug preventing advanced visualization view page load.
 * [UI/Developer]: Updated analysis urls to work with a context path.
