@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        data-layout-decorate="~{projects/_base}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    data-layout-decorate="~{projects/_base}">
+
 <head>
     <title th:text="#{metadata.page-title}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/samples-metadata-import2.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/dist/css/samples-metadata-import2.bundle.css}" />
 </head>
+
 <body>
-<div id="samples-metadata-import-root" layout:fragment="main">
-</div>
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/samples-metadata-import2.bundle.js}"></script>
-</th:block>
+    <div id="samples-metadata-import-root" layout:fragment="main">
+    </div>
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/dist/js/samples-metadata-import2.bundle.js}"></script>
+    </th:block>
 </body>
+
 </html>
