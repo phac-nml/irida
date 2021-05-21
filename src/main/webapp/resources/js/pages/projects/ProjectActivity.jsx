@@ -7,6 +7,12 @@ import { ActivityListItem } from "../../components/activities/ActivityListItem";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+/**
+ * Layout component solely for the purpose of extracting the project id out of
+ * the url.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function ActivityLayout() {
   return (
     <Router>
@@ -15,6 +21,12 @@ function ActivityLayout() {
   );
 }
 
+/**
+ * Component to display project activities
+ * @param {number} projectId - identifier current project
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function ProjectActivity({ projectId }) {
   const [activities, setActivities] = React.useState();
 
