@@ -15,32 +15,60 @@ import {
   IconUsergroupDelete,
 } from "../icons/Icons";
 
+/**
+ * Component for rendering an activity (event) within an Ant Design List.
+ * @param {Object} activity - the activity to render
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ActivityListItem({ activity }) {
   const [title] = React.useState(() => {
-    const texts = activity.sentence.split(/{([0-9])}/);
+    /*
+    The sentence (title) is sent from the server with placeholders, e.g.
+    "{0} has been removed from this project" - where {0} is the placed holder
+    for the user's name that has been removed.
+
+    items - is an array of the words to put into the sentence.  The come in
+    the order that they go into the sentence. An item has a label and if required
+    a href to link to it.  If it has an href the link will be created, if not
+    just the label is displayed.
+     */
+    const fragments = activity.sentence.split(/{([0-9])}/);
     const content = [];
-    for (let i = 0; i < texts.length; i++) {
+    for (let i = 0; i < fragments.length; i++) {
       const key = `activity-${activity.id}-${i}`;
-      if (isNumeric(texts[i])) {
-        const item = activity.items[parseInt(texts[i])];
+      if (isNumeric(fragments[i])) {
+        // If it is numeric, it is one of the placeholder values.
+        // get the item and decide how to add it.
+        const item = activity.items[parseInt(fragments[i])];
         if (item.href) {
+          // If there is a href create a link to the item
           content.push(
             <Typography.Link key={key} type="link" href={setBaseUrl(item.href)}>
               {item.label}
             </Typography.Link>
           );
         } else {
+          // No href, just add the label
           content.push(
             <Typography.Text key={key}>{item.label}</Typography.Text>
           );
         }
-      } else if (texts[i].length) {
-        content.push(<Typography.Text key={key}>{texts[i]}</Typography.Text>);
+      } else if (fragments[i].length) {
+        // If its not numeric, it is just part of the sentence so just add it.
+        content.push(
+          <Typography.Text key={key}>{fragments[i]}</Typography.Text>
+        );
       }
     }
     return content;
   });
 
+  /**
+   * Different icons for each type of activity
+   * @constant
+   * @type {{project_user_group_added: JSX.Element, project_user_group_removed: JSX.Element, project_sample_data_added: JSX.Element, project_sample_added: JSX.Element, project_user_role_updated: JSX.Element, project_user_removed: JSX.Element}}
+   */
   const typeAvatar = {
     project_user_role_updated: (
       <Avatar style={{ backgroundColor: blue6 }} icon={<IconUser />} />
