@@ -48,6 +48,7 @@ function ProjectActivity({ projectId }) {
     <>
       <Typography.Title level={2}>Project Activity</Typography.Title>
       <List
+        bordered
         dataSource={activities}
         renderItem={(activity) => <ActivityListItem activity={activity} />}
       />

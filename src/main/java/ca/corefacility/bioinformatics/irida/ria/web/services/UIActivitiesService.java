@@ -8,12 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.ActivityType;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.Activity;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.ActivityItem;
@@ -38,7 +41,8 @@ public class UIActivitiesService {
 
 	public List<Activity> geActivitiesForProject(Long projectId, int size, Locale locale) {
 		Project project = projectService.read(projectId);
-		Page<ProjectEvent> page = projectEventService.getEventsForProject(project, PageRequest.of(0, size));
+		Page<ProjectEvent> page = projectEventService.getEventsForProject(project,
+				PageRequest.of(0, size, Sort.Direction.DESC, "createdDate"));
 		return page.getContent()
 				.stream()
 				.map(event -> createActivity(event, locale))
@@ -50,7 +54,7 @@ public class UIActivitiesService {
 			UserRoleSetProjectEvent type = (UserRoleSetProjectEvent) event;
 			User user = type.getUser();
 			Project project = type.getProject();
-			String sentence = messageSource.getMessage("event.project.user_added", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.ProjectActivity.user_role_updated", new Object[] {}, locale);
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
 			ActivityItem roleItem = new ActivityItem(null, messageSource.getMessage("projectRole." + type.getRole()
 					.toString(), new Object[] {}, locale));
@@ -61,7 +65,7 @@ public class UIActivitiesService {
 			UserRemovedProjectEvent type = (UserRemovedProjectEvent) event;
 			User user = type.getUser();
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
-			String sentence = messageSource.getMessage("event.project.user_removed", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.ProjectActivity.user_removed", new Object[] {}, locale);
 			return new Activity(event.getId(), ActivityType.PROJECT_USER_REMOVED.label, sentence,
 					event.getCreatedDate(), ImmutableList.of(userItem));
 
@@ -71,18 +75,35 @@ public class UIActivitiesService {
 			Project project = type.getProject();
 			ActivityItem sampleItem = new ActivityItem("/projects/" + project.getId() + "/samples/" + sample.getId(),
 					sample.getLabel());
-			String sentence = messageSource.getMessage("event.project.sample_added", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.ProjectActivity.sample_added", new Object[] {}, locale);
 			return new Activity(type.getId(), ActivityType.PROJECT_SAMPLE_ADDED.label, sentence, event.getCreatedDate(),
 					ImmutableList.of(sampleItem));
 		} else if (event instanceof DataAddedToSampleProjectEvent) {
 			DataAddedToSampleProjectEvent type = (DataAddedToSampleProjectEvent) event;
 			Sample sample = type.getSample();
 			Project project = type.getProject();
-			ActivityItem sampleItem = new ActivityItem("/projects/" + project.getId() + "/samples/" + sample.getId() +"/sequenceFiles",
+			ActivityItem sampleItem = new ActivityItem(
+					"/projects/" + project.getId() + "/samples/" + sample.getId() + "/sequenceFiles",
 					sample.getLabel());
-			String sentence = messageSource.getMessage("event.project.sample_data_added", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.ProjectActivity.sample_data_added", new Object[] {}, locale);
 			return new Activity(event.getId(), ActivityType.PROJECT_SAMPLE_DATA_ADDED.label, sentence,
 					event.getCreatedDate(), ImmutableList.of(sampleItem));
+		} else if (event instanceof UserGroupRoleSetProjectEvent) {
+			UserGroupRoleSetProjectEvent type = (UserGroupRoleSetProjectEvent) event;
+			UserGroup group = type.getUserGroup();
+			ActivityItem groupItem = new ActivityItem("/groups/" + group.getId(), group.getLabel());
+			String role = messageSource.getMessage("projectRole." + type.getRole()
+					.toString(), new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.ProjectActivity.user_group_added", new Object[] {}, locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_ADDED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(groupItem));
+		}else if (event instanceof UserGroupRemovedProjectEvent) {
+			UserGroupRemovedProjectEvent type = (UserGroupRemovedProjectEvent) event;
+			UserGroup group = type.getUserGroup();
+			ActivityItem groupItem = new ActivityItem("/groups/" + group.getId(), group.getLabel());
+			String sentence = messageSource.getMessage("server.ProjectActivity.user_group_removed", new Object[] {}, locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_REMOVED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(groupItem));
 		}
 		return null;
 	}
