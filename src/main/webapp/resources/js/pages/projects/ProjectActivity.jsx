@@ -32,7 +32,7 @@ function ProjectActivity({ projectId }) {
 
   React.useEffect(() => {
     getProjectActivities({ projectId }).then((data) => {
-      const list = addKeysToList(data, "activity", "date");
+      const list = addKeysToList(data, "activity");
       setActivities(list);
     });
   }, [projectId]);
