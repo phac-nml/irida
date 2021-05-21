@@ -4,14 +4,13 @@ import {
   Divider,
   message,
   Space,
-  Steps,
   Typography,
 } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { SampleMetadataSteps } from "./SampleMetadataSteps";
 
 export function SampleMetadataFileUploader() {
-  const { Step } = Steps;
   const { Text, Title, Paragraph } = Typography
   const options = {
     multiple: false,
@@ -33,12 +32,7 @@ export function SampleMetadataFileUploader() {
 
   return (
     <>
-      <Steps current={0}>
-        <Step title="Upload File" />
-        <Step title="Verify Headers" />
-        <Step title="Review Data" />
-        <Step title="Complete" />
-      </Steps>
+      <SampleMetadataSteps />
       <Divider />
       <Space direction="vertical">
         <Typography>
