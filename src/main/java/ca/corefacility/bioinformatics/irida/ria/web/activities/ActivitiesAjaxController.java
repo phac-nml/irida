@@ -25,9 +25,18 @@ public class ActivitiesAjaxController {
 		this.service = service;
 	}
 
+	/**
+	 * Get a specific page of activities for a project
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param page      Page requested
+	 * @param locale    Current users locale
+	 * @return List of activities and the total number of activities
+	 */
 	@GetMapping("/project")
-	public ResponseEntity<AjaxResponse> getProjectActivities(@RequestParam Long projectId, @RequestParam(defaultValue = "0") int page, Locale locale) {
-		return ResponseEntity.ok( service.geActivitiesForProject(projectId, page, locale));
+	public ResponseEntity<AjaxResponse> getProjectActivities(@RequestParam Long projectId,
+			@RequestParam(defaultValue = "0") int page, Locale locale) {
+		return ResponseEntity.ok(service.geActivitiesForProject(projectId, page, locale));
 	}
 
 }
