@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.Activity;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIActivitiesService;
 
+/**
+ * AJAX controller to handle actitivies
+ */
 @Controller
 @RequestMapping("/ajax/activities")
 public class ActivitiesAjaxController {
