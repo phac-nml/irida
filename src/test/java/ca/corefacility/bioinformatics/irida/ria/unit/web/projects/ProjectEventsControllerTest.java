@@ -49,31 +49,6 @@ public class ProjectEventsControllerTest {
 	}
 
 	@Test
-	public void testGetRecentEventsForProject() {
-		Long projectId = 1L;
-		Project project = new Project();
-		ExtendedModelMap model = new ExtendedModelMap();
-		ProjectEvent event = new UserRoleSetProjectEvent();
-		Page<ProjectEvent> page = new PageImpl<>(Lists.newArrayList(event));
-
-		when(projectService.read(projectId)).thenReturn(project);
-		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
-
-//		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model, 10);
-//
-//		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
-//		assertTrue(model.containsAttribute("events"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> events = (List<Map<String, Object>>) model.get("events");
-//		assertEquals(1, events.size());
-//		Map<String, Object> next = events.iterator().next();
-//		assertTrue(next.containsKey("name"));
-//		assertTrue(next.containsKey("event"));
-//		assertEquals(ProjectEventsController.FRAGMENT_NAMES.get(event.getClass()), next.get("name"));
-//		assertEquals(event, next.get("event"));
-	}
-
-	@Test
 	public void testGetRecentEventsForUser() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		ProjectEvent event = new UserRoleSetProjectEvent();
@@ -140,14 +115,6 @@ public class ProjectEventsControllerTest {
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
-//
-//		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model, 10);
-//
-//		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
-//		assertTrue(model.containsAttribute("events"));
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> events = (List<Map<String, Object>>) model.get("events");
-//		assertEquals(0, events.size());
 
 	}
 }
