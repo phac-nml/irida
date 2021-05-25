@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.activities;
 
+/**
+ * Define specific tyf activities.
+ * NOTE: These are used in the UI on the activities pages, please update there if
+ * you update them here.
+ */
 public enum ActivityType {
 	PROJECT_USER_ROLE("project_user_role_updated"),
 	PROJECT_USER_REMOVED("project_user_removed"),
