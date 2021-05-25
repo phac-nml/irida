@@ -27,6 +27,9 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * UI service for converting events into UI activities.
+ */
 @Component
 public class UIActivitiesService {
 	private final ProjectService projectService;
