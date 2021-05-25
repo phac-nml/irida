@@ -3,26 +3,23 @@ package ca.corefacility.bioinformatics.irida.ria.web.activities.dto;
 import java.util.Date;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.list.ListItem;
+
 /**
  * Model for an Activity (Event).
  */
-public class Activity {
-	private final Long id;
+public class Activity extends ListItem {
 	private String type;
 	private final String sentence;
 	private final Date date;
 	private final List<ActivityItem> items;
 
 	public Activity(Long id, String type, String sentence, Date date, List<ActivityItem> items) {
-		this.id = id;
+		super(id);
 		this.type = type;
 		this.sentence = sentence;
 		this.date = date;
 		this.items = items;
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public String getSentence() {

@@ -20,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.ActivityType;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.Activity;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.ActivityItem;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.list.ListItem;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.list.PagedListResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
@@ -39,14 +41,15 @@ public class UIActivitiesService {
 		this.messageSource = messageSource;
 	}
 
-	public List<Activity> geActivitiesForProject(Long projectId, int page, Locale locale) {
+	public PagedListResponse geActivitiesForProject(Long projectId, int page, Locale locale) {
 		Project project = projectService.read(projectId);
 		Page<ProjectEvent> events = projectEventService.getEventsForProject(project,
 				PageRequest.of(page, 10, Sort.Direction.DESC, "createdDate"));
-		return events.getContent()
+		List<ListItem> activities =  events.getContent()
 				.stream()
 				.map(event -> createActivity(event, locale))
 				.collect(Collectors.toList());
+		return new PagedListResponse(events.getTotalElements(), activities);
 	}
 
 	private Activity createActivity(ProjectEvent event, Locale locale) {

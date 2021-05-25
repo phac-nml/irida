@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.activities;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ca.corefacility.bioinformatics.irida.ria.web.activities.dto.Activity;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIActivitiesService;
 
 /**
@@ -26,8 +26,8 @@ public class ActivitiesAjaxController {
 	}
 
 	@GetMapping("/project")
-	public List<Activity> getProjectActivities(@RequestParam Long projectId, @RequestParam(defaultValue = "0") int page, Locale locale) {
-		return service.geActivitiesForProject(projectId, page, locale);
+	public ResponseEntity<AjaxResponse> getProjectActivities(@RequestParam Long projectId, @RequestParam(defaultValue = "0") int page, Locale locale) {
+		return ResponseEntity.ok( service.geActivitiesForProject(projectId, page, locale));
 	}
 
 }

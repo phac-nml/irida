@@ -4,6 +4,7 @@ import React from "react";
 import { render } from "react-dom";
 import { getProjectActivities } from "../../apis/activities/activities";
 import { ActivityListItem } from "../../components/activities/ActivityListItem";
+import { BORDERED_LIGHT } from "../../styles/borders";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -28,13 +29,26 @@ function ActivityLayout() {
  * @constructor
  */
 function ProjectActivity({ projectId }) {
+  /**
+   * List of activities to render
+   */
   const [activities, setActivities] = React.useState([]);
+
+  /**
+   * Total number of ativities associated with this project
+   */
+  const [total, setTotal] = React.useState(0);
+
+  /**
+   * Last loaded page of activities from the server
+   */
   const [page, setPage] = React.useState(0);
 
   React.useEffect(() => {
     getProjectActivities({ projectId, page }).then((data) => {
-      const list = addKeysToList(data, "activity");
+      const list = addKeysToList(data.content, "activity");
       setActivities([...activities, ...list]);
+      setTotal(data.total);
     });
   }, [projectId, page]);
 
@@ -44,16 +58,32 @@ function ProjectActivity({ projectId }) {
         {i18n("ProjectActivity.title")}
       </Typography.Title>
       <Space direction={"vertical"} style={{ display: "block" }}>
-        <List
-          bordered
-          dataSource={activities}
-          renderItem={(activity) => <ActivityListItem activity={activity} />}
-        />
-        <div style={{ display: "flex", justifyContent: "middle" }}>
-          <Button size={"small"} onClick={() => setPage(1)}>
-            Load More
-          </Button>
+        <div
+          style={{
+            maxHeight: 600,
+            overflow: "auto",
+            border: BORDERED_LIGHT,
+            borderLeft: "none",
+            borderRight: "none",
+          }}
+        >
+          <List
+            bordered
+            dataSource={activities}
+            renderItem={(activity) => <ActivityListItem activity={activity} />}
+          />
         </div>
+        <Space>
+          <Button
+            onClick={() => setPage(page + 1)}
+            disabled={total === activities.length}
+          >
+            {i18n("ProjectActivity.load-more")}
+          </Button>
+          <Typography.Text>
+            {i18n("ProjectActivity.loaded", activities.length, total)}
+          </Typography.Text>
+        </Space>
       </Space>
     </>
   );
