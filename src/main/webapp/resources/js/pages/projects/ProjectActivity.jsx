@@ -1,5 +1,5 @@
 import { Router } from "@reach/router";
-import { List, Typography } from "antd";
+import { Button, List, Space, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { getProjectActivities } from "../../apis/activities/activities";
@@ -28,25 +28,33 @@ function ActivityLayout() {
  * @constructor
  */
 function ProjectActivity({ projectId }) {
-  const [activities, setActivities] = React.useState();
+  const [activities, setActivities] = React.useState([]);
+  const [page, setPage] = React.useState(0);
 
   React.useEffect(() => {
-    getProjectActivities({ projectId }).then((data) => {
+    getProjectActivities({ projectId, page }).then((data) => {
       const list = addKeysToList(data, "activity");
-      setActivities(list);
+      setActivities([...activities, ...list]);
     });
-  }, [projectId]);
+  }, [projectId, page]);
 
   return (
     <>
       <Typography.Title level={2}>
         {i18n("ProjectActivity.title")}
       </Typography.Title>
-      <List
-        bordered
-        dataSource={activities}
-        renderItem={(activity) => <ActivityListItem activity={activity} />}
-      />
+      <Space direction={"vertical"} style={{ display: "block" }}>
+        <List
+          bordered
+          dataSource={activities}
+          renderItem={(activity) => <ActivityListItem activity={activity} />}
+        />
+        <div style={{ display: "flex", justifyContent: "middle" }}>
+          <Button size={"small"} onClick={() => setPage(1)}>
+            Load More
+          </Button>
+        </div>
+      </Space>
     </>
   );
 }

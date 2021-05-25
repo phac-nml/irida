@@ -26,8 +26,8 @@ public class ActivitiesAjaxController {
 	}
 
 	@GetMapping("/project")
-	public List<Activity> getProjectActivities(@RequestParam Long projectId, @RequestParam(defaultValue = "10") int size, Locale locale) {
-		return service.geActivitiesForProject(projectId, size, locale);
+	public List<Activity> getProjectActivities(@RequestParam Long projectId, @RequestParam(defaultValue = "0") int page, Locale locale) {
+		return service.geActivitiesForProject(projectId, page, locale);
 	}
 
 }

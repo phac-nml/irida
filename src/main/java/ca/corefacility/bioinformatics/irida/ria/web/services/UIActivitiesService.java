@@ -39,11 +39,11 @@ public class UIActivitiesService {
 		this.messageSource = messageSource;
 	}
 
-	public List<Activity> geActivitiesForProject(Long projectId, int size, Locale locale) {
+	public List<Activity> geActivitiesForProject(Long projectId, int page, Locale locale) {
 		Project project = projectService.read(projectId);
-		Page<ProjectEvent> page = projectEventService.getEventsForProject(project,
-				PageRequest.of(0, size, Sort.Direction.DESC, "createdDate"));
-		return page.getContent()
+		Page<ProjectEvent> events = projectEventService.getEventsForProject(project,
+				PageRequest.of(page, 10, Sort.Direction.DESC, "createdDate"));
+		return events.getContent()
 				.stream()
 				.map(event -> createActivity(event, locale))
 				.collect(Collectors.toList());

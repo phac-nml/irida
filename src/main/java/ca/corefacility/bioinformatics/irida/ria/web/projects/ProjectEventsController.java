@@ -63,29 +63,6 @@ public class ProjectEventsController {
 	}
 
 	/**
-	 * Get recent {@link ProjectEvent}s for the given {@link Project}
-	 * 
-	 * @param projectId
-	 *            The ID of the {@link Project} to get events for
-	 * @param model
-	 *            Model for the view. Contains a list named "events". This will
-	 *            be a map which will contain "name" which is the name of the
-	 *            view fragment to use, and "event" which is a reference to the
-	 *            event itself
-	 * @param size
-	 *            Number of events to show
-	 * @return The name of the events view
-	 */
-	@RequestMapping("/project/{projectId}")
-	public Page<ProjectEvent> getRecentEventsForProject(@PathVariable Long projectId, Model model,
-			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
-		Project project = projectService.read(projectId);
-
-		return  eventService.getEventsForProject(project,
-				PageRequest.of(0, size, Direction.DESC, "createdDate"));
-	}
-
-	/**
 	 * Get recent {@link ProjectEvent}s for the currently logged in user
 	 * 
 	 * @param model
