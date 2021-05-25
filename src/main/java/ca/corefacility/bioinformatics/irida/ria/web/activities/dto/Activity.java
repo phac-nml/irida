@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.activities.dto;
 import java.util.Date;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.list.ListItem;
+import ca.corefacility.bioinformatics.irida.ria.web.dto.list.ListItem;
 
 /**
  * Model for an Activity (Event).

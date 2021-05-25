@@ -1,5 +1,8 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.list;
+package ca.corefacility.bioinformatics.irida.ria.web.dto.list;
 
+/**
+ * Generic List item for UI responses.
+ */
 public abstract class ListItem {
 	private final long id;
 

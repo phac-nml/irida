@@ -1,9 +1,12 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.list;
+package ca.corefacility.bioinformatics.irida.ria.web.dto.list;
 
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
+/**
+ * UI Response for returned a paged list to the UI.
+ */
 public class PagedListResponse extends AjaxResponse {
 	private final long total;
 	private final List<ListItem> content;
