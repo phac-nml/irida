@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.activities.dto;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Model for an Activity (Event).
+ */
 public class Activity {
 	private final Long id;
 	private String type;
