@@ -50,7 +50,7 @@ public class UIActivitiesService {
 	 * @param projectId Identifier for the current project
 	 * @param page      Current page of activities being asked for
 	 * @param locale    Current users locale
-	 * @return The page of activities plus the total amount of activiites
+	 * @return The page of activities plus the total amount of activities
 	 */
 	public PagedListResponse geActivitiesForProject(Long projectId, int page, Locale locale) {
 		Project project = projectService.read(projectId);

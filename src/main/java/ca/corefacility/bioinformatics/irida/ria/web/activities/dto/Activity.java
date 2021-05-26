@@ -9,13 +9,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.list.ListItem;
  * Model for an Activity (Event).
  */
 public class Activity extends ListItem {
+	private Long id;
 	private String type;
 	private final String sentence;
 	private final Date date;
 	private final List<ActivityItem> items;
 
 	public Activity(Long id, String type, String sentence, Date date, List<ActivityItem> items) {
-		super(id);
+		this.id = id;
 		this.type = type;
 		this.sentence = sentence;
 		this.date = date;
