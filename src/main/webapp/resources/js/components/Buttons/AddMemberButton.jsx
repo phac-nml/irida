@@ -1,6 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
-import { SPACE_XS } from "../../styles/spacing";
 import {
   Button,
   Form,
@@ -10,7 +7,10 @@ import {
   Select,
   Typography,
 } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { useRoles } from "../../contexts/roles-context";
+import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
+import { SPACE_XS } from "../../styles/spacing";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -82,7 +82,7 @@ export function AddMemberButton({
     } else {
       setResults([]);
     }
-  }, [debouncedQuery]);
+  }, [debouncedQuery, getAvailableMembersFn]);
 
   /*
   Watch for changes to the forms visibility, when it becomes visible

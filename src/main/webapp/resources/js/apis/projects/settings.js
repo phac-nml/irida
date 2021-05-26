@@ -2,17 +2,6 @@ import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
- * Get the processing priorities information for the current project.
- *
- * @param {number} projectId - identifier for the current project
- * @returns {Promise<any>} the current priority and list of available priorities
- */
-export const fetchProcessingInformation = async (projectId) =>
-  axios
-    .get(setBaseUrl(`ajax/projects/${projectId}/settings/priorities`))
-    .then(({ data }) => data);
-
-/**
  * Update the processing priority for the current project
  *
  * @param {number} projectId - identifier for the current project
@@ -47,7 +36,10 @@ export const fetchProcessingCoverage = async (projectId) =>
  * @param {object} coverage - updated coverage for the project
  * @returns {Promise<*>}
  */
-export const updateProcessingCoverage = async (projectId, coverage) => {
+export const updateProcessingCoverageForProject = async (
+  projectId,
+  coverage
+) => {
   try {
     const { data } = await axios.put(
       setBaseUrl(`ajax/projects/${projectId}/settings/coverage`),
