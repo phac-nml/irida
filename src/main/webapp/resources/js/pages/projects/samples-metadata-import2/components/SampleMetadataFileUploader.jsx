@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Divider,
@@ -16,7 +16,7 @@ export function SampleMetadataFileUploader() {
     multiple: false,
     showUploadList: true,
     accept: [".xls", ".xlsx", ".csv"],
-    // action: setBaseUrl(`/file`),
+    action: setBaseUrl(`/projects/${window.project.id}/sample-metadata/upload/file`),
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
@@ -29,10 +29,11 @@ export function SampleMetadataFileUploader() {
       }
     },
   }
+  const [step, setStep] = useState(0);
 
   return (
     <>
-      <SampleMetadataSteps />
+      <SampleMetadataSteps currentStep={step}/>
       <Divider />
       <Space direction="vertical">
         <Typography>

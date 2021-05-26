@@ -3,15 +3,16 @@ import {
     Steps,
 } from "antd";
 
-export function SampleMetadataSteps() {
+export function SampleMetadataSteps({currentStep}) {
     const { Step } = Steps;
 
     return (
-        <Steps current={0}>
+        <Steps current={currentStep}>
             <Step title="Upload File" />
-            <Step title="Verify Headers" />
+            <Step title="Map Headers" />
+            <Step title="Validation" />
             <Step title="Review Data" />
-            <Step title="Complete" />
+            <Step title="Completion" />
         </Steps>
     );
 }
