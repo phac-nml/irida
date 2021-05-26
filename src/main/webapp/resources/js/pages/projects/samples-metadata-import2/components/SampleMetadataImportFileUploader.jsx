@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Divider,
@@ -8,9 +8,9 @@ import {
 } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { SampleMetadataSteps } from "./SampleMetadataSteps";
+import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
 
-export function SampleMetadataFileUploader() {
+export function SampleMetadataImportFileUploader() {
   const { Text, Title, Paragraph } = Typography
   const options = {
     multiple: false,
@@ -33,7 +33,7 @@ export function SampleMetadataFileUploader() {
 
   return (
     <>
-      <SampleMetadataSteps currentStep={step}/>
+      <SampleMetadataImportSteps currentStep={step}/>
       <Divider />
       <Space direction="vertical">
         <Typography>
