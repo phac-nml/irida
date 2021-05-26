@@ -9,6 +9,8 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.NotWritablePropertyException;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +46,9 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	protected final IridaJpaRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
+
+	@Autowired
+	ConversionService conversionService;
 
 	public CRUDServiceImpl(IridaJpaRepository<ValueType, KeyType> repository, Validator validator,
 			Class<ValueType> valueType) {
@@ -158,6 +163,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 				// can't be found, so we have to force an exception to be thrown
 				// by calling getProperty manually first.
 				DirectFieldAccessor dfa = new DirectFieldAccessor(instance);
+				dfa.setConversionService(conversionService);
 				dfa.setPropertyValue(key, value);
 			} catch (IllegalArgumentException | NotWritablePropertyException | TypeMismatchException e) {
 				throw new InvalidPropertyException("Unable to access field [" + key + "]", valueType, e);

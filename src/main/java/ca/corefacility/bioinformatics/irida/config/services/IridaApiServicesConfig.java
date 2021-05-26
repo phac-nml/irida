@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.StringToDateConverter;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
@@ -35,8 +36,10 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.core.io.ClassPathResource;
@@ -283,6 +286,17 @@ public class IridaApiServicesConfig {
 		return null;
 	}
 
+	/**
+	 * Collects converter classes into a set
+	 *
+	 * @return A {@link Set} of converter classes
+	 */
+	private Set<Converter> getConverters() {
+		Set<Converter> converters = new HashSet<Converter>();
+		converters.add(new StringToDateConverter());
+		return converters;
+	}
+
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
 			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
@@ -421,6 +435,16 @@ public class IridaApiServicesConfig {
 
 		exportUploadTemplateEngine.addTemplateResolver(classLoaderTemplateResolver);
 		return exportUploadTemplateEngine;
+	}
+
+	/*
+	 * Service for converting from one class to another
+	 */
+	@Bean(name="conversionService")
+	public ConversionServiceFactoryBean conversionService() {
+		ConversionServiceFactoryBean bean = new ConversionServiceFactoryBean();
+		bean.setConverters(getConverters());
+		return bean;
 	}
 
 	@Bean
