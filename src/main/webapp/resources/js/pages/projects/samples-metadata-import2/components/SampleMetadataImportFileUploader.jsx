@@ -39,7 +39,7 @@ export function SampleMetadataImportFileUploader() {
     <>
       <SampleMetadataImportSteps currentStep={step} />
       <Divider />
-      <Space direction="vertical">
+      <Space direction="vertical" style={{ width: `100%` }}>
         <Typography>
           <Title level={3}>{i18n("SampleMetadataImportFileUploader.title")}</Title>
           <Paragraph>{i18n("SampleMetadataImportFileUploader.intro")}</Paragraph>
