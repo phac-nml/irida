@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   Alert,
   Divider,
-  message,
+  notification,
   Space,
   Typography,
 } from "antd";
@@ -14,7 +14,7 @@ export function SampleMetadataImportFileUploader() {
   const { Text, Title, Paragraph } = Typography
   const options = {
     multiple: false,
-    showUploadList: true,
+    showUploadList: false,
     accept: [".xls", ".xlsx", ".csv"],
     action: setBaseUrl(`/projects/${window.project.id}/sample-metadata/upload/file`),
     onChange(info) {
@@ -23,9 +23,13 @@ export function SampleMetadataImportFileUploader() {
         console.log(info.file);
       }
       if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        notification.success({
+          message: i18n("SampleMetadataImportFileUploader.success", info.file.name),
+        });
       } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+        notification.error({
+          message: i18n("SampleMetadataImportFileUploader.error", info.file.name),
+        });
       }
     },
   }
@@ -33,17 +37,17 @@ export function SampleMetadataImportFileUploader() {
 
   return (
     <>
-      <SampleMetadataImportSteps currentStep={step}/>
+      <SampleMetadataImportSteps currentStep={step} />
       <Divider />
       <Space direction="vertical">
         <Typography>
-          <Title level={3}>{i18n("metadata.upload.component.title")}</Title>
-          <Paragraph>{i18n("metadata.upload.component.intro")}</Paragraph>
+          <Title level={3}>{i18n("SampleMetadataImportFileUploader.title")}</Title>
+          <Paragraph>{i18n("SampleMetadataImportFileUploader.intro")}</Paragraph>
           <Alert
             message={
               <Space direction="vertical">
-                <Text>{i18n("metadata.upload.component.text")}</Text>
-                <Text strong={true}>{i18n("metadata.upload.component.warning")}</Text>
+                <Text>{i18n("SampleMetadataImportFileUploader.text")}</Text>
+                <Text strong={true}>{i18n("SampleMetadataImportFileUploader.warning")}</Text>
               </Space>
             }
             type="info"
@@ -51,7 +55,7 @@ export function SampleMetadataImportFileUploader() {
         </Typography>
         <DragUpload
           className="t-sample-metadata-file-uploader"
-          uploadText={i18n("metadata.dropzone.message")}
+          uploadText={i18n("SampleMetadataImportFileUploader.dropzone")}
           options={options}
         />
       </Space>

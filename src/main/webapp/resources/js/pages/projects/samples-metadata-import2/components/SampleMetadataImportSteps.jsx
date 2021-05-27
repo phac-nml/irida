@@ -3,7 +3,7 @@ import {
     Steps,
 } from "antd";
 
-export function SampleMetadataImportSteps({currentStep}) {
+export function SampleMetadataImportSteps({ currentStep }) {
     const { Step } = Steps;
 
     return (
