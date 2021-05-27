@@ -3,8 +3,9 @@ import {
     Steps,
 } from "antd";
 
+const { Step } = Steps;
+
 export function SampleMetadataImportSteps({ currentStep }) {
-    const { Step } = Steps;
 
     return (
         <Steps current={currentStep}>
