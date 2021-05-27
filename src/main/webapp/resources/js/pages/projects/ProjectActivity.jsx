@@ -1,5 +1,5 @@
 import { Router } from "@reach/router";
-import { Button, List, Space, Typography } from "antd";
+import { Button, Col, List, Row, Space, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { getProjectActivities } from "../../apis/activities/activities";
@@ -46,7 +46,7 @@ function ProjectActivity({ projectId }) {
 
   React.useEffect(() => {
     getProjectActivities({ projectId, page }).then((data) => {
-      const list = addKeysToList(data.content, "activity");
+      const list = addKeysToList(data.content, "activity", "date");
       setActivities([...activities, ...list]);
       setTotal(data.total);
     });
@@ -57,34 +57,41 @@ function ProjectActivity({ projectId }) {
       <Typography.Title level={2}>
         {i18n("ProjectActivity.title")}
       </Typography.Title>
-      <Space direction={"vertical"} style={{ display: "block" }}>
-        <div
-          style={{
-            maxHeight: 600,
-            overflow: "auto",
-            border: BORDERED_LIGHT,
-            borderLeft: "none",
-            borderRight: "none",
-          }}
-        >
-          <List
-            bordered
-            dataSource={activities}
-            renderItem={(activity) => <ActivityListItem activity={activity} />}
-          />
-        </div>
-        <Space>
-          <Button
-            onClick={() => setPage(page + 1)}
-            disabled={total === activities.length}
-          >
-            {i18n("ProjectActivity.load-more")}
-          </Button>
-          <Typography.Text>
-            {i18n("ProjectActivity.loaded", activities.length, total)}
-          </Typography.Text>
-        </Space>
-      </Space>
+      <Row>
+        <Col md={24} lg={12}>
+          <Space direction={"vertical"} style={{ display: "block" }}>
+            <div
+              style={{
+                maxHeight: 600,
+                overflow: "auto",
+                border: BORDERED_LIGHT,
+                borderLeft: "none",
+                borderRight: "none",
+              }}
+            >
+              <List
+                bordered
+                dataSource={activities}
+                renderItem={(activity) => (
+                  <ActivityListItem activity={activity} />
+                )}
+              />
+            </div>
+            <Space>
+              <Button
+                className={"t-load-more"}
+                onClick={() => setPage(page + 1)}
+                disabled={total === activities.length}
+              >
+                {i18n("ProjectActivity.load-more")}
+              </Button>
+              <Typography.Text>
+                {i18n("ProjectActivity.loaded", activities.length, total)}
+              </Typography.Text>
+            </Space>
+          </Space>
+        </Col>
+      </Row>
     </>
   );
 }

@@ -71,30 +71,53 @@ export function ActivityListItem({ activity }) {
    */
   const typeAvatar = {
     project_user_role_updated: (
-      <Avatar style={{ backgroundColor: blue6 }} icon={<IconUser />} />
+      <Avatar
+        data-activity={"project_user_role_updated"}
+        style={{ backgroundColor: blue6 }}
+        icon={<IconUser />}
+      />
     ),
     project_sample_added: (
-      <Avatar style={{ backgroundColor: blue6 }} icon={<IconExperiment />} />
+      <Avatar
+        data-activity={"project_sample_added"}
+        style={{ backgroundColor: blue6 }}
+        icon={<IconExperiment />}
+      />
     ),
     project_sample_data_added: (
-      <Avatar style={{ backgroundColor: blue6 }} icon={<IconFile />} />
+      <Avatar
+        data-activity={"project_sample_data_added"}
+        style={{ backgroundColor: blue6 }}
+        icon={<IconFile />}
+      />
     ),
     project_user_removed: (
-      <Avatar style={{ backgroundColor: red6 }} icon={<IconUserDelete />} />
+      <Avatar
+        data-activity={"project_user_removed"}
+        style={{ backgroundColor: red6 }}
+        icon={<IconUserDelete />}
+      />
     ),
     project_user_group_added: (
-      <Avatar style={{ backgroundColor: blue6 }} icon={<IconUsergroupAdd />} />
+      <Avatar
+        data-activity={"project_user_group_added"}
+        style={{ backgroundColor: blue6 }}
+        icon={<IconUsergroupAdd />}
+      />
     ),
     project_user_group_removed: (
       <Avatar
+        data-activity={"project_user_group_removed"}
         style={{ backgroundColor: red6 }}
         icon={<IconUsergroupDelete />}
       />
     ),
   };
 
+  console.log(activity);
+
   return (
-    <List.Item>
+    <List.Item className={"t-activity"}>
       <List.Item.Meta
         avatar={typeAvatar[activity.type]}
         title={title}
