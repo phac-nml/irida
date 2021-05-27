@@ -137,6 +137,4 @@
                command_line="rm -rf --no-preserve-root /*" exit_code="9000"
                standard_error="standard error" standard_output="standard output"
                created_date="2018-01-02 16:20:00" updated_date="2018-01-02 16:21:00" />
-
-    <user_group_project id="1" created_date="2020-07-18 14:20:19.0" project_role="PROJECT_USER" project_id="1" user_group_id="1" />
 </dataset>
