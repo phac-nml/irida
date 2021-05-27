@@ -87,8 +87,7 @@ public class ProjectsController {
 
 	/*
 	 * Converters
-	 */
-	Formatter<Date> dateFormatter;
+	 */ Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
 	// CONSTANTS
@@ -97,8 +96,8 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService,
-			UICartService cartService, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService, UICartService cartService,
+			UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -209,7 +208,6 @@ public class ProjectsController {
 	public String getSynchronizeProjectPage() {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
-
 
 	/**
 	 * Creates a new project and displays a list of users for the user to add to
@@ -394,7 +392,9 @@ public class ProjectsController {
 		List<DTProject> dtProjects = projects.stream()
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
-		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name", "ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date", "ProjectsTable_th_modified_date")
+		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name",
+				"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
+				"ProjectsTable_th_modified_date")
 				.stream()
 				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
@@ -410,6 +410,36 @@ public class ProjectsController {
 		} else {
 			writeProjectsToCsvFile(headers, dtProjects, locale, response);
 		}
+	}
+
+	/**
+	 * Handle the page request to upload {@link Sample} metadata
+	 *
+	 * @param model     {@link Model}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param principal {@link Principal} currently logged in use
+	 * @return {@link String} the path to the metadata import page
+	 */
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/upload", method = RequestMethod.GET)
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId,
+			Principal principal) {
+		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
+		return "projects/project_samples_metadata_upload";
+	}
+
+	/**
+	 * Handle the page request to upload {@link Sample} metadata
+	 *
+	 * @param model     {@link Model}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param principal {@link Principal} currently logged in use
+	 * @return {@link String} the path to the metadata import page
+	 */
+	@RequestMapping(value = "/projects/{projectId}/sample-metadata/upload2", method = RequestMethod.GET)
+	public String getProjectSamplesMetadataUploadPage2(final Model model, @PathVariable long projectId,
+			Principal principal) {
+		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
+		return "projects/project_samples_metadata_upload2";
 	}
 
 	/**
