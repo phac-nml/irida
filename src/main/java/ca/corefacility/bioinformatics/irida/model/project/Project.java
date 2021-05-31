@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.URL;
@@ -100,7 +100,8 @@ public class Project extends IridaResourceSupport
 	@Enumerated(EnumType.STRING)
 	private AnalysisSubmission.Priority analysisPriority;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonIgnore
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL )
 	@JoinColumn(name = "default_metadata_template")
 	private MetadataTemplate defaultMetadataTemplate;
 
