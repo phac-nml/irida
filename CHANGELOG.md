@@ -1,6 +1,10 @@
 Changes
 =======
 
+21.05 to 21.05.1
+----------------
+* [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page.
+
 21.01 to 21.05
 --------------
 * [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)
