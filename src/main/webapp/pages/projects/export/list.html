@@ -4,7 +4,7 @@
       data-layout-decorate="~{projects/_base}">
 <head>
   <title th:text="#{project.export.table.title}">SRA</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-ncbi-exports.bundle.css}">
+  <webpacker:css entry="project-ncbi-exports" />
 </head>
 
 <body>
@@ -13,7 +13,7 @@
 </main>
 
 <th:block layout:fragment="scripts">
-  <script th:src="@{/dist/js/project-ncbi-exports.bundle.js}"></script>
+  <webpacker:js entry="project-ncbi-exports" />
 </th:block>
 </body>
 

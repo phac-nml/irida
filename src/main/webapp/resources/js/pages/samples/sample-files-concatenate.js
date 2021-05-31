@@ -1,16 +1,16 @@
-$(document).ready(function() {
+import $ from "jquery";
+
+checkTypes();
+
+//after any file is selected, ensure the types are the same
+$(".concat").on("click", function() {
   checkTypes();
+});
 
-  //after any file is selected, ensure the types are the same
-  $(".concat").on("click", function() {
-    checkTypes();
-  });
-
-  //on submit disable the submit button and show a message
-  $("#concatenate-form").submit(function() {
-    $("#form-submit").prop("disabled", true);
-    $("#submit-info").show();
-  });
+//on submit disable the submit button and show a message
+$("#concatenate-form").submit(function() {
+  $("#form-submit").prop("disabled", true);
+  $("#submit-info").show();
 });
 
 /**

@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        data-layout-decorate="~{projects/_base}">
-<head>
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.settings}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-settings.bundle.css}">
-</head>
-<body>
-<div id="root" layout:fragment="main"></div>
+    <webpacker:css entry="project-settings" />
+  </head>
+  <body>
+    <div id="root" layout:fragment="main"></div>
 
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-settings.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="project-settings" />
+    </th:block>
+  </body>
 </html>

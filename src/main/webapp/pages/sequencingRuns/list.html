@@ -6,7 +6,7 @@
 >
   <head>
     <title th:text="#{sequencingruns.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/sequencing-runs.bundle.css}" />
+    <webpacker:css entry="sequencing-runs"/>
   </head>
   <body>
     <div
@@ -18,7 +18,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/sequencing-runs.bundle.js}"></script>
+      <webpacker:js entry="sequencing-runs"/>
     </th:block>
   </body>
 </html>

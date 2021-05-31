@@ -6,7 +6,7 @@
 >
   <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-sync.bundle.css}" />
+    <webpacker:css entry="project-sync" />
   </head>
   <body>
     <div
@@ -16,7 +16,7 @@
       <div id="root"></div>
     </div>
     <th:block layout:fragment="scripts" th:inline="javascript">
-      <script th:src="@{/dist/js/project-sync.bundle.js}"></script>
+      <webpacker:js entry="project-sync" />
     </th:block>
   </body>
 </html>

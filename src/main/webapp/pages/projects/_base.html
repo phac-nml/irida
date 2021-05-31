@@ -28,11 +28,12 @@
         status: /*[[#{'project.sync.status.'+${status.getSyncStatus()}}]]*/ "",
       };
     </script>
-    <link rel="stylesheet" th:href="@{/dist/css/project.bundle.css}" />
-  </head>
-  <body>
-    <div layout:fragment="page">
-      <div class="col-md-12">
+    <webpacker:css entry="project" />
+</head>
+<body>
+
+<div layout:fragment="page">
+    <div class="col-md-12">
         <div id="project-root"></div>
 
         <main layout:fragment="main" style="padding: 16px 24px">
@@ -43,8 +44,8 @@
       </div>
     </div>
 
-    <th:block layout:fragment="base-scripts">
-      <script th:src="@{/dist/js/project.bundle.js}"></script>
-    </th:block>
-  </body>
+<th:block layout:fragment="base-scripts">
+    <webpacker:js entry="project" />
+</th:block>
+</body>
 </html>

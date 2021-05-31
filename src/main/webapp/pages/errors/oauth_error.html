@@ -2,10 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <title th:text="#{error.oauth.title}">_OAUTH ERROR_</title>
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/access_confirmation.bundle.css}"
-    />
+    <webpacker:css entry="access_confirmation" />
     <style>
       body {
         padding: 14px;

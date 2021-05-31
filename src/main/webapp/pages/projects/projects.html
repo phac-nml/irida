@@ -6,7 +6,7 @@
 >
   <head>
     <title th:text="#{page.projects.title}">List of Projects</title>
-    <link rel="stylesheet" th:href="@{/dist/css/projects.bundle.css}" />
+    <webpacker:css entry="projects"/>
   </head>
   <body>
     <div
@@ -16,7 +16,7 @@
     ></div>
 
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/projects.bundle.js}"></script>
+      <webpacker:js entry="projects"/>
     </th:block>
   </body>
 </html>

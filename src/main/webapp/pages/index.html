@@ -5,9 +5,8 @@
       data-layout-decorate="~{template/page}">
 <head>
   <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <link rel="stylesheet" th:href="@{/dist/css/dashboard.bundle.css}">
+  <webpacker:css entry="dashboard" />
 </head>
-
 <body ng-app="irida.dashboard">
   <div class="row" style="margin-top: 1em;" layout:fragment="page">
     <div class="col-md-8 col-lg-6 col-sm-12" style="float: none; margin: 0 auto;">
@@ -29,9 +28,8 @@
     </div>
   </div>
 
-  <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/dashboard.bundle.js}"></script>
-  </th:block>
+<th:block layout:fragment="scripts">
+  <webpacker:js entry="dashboard" />
+</th:block>
 </body>
-
 </html>
