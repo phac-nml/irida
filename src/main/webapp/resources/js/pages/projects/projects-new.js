@@ -1,8 +1,24 @@
 import angular from "angular";
 import "angular-ui-bootstrap";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Layout,
+  Row,
+} from "antd";
 import React from "react";
 import { render } from "react-dom";
+import { TAXONOMY } from "../../apis/ontology/taxonomy";
+import { OntologySelect } from "../../components/ontology";
+import { SPACE_LG } from "../../styles/spacing";
 import "../../vendor/plugins/jquery/select2";
+
+const { Content } = Layout;
 
 $("#new-organism-warning").hide();
 $(".organism-select")
@@ -82,4 +98,88 @@ angular
     };
   });
 
-render(<h1>Foobar</h1>, document.querySelector("#root"));
+function CreateNewProject() {
+  const [organism, setOrganism] = React.useState("");
+
+  const validateMessages = {
+    required: "THIS MUST BE THERE",
+    string: {
+      min: "THIS IS TOO SHORT",
+    },
+    url: "This does not look like a fucking url does it?",
+  };
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  return (
+    <Layout>
+      <Row justify="center">
+        <Col xs={24} md={18} xl={12}>
+          <Content>
+            <Card style={{ marginTop: SPACE_LG }}>
+              <Form
+                layout={"vertical"}
+                validateMessages={validateMessages}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+              >
+                <Form.Item
+                  name={["name"]}
+                  label={i18n("projects.create.form.name")}
+                  rules={[{ type: "string", min: 5, required: true }]}
+                >
+                  <Input type={"text"} />
+                </Form.Item>
+                <Form.Item
+                  name={["organism"]}
+                  label={i18n("projects.create.form.organism")}
+                >
+                  <OntologySelect
+                    term={organism}
+                    onTermSelected={setOrganism}
+                    ontology={TAXONOMY}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={i18n("projects.create.form.description")}
+                  name="projectDescription"
+                >
+                  <Input.TextArea />
+                </Form.Item>
+                <Form.Item
+                  name={"remoteURL"}
+                  label={i18n("projects.create.form.wiki")}
+                  rules={[{ type: "url", required: false }]}
+                >
+                  <Input type="url" />
+                </Form.Item>
+                <Divider />
+                <Form.Item name={"useCartSamples"} valuePropName="checked">
+                  <Checkbox>{i18n("projects.create.settings.cart")}</Checkbox>
+                </Form.Item>
+                <Form.Item name={"lockSamples"} valuePropName="checked">
+                  <Checkbox>
+                    {i18n("projects.create.settings.sample.modification")}
+                  </Checkbox>
+                </Form.Item>
+                <Form.Item noStyle>
+                  <Button type="primary" htmlType="submit">
+                    SUBMIT
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Card>
+          </Content>
+        </Col>
+      </Row>
+    </Layout>
+  );
+}
+
+render(<CreateNewProject />, document.querySelector("#root"));
