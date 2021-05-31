@@ -32,8 +32,8 @@ export async function getProjectRoles() {
   return await axios.get(`${URL}/roles`).then(({ data }) => data);
 }
 
-export async function createProject(parameters) {
-  try {
-    axios.post(`${URL}/create`, parameters);
-  }
-}
+// export async function createProject(parameters) {
+//   try {
+//     axios.post(`${URL}/create`, parameters);
+//   }
+// }

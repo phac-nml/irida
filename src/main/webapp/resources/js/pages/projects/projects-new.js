@@ -16,6 +16,7 @@ import { render } from "react-dom";
 import { TAXONOMY } from "../../apis/ontology/taxonomy";
 import { OntologySelect } from "../../components/ontology";
 import { SPACE_LG } from "../../styles/spacing";
+import { CART } from "../../utilities/events-utilities";
 import "../../vendor/plugins/jquery/select2";
 
 const { Content } = Layout;
@@ -100,6 +101,17 @@ angular
 
 function CreateNewProject() {
   const [organism, setOrganism] = React.useState("");
+  const [hasCart, setHasCart] = React.useState(false);
+  const [form] = Form.useForm();
+
+  React.useEffect(() => {
+    function handleCart(event) {
+      setHasCart(event.detail.count > 0);
+    }
+
+    document.addEventListener(CART.UPDATED, handleCart);
+    return () => document.removeEventListener(handleCart);
+  }, []);
 
   const validateMessages = {
     required: "THIS MUST BE THERE",
@@ -111,6 +123,7 @@ function CreateNewProject() {
 
   const onFinish = (values) => {
     console.log("Success:", values);
+    console.log(form);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -124,6 +137,7 @@ function CreateNewProject() {
           <Content>
             <Card style={{ marginTop: SPACE_LG }}>
               <Form
+                form={form}
                 layout={"vertical"}
                 validateMessages={validateMessages}
                 onFinish={onFinish}
@@ -159,15 +173,28 @@ function CreateNewProject() {
                 >
                   <Input type="url" />
                 </Form.Item>
-                <Divider />
-                <Form.Item name={"useCartSamples"} valuePropName="checked">
-                  <Checkbox>{i18n("projects.create.settings.cart")}</Checkbox>
-                </Form.Item>
-                <Form.Item name={"lockSamples"} valuePropName="checked">
-                  <Checkbox>
-                    {i18n("projects.create.settings.sample.modification")}
-                  </Checkbox>
-                </Form.Item>
+                {hasCart && (
+                  <>
+                    <Divider />
+                    <Form.Item name={"useCartSamples"} valuePropName="checked">
+                      <Checkbox>
+                        {i18n("projects.create.settings.cart")}
+                      </Checkbox>
+                    </Form.Item>
+                    <Form.Item name={"lockSamples"} valuePropName="checked">
+                      <Checkbox
+                        rules={[
+                          {
+                            required: checkNick,
+                            message: "Please input your nickname",
+                          },
+                        ]}
+                      >
+                        {i18n("projects.create.settings.sample.modification")}
+                      </Checkbox>
+                    </Form.Item>
+                  </>
+                )}
                 <Form.Item noStyle>
                   <Button type="primary" htmlType="submit">
                     SUBMIT
