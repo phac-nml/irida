@@ -5,7 +5,7 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
 /**
- * UI Response for returned a paged list to the UI.
+ * UI Response for returning a paged list to the UI.
  */
 public class PagedListResponse extends AjaxResponse {
 	private final long total;
