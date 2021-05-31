@@ -1,5 +1,7 @@
 import angular from "angular";
 import "angular-ui-bootstrap";
+import React from "react";
+import { render } from "react-dom";
 import "../../vendor/plugins/jquery/select2";
 
 $("#new-organism-warning").hide();
@@ -79,3 +81,5 @@ angular
       remoteURL: window.PAGE.project.remoteURL,
     };
   });
+
+render(<h1>Foobar</h1>, document.querySelector("#root"));
