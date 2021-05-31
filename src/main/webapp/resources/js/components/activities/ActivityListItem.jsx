@@ -24,16 +24,16 @@ import {
 export function ActivityListItem({ activity }) {
   const [title] = React.useState(() => {
     /*
-    The sentence (title) is sent from the server with placeholders, e.g.
+    The description (title) is sent from the server with placeholders, e.g.
     "{0} has been removed from this project" - where {0} is the placed holder
     for the user's name that has been removed.
 
-    items - is an array of the words to put into the sentence.  The come in
-    the order that they go into the sentence. An item has a label and if required
+    items - is an array of the words to put into the description.  The come in
+    the order that they go into the description. An item has a label and if required
     a href to link to it.  If it has an href the link will be created, if not
     just the label is displayed.
      */
-    const fragments = activity.sentence.split(/{([0-9])}/);
+    const fragments = activity.description.split(/{([0-9])}/);
     const content = [];
     for (let i = 0; i < fragments.length; i++) {
       const key = `activity-${activity.id}-${i}`;
@@ -55,7 +55,7 @@ export function ActivityListItem({ activity }) {
           );
         }
       } else if (fragments[i].length) {
-        // If its not numeric, it is just part of the sentence so just add it.
+        // If its not numeric, it is just part of the description so just add it.
         content.push(
           <Typography.Text key={key}>{fragments[i]}</Typography.Text>
         );

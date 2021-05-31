@@ -11,20 +11,20 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.list.ListItem;
 public class Activity extends ListItem {
 	private Long id;
 	private String type;
-	private final String sentence;
+	private final String description;
 	private final Date date;
 	private final List<ActivityItem> items;
 
-	public Activity(Long id, String type, String sentence, Date date, List<ActivityItem> items) {
+	public Activity(Long id, String type, String description, Date date, List<ActivityItem> items) {
 		this.id = id;
 		this.type = type;
-		this.sentence = sentence;
+		this.description = description;
 		this.date = date;
 		this.items = items;
 	}
 
-	public String getSentence() {
-		return sentence;
+	public String getDescription() {
+		return description;
 	}
 
 	public Date getDate() {
