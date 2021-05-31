@@ -54,8 +54,9 @@ public class UIActivitiesService {
 	 */
 	public PagedListResponse geActivitiesForProject(Long projectId, int page, Locale locale) {
 		Project project = projectService.read(projectId);
+		final int DEFAULT_PAGE_SIZE = 10;
 		Page<ProjectEvent> events = projectEventService.getEventsForProject(project,
-				PageRequest.of(page, 10, Sort.Direction.DESC, "createdDate"));
+				PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate"));
 		List<ListItem> activities = events.getContent()
 				.stream()
 				.map(event -> createActivity(event, locale))
