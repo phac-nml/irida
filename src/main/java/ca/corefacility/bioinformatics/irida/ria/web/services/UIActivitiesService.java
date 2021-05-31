@@ -84,7 +84,6 @@ public class UIActivitiesService {
 			return new Activity(type.getId(), ActivityType.PROJECT_USER_ROLE.label, sentence, event.getCreatedDate(),
 					ImmutableList.of(userItem, roleItem));
 		} else if (event instanceof UserRemovedProjectEvent) {
-			// TODO: This does not seem to be hit?
 			UserRemovedProjectEvent type = (UserRemovedProjectEvent) event;
 			User user = type.getUser();
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
