@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.activities;
 
 /**
- * Define specific tyf activities.
+ * Define specific type activities.
  * NOTE: These are used in the UI on the activities pages, please update there if
  * you update them here.
  */
