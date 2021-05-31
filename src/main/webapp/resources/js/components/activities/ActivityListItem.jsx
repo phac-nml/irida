@@ -114,8 +114,6 @@ export function ActivityListItem({ activity }) {
     ),
   };
 
-  console.log(activity);
-
   return (
     <List.Item className={"t-activity"}>
       <List.Item.Meta
