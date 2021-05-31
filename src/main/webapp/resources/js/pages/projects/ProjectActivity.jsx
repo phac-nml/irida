@@ -1,5 +1,5 @@
 import { Router } from "@reach/router";
-import { Button, Col, List, Row, Space, Typography } from "antd";
+import { Button, Col, List, notification, Row, Space, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { getProjectActivities } from "../../apis/activities/activities";
@@ -45,11 +45,13 @@ function ProjectActivity({ projectId }) {
   const [page, setPage] = React.useState(0);
 
   React.useEffect(() => {
-    getProjectActivities({ projectId, page }).then((data) => {
-      const list = addKeysToList(data.content, "activity", "date");
-      setActivities([...activities, ...list]);
-      setTotal(data.total);
-    });
+    getProjectActivities({ projectId, page })
+      .then((data) => {
+        const list = addKeysToList(data.content, "activity", "date");
+        setActivities([...activities, ...list]);
+        setTotal(data.total);
+      })
+      .catch((error) => notification.error({ message: error }));
   }, [projectId, page]);
 
   return (

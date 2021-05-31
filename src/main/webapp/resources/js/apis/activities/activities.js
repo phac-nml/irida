@@ -14,7 +14,11 @@ const BASE_URL = `/ajax/activities`;
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function getProjectActivities({ projectId, page = 0 }) {
-  return axios
-    .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)
-    .then(({ data }) => data);
+  try {
+    return axios
+      .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)
+      .then(({ data }) => data);
+  } catch (e) {
+    return Promise.reject(i18n("ProjectActivity.error"));
+  }
 }
