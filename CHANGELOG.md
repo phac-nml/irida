@@ -3,6 +3,7 @@ Changes
 
 21.05 to 21.09
 --------------
+* [UI]: Update of Project Activities page to use Ant Design.
 
 21.01 to 21.05
 --------------
