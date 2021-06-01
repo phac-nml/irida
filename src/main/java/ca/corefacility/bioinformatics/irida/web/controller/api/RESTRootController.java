@@ -147,8 +147,7 @@ public class RESTRootController {
 	/**
 	 * A convenient class for returning the api version.
 	 */
-
-	private class ResponseVersion {
+	public class ResponseVersion {
 		private String version;
 
 		public ResponseVersion(String version) {
