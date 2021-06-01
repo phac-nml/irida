@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,7 +84,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "listAllProjects", summary = "Lists all projects", description = "Lists all projects.", tags = "projects")
-	@RequestMapping(method = RequestMethod.GET)
 	@Override
 	public ResponseResource<ResourceCollection<Project>> listAllResources() {
 		return super.listAllResources();
@@ -95,7 +93,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getProject", summary = "Find a project", description = "Get the project given the identifier.", tags = "projects")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
 	public ResponseResource<Project> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -105,7 +102,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "createProject", summary = "Create a new project", description = "Create a new project.", tags = "projects")
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<Project> create(@RequestBody Project resource, HttpServletResponse response) {
 		return super.create(resource, response);
@@ -115,7 +111,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteProject", summary = "Delete a project", description = "Delete a project given the identifier.", tags = "projects")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 		return super.delete(identifier);
@@ -125,8 +120,6 @@ public class RESTProjectsController extends RESTGenericController<Project> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateProject", summary = "Update a project", description = "Update a project", tags = "projects")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {

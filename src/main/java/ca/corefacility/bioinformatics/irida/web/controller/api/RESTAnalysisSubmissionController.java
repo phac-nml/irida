@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,7 +89,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "listAllAnalysisSubmissions", summary = "Lists all analysis submissions", description = "Lists all analysis submissions.", tags = "analysisSubmissions")
-	@RequestMapping(method = RequestMethod.GET)
 	@Override
 	public ResponseResource<ResourceCollection<AnalysisSubmission>> listAllResources() {
 		return super.listAllResources();
@@ -100,7 +98,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getAnalysisSubmission", summary = "Find an analysis submission", description = "Get the analysis submission given the identifier.", tags = "analysisSubmissions")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
 	public ResponseResource<AnalysisSubmission> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -110,7 +107,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "createAnalysisSubmission", summary = "Create a new analysis submission", description = "Create a new analysis submission.", tags = "analysisSubmissions")
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<AnalysisSubmission> create(@RequestBody AnalysisSubmission resource,
 			HttpServletResponse response) {
@@ -121,7 +117,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteAnalysisSubmission", summary = "Delete an analysis submission", description = "Delete an analysis submission given the identifier.", tags = "analysisSubmissions")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 		return super.delete(identifier);
@@ -131,8 +126,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateAnalysisSubmission", summary = "Update an analysis submission", description = "Update an analysis submission", tags = "analysisSubmissions")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {

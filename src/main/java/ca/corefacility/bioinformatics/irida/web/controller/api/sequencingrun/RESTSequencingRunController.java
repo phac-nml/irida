@@ -58,7 +58,6 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "listAllSequencingRun", summary = "Lists all sequencing runs", description = "Lists all sequencing runs.", tags = "sequencingrun")
-	@RequestMapping(method = RequestMethod.GET)
 	@Override
 	public ResponseResource<ResourceCollection<SequencingRun>> listAllResources() {
 		return super.listAllResources();
@@ -68,7 +67,6 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getSequencingRun", summary = "Find a sequencing run", description = "Get the sequencing run given the identifier.", tags = "sequencingrun")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
 	public ResponseResource<SequencingRun> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -78,7 +76,6 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "createSequencingRun", summary = "Create a new sequencing run", description = "Create a new sequencing run.", tags = "sequencingrun")
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<SequencingRun> create(@RequestBody SequencingRun resource, HttpServletResponse response) {
 		return super.create(resource, response);
@@ -88,7 +85,6 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteSequencingRun", summary = "Delete a sequencing run", description = "Delete a sequencing run given the identifier.", tags = "sequencingrun")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 		return super.delete(identifier);
@@ -98,8 +94,6 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateSequencingRun", summary = "Update a sequencing run", description = "Update a sequencing run", tags = "sequencingrun")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {

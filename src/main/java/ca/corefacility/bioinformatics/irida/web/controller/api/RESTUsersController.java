@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -99,7 +98,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "listAllUsers", summary = "Lists all users", description = "Lists all users.", tags = "users")
-	@RequestMapping(method = RequestMethod.GET)
 	@Override
 	public ResponseResource<ResourceCollection<User>> listAllResources() {
 		return super.listAllResources();
@@ -109,7 +107,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "getUser", summary = "Find a user", description = "Get the user given the identifier.", tags = "users")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	@Override
 	public ResponseResource<User> getResource(@PathVariable Long identifier) {
 		return super.getResource(identifier);
@@ -119,7 +116,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "createUser", summary = "Create a new user", description = "Create a new user.", tags = "users")
-	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<User> create(@RequestBody User resource, HttpServletResponse response) {
 		return super.create(resource, response);
@@ -129,7 +125,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "deleteUser", summary = "Delete a user", description = "Delete a user given the identifier.", tags = "users")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	@Override
 	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
 		return super.delete(identifier);
@@ -139,8 +134,6 @@ public class RESTUsersController extends RESTGenericController<User> {
 	 * {@inheritDoc}
 	 */
 	@Operation(operationId = "updateUser", summary = "Update a user", description = "Update a user", tags = "users")
-	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
-			MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {
