@@ -93,10 +93,6 @@ public class ProjectsControllerTest {
 				getUsersForProjectByRole());
 		when(projectService.getProjectsForUser(user)).thenReturn(projects);
 		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
-
-		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
-				controller.getProjectSpecificPage(projectId, model, principal));
-
 	}
 
 	@Test
@@ -119,7 +115,7 @@ public class ProjectsControllerTest {
 		when(projectService.update(any(Project.class))).thenReturn(project);
 		String page = controller.createNewProject(model, new Project(projectName), false, false);
 		assertEquals("Returns the correct redirect to the collaborators page",
-				"redirect:/projects/" + projectId + "/settings", page);
+				"redirect:/projects/" + projectId + "/settings/details", page);
 	}
 
 	@Test
