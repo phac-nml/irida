@@ -786,8 +786,4 @@ public class RESTSampleSequenceFilesController {
 		return sequencingObject;
 	}
 
-	private class SequenceFileSchema {
-		public SequenceFile resource;
-	}
-
 }
