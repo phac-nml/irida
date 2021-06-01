@@ -39,7 +39,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	/**
 	 * name of objects sent back to the client for all generic resources.
 	 */
-	public static final String RESOURCE_NAME = "response";
+	public static final String RESOURCE_NAME = "responseResource";
 	/**
 	 * name of related resources sent back to the client.
 	 */
