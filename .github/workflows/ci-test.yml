@@ -91,7 +91,7 @@ jobs:
       - name: Build Javadoc
         run: mvn clean site
       - name: Build Open API
-        run: mvn verify -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false
+        run: mvn verify -DskipTests=true -Dliquibase.update.database.schema=false
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
 

@@ -31,6 +31,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 		@Tag(name = "sequencingrun", description = "Everything about sequencing runs"),
 		@Tag(name = "users", description = "Everything about users") }, security = @SecurityRequirement(name = "oauth2", scopes = {
 		"read", "write" }))
-@Profile({ "swagger" })
 public class OpenAPIConfig implements WebMvcConfigurer {
 }
