@@ -37,7 +37,7 @@ import com.google.common.net.HttpHeaders;
 public abstract class RESTGenericController<Type extends IridaResourceSupport & IridaThing & Comparable<Type>> {
 
 	/**
-	 * name of objects sent back to the client for all generic resources.
+	 * name of the objects used to render the view classes.
 	 */
 	public static final String RESOURCE_NAME = "responseResource";
 	/**
