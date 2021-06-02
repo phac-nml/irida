@@ -69,12 +69,6 @@ jobs:
 
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
-    env:
-      MYSQL_PORT: 3800
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-      MYSQL_DATABASE: irida_integration_test
-      MYSQL_HOST: 127.0.0.1
     steps:
       - uses: actions/checkout@v2 #Checkout the project from git
       - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
@@ -97,7 +91,7 @@ jobs:
       - name: Build Javadoc
         run: mvn clean site
       - name: Build Open API
-        run: mvn verify -DskipTests=true -Dliquibase.update.database.schema=false
+        run: mvn verify -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
 
