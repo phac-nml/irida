@@ -306,7 +306,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 */
 	@Operation(operationId = "getAnalysisOutputFile", summary = "Find the analysis output file of an analysis submission", description = "Get the analysis output file for the given analysis submission.", tags = "analysisSubmissions")
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", method = RequestMethod.GET)
-	@ApiResponse(responseCode = "200", description = "Returns the analysis output file.", content = @Content(schema = @Schema(implementation = AnalysisOutputFileSchema.class)))
 	public ResponseResource<AnalysisOutputFile> getAnalysisOutputFile(@PathVariable Long submissionId,
 			@PathVariable Long fileId) {
 
@@ -367,32 +366,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 				resource.getId())).withRel(INPUT_FILES_PAIRED_REL));
 
 		return links;
-	}
-
-	/**
-	 * A convenient class for describing the analysis output file schema for an api response.
-	 */
-	public class AnalysisOutputFileSchema {
-
-		public ResourceSchema resource;
-
-		/**
-		 * A convenient class for describing the resource schema for an api response.
-		 */
-		public class ResourceSchema {
-			public Long identifier;
-			public String file;
-			public Date createdDate;
-			public Date modifiedDate;
-			public String uploadSha256;
-			public String fileName;
-			public String label;
-			public String executionManagerFileId;
-			public Long fileRevisionNumber;
-			public byte[] bytesForFile;
-			public List<Link> links;
-		}
-
 	}
 
 }
