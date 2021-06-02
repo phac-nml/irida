@@ -5,9 +5,12 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
@@ -99,5 +102,15 @@ public class CartAjaxController {
 	@GetMapping("/samples")
 	public ResponseEntity<List<CartProjectModel>> getCartSamplesForProjects(@RequestParam List<Long> ids) {
 		return ResponseEntity.ok(service.getSamplesForProjects(ids));
+	}
+
+	@RequestMapping("/all-samples")
+	public ResponseEntity<AjaxResponse> getAllSamplesInCart() {
+		try {
+			return ResponseEntity.ok(service.getCartSamplesForNewProject());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new AjaxErrorResponse("UNKNOWN ERROR"));
+		}
 	}
 }

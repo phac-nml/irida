@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRe
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
  * Controller for handling all ajax requests for Projects.
@@ -21,12 +22,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 @RestController
 @RequestMapping("/ajax/projects")
 public class ProjectsAjaxController {
-	private final UIProjectsService UIProjectsService;
+	private final UIProjectsService projectsService;
+	private final UISampleService sampleService;
 
 
 	@Autowired
-	public ProjectsAjaxController(UIProjectsService UIProjectsService) {
-		this.UIProjectsService = UIProjectsService;
+	public ProjectsAjaxController(UIProjectsService UIProjectsService, UISampleService sampleService) {
+		this.projectsService = UIProjectsService;
+		this.sampleService = sampleService;
 	}
 
 	/**
@@ -39,7 +42,7 @@ public class ProjectsAjaxController {
 	@RequestMapping
 	public ResponseEntity<TableResponse> getPagedProjectsForUser(@RequestBody TableRequest tableRequest,
 			@RequestParam Boolean admin) {
-		return ResponseEntity.ok(UIProjectsService.getPagedProjects(tableRequest, admin));
+		return ResponseEntity.ok(projectsService.getPagedProjects(tableRequest, admin));
 	}
 
 	/**
@@ -50,6 +53,6 @@ public class ProjectsAjaxController {
 	 */
 	@RequestMapping("/roles")
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
-		return ResponseEntity.ok(UIProjectsService.getProjectRoles(locale));
+		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
 	}
 }

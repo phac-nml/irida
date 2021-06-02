@@ -1,9 +1,23 @@
-import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { cartUpdated } from "../../utilities/events-utilities";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { notification } from "antd";
+import axios from "axios";
+import { cartUpdated } from "../../utilities/events-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
+
+export const cartApi = createApi({
+  reducerPath: `cartApi`,
+  baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
+  tagTypes: ["CartSample"],
+  endpoints: (build) => ({
+    getCartSamples: build.query({
+      url: "/samples",
+    }),
+  }),
+});
+
+export const { useGetCartSamplesQuery } = cartApi;
 
 const updateCart = (data) => {
   data.notifications.forEach((n) => notification[n.type](n));

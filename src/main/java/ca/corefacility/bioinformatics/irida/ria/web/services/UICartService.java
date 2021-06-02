@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -12,12 +14,14 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.ErrorNotification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.Notification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.SuccessNotification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.WarnNotification;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -29,14 +33,16 @@ public class UICartService {
 	private final Cart cart;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final UpdateSamplePermission updateSamplePermission;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public UICartService(Cart cart, ProjectService projectService, SampleService sampleService,
-			MessageSource messageSource) {
+			UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.cart = cart;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.updateSamplePermission = updateSamplePermission;
 		this.messageSource = messageSource;
 	}
 
@@ -248,5 +254,26 @@ public class UICartService {
 	 */
 	public Long isSampleInCart(Long sampleId) {
 		return cart.isSampleInCart(sampleId);
+	}
+
+	public CartSamples getCartSamplesForNewProject() {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+
+		Map<Project, List<Sample>> cart = getFullCart();
+		List<Sample> unlocked = new ArrayList<>();
+		List<Sample> locked = new ArrayList<>();
+
+		for (List<Sample> samples : cart.values()) {
+			for (Sample sample : samples) {
+				if (updateSamplePermission.isAllowed(authentication, sample)) {
+					unlocked.add(sample);
+				} else {
+					locked.add(sample);
+				}
+			}
+		}
+
+		return new CartSamples(locked, unlocked);
 	}
 }
