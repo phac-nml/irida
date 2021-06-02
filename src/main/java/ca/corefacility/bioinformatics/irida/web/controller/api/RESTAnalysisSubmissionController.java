@@ -26,12 +26,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
