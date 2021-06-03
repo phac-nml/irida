@@ -77,7 +77,8 @@ jobs:
           MYSQL_DB: irida_integration_test
           MYSQL_USER: test
           MYSQL_PASSWORD: test
-        ports: 3306
+        ports:
+          - 3306
     steps:
       - uses: actions/checkout@v2 #Checkout the project from git
       - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
