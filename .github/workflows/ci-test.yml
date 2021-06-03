@@ -108,8 +108,6 @@ jobs:
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
       - name: Build Open API
-        run: |
-          sudo systemctl start mysql.service
-          mvn verify -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
+        run: mvn verify -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
