@@ -4,7 +4,10 @@ Changes
 21.05 to 21.09
 --------------
 
+* [Developer]: Added pipeline plugin path configuration option
 * [UI]: Update of Project Activities page to use Ant Design.
+* [UI]: Fixes bug where the page title on Remote IRIDA Connections page was not displaying properly.
+* [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
 
 21.01 to 21.05
 --------------
@@ -35,7 +38,6 @@ Changes
 * [Developer]: Removing many unnecessary files from the `.war` file build to reduce build size.
 * [UI]: Fixed issue where analyses page was not displaying for some IRIDA instances due to deprecated analysis states in
   their audit tables.
-* [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
 
 20.09 to 21.01
 --------------
@@ -304,6 +306,7 @@ Changes
 [Admin/Documentation]: Added
 a [Troubleshooting](https://irida.corefacility.ca/documentation/user/administrator/troubleshooting/pipelines/) guide for
 troubleshooting common problems with IRIDA Pipelines/Galaxy.
+
 * [Developer]: Split `ProjectSettingsController` into smaller functional controllers and moved them to a `.settings`
   subpackage.
 * [UI/Developer]: Allowing any analysis pipeline to be run automatically on data upload.
