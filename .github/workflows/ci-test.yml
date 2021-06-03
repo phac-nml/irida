@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       mysql:
-        image:mysql:5.7
+        image: mysql:5.7
         env:
           MYSQL_HOST: 127.0.0.1
           MYSQL_DB: irida_integration_test
