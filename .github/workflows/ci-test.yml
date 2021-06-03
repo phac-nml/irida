@@ -109,7 +109,7 @@ jobs:
           mysql password: ${{ env.MYSQL_PASSWORD }}
       - name: Build Open API
         run: |
-          mysql -h ${{ env.MYSQL_HOST }} -P ${{ env.MYSQL_PORT }} -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} ${{ env.MYSQL_DATABASE }} < /src/main/webapp/chromedriver/ci/irida_latest.sql
+          mysql -h ${{ env.MYSQL_HOST }} -P ${{ env.MYSQL_PORT }} -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} ${{ env.MYSQL_DATABASE }} < /ci/irida_latest.sql
           mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
