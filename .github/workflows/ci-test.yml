@@ -99,14 +99,14 @@ jobs:
       - name: Build Javadoc
         run: mvn clean site
       - uses: mirromutth/mysql-action@v1.1
-          with:
-            host port: ${{ env.MYSQL_PORT }}
-            character set server: 'utf8'
-            collation server: 'utf8_general_ci'
-            mysql version: '5.7'
-            mysql database: ${{ env.MYSQL_DATABASE }}
-            mysql user: ${{ env.MYSQL_USER }}
-            mysql password: ${{ env.MYSQL_PASSWORD }}
+        with:
+          host port: ${{ env.MYSQL_PORT }}
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '5.7'
+          mysql database: ${{ env.MYSQL_DATABASE }}
+          mysql user: ${{ env.MYSQL_USER }}
+          mysql password: ${{ env.MYSQL_PASSWORD }}
       - name: Build Open API
         run: mvn verify -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
       - name: Build Jekyll Site
