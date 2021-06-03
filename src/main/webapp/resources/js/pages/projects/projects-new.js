@@ -15,6 +15,7 @@ import {
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
+import { useGetCartSamplesQuery } from "../../apis/cart/cart";
 import { TAXONOMY } from "../../apis/ontology/taxonomy";
 import { OntologySelect } from "../../components/ontology";
 import { SPACE_LG } from "../../styles/spacing";
@@ -159,24 +160,7 @@ function NewProjectDetails() {
   );
 }
 
-function NewProjectSamples() {
-  const [unlocked, setUnlocked] = React.useState();
-  const [locked, setLocked] = React.useState();
-  const [selected, setSelected] = React.useState([]);
-
-  React.useEffect(() => {
-    // Since we are here, there must be samples
-    fetch(`/ajax/projects/new/samples`)
-      .then((response) => response.json())
-      .then((data) => {
-        setUnlocked(data.unlocked);
-        setLocked(data.locked);
-        setSelected(
-          data.unlocked.map((sample) => `sample-${sample.identifier}`)
-        );
-      });
-  }, []);
-
+function NewProjectSamples({ samples, seletcted, setSelected }) {
   return (
     <div>
       <Table
@@ -187,7 +171,7 @@ function NewProjectSamples() {
         }}
         scroll={{ y: 200 }}
         pagination={false}
-        dataSource={unlocked}
+        dataSource={samples.unlocked}
         rowKey={(sample) => `sample-${sample.identifier}`}
         columns={[
           { title: "Name", dataIndex: "label" },
@@ -203,50 +187,8 @@ function NewProjectSamples() {
   );
 }
 
-function NewProjectWithSteps() {
-  const [step, setStep] = React.useState(0);
-
-  return (
-    <Row>
-      <Col sm={10} md={6}>
-        <Steps
-          progressDot
-          current={step}
-          style={{ marginBottom: SPACE_LG }}
-          direction={"vertical"}
-        >
-          {steps.map((item) => (
-            <Steps.Step key={item.title} title={item.title} />
-          ))}
-        </Steps>
-      </Col>
-      <Col sm={14} md={18}>
-        {steps[step].content}
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Button disabled={step === 0} onClick={() => setStep(step - 1)}>
-            PREVIOUS
-          </Button>
-          <Button
-            disabled={step === steps.length - 1}
-            onClick={() => setStep(step + 1)}
-          >
-            Next
-          </Button>
-          {step === steps.length - 1 && (
-            <Form.Item noStyle>
-              <Button type="primary" htmlType="submit">
-                {i18n("projects.create.form.create")}
-              </Button>
-            </Form.Item>
-          )}
-        </div>
-      </Col>
-    </Row>
-  );
-}
-
 function NewProjectLayout() {
-  const [hasCart, setHasCart] = React.useState(false);
+  const { data: samples } = useGetCartSamplesQuery();
   const [step, setStep] = React.useState(0);
 
   const [form] = Form.useForm();
@@ -296,15 +238,10 @@ function NewProjectLayout() {
   return (
     <Layout>
       <Row justify="center">
-        <Col xs={23} md={18} xl={12} xxl={8}>
+        <Col xs={23} md={20} xl={16} xxl={8}>
           <Content style={{ marginTop: SPACE_LG }}>
             <Card>
-              <Form
-                layout={"vertical"}
-                validateMessages={validateMessages}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-              >
+              <Row>
                 <Col sm={10} md={6}>
                   <Steps
                     progressDot
@@ -318,32 +255,42 @@ function NewProjectLayout() {
                   </Steps>
                 </Col>
                 <Col sm={14} md={18}>
-                  {steps[step].content}
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
+                  <Form
+                    layout={"vertical"}
+                    validateMessages={validateMessages}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
                   >
-                    <Button
-                      disabled={step === 0}
-                      onClick={() => setStep(step - 1)}
+                    {steps[step].content}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
                     >
-                      PREVIOUS
-                    </Button>
-                    <Button
-                      disabled={step === steps.length - 1}
-                      onClick={() => setStep(step + 1)}
-                    >
-                      Next
-                    </Button>
-                    {step === steps.length - 1 && (
-                      <Form.Item noStyle>
-                        <Button type="primary" htmlType="submit">
-                          {i18n("projects.create.form.create")}
-                        </Button>
-                      </Form.Item>
-                    )}
-                  </div>
+                      <Button
+                        disabled={step === 0}
+                        onClick={() => setStep(step - 1)}
+                      >
+                        PREVIOUS
+                      </Button>
+                      <Button
+                        disabled={step === steps.length - 1}
+                        onClick={() => setStep(step + 1)}
+                      >
+                        Next
+                      </Button>
+                      {step === steps.length - 1 && (
+                        <Form.Item noStyle>
+                          <Button type="primary" htmlType="submit">
+                            {i18n("projects.create.form.create")}
+                          </Button>
+                        </Form.Item>
+                      )}
+                    </div>
+                  </Form>
                 </Col>
-              </Form>
+              </Row>
             </Card>
           </Content>
         </Col>

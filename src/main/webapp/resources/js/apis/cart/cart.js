@@ -9,10 +9,10 @@ const AJAX_URL = setBaseUrl(`/ajax/cart`);
 export const cartApi = createApi({
   reducerPath: `cartApi`,
   baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
-  tagTypes: ["CartSample"],
+  tagTypes: ["Cart"],
   endpoints: (build) => ({
     getCartSamples: build.query({
-      url: "/samples",
+      query: () => ({ url: "/all-samples" }),
     }),
   }),
 });
