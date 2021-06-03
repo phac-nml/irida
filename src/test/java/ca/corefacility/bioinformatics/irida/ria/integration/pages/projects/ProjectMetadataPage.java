@@ -46,7 +46,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public static ProjectMetadataPage goTo(WebDriver driver) {
-		get(driver, "/projects/1/metadata/fields");
+		get(driver, "/projects/1/settings/metadata/fields");
 		return PageFactory.initElements(driver, ProjectMetadataPage.class);
 	}
 
@@ -92,7 +92,7 @@ public class ProjectMetadataPage extends AbstractPage {
 				.sendKeys(description);
 		createTemplateModal.findElement(By.className("t-create-modal-ok"))
 				.click();
-		wait.until(ExpectedConditions.urlContains("/templates"));
+		wait.until(ExpectedConditions.urlContains("/metadata/templates"));
 	}
 
 	public void gotoTemplate(String name) {
@@ -102,7 +102,7 @@ public class ProjectMetadataPage extends AbstractPage {
 			if (element.getText()
 					.equalsIgnoreCase(name)) {
 				element.click();
-				wait.until(ExpectedConditions.urlContains("/templates/"));
+				wait.until(ExpectedConditions.urlContains("/metadata/templates/"));
 				break;
 			}
 		}

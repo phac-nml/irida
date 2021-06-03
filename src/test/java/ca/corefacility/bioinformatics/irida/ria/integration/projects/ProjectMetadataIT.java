@@ -46,7 +46,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		page.selectMetadataField("Symptoms");
 		page.selectMetadataField("Exposures");
 		page.createNewTemplate("Special Template", "Long description");
-		Assert.assertTrue("Should be on a template specific page", driver().getCurrentUrl().matches("(.*)/templates/\\d+"));
+		Assert.assertTrue("Should be on a template specific page", driver().getCurrentUrl().matches("(.*)/metadata/templates/\\d+"));
 		final String newTemplateName = "An awesome name";
 		final String currentName = page.getTemplateName();
 		page.editTemplateName(newTemplateName);

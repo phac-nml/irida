@@ -33,7 +33,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 	}
 
 	public static ProjectUserGroupsPage goToPage(WebDriver driver, Long projectId) {
-		get(driver, "projects/" + projectId + "/settings/user-groups");
+		get(driver, "projects/" + projectId + "/settings/groups");
 		table = AntTable.getTable(driver);
 		return PageFactory.initElements(driver, ProjectUserGroupsPage.class);
 	}

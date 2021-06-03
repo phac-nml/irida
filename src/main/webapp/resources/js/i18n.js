@@ -27,7 +27,7 @@ const translations = Object.assign({}, ...window.translations);
  * @param {string} key
  * @returns {*}
  */
-const getTranslation = key => {
+const getTranslation = (key) => {
   if (translations && translations[key]) return translations[key];
   throw new Error(`No internationalization string for key: ${key}`);
 };

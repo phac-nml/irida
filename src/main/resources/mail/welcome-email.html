@@ -10,7 +10,7 @@
 <body>
 	<h1 th:text="#{email.welcome.subject}">_Welcome to the IRIDA Platform_</h1>
 	<p th:text="#{email.welcome.createdBy(${creator.label})}">_An account has been created for you by Some Guy._</p>
-	<p><span th:text="#{email.welcome.homepagedescription}">_The IRIDA Platform home page can be found at_</span> 
+	<p><span th:text="#{email.welcome.homepagedescription}">_The IRIDA Platform home page can be found at_</span>
 	<a href="#" th:href="${serverURL}" th:text="${serverURL}">_http://localhost:8080_</a></p>
 <div>
 	<p th:text="#{email.welcome.infoheader}">_Your account has been created with the following information:_</p>
