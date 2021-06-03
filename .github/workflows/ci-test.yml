@@ -74,7 +74,7 @@ jobs:
       MYSQL_PORT: 3800
       MYSQL_USER: test
       MYSQL_PASSWORD: test
-      MYSQL_DATABASE: irida_integration_test
+      MYSQL_DATABASE: irida_test
       MYSQL_HOST: 127.0.0.1
 
     steps:
@@ -108,6 +108,6 @@ jobs:
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
       - name: Build Open API
-        run: mvn verify -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
+        run: mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
