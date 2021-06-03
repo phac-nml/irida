@@ -1,6 +1,10 @@
 Changes
 =======
 
+21.05 to 21.09
+--------------
+* [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
+
 21.01 to 21.05
 --------------
 * [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)
