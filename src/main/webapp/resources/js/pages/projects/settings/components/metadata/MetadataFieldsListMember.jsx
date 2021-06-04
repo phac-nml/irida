@@ -1,6 +1,5 @@
 import { Empty, Space, Table } from "antd";
 import React from "react";
-import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 
 /**
  * Component for showing metadata fields associated with a project.
