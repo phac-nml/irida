@@ -162,8 +162,12 @@ test_galaxy_internal() {
 
 test_doc() {
 	mvn clean site $@
-	exit_code=$?
-	return $exit_code
+	javadoc_result_code=$?
+	mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
+  openapi_result_code=$?
+  test -f doc/swagger-ui/open-api.json
+  file_result_code=$?
+	return $((javadoc_result_code + openapi_result_code + file_result_code))
 }
 
 test_all() {

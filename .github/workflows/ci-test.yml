@@ -30,7 +30,7 @@ jobs:
       fail-fast: false  #Setting so that if one of the test suites fail, the other will continue
       matrix:
         #The list of test suites to run
-        suite: [ 'service_testing', 'rest_testing', 'ui_testing', 'galaxy_testing', 'galaxy_pipeline_testing' ]
+        suite: [ 'service_testing', 'rest_testing', 'ui_testing', 'galaxy_testing', 'galaxy_pipeline_testing', 'doc_testing' ]
 
     steps:
       - uses: actions/checkout@v2 #Checkout the project from git
@@ -65,7 +65,7 @@ jobs:
       - name: Install libraries # Install our non-maven backed dependencies
         run: pushd lib; ./install-libs.sh; popd
       - name: Run tests with Maven # Run the test suite
-        run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }}  --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
+        run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
 
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
@@ -98,22 +98,5 @@ jobs:
         run: pushd doc; bundle install; popd
       - name: Build Javadoc
         run: mvn clean site
-      - uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: ${{ env.MYSQL_PORT }}
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mysql version: '5.7'
-          mysql database: ${{ env.MYSQL_DATABASE }}
-          mysql user: ${{ env.MYSQL_USER }}
-          mysql password: ${{ env.MYSQL_PASSWORD }}
-      - name: Remove only_full_group_by from sql_mode
-        run: mysql -h ${{ env.MYSQL_HOST }} -P ${{ env.MYSQL_PORT }} -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} ${{ env.MYSQL_DATABASE }} -e "select @@sql_mode;"
-      - name: Restart MySQL
-        run: sudo service mysql restart
-      - name: Build Open API
-        run: mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
-      - name: Verify Open API file generated
-        run: test -f doc/swagger-ui/open-api.json
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
