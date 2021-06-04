@@ -70,13 +70,6 @@ jobs:
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
 
-    env:
-      MYSQL_PORT: 3800
-      MYSQL_USER: test
-      MYSQL_PASSWORD: test
-      MYSQL_DATABASE: irida_test
-      MYSQL_HOST: 127.0.0.1
-
     steps:
       - uses: actions/checkout@v2 #Checkout the project from git
       - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
