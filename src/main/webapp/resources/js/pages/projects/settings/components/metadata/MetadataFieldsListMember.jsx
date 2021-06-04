@@ -1,14 +1,18 @@
 import { Empty, Space, Table } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 
 /**
  * Component for showing metadata fields associated with a project.
  *
+ * @param {number} projectId - Identifier for the current project
  * @returns {JSX.Element|string}
  */
-export function MetadataFieldsListMember({ projectId }) {
-  const { fields, loading } = useSelector((state) => state.fields);
+export default function MetadataFieldsListMember({ projectId }) {
+  const { data: fields, isLoading } = useGetMketadataFieldsForProjectQuery(
+    projectId
+  );
+
   const columns = [
     {
       title: i18n("MetadataField.label"),
@@ -26,7 +30,7 @@ export function MetadataFieldsListMember({ projectId }) {
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Table
-        loading={loading}
+        loading={isLoading}
         pagination={false}
         rowClassName={() => `t-m-field`}
         locale={{

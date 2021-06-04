@@ -1,44 +1,44 @@
-import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Empty, notification, Select, Space, Table } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { HelpPopover } from "../../../components/popovers";
-import { useTableSelect } from "../../../hooks";
 import {
-  fetchFieldsRestrictions,
-  updateProjectFieldRestriction,
-} from "../redux/fieldsSlice";
+  getMetadataRestrictions,
+  useGetMetadataFieldsForProjectQuery,
+  useUpdateProjectMetadataFieldRestrictionMutation,
+} from "../../../../../apis/metadata/field";
+import { HelpPopover } from "../../../../../components/popovers";
+import { useTableSelect } from "../../../../../hooks";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
  * Component for showing metadata fields associated with a project.
  *
+ * @param {number} projectId - Identifier for the current project
  * @returns {JSX.Element|string}
  */
-export function MetadataFieldsListManager({ projectId }) {
-  const dispatch = useDispatch();
-  const { canManage } = useSelector((state) => state.project);
-  const { fields, restrictions, loading } = useSelector(
-    (state) => state.fields
+export default function MetadataFieldsListManager({ projectId }) {
+  const [restrictions, setRestrictions] = React.useState([]);
+  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
+    projectId
   );
+  const [
+    updateProjectMetadataFieldRestriction,
+  ] = useUpdateProjectMetadataFieldRestrictionMutation();
 
   const [{ selected, selectedItems }, { setSelected }] = useTableSelect(fields);
 
-  const changeFieldRestriction = (field, restriction) => {
-    dispatch(
-      updateProjectFieldRestriction({
-        projectId,
-        fieldId: field.id,
-        projectRole: restriction,
-      })
-    )
-      .then(unwrapResult)
-      .then(({ message }) => notification.success({ message }));
-  };
-
   React.useEffect(() => {
-    dispatch(fetchFieldsRestrictions());
-  }, [dispatch]);
+    getMetadataRestrictions()
+      .then(setRestrictions)
+      .catch((message) => notification.error(message));
+  }, []);
+
+  const changeFieldRestriction = (field, restriction) => {
+    updateProjectMetadataFieldRestriction({
+      projectId,
+      fieldId: field.id,
+      projectRole: restriction,
+    }).then(({ data }) => notification.success({ message: data.message }));
+  };
 
   const columns = [
     {
@@ -81,27 +81,21 @@ export function MetadataFieldsListManager({ projectId }) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      {canManage && (
-        <Space>
-          <MetadataTemplateCreate fields={selectedItems} projectId={projectId}>
-            <Button
-              className="t-create-template"
-              disabled={selected.length === 0}
-            >
-              {i18n("CreateMetadataTemplate.title")}
-            </Button>
-          </MetadataTemplateCreate>
-        </Space>
-      )}
+      <Space>
+        <MetadataTemplateCreate fields={selectedItems} projectId={projectId}>
+          <Button
+            className="t-create-template"
+            disabled={selected.length === 0}
+          >
+            {i18n("CreateMetadataTemplate.title")}
+          </Button>
+        </MetadataTemplateCreate>
+      </Space>
       <Table
-        loading={loading}
+        loading={isLoading}
         pagination={false}
         rowClassName={() => `t-m-field`}
-        rowSelection={
-          canManage
-            ? { selectedRowKeys: selected, onChange: setSelected }
-            : false
-        }
+        rowSelection={{ selectedRowKeys: selected, onChange: setSelected }}
         locale={{
           emptyText: (
             <Empty

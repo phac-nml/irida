@@ -24,9 +24,15 @@ const ProjectGroups = React.lazy(() =>
 const MetadataLayout = React.lazy(() =>
   import("./components/metadata/MetadataLayout")
 );
-const MetadataFields = React.lazy(() =>
-  import("./components/metadata/MetadataFields")
+
+const MetadataFieldsListManager = React.lazy(() =>
+  import("./components/metadata/MetadataFieldsListManager")
 );
+
+const MetadataFieldsListMember = React.lazy(() =>
+  import("./components/metadata/MetadataFieldsListMember")
+);
+
 const MetadataTemplateManager = React.lazy(() =>
   import("./components/metadata/MetadataTemplateManager")
 );
@@ -104,12 +110,17 @@ const ProjectSettings = (props) => {
                     <ProjectMembers path="/members" />
                     <ProjectGroups path="/groups" />
                     <MetadataLayout path="/metadata">
-                      <MetadataFields path="/fields" />
                       <MetadataTemplates path="/templates" />
                       {project.canManage ? (
-                        <MetadataTemplateManager path="/templates/:id" />
+                        <>
+                          <MetadataFieldsListManager path="/fields" />
+                          <MetadataTemplateManager path="/templates/:id" />
+                        </>
                       ) : (
-                        <MetadataTemplateMember path="/templates/:id" />
+                        <>
+                          <MetadataFieldsListMember path="/fields" />
+                          <MetadataTemplateMember path="/templates/:id" />
+                        </>
                       )}
                     </MetadataLayout>
                     <AssociatedProjects path="/associated" />

@@ -25,53 +25,39 @@ export const fieldsApi = createApi({
         url: "",
         params: { projectId },
       }),
-      provideTags: (result) =>
-        result
-          ? result.map(({ identifier }) => ({
-              type: "MetadataField",
-              id: identifier,
-            }))
-          : ["MetadataField"],
+      provides: (result) => [
+        ...result.map(({ id }) => ({ type: "MetadataFields", id })),
+        { type: "MetadataFields", id: "LIST" },
+      ],
       transformResponse(response) {
         return addKeysToList(response, "field", "id");
       },
     }),
+    updateProjectMetadataFieldRestriction: build.mutation({
+      query: ({ projectId, fieldId, projectRole }) => ({
+        url: `/restrictions`,
+        method: `PATCH`,
+        params: { projectId, fieldId, projectRole },
+      }),
+      invalidatesTags: [{ type: "MetadataFields", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useGetMetadataFieldsForProjectQuery } = fieldsApi;
+export const {
+  useGetMetadataFieldsForProjectQuery,
+  useUpdateProjectMetadataFieldRestrictionMutation,
+} = fieldsApi;
 
 /**
- * Get a list of a field restrictions
+ * Get a list of field restrictions
  * @returns {Promise<any>}
  */
 export async function getMetadataRestrictions() {
   try {
-    const { data } = await axios.get(`${URL}/restrictions`);
+    const { data } = await axios.get(`${BASE_URL}/restrictions`);
     return data;
   } catch (e) {
-    return Promise.reject(e.response.data);
-  }
-}
-
-/**
- * Update a metadata field restriction on a field within a project
- * @param {number} projectId - identifier for a project
- * @param {number} fieldId - identifier for a metadata field
- * @param {string} projectRole - role to update the field to
- * @returns {Promise<any>}
- */
-export async function updateProjectMetadataFieldRestriction({
-  projectId,
-  fieldId,
-  projectRole,
-}) {
-  try {
-    const { data } = await axios.patch(
-      `${URL}/restrictions?projectId=${projectId}&fieldId=${fieldId}&projectRole=${projectRole}`
-    );
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data);
+    return Promise.reject(e.response.data.message);
   }
 }
