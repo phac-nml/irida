@@ -167,7 +167,7 @@ test_doc() {
   openapi_result_code=$?
   test -f doc/swagger-ui/open-api.json
   file_result_code=$?
-	return $(javadoc_result_code + openapi_result_code + file_result_code)
+	return $((javadoc_result_code + openapi_result_code + file_result_code))
 }
 
 test_all() {
