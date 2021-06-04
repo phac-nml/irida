@@ -107,6 +107,8 @@ jobs:
           mysql database: ${{ env.MYSQL_DATABASE }}
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
+      - name: Build Open API
+        run: mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
       - name: "Verify Open API file generated"
         run: test -f doc/swagger-ui/open-api.json
       - name: Build Jekyll Site
