@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>21.05-SNAPSHOT</version>
+	<version>21.09-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -915,7 +915,12 @@
 				<version>${maven.war.plugin.version}</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<packagingExcludes>node_modules/**/*</packagingExcludes>
+					<packagingExcludes>
+						node_modules/,
+						.yarn/,
+						resources/css/,
+						resources/js/
+					</packagingExcludes>
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>

@@ -2,72 +2,62 @@
  * Class responsible for ajax call for project sample metadata fields.
  */
 import axios from "axios";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const OLD_URL = setBaseUrl(`linelist/fields`);
+const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
 
 /**
- * @deprecated - this is currently being used on the linelist page.
- * // TODO: remove once line list page refactor is complete.
- * Get all the MetadataTemplateFields belonging to the templates withing a
- * project.These will be the table headers.
- * @param {number} projectId
- * @returns {Promise}
+ * Redux API for metadata fields.
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getMetadataFieldsForProject: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getMetadataFieldsForProject: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
-export function fetchMetadataFields(projectId) {
-  return axios({
-    method: "get",
-    url: `${OLD_URL}?projectId=${projectId}`,
-  });
-}
+export const fieldsApi = createApi({
+  reducerPath: `fieldsApi`,
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  tagTypes: ["MetadataFields"],
+  endpoints: (build) => ({
+    /*
+    Get the metadata fields for a specific project.
+     */
+    getMetadataFieldsForProject: build.query({
+      query: (projectId) => ({
+        url: "",
+        params: { projectId },
+      }),
+      provides: (result) => [
+        ...result.map(({ id }) => ({ type: "MetadataFields", id })),
+        { type: "MetadataFields", id: "LIST" },
+      ],
+      transformResponse(response) {
+        return addKeysToList(response, "field", "id");
+      },
+    }),
+    updateProjectMetadataFieldRestriction: build.mutation({
+      query: ({ projectId, fieldId, projectRole }) => ({
+        url: `/restrictions`,
+        method: `PATCH`,
+        params: { projectId, fieldId, projectRole },
+      }),
+      invalidatesTags: [{ type: "MetadataFields", id: "LIST" }],
+    }),
+  }),
+});
 
-const URL = setBaseUrl(`/ajax/metadata/fields`);
+export const {
+  useGetMetadataFieldsForProjectQuery,
+  useUpdateProjectMetadataFieldRestrictionMutation,
+} = fieldsApi;
 
 /**
- * Get all metadata fields associated with samples in a given project.
- * @param {number} projectId - identifier for a project
- * @returns {Promise<any>}
- */
-export async function getMetadataFieldsForProject(projectId) {
-  try {
-    const { data } = await axios.get(`${URL}?projectId=${projectId}`);
-    return data;
-  } catch (e) {
-    return e.response.data.message;
-  }
-}
-
-/**
- * Get a list of a field restrictions
+ * Get a list of field restrictions
  * @returns {Promise<any>}
  */
 export async function getMetadataRestrictions() {
   try {
-    const { data } = await axios.get(`${URL}/restrictions`);
+    const { data } = await axios.get(`${BASE_URL}/restrictions`);
     return data;
   } catch (e) {
-    return Promise.reject(e.response.data);
-  }
-}
-
-/**
- * Update a metadata field restriction on a field within a project
- * @param {number} projectId - identifier for a project
- * @param {number} fieldId - identifier for a metadata field
- * @param {string} projectRole - role to update the field to
- * @returns {Promise<any>}
- */
-export async function updateProjectMetadataFieldRestriction({
-  projectId,
-  fieldId,
-  projectRole,
-}) {
-  try {
-    const { data } = await axios.patch(
-      `${URL}/restrictions?projectId=${projectId}&fieldId=${fieldId}&projectRole=${projectRole}`
-    );
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data);
+    return Promise.reject(e.response.data.message);
   }
 }

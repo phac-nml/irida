@@ -23,6 +23,22 @@ public enum AnalysisState {
 	NEW("NEW"),
 
 	/**
+	 * Occurs when an analysis is downloading remote files
+	 * @deprecated This is no longer a valid state. This must still exist in IRIDA
+	 *     in cases where this state has been recored in the audit tables.
+	 */
+	@Deprecated(since = "0.17.0")
+	DOWNLOADING("DOWNLOADING"),
+
+	/**
+	 * Occurs when an analysis has completed downloading remote files
+	 * @deprecated This is no longer a valid state. This must still exist in IRIDA
+	 *     in cases where this state has been recored in the audit tables.
+	 */
+	@Deprecated(since = "0.17.0")
+	FINISHED_DOWNLOADING("FINISHED_DOWNLOADING"),
+
+	/**
 	 * Occurs when an analysis is starting to be submitted.
 	 */
 	PREPARING("PREPARING"),

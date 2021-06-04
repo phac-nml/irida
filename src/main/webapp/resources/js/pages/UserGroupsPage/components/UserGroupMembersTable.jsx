@@ -1,18 +1,19 @@
-import { UserGroupRole } from "../../../components/roles/UserGroupRole";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { Button, Table } from "antd";
 import React from "react";
-import { SPACE_XS } from "../../../styles/spacing";
-import { stringSorter } from "../../../utilities/table-utilities";
-import {
-  AddMemberButton,
-  RemoveTableItemButton
-} from "../../../components/Buttons";
 import {
   addMemberToUserGroup,
   getAvailableUsersForUserGroup,
   removeMemberFromUserGroup,
+  updateUserRoleOnUserGroups,
 } from "../../../apis/users/groups";
-import { Button, Table } from "antd";
+import {
+  AddMemberButton,
+  RemoveTableItemButton,
+} from "../../../components/Buttons";
+import { GroupRole } from "../../../components/roles/GroupRole";
+import { SPACE_XS } from "../../../styles/spacing";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { stringSorter } from "../../../utilities/table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /**
@@ -55,7 +56,11 @@ export default function UserGroupMembersTable({
       width: 200,
       render(text, user) {
         return (
-          <UserGroupRole user={user} canManage={canManage} groupId={groupId} />
+          <GroupRole
+            item={user}
+            canManage={canManage}
+            updateRoleFn={updateMemberRole}
+          />
         );
       },
     },
@@ -88,12 +93,36 @@ export default function UserGroupMembersTable({
     });
   }
 
+  /*
+   * Get the available users for a group based on a search parameter
+   *
+   * @param {string} query - search parameter for the user
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   const getAvailableMembers = (query) =>
     getAvailableUsersForUserGroup({ id: groupId, query });
 
+  /**
+   * Add a member to this groups
+   *
+   * @param {number} id - identifier for the user to add
+   * @param {string} role - group role to set the user to
+   * @returns {Promise<AxiosResponse<*>>}
+   */
   const addMember = ({ id, role }) => {
     return addMemberToUserGroup({ groupId, userId: id, role });
   };
+
+  /**
+   * Update a member role on this group
+   *
+   * @param {number} userId - identifier for the member to update
+   * @param {string} role - group role to update the user to
+   * @returns {Promise<AxiosResponse<*>>}
+   */
+  async function updateMemberRole({ userId, role }) {
+    return updateUserRoleOnUserGroups({ groupId, userId, role });
+  }
 
   return (
     <>
