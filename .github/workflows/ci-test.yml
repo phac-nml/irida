@@ -71,8 +71,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     env:
-      MYSQL_HOST_PORT: 3800
-      MYSQL_CONTAINER_PORT: 3307
+      MYSQL_PORT: 3800
       MYSQL_USER: test
       MYSQL_PASSWORD: test
       MYSQL_DATABASE: irida_test
@@ -109,11 +108,11 @@ jobs:
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
       - name: Remove only_full_group_by from sql_mode
-        run: mysql -h ${{ env.MYSQL_HOST }} -P ${{ env.MYSQL_CONTAINER_PORT }}:${{ env.MYSQL_HOST_PORT }} -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} ${{ env.MYSQL_DATABASE }} -e "select @@sql_mode;"
+        run: mysql -h ${{ env.MYSQL_HOST }} -P ${{ env.MYSQL_PORT }} -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} ${{ env.MYSQL_DATABASE }} -e "select @@sql_mode;"
       - name: Restart MySQL
         run: sudo service mysql restart
       - name: Build Open API
-        run: mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_HOST_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
+        run: mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
       - name: Verify Open API file generated
         run: test -f doc/swagger-ui/open-api.json
       - name: Build Jekyll Site
