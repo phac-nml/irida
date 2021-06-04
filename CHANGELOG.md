@@ -6,6 +6,7 @@ Changes
 * [Developer]: Added pipeline plugin path configuration option
 * [UI]: Update of Project Activities page to use Ant Design.
 * [UI]: Fixes bug where the page title on Remote IRIDA Connections page was not displaying properly.
+* [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page. (21.05.1)
 
 21.01 to 21.05
 --------------
