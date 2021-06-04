@@ -110,8 +110,6 @@ jobs:
       - name: Build Open API
         run: mvn verify -Djdbc.url=jdbc:mysql://${{ env.MYSQL_HOST }}:${{ env.MYSQL_PORT }}/${{ env.MYSQL_DATABASE }} -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true
       - name: "Verify Open API file generated"
-        uses: andstor/file-existence-action@v1
-        with:
-          files: "../../doc/swagger-ui/open-api.json"
+        run: pushd doc/swagger-ui; test -f ./open-api.json; popd;
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;
