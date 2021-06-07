@@ -217,6 +217,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	//TODO: Ensure a user is allowed to read the requested fields
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
 		return metadataEntryRepository.getMetadataForProject(project, fields);
