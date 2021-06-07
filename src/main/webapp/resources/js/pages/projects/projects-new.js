@@ -6,9 +6,7 @@ import {
   Form,
   Input,
   Layout,
-  List,
   Row,
-  Space,
   Steps,
   Table,
 } from "antd";
@@ -17,58 +15,52 @@ import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { useGetCartSamplesQuery } from "../../apis/cart/cart";
 import { TAXONOMY } from "../../apis/ontology/taxonomy";
+import { createProject } from "../../apis/projects/create";
 import { OntologySelect } from "../../components/ontology";
 import { SampleDetailViewer } from "../../components/samples/SampleDetailViewer";
 import { SPACE_LG } from "../../styles/spacing";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import "../../vendor/plugins/jquery/select2";
 import store from "./create/store";
 
 const { Content } = Layout;
 
-function NewProjectDetails({ onNext }) {
-  const [organism, setOrganism] = React.useState("");
+function NewProjectDetails({ form }) {
   const nameRef = React.createRef();
+  const [organism, setOrganism] = React.useState();
 
   React.useEffect(() => {
     // Autofocus on the name input after loading
     nameRef.current.focus();
   }, [nameRef]);
 
-  const validateMessages = {
-    required: "THIS MUST BE THERE",
-    string: {
-      min: "THIS IS TOO SHORT",
-    },
-    url: "This does not look like a fucking url does it?",
+  const setFormOrganism = (value) => {
+    form.setFieldsValue({ organism: value });
   };
 
   return (
-    <Form
-      layout={"vertical"}
-      validateMessages={validateMessages}
-      onFinish={onNext}
-    >
+    <>
       <Form.Item
-        name={["name"]}
+        name="name"
         label={i18n("projects.create.form.name")}
         rules={[{ type: "string", min: 5, required: true }]}
       >
         <Input type={"text"} ref={nameRef} />
       </Form.Item>
       <Form.Item
-        name={["organism"]}
+        name={"organism"}
         label={i18n("projects.create.form.organism")}
       >
         <OntologySelect
           term={organism}
-          onTermSelected={setOrganism}
+          onTermSelected={setFormOrganism}
           ontology={TAXONOMY}
           autofocus={false}
         />
       </Form.Item>
       <Form.Item
         label={i18n("projects.create.form.description")}
-        name="projectDescription"
+        name="description"
       >
         <Input.TextArea />
       </Form.Item>
@@ -79,12 +71,11 @@ function NewProjectDetails({ onNext }) {
       >
         <Input type="url" />
       </Form.Item>
-      <Button htmlType="submit">Next</Button>
-    </Form>
+    </>
   );
 }
 
-function NewProjectSamples({ samples, onNext }) {
+function NewProjectSamples({ form, samples }) {
   const [organismFilter] = React.useState(() => {
     const exists = {};
     samples.unlocked.forEach((sample) => {
@@ -98,18 +89,19 @@ function NewProjectSamples({ samples, onNext }) {
     return Object.values(exists);
   });
   const [selected, setSelected] = React.useState([]);
-  const [selectedSamples, setSelectedSamples] = React.useState([]);
   const [lock, setLock] = React.useState(false);
 
   return (
-    <Space direction="vertical">
+    <>
       <Table
         rowSelection={{
           type: "checkbox",
           selectedRowKeys: selected,
           onChange: (selectedRowKeys, selectedRows) => {
             setSelected(selectedRowKeys);
-            setSelectedSamples(selectedRows);
+            form.setFieldsValue({
+              samples: selectedRows.map((s) => Number(s.identifier)),
+            });
           },
         }}
         scroll={{ y: 600 }}
@@ -136,80 +128,56 @@ function NewProjectSamples({ samples, onNext }) {
           },
         ]}
       />
-      <Checkbox
-        disabled={selected.length === 0}
-        checked={lock}
-        onChange={(e) => setLock(e.target.checked)}
-      >
-        {i18n("projects.create.settings.sample.modification")}
-      </Checkbox>
-      <Button onClick={() => onNext({ samples: selectedSamples })}>NEXT</Button>
-    </Space>
-  );
-}
-
-function NewProjectSummary({ details }) {
-  return (
-    <List itemLayout="horizontal">
-      <List.Item>
-        <List.Item.Meta title={"NAME"} description={details.name} />
-      </List.Item>
-      <List.Item>
-        <List.Item.Meta
-          title={"ORGANISM"}
-          description={details.organism || "---"}
-        />
-      </List.Item>
-      <List.Item>
-        <List.Item.Meta
-          title={"DESCRIPTION"}
-          description={details.projectDescription}
-        />
-      </List.Item>
-      <List.Item>
-        <List.Item.Meta
-          title={"Samples"}
-          description={
-            <List
-              itemLayout="horizontal"
-              dataSource={details.samples}
-              renderItem={(sample) => <List.Item title={sample.label} />}
-            />
-          }
-        />
-      </List.Item>
-    </List>
+      <Form.Item name="samples" hidden>
+        <Input />
+      </Form.Item>
+      <Form.Item name="lock" valuePropName="checked">
+        <Checkbox
+          disabled={selected.length === 0}
+          checked={lock}
+          onChange={(e) => setLock(e.target.checked)}
+        >
+          {i18n("projects.create.settings.sample.modification")}
+        </Checkbox>
+      </Form.Item>
+    </>
   );
 }
 
 function NewProjectLayout() {
+  const [form] = Form.useForm();
   const [step, setStep] = React.useState(0);
-  const [details, setDetails] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
   const { data: samples = {} } = useGetCartSamplesQuery();
-
-  const updateDetails = (updates) => {
-    setDetails({ ...details, ...updates });
-    setStep(step + 1);
-  };
 
   const steps = [
     {
       title: "DETAILS",
-      content: <NewProjectDetails onNext={updateDetails} />,
+      content: <NewProjectDetails form={form} />,
     },
   ];
 
   if (samples.unlocked?.length) {
     steps.push({
       title: "SAMPLES",
-      content: <NewProjectSamples onNext={updateDetails} samples={samples} />,
+      content: <NewProjectSamples form={form} samples={samples} />,
     });
   }
 
-  steps.push({
-    title: "SUMMARY",
-    content: <NewProjectSummary details={details} />,
-  });
+  const validateMessages = {
+    required: "THIS MUST BE THERE",
+    string: {
+      min: "THIS IS TOO SHORT",
+    },
+    url: "This does not look like a fucking url does it?",
+  };
+
+  const submit = (values) => {
+    setLoading(true);
+    createProject(values).then(
+      ({ id }) => (window.location.href = setBaseUrl(`projects/${id}`))
+    );
+  };
 
   return (
     <Layout>
@@ -231,7 +199,66 @@ function NewProjectLayout() {
                   </Steps>
                 </Col>
                 <Col sm={14} md={18}>
-                  {steps[step].content}
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    validateMessages={validateMessages}
+                    onFinish={submit}
+                    initialValues={{
+                      name: "",
+                      description: "",
+                      organism: "",
+                      remoteURL: "",
+                      lock: false,
+                      samples: [],
+                    }}
+                  >
+                    {steps.map((s, index) => (
+                      <div
+                        key={`step-${index}`}
+                        style={{ display: step === index ? "block" : "none" }}
+                      >
+                        {s.content}
+                      </div>
+                    ))}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexDirection: "row-reverse",
+                      }}
+                    >
+                      {step !== steps.length - 1 && (
+                        <Button
+                          onClick={() => {
+                            form.validateFields().then(() => {
+                              setStep(step + 1);
+                            });
+                          }}
+                        >
+                          NEXT
+                        </Button>
+                      )}
+                      {step === steps.length - 1 && (
+                        <Button
+                          htmlType="submit"
+                          loading={loading}
+                          type="primary"
+                        >
+                          CREATE
+                        </Button>
+                      )}
+                      {step !== 0 && (
+                        <Button
+                          onClick={() => {
+                            form.validateFields().then(() => setStep(step - 1));
+                          }}
+                        >
+                          PREVIOUS
+                        </Button>
+                      )}
+                    </div>
+                  </Form>
                 </Col>
               </Row>
             </Card>

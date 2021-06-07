@@ -5,13 +5,14 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -30,6 +31,15 @@ public class ProjectsAjaxController {
 	public ProjectsAjaxController(UIProjectsService UIProjectsService, UISampleService sampleService) {
 		this.projectsService = UIProjectsService;
 		this.sampleService = sampleService;
+	}
+
+	@PostMapping("/new")
+	public AjaxResponse createNewProject(@RequestBody CreateProjectRequest request) {
+		try {
+			return new AjaxCreateItemSuccessResponse(projectsService.createProject(request));
+		} catch (Exception e) {
+			return new AjaxErrorResponse("SOMETHING WENT SERIOUSLY WRONG");
+		}
 	}
 
 	/**

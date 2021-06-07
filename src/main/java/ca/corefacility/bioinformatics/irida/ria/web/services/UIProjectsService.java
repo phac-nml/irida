@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.excep
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.errors.AjaxItemNotFoundException;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
@@ -55,6 +56,21 @@ public class UIProjectsService {
 		this.messageSource = messageSource;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
+	}
+
+	public Long createProject(CreateProjectRequest request) {
+		Project project = new Project(request.getName());
+		project.setProjectDescription(request.getDescription());
+		project.setOrganism(request.getOrganism());
+		project.setRemoteURL(request.getRemoteURL());
+
+		Project createdProject;
+		if(request.getSamples().size() > 0) {
+			createdProject = projectService.createProjectWithSamples(project, request.getSamples(), !request.isLock());
+		} else {
+			createdProject = projectService.create(project);
+		}
+		return createdProject.getId();
 	}
 
 	/**
