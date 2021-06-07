@@ -31,6 +31,8 @@ NO_CLEANUP=false
 HEADLESS=true
 SELENIUM_DOCKER=false
 
+OPEN_API_FILE=doc/swagger-ui/open-api.json
+
 if [ -z "$DB_MAX_WAIT_MILLIS" ];
 then
 	export DB_MAX_WAIT_MILLIS=10000
@@ -93,12 +95,14 @@ tmp_dir_cleanup() {
 	rm -rf $SEQUENCE_FILE_DIR/*
 	rm -rf $REFERENCE_FILE_DIR/*
 	rm -rf $OUTPUT_FILE_DIR/*
+	rm -f $OPEN_API_FILE
 }
 
 posttest_cleanup() {
-        rm -rf $SEQUENCE_FILE_DIR
-        rm -rf $REFERENCE_FILE_DIR
-        rm -rf $OUTPUT_FILE_DIR
+  rm -rf $SEQUENCE_FILE_DIR
+  rm -rf $REFERENCE_FILE_DIR
+  rm -rf $OUTPUT_FILE_DIR
+  rm -f $OPEN_API_FILE
 }
 
 exit_error() {
@@ -161,17 +165,20 @@ test_galaxy_internal() {
 }
 
 test_doc() {
-	mvn clean site $@
-	javadoc_result_code=$?
-	mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
-  openapi_result_code=$?
-  test -f doc/swagger-ui/open-api.json
-  file_result_code=$?
-	return $((javadoc_result_code + openapi_result_code + file_result_code))
+  mvn clean site $@
+	exit_code=$?
+	return $exit_code
+}
+
+test_open_api() {
+  mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
+	test -f $OPEN_API_FILE
+	exit_code=$?
+	return $exit_code
 }
 
 test_all() {
-	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc;
+	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc test_open_api;
 	do
 		tmp_dir_cleanup
 		eval $test_profile
@@ -298,8 +305,15 @@ case "$1" in
 	;;
 	doc_testing)
 		shift
-		pretest_cleanup
+		#pretest_cleanup
 		test_doc $@
+		exit_code=$?
+		posttest_cleanup
+	;;
+	open_api_testing)
+		shift
+		pretest_cleanup
+		test_open_api $@
 		exit_code=$?
 		posttest_cleanup
 	;;
