@@ -169,7 +169,7 @@ public class ProjectsController {
 	 *                       the project
 	 * @return The name of the create new project page
 	 */
-	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
+	@RequestMapping(value = { "/projects/new", "/projects/new/*" }, method = RequestMethod.GET)
 	public String getCreateProjectPage(
 			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
 			final Model model,

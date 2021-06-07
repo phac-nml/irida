@@ -6,7 +6,9 @@ import {
   Form,
   Input,
   Layout,
+  List,
   Row,
+  Space,
   Steps,
   Table,
 } from "antd";
@@ -16,6 +18,7 @@ import { Provider } from "react-redux";
 import { useGetCartSamplesQuery } from "../../apis/cart/cart";
 import { TAXONOMY } from "../../apis/ontology/taxonomy";
 import { OntologySelect } from "../../components/ontology";
+import { SampleDetailViewer } from "../../components/samples/SampleDetailViewer";
 import { SPACE_LG } from "../../styles/spacing";
 import "../../vendor/plugins/jquery/select2";
 import store from "./create/store";
@@ -76,58 +79,106 @@ function NewProjectDetails({ onNext }) {
       >
         <Input type="url" />
       </Form.Item>
-      {/*{hasCart && (*/}
-      {/*  <>*/}
-      {/*    <Divider />*/}
-      {/*    <Form.Item name={"useCartSamples"} valuePropName="checked">*/}
-      {/*      <Checkbox onChange={onAddSamples}>*/}
-      {/*        {i18n("projects.create.settings.cart")}*/}
-      {/*      </Checkbox>*/}
-      {/*    </Form.Item>*/}
-
-      {/*  </>*/}
-      {/*)}*/}
       <Button htmlType="submit">Next</Button>
     </Form>
   );
 }
 
-function NewProjectSamples({ samples }) {
+function NewProjectSamples({ samples, onNext }) {
+  const [organismFilter] = React.useState(() => {
+    const exists = {};
+    samples.unlocked.forEach((sample) => {
+      if (!exists[sample.organism]) {
+        exists[sample.organism] = {
+          text: sample.organism,
+          value: sample.organism,
+        };
+      }
+    });
+    return Object.values(exists);
+  });
   const [selected, setSelected] = React.useState([]);
+  const [selectedSamples, setSelectedSamples] = React.useState([]);
   const [lock, setLock] = React.useState(false);
 
   return (
-    <div>
-      <Form>
-        <Table
-          rowSelection={{
-            type: "checkbox",
-            selectedRowKeys: selected,
-            onChange: (selectedRowKeys) => setSelected(selectedRowKeys),
-          }}
-          scroll={{ y: 200 }}
-          pagination={false}
-          dataSource={samples.unlocked}
-          rowKey={(sample) => `sample-${sample.identifier}`}
-          columns={[
-            { title: "Name", dataIndex: "label" },
-            { title: "Organism", dataIndex: "organism" },
-          ]}
+    <Space direction="vertical">
+      <Table
+        rowSelection={{
+          type: "checkbox",
+          selectedRowKeys: selected,
+          onChange: (selectedRowKeys, selectedRows) => {
+            setSelected(selectedRowKeys);
+            setSelectedSamples(selectedRows);
+          },
+        }}
+        scroll={{ y: 600 }}
+        pagination={false}
+        dataSource={samples.unlocked}
+        rowKey={(sample) => `sample-${sample.identifier}`}
+        columns={[
+          {
+            title: "Name",
+            dataIndex: "label",
+            render: (text, sample) => (
+              <SampleDetailViewer sampleId={sample.identifier}>
+                <Button size="small">{sample.label}</Button>
+              </SampleDetailViewer>
+            ),
+            onFilter: (value, record) =>
+              record.label.toLowerCase().indexOf(value.toLowerCase()) >= 0,
+          },
+          {
+            title: "Organism",
+            dataIndex: "organism",
+            filters: organismFilter,
+            onFilter: (value, record) => record.organism === value,
+          },
+        ]}
+      />
+      <Checkbox
+        disabled={selected.length === 0}
+        checked={lock}
+        onChange={(e) => setLock(e.target.checked)}
+      >
+        {i18n("projects.create.settings.sample.modification")}
+      </Checkbox>
+      <Button onClick={() => onNext({ samples: selectedSamples })}>NEXT</Button>
+    </Space>
+  );
+}
+
+function NewProjectSummary({ details }) {
+  return (
+    <List itemLayout="horizontal">
+      <List.Item>
+        <List.Item.Meta title={"NAME"} description={details.name} />
+      </List.Item>
+      <List.Item>
+        <List.Item.Meta
+          title={"ORGANISM"}
+          description={details.organism || "---"}
         />
-        <Form.Item>
-          <Checkbox
-            disabled={selected.length === 0}
-            checked={lock}
-            onChange={(e) => setLock(e.target.checked)}
-          >
-            {i18n("projects.create.settings.sample.modification")}
-          </Checkbox>
-        </Form.Item>
-        <Form.Item>
-          <Button>NEXT</Button>
-        </Form.Item>
-      </Form>
-    </div>
+      </List.Item>
+      <List.Item>
+        <List.Item.Meta
+          title={"DESCRIPTION"}
+          description={details.projectDescription}
+        />
+      </List.Item>
+      <List.Item>
+        <List.Item.Meta
+          title={"Samples"}
+          description={
+            <List
+              itemLayout="horizontal"
+              dataSource={details.samples}
+              renderItem={(sample) => <List.Item title={sample.label} />}
+            />
+          }
+        />
+      </List.Item>
+    </List>
   );
 }
 
@@ -137,7 +188,6 @@ function NewProjectLayout() {
   const { data: samples = {} } = useGetCartSamplesQuery();
 
   const updateDetails = (updates) => {
-    console.log({ updates, details });
     setDetails({ ...details, ...updates });
     setStep(step + 1);
   };
@@ -149,12 +199,17 @@ function NewProjectLayout() {
     },
   ];
 
-  if (samples.locked?.length) {
+  if (samples.unlocked?.length) {
     steps.push({
       title: "SAMPLES",
       content: <NewProjectSamples onNext={updateDetails} samples={samples} />,
     });
   }
+
+  steps.push({
+    title: "SUMMARY",
+    content: <NewProjectSummary details={details} />,
+  });
 
   return (
     <Layout>
