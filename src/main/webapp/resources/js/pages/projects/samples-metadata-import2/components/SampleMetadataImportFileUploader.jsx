@@ -8,13 +8,13 @@ import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
 
-export function SampleMetadataImportFileUploader() {
+export function SampleMetadataImportFileUploader(props) {
   const { Text, Title, Paragraph } = Typography
   const options = {
     multiple: false,
     showUploadList: false,
     accept: [".xls", ".xlsx", ".csv"],
-    action: setBaseUrl(`/projects/${window.project.id}/sample-metadata/upload/file`),
+    action: setBaseUrl(`/projects/${props.projectId}/sample-metadata/upload/file`),
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
