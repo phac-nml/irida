@@ -69,8 +69,9 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	private void removeMember(int row) {
-		removeMemberButtons.get(row).click();
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebElement button = wait.until(ExpectedConditions.elementToBeClickable(removeMemberButtons.get(row)));
+		button.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
 		driver.findElement(By.className("t-remove-confirm")).click();
 	}
