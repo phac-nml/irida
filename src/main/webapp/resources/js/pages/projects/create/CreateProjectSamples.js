@@ -1,7 +1,6 @@
-import { Button, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, Table } from "antd";
 import React from "react";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
-import { Table } from "../linelist/components/Table";
 
 export function CreateProjectSamples({ form, samples }) {
   const [organismFilter] = React.useState(() => {

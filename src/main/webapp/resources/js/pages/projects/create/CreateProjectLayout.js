@@ -7,7 +7,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateProjectDetails } from "./CreateProjectDetails";
 import { CreateProjectSamples } from "./CreateProjectSamples";
 
-export function CreateProjectLayout() {
+export function CreateProjectLayout({ children }) {
   const [form] = Form.useForm();
   const [visible, setVisible] = React.useState(false);
   const [current, setCurrent] = React.useState(0);
@@ -48,7 +48,13 @@ export function CreateProjectLayout() {
       {React.cloneElement(children, {
         onClick: () => setVisible(true),
       })}
-      <Modal visible={visible}>
+      <Modal
+        visible={visible}
+        footer={null}
+        onCancel={() => setVisible(false)}
+        width={720}
+        title={"CREATE NEW PROJECT"}
+      >
         <Row>
           <Col sm={10} md={6}>
             <Steps
