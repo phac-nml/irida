@@ -1,6 +1,5 @@
 import { Button, Col, Form, Modal, Row, Steps } from "antd";
 import React from "react";
-import { useGetCartSamplesQuery } from "../../../apis/cart/cart";
 import { createProject } from "../../../apis/projects/create";
 import { SPACE_LG } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -12,21 +11,17 @@ export function CreateProjectLayout({ children }) {
   const [visible, setVisible] = React.useState(false);
   const [current, setCurrent] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
-  const { data: samples = {} } = useGetCartSamplesQuery();
 
   const steps = [
     {
       title: "DETAILS",
       content: <CreateProjectDetails form={form} />,
     },
-  ];
-
-  if (samples.unlocked?.length) {
-    steps.push({
+    {
       title: "SAMPLES",
-      content: <CreateProjectSamples form={form} samples={samples} />,
-    });
-  }
+      content: <CreateProjectSamples form={form} />,
+    },
+  ];
 
   const validateMessages = {
     required: "THIS MUST BE THERE",
@@ -50,24 +45,60 @@ export function CreateProjectLayout({ children }) {
       })}
       <Modal
         visible={visible}
-        footer={null}
+        footer={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "row-reverse",
+            }}
+          >
+            {current !== steps.length - 1 && (
+              <Button
+                onClick={() => {
+                  form.validateFields().then(() => {
+                    setCurrent(current + 1);
+                  });
+                }}
+              >
+                NEXT
+              </Button>
+            )}
+            {current === steps.length - 1 && (
+              <Button htmlType="submit" loading={loading} type="primary">
+                CREATE
+              </Button>
+            )}
+            {current !== 0 && (
+              <Button
+                onClick={() => {
+                  form.validateFields().then(() => setCurrent(current - 1));
+                }}
+              >
+                PREVIOUS
+              </Button>
+            )}
+          </div>
+        }
         onCancel={() => setVisible(false)}
         width={720}
         title={"CREATE NEW PROJECT"}
       >
         <Row>
-          <Col sm={10} md={6}>
-            <Steps
-              progressDot
-              current={current}
-              style={{ marginBottom: SPACE_LG }}
-              direction={"vertical"}
-            >
-              {steps.map((step) => (
-                <Steps.Step key={step.title} title={step.title} />
-              ))}
-            </Steps>
-          </Col>
+          {
+            <Col sm={10} md={6}>
+              <Steps
+                progressDot
+                current={current}
+                style={{ marginBottom: SPACE_LG }}
+                direction={"vertical"}
+              >
+                {steps.map((step) => (
+                  <Steps.Step key={step.title} title={step.title} />
+                ))}
+              </Steps>
+            </Col>
+          }
           <Col sm={14} md={18}>
             <Form
               form={form}
@@ -88,44 +119,12 @@ export function CreateProjectLayout({ children }) {
                   key={`step-${index}`}
                   style={{
                     display: current === index ? "block" : "none",
+                    flex: `1 1 auto`,
                   }}
                 >
                   {step.content}
                 </div>
               ))}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexDirection: "row-reverse",
-                }}
-              >
-                {current !== steps.length - 1 && (
-                  <Button
-                    onClick={() => {
-                      form.validateFields().then(() => {
-                        setCurrent(current + 1);
-                      });
-                    }}
-                  >
-                    NEXT
-                  </Button>
-                )}
-                {current === steps.length - 1 && (
-                  <Button htmlType="submit" loading={loading} type="primary">
-                    CREATE
-                  </Button>
-                )}
-                {current !== 0 && (
-                  <Button
-                    onClick={() => {
-                      form.validateFields().then(() => setCurrent(current - 1));
-                    }}
-                  >
-                    PREVIOUS
-                  </Button>
-                )}
-              </div>
             </Form>
           </Col>
         </Row>

@@ -1,11 +1,17 @@
-import { Button, Checkbox, Form, Input, Table } from "antd";
+import { Button, Checkbox, Form, Input, Table, Typography } from "antd";
 import React from "react";
+import { useGetCartSamplesQuery } from "../../../apis/cart/cart";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 
-export function CreateProjectSamples({ form, samples }) {
-  const [organismFilter] = React.useState(() => {
+export function CreateProjectSamples({ form }) {
+  const { data: samples = {}, isLoading } = useGetCartSamplesQuery();
+  const [organismFilter, setOrganismFilter] = React.useState([]);
+  const [selected, setSelected] = React.useState([]);
+  const [lock, setLock] = React.useState(false);
+
+  React.useEffect(() => {
     const exists = {};
-    samples.unlocked.forEach((sample) => {
+    samples.unlocked?.forEach((sample) => {
       if (!exists[sample.organism]) {
         exists[sample.organism] = {
           text: sample.organism,
@@ -13,12 +19,12 @@ export function CreateProjectSamples({ form, samples }) {
         };
       }
     });
-    return Object.values(exists);
-  });
-  const [selected, setSelected] = React.useState([]);
-  const [lock, setLock] = React.useState(false);
+    setOrganismFilter(Object.values(exists));
+  }, [samples]);
 
-  return (
+  return isLoading ? (
+    <div>LOADING</div>
+  ) : samples.length ? (
     <>
       <Table
         rowSelection={{
@@ -68,5 +74,9 @@ export function CreateProjectSamples({ form, samples }) {
         </Checkbox>
       </Form.Item>
     </>
+  ) : (
+    <Typography.Paragraph>
+      Samples can be added to a project here if they are in your cart.
+    </Typography.Paragraph>
   );
 }
