@@ -1,20 +1,22 @@
+import { Button, Dropdown, Input, Menu, Table } from "antd";
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Dropdown, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
-import { PageWrapper } from "../../../components/page/PageWrapper";
 import {
   dateColumnFormat,
   idColumnFormat,
   nameColumnFormat,
 } from "../../../components/ant.design/table-renderers";
-import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   IconDropDown,
   IconFile,
   IconFileExcel,
+  IconPlusCircle,
   IconSwap,
 } from "../../../components/icons/Icons";
+import { PageWrapper } from "../../../components/page/PageWrapper";
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
+import { primaryColour } from "../../../utilities/theme-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateNewProject } from "../create";
 
 const initialState = {
@@ -183,8 +185,9 @@ export function ProjectsTable() {
           <Button
             text={i18n("ProjectsTable_create_new_project")}
             className="t-create-new-project-btn"
+            icon={<IconPlusCircle twoToneColor={primaryColour} />}
           >
-            CREATE
+            {i18n("ProjectsTable_create_new_project")}
           </Button>
         </CreateNewProject>
       }

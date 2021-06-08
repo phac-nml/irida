@@ -1,5 +1,5 @@
-import React from "react";
 import { Form, Input } from "antd";
+import React from "react";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
 import { OntologySelect } from "../../../components/ontology";
 
@@ -39,7 +39,7 @@ export function CreateProjectDetails({ form }) {
     <>
       <Form.Item
         name="name"
-        label={i18n("projects.create.form.name")}
+        label={i18n("CreateProjectDetails.name")}
         rules={[{ type: "string", min: 5, required: true }]}
       >
         <Input type={"text"} ref={nameRef} />

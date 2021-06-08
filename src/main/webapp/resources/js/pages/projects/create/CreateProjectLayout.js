@@ -24,11 +24,13 @@ export function CreateProjectLayout({ children }) {
   ];
 
   const validateMessages = {
-    required: "THIS MUST BE THERE",
+    required: i18n("CreateProjectDetails.required"),
     string: {
-      min: "THIS IS TOO SHORT",
+      min: i18n("CreateProjectDetails.length"),
     },
-    url: "This does not look like a fucking url does it?",
+    types: {
+      url: i18n("CreateProjectDetails.url"),
+    },
   };
 
   const submit = (values) => {
@@ -82,7 +84,7 @@ export function CreateProjectLayout({ children }) {
         }
         onCancel={() => setVisible(false)}
         width={720}
-        title={"CREATE NEW PROJECT"}
+        title={i18n("CreateProject.title")}
       >
         <Row>
           {
