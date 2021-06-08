@@ -330,6 +330,7 @@ public class LineListController {
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
 
+		//TODO: fields in templates here will be added to the fields list even if a user isn't permitted to read them.  Needs refactored
 		/*
 		Get all unique fields from the templates.
 		 */
