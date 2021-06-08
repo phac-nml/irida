@@ -65,7 +65,7 @@ public class UIProjectsService {
 		project.setRemoteURL(request.getRemoteURL());
 
 		Project createdProject;
-		if(request.getSamples().size() > 0) {
+		if(request.getSamples() != null) {
 			createdProject = projectService.createProjectWithSamples(project, request.getSamples(), !request.isLock());
 		} else {
 			createdProject = projectService.create(project);
