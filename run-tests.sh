@@ -166,15 +166,15 @@ test_galaxy_internal() {
 
 test_doc() {
   mvn clean site $@
-	exit_code=$?
-	return $exit_code
+  exit_code=$?
+  return $exit_code
 }
 
 test_open_api() {
   mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
-	test -f $OPEN_API_FILE
-	exit_code=$?
-	return $exit_code
+  test -f $OPEN_API_FILE
+  exit_code=$?
+  return $exit_code
 }
 
 test_all() {
