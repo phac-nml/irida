@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.groups;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -15,6 +16,7 @@ import static org.junit.Assert.*;
 public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
+	@Ignore
 	public void testUserGroupsAsManager() {
 		LoginPage.loginAsManager(driver());
 
@@ -58,6 +60,7 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testUserGroupsAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 

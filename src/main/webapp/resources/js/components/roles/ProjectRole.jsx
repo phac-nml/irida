@@ -1,6 +1,7 @@
-import React, { useState } from "react";
 import { notification, Select } from "antd";
-import { RolesContext, useRoles } from "../../contexts/roles-context";
+import React, { useState } from "react";
+import { useGetProjectDetailsQuery } from "../../apis/projects/project";
+import { useRoles } from "../../contexts/roles-context";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -8,38 +9,38 @@ import { RolesContext, useRoles } from "../../contexts/roles-context";
  * any member.  If the user cannot manage, just the label for the project role
  * will be rendered
  *
- * @param {object} user - the current user to be rendered
+ * @param {object} item - the current item to be rendered
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({
-  item,
-  // eslint-disable-next-line no-console
-  updateFn = () => console.error("updateFn is required"),
-}) {
-  const [role, setRole] = useState(item.role);
+export function ProjectRole({ projectId, item, updateRoleFn }) {
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
+  const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = useState(false);
   const { roles, getRoleFromKey } = useRoles();
 
+  /**
+   * When the project role for the user is updated, update the new value on
+   * the server as well.
+   *
+   * @param {string} value - updated role
+   */
   const onChange = (value) => {
     setLoading(true);
-    updateFn({
-      id: item.id,
-      role: value,
-    })
+    updateRoleFn({ projectId, id: item.id, role: value })
       .then((message) => {
         notification.success({ message });
         setRole(value);
       })
-      .catch((error) =>
+      .catch((message) =>
         notification.error({
-          message: error.response.data,
+          message,
         })
       )
       .finally(() => setLoading(false));
   };
 
-  return window.PAGE.canManage ? (
+  return project.canManage ? (
     <Select
       className="t-role-select"
       value={role}

@@ -35,7 +35,6 @@ import com.google.common.base.Joiner;
 /**
  * Configuration for IRIDA's spring security modules
  */
-@SuppressWarnings("deprecation")
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, order = IridaApiSecurityConfig.METHOD_SECURITY_ORDER)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")

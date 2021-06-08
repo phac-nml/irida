@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
-import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -38,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * This controller is responsible for AJAX handling for the line list page, which displays sample metadata.
@@ -74,16 +72,21 @@ public class LineListController {
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
 		Project project = projectService.read(projectId);
 
-		List<Join<Project, Sample>> projectSamples = sampleService.getSamplesForProject(project);
+		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
+
+		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
+
+		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
 		return projectSamples.stream()
-				.map(join -> {
-					ProjectSampleJoin psj = (ProjectSampleJoin)join;
-					Set<MetadataEntry> metadata = sampleService.getMetadataForSample(psj.getObject());
-					return new UISampleMetadata(psj, updateSamplePermission.isAllowed(authentication, psj.getObject()), metadata);
+				.map(sample -> {
+					Set<MetadataEntry> metadata = metadataForProject.get(sample.getId());
+
+					//check if the project owns the sample
+					boolean ownership = !lockedSamplesInProject.contains(sample.getId());
+
+					return new UISampleMetadata(project, sample, ownership, metadata);
 				})
 				.collect(Collectors.toList());
 	}
@@ -185,11 +188,14 @@ public class LineListController {
 	 */
 	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns,
 			boolean canEdit) {
+
+		AgGridColumn iconCol = allFieldsAgGridColumns.get(0);
+		AgGridColumn sampleNameCol = allFieldsAgGridColumns.get(1);
+
 		/*
 		Need to remove the sample since allFields begins with the sample.
 		 */
 		allFieldsAgGridColumns.remove(0);
-
 		/*
 		Get a list of all the column field keys to facilitate faster look ups.
 		 */
@@ -217,12 +223,19 @@ public class LineListController {
 			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
 		}
 
+		// Add the "icon" to the template columns
+		templateAgGridColumns.add(0, iconCol);
+
 		/*
 		Since it the previous for loop we removed all of the current template fields from allFieldsAgGridColumns,
 		we can assume the rest should be hidden and then just appended to the end of the template.
 		 */
 		allFieldsAgGridColumns.forEach(field -> {
-			field.setHide(true);
+			// Don't hide the sample name as it is required for the table header
+			if(!field.getField().equals(sampleNameCol.getField()))
+			{
+				field.setHide(true);
+			}
 			templateAgGridColumns.add(field);
 		});
 		return templateAgGridColumns;

@@ -65,15 +65,25 @@ public class UIProjectReferenceFileService {
 				Path target = temp.resolve(file.getOriginalFilename());
 				file.transferTo(target.toFile());
 
-				ReferenceFile referenceFile = referenceFileService.create(new ReferenceFile(target));
+				ReferenceFile referenceFile;
+
 				if (projectId != null) {
 					logger.debug("Adding reference file to project " + projectId);
+					/*
+					Just create the reference file object but don't save to the reference file
+					repository here as the ProjectService -> addReferenceFileToProject takes care of that
+					 */
+					referenceFile = new ReferenceFile(target);
 					Project project = projectService.read(projectId);
 					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
 					ReferenceFile refFile = join.getObject();
 					long filesize = Files.size(refFile.getFile());
 					referenceFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
 				} else {
+					/*
+					Creates the reference file and saves it to the reference file repository
+					 */
+					referenceFile = referenceFileService.create(new ReferenceFile(target));
 					referenceFiles.add(new UIReferenceFile(referenceFile));
 				}
 
