@@ -256,6 +256,12 @@ public class UICartService {
 		return cart.isSampleInCart(sampleId);
 	}
 
+	/**
+	* Get a list of samles that are currently loaded into the cart that can be added to a new project
+	 * This requires a special method because the user can only add samples to the new project
+	 * that they already can modify
+* @return {}
+	 */
 	public CartSamples getCartSamplesForNewProject() {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
