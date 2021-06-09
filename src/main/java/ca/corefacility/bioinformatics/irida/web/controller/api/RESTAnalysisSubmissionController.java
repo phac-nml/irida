@@ -102,11 +102,10 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "createAnalysisSubmission", summary = "Create a new analysis submission", description = "Create a new analysis submission.", tags = "analysisSubmissions")
 	@Override
 	public ResponseResource<AnalysisSubmission> create(@RequestBody AnalysisSubmission resource,
 			HttpServletResponse response) {
-		return super.create(resource, response);
+		throw new UnsupportedOperationException("Create a new analysis submission is not supported.");
 	}
 
 	/**
@@ -121,11 +120,10 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	/**
 	 * {@inheritDoc}
 	 */
-	@Operation(operationId = "updateAnalysisSubmission", summary = "Update an analysis submission", description = "Update an analysis submission", tags = "analysisSubmissions")
 	@Override
 	public ResponseResource<RootResource> update(@PathVariable Long identifier,
 			@RequestBody Map<String, Object> representation) {
-		return super.update(identifier, representation);
+		throw new UnsupportedOperationException("Update an analysis submission is not supported.");
 	}
 
 	/**
