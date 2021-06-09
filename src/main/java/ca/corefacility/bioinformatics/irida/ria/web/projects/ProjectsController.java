@@ -252,15 +252,13 @@ public class ProjectsController {
 	 * @param model     model for view variables
 	 * @return name of the analysis view page
 	 */
-	@RequestMapping("/projects/{projectId}/analyses")
+	@RequestMapping("/projects/{projectId}/analyses/**")
 	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
-		model.addAttribute("page", "analyses");
-		return "projects/analyses/pages/analyses_table.html";
+		return "projects/project_analyses";
 	}
 
 	/**

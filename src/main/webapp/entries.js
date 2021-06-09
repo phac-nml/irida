@@ -42,8 +42,7 @@ module.exports = {
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-analyses":
-    "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
+  "project-analyses": "./resources/js/pages/projects/project-analyses/",
   "analysis-outputs-table":
     "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
