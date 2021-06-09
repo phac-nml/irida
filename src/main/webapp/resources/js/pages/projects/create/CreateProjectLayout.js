@@ -1,10 +1,18 @@
-import { Button, Col, Form, Modal, Row, Steps } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Steps } from "antd";
 import React from "react";
 import { createProject } from "../../../apis/projects/create";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateProjectDetails } from "./CreateProjectDetails";
 import { CreateProjectSamples } from "./CreateProjectSamples";
 
+/**
+ * React component to handle the layout of the Create New Project and
+ * display a modal to contain it.
+ *
+ * @param  {JSX.Element} children - A clickable element used to open the modal
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function CreateProjectLayout({ children }) {
   const [form] = Form.useForm();
   const [visible, setVisible] = React.useState(false);
@@ -32,6 +40,10 @@ export function CreateProjectLayout({ children }) {
     },
   };
 
+  /**
+   * Once the form is filled out, this is the submit to server call.
+   * After a successful call, the user will be redirected to the new project.
+   */
   const submit = () => {
     setLoading(true);
     form
@@ -40,9 +52,18 @@ export function CreateProjectLayout({ children }) {
         createProject(values).then(
           ({ id }) => (window.location.href = setBaseUrl(`projects/${id}`))
         )
-      );
+      )
+      .catch(() => {
+        notification.error({
+          message: i18n("CreateProjectLayout.error"),
+        });
+        setLoading(false);
+      });
   };
 
+  /**
+   * Handle the modal closing - reset the form!
+   */
   const onCancel = () => {
     form.resetFields();
     setCurrent(0);
