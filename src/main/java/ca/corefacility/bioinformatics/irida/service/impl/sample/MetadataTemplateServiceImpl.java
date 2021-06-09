@@ -258,10 +258,10 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 					//if the restriction map contains the field
 					if (restrictionMap.containsKey(field)) {
 						MetadataRestriction metadataRestriction = restrictionMap.get(field);
-						ProjectRole level = metadataRestriction.getLevel();
+						ProjectRole restrictionRole = metadataRestriction.getLevel();
 
 						//compare the restriction level to the given role.  If it's greater or equal, we're good
-						if (role.compareTo(level) >= 0) {
+						if (role.getLevel() >= restrictionRole.getLevel()) {
 							return true;
 						}
 
