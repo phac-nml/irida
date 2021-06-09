@@ -59,7 +59,7 @@ check_dependencies() {
 }
 
 pretest_cleanup() {
-  JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
+	JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
 
 	if [ "$NO_CLEANUP" = true ];
 	then
@@ -99,10 +99,10 @@ tmp_dir_cleanup() {
 }
 
 posttest_cleanup() {
-  rm -rf $SEQUENCE_FILE_DIR
-  rm -rf $REFERENCE_FILE_DIR
-  rm -rf $OUTPUT_FILE_DIR
-  rm -f $OPEN_API_FILE
+	rm -rf $SEQUENCE_FILE_DIR
+	rm -rf $REFERENCE_FILE_DIR
+	rm -rf $OUTPUT_FILE_DIR
+	rm -f $OPEN_API_FILE
 }
 
 exit_error() {
@@ -165,16 +165,16 @@ test_galaxy_internal() {
 }
 
 test_doc() {
-  mvn clean site $@
-  exit_code=$?
-  return $exit_code
+	mvn clean site $@
+	exit_code=$?
+	return $exit_code
 }
 
 test_open_api() {
-  mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
-  test -f $OPEN_API_FILE
-  exit_code=$?
-  return $exit_code
+	mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
+	test -f $OPEN_API_FILE
+	exit_code=$?
+	return $exit_code
 }
 
 test_all() {
