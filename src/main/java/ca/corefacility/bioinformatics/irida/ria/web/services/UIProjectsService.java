@@ -50,7 +50,9 @@ public class UIProjectsService {
 	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
 
 	@Autowired
-	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource, ProjectOwnerPermission projectOwnerPermission, ManageLocalProjectSettingsPermission projectMembersPermission) {
+	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
+			ProjectOwnerPermission projectOwnerPermission,
+			ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
@@ -58,6 +60,12 @@ public class UIProjectsService {
 		this.projectMembersPermission = projectMembersPermission;
 	}
 
+	/**
+	 * Create a new project based on a request sent by the UI.
+	 *
+	 * @param request {@link CreateProjectRequest} containing (at the very least) the name for the project
+	 * @return the identifier for the newly created project
+	 */
 	public Long createProject(CreateProjectRequest request) {
 		Project project = new Project(request.getName());
 		project.setProjectDescription(request.getDescription());
@@ -65,7 +73,7 @@ public class UIProjectsService {
 		project.setRemoteURL(request.getRemoteURL());
 
 		Project createdProject;
-		if(request.getSamples() != null) {
+		if (request.getSamples() != null) {
 			createdProject = projectService.createProjectWithSamples(project, request.getSamples(), !request.isLock());
 		} else {
 			createdProject = projectService.create(project);
@@ -89,7 +97,7 @@ public class UIProjectsService {
 	 * Get the table contents for the projects listing table based on the user and table request.
 	 *
 	 * @param tableRequest - {@link TableRequest}
-	 * @param isAdmin - whether this is the full administration table or a user listing.
+	 * @param isAdmin      - whether this is the full administration table or a user listing.
 	 * @return {@link TableResponse} with the current list of projects
 	 */
 	public TableResponse getPagedProjects(TableRequest tableRequest, Boolean isAdmin) {
@@ -127,7 +135,7 @@ public class UIProjectsService {
 	 * Get information about a project as well as permissions
 	 *
 	 * @param projectId - The project to get info for
-	 * @param locale Current users locale
+	 * @param locale    Current users locale
 	 * @return {@link ProjectDetailsResponse}
 	 * @throws AjaxItemNotFoundException if project cannot be found
 	 */
@@ -150,7 +158,8 @@ public class UIProjectsService {
 
 			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
 		} catch (EntityNotFoundException e) {
-			throw new AjaxItemNotFoundException(messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[]{}, locale));
+			throw new AjaxItemNotFoundException(
+					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));
 		}
 	}
 

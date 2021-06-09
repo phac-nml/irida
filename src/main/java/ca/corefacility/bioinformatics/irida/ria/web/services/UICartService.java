@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * Service for handling all aspects interaction with the Cart.
+ * Service for handling all aspects' interaction with the Cart.
  */
 @Component
 public class UICartService {
@@ -58,7 +58,7 @@ public class UICartService {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
 		Set<String> existingSampleNames = cart.getSampleNamesInCart();
 
-		// Modify the cart here so we can properly return the UI.
+		// Modify the cart here, so we can properly return the UI.
 
 		List<Sample> duplicateNames = new ArrayList<>();
 		List<Sample> existsInCart = new ArrayList<>();
@@ -169,7 +169,7 @@ public class UICartService {
 		int count = cart.removeProject(id);
 		Project project = projectService.read(id);
 		Notification notification = new SuccessNotification(
-				messageSource.getMessage("server.cart.remove-project", new Object[] {project.getLabel()}, locale));
+				messageSource.getMessage("server.cart.remove-project", new Object[] { project.getLabel() }, locale));
 		CartUpdateResponse response = new CartUpdateResponse();
 		response.setCount(count);
 		response.addNotification(notification);
@@ -199,7 +199,8 @@ public class UICartService {
 			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
 			List<Long> sampleIds = cart.entrySet()
 					.stream()
-					.filter(entry -> project.getId().equals(entry.getValue()))
+					.filter(entry -> project.getId()
+							.equals(entry.getValue()))
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toList());
 
@@ -223,23 +224,26 @@ public class UICartService {
 		Map<Project, List<Sample>> response = new HashMap<>();
 
 		// Get unique project ids;
-		cart.values().stream().distinct().forEach(projectId -> {
-			Project project = projectService.read(projectId);
-			List<Long> sampleIds = new ArrayList<>();
-			cart.forEach((key, value) -> {
-				if (value.equals(projectId)) {
-					sampleIds.add(key);
-				}
-			});
-			response.put(project, (List<Sample>) sampleService.readMultiple(sampleIds));
-		});
-
+		cart.values()
+				.stream()
+				.distinct()
+				.forEach(projectId -> {
+					Project project = projectService.read(projectId);
+					List<Long> sampleIds = new ArrayList<>();
+					cart.forEach((key, value) -> {
+						if (value.equals(projectId)) {
+							sampleIds.add(key);
+						}
+					});
+					response.put(project, (List<Sample>) sampleService.readMultiple(sampleIds));
+				});
 
 		return response;
 	}
 
 	/**
 	 * Determine if the cart is empty
+	 *
 	 * @return Boolean if the cart is empty
 	 */
 	public Boolean isCartEmpty() {
@@ -257,10 +261,11 @@ public class UICartService {
 	}
 
 	/**
-	* Get a list of samles that are currently loaded into the cart that can be added to a new project
+	 * Get a list of samples that are currently loaded into the cart that can be added to a new project
 	 * This requires a special method because the user can only add samples to the new project
-	 * that they already can modify
-* @return {}
+	 * that they already can modify.
+	 *
+	 * @return {@link CartSamples}
 	 */
 	public CartSamples getCartSamplesForNewProject() {
 		Authentication authentication = SecurityContextHolder.getContext()
