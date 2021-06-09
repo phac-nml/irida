@@ -1,7 +1,6 @@
 import { Button, Col, Form, Modal, Row, Steps } from "antd";
 import React from "react";
 import { createProject } from "../../../apis/projects/create";
-import { SPACE_LG } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateProjectDetails } from "./CreateProjectDetails";
 import { CreateProjectSamples } from "./CreateProjectSamples";
@@ -14,11 +13,11 @@ export function CreateProjectLayout({ children }) {
 
   const steps = [
     {
-      title: "DETAILS",
+      title: i18n("CreateProjectLayout.details"),
       content: <CreateProjectDetails form={form} />,
     },
     {
-      title: "SAMPLES",
+      title: i18n("CreateProjectLayout.samples"),
       content: <CreateProjectSamples form={form} />,
     },
   ];
@@ -33,11 +32,21 @@ export function CreateProjectLayout({ children }) {
     },
   };
 
-  const submit = (values) => {
+  const submit = () => {
     setLoading(true);
-    createProject(values).then(
-      ({ id }) => (window.location.href = setBaseUrl(`projects/${id}`))
-    );
+    form
+      .validateFields()
+      .then((values) =>
+        createProject(values).then(
+          ({ id }) => (window.location.href = setBaseUrl(`projects/${id}`))
+        )
+      );
+  };
+
+  const onCancel = () => {
+    form.resetFields();
+    setCurrent(0);
+    setVisible(false);
   };
 
   return (
@@ -63,12 +72,12 @@ export function CreateProjectLayout({ children }) {
                   });
                 }}
               >
-                NEXT
+                {i18n("CreateProjectLayout.next")}
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button htmlType="submit" loading={loading} type="primary">
-                CREATE
+              <Button loading={loading} type="primary" onClick={submit}>
+                {i18n("CreateProjectLayout.finish")}
               </Button>
             )}
             {current !== 0 && (
@@ -77,24 +86,19 @@ export function CreateProjectLayout({ children }) {
                   form.validateFields().then(() => setCurrent(current - 1));
                 }}
               >
-                PREVIOUS
+                {i18n("CreateProjectLayout.previous")}
               </Button>
             )}
           </div>
         }
-        onCancel={() => setVisible(false)}
+        onCancel={onCancel}
         width={720}
         title={i18n("CreateProject.title")}
       >
         <Row>
           {
             <Col sm={10} md={6}>
-              <Steps
-                progressDot
-                current={current}
-                style={{ marginBottom: SPACE_LG }}
-                direction={"vertical"}
-              >
+              <Steps current={current} size="small" direction={"vertical"}>
                 {steps.map((step) => (
                   <Steps.Step key={step.title} title={step.title} />
                 ))}
@@ -106,7 +110,6 @@ export function CreateProjectLayout({ children }) {
               form={form}
               layout="vertical"
               validateMessages={validateMessages}
-              onFinish={submit}
               initialValues={{
                 name: "",
                 description: "",
