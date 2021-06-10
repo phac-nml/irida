@@ -5,11 +5,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
@@ -104,13 +102,14 @@ public class CartAjaxController {
 		return ResponseEntity.ok(service.getSamplesForProjects(ids));
 	}
 
+	/**
+	 * Get a list of all samples in the cart, these will be separated out into samples that the user
+	 * can and cannot modify.
+	 *
+	 * @return list of samples that are in the cart.
+	 */
 	@RequestMapping("/all-samples")
 	public ResponseEntity<AjaxResponse> getAllSamplesInCart() {
-		try {
-			return ResponseEntity.ok(service.getCartSamplesForNewProject());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse("UNKNOWN ERROR"));
-		}
+		return ResponseEntity.ok(service.getCartSamplesForNewProject());
 	}
 }
