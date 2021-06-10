@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import java.util.List;
 
+/**
+ * Data transfer object for creating a new project.
+ */
 public class CreateProjectRequest {
 	private String name;
 	private String organism;
