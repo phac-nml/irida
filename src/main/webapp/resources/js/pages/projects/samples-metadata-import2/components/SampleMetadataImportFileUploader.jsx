@@ -9,7 +9,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
 
 export function SampleMetadataImportFileUploader(props) {
-  const { Text, Title, Paragraph } = Typography
+  const { Text, Title } = Typography
   const options = {
     multiple: false,
     showUploadList: false,
