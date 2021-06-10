@@ -14,13 +14,13 @@ import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportFileUploader(props) {
+export function SampleMetadataImportFileUploader({ projectId }) {
   const { Text, Title } = Typography
   const options = {
     multiple: false,
     showUploadList: false,
     accept: [".xls", ".xlsx", ".csv"],
-    action: setBaseUrl(`/projects/${props.projectId}/sample-metadata/upload/file`),
+    action: setBaseUrl(`/projects/${projectId}/sample-metadata/upload/file`),
     onChange(info) {
       const { status } = info.file;
       if (status !== 'uploading') {
