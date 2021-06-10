@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -75,6 +76,15 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 
 	/**
+	 * Get the {@link MetadataEntry} set associated with a given {@link Sample} for the selected {@link MetadataTemplateField}
+	 *
+	 * @param sample the {@link Sample} to read fields for
+	 * @param fields the {@link MetadataTemplateField}s to request
+	 * @return the collection of {@link MetadataEntry} for the given {@link Sample}
+	 */
+	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields);
+
+	/**
 	 * Get a list of {@link Sample} ids that are locked in this project.  This method exists as a faster way of determining ownership than getting the full {@link ProjectSampleJoin}
 	 *
 	 * @param project the {@link Project} to check
@@ -86,9 +96,10 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * Get the metadata collections for an entire project.  This will return a Map of {@link Sample} ID with a Set of the {@link MetadataEntry}s
 	 *
 	 * @param project the {@link Project} to get metadata for
+	 * @param fields the fields to get metadata fro from the project
 	 * @return a map of metadata
 	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
+	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project, List<MetadataTemplateField> fields);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

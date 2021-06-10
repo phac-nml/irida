@@ -34,7 +34,8 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 	/**
 	 * {@inheritDoc}
 	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
+	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project,
+			List<MetadataTemplateField> requestedFields) {
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());
@@ -55,7 +56,11 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 				(rs, rowNum) -> rs.getLong("p.sample_id"));
 
 		//query for all metadata entries used in the project
-		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
+		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project AND e.field_id IN (:fieldIds)";
+		List<Long> requestedFieldIds = requestedFields.stream()
+				.map(MetadataTemplateField::getId)
+				.collect(Collectors.toList());
+		parameters.addValue("fieldIds", requestedFieldIds);
 
 		//map the results into a SampleMetadataEntry
 		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters, (rs, rowNum) -> {
