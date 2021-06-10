@@ -93,10 +93,6 @@ public class ProjectsControllerTest {
 				getUsersForProjectByRole());
 		when(projectService.getProjectsForUser(user)).thenReturn(projects);
 		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
-
-		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
-				controller.getProjectSpecificPage(projectId, model, principal));
-
 	}
 
 	@Test

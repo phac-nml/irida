@@ -5,17 +5,18 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
+
 import com.google.common.net.HttpHeaders;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ModelMap;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,15 +56,14 @@ public class SequencingRunSequenceFilesControllerTest {
 		when(objectService.read(seqId)).thenReturn(singleEndSequenceFile);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
 
-		ModelMap modelMap = controller.addSequenceFilesToSequencingRun(sequencingrunId, representation, response);
+		ResponseResource<SequencingRun> responseResource = controller.addSequenceFilesToSequencingRun(sequencingrunId,
+				representation, response);
 
 		verify(objectService).read(seqId);
 		verify(miseqRunService).read(sequencingrunId);
 
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull("Object should not be null", o);
-		assertTrue("Object should be an instance of SequencingRun", o instanceof SequencingRun);
-		SequencingRun res = (SequencingRun) o;
+		SequencingRun res = responseResource.getResource();
+		assertNotNull("Sequencing run should not be null", res);
 		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId)
 				.slash("sequenceFiles")
 				.slash(seqId)

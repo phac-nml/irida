@@ -1,11 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -20,13 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
@@ -70,34 +60,6 @@ public class ProjectEventsController {
 		this.projectService = projectService;
 		this.userService = userService;
 		this.messageSource = messageSource;
-	}
-
-	/**
-	 * Get recent {@link ProjectEvent}s for the given {@link Project}
-	 * 
-	 * @param projectId
-	 *            The ID of the {@link Project} to get events for
-	 * @param model
-	 *            Model for the view. Contains a list named "events". This will
-	 *            be a map which will contain "name" which is the name of the
-	 *            view fragment to use, and "event" which is a reference to the
-	 *            event itself
-	 * @param size
-	 *            Number of events to show
-	 * @return The name of the events view
-	 */
-	@RequestMapping("/project/{projectId}")
-	public String getRecentEventsForProject(@PathVariable Long projectId, Model model,
-			@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
-		Project project = projectService.read(projectId);
-
-		Page<ProjectEvent> events = eventService.getEventsForProject(project,
-				PageRequest.of(0, size, Direction.DESC, "createdDate"));
-		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
-
-		model.addAttribute("events", eventInfo);
-
-		return EVENTS_VIEW;
 	}
 
 	/**
