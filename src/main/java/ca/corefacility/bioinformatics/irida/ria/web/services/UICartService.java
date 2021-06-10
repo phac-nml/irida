@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSamplesByUserPermissions;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.ErrorNotification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.Notification;
@@ -265,9 +265,9 @@ public class UICartService {
 	 * This requires a special method because the user can only add samples to the new project
 	 * that they already can modify.
 	 *
-	 * @return {@link CartSamples}
+	 * @return {@link CartSamplesByUserPermissions}
 	 */
-	public CartSamples getCartSamplesForNewProject() {
+	public CartSamplesByUserPermissions getCartSamplesForNewProject() {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 
@@ -285,6 +285,6 @@ public class UICartService {
 			}
 		}
 
-		return new CartSamples(locked, unlocked);
+		return new CartSamplesByUserPermissions(locked, unlocked);
 	}
 }
