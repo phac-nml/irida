@@ -42,12 +42,10 @@ export function SampleMetadataImportFileUploader({ projectId }) {
   return (
     <>
       <Space direction="vertical" size="large" style={{ width: `100%` }}>
-        <Typography>
-          <Title level={3}>{i18n("SampleMetadataImportFileUploader.title")}</Title>
-          <Text type="secondary">
-            {i18n("SampleMetadataImportFileUploader.intro")}
-          </Text>
-        </Typography>
+        <Title level={3}>{i18n("SampleMetadataImportFileUploader.title")}</Title>
+        <Text type="secondary">
+          {i18n("SampleMetadataImportFileUploader.intro")}
+        </Text>
         <SampleMetadataImportSteps currentStep={step} />
         <DragUpload
           className="t-sample-metadata-file-uploader"
