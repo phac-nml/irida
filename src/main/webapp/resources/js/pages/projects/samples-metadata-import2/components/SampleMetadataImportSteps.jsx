@@ -5,8 +5,12 @@ import {
 
 const { Step } = Steps;
 
+/**
+ * React component that displays the steps for the Sample Metadata Uploader.
+ * @returns {*}
+ * @constructor
+ */
 export function SampleMetadataImportSteps({ currentStep }) {
-
     return (
         <Steps current={currentStep}>
             <Step title="Upload File" />
