@@ -42,7 +42,7 @@ export function CreateProjectDetails({ form }) {
         label={i18n("CreateProjectDetails.name")}
         rules={[{ type: "string", min: 5, required: true }]}
       >
-        <Input type={"text"} ref={nameRef} />
+        <Input className="t-name-input" type={"text"} ref={nameRef} />
       </Form.Item>
       <Form.Item
         name={"organism"}
@@ -59,14 +59,14 @@ export function CreateProjectDetails({ form }) {
         label={i18n("projects.create.form.description")}
         name="description"
       >
-        <Input.TextArea />
+        <Input.TextArea className="t-desc-input" />
       </Form.Item>
       <Form.Item
         name={"remoteURL"}
         label={i18n("projects.create.form.wiki")}
         rules={[{ type: "url", required: false }]}
       >
-        <Input type="url" />
+        <Input className="t-wiki-input" type="url" />
       </Form.Item>
     </>
   );

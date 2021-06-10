@@ -15,6 +15,13 @@ import { IconExperiment } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { blue6 } from "../../../styles/colors";
 
+/**
+ * Component to render samples that are in the cart (if any).
+ * User can select which samples to add to the new project.
+ * @param {Object} form - Ant Design form API
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function CreateProjectSamples({ form }) {
   const { data: samples = {}, isLoading } = useGetCartSamplesQuery();
   const [organismFilter, setOrganismFilter] = React.useState([]);
@@ -46,6 +53,7 @@ export function CreateProjectSamples({ form }) {
       {samples.unlocked?.length ? (
         <Space style={{ display: "block" }}>
           <Table
+            className="t-samples"
             loading={isLoading}
             rowSelection={{
               type: "checkbox",
@@ -102,7 +110,7 @@ export function CreateProjectSamples({ form }) {
             color: blue6,
           }}
           description={
-            <div>
+            <div className="t-no-samples">
               <Typography.Paragraph>
                 {i18n("CreateProjectSamples.empty-description")}
               </Typography.Paragraph>

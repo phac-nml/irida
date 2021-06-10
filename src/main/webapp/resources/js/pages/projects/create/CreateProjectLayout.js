@@ -87,6 +87,7 @@ export function CreateProjectLayout({ children }) {
           >
             {current !== steps.length - 1 && (
               <Button
+                className="t-create-next-btn"
                 onClick={() => {
                   form.validateFields().then(() => {
                     setCurrent(current + 1);
@@ -97,12 +98,18 @@ export function CreateProjectLayout({ children }) {
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button loading={loading} type="primary" onClick={submit}>
+              <Button
+                className="t-create-finish-btn"
+                loading={loading}
+                type="primary"
+                onClick={submit}
+              >
                 {i18n("CreateProjectLayout.finish")}
               </Button>
             )}
             {current !== 0 && (
               <Button
+                className="t-create-previous-btn"
                 onClick={() => {
                   form.validateFields().then(() => setCurrent(current - 1));
                 }}
