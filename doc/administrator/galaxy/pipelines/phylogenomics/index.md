@@ -11,7 +11,7 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name               | Tool Revision   | Toolshed Installable Revision | Toolshed              |
 |:-----------------------:|:---------------:|:-----------------------------:|:---------------------:|
-| **suite_snvphyl_1_2_2** | [77a9422303ce]  | 0                             | [Galaxy Main Shed][]  |
+| **suite_snvphyl_1_2_3** | [bc72925159fc]  | 0                             | [Galaxy Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
@@ -46,7 +46,7 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SNVPhyl]: http://snvphyl.readthedocs.io
-[77a9422303ce]: https://toolshed.g2.bx.psu.edu/view/nml/suite_snvphyl_1_2_2/77a9422303ce
+[bc72925159fc]: https://toolshed.g2.bx.psu.edu/view/nml/suite_snvphyl_1_2_3/bc72925159fc
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [SNVPhyl Galaxy Workflow]: ../test/snvphyl/snvphyl_workflow.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
