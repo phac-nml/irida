@@ -9,7 +9,7 @@ Changes
 * [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page. (21.05.1)
 * [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
 * [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
-
+* [Developer]: Upgraded Ant Desgin to v4.16.2.
 21.01 to 21.05
 --------------
 * [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)

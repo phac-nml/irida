@@ -17,12 +17,12 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
-    "@ant-design/charts": "^1.1.1",
+    "@ant-design/charts": "^1.1.12",
     "@ant-design/icons": "^4.6.2",
     "@antv/color-util": "^2.0.6",
     "@antv/matrix-util": "^3.0.4",
     "@antv/path-util": "^2.0.9",
-    "@antv/scale": "^0.3.9",
+    "@antv/scale": "^0.4.0",
     "@antv/util": "^2.0.13",
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
@@ -37,7 +37,7 @@
     "angular-marked": "^1.2.2",
     "angular-ui-bootstrap": "^2.5.6",
     "angular-ui-router": "1.0.0-alpha.4",
-    "antd": "4.15.0",
+    "antd": "4.16.2",
     "axios": "^0.21.1",
     "bootstrap": "3.4.1",
     "bootstrap-daterangepicker": "^3.0.3",
