@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -91,8 +94,15 @@ public class RESTSampleMetadataController {
 		//get the project and samples for the project
 		Project project = projectService.read(projectId);
 
+		List<MetadataFieldResponse> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+				project);
+		List<MetadataTemplateField> metadataTemplateFields = permittedFieldsForCurrentUser.stream()
+				.map(MetadataFieldResponse::getField)
+				.collect(Collectors.toList());
+
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
+		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project,
+				metadataTemplateFields);
 
 		//for each sample
 		for (Sample s : samples) {

@@ -199,6 +199,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields) {
+		return metadataEntryRepository.getMetadataForSampleAndField(sample,fields);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
 	public List<Long> getLockedSamplesInProject(Project project) {
@@ -209,10 +217,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	//TODO: Ensure a user is allowed to read the requested fields
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
-		return metadataEntryRepository.getMetadataForProject(project);
+	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
+		return metadataEntryRepository.getMetadataForProject(project, fields);
 	}
+
 
 	/**
 	 * {@inheritDoc}

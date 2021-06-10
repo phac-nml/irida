@@ -1,5 +1,6 @@
 import { Empty, Space, Table } from "antd";
 import React from "react";
+import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -8,7 +9,7 @@ import React from "react";
  * @returns {JSX.Element|string}
  */
 export default function MetadataFieldsListMember({ projectId }) {
-  const { data: fields, isLoading } = useGetMketadataFieldsForProjectQuery(
+  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
     projectId
   );
 
