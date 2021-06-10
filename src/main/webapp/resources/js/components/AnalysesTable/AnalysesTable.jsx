@@ -31,7 +31,7 @@ const UPDATE_PROGRESS_DELAY = 60000;
  * @returns {*}
  * @constructor
  */
-export function AnalysesTable({ canManage = window.PAGE.canManage }) {
+export function AnalysesTable({ canManage }) {
   const { updateTable } = useContext(PagedTableContext);
 
   /**
