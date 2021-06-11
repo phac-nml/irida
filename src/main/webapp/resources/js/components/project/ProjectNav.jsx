@@ -1,5 +1,5 @@
 import { Layout, Menu, PageHeader } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import { render } from "react-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
@@ -17,12 +17,13 @@ export function ProjectNav() {
   /*
   Get the current page from the global project object
    */
-  const [current, setCurrent] = useState(() => window.project.page);
+  const [current, setCurrent] = React.useState(() => window.project.page);
   const BASE_URL = setBaseUrl(`projects/${window.project.id}/`);
 
-  const pathTokens = window.location.pathname
-    .match(/^\/projects\/([0-9]+)\/(\w+)\/[\w+-]+$/)[0]
-    .split("/");
+  const pathMatch = window.location.pathname.match(
+    /^\/projects\/([0-9]+)\/(\w+)\/[\w+-]+$/
+  );
+  const pathTokens = pathMatch ? pathMatch[0].split("/") : "";
   const [subMenuKey, setSubMenuKey] = React.useState(
     pathTokens[pathTokens.length - 1]
   );

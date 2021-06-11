@@ -12,7 +12,7 @@ public class ProjectAnalysesPage extends AnalysesUserPage {
 	}
 
 	public static ProjectAnalysesPage initializeProjectAnalysesPage(WebDriver driver, int projectId) {
-		get(driver, "projects/" + projectId + "/analyses");
+		get(driver, "projects/" + projectId + "/analyses/project-analyses");
 		return PageFactory.initElements(driver, ProjectAnalysesPage.class);
 	}
 }

@@ -3,7 +3,6 @@ import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -55,7 +54,6 @@ const AnalysesLayout = () => (
  * @constructor
  */
 const ProjectAnalyses = (props) => {
-  const { data: project = {} } = useGetProjectDetailsQuery(props.projectId);
   return (
     <Layout>
       <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
@@ -63,10 +61,7 @@ const ProjectAnalyses = (props) => {
           <Col lg={24} xxl={12}>
             <Suspense fallback={<Skeleton />}>
               <Router>
-                <ProjectAnalysesPage
-                  path="/project-analyses"
-                  canManage={project.canManage}
-                />
+                <ProjectAnalysesPage path="/project-analyses" />
                 <SharedSingleSampleAnalysisOutputs path="/shared-outputs" />
                 <AutomatedSingleSampleAnalysisOutputs path="/automated-outputs" />
                 <Redirect from="/" to="/project-analyses" />

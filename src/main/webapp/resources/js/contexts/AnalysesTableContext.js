@@ -7,8 +7,6 @@ import React, { useState } from "react";
 import { getUpdatedTableDetails } from "../apis/analysis/analysis";
 import { notification } from "antd";
 
-//export const isAdmin = window.PAGE.isAdmin;
-
 const initialContext = {
   rows: [{}],
 };
