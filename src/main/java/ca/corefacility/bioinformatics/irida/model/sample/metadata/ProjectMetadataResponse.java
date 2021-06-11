@@ -5,6 +5,9 @@ import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+/**
+ * Object grouping a project and all the metadata for smaples within that project
+ */
 public class ProjectMetadataResponse {
 	private Project project;
 	private Map<Long, Set<MetadataEntry>> metadata;
