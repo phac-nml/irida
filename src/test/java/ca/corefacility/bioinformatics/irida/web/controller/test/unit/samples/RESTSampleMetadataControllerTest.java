@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -67,7 +68,7 @@ public class RESTSampleMetadataControllerTest {
 		when(projectService.read(p1.getId())).thenReturn(p1);
 		when(sampleService.getSamplesForProjectShallow(p1)).thenReturn(Lists.newArrayList(s1, s2));
 		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1)).thenReturn(fieldResponses);
-		when(sampleService.getMetadataForProject(p1, fieldList)).thenReturn(metadata);
+		when(sampleService.getMetadataForProject(p1, fieldList)).thenReturn(new ProjectMetadataResponse(p1,metadata));
 
 		ModelMap modelMap = metadataController.getProjectSampleMetadata(p1.getId());
 

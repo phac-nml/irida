@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -101,8 +102,10 @@ public class RESTSampleMetadataController {
 				.collect(Collectors.toList());
 
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project,
+		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
 				metadataTemplateFields);
+
+		final Map<Long, Set<MetadataEntry>> metadataForProject = metadataResponse.getMetadata();
 
 		//for each sample
 		for (Sample s : samples) {

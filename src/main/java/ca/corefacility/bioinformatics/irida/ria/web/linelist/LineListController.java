@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
@@ -83,7 +84,10 @@ public class LineListController {
 				.map(MetadataFieldResponse::getField)
 				.collect(Collectors.toList());
 
-		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project, metadataTemplateFields);
+		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
+				metadataTemplateFields);
+
+		final Map<Long, Set<MetadataEntry>> metadataForProject = metadataResponse.getMetadata();
 
 		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
 

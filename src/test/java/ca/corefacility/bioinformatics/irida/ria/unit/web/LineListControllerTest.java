@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
@@ -80,7 +81,7 @@ public class LineListControllerTest {
 		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", field)));
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(sampleService.getMetadataForProject(project, fieldList)).thenReturn(metadata);
+		when(sampleService.getMetadataForProject(project, fieldList)).thenReturn(new ProjectMetadataResponse(project,metadata));
 		when(sampleService.getSamplesForProjectShallow(project)).thenReturn(Lists.newArrayList(s1, s2));
 		when(metadataTemplateService.getPermittedFieldsForCurrentUser(project)).thenReturn(fieldResponses);
 		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController.getProjectSamplesMetadataEntries(

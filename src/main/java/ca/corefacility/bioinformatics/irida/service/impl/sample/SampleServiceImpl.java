@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -217,10 +219,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	//TODO: Ensure a user is allowed to read the requested fields
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
-		return metadataEntryRepository.getMetadataForProject(project, fields);
+	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
+	public ProjectMetadataResponse getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
+		Map<Long, Set<MetadataEntry>> metadataForProject = metadataEntryRepository.getMetadataForProject(project,
+				fields);
+
+		return new ProjectMetadataResponse(project, metadataForProject);
 	}
 
 
