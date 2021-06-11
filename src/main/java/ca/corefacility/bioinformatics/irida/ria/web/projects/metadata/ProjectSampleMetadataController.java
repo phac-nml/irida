@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.Principal;
+import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -18,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,21 +57,6 @@ public class ProjectSampleMetadataController {
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
-	}
-
-	/**
-	 * Handle the page request to upload {@link Sample} metadata
-	 *
-	 * @param model     {@link Model}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param principal {@link Principal} currently logged in use
-	 * @return {@link String} the path to the metadata import page
-	 */
-	@RequestMapping(value = "upload", method = RequestMethod.GET)
-	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId,
-			Principal principal) {
-		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
-		return "projects/project_samples_metadata_upload";
 	}
 
 	/**
@@ -139,7 +119,8 @@ public class ProjectSampleMetadataController {
 
 						if (!Strings.isNullOrEmpty(header)) {
 							// Need to ignore empty headers.
-							if(cell.getCellTypeEnum().equals(CellType.NUMERIC)) {
+							if (cell.getCellTypeEnum()
+									.equals(CellType.NUMERIC)) {
 								/*
 								This is a special handler for number cells.  It was requested that numbers
 								keep their formatting from their excel files.  E.g. 2.222222 with formatting
@@ -148,8 +129,7 @@ public class ProjectSampleMetadataController {
 								DataFormatter formatter = new DataFormatter();
 								String value = formatter.formatCellValue(cell);
 								rowMap.put(header, value);
-							}
-							else {
+							} else {
 								cell.setCellType(CellType.STRING);
 								rowMap.put(header, cell.getStringCellValue());
 							}
@@ -302,7 +282,7 @@ public class ProjectSampleMetadataController {
 					}
 
 					// Save metadata back to the sample
-					sampleService.mergeSampleMetadata(sample,metadataEntrySet);
+					sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 				}
 
 			} catch (EntityNotFoundException e) {
