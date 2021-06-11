@@ -116,6 +116,8 @@ Recent activities include adding or modifying project members and adding new sam
 
 ![Project recent activities.](images/project-recent-activities.png)
 
+By default, the 10 most recent activities wil be displayed.  Clicking the "Load More" button will load 10 more activties until all the activities are loaded.
+
 Managing project settings
 -------------------------
 
