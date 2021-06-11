@@ -40,7 +40,16 @@ export function CreateProjectDetails({ form }) {
       <Form.Item
         name="name"
         label={i18n("CreateProjectDetails.name")}
-        rules={[{ type: "string", min: 5, required: true }]}
+        rules={[
+          {
+            required: true,
+            message: i18n("CreateProjectDetails.name-required"),
+          },
+          {
+            pattern: /^[a-zA-Z0-9\s_-]+$/,
+            message: i18n("CreateProjectDetails.name-characters"),
+          },
+        ]}
       >
         <Input className="t-name-input" type={"text"} ref={nameRef} />
       </Form.Item>

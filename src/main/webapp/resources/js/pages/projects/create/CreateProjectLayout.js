@@ -137,7 +137,6 @@ export function CreateProjectLayout({ children }) {
             <Form
               form={form}
               layout="vertical"
-              validateMessages={validateMessages}
               initialValues={{
                 name: "",
                 description: "",
