@@ -15,7 +15,7 @@ export default function ProjectAnalysesPage({ projectId }) {
 
   return (
     <PagedTableProvider url={PROJECT_ANALYSES_URL}>
-      <Title level={2}>Analyses</Title>
+      <Title level={2}>{i18n("ProjectAnalysesPage.title")}</Title>
       <AnalysesTable canManage={project.canManage} />
     </PagedTableProvider>
   );
