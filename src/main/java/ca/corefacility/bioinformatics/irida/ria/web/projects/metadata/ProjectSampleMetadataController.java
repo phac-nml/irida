@@ -1,11 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.metadata;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -81,11 +85,42 @@ public class ProjectSampleMetadataController {
 			byte[] byteArr = file.getBytes();
 			InputStream fis = new ByteArrayInputStream(byteArr);
 
-			Workbook workbook;
+			Workbook workbook = null;
 			String extension = Files.getFileExtension(filename);
 
 			// Check the type of workbook
 			switch (extension) {
+			case "csv":
+				CSVParser parser = CSVParser.parse(fis, StandardCharsets.UTF_8,
+						CSVFormat.RFC4180.withFirstRecordAsHeader()
+								.withTrim()
+								.withIgnoreEmptyLines());
+				List<Map<String, String>> rows = new ArrayList<>();
+
+				// save headers
+				Map<String, Integer> headers_set = parser.getHeaderMap();
+				List<String> headers_list = new ArrayList<>(headers_set.keySet());
+				storage.saveHeaders(headers_list);
+
+				// save data
+				for (CSVRecord row : parser) {
+					System.out.println(row);
+					Map<String, String> rowMap = new HashMap<>();
+					for (String key : row.toMap()
+							.keySet()) {
+						String value = row.toMap()
+								.get(key);
+						System.out.println("key: " + key + " value: " + value);
+						rowMap.put(key, value);
+					}
+					rows.add(rowMap);
+				}
+
+				storage.saveRows(rows);
+				parser.close();
+				fis.close();
+				session.setAttribute("pm-" + projectId, storage);
+				return storage;
 			case "xlsx":
 				workbook = new XSSFWorkbook(fis);
 				break;
