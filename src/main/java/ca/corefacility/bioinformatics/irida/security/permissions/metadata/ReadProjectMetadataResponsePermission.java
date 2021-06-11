@@ -21,14 +21,17 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrict
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
+/**
+ * Permission for checking that a user should have access to the given {@link MetadataTemplateField}s in a {@link ProjectMetadataResponse}
+ */
 @Component
 public class ReadProjectMetadataResponsePermission implements BasePermission<ProjectMetadataResponse> {
 
 	public static final String PERMISSION_PROVIDED = "readProjectMetadataResponse";
 
-	UserRepository userRepository;
-	ProjectUserJoinRepository projectUserJoinRepository;
-	MetadataRestrictionRepository metadataRestrictionRepository;
+	private UserRepository userRepository;
+	private ProjectUserJoinRepository projectUserJoinRepository;
+	private MetadataRestrictionRepository metadataRestrictionRepository;
 
 	@Autowired
 	public ReadProjectMetadataResponsePermission(UserRepository userRepository,
@@ -46,68 +49,73 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 
 	@Override
 	public boolean isAllowed(Authentication authentication, Object targetDomainObject) {
+		//ensure the object we're checking is a ProjectMetadataResponse
 		if (!(targetDomainObject instanceof ProjectMetadataResponse)) {
 			throw new IllegalArgumentException(
 					"Object is not a ProjectMetadataResponse: " + targetDomainObject.getClass());
 		}
-
 		ProjectMetadataResponse metadataResponse = (ProjectMetadataResponse) targetDomainObject;
 
+		//get the user & projec
 		User user = userRepository.loadUserByUsername(authentication.getName());
-
 		Project project = metadataResponse.getProject();
-
 		ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
 
+		//get the user's role on the project
 		ProjectRole userProjectRole;
 		if (projectJoinForUser != null) {
 			userProjectRole = projectJoinForUser.getProjectRole();
 		} else if (user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
+			//if the user isn't on the project but is an admin, treat them as a project owner
 			userProjectRole = ProjectRole.PROJECT_OWNER;
 		} else {
+			//if the user is not otherwise on the project, they shouldn't be able to read anything
 			return false;
 		}
 
+		//get the metadata restrictions on the project
 		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository.getRestrictionForProject(
 				project);
-
 		Map<MetadataTemplateField, MetadataRestriction> restrictionMap = restrictionForProject.stream()
 				.collect(Collectors.toMap(MetadataRestriction::getField, field -> field));
 
+		//go through the metadata being returned and get a distinct collection of the fields
 		Map<Long, Set<MetadataEntry>> metadata = metadataResponse.getMetadata();
-
 		Set<MetadataTemplateField> fields = new HashSet<>();
-
 		for (Set<MetadataEntry> entries : metadata.values()) {
 			for (MetadataEntry entry : entries) {
 				fields.add(entry.getField());
 			}
 		}
 
-		//for each field to check
-		Optional<MetadataTemplateField> filteredField = fields.stream()
+		/*
+		 * for each field check if the set of fields contain any they shouldn't be able to read.
+		 * this will return true if the user is allowed to read all the fields in the set.
+		 */
+		boolean allFieldsValid = fields.stream()
 				.filter(field -> {
-					//if the restriction map contains the field
+					//if we have a restriction on a field, compare it against the user's role on the project
 					if (restrictionMap.containsKey(field)) {
 						MetadataRestriction metadataRestriction = restrictionMap.get(field);
 						ProjectRole restrictionRole = metadataRestriction.getLevel();
 
-						//compare the restriction level to the given role.  If it's greater or equal, we're good
+						//compare the restriction level to the user's role
 						if (userProjectRole.getLevel() >= restrictionRole.getLevel()) {
 							return false;
+						} else {
+							return true;
 						}
 
-						//if it's less, filter out the field
-						return true;
 					} else {
 						//if there's no restriction set for the field, all users can view
 						return false;
 					}
 
 				})
-				.findAny();
+				.findAny()
+				.isEmpty();
 
-		return filteredField.isEmpty();
+		return allFieldsValid;
 	}
 }
