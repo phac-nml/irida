@@ -6,11 +6,19 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
 
+/**
+ * Redux Cart API
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getCartSamples: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getCartSamples: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
+ */
 export const cartApi = createApi({
   reducerPath: `cartApi`,
   baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
   tagTypes: ["Cart"],
   endpoints: (build) => ({
+    /*
+    Get all the samples in the cart.  This is specially formatted for the create new project page
+    where samples need to be broken down into locked and unlocked samples.
+     */
     getCartSamples: build.query({
       query: () => ({ url: "/all-samples" }),
     }),
