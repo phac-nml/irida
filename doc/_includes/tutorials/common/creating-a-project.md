@@ -18,7 +18,7 @@ If you choose to set a project organism, click on the "Select an Organism" drop-
 
 The organism names are derived from the [NCBI taxonomy database](http://www.ncbi.nlm.nih.gov/taxonomy).
 
-Clicking the "Next" buttons allows you to select samples that have been added to your cart to the project.
+Clicking the "Next" button allows you to select samples that have been added to your cart and add them to the project.
 
 If there are no samples currently in the cart a message will be displayed:
 
