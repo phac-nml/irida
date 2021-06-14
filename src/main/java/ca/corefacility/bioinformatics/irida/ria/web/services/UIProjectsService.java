@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -65,8 +68,10 @@ public class UIProjectsService {
 	 *
 	 * @param request {@link CreateProjectRequest} containing (at the very least) the name for the project
 	 * @return the identifier for the newly created project
+	 * @throws EntityExistsException if the project already exists.
+	 * @throws ConstraintViolationException if there was a constraint violation with the parameters passed.
 	 */
-	public Long createProject(CreateProjectRequest request) {
+	public Long createProject(CreateProjectRequest request) throws EntityExistsException, ConstraintViolationException {
 		Project project = new Project(request.getName());
 		project.setProjectDescription(request.getDescription());
 		project.setOrganism(request.getOrganism());
