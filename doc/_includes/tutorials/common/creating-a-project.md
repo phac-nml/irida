@@ -28,7 +28,7 @@ When samples are in the cart, only samples that you have full permissions on can
 
 ![Samples]({{ site.baseurl }}/images/tutorials/common/projects/create-project-samples.png)
 
-To prevent samples from being modified or copied withinthe new project, check the "Prevent modification and copying of these samples" box. This setting will only allow the sample owner to edit any sample data.
+To prevent samples from being modified or copied within the new project, check the "Prevent modification and copying of these samples" box. This setting will only allow the sample owner to edit any sample data.
 
 When you've finished entering the details for your new project, click on the "Create Project" button. You will be redirected to the projects list.
 
