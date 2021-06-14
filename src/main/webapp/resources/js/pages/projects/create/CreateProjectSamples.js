@@ -30,6 +30,10 @@ export function CreateProjectSamples({ form }) {
 
   React.useEffect(() => {
     const exists = {};
+    /*
+    For all unlocked samples we need to get the unique values of the organism names.
+    Then format them into a manner that can be consumed by the dropdown.
+     */
     samples.unlocked?.forEach((sample) => {
       if (!exists[sample.organism]) {
         exists[sample.organism] = {
