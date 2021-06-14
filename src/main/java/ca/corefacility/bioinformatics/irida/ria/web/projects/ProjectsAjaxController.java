@@ -49,7 +49,7 @@ public class ProjectsAjaxController {
 	}
 
 	/**
-	 * Handle request for get a filtered and sorted list of projects for a user or administrator
+	 * Handle request for getting a filtered and sorted list of projects for a user or administrator
 	 *
 	 * @param tableRequest {@link TableRequest} Details about what is needed in the table (sort, filter, and search).
 	 * @param admin        {@link Boolean} Is the user on an administration page.
