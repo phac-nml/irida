@@ -202,14 +202,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields) {
-		return metadataEntryRepository.getMetadataForSampleAndField(sample,fields);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
 	public List<Long> getLockedSamplesInProject(Project project) {
