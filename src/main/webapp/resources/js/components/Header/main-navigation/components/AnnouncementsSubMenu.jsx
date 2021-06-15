@@ -2,15 +2,17 @@
  * @file AnnouncementsSubMenu is the announcements drop down in the main navigation bar.
  */
 
+import { Badge, Menu, Row, Typography } from "antd";
 import React from "react";
-import { Badge, Dropdown, Menu, Space, Typography } from "antd";
-import { IconBell } from "../../../icons/Icons";
+import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
+import { BORDERED_LIGHT } from "../../../../styles/borders";
+import { grey2, grey4 } from "../../../../styles/colors";
+import { SPACE_MD } from "../../../../styles/spacing";
+import { fromNow } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { LinkButton } from "../../../Buttons/LinkButton";
+import { IconBell } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
-import { fromNow } from "../../../../utilities/date-utilities";
-import { BORDERED_LIGHT } from "../../../../styles/borders";
-import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
 
 const { Text } = Typography;
 
@@ -34,8 +36,8 @@ export function AnnouncementsSubMenu() {
   }
 
   const aMenu = (
-    <Menu className="t-announcements-submenu">
-      {announcements.length == 0 ? (
+    <>
+      {announcements.length === 0 ? (
         <Menu.Item
           key={"announcement_none"}
           style={{ width: 400, borderBottom: BORDERED_LIGHT }}
@@ -47,23 +49,30 @@ export function AnnouncementsSubMenu() {
         announcements.map((item, index) => (
           <Menu.Item
             key={"announcement_" + index}
-            style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+            style={{
+              width: 400,
+            }}
+            icon={<PriorityFlag hasPriority={item.priority} />}
           >
             <LinkButton
               title={item.title}
               text={
-                <Space size="large">
-                  <PriorityFlag hasPriority={item.priority} />
-                  <span>
-                    <Text strong ellipsis style={{ width: 310 }}>
-                      {item.title}
-                    </Text>
-                    <br />
-                    <Text type="secondary" style={{ fontSize: `.8em` }}>
-                      {fromNow({ date: item.createdDate })}
-                    </Text>
-                  </span>
-                </Space>
+                <Row justify="space-between" align="middle">
+                  <Text ellipsis style={{ maxWidth: 260, color: grey2 }}>
+                    {item.title}
+                  </Text>
+                  {/*<br />*/}
+                  <Text
+                    type="secondary"
+                    style={{
+                      fontSize: `.8em`,
+                      color: grey4,
+                      paddingRight: SPACE_MD,
+                    }}
+                  >
+                    {fromNow({ date: item.createdDate })}
+                  </Text>
+                </Row>
               }
               onClick={() => {
                 showAnnouncementModal(index);
@@ -79,19 +88,24 @@ export function AnnouncementsSubMenu() {
           href={setBaseUrl(`/announcements/user/list`)}
         />
       </Menu.Item>
-    </Menu>
+    </>
   );
 
   return (
-    <Dropdown overlay={aMenu}>
-      <span className="announcements-dropdown">
-        <Badge
-          className="t-announcements-badge"
-          count={announcements && announcements.filter((a) => !a.read).length}
-        >
-          <IconBell />
-        </Badge>
-      </span>
-    </Dropdown>
+    <Menu.SubMenu
+      key="announcements"
+      title={
+        <span className="announcements-dropdown">
+          <Badge
+            className="t-announcements-badge"
+            count={announcements && announcements.filter((a) => !a.read).length}
+          >
+            <IconBell style={{ color: grey2 }} />
+          </Badge>
+        </span>
+      }
+    >
+      {aMenu}
+    </Menu.SubMenu>
   );
 }

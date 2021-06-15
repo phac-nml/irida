@@ -1,12 +1,12 @@
-import React from "react";
 import { Avatar, Col, Menu, Row, Space } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import React from "react";
 import { SPACE_MD } from "../../styles/spacing";
+import { primaryColour, theme } from "../../utilities/theme-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
 import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
-import { primaryColour, theme } from "../../utilities/theme-utilities";
 import "./main-navigation/style.css";
 
 export function MainNavigation() {
@@ -49,21 +49,21 @@ export function MainNavigation() {
               </a>
             </Menu.Item>
           </Menu.SubMenu>
-          <Menu.SubMenu title={i18n("nav.main.analysis")}>
-            <Menu.Item>
+          <Menu.SubMenu key="analyses" title={i18n("nav.main.analysis")}>
+            <Menu.Item key="analyses:user">
               <a href={setBaseUrl(`/analysis`)}>
                 {i18n("nav.main.analysis-admin-user")}
               </a>
             </Menu.Item>
             {isAdmin && (
-              <Menu.Item key="project:all">
+              <Menu.Item key="analyses:all">
                 <a href={setBaseUrl("/analysis/all")}>
                   {i18n("nav.main.analysis-admin-all")}
                 </a>
               </Menu.Item>
             )}
             <Menu.Divider />
-            <Menu.Item>
+            <Menu.Item key="analyses:outputs">
               <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
                 {i18n("Analysis.outputFiles")}
               </a>
@@ -84,13 +84,13 @@ export function MainNavigation() {
         <Menu mode="horizontal" theme={theme} className="accessory-menu">
           <Menu.Item icon={<CartLink />} key="cart" />
           {!isAdmin && (
-            <Menu.SubMenu title={<IconCog />}>
+            <Menu.SubMenu title={<IconCog />} key="settings">
               {isManager && (
-              <Menu.Item key="user:users">
-                <a href={setBaseUrl("/users")}>
-                  {i18n("nav.main.users-list")}
-                </a>
-              </Menu.Item>
+                <Menu.Item key="user:users">
+                  <a href={setBaseUrl("/users")}>
+                    {i18n("nav.main.users-list")}
+                  </a>
+                </Menu.Item>
               )}
               <Menu.Item key="user:groups">
                 <a href={setBaseUrl("/groups")}>
@@ -112,12 +112,16 @@ export function MainNavigation() {
               </a>
             </Menu.Item>
           )}
-          <Menu.SubMenu title={<IconQuestionCircle />}>
-            <Menu.ItemGroup title={i18n("MainNavigation.docs")}>
+          <Menu.SubMenu title={<IconQuestionCircle />} key="help">
+            <Menu.ItemGroup
+              title={i18n("MainNavigation.docs")}
+              key="help:guides"
+            >
               <Menu.Item key="userguide">
                 <a
                   href="https://irida.corefacility.ca/documentation/user/user"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   {i18n("nav.main.userguide")}
                 </a>
@@ -141,10 +145,13 @@ export function MainNavigation() {
               </a>
             </Menu.Item>
             <Menu.Divider />
-            <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
+            <Menu.Item key="irida:version" disabled>
+              {i18n("irida.version")}
+            </Menu.Item>
           </Menu.SubMenu>
           <AnnouncementsSubMenu />
           <Menu.SubMenu
+            key="user:settings"
             title={
               <Space>
                 <Avatar
