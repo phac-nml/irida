@@ -36,7 +36,7 @@ public class MetadataEntry {
 	@JoinColumn(name = "field_id", nullable = false)
 	private MetadataTemplateField field;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id", nullable = false)
 	private Sample sample;
 
@@ -109,10 +109,6 @@ public class MetadataEntry {
 	@JsonIgnore
 	public MetadataTemplateField getField() {
 		return field;
-	}
-
-	public Sample getSample() {
-		return sample;
 	}
 
 	@JsonIgnore

@@ -193,7 +193,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	@PostFilter("hasPermission(filterObject, 'canReadMetadataEntry')")
 	@Override
 	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
 		return metadataEntryRepository.getMetadataForSample(sample);
@@ -203,7 +202,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	@PostFilter("hasPermission(filterObject, 'canReadMetadataEntry')")
 	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields) {
 		return metadataEntryRepository.getMetadataForSampleAndField(sample,fields);
 	}
