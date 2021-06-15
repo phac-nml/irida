@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Confirms that the authenticated user is allowed to modify another (or their
@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
  * 
  */
 @Component
-public class UpdateUserPermission extends BasePermission<User, Long> {
+public class UpdateUserPermission extends RepositoryBackedPermission<User, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canUpdateUser";
 

@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 
 /**
@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
  *
  */
 @Component
-public class UpdateSamplePermission extends BasePermission<Sample, Long> {
+public class UpdateSamplePermission extends RepositoryBackedPermission<Sample, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canUpdateSample";
 

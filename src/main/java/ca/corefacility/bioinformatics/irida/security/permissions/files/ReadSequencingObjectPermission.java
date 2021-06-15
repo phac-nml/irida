@@ -11,14 +11,14 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 
 /**
  * Evaluate whether or not a user can read a {@link SequencingObject}
  */
 @Component
-public class ReadSequencingObjectPermission extends BasePermission<SequencingObject, Long> {
+public class ReadSequencingObjectPermission extends RepositoryBackedPermission<SequencingObject, Long> {
 	private static final String PERMISSION_PROVIDED = "canReadSequencingObject";
 	
 	private static final Logger logger = LoggerFactory.getLogger(ReadSequencingObjectPermission.class);

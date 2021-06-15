@@ -8,13 +8,13 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Whether or not a {@link User} can read a given {@link NcbiExportSubmission}
  */
 @Component
-public class ReadExportSubmissionPermission extends BasePermission<NcbiExportSubmission, Long> {
+public class ReadExportSubmissionPermission extends RepositoryBackedPermission<NcbiExportSubmission, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canReadExportSubmission";
 
