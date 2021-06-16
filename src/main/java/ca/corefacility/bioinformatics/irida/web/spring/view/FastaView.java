@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.spring.view;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 
 import com.google.common.net.HttpHeaders;
@@ -39,7 +40,8 @@ public class FastaView extends AbstractView {
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		IridaSequenceFile sfr = (IridaSequenceFile) model.get(RESTGenericController.RESOURCE_NAME);
+		IridaSequenceFile sfr = (IridaSequenceFile) ((ResponseResource) model.get(
+				RESTGenericController.RESOURCE_NAME)).getResource();
 		Path fileContent = sfr.getFile();
 		String filename = fileContent.getFileName()
 				.toString();
