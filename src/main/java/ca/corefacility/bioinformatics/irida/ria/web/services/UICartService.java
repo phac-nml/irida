@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * Service for handling all aspects interaction with the Cart.
+ * Service for handling all aspects of interaction with the Cart.
  */
 @Component
 public class UICartService {
