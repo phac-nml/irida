@@ -24,6 +24,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import "./linker/Linker";
 import "./add-sample/AddSampleButton";
+import "./share-samples/ShareSamplesButton";
 
 /*
 This is required to use select2 inside a modal.

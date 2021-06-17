@@ -37,6 +37,7 @@ import {
   RocketOutlined,
   SearchOutlined,
   SettingOutlined,
+  ShareAltOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -194,6 +195,10 @@ export const IconUsergroupDelete = (props) => (
 
 export const IconCalendarTwoTone = ({ ...props }) => (
   <CalendarTwoTone {...props} />
+);
+
+export const IconShareSamples = ({ ...props }) => (
+  <ShareAltOutlined {...props} />
 );
 
 /*
