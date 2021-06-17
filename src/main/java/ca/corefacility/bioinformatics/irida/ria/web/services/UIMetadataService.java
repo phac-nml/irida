@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemp
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
@@ -119,11 +118,7 @@ public class UIMetadataService {
 	 */
 	public List<ProjectMetadataField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataFieldResponse> permittedFieldsForCurrentUser = templateService.getPermittedFieldsForCurrentUser(
-				project);
-		List<MetadataTemplateField> fields = permittedFieldsForCurrentUser.stream()
-				.map(MetadataFieldResponse::getField)
-				.collect(Collectors.toList());
+		List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project);
 		return addRestrictionsToMetadataFields(project, fields);
 	}
 

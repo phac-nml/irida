@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -7,13 +11,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Service for managing {@link MetadataTemplate}s and related {@link Project}s
@@ -157,7 +156,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Get all {@link MetadataTemplateField} that the currently logged in user is allowed to read
 	 *
 	 * @param project the {@link Project} to request fields from
-	 * @return a {@link MetadataFieldResponse} collecting the allowed {@link MetadataTemplateField}
+	 * @return a list of {@link MetadataTemplateField} collecting the allowed {@link MetadataTemplateField}
 	 */
-	public List<MetadataFieldResponse> getPermittedFieldsForCurrentUser(Project project);
+	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project);
 }
