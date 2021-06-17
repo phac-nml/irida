@@ -10,6 +10,7 @@ Changes
 * [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
 * [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
 * [UI]: Update of Create New Project page to use Ant Design.
+* [Developer]: Updated Redux Toolkit to stable version 1.6.2
 
 21.01 to 21.05
 --------------
