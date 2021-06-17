@@ -39,7 +39,7 @@ export default function CopySamples({ children, getSelectedSamples }) {
                 description={
                   sample.owner
                     ? null
-                    : "This sample will be locked from modification in the new project"
+                    : "`This sample will be locked from modification in the new project`"
                 }
               />
             </List.Item>
