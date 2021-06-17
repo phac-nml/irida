@@ -480,7 +480,7 @@ public class SampleServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "test", roles = "USER")
-	public void testGetMetadataAsUser() {
+	public void testGetPartialMetadataAsUser() {
 		Project project = projectService.read(1L);
 
 		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
@@ -508,11 +508,41 @@ public class SampleServiceImplIT {
 		Project project = projectService.read(1L);
 
 		MetadataTemplateField field1 = metadataTemplateService.readMetadataField(1L);
-		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(2L);
+		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(
+				2L); //user shouldn't be able to read this one in the project
 
 		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
 
 		sampleService.getMetadataForProject(project, metadataTemplateFields);
+	}
+
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
+	public void testManagerReadAllMetadata() {
+		Project project = projectService.read(1L);
+
+		MetadataTemplateField field1 = metadataTemplateService.readMetadataField(1L);
+		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(2L);
+
+		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
+
+		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProject(project,
+				metadataTemplateFields);
+
+		Map<Long, Set<MetadataEntry>> metadata = metadataForProject.getMetadata();
+
+		Set<MetadataEntry> metadataEntries = metadata.values()
+				.iterator()
+				.next();
+
+		assertEquals("should be 2 metadata entries", 2, metadataEntries.size());
+
+		List<MetadataTemplateField> fields = metadataEntries.stream()
+				.map(MetadataEntry::getField)
+				.collect(Collectors.toList());
+
+		assertEquals("should be 2 fields", 2, fields.size());
+		assertTrue(fields.contains(field1));
+		assertTrue(fields.contains(field2));
 	}
 
 	private void assertSampleNotFound(Long id) {
