@@ -7,14 +7,15 @@ import ShareSamplesWrapper from "../../../../components/samples/share";
 export function ShareSamplesButton() {
   const getSelectedSamples = () => {
     const selected = window.$dt.select.selected()[0];
-    console.log(selected);
-    const samples = [];
-
-    for (let next of selected.keys()) {
-      samples.push(window.$dt.row(`#${next}`).data());
-    }
-    console.log(samples);
-    return samples;
+    const ids = [];
+    selected.forEach((value) => {
+      ids.push(value.id);
+    });
+    return {
+      ids,
+      projectId: selected.values().next().value.projectId,
+      timestamp: Date.now(),
+    };
   };
 
   return (

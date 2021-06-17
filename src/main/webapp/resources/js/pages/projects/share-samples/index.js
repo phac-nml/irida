@@ -1,9 +1,24 @@
-import { Router, useLocation } from "@reach/router";
+import { Router } from "@reach/router";
 import React from "react";
 import { render } from "react-dom";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 function ShareSamples({ projectId }) {
+  console.log("HELO");
+  React.useEffect(() => {
+    const shared = sessionStorage.getItem("share");
+    if (shared) {
+      const sharedJson = JSON.parse(shared);
+      if (Number(sharedJson.projectId) !== Number(projectId)) {
+        sessionStorage.removeItem("share");
+        window.location.href = setBaseUrl(`/projects/${projectId}`);
+      }
+
+      sessionStorage.removeItem("share");
+    } else {
+      window.location.href = setBaseUrl(`/projects/${projectId}`);
+    }
+  }, [projectId]);
   // const location = useLocation();
 
   // React.useEffect(() => {
@@ -14,7 +29,7 @@ function ShareSamples({ projectId }) {
   //   if (!ids) window.location.href = setBaseUrl(`projects/${projectId}`);
   // }, [location.search, projectId]);
 
-  return <div>HELO JIMMY</div>;
+  return <div>HELLO JIMMY</div>;
 }
 
 render(

@@ -244,6 +244,13 @@ public class ProjectsController {
 		return "redirect:/projects/" + project.getId() + "/settings/details";
 	}
 
+	@RequestMapping("/projects/{projectId}/samples/share")
+	public String getProjectSamplesCopyPage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/share_samples";
+	}
+
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *

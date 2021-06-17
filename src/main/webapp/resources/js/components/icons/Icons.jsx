@@ -3,6 +3,7 @@ import {
   BoldOutlined,
   CalendarTwoTone,
   CheckCircleOutlined,
+  CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
@@ -200,6 +201,8 @@ export const IconCalendarTwoTone = ({ ...props }) => (
 export const IconShareSamples = ({ ...props }) => (
   <ShareAltOutlined {...props} />
 );
+
+export const IconCheck = ({ ...props }) => <CheckOutlined {...props} />;
 
 /*
 File Type Icons
