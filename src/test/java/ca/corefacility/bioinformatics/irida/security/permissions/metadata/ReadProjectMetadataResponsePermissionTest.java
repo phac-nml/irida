@@ -172,4 +172,33 @@ public class ReadProjectMetadataResponsePermissionTest {
 
 		assertTrue("permission should be allowed", permission.isAllowed(authentication, metadataResponse));
 	}
+
+	@Test
+	public void testAdminOnProjectDisallowed() {
+		Authentication authentication = new PreAuthenticatedAuthenticationToken(admin, admin.getSystemRole());
+
+		when(projectUserJoinRepository.getProjectJoinForUser(project, admin)).thenReturn(
+				new ProjectUserJoin(project, admin, ProjectRole.PROJECT_USER));
+
+		MetadataTemplateField field = new MetadataTemplateField("name", "text");
+		MetadataEntry entry = new MetadataEntry("test", "text");
+		entry.setField(field);
+
+		MetadataTemplateField field2 = new MetadataTemplateField("name2", "text");
+		MetadataEntry entry2 = new MetadataEntry("test2", "text");
+		entry2.setField(field2);
+
+		Map<Long, Set<MetadataEntry>> entries = new HashMap<>();
+		entries.put(1L, Sets.newHashSet(entry, entry2));
+
+		ProjectMetadataResponse metadataResponse = new ProjectMetadataResponse(project, entries);
+
+		MetadataRestriction restriction1 = new MetadataRestriction(project, field, ProjectRole.PROJECT_USER);
+		MetadataRestriction restriction2 = new MetadataRestriction(project, field2, ProjectRole.PROJECT_OWNER);
+
+		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
+				Lists.newArrayList(restriction1, restriction2));
+
+		assertFalse("permission should be denied", permission.isAllowed(authentication, metadataResponse));
+	}
 }
