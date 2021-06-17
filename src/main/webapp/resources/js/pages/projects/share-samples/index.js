@@ -1,4 +1,5 @@
 import { Router } from "@reach/router";
+import { List } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -29,7 +30,9 @@ function ShareSamples({ projectId }) {
   //   if (!ids) window.location.href = setBaseUrl(`projects/${projectId}`);
   // }, [location.search, projectId]);
 
-  return <div>HELLO JIMMY</div>;
+  const handleLoad = ({ startIndex, stopIndex }) => {};
+
+  return <List>HELLO JIMMY</List>;
 }
 
 render(

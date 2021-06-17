@@ -1728,6 +1728,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.7":
+  version: 7.14.6
+  resolution: "@babel/runtime@npm:7.14.6"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: dd931f6ef1c8dab295c4a00c592db6352bf12a5c443f8222304d5c1d3e88d795fa949afcb6f053eec2e69e9827a17ff274524c1cd43813f56b61e3a540274d2f
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.9.2":
   version: 7.13.17
   resolution: "@babel/runtime@npm:7.13.17"
@@ -4271,6 +4280,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^1.0.4":
+  version: 1.1.1
+  resolution: "clsx@npm:1.1.1"
+  checksum: d8ae10ac0546da19fe8c9516886f6582a64a382cf4d09ea7d36d5287cafbdab1192ab249adc2cdf0310e0b0aeac4f4142cf7c738c98d9cb68c19ba24b6f673d5
+  languageName: node
+  linkType: hard
+
 "co@npm:^4.6.0":
   version: 4.6.0
   resolution: "co@npm:4.6.0"
@@ -5381,6 +5397,16 @@ __metadata:
   version: 1.12.0
   resolution: "dom-align@npm:1.12.0"
   checksum: d4d274a1fd32ce7839096a498b9b1b24fb3e5f47fe1cc576dd18c8ca1cd0d2554e7a136c364ee6e38146aea9ddabd8c81efb3de42796b3cdef30609f89ada82d
+  languageName: node
+  linkType: hard
+
+"dom-helpers@npm:^5.1.3":
+  version: 5.2.1
+  resolution: "dom-helpers@npm:5.2.1"
+  dependencies:
+    "@babel/runtime": ^7.8.7
+    csstype: ^3.0.2
+  checksum: 4bbdac8dfd37ad689921af2c4d0027870108c673d458a0fc65b4350900c6195df2f872dd75c357755d197208b228e90c55619f75f9a9d337910e5050e83832af
   languageName: node
   linkType: hard
 
@@ -7198,6 +7224,7 @@ fsevents@^2.1.2:
     react-markdown: ^4.3.1
     react-mde: ^8.0.2
     react-redux: ^7.1.0
+    react-virtualized: ^9.22.3
     react-virtualized-auto-sizer: ^1.0.2
     react-window: ^1.8.1
     reactour: ^1.9.1
@@ -11617,6 +11644,23 @@ fsevents@^2.1.2:
     react: ^15.3.0 || ^16.0.0-alpha
     react-dom: ^15.3.0 || ^16.0.0-alpha
   checksum: 091e260be01e5c1ea82376d3dbe430d41319deaabf5cb5d9ef7923e9f998ad05ed849ff1334c5f509955f25b4e9d864a482476c53040c7e55885d089ba7ed497
+  languageName: node
+  linkType: hard
+
+"react-virtualized@npm:^9.22.3":
+  version: 9.22.3
+  resolution: "react-virtualized@npm:9.22.3"
+  dependencies:
+    "@babel/runtime": ^7.7.2
+    clsx: ^1.0.4
+    dom-helpers: ^5.1.3
+    loose-envify: ^1.4.0
+    prop-types: ^15.7.2
+    react-lifecycles-compat: ^3.0.4
+  peerDependencies:
+    react: ^15.3.0 || ^16.0.0-alpha
+    react-dom: ^15.3.0 || ^16.0.0-alpha
+  checksum: 1e54556ab99409bb172842ddeea3ade467ff9aed6331e80376f969d1c61ff0dc9dfb07986080066aaa327fd977060e7f50c19ae0cbeb8d53e5bd258c7d83e6a2
   languageName: node
   linkType: hard
 
