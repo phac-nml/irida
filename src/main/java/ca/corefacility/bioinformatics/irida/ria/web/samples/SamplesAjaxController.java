@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSample;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -178,6 +179,11 @@ public class SamplesAjaxController {
 	public ResponseEntity<AjaxResponse> getFilesForSample(@PathVariable Long id,
 			@RequestParam(required = false) Long projectId) {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
+	}
+
+	@GetMapping("/share")
+	public List<ShareSample> getSampleToShare(@RequestParam Long projectId, @RequestParam List<Long> ids) {
+		return uiSampleService.getSamplesById(ids, projectId);
 	}
 
 	/**
