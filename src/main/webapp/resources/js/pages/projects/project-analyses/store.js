@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { projectApi } from "../../../apis/projects/project";
+import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
+import { singleSampleAnalysisOutputsApi } from "../../../apis/projects/analyses";
 
 /*
 Redux Store for project details.
@@ -8,7 +10,12 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
 export default configureStore({
   reducer: {
     [projectApi.reducerPath]: projectApi.reducer,
+    [singleSampleAnalysisOutputsApi.reducerPath]:
+      singleSampleAnalysisOutputsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(projectApi.middleware),
+    getDefaultMiddleware().concat(
+      projectApi.middleware,
+      singleSampleAnalysisOutputsApi.middleware
+    ),
 });
