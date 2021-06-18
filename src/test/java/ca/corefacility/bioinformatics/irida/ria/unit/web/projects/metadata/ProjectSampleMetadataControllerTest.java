@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects.metadata;
 
 import java.util.*;
 
-import javax.servlet.http.HttpSession;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -65,10 +63,10 @@ public class ProjectSampleMetadataControllerTest {
 
 		MockMultipartFile file = new MockMultipartFile("file", "test.csv", MediaType.TEXT_PLAIN_VALUE,
 				"header1,header2,header3\nvalue1,value2,value3".getBytes());
-		HttpSession session = new MockHttpSession();
+		MockHttpSession session = new MockHttpSession();
 
 		controller.createProjectSampleMetadata(session, projectId, file);
-		
+
 		assertEquals(storage, session.getAttribute("pm-" + projectId));
 	}
 }
