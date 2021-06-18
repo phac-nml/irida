@@ -64,13 +64,13 @@ public class ProjectSampleMetadataController {
 	}
 
 	/**
-	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
+	 * Upload CSV or Excel file containing sample metadata and extract the headers.  The file is stored in the session until
 	 * the column that corresponds to a {@link Sample} identifier has been sent.
 	 *
 	 * @param session   {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param file      {@link MultipartFile} The excel file containing the metadata.
-	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the
+	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
+	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
 	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
@@ -88,7 +88,7 @@ public class ProjectSampleMetadataController {
 			Workbook workbook = null;
 			String extension = Files.getFileExtension(filename);
 
-			// Check the type of workbook
+			// Check the file type
 			switch (extension) {
 			case "csv":
 				CSVParser parser = CSVParser.parse(fis, StandardCharsets.UTF_8,
@@ -110,7 +110,6 @@ public class ProjectSampleMetadataController {
 							.keySet()) {
 						String value = row.toMap()
 								.get(key);
-						System.out.println("key: " + key + " value: " + value);
 						rowMap.put(key, value);
 					}
 					rows.add(rowMap);
@@ -121,6 +120,7 @@ public class ProjectSampleMetadataController {
 				fis.close();
 				session.setAttribute("pm-" + projectId, storage);
 				return storage;
+			// Check the type of workbook
 			case "xlsx":
 				workbook = new XSSFWorkbook(fis);
 				break;
@@ -128,7 +128,7 @@ public class ProjectSampleMetadataController {
 				workbook = new HSSFWorkbook(fis);
 				break;
 			default:
-				// Should never reach here as the uploader limits to .xlsx and .xlx files.
+				// Should never reach here as the uploader limits to .csv, .xlsx and .xlx files.
 				throw new MetadataImportFileTypeNotSupportedError(extension);
 			}
 
