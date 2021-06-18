@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
@@ -78,11 +77,8 @@ public class LineListController {
 
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
-		List<MetadataFieldResponse> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project);
-		List<MetadataTemplateField> metadataTemplateFields = permittedFieldsForCurrentUser.stream()
-				.map(MetadataFieldResponse::getField)
-				.collect(Collectors.toList());
 
 		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
 				metadataTemplateFields);
@@ -314,11 +310,10 @@ public class LineListController {
 	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 
-		List<MetadataFieldResponse> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project);
 
 		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
-				.map(MetadataFieldResponse::getField)
 				.collect(Collectors.toSet());
 
 		// Need to get all the fields from the templates too!

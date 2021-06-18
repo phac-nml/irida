@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
@@ -72,10 +70,6 @@ public class LineListControllerTest {
 		MetadataTemplateField field = new MetadataTemplateField("field", "text");
 		List<MetadataTemplateField> fieldList = Lists.newArrayList(field);
 
-		List<MetadataFieldResponse> fieldResponses = fieldList.stream()
-				.map(f -> new MetadataFieldResponse(project, f))
-				.collect(Collectors.toList());
-
 		Map<Long, Set<MetadataEntry>> metadata = new HashMap<>();
 		metadata.put(s1.getId(), Sets.newHashSet(new MetadataEntry("value", "text", field)));
 		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", field)));
@@ -83,7 +77,7 @@ public class LineListControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(sampleService.getMetadataForProject(project, fieldList)).thenReturn(new ProjectMetadataResponse(project,metadata));
 		when(sampleService.getSamplesForProjectShallow(project)).thenReturn(Lists.newArrayList(s1, s2));
-		when(metadataTemplateService.getPermittedFieldsForCurrentUser(project)).thenReturn(fieldResponses);
+		when(metadataTemplateService.getPermittedFieldsForCurrentUser(project)).thenReturn(fieldList);
 		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController.getProjectSamplesMetadataEntries(
 				projectId);
 

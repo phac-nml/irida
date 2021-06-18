@@ -100,13 +100,10 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 						MetadataRestriction metadataRestriction = restrictionMap.get(field);
 						ProjectRole restrictionRole = metadataRestriction.getLevel();
 
-						//compare the restriction level to the user's role
-						if (userProjectRole.getLevel() >= restrictionRole.getLevel()) {
-							return false;
-						} else {
-							return true;
-						}
-
+						/*
+						 * Compare the restriction level to the user's role.  If user's role is less, return the unauthorized field.
+						 */
+						return userProjectRole.getLevel() < restrictionRole.getLevel();
 					} else {
 						//if there's no restriction set for the field, all users can view
 						return false;
