@@ -12,6 +12,7 @@ export function ShareProjects({ projectId }) {
       .then((response) => response.json())
       .then(setProjects);
   }, [projectId]);
+
   return (
     <Table
       scroll={{
