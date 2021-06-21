@@ -103,7 +103,9 @@ public class UISampleService {
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
 			SequencingObject obj = join.getObject();
-			enhanceQcEntries(obj, project);
+			if (project != null) {
+				enhanceQcEntries(obj, project);
+			}
 			filePairs.add(obj);
 		}
 

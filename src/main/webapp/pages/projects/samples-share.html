@@ -6,9 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/dist/css/samples-share.bundle.css}">
 </head>
 <body>
 <div id="root" layout:fragment="main"></div>
-<script layout:fragment="scripts" src="/dist/js/project-samples-share.bundle.js"></script>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/dist/js/samples-share.bundle.js}"></script>
+</th:block>
 </body>
 </html>

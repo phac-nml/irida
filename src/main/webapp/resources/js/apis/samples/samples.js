@@ -27,7 +27,7 @@ export const fetchSampleDetails = async (id) => {
 export async function fetchSampleFiles({ sampleId, projectId }) {
   try {
     const response = await axios(
-      `${URL}/${sampleId}/files${projectId ? `?projectId=${projectId}` : null}`
+      `${URL}/${sampleId}/files${projectId ? `?projectId=${projectId}` : ""}`
     );
     return response.data;
   } catch (e) {

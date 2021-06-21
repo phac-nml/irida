@@ -1,10 +1,13 @@
-import { Table } from "antd";
+import { Select, Table } from "antd";
 import React from "react";
+import { getMetadataRestrictions } from "../../../../apis/metadata/field";
 import { blue6, green6 } from "../../../../styles/colors";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 export function ShareMetadataFields({ projectId }) {
   const [fields, setFields] = React.useState();
+  const [restictions, setRestictions] = React.useState([]);
+  getMetadataRestrictions().then(setRestictions);
 
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
@@ -15,6 +18,7 @@ export function ShareMetadataFields({ projectId }) {
     const [currentResponse, targetResponse] = await Promise.all([
       fetch(setBaseUrl(`/ajax/metadata/fields?projectId=${projectId}`)),
       fetch(setBaseUrl(`/ajax/metadata/fields?projectId=${18}`)),
+      ``,
     ]);
     const currentFields = await currentResponse.json();
     const targetFields = await targetResponse.json();
@@ -56,7 +60,7 @@ export function ShareMetadataFields({ projectId }) {
               <div
                 style={{ backgroundColor: item.target.exists ? blue6 : green6 }}
               >
-                {text}
+                <Select defaultValue={item.restiction} options={restictions} />
               </div>
             );
           },

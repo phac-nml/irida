@@ -248,7 +248,7 @@ public class ProjectsController {
 	public String getProjectSamplesCopyPage(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		return "projects/share_samples";
+		return "projects/samples-share";
 	}
 
 	/**

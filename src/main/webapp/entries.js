@@ -27,7 +27,7 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-copy.js",
   "project-samples-remove":
     "./resources/js/pages/projects/samples/modals/samples-remove.js",
-  "projects-samples-share": "./resources/js/pages/projects/share-samples",
+  "samples-share": "./resources/js/pages/projects/samples-share",
   "project-samples-filter":
     "./resources/js/pages/projects/samples/modals/samples-filter.js",
   "project-samples-linker":

@@ -1,5 +1,5 @@
-import React from "react";
 import { Button, Modal, Skeleton, Typography } from "antd";
+import React from "react";
 import { fetchSampleDetails } from "../../apis/samples/samples";
 import { SampleDetails } from "./components/SampleDetails";
 
@@ -13,11 +13,7 @@ const { Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetailViewer({
-  sampleId,
-  removeSample = Function.prototype,
-  children,
-}) {
+export function SampleDetailViewer({ sampleId, removeSample, children }) {
   const [loading, setLoading] = React.useState(true);
   const [details, setDetails] = React.useState({});
   const [visible, setVisible] = React.useState(false);
@@ -28,7 +24,7 @@ export function SampleDetailViewer({
         .then(setDetails)
         .then(() => setLoading(false));
     }
-  }, [visible]);
+  }, [sampleId, visible]);
 
   const removeSampleFromCart = () => {
     removeSample({ projectId: details.projectId, sampleId });
@@ -61,14 +57,16 @@ export function SampleDetailViewer({
                     {details.sample.sampleName}
                   </span>
                 </Text>
-                <Button
-                  size="small"
-                  danger
-                  style={{ marginRight: 30 }}
-                  onClick={removeSampleFromCart}
-                >
-                  {i18n("SampleDetailsSidebar.removeFromCart")}
-                </Button>
+                {typeof removeSample === "function" && (
+                  <Button
+                    size="small"
+                    danger
+                    style={{ marginRight: 30 }}
+                    onClick={removeSampleFromCart}
+                  >
+                    {i18n("SampleDetailsSidebar.removeFromCart")}
+                  </Button>
+                )}
               </div>
             )
           }

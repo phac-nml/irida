@@ -3,7 +3,6 @@ import { Layout, Steps } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { grey1 } from "../../../styles/colors";
-import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadataFields } from "./components/ShareMetadataFields";
 import { ShareProjects } from "./components/ShareProjects";
@@ -56,7 +55,7 @@ function ShareSamples({ projectId, ...params }) {
           <Steps.Step title={"METADATA FIELDS"} />
         </Steps>
       </Layout.Sider>
-      <Layout.Content style={{ padding: SPACE_MD }}>
+      <Layout.Content>
         <Router>
           <ShareSamplesList samples={samples} path="/samples" />
           <ShareProjects path="/projects" />
