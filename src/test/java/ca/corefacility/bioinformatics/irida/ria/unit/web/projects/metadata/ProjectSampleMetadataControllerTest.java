@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.metadata.ProjectSampleMetadataController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -30,6 +31,7 @@ public class ProjectSampleMetadataControllerTest {
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
 	private ProjectControllerUtils projectControllerUtils;
+	private UIMetadataImportService metadataImportService;
 
 	@Before
 	public void setUp() {
@@ -38,9 +40,10 @@ public class ProjectSampleMetadataControllerTest {
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		projectControllerUtils = mock(ProjectControllerUtils.class);
+		metadataImportService = mock(UIMetadataImportService.class);
 
 		controller = new ProjectSampleMetadataController(messageSource, projectService, sampleService,
-				metadataTemplateService, projectControllerUtils);
+				metadataTemplateService, projectControllerUtils, metadataImportService);
 	}
 
 	@Test
