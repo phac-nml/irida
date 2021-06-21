@@ -6,6 +6,11 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 export function ShareMetadataFields({ projectId }) {
   const [fields, setFields] = React.useState();
 
+  const ROLES = {
+    PROJECT_USER: i18n("projectRole.PROJECT_USER"),
+    PROJECT_OWNER: i18n("projectRole.PROJECT_OWNER"),
+  };
+
   const getMetadataFields = React.useCallback(async () => {
     const [currentResponse, targetResponse] = await Promise.all([
       fetch(setBaseUrl(`/ajax/metadata/fields?projectId=${projectId}`)),
@@ -40,6 +45,7 @@ export function ShareMetadataFields({ projectId }) {
         {
           title: "Current Project Restrictions",
           dataIndex: ["current", "restriction"],
+          render: (text) => ROLES[text],
         },
         {
           title: "Target Project Restrictions",

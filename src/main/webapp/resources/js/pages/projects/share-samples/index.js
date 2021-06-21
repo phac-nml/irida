@@ -48,7 +48,7 @@ function ShareSamples({ projectId, ...params }) {
         <Steps
           direction="vertical"
           current={step}
-          style={{ height: `100%` }}
+          style={{ height: 600 }}
           onChange={onChange}
         >
           <Steps.Step title={"SAMPLES"} />
