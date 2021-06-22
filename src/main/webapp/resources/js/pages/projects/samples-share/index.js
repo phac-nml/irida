@@ -2,35 +2,29 @@ import { navigate, Router } from "@reach/router";
 import { Layout, Steps } from "antd";
 import React from "react";
 import { render } from "react-dom";
+import { Provider } from "react-redux";
 import { grey1 } from "../../../styles/colors";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadataFields } from "./components/ShareMetadataFields";
 import { ShareProjects } from "./components/ShareProjects";
 import { ShareSamplesList } from "./components/ShareSamplesList";
+import store from "./store";
 
 function ShareSamples({ projectId, ...params }) {
   const paths = ["samples", "projects", "fields"];
   const [step, setStep] = React.useState(paths.indexOf(params["*"]));
-  const [sampleIds, setSampleIds] = React.useState();
   const [samples, setSamples] = React.useState();
 
   React.useEffect(() => {
     const shared = sessionStorage.getItem("share");
     if (shared) {
       const sharedJson = JSON.parse(shared);
+      console.log(sharedJson);
       if (Number(sharedJson.projectId) !== Number(projectId)) {
         sessionStorage.removeItem("share");
         window.location.href = setBaseUrl(`/projects/${projectId}`);
       }
-      setSampleIds(sharedJson.ids);
-
-      // TODO: Move this into redux?
-      const params = new URLSearchParams();
-      params.set("projectId", projectId);
-      params.set("ids", sharedJson.ids);
-      fetch(`${setBaseUrl(`/ajax/samples/share`)}?${params.toString()}`)
-        .then((response) => response.json())
-        .then((data) => setSamples(data));
+      setSamples(sharedJson.samples);
 
       // sessionStorage.removeItem("share");
     } else {
@@ -67,8 +61,10 @@ function ShareSamples({ projectId, ...params }) {
 }
 
 render(
-  <Router>
-    <ShareSamples path={setBaseUrl(`/projects/:projectId/samples-share/*`)} />
-  </Router>,
+  <Provider store={store}>
+    <Router>
+      <ShareSamples path={setBaseUrl(`/projects/:projectId/samples-share/*`)} />
+    </Router>
+  </Provider>,
   document.querySelector("#root")
 );

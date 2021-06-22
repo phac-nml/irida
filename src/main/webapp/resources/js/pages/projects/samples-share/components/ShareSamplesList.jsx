@@ -13,7 +13,7 @@ export function ShareSamplesList({ samples }) {
             avatar={<ShareStatusAvatar owner={sample.owner} />}
             title={
               <SampleDetailViewer sampleId={sample.id}>
-                <Button>{sample.label}</Button>
+                <Button>{sample.name}</Button>
               </SampleDetailViewer>
             }
           />
