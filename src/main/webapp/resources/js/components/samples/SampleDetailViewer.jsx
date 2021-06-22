@@ -8,19 +8,25 @@ const { Text } = Typography;
 /**
  * React component to render details (metadata and files) for a sample.
  * @param sampleId - identifier for a sample
+ * @param projectId - identifier for the project the sample belong to
  * @param removeSample - function to remove the sample from the cart.
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetailViewer({ sampleId, removeSample, children }) {
+export function SampleDetailViewer({
+  sampleId,
+  projectId,
+  removeSample,
+  children,
+}) {
   const [loading, setLoading] = React.useState(true);
   const [details, setDetails] = React.useState({});
   const [visible, setVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (visible) {
-      fetchSampleDetails(sampleId)
+      fetchSampleDetails(sampleId, projectId)
         .then(setDetails)
         .then(() => setLoading(false));
     }

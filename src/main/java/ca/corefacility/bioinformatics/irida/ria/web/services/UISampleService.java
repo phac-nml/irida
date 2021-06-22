@@ -41,8 +41,9 @@ public class UISampleService {
 	private final UICartService cartService;
 
 	@Autowired
-	public UISampleService(SampleService sampleService, ProjectService projectService, UpdateSamplePermission updateSamplePermission,
-			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
+	public UISampleService(SampleService sampleService, ProjectService projectService,
+			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
+			GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.updateSamplePermission = updateSamplePermission;
@@ -54,16 +55,18 @@ public class UISampleService {
 	/**
 	 * Get full details, including metadata for a {@link Sample}
 	 *
-	 * @param id Identifier for a {@link Sample}
+	 * @param id        Identifier for a {@link Sample}
+	 * @param projectId Identifier for a {@link Project} the sample belongs to
 	 * @return {@link SampleDetails}
 	 */
-	public SampleDetails getSampleDetails(Long id) {
+	public SampleDetails getSampleDetails(Long id, Long projectId) {
 		Sample sample = sampleService.read(id);
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
-		return new SampleDetails(sample, isModifiable, metadataForSample, cartService.isSampleInCart(id));
+		Long projectIdentifier = projectId != null ? projectId : cartService.isSampleInCart(sample.getId());
+		return new SampleDetails(sample, isModifiable, metadataForSample, projectIdentifier);
 	}
 
 	/**

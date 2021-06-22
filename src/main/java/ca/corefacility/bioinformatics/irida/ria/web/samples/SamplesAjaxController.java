@@ -165,8 +165,8 @@ public class SamplesAjaxController {
 	 * @return {@link SampleDetails} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
-		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id, @RequestParam(required = false) Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleDetails(id, projectId));
 	}
 
 	/**
