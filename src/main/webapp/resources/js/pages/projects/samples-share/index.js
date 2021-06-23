@@ -35,6 +35,14 @@ function ShareSamples({ projectId, ...params }) {
     setSamples(shared.samples);
   }, [projectId]);
 
+  React.useEffect(() => {
+    if (projects) {
+      // ONce we have the projects, we need to set a default shared project,
+      // let's just use the first one.
+      setShareProjectId(projects[0].identifier);
+    }
+  }, [projects]);
+
   const onChange = (key) => navigate(paths[key]).then(() => setStep(key));
 
   return (
@@ -56,6 +64,7 @@ function ShareSamples({ projectId, ...params }) {
           <ShareSamplesList samples={samples} path="/samples" />
           <ShareProjects
             path="/projects"
+            projects={projects}
             setShareProjectId={setShareProjectId}
             shareProjectId={shareProjectId}
           />

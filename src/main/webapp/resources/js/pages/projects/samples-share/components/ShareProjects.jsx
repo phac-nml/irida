@@ -1,17 +1,15 @@
 import { navigate } from "@reach/router";
 import { Table } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { getTextSearchProps } from "../../../../components/ant.design/table-search-props";
 
 export function ShareProjects({
   projectId,
   setShareProjectId,
   shareProjectId,
+  projects,
 }) {
-  const dispatch = useDispatch();
-  const [selected, setSelected] = React.useState();
-  const projects = useSelector((state) => state.sharedSamples.projects);
+  const [selected, setSelected] = React.useState([`project-${shareProjectId}`]);
 
   if (!projectId) navigate("./projects");
 
