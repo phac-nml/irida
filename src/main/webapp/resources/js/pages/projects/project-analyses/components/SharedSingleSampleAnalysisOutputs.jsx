@@ -7,6 +7,14 @@ import SingleSampleAnalysisOutputs from "./SingleSampleAnalysisOutputs";
 
 const { Title } = Typography;
 
+/**
+ * React component for getting the shared single sample analysis outputs
+ * and setting the layout for the page
+ * @param projectId The project identifier
+ * @returns {JSX.Element}
+ * @constructor
+ */
+
 export default function SharedSingleSampleAnalysisOutputs({ projectId }) {
   const {
     data: sharedSingleSampleAnalysisOutputs = {},

@@ -7,6 +7,15 @@ import { IconDownloadFile } from "../../../../components/icons/Icons";
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
+/**
+ * React component for single sample analysis outputs
+ * @param outputs The single sample analysis outputs
+ * @param isLoading If data is still being retrieved from the server
+ * @param projectId The project identifier
+ * @returns {JSX.Element}
+ * @constructor
+ */
+
 export default function SingleSampleAnalysisOutputs({
   outputs,
   isLoading,

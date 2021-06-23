@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
- * Controller for handling all ajax requests for Project Analyses Outputs.
+ * Controller for handling all ajax requests for Project Single Sample Analyses Outputs.
  */
 @RestController
 @RequestMapping("/ajax/projects/analyses-outputs")
