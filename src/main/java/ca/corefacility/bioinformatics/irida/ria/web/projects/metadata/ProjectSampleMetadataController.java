@@ -6,9 +6,6 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
@@ -47,26 +44,28 @@ public class ProjectSampleMetadataController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final UIMetadataImportService metadataImportService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
 			SampleService sampleService, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils) {
+			ProjectControllerUtils projectControllerUtils, UIMetadataImportService metadataImportService) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
+		this.metadataImportService = metadataImportService;
 	}
 
 	/**
-	 * Upload Excel file containing sample metadata and extract the headers.  The file is stored in the session until
+	 * Upload CSV or Excel file containing sample metadata and extract the headers.  The file is stored in the session until
 	 * the column that corresponds to a {@link Sample} identifier has been sent.
 	 *
 	 * @param session   {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param file      {@link MultipartFile} The excel file containing the metadata.
-	 * @return {@link Map} of headers and rows from the excel file for the user to select the header corresponding the
+	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
+	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
 	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
@@ -76,71 +75,26 @@ public class ProjectSampleMetadataController {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try {
-			// Need an input stream
 			String filename = file.getOriginalFilename();
 			byte[] byteArr = file.getBytes();
-			InputStream fis = new ByteArrayInputStream(byteArr);
+			InputStream inputStream = new ByteArrayInputStream(byteArr);
 
-			Workbook workbook;
 			String extension = Files.getFileExtension(filename);
 
-			// Check the type of workbook
+			// Check the file type
 			switch (extension) {
-			case "xlsx":
-				workbook = new XSSFWorkbook(fis);
+			case "csv":
+				storage = metadataImportService.parseCSV(inputStream);
 				break;
+			case "xlsx":
 			case "xls":
-				workbook = new HSSFWorkbook(fis);
+				storage = metadataImportService.parseExcel(inputStream, extension);
 				break;
 			default:
-				// Should never reach here as the uploader limits to .xlsx and .xlx files.
+				// Should never reach here as the uploader limits to .csv, .xlsx and .xlx files.
 				throw new MetadataImportFileTypeNotSupportedError(extension);
 			}
-
-			// Only look at the first sheet in the workbook as this should be the file we want.
-			Sheet sheet = workbook.getSheetAt(0);
-			Iterator<Row> rowIterator = sheet.iterator();
-
-			List<String> headers = getWorkbookHeaders(rowIterator.next());
-			storage.saveHeaders(headers);
-
-			// Get the metadata out of the table.
-			List<Map<String, String>> rows = new ArrayList<>();
-			while (rowIterator.hasNext()) {
-				Map<String, String> rowMap = new HashMap<>();
-				Row row = rowIterator.next();
-				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext()) {
-					Cell cell = cellIterator.next();
-
-					int columnIndex = cell.getColumnIndex();
-					if (columnIndex < headers.size()) {
-						String header = headers.get(columnIndex);
-
-						if (!Strings.isNullOrEmpty(header)) {
-							// Need to ignore empty headers.
-							if (cell.getCellTypeEnum()
-									.equals(CellType.NUMERIC)) {
-								/*
-								This is a special handler for number cells.  It was requested that numbers
-								keep their formatting from their excel files.  E.g. 2.222222 with formatting
-								for 2 decimal places will be saved as 2.22.
-								 */
-								DataFormatter formatter = new DataFormatter();
-								String value = formatter.formatCellValue(cell);
-								rowMap.put(header, value);
-							} else {
-								cell.setCellType(CellType.STRING);
-								rowMap.put(header, cell.getStringCellValue());
-							}
-						}
-					}
-				}
-				rows.add(rowMap);
-			}
-			storage.saveRows(rows);
-
-			fis.close();
+			inputStream.close();
 		} catch (FileNotFoundException e) {
 			logger.debug("No file found for uploading an excel file of metadata.");
 		} catch (IOException e) {
@@ -149,37 +103,6 @@ public class ProjectSampleMetadataController {
 
 		session.setAttribute("pm-" + projectId, storage);
 		return storage;
-	}
-
-	/**
-	 * Extract the headers from an excel file.
-	 *
-	 * @param row {@link Row} First row from the excel file.
-	 * @return {@link List} of {@link String} header values.
-	 */
-	private List<String> getWorkbookHeaders(Row row) {
-		// We want to return a list of the table headers back to the UI.
-		List<String> headers = new ArrayList<>();
-
-		// Get the column headers
-		Iterator<Cell> headerIterator = row.cellIterator();
-		while (headerIterator.hasNext()) {
-			Cell headerCell = headerIterator.next();
-			CellType cellType = headerCell.getCellTypeEnum();
-
-			String headerValue;
-			if (cellType.equals(CellType.STRING)) {
-				headerValue = headerCell.getStringCellValue()
-						.trim();
-			} else {
-				headerValue = String.valueOf(headerCell.getNumericCellValue())
-						.trim();
-			}
-
-			// Leave empty headers for now, we will remove those columns later.
-			headers.add(headerValue);
-		}
-		return headers;
 	}
 
 	/**

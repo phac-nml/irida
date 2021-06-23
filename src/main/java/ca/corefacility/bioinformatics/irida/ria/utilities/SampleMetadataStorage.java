@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Used to store information relating to sample metadata during upload.
@@ -19,6 +20,7 @@ public class SampleMetadataStorage {
 
 	/**
 	 * Save the given headers
+	 *
 	 * @param headers the headers to save
 	 */
 	public void saveHeaders(List<String> headers) {
@@ -27,6 +29,7 @@ public class SampleMetadataStorage {
 
 	/**
 	 * Save the given rows
+	 *
 	 * @param rows the rows to save
 	 */
 	public void saveRows(List<Map<String, String>> rows) {
@@ -35,6 +38,7 @@ public class SampleMetadataStorage {
 
 	/**
 	 * Save the found values
+	 *
 	 * @param found the found values
 	 */
 	public void saveFound(List<Map<String, String>> found) {
@@ -43,6 +47,7 @@ public class SampleMetadataStorage {
 
 	/**
 	 * Save the missing values
+	 *
 	 * @param missing the missing values
 	 */
 	public void saveMissing(List<Map<String, String>> missing) {
@@ -75,4 +80,17 @@ public class SampleMetadataStorage {
 	public void removeRows() {
 		this.rows = null;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		SampleMetadataStorage that = (SampleMetadataStorage) o;
+		return Objects.equals(sampleNameColumn, that.sampleNameColumn) && Objects.equals(headers, that.headers)
+				&& Objects.equals(rows, that.rows) && Objects.equals(found, that.found) && Objects.equals(missing,
+				that.missing);
+	}
+	
 }
