@@ -7,6 +7,8 @@ import { IconDownloadFile } from "../../../../components/icons/Icons";
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
+const { Search } = Input;
+
 /**
  * React component for single sample analysis outputs
  * @param outputs The single sample analysis outputs
@@ -22,15 +24,16 @@ export default function SingleSampleAnalysisOutputs({
   projectId,
 }) {
   const [selected, setSelected] = React.useState([]);
+  const [filteredOutputs, setFilteredOutputs] = React.useState(null);
 
   const columns = [
     {
-      title: "ID",
+      title: i18n("SingleSampleAnalysisOutputs.id"),
       key: "analysisOutputFileId",
       dataIndex: "analysisOutputFileId",
     },
     {
-      title: "Sample Name",
+      title: i18n("SingleSampleAnalysisOutputs.sampleName"),
       key: "sampleName",
       dataIndex: "sampleName",
       render(sampleName, record) {
@@ -47,7 +50,7 @@ export default function SingleSampleAnalysisOutputs({
       },
     },
     {
-      title: "File",
+      title: i18n("SingleSampleAnalysisOutputs.file"),
       key: "fileName",
       dataIndex: "filePath",
       render(filePath, record) {
@@ -57,7 +60,7 @@ export default function SingleSampleAnalysisOutputs({
       },
     },
     {
-      title: "Analysis Type",
+      title: i18n("SingleSampleAnalysisOutputs.analysisType"),
       key: "analysisType",
       dataIndex: "analysisType",
       render({ type }) {
@@ -65,7 +68,7 @@ export default function SingleSampleAnalysisOutputs({
       },
     },
     {
-      title: "Pipeline",
+      title: i18n("SingleSampleAnalysisOutputs.pipeline"),
       key: "pipeline",
       dataIndex: "workflowDescription",
       render(workflowDescription) {
@@ -73,7 +76,7 @@ export default function SingleSampleAnalysisOutputs({
       },
     },
     {
-      title: "Analysis Submission",
+      title: i18n("SingleSampleAnalysisOutputs.analysisSubmission"),
       key: "analysisSubmissionName",
       dataIndex: "analysisSubmissionName",
       render(analysisSubmissionName, record) {
@@ -88,7 +91,7 @@ export default function SingleSampleAnalysisOutputs({
       },
     },
     {
-      title: "Submitter",
+      title: i18n("SingleSampleAnalysisOutputs.submitter"),
       key: "submitter",
       dataIndex: "userFirstName",
       render(userFirstName, record) {
@@ -97,12 +100,13 @@ export default function SingleSampleAnalysisOutputs({
     },
     {
       ...dateColumnFormat(),
-      title: "Date Created",
+      title: i18n("SingleSampleAnalysisOutputs.createdDate"),
       key: "createdDate",
       dataIndex: "createdDate",
     },
   ];
 
+  // Get the selected row ids (AnalysisOutputFile id)
   let rowSelection;
   rowSelection = {
     selectedRowKeys: selected,
@@ -110,6 +114,32 @@ export default function SingleSampleAnalysisOutputs({
     getCheckboxProps: (record) => ({
       name: record.analysisOutputFileId,
     }),
+  };
+
+  // Function to filter out outputs by the search term
+  const filterOutputsByTerm = (searchStr) => {
+    if (
+      searchStr.trim() === "" ||
+      searchStr === "undefined" ||
+      searchStr === null
+    ) {
+      setFilteredOutputs(null);
+    } else {
+      searchStr = String(searchStr).toLowerCase();
+      // filePath contains the file name so we use it in the search
+      const outputsContainingSearchValue = outputs.filter(
+        (analysisOutput) =>
+          analysisOutput.sampleName.toLowerCase().includes(searchStr) ||
+          analysisOutput.analysisType.type.toLowerCase().includes(searchStr) ||
+          analysisOutput.filePath.toLowerCase().includes(searchStr) ||
+          analysisOutput.userFirstName.toLowerCase().includes(searchStr) ||
+          analysisOutput.userLastName.toLowerCase().includes(searchStr)
+      );
+      // Only set state if there were outputs matching the search term
+      if (outputsContainingSearchValue.length > 0) {
+        setFilteredOutputs(outputsContainingSearchValue);
+      }
+    }
   };
 
   return (
@@ -123,16 +153,21 @@ export default function SingleSampleAnalysisOutputs({
       >
         <Button>
           <IconDownloadFile style={{ marginRight: SPACE_XS }} />
-          Download
+          {i18n("SingleSampleAnalysisOutputs.download")}
         </Button>
-        <Input.Search style={{ width: 300 }} />
+        <Search
+          style={{ width: 300 }}
+          onSearch={filterOutputsByTerm}
+          placeholder={i18n("SingleSampleAnalysisOutputs.searchPlaceholder")}
+          allowClear
+        />
       </div>
       <Table
         rowKey={(record) => record.analysisOutputFileId}
         loading={isLoading}
         scroll={{ x: "max-content" }}
         columns={columns}
-        dataSource={!isLoading && outputs}
+        dataSource={filteredOutputs || (!isLoading && outputs)}
         tableLayout="auto"
         rowSelection={rowSelection}
       />

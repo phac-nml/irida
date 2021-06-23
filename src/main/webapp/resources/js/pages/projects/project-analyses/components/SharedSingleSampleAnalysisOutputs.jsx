@@ -23,7 +23,7 @@ export default function SharedSingleSampleAnalysisOutputs({ projectId }) {
 
   return (
     <>
-      <Title level={2}>Shared Single Sample Analysis Outputs</Title>
+      <Title level={2}>{i18n("SharedSingleSampleAnalysisOutputs.title")}</Title>
       <SingleSampleAnalysisOutputs
         outputs={sharedSingleSampleAnalysisOutputs}
         isLoading={isLoading}
