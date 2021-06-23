@@ -1,72 +1,87 @@
 import { Select, Table } from "antd";
 import React from "react";
-import { getMetadataRestrictions } from "../../../../apis/metadata/field";
+import {
+  getMetadataRestrictions,
+  useGetMetadataFieldsForProjectQuery,
+} from "../../../../apis/metadata/field";
 import { blue6, green6 } from "../../../../styles/colors";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 
-export function ShareMetadataFields({ projectId }) {
+export function ShareMetadataFields({ projectId, sharedProjectId }) {
   const [fields, setFields] = React.useState();
-  const [restictions, setRestictions] = React.useState([]);
-  getMetadataRestrictions().then(setRestictions);
+  const [restrictions, setRestrictions] = React.useState([]);
 
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
     PROJECT_OWNER: i18n("projectRole.PROJECT_OWNER"),
   };
 
-  const getMetadataFields = React.useCallback(async () => {
-    const [currentResponse, targetResponse] = await Promise.all([
-      fetch(setBaseUrl(`/ajax/metadata/fields?projectId=${projectId}`)),
-      fetch(setBaseUrl(`/ajax/metadata/fields?projectId=${18}`)),
-      ``,
-    ]);
-    const currentFields = await currentResponse.json();
-    const targetFields = await targetResponse.json();
-
-    return currentFields.map((current) => {
-      const target = targetFields.find(
-        (element) => element.label === current.label
-      );
-      return {
-        current,
-        target:
-          target !== undefined
-            ? { ...target, exists: true }
-            : { ...current, exists: false },
-      };
-    });
-  }, [projectId]);
+  const {
+    data: sharedFields,
+    isLoading: sharedLoading,
+  } = useGetMetadataFieldsForProjectQuery(projectId);
+  const {
+    data: projectFields,
+    isLoading: projectsLoading,
+  } = useGetMetadataFieldsForProjectQuery(sharedProjectId);
 
   React.useEffect(() => {
-    getMetadataFields().then(setFields);
-  }, [getMetadataFields]);
+    getMetadataRestrictions().then(setRestrictions);
+  }, []);
+
+  React.useEffect(() => {
+    if (!sharedLoading && !projectsLoading) {
+      const merged = sharedFields.map((current) => {
+        const target = projectFields.find(
+          (element) => element.label === current.label
+        );
+        return {
+          current,
+          target:
+            target !== undefined
+              ? { ...target, exists: true }
+              : { ...current, exists: false },
+        };
+      });
+      setFields(merged);
+    }
+  }, [projectFields, projectsLoading, sharedFields, sharedLoading]);
 
   return (
-    <Table
-      rowKey={(item) => `field-${item.current.id}`}
-      columns={[
-        { title: "Field Label", dataIndex: ["current", "label"] },
-        {
-          title: "Current Project Restrictions",
-          dataIndex: ["current", "restriction"],
-          render: (text) => ROLES[text],
-        },
-        {
-          title: "Target Project Restrictions",
-          dataIndex: ["target", "restriction"],
-          render: (text, item) => {
-            console.log({ text, item });
-            return (
-              <div
-                style={{ backgroundColor: item.target.exists ? blue6 : green6 }}
-              >
-                <Select defaultValue={item.restiction} options={restictions} />
-              </div>
-            );
+    <div>
+      <Table
+        rowKey={(item) => `field-${item.current.id}`}
+        columns={[
+          { title: "Field Label", dataIndex: ["current", "label"] },
+          {
+            title: "Current Project Restrictions",
+            dataIndex: ["current", "restriction"],
+            render: (text) => ROLES[text],
           },
-        },
-      ]}
-      dataSource={fields}
-    />
+          {
+            title: "Target Project Restrictions",
+            dataIndex: ["target", "restriction"],
+            render: (text, item) => {
+              console.log({ text, item });
+              return (
+                <div
+                  style={{
+                    backgroundColor: item.target.exists ? blue6 : green6,
+                  }}
+                >
+                  <Select style={{ display: "block" }} defaultValue={text}>
+                    {restrictions.map((restriction) => (
+                      <Select.Option value={restriction.value}>
+                        {restriction.text}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              );
+            },
+          },
+        ]}
+        dataSource={fields}
+      />
+    </div>
   );
 }

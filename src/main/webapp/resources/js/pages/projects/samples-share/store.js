@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import sharedSamplesReducer from "./services/shareSamplesSlice";
+import { projectsApi } from "../../../apis/projects/projects";
 
 export default configureStore({
   reducer: {
-    sharedSamples: sharedSamplesReducer,
+    [projectsApi.reducerPath]: projectsApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(projectsApi.middleware),
 });

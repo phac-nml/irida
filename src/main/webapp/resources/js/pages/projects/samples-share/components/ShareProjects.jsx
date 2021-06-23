@@ -1,17 +1,25 @@
+import { navigate } from "@reach/router";
 import { Table } from "antd";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { getTextSearchProps } from "../../../../components/ant.design/table-search-props";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 
-export function ShareProjects({ projectId }) {
-  const [projects, setProjects] = React.useState();
+export function ShareProjects({
+  projectId,
+  setShareProjectId,
+  shareProjectId,
+}) {
+  const dispatch = useDispatch();
   const [selected, setSelected] = React.useState();
+  const projects = useSelector((state) => state.sharedSamples.projects);
 
-  React.useEffect(() => {
-    fetch(setBaseUrl(`/ajax/projects/share-samples?current=${projectId}`))
-      .then((response) => response.json())
-      .then(setProjects);
-  }, [projectId]);
+  if (!projectId) navigate("./projects");
+
+  const onChange = (_, selectedRows) => {
+    const identifier = selectedRows[0].identifier;
+    setSelected([`project-${identifier}`]);
+    setShareProjectId(identifier);
+  };
 
   return (
     <Table
@@ -21,7 +29,8 @@ export function ShareProjects({ projectId }) {
       pagination={{ hideOnSinglePage: true, pageSize: projects?.length }}
       rowSelection={{
         type: "radio",
-        onChange: (_, selectedRows) => setSelected(selectedRows[0]),
+        selectedRowKeys: selected,
+        onChange,
       }}
       dataSource={projects}
       rowKey={(item) => `project-${item.identifier}`}

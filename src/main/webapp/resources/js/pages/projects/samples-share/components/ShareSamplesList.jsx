@@ -1,4 +1,4 @@
-import { Button, List } from "antd";
+import { Button, List, Space, Typography } from "antd";
 import React from "react";
 
 import { FixedSizeList as VList } from "react-window";
@@ -24,15 +24,18 @@ export function ShareSamplesList({ samples }) {
   };
 
   return (
-    <List bordered>
-      <VList
-        height={600}
-        itemCount={samples.length}
-        itemSize={75}
-        width={`100%`}
-      >
-        {Row}
-      </VList>
-    </List>
+    <Space direction="vertical" style={{ display: "block" }}>
+      <Typography.Text>HELLO</Typography.Text>
+      <List bordered>
+        <VList
+          height={600}
+          itemCount={samples.length}
+          itemSize={75}
+          width={`100%`}
+        >
+          {Row}
+        </VList>
+      </List>
+    </Space>
   );
 }
