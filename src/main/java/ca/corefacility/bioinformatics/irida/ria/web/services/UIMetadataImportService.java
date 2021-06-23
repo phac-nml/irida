@@ -52,7 +52,6 @@ public class UIMetadataImportService {
 
 		// save data
 		for (CSVRecord row : parser) {
-			System.out.println(row);
 			Map<String, String> rowMap = new HashMap<>();
 			for (String key : row.toMap()
 					.keySet()) {
