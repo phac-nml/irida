@@ -4,7 +4,6 @@ import {
   getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
 } from "../../../../apis/metadata/field";
-import { blue6, green6 } from "../../../../styles/colors";
 
 export function ShareMetadataFields({ projectId, sharedProjectId }) {
   const [fields, setFields] = React.useState();
@@ -61,21 +60,17 @@ export function ShareMetadataFields({ projectId, sharedProjectId }) {
             title: "Target Project Restrictions",
             dataIndex: ["target", "restriction"],
             render: (text, item) => {
-              console.log({ text, item });
               return (
-                <div
-                  style={{
-                    backgroundColor: item.target.exists ? blue6 : green6,
-                  }}
-                >
-                  <Select style={{ display: "block" }} defaultValue={text}>
-                    {restrictions.map((restriction) => (
-                      <Select.Option value={restriction.value}>
-                        {restriction.text}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
+                <Select style={{ display: "block" }} defaultValue={text}>
+                  {restrictions.map((restriction) => (
+                    <Select.Option
+                      key={restriction.value}
+                      value={restriction.value}
+                    >
+                      {restriction.text}
+                    </Select.Option>
+                  ))}
+                </Select>
               );
             },
           },
