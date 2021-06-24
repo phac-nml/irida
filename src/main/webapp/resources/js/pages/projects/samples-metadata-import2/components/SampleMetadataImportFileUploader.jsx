@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { navigate } from "@reach/router"
 import {
   notification,
   Space,
@@ -30,6 +31,7 @@ export function SampleMetadataImportFileUploader({ projectId }) {
         notification.success({
           message: i18n("SampleMetadataImportFileUploader.success", info.file.name),
         });
+        navigate('/upload/getMetadata');
       } else if (status === 'error') {
         notification.error({
           message: i18n("SampleMetadataImportFileUploader.error", info.file.name),
@@ -37,7 +39,6 @@ export function SampleMetadataImportFileUploader({ projectId }) {
       }
     },
   }
-  const [step, setStep] = useState(0);
 
   return (
     <>
@@ -46,7 +47,7 @@ export function SampleMetadataImportFileUploader({ projectId }) {
         <Text type="secondary">
           {i18n("SampleMetadataImportFileUploader.intro")}
         </Text>
-        <SampleMetadataImportSteps currentStep={step} />
+        <SampleMetadataImportSteps currentStep={0} />
         <DragUpload
           className="t-sample-metadata-file-uploader"
           uploadText={i18n("SampleMetadataImportFileUploader.dropzone")}
