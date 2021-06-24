@@ -64,9 +64,9 @@ export function ShareMetadataFields({ projectId, destinationId }) {
             render: (text) => ROLES[text],
           },
           {
-            title: "Target Project Restrictions",
+            title: "Destination Project Restrictions",
             dataIndex: ["target", "restriction"],
-            render: (text, item) => {
+            render: (text, item, index) => {
               return (
                 <Select style={{ display: "inline-block" }} defaultValue={text}>
                   {restrictions.map((restriction) => (
