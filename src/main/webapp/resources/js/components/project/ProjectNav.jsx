@@ -34,7 +34,7 @@ export function ProjectNav({ projectId, uri: BASE_URL, ...props }) {
           <Item key="linelist">
             <a href={`${BASE_URL}/linelist`}>{i18n("project.nav.linelist")}</a>
           </Item>
-          <Item key="analyses/project-analyses">
+          <Item key="analyses">
             <a href={`${BASE_URL}/analyses/project-analyses`}>
               {i18n("project.nav.analysis")}
             </a>
