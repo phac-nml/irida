@@ -7,8 +7,8 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 export function ShareProjects({
   projectId,
-  setShareProjectId,
-  shareProjectId,
+  setDestinationId,
+  destinationId,
   projects,
 }) {
   const [selected, setSelected] = React.useState();
@@ -16,11 +16,11 @@ export function ShareProjects({
   if (!projectId) navigate("./projects");
 
   const onChange = (_, selectedRows) =>
-    setShareProjectId(selectedRows[0].identifier);
+    setDestinationId(selectedRows[0].identifier);
 
   React.useEffect(() => {
-    setSelected([`project-${shareProjectId}`]);
-  }, [shareProjectId]);
+    setSelected([`project-${destinationId}`]);
+  }, [destinationId]);
 
   return (
     <Table

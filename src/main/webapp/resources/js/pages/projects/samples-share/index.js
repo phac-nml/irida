@@ -16,7 +16,7 @@ function ShareSamples({ projectId, ...params }) {
   const [step, setStep] = React.useState(() => paths.indexOf(params["*"]));
 
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
-  const [shareProjectId, setShareProjectId] = React.useState();
+  const [destinationId, setDestinationId] = React.useState();
   const [samples, setSamples] = React.useState([]);
 
   React.useEffect(() => {
@@ -39,7 +39,7 @@ function ShareSamples({ projectId, ...params }) {
     if (projects) {
       // Once we have the projects, we need to set a default shared project,
       // let's just use the first one.
-      setShareProjectId(projects[0].identifier);
+      setDestinationId(projects[0].identifier);
     }
   }, [projects]);
 
@@ -65,13 +65,13 @@ function ShareSamples({ projectId, ...params }) {
           <ShareProjects
             path="/projects"
             projects={projects}
-            setShareProjectId={setShareProjectId}
-            shareProjectId={shareProjectId}
+            setDestinationId={setDestinationId}
+            destinationId={destinationId}
           />
           <ShareMetadataFields
             path="/fields"
             projectId={projectId}
-            sharedProjectId={shareProjectId}
+            sharedProjectId={destinationId}
           />
         </Router>
       </Layout.Content>
