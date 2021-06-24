@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectAnalysesService;
 
 /**
  * Controller for handling all ajax requests for Project Single Sample Analyses Outputs.
@@ -22,39 +19,23 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @RequestMapping("/ajax/projects/analyses-outputs")
 public class ProjectAnalysesAjaxController {
 
-	private AnalysisSubmissionService analysisSubmissionService;
-	private IridaWorkflowsService workflowsService;
+	private UIProjectAnalysesService uiProjectAnalysesService;
 
 	@Autowired
-	public ProjectAnalysesAjaxController(AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService workflowsService) {
-		this.analysisSubmissionService = analysisSubmissionService;
-		this.workflowsService = workflowsService;
+	public ProjectAnalysesAjaxController(UIProjectAnalysesService uiProjectAnalysesService) {
+		this.uiProjectAnalysesService = uiProjectAnalysesService;
 	}
 
 	/**
 	 * Get all the shared single sample analysis outputs for the project
 	 *
 	 * @param projectId {@link ca.corefacility.bioinformatics.irida.model.project.Project} id
-	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} objects
+	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} single sample analysis outputs
 	 */
 	@GetMapping("/shared")
 	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getSharedSingleSampleOutputs(
 			@RequestParam Long projectId) {
-		List<ProjectSampleAnalysisOutputInfo> projectSampleAnalysisOutputInfos = analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(
-				projectId);
-		Map<Long, Long> singleSampleCountMap = projectSampleAnalysisOutputInfos.stream()
-				.collect(Collectors.groupingBy(s -> s.getAnalysisOutputFileId(), Collectors.counting()));
-
-		// Filter out the projectSampleAnalysisOutputInfos list to only contain objects which are single sample analysis outputs
-		List<ProjectSampleAnalysisOutputInfo> filterProjectSampleAnalysisOutputInfo = projectSampleAnalysisOutputInfos.stream()
-				.filter(s -> singleSampleCountMap.get(s.getAnalysisOutputFileId()) == 1L)
-				.collect(Collectors.toList());
-
-		// Get the Irida workflow description and set it for each of the filtered analysis outputs
-		filterProjectSampleAnalysisOutputInfo.forEach(s -> s.setWorkflowDescription(workflowsService.getIridaWorkflowOrUnknown(s.getWorkflowId())
-				.getWorkflowDescription()));
-
-		return ResponseEntity.ok(filterProjectSampleAnalysisOutputInfo);
+		return ResponseEntity.ok(uiProjectAnalysesService.getSharedSingleSampleOutputs(projectId));
 	}
 
 	@GetMapping("/automated")
