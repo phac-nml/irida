@@ -29,7 +29,7 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 
 /**
  * @file Base component for the project analyses page.
@@ -61,10 +61,10 @@ const ProjectAnalyses = (props) => {
           <Col lg={24} xxl={12}>
             <Suspense fallback={<Skeleton />}>
               <Router>
-                <ProjectAnalysesPage path="/project-analyses" />
-                <SharedSingleSampleAnalysisOutputs path="/shared-outputs" />
-                <AutomatedSingleSampleAnalysisOutputs path="/automated-outputs" />
-                <Redirect from="/" to="/project-analyses" />
+                <ProjectAnalysesPage path="project-analyses" />
+                <SharedSingleSampleAnalysisOutputs path="shared-outputs" />
+                <AutomatedSingleSampleAnalysisOutputs path="automated-outputs" />
+                <Redirect from="/" to="project-analyses" />
               </Router>
             </Suspense>
           </Col>
