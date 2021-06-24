@@ -1,7 +1,9 @@
 import { navigate } from "@reach/router";
-import { Table } from "antd";
+import { Button, Space, Table } from "antd";
 import React from "react";
 import { getTextSearchProps } from "../../../../components/ant.design/table-search-props";
+import { IconLinkOut } from "../../../../components/icons/Icons";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 export function ShareProjects({
   projectId,
@@ -39,6 +41,19 @@ export function ShareProjects({
           title: "Project Name",
           ...getTextSearchProps("name"),
           onFilter: (value, record) => 0 < record.name.indexOf(value),
+          render: (text, project) => (
+            <Button
+              type="link"
+              target="_blank"
+              href={setBaseUrl(`/projects/${project.identifier}`)}
+              rel="noreferrer"
+            >
+              <Space>
+                {text}
+                <IconLinkOut />{" "}
+              </Space>
+            </Button>
+          ),
         },
         {
           dataIndex: "organism",
