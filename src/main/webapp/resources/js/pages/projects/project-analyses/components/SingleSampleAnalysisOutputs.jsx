@@ -103,6 +103,7 @@ export default function SingleSampleAnalysisOutputs({
       title: i18n("SingleSampleAnalysisOutputs.createdDate"),
       key: "createdDate",
       dataIndex: "createdDate",
+      sorter: false,
     },
   ];
 

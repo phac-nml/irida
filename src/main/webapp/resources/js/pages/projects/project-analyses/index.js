@@ -8,6 +8,7 @@ import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import store from "./store";
+import AnalysesNav from "./components/AnalysesNav";
 
 const ProjectAnalysesPage = React.lazy(() =>
   import("./components/ProjectAnalysesPage")
@@ -29,7 +30,7 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-const { Content } = Layout;
+const { Content, Sider } = Layout;
 
 /**
  * @file Base component for the project analyses page.
@@ -57,8 +58,13 @@ const ProjectAnalyses = (props) => {
   return (
     <Layout>
       <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
+        <Row style={{ marginBottom: SPACE_SM }}>
+          <Col lg={24} xxl={10}>
+            <AnalysesNav path={props["*"]} />
+          </Col>
+        </Row>
         <Row>
-          <Col lg={24} xxl={12}>
+          <Col lg={24} xxl={24}>
             <Suspense fallback={<Skeleton />}>
               <Router>
                 <ProjectAnalysesPage path="project-analyses" />
