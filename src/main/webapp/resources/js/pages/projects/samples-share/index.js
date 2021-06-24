@@ -37,7 +37,7 @@ function ShareSamples({ projectId, ...params }) {
 
   React.useEffect(() => {
     if (projects) {
-      // ONce we have the projects, we need to set a default shared project,
+      // Once we have the projects, we need to set a default shared project,
       // let's just use the first one.
       setShareProjectId(projects[0].identifier);
     }

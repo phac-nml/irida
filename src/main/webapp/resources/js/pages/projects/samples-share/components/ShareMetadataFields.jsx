@@ -9,6 +9,8 @@ export function ShareMetadataFields({ projectId, sharedProjectId }) {
   const [fields, setFields] = React.useState();
   const [restrictions, setRestrictions] = React.useState([]);
 
+  console.log({ projectId, sharedProjectId });
+
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
     PROJECT_OWNER: i18n("projectRole.PROJECT_OWNER"),
@@ -61,7 +63,10 @@ export function ShareMetadataFields({ projectId, sharedProjectId }) {
             dataIndex: ["target", "restriction"],
             render: (text, item) => {
               return (
-                <Select style={{ display: "block" }} defaultValue={text}>
+                <Select
+                  style={{ display: "block" }}
+                  defaultValue={{ value: text }}
+                >
                   {restrictions.map((restriction) => (
                     <Select.Option
                       key={restriction.value}

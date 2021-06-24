@@ -9,15 +9,16 @@ export function ShareProjects({
   shareProjectId,
   projects,
 }) {
-  const [selected, setSelected] = React.useState([`project-${shareProjectId}`]);
+  const [selected, setSelected] = React.useState();
 
   if (!projectId) navigate("./projects");
 
-  const onChange = (_, selectedRows) => {
-    const identifier = selectedRows[0].identifier;
-    setSelected([`project-${identifier}`]);
-    setShareProjectId(identifier);
-  };
+  const onChange = (_, selectedRows) =>
+    setShareProjectId(selectedRows[0].identifier);
+
+  React.useEffect(() => {
+    setSelected([`project-${shareProjectId}`]);
+  }, [shareProjectId]);
 
   return (
     <Table
