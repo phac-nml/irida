@@ -7,13 +7,16 @@ export const setDestinationProject = createAction(
   }
 );
 
-const initialState = (() => {
+const storedState = (() => {
   const sharedString = sessionStorage.getItem("share");
   return sharedString ? JSON.parse(sharedString) : {};
 })();
 
-export const rootReducer = createReducer(initialState, (builder) => {
-  builder.addCase(setDestinationProject, (state, action) => {
-    state.destinationId = action.payload.destinationId;
-  });
-});
+export const rootReducer = createReducer(
+  { ...storedState, owner: true },
+  (builder) => {
+    builder.addCase(setDestinationProject, (state, action) => {
+      state.destinationId = action.payload.destinationId;
+    });
+  }
+);
