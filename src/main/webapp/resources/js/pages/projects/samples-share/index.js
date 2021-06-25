@@ -2,7 +2,7 @@ import { navigate, Router } from "@reach/router";
 import { Layout, Steps } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { useGetProjectsManagedByUserQuery } from "../../../apis/projects/projects";
 import { grey1 } from "../../../styles/colors";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -14,26 +14,25 @@ import store from "./store";
 function ShareSamples({ projectId, ...params }) {
   const paths = ["samples", "projects", "fields"];
   const [step, setStep] = React.useState(() => paths.indexOf(params["*"]));
+  const { samples, projectId: sharedProjectId } = useSelector(
+    (state) => state.reducer
+  );
 
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
   const [destinationId, setDestinationId] = React.useState();
-  const [samples, setSamples] = React.useState([]);
 
   React.useEffect(() => {
-    const sharedString = sessionStorage.getItem("share");
-    if (!sharedString) {
+    if (!sharedProjectId) {
       window.location.href = setBaseUrl(`/projects/${projectId}`);
     }
-    const shared = JSON.parse(sharedString);
     if (
-      Number(shared.projectId) !== Number(projectId) ||
-      shared.samples === undefined
+      Number(sharedProjectId) !== Number(projectId) ||
+      samples === undefined
     ) {
       sessionStorage.removeItem("share");
       window.location.href = setBaseUrl(`/projects/${projectId}`);
     }
-    setSamples(shared.samples);
-  }, [projectId]);
+  }, [projectId, samples, sharedProjectId]);
 
   React.useEffect(() => {
     if (projects) {
