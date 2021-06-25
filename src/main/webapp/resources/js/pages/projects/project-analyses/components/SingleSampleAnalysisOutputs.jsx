@@ -40,7 +40,9 @@ export default function SingleSampleAnalysisOutputs({
         return (
           <a
             href={setBaseUrl(
-              `/projects/${projectId}/samples/${record["sampleId"]}`
+              projectId
+                ? `/projects/${projectId}/samples/${record["sampleId"]}`
+                : `/samples/${record["sampleId"]}`
             )}
             target="_blank"
           >
@@ -171,6 +173,11 @@ export default function SingleSampleAnalysisOutputs({
         dataSource={filteredOutputs || (!isLoading && outputs)}
         tableLayout="auto"
         rowSelection={rowSelection}
+        pagination={{
+          pageSizeOptions: [5, 10, 25, 50, 100],
+          defaultPageSize: 10,
+          showSizeChanger: true,
+        }}
       />
     </>
   );

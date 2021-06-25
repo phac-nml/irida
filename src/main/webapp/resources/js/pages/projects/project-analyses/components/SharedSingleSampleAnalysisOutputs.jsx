@@ -27,6 +27,7 @@ export default function SharedSingleSampleAnalysisOutputs({ projectId }) {
       <SingleSampleAnalysisOutputs
         outputs={sharedSingleSampleAnalysisOutputs}
         isLoading={isLoading}
+        projectId={projectId}
       />
     </>
   );
