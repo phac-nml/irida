@@ -1,4 +1,4 @@
-import { Button, List, Space, Typography } from "antd";
+import { Button, Checkbox, List, Space, Typography } from "antd";
 import React from "react";
 
 import { FixedSizeList as VList } from "react-window";
@@ -36,6 +36,7 @@ export function ShareSamplesList({ samples }) {
           {Row}
         </VList>
       </List>
+      <Checkbox>Allow modification of samples in destination project</Checkbox>
     </Space>
   );
 }

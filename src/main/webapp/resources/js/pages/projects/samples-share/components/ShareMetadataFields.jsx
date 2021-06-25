@@ -51,6 +51,7 @@ export function ShareMetadataFields({ projectId, destinationId }) {
     <div>
       <Table
         loading={currentLoading && destinationLoading}
+        pagination={{ hideOnSinglePage: true, pageSize: fields?.length }}
         rowKey={(item) => `field-${item.current.id}`}
         locale={{
           emptyText:
