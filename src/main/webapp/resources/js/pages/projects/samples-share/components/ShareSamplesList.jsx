@@ -8,7 +8,7 @@ import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ samples }) {
   const dispatch = useDispatch();
-  const { owner } = useSelector((stete) => state.reducer);
+  const { owner } = useSelector((state) => state.reducer);
 
   const Row = ({ index, style }) => {
     const sample = samples[index];
