@@ -40,7 +40,7 @@ export function ShareSamplesList({ samples }) {
           {Row}
         </VList>
       </List>
-      <Checkbox checked={ownder}>
+      <Checkbox checked={owner}>
         Allow modification of samples in destination project
       </Checkbox>
     </Space>
