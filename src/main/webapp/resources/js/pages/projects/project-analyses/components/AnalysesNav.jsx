@@ -13,17 +13,15 @@ export default function AnalysesNav({ path: key }) {
     <Menu mode="horizontal" theme="dark" selectedKeys={[key]}>
       <Menu.Item key="project-analyses">
         <Link to="project-analyses">
-          {i18n("project.nav.analyses.project-analyses")}
+          {i18n("AnalysesNav.project-analyses")}
         </Link>
       </Menu.Item>
       <Menu.Item key="shared-outputs">
-        <Link to="shared-outputs">
-          {i18n("project.nav.analyses.shared-outputs")}
-        </Link>
+        <Link to="shared-outputs">{i18n("AnalysesNav.shared-outputs")}</Link>
       </Menu.Item>
       <Menu.Item key="automated-outputs">
         <Link to="automated-outputs">
-          {i18n("project.nav.analyses.automated-outputs")}
+          {i18n("AnalysesNav.automated-outputs")}
         </Link>
       </Menu.Item>
     </Menu>
