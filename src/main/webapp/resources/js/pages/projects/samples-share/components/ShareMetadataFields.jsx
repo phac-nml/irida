@@ -2,14 +2,14 @@ import { Select, Table } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
-  getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
+  useGetMetadataRestrictionsQuery,
 } from "../../../../apis/metadata/field";
 
 export function ShareMetadataFields({ projectId }) {
   const [fields, setFields] = React.useState();
   const { destinationId } = useSelector((state) => state.reducer);
-  const [restrictions, setRestrictions] = React.useState([]);
+  const { data: restrictions } = useGetMetadataRestrictionsQuery();
 
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
@@ -26,10 +26,6 @@ export function ShareMetadataFields({ projectId }) {
   } = useGetMetadataFieldsForProjectQuery(destinationId, {
     skip: destinationId === undefined,
   });
-
-  React.useEffect(() => {
-    getMetadataRestrictions().then(setRestrictions);
-  }, []);
 
   React.useEffect(() => {
     if (!currentLoading && !destinationLoading) {

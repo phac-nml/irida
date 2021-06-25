@@ -1,11 +1,15 @@
 import { Button, Checkbox, List, Space, Typography } from "antd";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { FixedSizeList as VList } from "react-window";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ samples }) {
+  const dispatch = useDispatch();
+  const { owner } = useSelector((stete) => state.reducer);
+
   const Row = ({ index, style }) => {
     const sample = samples[index];
 
@@ -36,7 +40,9 @@ export function ShareSamplesList({ samples }) {
           {Row}
         </VList>
       </List>
-      <Checkbox>Allow modification of samples in destination project</Checkbox>
+      <Checkbox checked={ownder}>
+        Allow modification of samples in destination project
+      </Checkbox>
     </Space>
   );
 }
