@@ -1,12 +1,14 @@
 import { Select, Table } from "antd";
 import React from "react";
+import { useSelector } from "react-redux";
 import {
   getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
 } from "../../../../apis/metadata/field";
 
-export function ShareMetadataFields({ projectId, destinationId }) {
+export function ShareMetadataFields({ projectId }) {
   const [fields, setFields] = React.useState();
+  const { destinationId } = useSelector((state) => state.reducer);
   const [restrictions, setRestrictions] = React.useState([]);
 
   const ROLES = {

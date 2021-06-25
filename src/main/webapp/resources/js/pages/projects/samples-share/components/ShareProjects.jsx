@@ -1,22 +1,20 @@
-import { navigate } from "@reach/router";
 import { Button, Space, Table } from "antd";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/projects";
 import { getTextSearchProps } from "../../../../components/ant.design/table-search-props";
 import { IconLinkOut } from "../../../../components/icons/Icons";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { setDestinationProject } from "../services/rootReducer";
 
-export function ShareProjects({
-  projectId,
-  setDestinationId,
-  destinationId,
-  projects,
-}) {
+export function ShareProjects({ projectId }) {
+  const dispatch = useDispatch();
+  const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
+  const { destinationId } = useSelector((state) => state.reducer);
   const [selected, setSelected] = React.useState();
 
-  if (!projectId) navigate("./projects");
-
   const onChange = (_, selectedRows) =>
-    setDestinationId(selectedRows[0].identifier);
+    dispatch(setDestinationProject(selectedRows[0].identifier));
 
   React.useEffect(() => {
     setSelected([`project-${destinationId}`]);
