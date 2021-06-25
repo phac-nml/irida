@@ -2,9 +2,12 @@ import { createAction, createReducer } from "@reduxjs/toolkit";
 
 export const setDestinationProject = createAction(
   `rootReducer/setDestinationProject`,
-  (destinationId) => {
-    return { payload: { destinationId } };
-  }
+  (destinationId) => ({ payload: { destinationId } })
+);
+
+export const updatedSamplesOwnerStatus = createAction(
+  `rootReducer/updatedSamplesOwnerStatus`,
+  (owner) => ({ payload: { owner } })
 );
 
 const storedState = (() => {
@@ -17,6 +20,9 @@ export const rootReducer = createReducer(
   (builder) => {
     builder.addCase(setDestinationProject, (state, action) => {
       state.destinationId = action.payload.destinationId;
+    });
+    builder.addCase(updatedSamplesOwnerStatus, (state, action) => {
+      state.owner = action.payload.owner;
     });
   }
 );

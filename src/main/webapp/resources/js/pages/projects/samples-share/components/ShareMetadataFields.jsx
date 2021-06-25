@@ -1,4 +1,4 @@
-import { Select, Table } from "antd";
+import { Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
@@ -45,6 +45,16 @@ export function ShareMetadataFields({ projectId }) {
     }
   }, [destinationFields, destinationLoading, currentFields, currentLoading]);
 
+  const getIcon = (item) => {
+    const current = restrictions.findIndex(
+      (restriction) => restriction.value === item.current.restriction
+    );
+    const target = restrictions.findIndex(
+      (restriction) => restriction.value === item.target.restriction
+    );
+    console.log({ current, target, item });
+  };
+
   return (
     <div>
       <Table
@@ -66,17 +76,25 @@ export function ShareMetadataFields({ projectId }) {
             title: "Destination Project Restrictions",
             dataIndex: ["target", "restriction"],
             render: (text, item, index) => {
+              getIcon(item);
               return (
-                <Select style={{ display: "inline-block" }} defaultValue={text}>
-                  {restrictions.map((restriction) => (
-                    <Select.Option
-                      key={restriction.value}
-                      value={restriction.value}
-                    >
-                      {restriction.label}
-                    </Select.Option>
-                  ))}
-                </Select>
+                <Space>
+                  {getIcon(item)}
+                  <Select
+                    style={{ display: "inline-block" }}
+                    defaultValue={text}
+                  >
+                    {restrictions.map((restriction) => (
+                      <Select.Option
+                        key={restriction.value}
+                        value={restriction.value}
+                      >
+                        {restriction.label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  {!item.target.exists && <Tag color="green">NEW</Tag>}
+                </Space>
               );
             },
           },

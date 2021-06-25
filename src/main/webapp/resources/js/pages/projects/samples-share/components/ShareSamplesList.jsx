@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { FixedSizeList as VList } from "react-window";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
+import { updatedSamplesOwnerStatus } from "../services/rootReducer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ samples }) {
@@ -27,6 +28,9 @@ export function ShareSamplesList({ samples }) {
     );
   };
 
+  const updateOwnerShip = (e) =>
+    dispatch(updatedSamplesOwnerStatus(e.target.checked));
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Typography.Text>HELLO</Typography.Text>
@@ -40,7 +44,7 @@ export function ShareSamplesList({ samples }) {
           {Row}
         </VList>
       </List>
-      <Checkbox checked={owner}>
+      <Checkbox checked={owner} onChange={updateOwnerShip}>
         Allow modification of samples in destination project
       </Checkbox>
     </Space>

@@ -47,15 +47,16 @@ function ShareSamples({ projectId, ...params }) {
 
   return (
     <Layout style={{ backgroundColor: grey1 }}>
-      <Layout.Sider width={200} style={{ backgroundColor: grey1 }}>
-        <Steps
-          direction="vertical"
-          current={step}
-          style={{ height: 600 }}
-          onChange={onChange}
-        >
-          <Steps.Step title={"SAMPLES"} />
-          <Steps.Step title={"PROJECT"} />
+      <Layout.Sider width={250} style={{ backgroundColor: grey1 }}>
+        <Steps direction="vertical" current={step} onChange={onChange}>
+          <Steps.Step
+            title={"SAMPLES"}
+            description={"Review samplebe copied to the destination project"}
+          />
+          <Steps.Step
+            title={"PROJECT"}
+            description={"Select the destincation project"}
+          />
           <Steps.Step title={"METADATA FIELDS"} />
         </Steps>
       </Layout.Sider>
