@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -283,7 +282,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
-	public List<MetadataFieldResponse> getPermittedFieldsForCurrentUser(Project project) {
+	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getPrincipal();
@@ -303,11 +302,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 
 		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole);
 
-		List<MetadataFieldResponse> fieldResponses = permittedFieldsForRole.stream()
-				.map(f -> new MetadataFieldResponse(project, f))
-				.collect(Collectors.toList());
-
-		return fieldResponses;
+		return permittedFieldsForRole;
 	}
 
 }

@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 /**
  * Root interface for any permissions being built within IRIDA.  This interface defines the methods required for evaluating a permission in {@link IridaPermissionEvaluator}.
  *
- * @param <DomainObjectType>
+ * @param <DomainObjectType> The class to be evaluated by this permission
  * @see IridaPermissionEvaluator
  */
 public interface BasePermission<DomainObjectType> {
