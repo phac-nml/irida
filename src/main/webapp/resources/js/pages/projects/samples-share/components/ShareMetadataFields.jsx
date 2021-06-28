@@ -1,4 +1,4 @@
-import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
+import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import { Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,7 @@ import {
   useGetMetadataFieldsForProjectQuery,
   useGetMetadataRestrictionsQuery,
 } from "../../../../apis/metadata/field";
-import { green6, red6 } from "../../../../styles/colors";
+import { green6, yellow6 } from "../../../../styles/colors";
 import { setFields, updateFields } from "../services/rootReducer";
 
 export function ShareMetadataFields({ projectId }) {
@@ -62,8 +62,13 @@ export function ShareMetadataFields({ projectId }) {
       (restriction) => restriction.value === item.target.restriction
     );
     console.log({ current, target, item });
-    if (current > target) return <CloseCircleTwoTone twoToneColor={red6} />;
-    return <CheckCircleTwoTone twoToneColor={green6} />;
+    if (current > target)
+      return (
+        <WarningTwoTone twoToneColor={yellow6} style={{ fontSize: `1.4em` }} />
+      );
+    return (
+      <CheckCircleTwoTone twoToneColor={green6} style={{ fontSize: `1.4em` }} />
+    );
   };
 
   return (
@@ -77,7 +82,18 @@ export function ShareMetadataFields({ projectId }) {
             "__There are no metadata fields being copied for these samples__",
         }}
         columns={[
-          { title: "Field Label", dataIndex: ["current", "label"] },
+          {
+            title: "Field Label",
+            dataIndex: ["current", "label"],
+            render: (text, item) => {
+              return (
+                <Space>
+                  {text}
+                  {!item.target.exists && <Tag color="green">NEW</Tag>}
+                </Space>
+              );
+            },
+          },
           {
             title: "Current Project Restrictions",
             dataIndex: ["current", "restriction"],
@@ -105,7 +121,6 @@ export function ShareMetadataFields({ projectId }) {
                       </Select.Option>
                     ))}
                   </Select>
-                  {!item.target.exists && <Tag color="green">NEW</Tag>}
                 </Space>
               );
             },
