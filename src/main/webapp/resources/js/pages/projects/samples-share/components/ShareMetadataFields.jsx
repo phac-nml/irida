@@ -1,11 +1,13 @@
 import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
-import { Select, Space, Table, Tag } from "antd";
+import { navigate } from "@reach/router";
+import { Button, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useGetMetadataFieldsForProjectQuery,
   useGetMetadataRestrictionsQuery,
 } from "../../../../apis/metadata/field";
+import { IconArrowLeft } from "../../../../components/icons/Icons";
 import { green6, yellow6 } from "../../../../styles/colors";
 import { setFields, updateFields } from "../services/rootReducer";
 
@@ -70,7 +72,7 @@ export function ShareMetadataFields({ projectId }) {
   };
 
   return (
-    <div>
+    <Space direction="vertical" style={{ display: "block" }}>
       <Table
         loading={currentLoading && destinationLoading}
         pagination={{ hideOnSinglePage: true, pageSize: fields?.length }}
@@ -126,6 +128,14 @@ export function ShareMetadataFields({ projectId }) {
         ]}
         dataSource={fields}
       />
-    </div>
+      <div>
+        <Button onClick={() => navigate("projects")}>
+          <Space>
+            <IconArrowLeft />
+            <span>Select a Project</span>
+          </Space>
+        </Button>
+      </div>
+    </Space>
   );
 }
