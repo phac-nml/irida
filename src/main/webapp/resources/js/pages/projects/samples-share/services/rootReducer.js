@@ -22,6 +22,10 @@ export const updateFields = createAction(
   (index, value) => ({ payload: { index, value } })
 );
 
+export const setStep = createAction(`rootReducer/setStep`, (step) => ({
+  payload: { step },
+}));
+
 const storedState = (() => {
   const sharedString = sessionStorage.getItem("share");
   return sharedString ? JSON.parse(sharedString) : {};
@@ -42,6 +46,9 @@ export const rootReducer = createReducer(
     builder.addCase(updateFields, (state, action) => {
       state.fields[action.payload.index].target.restriction =
         action.payload.value;
+    });
+    builder.addCase(setStep, (state, action) => {
+      state.step = action.payload.step;
     });
   }
 );

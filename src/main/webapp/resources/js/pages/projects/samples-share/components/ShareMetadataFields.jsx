@@ -12,8 +12,7 @@ import { setFields, updateFields } from "../services/rootReducer";
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();
   const { destinationId, fields = [] } = useSelector((state) => state.reducer);
-  const { data: restrictions } = useGetMetadataRestrictionsQuery();
-  console.log(fields);
+  const { data: restrictions = [] } = useGetMetadataRestrictionsQuery();
 
   const ROLES = {
     PROJECT_USER: i18n("projectRole.PROJECT_USER"),
@@ -45,7 +44,6 @@ export function ShareMetadataFields({ projectId }) {
               : { ...current, exists: false },
         };
       });
-      console.log(merged);
       dispatch(setFields(merged));
     }
   }, [destinationFields, destinationLoading, currentFields, currentLoading]);
@@ -54,14 +52,14 @@ export function ShareMetadataFields({ projectId }) {
     dispatch(updateFields(index, value));
   };
 
-  const getIcon = (item) => {
+  const getRestrictionIcon = (item) => {
     const current = restrictions.findIndex(
       (restriction) => restriction.value === item.current.restriction
     );
     const target = restrictions.findIndex(
       (restriction) => restriction.value === item.target.restriction
     );
-    console.log({ current, target, item });
+
     if (current > target)
       return (
         <WarningTwoTone twoToneColor={yellow6} style={{ fontSize: `1.4em` }} />
@@ -103,10 +101,10 @@ export function ShareMetadataFields({ projectId }) {
             title: "Destination Project Restrictions",
             dataIndex: ["target", "restriction"],
             render: (text, item, index) => {
-              getIcon(item);
+              getRestrictionIcon(item);
               return (
                 <Space>
-                  {getIcon(item)}
+                  {getRestrictionIcon(item)}
                   <Select
                     style={{ display: "inline-block", width: 150 }}
                     defaultValue={text}

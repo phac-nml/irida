@@ -8,7 +8,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadataFields } from "./components/ShareMetadataFields";
 import { ShareProjects } from "./components/ShareProjects";
 import { ShareSamplesList } from "./components/ShareSamplesList";
-import { setDestinationProject } from "./services/rootReducer";
+import { setDestinationProject, setStep } from "./services/rootReducer";
 import store from "./store";
 
 const { useBreakpoint } = Grid;
@@ -16,9 +16,9 @@ const { useBreakpoint } = Grid;
 function ShareSamples({ projectId, ...params }) {
   const dispatch = useDispatch();
   const screens = useBreakpoint();
-  const paths = ["samples", "projects", "fields"];
-  const [step, setStep] = React.useState(() => paths.indexOf(params["*"]));
-  const { samples, projectId: sharedProjectId } = useSelector(
+  const paths = React.useMemo(() => ["samples", "projects", "fields"], []);
+
+  const { samples, projectId: sharedProjectId, step } = useSelector(
     (state) => state.reducer
   );
 
@@ -28,6 +28,11 @@ function ShareSamples({ projectId, ...params }) {
   };
 
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
+
+  // Check to make sure we are entering at samples step
+  React.useEffect(() => {
+    dispatch(setStep(paths.indexOf(params["*"])));
+  }, [dispatch, params, paths]);
 
   React.useEffect(() => {
     if (
@@ -59,11 +64,11 @@ function ShareSamples({ projectId, ...params }) {
         >
           <Steps.Step
             title={"SAMPLES"}
-            description={"Review samplebe copied to the destination project"}
+            description={"Review samples copied to the destination project"}
           />
           <Steps.Step
             title={"PROJECT"}
-            description={"Select the destincation project"}
+            description={"Select the destination project"}
           />
           <Steps.Step title={"METADATA FIELDS"} />
         </Steps>
