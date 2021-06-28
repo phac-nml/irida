@@ -1,3 +1,5 @@
+import { ArrowRightOutlined } from "@ant-design/icons";
+import { navigate } from "@reach/router";
 import { Button, Checkbox, List, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,6 +49,14 @@ export function ShareSamplesList({ samples }) {
       <Checkbox checked={owner} onChange={updateOwnerShip}>
         Allow modification of samples in destination project
       </Checkbox>
+      <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+        <Button onClick={() => navigate("projects")}>
+          <Space>
+            <span>Select a Project</span>
+            <ArrowRightOutlined />
+          </Space>
+        </Button>
+      </div>
     </Space>
   );
 }

@@ -1,4 +1,6 @@
 import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
   BellOutlined,
   BoldOutlined,
   CalendarTwoTone,
@@ -235,3 +237,12 @@ export const IconCheckCircle = ({ ...props }) => (
 );
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
+
+/*
+Arrows
+ */
+export const IconArrowRight = ({ ...props }) => (
+  <ArrowRightOutlined {...props} />
+);
+
+export const IconArrowLeft = ({ ...props }) => <ArrowLeftOutlined {...props} />;

@@ -52,15 +52,13 @@ function ShareSamples({ projectId, ...params }) {
     }
   }, [dispatch, projects]);
 
-  const onChange = (key) => navigate(paths[key]).then(() => setStep(key));
-
   return (
     <Row gutter={[16, 16]}>
       <Col xs={24}>
         <Steps
           direction={screens.md ? "horizontal" : "vertical"}
           current={step}
-          onChange={onChange}
+          onChange={(key) => navigate(paths[key])}
         >
           <Steps.Step
             title={"SAMPLES"}
