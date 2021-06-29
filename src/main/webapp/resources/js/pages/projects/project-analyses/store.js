@@ -4,7 +4,7 @@ import { associatedProjectsApi } from "../../../apis/projects/associated-project
 import { singleSampleAnalysisOutputsApi } from "../../../apis/projects/analyses";
 
 /*
-Redux Store for project details.
+Redux Store for project details and project analyses outputs.
 For more information on redux stores see: https://redux.js.org/tutorials/fundamentals/part-4-store
  */
 export default configureStore({
