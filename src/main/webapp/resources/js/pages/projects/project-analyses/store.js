@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { projectApi } from "../../../apis/projects/project";
-import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
 import { singleSampleAnalysisOutputsApi } from "../../../apis/projects/analyses";
 
 /*
