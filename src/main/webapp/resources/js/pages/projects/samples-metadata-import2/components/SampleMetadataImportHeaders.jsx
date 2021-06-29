@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  List,
   Space,
   Typography,
 } from "antd";
-
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
+import {
+  useGetMetadataForProjectQuery
+} from "../../../../apis/metadata/metadata-import";
 
 /**
  * React component that displays the steps for the Sample Metadata Uploader.
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportHeaders() {
+export function SampleMetadataImportHeaders({ projectId }) {
   const { Text, Title } = Typography
+  const { data: metadata } = useGetMetadataForProjectQuery(projectId)
+
   return (
     <>
       <Space direction="vertical" size="large" style={{ width: `100%` }}>
@@ -21,6 +26,9 @@ export function SampleMetadataImportHeaders() {
           {i18n("SampleMetadataImportFileUploader.intro")}
         </Text>
         <SampleMetadataImportSteps currentStep={1} />
+        {metadata && <List
+          dataSource={metadata.headers}
+          renderItem={item => <List.Item>{item}</List.Item>} />}
       </Space>
     </>
   );

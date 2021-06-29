@@ -24,14 +24,11 @@ export function SampleMetadataImportFileUploader({ projectId }) {
     action: setBaseUrl(`/projects/${projectId}/sample-metadata/upload/file`),
     onChange(info) {
       const { status } = info.file;
-      if (status !== 'uploading') {
-        console.log(info.file);
-      }
       if (status === 'done') {
         notification.success({
           message: i18n("SampleMetadataImportFileUploader.success", info.file.name),
         });
-        navigate('/upload/getMetadata');
+        navigate('headers')
       } else if (status === 'error') {
         notification.error({
           message: i18n("SampleMetadataImportFileUploader.error", info.file.name),
