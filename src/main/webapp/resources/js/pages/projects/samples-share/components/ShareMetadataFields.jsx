@@ -1,6 +1,5 @@
-import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import { navigate } from "@reach/router";
-import { Button, Select, Space, Table, Tag } from "antd";
+import { Button, Form, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,7 +7,6 @@ import {
   useGetMetadataRestrictionsQuery,
 } from "../../../../apis/metadata/field";
 import { IconArrowLeft } from "../../../../components/icons/Icons";
-import { green6, yellow6 } from "../../../../styles/colors";
 import { setFields, updateFields } from "../services/rootReducer";
 
 export function ShareMetadataFields({ projectId }) {
@@ -54,80 +52,82 @@ export function ShareMetadataFields({ projectId }) {
     dispatch(updateFields(index, value));
   };
 
-  const getRestrictionIcon = (item) => {
+  const renderRestriction = (text, item, index) => {
     const current = restrictions.findIndex(
       (restriction) => restriction.value === item.current.restriction
     );
-    const target = restrictions.findIndex(
+    const destination = restrictions.findIndex(
       (restriction) => restriction.value === item.target.restriction
     );
 
-    if (current > target)
-      return (
-        <WarningTwoTone twoToneColor={yellow6} style={{ fontSize: `1.4em` }} />
-      );
+    const loweredPermission = current > destination;
+    const higherPermission = current < destination;
+
+    const feedback = {
+      hasFeedback: true,
+      validateStatus: loweredPermission ? "warning" : "success",
+      help: loweredPermission
+        ? "This field has a lower permission"
+        : higherPermission
+        ? "This field will be more secure in the destination project"
+        : "Permissions have not been changed",
+    };
+
     return (
-      <CheckCircleTwoTone twoToneColor={green6} style={{ fontSize: `1.4em` }} />
+      <Form.Item {...feedback}>
+        <Select
+          defaultValue={text}
+          onChange={(value) => updateRestriction(index, value)}
+        >
+          {restrictions.map((restriction) => (
+            <Select.Option key={restriction.value} value={restriction.value}>
+              {restriction.label}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
     );
   };
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      <Table
-        loading={currentLoading && destinationLoading}
-        pagination={{ hideOnSinglePage: true, pageSize: fields?.length }}
-        rowKey={(item) => `field-${item.current.id}`}
-        locale={{
-          emptyText:
-            "__There are no metadata fields being copied for these samples__",
-        }}
-        columns={[
-          {
-            title: "Field Label",
-            dataIndex: ["current", "label"],
-            render: (text, item) => {
-              return (
-                <Space>
-                  {text}
-                  {!item.target.exists && <Tag color="green">NEW</Tag>}
-                </Space>
-              );
+      <Form>
+        <Table
+          loading={currentLoading && destinationLoading}
+          pagination={{ hideOnSinglePage: true, pageSize: fields?.length }}
+          rowKey={(item) => `field-${item.current.id}`}
+          locale={{
+            emptyText:
+              "__There are no metadata fields being copied for these samples__",
+          }}
+          columns={[
+            {
+              title: "Field",
+              dataIndex: ["current", "label"],
+              render: (text, item) => {
+                return (
+                  <Space>
+                    {text}
+                    {!item.target.exists && <Tag color="green">NEW</Tag>}
+                  </Space>
+                );
+              },
             },
-          },
-          {
-            title: "Current Project Restrictions",
-            dataIndex: ["current", "restriction"],
-            render: (text) => ROLES[text],
-          },
-          {
-            title: "Destination Project Restrictions",
-            dataIndex: ["target", "restriction"],
-            render: (text, item, index) => {
-              getRestrictionIcon(item);
-              return (
-                <Space>
-                  {getRestrictionIcon(item)}
-                  <Select
-                    style={{ display: "inline-block", width: 150 }}
-                    defaultValue={text}
-                    onChange={(value) => updateRestriction(index, value)}
-                  >
-                    {restrictions.map((restriction) => (
-                      <Select.Option
-                        key={restriction.value}
-                        value={restriction.value}
-                      >
-                        {restriction.label}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Space>
-              );
+            {
+              title: "Current Project Restrictions",
+              dataIndex: ["current", "restriction"],
+              render: (text) => ROLES[text],
             },
-          },
-        ]}
-        dataSource={fields}
-      />
+            {
+              title: "Destination Project Restrictions",
+              dataIndex: ["target", "restriction"],
+              render: renderRestriction,
+              width: 400,
+            },
+          ]}
+          dataSource={fields}
+        />
+      </Form>
       <div>
         <Button onClick={() => navigate("projects")}>
           <Space>

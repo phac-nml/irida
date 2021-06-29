@@ -1,5 +1,5 @@
 import { navigate } from "@reach/router";
-import { Button, Checkbox, List, Space, Typography } from "antd";
+import { Button, Checkbox, List, Space } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -35,7 +35,6 @@ export function ShareSamplesList({ samples }) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      <Typography.Text>HELLO</Typography.Text>
       <List bordered>
         <VList
           height={600}
