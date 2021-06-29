@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/projects";
 import { getTextSearchProps } from "../../../../components/ant.design/table-search-props";
 import {
-  IconArrowLeft,
   IconArrowRight,
   IconLinkOut,
 } from "../../../../components/icons/Icons";
@@ -72,16 +71,10 @@ export function ShareProjects({ projectId }) {
           },
         ]}
       />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", flexDirection: "row-reverse" }}>
         <Button onClick={() => navigate("samples")}>
           <Space>
-            <IconArrowLeft />
-            <span>Samples</span>
-          </Space>
-        </Button>
-        <Button onClick={() => navigate("fields")}>
-          <Space>
-            <span>Check Metadata Fields</span>
+            <span>Review Samples</span>
             <IconArrowRight />
           </Space>
         </Button>

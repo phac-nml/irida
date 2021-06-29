@@ -16,7 +16,7 @@ const { useBreakpoint } = Grid;
 function ShareSamples({ projectId, ...params }) {
   const dispatch = useDispatch();
   const screens = useBreakpoint();
-  const paths = React.useMemo(() => ["samples", "projects", "fields"], []);
+  const paths = React.useMemo(() => ["projects", "samples", "fields"], []);
 
   const { samples, projectId: sharedProjectId, step } = useSelector(
     (state) => state.reducer
@@ -60,21 +60,15 @@ function ShareSamples({ projectId, ...params }) {
           current={step}
           onChange={(key) => navigate(paths[key])}
         >
-          <Steps.Step
-            title={"SAMPLES"}
-            description={"Review samples copied to the destination project"}
-          />
-          <Steps.Step
-            title={"PROJECT"}
-            description={"Select the destination project"}
-          />
-          <Steps.Step title={"METADATA FIELDS"} />
+          <Steps.Step title={"DESTINATION PROJECT"} />
+          <Steps.Step title={"REVIEW SAMPLES"} />
+          <Steps.Step title={"CHECK METADATA FIELD RESTRICTIONS"} />
         </Steps>
       </Col>
       <Col xs={24}>
         <Router>
-          <ShareSamplesList samples={samples} path="/samples" />
           <ShareProjects path="/projects" projects={projects} />
+          <ShareSamplesList samples={samples} path="/samples" />
           <ShareMetadataFields path="/fields" />
         </Router>
       </Col>

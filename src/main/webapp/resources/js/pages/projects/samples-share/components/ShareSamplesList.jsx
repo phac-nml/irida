@@ -4,7 +4,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { FixedSizeList as VList } from "react-window";
-import { IconArrowRight } from "../../../../components/icons/Icons";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+} from "../../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import { updatedSamplesOwnerStatus } from "../services/rootReducer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
@@ -48,10 +51,17 @@ export function ShareSamplesList({ samples }) {
       <Checkbox checked={owner} onChange={updateOwnerShip}>
         Allow modification of samples in destination project
       </Checkbox>
-      <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button onClick={() => navigate("projects")}>
           <Space>
+            <IconArrowLeft />
             <span>Select a Project</span>
+            <IconArrowRight />
+          </Space>
+        </Button>
+        <Button onClick={() => navigate("fields")}>
+          <Space>
+            <span>Check Metadata Field Permissions</span>
             <IconArrowRight />
           </Space>
         </Button>

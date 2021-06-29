@@ -138,10 +138,10 @@ export function ShareMetadataFields({ projectId }) {
         />
       </Form>
       <div>
-        <Button onClick={() => navigate("projects")}>
+        <Button onClick={() => navigate("samples")}>
           <Space>
             <IconArrowLeft />
-            <span>Select a Project</span>
+            <span>Review Samples</span>
           </Space>
         </Button>
       </div>
