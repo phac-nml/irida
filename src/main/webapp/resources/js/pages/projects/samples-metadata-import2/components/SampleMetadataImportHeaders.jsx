@@ -9,13 +9,15 @@ import {
   useGetMetadataForProjectQuery
 } from "../../../../apis/metadata/metadata-import";
 
+const { Text, Title } = Typography
+
 /**
  * React component that displays the steps for the Sample Metadata Uploader.
  * @returns {*}
  * @constructor
  */
 export function SampleMetadataImportHeaders({ projectId }) {
-  const { Text, Title } = Typography
+
   const { data: metadata } = useGetMetadataForProjectQuery(projectId)
 
   return (

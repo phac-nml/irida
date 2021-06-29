@@ -9,6 +9,8 @@ import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
 
+const { Text, Title } = Typography
+
 /**
  * React component that displays Step #1 of the Sample Metadata Uploader.
  * This page is where the user selects the file to be uploaded.
@@ -16,7 +18,7 @@ import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
  * @constructor
  */
 export function SampleMetadataImportFileUploader({ projectId }) {
-  const { Text, Title } = Typography
+
   const options = {
     multiple: false,
     showUploadList: false,
