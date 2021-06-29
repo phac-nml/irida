@@ -38,16 +38,16 @@ public class ProjectAnalysesAjaxController {
 		return ResponseEntity.ok(uiProjectAnalysesService.getSharedSingleSampleOutputs(projectId));
 	}
 
-	@GetMapping("/automated")
-	public String getAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
-		return "YAYYYY THIS WORKS AUTOMATED";
-	}
-
-	@GetMapping("/download-shared")
-	public void downloadSharedSingleSampleOutputs(@RequestParam Long projectId) {
-	}
-
-	@GetMapping("/download-automated")
-	public void downloadAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
-	}
+//	@GetMapping("/automated")
+//	public String getAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
+//		return "YAYYYY THIS WORKS AUTOMATED";
+//	}
+//
+//	@GetMapping("/download-shared")
+//	public void downloadSharedSingleSampleOutputs(@RequestParam Long projectId) {
+//	}
+//
+//	@GetMapping("/download-automated")
+//	public void downloadAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
+//	}
 }

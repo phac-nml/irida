@@ -26,6 +26,10 @@ export default function SingleSampleAnalysisOutputs({
   const [selected, setSelected] = React.useState([]);
   const [filteredOutputs, setFilteredOutputs] = React.useState(null);
 
+  // Ant Design Table options
+  const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
+  const DEFAULT_PAGE_SIZE = 10;
+
   const columns = [
     {
       title: i18n("SingleSampleAnalysisOutputs.id"),
@@ -138,10 +142,7 @@ export default function SingleSampleAnalysisOutputs({
           analysisOutput.userFirstName.toLowerCase().includes(searchStr) ||
           analysisOutput.userLastName.toLowerCase().includes(searchStr)
       );
-      // Only set state if there were outputs matching the search term
-      if (outputsContainingSearchValue.length > 0) {
-        setFilteredOutputs(outputsContainingSearchValue);
-      }
+      setFilteredOutputs(outputsContainingSearchValue);
     }
   };
 
@@ -174,8 +175,8 @@ export default function SingleSampleAnalysisOutputs({
         tableLayout="auto"
         rowSelection={rowSelection}
         pagination={{
-          pageSizeOptions: [5, 10, 25, 50, 100],
-          defaultPageSize: 10,
+          pageSizeOptions: PAGE_SIZE_OPTIONS,
+          defaultPageSize: DEFAULT_PAGE_SIZE,
           showSizeChanger: true,
         }}
       />
