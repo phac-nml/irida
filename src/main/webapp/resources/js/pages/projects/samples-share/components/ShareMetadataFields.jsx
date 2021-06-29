@@ -1,5 +1,5 @@
 import { navigate } from "@reach/router";
-import { Button, Form, Select, Space, Table, Tag } from "antd";
+import { Button, Form, Popover, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -67,9 +67,9 @@ export function ShareMetadataFields({ projectId }) {
       hasFeedback: true,
       validateStatus: loweredPermission ? "warning" : "success",
       help: loweredPermission
-        ? "This field has a lower permission"
+        ? "Permissions are less secure in the destination project"
         : higherPermission
-        ? "This field will be more secure in the destination project"
+        ? "Permissions are more secure in the destination project"
         : "Permissions have not been changed",
     };
 
@@ -108,7 +108,16 @@ export function ShareMetadataFields({ projectId }) {
                 return (
                   <Space>
                     {text}
-                    {!item.target.exists && <Tag color="green">NEW</Tag>}
+                    {!item.target.exists && (
+                      <Popover
+                        placement={"right"}
+                        content={
+                          "This field do exist in the destination project."
+                        }
+                      >
+                        <Tag color="green">NEW</Tag>
+                      </Popover>
+                    )}
                   </Space>
                 );
               },
@@ -122,7 +131,7 @@ export function ShareMetadataFields({ projectId }) {
               title: "Destination Project Restrictions",
               dataIndex: ["target", "restriction"],
               render: renderRestriction,
-              width: 400,
+              width: 500,
             },
           ]}
           dataSource={fields}
