@@ -34,6 +34,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
@@ -64,6 +65,8 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
 
+	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
+
 	@Value("${security.password.expiry}")
 	private int passwordExpiryInDays = -1;
 
@@ -93,51 +96,8 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
-//		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
-
-//		auth.ldapAuthentication()
-//		auth.authenticationProvider(authenticationProvider());
-//		auth.ldapAuthentication()
-//				.userDnPatterns("uid={0},ou=Users")
-//				.groupSearchBase("ou=Groups")
-//				.contextSource()
-//				.url("ldap://localhost:10389/dc=example,dc=com")
-//				.and()
-//				.passwordCompare()
-//				.passwordEncoder(passwordEncoder())
-//				.passwordAttribute("userPassword");
-//		auth.authenticationProvider(authenticationProvider());
-//		auth.ldapAuthentication()
-////				.userDetailsContextMapper(userDetailsContextMapper())
-//				.userDnPatterns("uid={0},ou=Users")
-//				.groupSearchBase("ou=Groups")
-//				.contextSource()
-//				.url("ldap://localhost:10389/dc=example,dc=com")
-//				.and()
-//				.passwordCompare()
-//				.passwordEncoder(passwordEncoder())
-//				.passwordAttribute("userPassword");
-
-		logger.info("configure function XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-				"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-				"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-				"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-				"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-				"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-		//String domain, String url, String rootDn
-		ActiveDirectoryLdapAuthenticationProvider authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(null, "ldap://localhost:10389", "admin");
-		authenticationProvider.setConvertSubErrorCodesToExceptions(true);
-		authenticationProvider.setUseAuthenticationRequestCredentials(true);
-		authenticationProvider.setSearchFilter("(&(objectClass=Users)(uid={0}))"); // uid={1}   ????
-		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
-		auth.authenticationProvider(authenticationProvider).authenticationProvider(anonymousAuthenticationProvider());
-//		auth.authenticationProvider(authenticationProvider));
-//		auth.ldapAuthentication()
-//				.userDnPatterns("uid={0},ou=Users")
-//				.groupSearchBase("ou=Groups");
-//		auth.ldapAuthentication().userDetailsContextMapper(userDetailsContextMapper());
-
+//		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder()); // this line is probably not actually needed???
+		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
 	}
 
 	@Bean
@@ -145,13 +105,12 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new UserDetailsContextMapper() {
 			@Override
 			public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-				logger.info("mapUserFromContext function");
-				try {
-					logger.info("LOOKING UP USERNAME: " + username);
-					dirContextOperations.lookup(username);
-				} catch (NamingException e) {
-					e.printStackTrace();
-				}
+//				// Here we can use dirContextOperations to fetch an attribute that is not (in) the dn
+//				try {
+//					dirContextOperations.lookup(username);?
+//				} catch (NamingException e) {
+//					e.printStackTrace();
+//				}
 				User user = userRepository.loadUserByUsername(username);
 				return user;
 
@@ -175,65 +134,20 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return anonymousAuthenticationProvider;
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
-
 
 //	@Bean
 //	public AuthenticationProvider authenticationProvider() {
-//		//todo: what is a dao auth prodider???
-////		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-////		authenticationProvider.setUserDetailsService(userRepository);
-////		authenticationProvider.setPasswordEncoder(passwordEncoder());
+//		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+//		authenticationProvider.setUserDetailsService(userRepository);
+//		authenticationProvider.setPasswordEncoder(passwordEncoder());
 //
-////		LdapAuthenticator ldapAuthenticator = new LdapAuthenticator() {
-////			@Override
-////			public DirContextOperations authenticate(Authentication authentication) {
-////				logger.info("ldapauthenticator authenticate function OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" +
-////						"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" +
-////						"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" +
-////						"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" +
-////						"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo");
-////				logger.info("creds: " + (String) authentication.getCredentials());
-////
-////				return null;
-////			}
-////		};
-//		logger.info("in authenticationProvider()");
-//		LdapAuthenticator ldapAuthenticator = new PasswordComparisonAuthenticator(ldapContextSource());
-//
-//		LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
-//
-//
-////		ldapAuthenticationProvider.setUserDetailsContextMapper(new UserDetailsContextMapper() {
-////			@Override
-////			public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-////				logger.info("mapUserFromContext function");
-////				try {
-////					logger.info("LOOKING UP USERNAME: " + username);
-////					dirContextOperations.lookup(username);
-////				} catch (NamingException e) {
-////					e.printStackTrace();
-////				}
-////				User user = userRepository.loadUserByUsername(username);
-////				return user;
-////
-////
-//////				return null;
-////			}
-////
-////			@Override
-////			public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
-////
-////			}
-////		});
 //		/*
 //		Expire a user's password after the given number of days and force them to change it.
 //		 */
-//		//todo: ldap wouldnt use this??
-////		if (passwordExpiryInDays != -1) {
-////			authenticationProvider
-////					.setPreAuthenticationChecks(new PasswordExpiryChecker(userRepository, passwordExpiryInDays));
-////		}
+//		if (passwordExpiryInDays != -1) {
+//			authenticationProvider
+//					.setPreAuthenticationChecks(new PasswordExpiryChecker(userRepository, passwordExpiryInDays));
+//		}
 //
 //		/*
 //		 * After a user has been authenticated, we want to allow them to change
@@ -242,10 +156,42 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 //		 * authenticated users with expired credentials to invoke one method, the
 //		 * {@link UserService#changePassword(Long, String)} method.
 //		 */
-////		authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
-////		return authenticationProvider;
-//		return ldapAuthenticationProvider;
+//		authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
+//		return authenticationProvider;
 //	}
+
+
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		PasswordComparisonAuthenticator ldapAuthenticator = new PasswordComparisonAuthenticator(ldapContextSource());
+		ldapAuthenticator.setPasswordEncoder(ldapPasswordEncoder());
+		String[] userDnPatterns = {"cn={0},ou=Users"};
+		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
+		ldapAuthenticator.setPasswordAttributeName("userPassword");
+		ldapAuthenticator.afterPropertiesSet();
+
+		LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
+		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+
+		return authenticationProvider;
+	}
+
+	/**
+	 * This generates a ContextSource with credentials to access the LDAP server
+	 *
+	 * @return LdapContextSource
+	 */
+	@Bean
+	public LdapContextSource ldapContextSource() {
+		LdapContextSource ldapContextSource = new LdapContextSource();
+		ldapContextSource.setUrl("ldap://localhost:10389/dc=example,dc=com");
+		ldapContextSource.setUserDn("uid=admin,ou=system");
+		ldapContextSource.setPassword("secret");
+//		ldapContextSource.setReferral("follow");
+		ldapContextSource.afterPropertiesSet();
+		return ldapContextSource;
+
+	}
 
 	//this is what runs the configure() and builds it
 	@Bean(name = "userAuthenticationManager")
@@ -258,18 +204,11 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Bean
-//	public LdapContextSource ldapContextSource() {
-//		LdapContextSource ldapContextSource = new LdapContextSource();
-//		ldapContextSource.setUserDn("uid=admin,ou=system");
-//		ldapContextSource.setUrl("ldap://localhost:10389");
-//		ldapContextSource.setPassword("secret");
-////		ldapContextSource.setPooled(false);
-//		ldapContextSource.afterPropertiesSet();
-//		logger.info("in ldap context source thing: ");
-//		return ldapContextSource;
-//
-//	}
+	@Bean
+	public PasswordEncoder ldapPasswordEncoder(){
+		// TODO This is deprecated/insecure, need to figure out how we are expecting ldap to do auth
+		return new LdapShaPasswordEncoder();
+	}
 
 	@Bean
 	public OAuthClient oAuthClient() {
