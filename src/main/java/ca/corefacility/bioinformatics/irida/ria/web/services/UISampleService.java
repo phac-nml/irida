@@ -173,6 +173,12 @@ public class UISampleService {
 				.collect(Collectors.toList());
 	}
 
+	public List<Long> getCommonSampleIdentifiers(Long projectId, List<Long> sampleIds) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = sampleService.getSamplesInProject(project, sampleIds);
+		return samples.stream().map(Sample::getId).collect(Collectors.toList());
+	}
+
 	/**
 	 * Adds the {@link Project} to any {@link QCEntry} within a
 	 * {@link SequencingObject}. If the {@link QCEntry} reports as

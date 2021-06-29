@@ -4,6 +4,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { FixedSizeList as VList } from "react-window";
+import { useGetCommonSampleIdentifiersQuery } from "../../../../apis/projects/projects";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -12,9 +13,16 @@ import { SampleDetailViewer } from "../../../../components/samples/SampleDetailV
 import { updatedSamplesOwnerStatus } from "../services/rootReducer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
-export function ShareSamplesList({ samples }) {
+export function ShareSamplesList({ samples = [] }) {
   const dispatch = useDispatch();
-  const { owner } = useSelector((state) => state.reducer);
+  const { owner, destinationId } = useSelector((state) => state.reducer);
+
+  const { data: commonSampleI } = useGetCommonSampleIdentifiersQuery(
+    { projectId: destinationId, sampleIds: samples.map((s) => s.id) },
+    {
+      skip: destinationId === undefined,
+    }
+  );
 
   const Row = ({ index, style }) => {
     const sample = samples[index];

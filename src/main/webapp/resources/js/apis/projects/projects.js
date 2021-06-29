@@ -14,16 +14,29 @@ export const projectsApi = createApi({
   endpoints: (build) => ({
     getProjectsManagedByUser: build.query({
       query: (currentId) => ({
-        url: `/share-samples`,
+        url: `/share-samples/projects`,
         params: {
           current: currentId,
         },
       }),
     }),
+    getCommonSampleIdentifiers: build.query({
+      query: ({ projectId, sampleIds }) => ({
+        url: `/share-samples/sampleIds`,
+        method: "POST",
+        params: {
+          projectId,
+        },
+        body: sampleIds,
+      }),
+    }),
   }),
 });
 
-export const { useGetProjectsManagedByUserQuery } = projectsApi;
+export const {
+  useGetProjectsManagedByUserQuery,
+  useGetCommonSampleIdentifiersQuery,
+} = projectsApi;
 
 /**
  * Returns the projects on the current page of the projects table.

@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRe
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
  * Controller for handling all ajax requests for Projects.
@@ -20,11 +21,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 @RequestMapping("/ajax/projects")
 public class ProjectsAjaxController {
 	private final UIProjectsService projectsService;
+	private final UISampleService sampleService;
 
 
 	@Autowired
-	public ProjectsAjaxController(UIProjectsService projectsService) {
+	public ProjectsAjaxController(UIProjectsService projectsService, UISampleService sampleService) {
 		this.projectsService = projectsService;
+		this.sampleService = sampleService;
 	}
 
 	/**
@@ -51,8 +54,13 @@ public class ProjectsAjaxController {
 		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
 	}
 
-	@GetMapping("/share-samples")
+	@GetMapping("/share-samples/projects")
 	public List<Project> getProjectToShare(@RequestParam long current) {
 		return projectsService.getProjectToShare(current);
+	}
+
+	@PostMapping("/share-samples/sampleIds")
+	public List<Long> getProjectToShare(@RequestParam long projectId, @RequestBody List<Long> sampleIds) {
+		return sampleService.getCommonSampleIdentifiers(projectId, sampleIds);
 	}
 }
