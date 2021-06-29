@@ -4,6 +4,14 @@ import SingleSampleAnalysisOutputs from "./SingleSampleAnalysisOutputs";
 import { useGetAutomatedSingleSampleAnalysisOutputsQuery } from "../../../../apis/projects/analyses";
 const { Title } = Typography;
 
+/**
+ * React component for getting the shared single sample analysis outputs
+ * and setting the layout for the page
+ * @param projectId The project identifier
+ * @returns {JSX.Element}
+ * @constructor
+ */
+
 export default function AutomatedSingleSampleAnalysisOutputs({ projectId }) {
   const {
     data: automatedSingleSampleAnalysisOutputs = {},
