@@ -26,6 +26,13 @@ export const setStep = createAction(`rootReducer/setStep`, (step) => ({
   payload: { step },
 }));
 
+export const removeSample = createAction(
+  `rootReducer/removeSample`,
+  (index) => ({
+    payload: { index },
+  })
+);
+
 const storedState = (() => {
   const sharedString = sessionStorage.getItem("share");
   return sharedString ? JSON.parse(sharedString) : {};
@@ -49,6 +56,11 @@ export const rootReducer = createReducer(
     });
     builder.addCase(setStep, (state, action) => {
       state.step = action.payload.step;
+    });
+    builder.addCase(removeSample, (state, action) => {
+      const samples = [...state.samples];
+      samples.splice(action.payload.index, 1);
+      state.samples = samples;
     });
   }
 );

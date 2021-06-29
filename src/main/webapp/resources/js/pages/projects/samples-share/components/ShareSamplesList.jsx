@@ -1,5 +1,5 @@
 import { navigate } from "@reach/router";
-import { Alert, Button, Checkbox, List, Popover, Space, Tag } from "antd";
+import { Alert, Button, Checkbox, List, Space } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,8 +12,10 @@ import {
   IconLocked,
 } from "../../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
-import { red6 } from "../../../../styles/colors";
-import { updatedSamplesOwnerStatus } from "../services/rootReducer";
+import {
+  removeSample,
+  updatedSamplesOwnerStatus,
+} from "../services/rootReducer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ projectId, samples = [] }) {
@@ -31,11 +33,24 @@ export function ShareSamplesList({ projectId, samples = [] }) {
     }
   );
 
+  const removeSampleByIndex = (index) => dispatch(removeSample(index));
+
   const Row = ({ index, style }) => {
     const sample = samples[index];
 
     return (
-      <List.Item style={style}>
+      <List.Item
+        style={style}
+        actions={[
+          <Button
+            key="remove"
+            type="link"
+            onClick={() => removeSampleByIndex(index)}
+          >
+            remove
+          </Button>,
+        ]}
+      >
         <List.Item.Meta
           avatar={
             <ShareStatusAvatar
@@ -48,15 +63,12 @@ export function ShareSamplesList({ projectId, samples = [] }) {
               <Button size={"small"}>{sample.name}</Button>
             </SampleDetailViewer>
           }
+          description={
+            commonSampleIds.includes(sample.id)
+              ? "Exists in destination project and will not be recopied"
+              : null
+          }
         />
-        {commonSampleIds.includes(sample.id) && (
-          <Popover
-            placement="left"
-            content={"Sample exists in the destination project"}
-          >
-            <Tag color={red6}>EXISTS</Tag>
-          </Popover>
-        )}
       </List.Item>
     );
   };
@@ -75,7 +87,7 @@ export function ShareSamplesList({ projectId, samples = [] }) {
           icon={<IconLocked />}
         />
       )}
-      <List bordered>
+      <List bordered rowKey={(item) => item.name}>
         <VList
           height={600}
           itemCount={samples.length}
