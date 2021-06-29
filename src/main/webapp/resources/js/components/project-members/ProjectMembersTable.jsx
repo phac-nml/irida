@@ -69,7 +69,7 @@ export function ProjectMembersTable({ projectId }) {
     },
   ];
 
-  if (project.canManage) {
+  if (project.canManage || project.canManageRemote) {
     columns.push({
       align: "right",
       render(text, user) {
@@ -109,7 +109,7 @@ export function ProjectMembersTable({ projectId }) {
   return (
     <PagedTable
       buttons={[
-        project.canManage ? (
+        project.canManage || project.canManageRemote ? (
           <AddMemberButton
             key="add-members-btn"
             label={i18n("AddMemberButton.label")}

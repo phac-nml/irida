@@ -5,6 +5,7 @@ Changes
 --------------
 * [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page. (21.05.1)
 * [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
+* [UI]: Fixed bug which prevented a manager on a remote project from adding/removing members and groups. (21.05.2)
 
 21.01 to 21.05
 --------------
