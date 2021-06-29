@@ -1,14 +1,14 @@
 import { Avatar } from "antd";
 import React from "react";
 import { IconCheck, IconLocked } from "../../../../components/icons/Icons";
-import { green6, grey1, grey8, yellow6 } from "../../../../styles/colors";
+import { blue2, blue8, grey8, yellow6 } from "../../../../styles/colors";
 
-export function ShareStatusAvatar({ owner }) {
-  return owner ? (
+export function ShareStatusAvatar({ remote, owner }) {
+  return !remote && owner ? (
     <Avatar
       size="small"
-      style={{ backgroundColor: green6 }}
-      icon={<IconCheck style={{ color: grey1 }} />}
+      style={{ backgroundColor: blue2 }}
+      icon={<IconCheck style={{ color: blue8 }} />}
     />
   ) : (
     <Avatar

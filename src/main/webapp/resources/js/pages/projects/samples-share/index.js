@@ -17,7 +17,6 @@ function ShareSamples({ projectId, ...params }) {
   const dispatch = useDispatch();
   const screens = useBreakpoint();
   const paths = React.useMemo(() => ["projects", "samples", "fields"], []);
-
   const { samples, projectId: sharedProjectId, step } = useSelector(
     (state) => state.reducer
   );
