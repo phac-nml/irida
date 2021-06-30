@@ -1,10 +1,9 @@
-import { navigate } from "@reach/router";
 import { Button, Select, Space, Tag, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/projects";
 import { IconArrowRight } from "../../../../components/icons/Icons";
-import { setDestinationProject } from "../services/rootReducer";
+import { setDestinationProject, setNextStep } from "../services/rootReducer";
 
 /**
  * React component to select the destination project.
@@ -15,19 +14,22 @@ import { setDestinationProject } from "../services/rootReducer";
 export function ShareProjects({ projectId }) {
   const dispatch = useDispatch();
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
-  const { destinationId } = useSelector((state) => state.reducer);
+  const { destination } = useSelector((state) => state.reducer);
   const [options, setOptions] = React.useState([]);
 
-  const onChange = (value) => dispatch(setDestinationProject(value));
+  /**
+   * When the value of the select changes store the new project information
+   * in redux.
+   * @param {number} index - Index of the selected project
+   * @returns {*}
+   */
+  const onChange = (index) => dispatch(setDestinationProject(projects[index]));
 
   React.useEffect(() => {
     if (projects) {
       setOptions(
-        projects.map((project) => (
-          <Select.Option
-            key={`project-${project.identifier}`}
-            value={project.identifier}
-          >
+        projects.map((project, index) => (
+          <Select.Option key={`project-${project.identifier}`} value={index}>
             <Space>
               {project.label}
               {project.organism && <Tag>{project.organism}</Tag>}
@@ -49,8 +51,7 @@ export function ShareProjects({ projectId }) {
         size="large"
         style={{ width: `100%` }}
         onChange={onChange}
-        value={destinationId}
-        optionFilterProp="children"
+        value={destination?.name}
         filterOption={(input, option) => {
           return option.children.props.children[0]
             .toLowerCase()
@@ -61,7 +62,7 @@ export function ShareProjects({ projectId }) {
       </Select>
 
       <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Button onClick={() => navigate("samples")} disabled={!destinationId}>
+        <Button onClick={() => dispatch(setNextStep())} disabled={!destination}>
           <Space>
             <span>Review Samples</span>
             <IconArrowRight />

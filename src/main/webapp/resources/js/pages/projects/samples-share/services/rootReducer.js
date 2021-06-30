@@ -2,7 +2,7 @@ import { createAction, createReducer } from "@reduxjs/toolkit";
 
 export const setDestinationProject = createAction(
   `rootReducer/setDestinationProject`,
-  (destinationId) => ({ payload: { destinationId } })
+  (project) => ({ payload: { project } })
 );
 
 export const updatedSamplesOwnerStatus = createAction(
@@ -22,9 +22,9 @@ export const updateFields = createAction(
   (index, value) => ({ payload: { index, value } })
 );
 
-export const setStep = createAction(`rootReducer/setStep`, (step) => ({
-  payload: { step },
-}));
+export const setNextStep = createAction(`rootReducer/nextStep`);
+
+export const setPreviousStep = createAction(`rootReducer/previousStep`);
 
 export const removeSample = createAction(
   `rootReducer/removeSample`,
@@ -39,10 +39,10 @@ const storedState = (() => {
 })();
 
 export const rootReducer = createReducer(
-  { ...storedState, owner: true },
+  { ...storedState, owner: true, step: 0 },
   (builder) => {
     builder.addCase(setDestinationProject, (state, action) => {
-      state.destinationId = action.payload.destinationId;
+      state.destination = action.payload.project;
     });
     builder.addCase(updatedSamplesOwnerStatus, (state, action) => {
       state.owner = action.payload.owner;
@@ -54,8 +54,11 @@ export const rootReducer = createReducer(
       state.fields[action.payload.index].target.restriction =
         action.payload.value;
     });
-    builder.addCase(setStep, (state, action) => {
-      state.step = action.payload.step;
+    builder.addCase(setNextStep, (state) => {
+      state.step = state.step + 1;
+    });
+    builder.addCase(setPreviousStep, (state) => {
+      state.step = state.step - 1;
     });
     builder.addCase(removeSample, (state, action) => {
       const samples = [...state.samples];

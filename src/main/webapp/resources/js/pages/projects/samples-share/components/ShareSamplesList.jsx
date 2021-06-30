@@ -1,4 +1,3 @@
-import { navigate } from "@reach/router";
 import { Alert, Button, Checkbox, List, Space } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,22 +13,26 @@ import {
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import {
   removeSample,
+  setNextStep,
+  setPreviousStep,
   updatedSamplesOwnerStatus,
 } from "../services/rootReducer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
-export function ShareSamplesList({ projectId, samples = [] }) {
+export function ShareSamplesList({ projectId }) {
   const dispatch = useDispatch();
-  const { owner, destinationId } = useSelector((state) => state.reducer);
+  const { owner, destination = {}, samples } = useSelector(
+    (state) => state.reducer
+  );
 
   const { data: projectDetails = {}, isLoading } = useGetProjectDetailsQuery(
     projectId
   );
 
   const { data: commonSampleIds = [] } = useGetCommonSampleIdentifiersQuery(
-    { projectId: destinationId, sampleIds: samples.map((s) => s.id) },
+    { projectId: destination.identifier, sampleIds: samples.map((s) => s.id) },
     {
-      skip: destinationId === undefined,
+      skip: destination.identifier === undefined,
     }
   );
 
@@ -65,7 +68,7 @@ export function ShareSamplesList({ projectId, samples = [] }) {
           }
           description={
             commonSampleIds.includes(sample.id)
-              ? "Exists in destination project and will not be recopied"
+              ? `Exists in ${destination.name}  and will not be recopied`
               : null
           }
         />
@@ -103,13 +106,13 @@ export function ShareSamplesList({ projectId, samples = [] }) {
         </Checkbox>
       ) : null}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Button onClick={() => navigate("projects")}>
+        <Button onClick={() => dispatch(setPreviousStep())}>
           <Space>
             <IconArrowLeft />
             <span>Select a Project</span>
           </Space>
         </Button>
-        <Button onClick={() => navigate("fields")}>
+        <Button onClick={() => dispatch(setNextStep())}>
           <Space>
             <span>Check Metadata Field Permissions</span>
             <IconArrowRight />

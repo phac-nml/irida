@@ -244,7 +244,7 @@ public class ProjectsController {
 		return "redirect:/projects/" + project.getId() + "/settings/details";
 	}
 
-	@RequestMapping("/projects/{projectId}/samples-share/*")
+	@RequestMapping("/projects/{projectId}/samples-share")
 	public String getProjectSamplesCopyPage(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);

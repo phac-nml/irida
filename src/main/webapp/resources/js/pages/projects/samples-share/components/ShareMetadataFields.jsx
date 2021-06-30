@@ -11,7 +11,9 @@ import { setFields, updateFields } from "../services/rootReducer";
 
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();
-  const { destinationId, fields = [] } = useSelector((state) => state.reducer);
+  const { destination = {}, fields = [] } = useSelector(
+    (state) => state.reducer
+  );
   const { data: restrictions = [] } = useGetMetadataRestrictionsQuery();
 
   const ROLES = {
@@ -26,8 +28,8 @@ export function ShareMetadataFields({ projectId }) {
   const {
     data: destinationFields,
     isLoading: destinationLoading,
-  } = useGetMetadataFieldsForProjectQuery(destinationId, {
-    skip: destinationId === undefined,
+  } = useGetMetadataFieldsForProjectQuery(destination.identifier, {
+    skip: destination.identifier === undefined,
   });
 
   React.useEffect(() => {
