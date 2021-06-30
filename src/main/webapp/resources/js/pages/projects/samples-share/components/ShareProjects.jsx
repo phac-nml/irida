@@ -6,6 +6,12 @@ import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/proj
 import { IconArrowRight } from "../../../../components/icons/Icons";
 import { setDestinationProject } from "../services/rootReducer";
 
+/**
+ * React component to select the destination project.
+ * @param {number} projectId - identifier for the current project
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareProjects({ projectId }) {
   const dispatch = useDispatch();
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
