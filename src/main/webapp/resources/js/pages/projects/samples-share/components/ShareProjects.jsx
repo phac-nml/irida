@@ -1,78 +1,61 @@
 import { navigate } from "@reach/router";
-import { Button, Space, Table } from "antd";
+import { Button, Select, Space, Tag, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/projects";
-import { getTextSearchProps } from "../../../../components/ant.design/table-search-props";
-import {
-  IconArrowRight,
-  IconLinkOut,
-} from "../../../../components/icons/Icons";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { IconArrowRight } from "../../../../components/icons/Icons";
 import { setDestinationProject } from "../services/rootReducer";
 
 export function ShareProjects({ projectId }) {
   const dispatch = useDispatch();
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
   const { destinationId } = useSelector((state) => state.reducer);
-  const [selected, setSelected] = React.useState();
+  const [options, setOptions] = React.useState([]);
 
-  const onChange = (_, selectedRows) =>
-    dispatch(setDestinationProject(selectedRows[0].identifier));
+  const onChange = (value) => dispatch(setDestinationProject(value));
 
   React.useEffect(() => {
-    setSelected([`project-${destinationId}`]);
-  }, [destinationId]);
+    if (projects) {
+      setOptions(
+        projects.map((project) => (
+          <Select.Option
+            key={`project-${project.identifier}`}
+            value={project.identifier}
+          >
+            <Space>
+              {project.label}
+              {project.organism && <Tag>{project.organism}</Tag>}
+            </Space>
+          </Select.Option>
+        ))
+      );
+    }
+  }, [projects]);
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      <Table
-        scroll={{
-          y: 600,
+      <Typography.Text>
+        Search for a project to copy the samples to:
+      </Typography.Text>
+      <Select
+        autoFocus={true}
+        showSearch
+        size="large"
+        style={{ width: `100%` }}
+        onChange={onChange}
+        value={destinationId}
+        optionFilterProp="children"
+        filterOption={(input, option) => {
+          return option.children.props.children[0]
+            .toLowerCase()
+            .includes(input.toLowerCase());
         }}
-        pagination={{ hideOnSinglePage: true, pageSize: projects?.length }}
-        rowSelection={{
-          type: "radio",
-          selectedRowKeys: selected,
-          onChange,
-        }}
-        dataSource={projects}
-        rowKey={(item) => `project-${item.identifier}`}
-        columns={[
-          {
-            dataIndex: "name",
-            title: "Project Name",
-            ...getTextSearchProps("name"),
-            onFilter: (value, record) => 0 < record.name.indexOf(value),
-            render: (text, project) => (
-              <Button
-                type="link"
-                target="_blank"
-                href={setBaseUrl(`/projects/${project.identifier}`)}
-                rel="noreferrer"
-              >
-                <Space>
-                  {text}
-                  <IconLinkOut />{" "}
-                </Space>
-              </Button>
-            ),
-          },
-          {
-            dataIndex: "organism",
-            title: "Organism",
-            filters: projects
-              ?.filter((project) => project.organism)
-              .map((project) => ({
-                text: project.organism,
-                value: project.organism,
-              })),
-            onFilter: (value, record) => record.organism === value,
-          },
-        ]}
-      />
+      >
+        {options}
+      </Select>
+
       <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Button onClick={() => navigate("samples")}>
+        <Button onClick={() => navigate("samples")} disabled={!destinationId}>
           <Space>
             <span>Review Samples</span>
             <IconArrowRight />

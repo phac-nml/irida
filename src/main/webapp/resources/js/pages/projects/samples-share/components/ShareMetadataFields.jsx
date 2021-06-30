@@ -137,11 +137,16 @@ export function ShareMetadataFields({ projectId }) {
           dataSource={fields}
         />
       </Form>
-      <div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button onClick={() => navigate("samples")}>
           <Space>
             <IconArrowLeft />
             <span>Review Samples</span>
+          </Space>
+        </Button>
+        <Button type="primary" onClick={() => navigate("finish")}>
+          <Space>
+            <span>Copy Samples</span>
           </Space>
         </Button>
       </div>
