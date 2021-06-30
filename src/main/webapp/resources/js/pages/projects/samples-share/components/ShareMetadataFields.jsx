@@ -1,4 +1,3 @@
-import { navigate } from "@reach/router";
 import { Button, Form, Popover, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +6,12 @@ import {
   useGetMetadataRestrictionsQuery,
 } from "../../../../apis/metadata/field";
 import { IconArrowLeft } from "../../../../components/icons/Icons";
-import { setFields, updateFields } from "../services/rootReducer";
+import {
+  setFields,
+  setNextStep,
+  setPreviousStep,
+  updateFields,
+} from "../services/rootReducer";
 
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();
@@ -31,6 +35,17 @@ export function ShareMetadataFields({ projectId }) {
   } = useGetMetadataFieldsForProjectQuery(destination.identifier, {
     skip: destination.identifier === undefined,
   });
+
+  const getPermissionStatus = (current, destination) => {
+    const currentRestriction = restrictions.findIndex(
+      (restriction) => restriction.value === item.current.restriction
+    );
+    const destinationRestriction = restrictions.findIndex(
+      (restriction) => restriction.value === item.target.restriction
+    );
+
+    return currentRestriction - destinationRestriction;
+  };
 
   React.useEffect(() => {
     if (!currentLoading && !destinationLoading) {
@@ -140,13 +155,13 @@ export function ShareMetadataFields({ projectId }) {
         />
       </Form>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Button onClick={() => navigate("samples")}>
+        <Button onClick={() => dispatch(setPreviousStep())}>
           <Space>
             <IconArrowLeft />
             <span>Review Samples</span>
           </Space>
         </Button>
-        <Button type="primary" onClick={() => navigate("finish")}>
+        <Button type="primary" onClick={() => dispatch(setNextStep())}>
           <Space>
             <span>Copy Samples</span>
           </Space>
