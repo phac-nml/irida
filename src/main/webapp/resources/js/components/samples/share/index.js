@@ -6,7 +6,7 @@ export default function CopySamples({ children, getSelectedSamples }) {
     const selectedSamples = getSelectedSamples();
     sessionStorage.setItem("share", JSON.stringify(selectedSamples));
     window.location.href = setBaseUrl(
-      `/projects/${selectedSamples.projectId}/samples-share/samples`
+      `/projects/${selectedSamples.projectId}/samples-share/projects`
     );
   };
 
