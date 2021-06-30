@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { setHeaders } from "../services/rootReducer"
 import { navigate } from "@reach/router"
 import {
   notification,
@@ -18,6 +20,7 @@ const { Text, Title } = Typography
  * @constructor
  */
 export function SampleMetadataImportFileUploader({ projectId }) {
+  const dispatch = useDispatch();
 
   const options = {
     multiple: false,
@@ -30,7 +33,8 @@ export function SampleMetadataImportFileUploader({ projectId }) {
         notification.success({
           message: i18n("SampleMetadataImportFileUploader.success", info.file.name),
         });
-        navigate('headers')
+        dispatch(setHeaders(info.file.response.headers, info.file.response.columnName));
+        navigate('headers');
       } else if (status === 'error') {
         notification.error({
           message: i18n("SampleMetadataImportFileUploader.error", info.file.name),

@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   List,
   Space,
   Typography,
 } from "antd";
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
-import {
-  useGetMetadataForProjectQuery
-} from "../../../../apis/metadata/metadata-import";
+import { useSelector } from "react-redux";
 
 const { Text, Title } = Typography
 
@@ -18,7 +16,8 @@ const { Text, Title } = Typography
  */
 export function SampleMetadataImportHeaders({ projectId }) {
 
-  const { data: metadata } = useGetMetadataForProjectQuery(projectId)
+  const { headers, nameColumn } = useSelector((state) => state.reducer);
+  console.log(nameColumn);
 
   return (
     <>
@@ -28,9 +27,9 @@ export function SampleMetadataImportHeaders({ projectId }) {
           {i18n("SampleMetadataImportFileUploader.intro")}
         </Text>
         <SampleMetadataImportSteps currentStep={1} />
-        {metadata && <List
-          dataSource={metadata.headers}
-          renderItem={item => <List.Item>{item}</List.Item>} />}
+        <List
+          dataSource={headers}
+          renderItem={item => <List.Item>{item}</List.Item>} />
       </Space>
     </>
   );
