@@ -59,7 +59,7 @@ const ProjectAnalyses = (props) => {
   return (
     <Layout>
       <Layout>
-        <Sider width={350} style={{ backgroundColor: grey1 }}>
+        <Sider width={310} style={{ backgroundColor: grey1 }}>
           <AnalysesNav path={props["*"]} />
         </Sider>
 
