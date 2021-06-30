@@ -10,7 +10,7 @@ import React from "react";
  */
 export default function AnalysesNav({ path: key }) {
   return (
-    <Menu mode="horizontal" theme="dark" selectedKeys={[key]}>
+    <Menu selectedKeys={[key]}>
       <Menu.Item key="project-analyses">
         <Link to="project-analyses">{i18n("AnalysesNav.projectAnalyses")}</Link>
       </Menu.Item>

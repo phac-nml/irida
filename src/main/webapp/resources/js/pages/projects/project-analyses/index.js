@@ -9,6 +9,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import store from "./store";
 import AnalysesNav from "./components/AnalysesNav";
+import SettingsNav from "../settings/components/SettingsNav";
 
 const ProjectAnalysesPage = React.lazy(() =>
   import("./components/ProjectAnalysesPage")
@@ -57,25 +58,26 @@ const AnalysesLayout = () => (
 const ProjectAnalyses = (props) => {
   return (
     <Layout>
-      <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
-        <Row style={{ marginBottom: SPACE_SM }}>
-          <Col lg={24} xxl={10}>
-            <AnalysesNav path={props["*"]} />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={24} xxl={24}>
-            <Suspense fallback={<Skeleton />}>
-              <Router>
-                <ProjectAnalysesPage path="project-analyses" />
-                <SharedSingleSampleAnalysisOutputs path="shared-outputs" />
-                <AutomatedSingleSampleAnalysisOutputs path="automated-outputs" />
-                <Redirect from="/" to="project-analyses" />
-              </Router>
-            </Suspense>
-          </Col>
-        </Row>
-      </Content>
+      <Layout>
+        <Sider width={310} style={{ backgroundColor: grey1 }}>
+          <AnalysesNav path={props["*"]} />
+        </Sider>
+
+        <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
+          <Row>
+            <Col lg={24} xxl={24}>
+              <Suspense fallback={<Skeleton />}>
+                <Router>
+                  <ProjectAnalysesPage path="project-analyses" />
+                  <SharedSingleSampleAnalysisOutputs path="shared-outputs" />
+                  <AutomatedSingleSampleAnalysisOutputs path="automated-outputs" />
+                  <Redirect from="/" to="project-analyses" />
+                </Router>
+              </Suspense>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
     </Layout>
   );
 };

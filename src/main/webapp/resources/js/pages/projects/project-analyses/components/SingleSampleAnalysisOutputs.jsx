@@ -45,8 +45,8 @@ export default function SingleSampleAnalysisOutputs({
           <a
             href={setBaseUrl(
               projectId
-                ? `/projects/${projectId}/samples/${record["sampleId"]}`
-                : `/samples/${record["sampleId"]}`
+                ? `/projects/${projectId}/samples/${record.sampleId}`
+                : `/samples/${record.sampleId}`
             )}
             target="_blank"
           >
@@ -62,16 +62,13 @@ export default function SingleSampleAnalysisOutputs({
       render(filePath, record) {
         let splitItems = filePath.split("/");
         let fileName = splitItems[splitItems.length - 1];
-        return fileName + " (" + record["analysisOutputFileKey"] + ")";
+        return fileName + " (" + record.analysisOutputFileKey + ")";
       },
     },
     {
       title: i18n("SingleSampleAnalysisOutputs.analysisType"),
       key: "analysisType",
-      dataIndex: "analysisType",
-      render({ type }) {
-        return type;
-      },
+      dataIndex: ["analysisType", "type"],
     },
     {
       title: i18n("SingleSampleAnalysisOutputs.pipeline"),
@@ -88,7 +85,7 @@ export default function SingleSampleAnalysisOutputs({
       render(analysisSubmissionName, record) {
         return (
           <a
-            href={setBaseUrl(`/analysis/${record["analysisSubmissionId"]}`)}
+            href={setBaseUrl(`/analysis/${record.analysisSubmissionId}`)}
             target="_blank"
           >
             {analysisSubmissionName}
@@ -101,7 +98,7 @@ export default function SingleSampleAnalysisOutputs({
       key: "submitter",
       dataIndex: "userFirstName",
       render(userFirstName, record) {
-        return userFirstName + " " + record["userLastName"];
+        return userFirstName + " " + record.userLastName;
       },
     },
     {
