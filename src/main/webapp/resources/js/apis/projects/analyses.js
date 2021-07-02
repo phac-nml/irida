@@ -9,7 +9,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: "/ajax/projects/analyses-outputs",
+    baseUrl: setBaseUrl(`/ajax/projects/analyses-outputs`),
   }),
   tagTypes: ["ProjectSampleAnalysisOutputInfo"],
   endpoints: (build) => ({

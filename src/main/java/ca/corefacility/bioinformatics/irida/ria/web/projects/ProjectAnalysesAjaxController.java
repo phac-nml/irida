@@ -30,7 +30,7 @@ public class ProjectAnalysesAjaxController {
 	 * Get all the shared single sample analysis outputs for the project
 	 *
 	 * @param projectId {@link ca.corefacility.bioinformatics.irida.model.project.Project} id
-	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} shated single sample analysis outputs
+	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} shared single sample analysis outputs
 	 */
 	@GetMapping("/shared")
 	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getSharedSingleSampleOutputs(
