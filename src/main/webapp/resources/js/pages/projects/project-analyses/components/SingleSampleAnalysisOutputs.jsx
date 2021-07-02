@@ -5,10 +5,10 @@ import { IconDownloadFile } from "../../../../components/icons/Icons";
 
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { prepareAnalysisOutputsDownload } from "../../../../apis/analysis/analysis";
 import {
   downloadIndividualOutputFile,
   downloadSelectedOutputFiles,
+  prepareAnalysisOutputsDownload,
 } from "../../../../apis/projects/analyses";
 
 const { Search } = Input;
@@ -34,7 +34,7 @@ export default function SingleSampleAnalysisOutputs({
   const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
   const DEFAULT_PAGE_SIZE = 10;
 
-  const DOWNLOAD_BASE_URL = setBaseUrl("/ajax/analysis/download");
+  // Regex for getting file name from path
   const FILENAME_REGEX = /.*\/(.+\.\w+)/;
 
   const columns = [
@@ -67,9 +67,9 @@ export default function SingleSampleAnalysisOutputs({
       key: "fileName",
       dataIndex: "filePath",
       render(filePath, record) {
-        let splitItems = filePath.split("/");
-        let fileName = splitItems[splitItems.length - 1];
-        return fileName + " (" + record.analysisOutputFileKey + ")";
+        return (
+          getFilename(filePath) + " (" + record.analysisOutputFileKey + ")"
+        );
       },
     },
     {
@@ -117,7 +117,7 @@ export default function SingleSampleAnalysisOutputs({
     },
   ];
 
-  // Get the selected row ids (AnalysisOutputFile id)
+  // Get the selected row objects
   let rowSelection;
   rowSelection = {
     selectedRows: selected,
@@ -129,11 +129,13 @@ export default function SingleSampleAnalysisOutputs({
     }),
   };
 
+  // Function to get file name from file path using regex
   function getFilename(path) {
     return path.replace(FILENAME_REGEX, "$1");
   }
 
-  const downloadSelectFiles = () => {
+  // Function to download an individual or collection of analysis output files
+  const downloadSelectedFiles = () => {
     const currentlySelectedFiles = rowSelection.selectedRows;
 
     if (currentlySelectedFiles.length === 1) {
@@ -145,9 +147,11 @@ export default function SingleSampleAnalysisOutputs({
         filePath,
       } = currentlySelectedFiles[0];
 
+      // Custom file name
       const fileName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
         filePath
       )}`;
+      //Download the selected output file
       downloadIndividualOutputFile(
         analysisSubmissionId,
         analysisOutputFileId,
@@ -159,14 +163,17 @@ export default function SingleSampleAnalysisOutputs({
         ({ workflowDescription, ...keepAttrs }) => keepAttrs
       );
 
+      // Prepare the selected files and download
       prepareAnalysisOutputsDownload(outputsToDownload).then(() => {
-        const downloadUrl = `${DOWNLOAD_BASE_URL}/selection?filename=${
+        // Custom zipped directory name
+        const zipFolderName = `${
           projectId ? `projectId-${projectId}` : `user`
         }-batch-download-analysis-output-files`;
         notification.success({
           message: "Starting download of selected files",
         });
-        downloadSelectedOutputFiles(downloadUrl);
+        //Download the selected output files into a zip folder
+        downloadSelectedOutputFiles(zipFolderName);
       });
     }
   };
@@ -199,7 +206,7 @@ export default function SingleSampleAnalysisOutputs({
       <Row justify={"space-between"}>
         <Button
           icon={<IconDownloadFile />}
-          onClick={downloadSelectFiles}
+          onClick={downloadSelectedFiles}
           disabled={!selected.length}
         >
           {i18n("SingleSampleAnalysisOutputs.download")}
