@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CopySamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -62,5 +63,10 @@ public class ProjectsAjaxController {
 	@PostMapping("/share-samples/sampleIds")
 	public List<Long> getProjectToShare(@RequestParam long projectId, @RequestBody List<Long> sampleIds) {
 		return sampleService.getCommonSampleIdentifiers(projectId, sampleIds);
+	}
+
+	@PostMapping("/share-samples/copy")
+	public void copySamplesToProject(@RequestBody CopySamplesRequest request) {
+
 	}
 }

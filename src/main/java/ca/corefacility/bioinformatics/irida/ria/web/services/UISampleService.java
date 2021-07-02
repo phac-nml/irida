@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CopySamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSample;
@@ -38,17 +39,19 @@ public class UISampleService {
 	private final UpdateSamplePermission updateSamplePermission;
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
+	private final UIMetadataService uiMetadataService;
 	private final UICartService cartService;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
+			GenomeAssemblyService genomeAssemblyService, UIMetadataService uiMetadataService, UICartService cartService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
+		this.uiMetadataService = uiMetadataService;
 		this.cartService = cartService;
 	}
 
@@ -177,6 +180,14 @@ public class UISampleService {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleService.getSamplesInProject(project, sampleIds);
 		return samples.stream().map(Sample::getId).collect(Collectors.toList());
+	}
+
+	public void copySamplesToProject(CopySamplesRequest request) {
+		Project current = projectService.read(request.getOriginal());
+		Project destination = projectService.read(request.getDestination());
+		Collection<Sample> samples = (Collection<Sample>) sampleService.readMultiple(request.getSampleIds());
+		projectService.shareSamples(current, destination, samples, request.isOwner());
+		uiMetadataService.setMetadataFieldRestrictions(destination, request.getFields());
 	}
 
 	/**

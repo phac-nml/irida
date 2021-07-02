@@ -63,3 +63,19 @@ export async function getPagedProjectsForUser(params) {
 export async function getProjectRoles() {
   return await axios.get(`${URL}/roles`).then(({ data }) => data);
 }
+
+export async function copySamples({
+  original,
+  destination,
+  sampleIds,
+  owner,
+  fields,
+}) {
+  return axios.post(`${URL}/share-samples/copy`, {
+    original,
+    destination,
+    sampleIds,
+    owner,
+    fields,
+  });
+}

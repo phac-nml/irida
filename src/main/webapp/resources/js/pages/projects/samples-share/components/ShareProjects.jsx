@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/projects";
 import { IconArrowRight } from "../../../../components/icons/Icons";
-import { setDestinationProject, setNextStep } from "../services/rootReducer";
+import { setDestinationProject, setNextStep } from "../services/shareReducer";
 
 /**
  * React component to select the destination project.

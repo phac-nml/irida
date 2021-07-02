@@ -182,6 +182,15 @@ public class UIMetadataService {
 		}
 	}
 
+	public void setMetadataFieldRestrictions(Project project, List<ProjectMetadataField> projectMetadataFields) {
+		projectMetadataFields.forEach(projectMetadataField -> {
+			Long fieldId = projectMetadataField.getId();
+			MetadataTemplateField field = templateService.readMetadataField(fieldId);
+			templateService.setMetadataRestriction(project, field,
+					ProjectRole.fromString(projectMetadataField.getRestriction()));
+		});
+	}
+
 	/**
 	 * Utility function to update a list of {@link MetadataTemplateField}s with their restrictions for a project.
 	 *

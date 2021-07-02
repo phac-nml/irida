@@ -11,7 +11,7 @@ import {
   setNextStep,
   setPreviousStep,
   updateFields,
-} from "../services/rootReducer";
+} from "../services/shareReducer";
 
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();

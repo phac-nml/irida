@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, List, Space } from "antd";
+import { Alert, Button, List, Space, Switch, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,6 +8,7 @@ import { useGetCommonSampleIdentifiersQuery } from "../../../../apis/projects/pr
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconCheck,
   IconLocked,
 } from "../../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
@@ -16,7 +17,7 @@ import {
   setNextStep,
   setPreviousStep,
   updatedSamplesOwnerStatus,
-} from "../services/rootReducer";
+} from "../services/shareReducer";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ projectId }) {
@@ -76,8 +77,13 @@ export function ShareSamplesList({ projectId }) {
     );
   };
 
-  const updateOwnerShip = (e) =>
-    dispatch(updatedSamplesOwnerStatus(e.target.checked));
+  const updateOwnerShip = (checked) =>
+    dispatch(updatedSamplesOwnerStatus(checked));
+
+  const getOwnershipMessage = (owner) =>
+    owner
+      ? " Allow modification of samples in destination project"
+      : "Samples will be locked from modification.";
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
@@ -101,9 +107,18 @@ export function ShareSamplesList({ projectId }) {
         </VList>
       </List>
       {!isLoading && !projectDetails.remote ? (
-        <Checkbox checked={owner} onChange={updateOwnerShip}>
-          Allow modification of samples in destination project
-        </Checkbox>
+        // <Checkbox checked={owner} onChange={updateOwnerShip}>
+        //   Allow modification of samples in destination project
+        // </Checkbox>
+        <Space>
+          <Switch
+            checkedChildren={<IconCheck />}
+            unCheckedChildren={<IconLocked />}
+            checked={owner}
+            onChange={updateOwnerShip}
+          />
+          <Typography.Text strong>{getOwnershipMessage(owner)}</Typography.Text>
+        </Space>
       ) : null}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button onClick={() => dispatch(setPreviousStep())}>
