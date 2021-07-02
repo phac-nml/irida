@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Input, Table } from "antd";
+import { Button, Input, Row, Space, Table } from "antd";
 
-import { SPACE_MD, SPACE_XS } from "../../../../styles/spacing";
+import { SPACE_XS } from "../../../../styles/spacing";
 import { IconDownloadFile } from "../../../../components/icons/Icons";
 
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
@@ -144,16 +144,9 @@ export default function SingleSampleAnalysisOutputs({
   };
 
   return (
-    <>
-      <div
-        style={{
-          paddingBottom: SPACE_MD,
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <Button>
-          <IconDownloadFile style={{ marginRight: SPACE_XS }} />
+    <Space direction="vertical" style={{ display: "block" }}>
+      <Row justify={"space-between"}>
+        <Button icon={<IconDownloadFile />}>
           {i18n("SingleSampleAnalysisOutputs.download")}
         </Button>
         <Search
@@ -162,7 +155,7 @@ export default function SingleSampleAnalysisOutputs({
           placeholder={i18n("SingleSampleAnalysisOutputs.searchPlaceholder")}
           allowClear
         />
-      </div>
+      </Row>
       <Table
         rowKey={(record) => record.analysisOutputFileId}
         loading={isLoading}
@@ -177,6 +170,6 @@ export default function SingleSampleAnalysisOutputs({
           showSizeChanger: true,
         }}
       />
-    </>
+    </Space>
   );
 }
