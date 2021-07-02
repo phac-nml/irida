@@ -6,6 +6,8 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 
+const DOWNLOAD_BASE_URL = setBaseUrl("/ajax/analysis/download");
+
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
@@ -32,3 +34,14 @@ export const {
   useGetSharedSingleSampleAnalysisOutputsQuery,
   useGetAutomatedSingleSampleAnalysisOutputsQuery,
 } = singleSampleAnalysisOutputsApi;
+
+export function downloadIndividualOutputFile(submissionId, fileId, fileName) {
+  window.open(
+    `${DOWNLOAD_BASE_URL}/${submissionId}/file/${fileId}?filename=${fileName}`,
+    "_blank"
+  );
+}
+
+export function downloadSelectedOutputFiles(downloadUrl) {
+  window.open(downloadUrl, "_blank");
+}
