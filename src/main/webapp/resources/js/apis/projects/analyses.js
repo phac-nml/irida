@@ -11,7 +11,7 @@ const DOWNLOAD_BASE_URL = setBaseUrl("/ajax/analysis/download");
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: "/ajax/projects/analyses-outputs",
+    baseUrl: setBaseUrl(`/ajax/projects/analyses-outputs`),
   }),
   tagTypes: ["ProjectSampleAnalysisOutputInfo"],
   endpoints: (build) => ({
