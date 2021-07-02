@@ -225,7 +225,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
+	@PreAuthorize("hasPermission(#s, 'canUpdateSample') and hasPermission(#metadataToSet, 'canReadMetadataEntry')")
 	@Transactional
 	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {
 		Set<MetadataEntry> currentMetadata = getMetadataForSample(s);
