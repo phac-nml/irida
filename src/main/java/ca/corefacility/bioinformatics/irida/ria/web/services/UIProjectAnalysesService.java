@@ -35,11 +35,33 @@ public class UIProjectAnalysesService {
 	public List<ProjectSampleAnalysisOutputInfo> getSharedSingleSampleOutputs(Long projectId) {
 		List<ProjectSampleAnalysisOutputInfo> projectSampleAnalysisOutputInfos = analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(
 				projectId);
-		Map<Long, Long> singleSampleCountMap = projectSampleAnalysisOutputInfos.stream()
+		return getSingleSampleAnalysisOutputsInfo(projectSampleAnalysisOutputInfos);
+	}
+
+	/**
+	 * Get all the automated single sample analysis outputs for the project
+	 *
+	 * @param projectId {@link ca.corefacility.bioinformatics.irida.model.project.Project} id
+	 * @return a list of filtered {@link ProjectSampleAnalysisOutputInfo} single sample analysis outputs
+	 */
+	public List<ProjectSampleAnalysisOutputInfo> getAutomatedSingleSampleOutputs(Long projectId) {
+		List<ProjectSampleAnalysisOutputInfo> projectSampleAnalysisOutputInfos = analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(
+				projectId);
+		return getSingleSampleAnalysisOutputsInfo(projectSampleAnalysisOutputInfos);
+	}
+
+	/**
+	 * Utility method to get the single sample analysis outputs for the project
+	 *
+	 * @param outputs List of unfiltered {@link ProjectSampleAnalysisOutputInfo} single sample analysis outputs
+	 * @return a list of filtered {@link ProjectSampleAnalysisOutputInfo} single sample analysis outputs
+	 */
+	private List<ProjectSampleAnalysisOutputInfo> getSingleSampleAnalysisOutputsInfo(List<ProjectSampleAnalysisOutputInfo> outputs) {
+		Map<Long, Long> singleSampleCountMap = outputs.stream()
 				.collect(Collectors.groupingBy(s -> s.getAnalysisOutputFileId(), Collectors.counting()));
 
 		// Filter out the projectSampleAnalysisOutputInfos list to only contain objects which are single sample analysis outputs
-		List<ProjectSampleAnalysisOutputInfo> filterProjectSampleAnalysisOutputInfo = projectSampleAnalysisOutputInfos.stream()
+		List<ProjectSampleAnalysisOutputInfo> filterProjectSampleAnalysisOutputInfo = outputs.stream()
 				.filter(s -> singleSampleCountMap.get(s.getAnalysisOutputFileId()) == 1L)
 				.collect(Collectors.toList());
 
@@ -49,4 +71,5 @@ public class UIProjectAnalysesService {
 
 		return filterProjectSampleAnalysisOutputInfo;
 	}
+
 }

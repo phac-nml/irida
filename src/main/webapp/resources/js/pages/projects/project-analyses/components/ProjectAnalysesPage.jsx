@@ -6,6 +6,7 @@ import { AnalysesTable } from "../../../../components/AnalysesTable/AnalysesTabl
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
+import { AnalysesTableProvider } from "../../../../contexts/AnalysesTableContext";
 
 /**
  * React component for the overall layout for the project analyses listing table
@@ -23,7 +24,9 @@ export default function ProjectAnalysesPage({ projectId }) {
   return (
     <PagedTableProvider url={PROJECT_ANALYSES_URL}>
       <Title level={2}>{i18n("ProjectAnalysesPage.title")}</Title>
-      <AnalysesTable canManage={project.canManage} />
+      <AnalysesTableProvider>
+        <AnalysesTable canManage={project.canManage} />
+      </AnalysesTableProvider>
     </PagedTableProvider>
   );
 }

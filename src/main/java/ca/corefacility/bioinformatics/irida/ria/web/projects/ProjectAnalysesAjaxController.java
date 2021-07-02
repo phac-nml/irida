@@ -30,7 +30,7 @@ public class ProjectAnalysesAjaxController {
 	 * Get all the shared single sample analysis outputs for the project
 	 *
 	 * @param projectId {@link ca.corefacility.bioinformatics.irida.model.project.Project} id
-	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} single sample analysis outputs
+	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} shared single sample analysis outputs
 	 */
 	@GetMapping("/shared")
 	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getSharedSingleSampleOutputs(
@@ -38,11 +38,17 @@ public class ProjectAnalysesAjaxController {
 		return ResponseEntity.ok(uiProjectAnalysesService.getSharedSingleSampleOutputs(projectId));
 	}
 
-//	@GetMapping("/automated")
-//	public String getAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
-//		return "YAYYYY THIS WORKS AUTOMATED";
-//	}
-//
+	/**
+	 * Get all the automated single sample analysis outputs for the project
+	 *
+	 * @param projectId {@link ca.corefacility.bioinformatics.irida.model.project.Project} id
+	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} automated single sample analysis outputs
+	 */
+	@GetMapping("/automated")
+	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
+		return ResponseEntity.ok(uiProjectAnalysesService.getAutomatedSingleSampleOutputs(projectId));
+	}
+
 //	@GetMapping("/download-shared")
 //	public void downloadSharedSingleSampleOutputs(@RequestParam Long projectId) {
 //	}
