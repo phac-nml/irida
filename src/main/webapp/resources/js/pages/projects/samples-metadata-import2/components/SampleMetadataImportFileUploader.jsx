@@ -26,7 +26,7 @@ export function SampleMetadataImportFileUploader({ projectId }) {
     multiple: false,
     showUploadList: false,
     accept: [".xls", ".xlsx", ".csv"],
-    action: setBaseUrl(`/projects/${projectId}/sample-metadata/upload/file`),
+    action: setBaseUrl(`/ajax/projects/sample-metadata/upload/file?projectId=${projectId}`),
     onChange(info) {
       const { status } = info.file;
       if (status === 'done') {

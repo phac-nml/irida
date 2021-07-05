@@ -36,9 +36,9 @@ import com.google.common.io.Files;
  * within a {@link Project}.
  */
 @Controller
-@RequestMapping("/projects/{projectId}/sample-metadata")
-public class ProjectSampleMetadataController {
-	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataController.class);
+@RequestMapping("/ajax/projects/sample-metadata")
+public class ProjectSampleMetadataAjaxController {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataAjaxController.class);
 	private final MessageSource messageSource;
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -47,7 +47,7 @@ public class ProjectSampleMetadataController {
 	private final UIMetadataImportService metadataImportService;
 
 	@Autowired
-	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
+	public ProjectSampleMetadataAjaxController(MessageSource messageSource, ProjectService projectService,
 			SampleService sampleService, MetadataTemplateService metadataTemplateService,
 			ProjectControllerUtils projectControllerUtils, UIMetadataImportService metadataImportService) {
 		this.messageSource = messageSource;
@@ -70,7 +70,7 @@ public class ProjectSampleMetadataController {
 	 */
 	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
 	@ResponseBody
-	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, @PathVariable long projectId,
+	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, @RequestParam long projectId,
 			@RequestParam("file") MultipartFile file) {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
@@ -115,7 +115,7 @@ public class ProjectSampleMetadataController {
 	 */
 	@RequestMapping(value = "/upload/setSampleColumn", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> setProjectSampleMetadataSampleId(HttpSession session, @PathVariable long projectId,
+	public Map<String, Object> setProjectSampleMetadataSampleId(HttpSession session, @RequestParam long projectId,
 			@RequestParam String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
@@ -159,7 +159,7 @@ public class ProjectSampleMetadataController {
 	@RequestMapping(value = "/upload/save", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
-			@PathVariable long projectId) {
+			@RequestParam long projectId) {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
 		Map<String, Object> errors = new HashMap<>();
@@ -235,7 +235,7 @@ public class ProjectSampleMetadataController {
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
 	@RequestMapping("/upload/clear")
-	public void clearProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
+	public void clearProjectSampleMetadata(HttpSession session, @RequestParam long projectId) {
 		session.removeAttribute("pm-" + projectId);
 	}
 
@@ -248,7 +248,7 @@ public class ProjectSampleMetadataController {
 	 */
 	@RequestMapping("/upload/getMetadata")
 	@ResponseBody
-	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @PathVariable long projectId) {
+	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @RequestParam long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 	}
 }

@@ -10,11 +10,14 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,12 +26,15 @@ public class UIMetadataImportServiceTest {
 
 	@Before
 	public void setUp() {
-		service = new UIMetadataImportService();
+		ProjectService projectService = Mockito.mock(ProjectService.class);
+		SampleService sampleService = Mockito.mock(SampleService.class);
+		service = new UIMetadataImportService(projectService, sampleService);
 	}
 
 	@Test
 	public void parseCSV() {
 		try {
+			Long projectId = 1L;
 			SampleMetadataStorage expected_storage = new SampleMetadataStorage();
 			List<String> headers_list = new ArrayList<>();
 			headers_list.add("header1");
@@ -48,7 +54,7 @@ public class UIMetadataImportServiceTest {
 
 			byte[] byteArr = file.getBytes();
 			InputStream inputStream = new ByteArrayInputStream(byteArr);
-			SampleMetadataStorage actual_storage = service.parseCSV(inputStream);
+			SampleMetadataStorage actual_storage = service.parseCSV(projectId, inputStream);
 			assertEquals(actual_storage, expected_storage);
 		} catch (IOException e) {
 			e.printStackTrace();

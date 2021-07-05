@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.base.Strings;;
+import com.google.common.base.Strings;
 
 /**
  * UI service to handle parsing metadata files so they can be saved to the session.
@@ -25,8 +28,13 @@ import com.google.common.base.Strings;;
 @Component
 public class UIMetadataImportService {
 
+	private final ProjectService projectService;
+	private final SampleService sampleService;
+
 	@Autowired
-	public UIMetadataImportService() {
+	public UIMetadataImportService(ProjectService projectService, SampleService sampleService) {
+		this.projectService = projectService;
+		this.sampleService = sampleService;
 	}
 
 	/**
@@ -36,7 +44,7 @@ public class UIMetadataImportService {
 	 * @return {@link SampleMetadataStorage} contains the metadata from file.
 	 * @throws IOException thrown if the extension does not exist.
 	 */
-	public SampleMetadataStorage parseCSV(InputStream inputStream) throws IOException {
+	public SampleMetadataStorage parseCSV(Long projectId, InputStream inputStream) throws IOException {
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 
 		CSVParser parser = CSVParser.parse(inputStream, StandardCharsets.UTF_8,
@@ -63,6 +71,7 @@ public class UIMetadataImportService {
 		}
 
 		storage.saveRows(rows);
+		storage.setSampleNameColumn(findColumnName(projectId, rows.get(0)));
 		parser.close();
 
 		return storage;
@@ -76,7 +85,8 @@ public class UIMetadataImportService {
 	 * @return {@link SampleMetadataStorage} contains the metadata from file.
 	 * @throws IOException thrown if the extension does not exist.
 	 */
-	public SampleMetadataStorage parseExcel(InputStream inputStream, String extension) throws IOException {
+	public SampleMetadataStorage parseExcel(Long projectId, InputStream inputStream, String extension)
+			throws IOException {
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		Workbook workbook = null;
 
@@ -135,6 +145,7 @@ public class UIMetadataImportService {
 			rows.add(rowMap);
 		}
 		storage.saveRows(rows);
+		storage.setSampleNameColumn(findColumnName(projectId, rows.get(0)));
 
 		return storage;
 	}
@@ -168,5 +179,30 @@ public class UIMetadataImportService {
 			headers.add(headerValue);
 		}
 		return headers;
+	}
+
+	/**
+	 * Extract the headers from an excel file.
+	 *
+	 * @param row {@link Row} First row from the excel file.
+	 * @return {@link String} column name.
+	 */
+	private String findColumnName(Long projectId, Map<String, String> row) {
+		String columnName = null;
+		Project project = projectService.read(projectId);
+		Iterator<Map.Entry<String, String>> iterator = row.entrySet()
+				.iterator();
+
+		while (iterator.hasNext() && columnName != null) {
+			Map.Entry<String, String> entry = iterator.next();
+			String key = entry.getKey();
+			String value = entry.getValue();
+			System.out.println("key = " + key + ", value = " + value);
+			if (sampleService.getSampleBySampleName(project, value) != null) {
+				columnName = key;
+			}
+		}
+
+		return columnName;
 	}
 }
