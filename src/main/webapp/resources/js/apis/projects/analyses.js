@@ -67,12 +67,13 @@ export function downloadSelectedOutputFiles(zipFolderName) {
  */
 export async function prepareAnalysisOutputsDownload(outputs) {
   try {
-    const { data } = await axios.post(
-      `${setBaseUrl(`/ajax/analysis/download/prepare`)}`,
-      { data: outputs }
-    );
-    return Promise.resolve(data);
-  } catch (e) {
-    return Promise.reject(e.response.data);
+    const { data } = await axios({
+      method: "post",
+      url: `${DOWNLOAD_BASE_URL}/prepare`,
+      data: outputs,
+    });
+    return { data };
+  } catch (error) {
+    return { error };
   }
 }
