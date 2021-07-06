@@ -33,7 +33,7 @@ export function SampleMetadataImportFileUploader({ projectId }) {
         notification.success({
           message: i18n("SampleMetadataImportFileUploader.success", info.file.name),
         });
-        dispatch(setHeaders(info.file.response.headers, info.file.response.columnName));
+        dispatch(setHeaders(info.file.response.headers, info.file.response.sampleNameColumn));
         navigate('headers');
       } else if (status === 'error') {
         notification.error({

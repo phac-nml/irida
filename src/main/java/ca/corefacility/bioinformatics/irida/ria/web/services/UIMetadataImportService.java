@@ -11,9 +11,12 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
@@ -27,6 +30,8 @@ import com.google.common.base.Strings;
  */
 @Component
 public class UIMetadataImportService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UIMetadataImportService.class);
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
@@ -193,13 +198,20 @@ public class UIMetadataImportService {
 		Iterator<Map.Entry<String, String>> iterator = row.entrySet()
 				.iterator();
 
-		while (iterator.hasNext() && columnName != null) {
-			Map.Entry<String, String> entry = iterator.next();
-			String key = entry.getKey();
-			String value = entry.getValue();
-			System.out.println("key = " + key + ", value = " + value);
-			if (sampleService.getSampleBySampleName(project, value) != null) {
-				columnName = key;
+		while (iterator.hasNext() && columnName == null) {
+			String key = null;
+			String value = null;
+			try {
+				Map.Entry<String, String> entry = iterator.next();
+				key = entry.getKey();
+				value = entry.getValue();
+
+				if (sampleService.getSampleBySampleName(project, value) != null) {
+					columnName = key;
+				}
+			} catch (EntityNotFoundException entityNotFoundException) {
+				logger.trace("Sample " + value + " in project " + project.getId() + " is not found.",
+						entityNotFoundException);
 			}
 		}
 

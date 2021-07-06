@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  List,
+  Radio,
   Space,
   Typography,
 } from "antd";
@@ -16,8 +16,7 @@ const { Text, Title } = Typography
  */
 export function SampleMetadataImportHeaders({ projectId }) {
 
-  const { headers, nameColumn } = useSelector((state) => state.reducer);
-  console.log(nameColumn);
+  const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
 
   return (
     <>
@@ -27,9 +26,13 @@ export function SampleMetadataImportHeaders({ projectId }) {
           {i18n("SampleMetadataImportFileUploader.intro")}
         </Text>
         <SampleMetadataImportSteps currentStep={1} />
-        <List
-          dataSource={headers}
-          renderItem={item => <List.Item>{item}</List.Item>} />
+        <Radio.Group buttonStyle="solid" size="large" defaultValue={sampleNameColumn}>
+          {headers.map((header) => (
+            <Radio.Button key={header} value={header}>
+              {header}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
       </Space>
     </>
   );

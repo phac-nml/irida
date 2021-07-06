@@ -4,8 +4,8 @@ const initialState = {}
 
 export const setHeaders = createAction(
   `rootReducers/setHeaders`,
-  (headers, nameColumn) => ({
-    payload: { headers, nameColumn }
+  (headers, sampleNameColumn) => ({
+    payload: { headers, sampleNameColumn }
   })
 );
 
@@ -14,7 +14,7 @@ export const rootReducer = createReducer(
   (builder) => {
     builder.addCase(setHeaders, (state, action) => {
       state.headers = action.payload.headers;
-      state.nameColumn = action.payload.nameColumn;
+      state.sampleNameColumn = action.payload.sampleNameColumn;
     });
   }
 );
