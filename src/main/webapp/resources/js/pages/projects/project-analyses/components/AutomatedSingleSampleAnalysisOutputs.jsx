@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "antd";
-import SingleSampleAnalysisOutputs from "./SingleSampleAnalysisOutputs";
-import { useGetAutomatedSingleSampleAnalysisOutputsQuery } from "../../../../apis/projects/analyses";
+import SingleSampleAnalysisOutputs from "../../../../components/analyses-outputs/SingleSampleAnalysisOutputs";
+import { useGetAutomatedSingleSampleAnalysisOutputsQuery } from "../../../../apis/analyses/analyses";
 const { Title } = Typography;
 
 /**

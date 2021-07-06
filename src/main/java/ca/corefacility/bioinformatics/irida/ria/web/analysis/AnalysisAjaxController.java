@@ -122,19 +122,6 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get all {@link User} generated {@link AnalysisOutputFile} info for principal User
-	 *
-	 * @param principal Principal {@link User}
-	 * @return {@link User} generated {@link AnalysisOutputFile} info
-	 */
-	@RequestMapping(value = "/user/analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Principal principal) {
-		final User user = userService.getUserByUsername(principal.getName());
-		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
-	}
-
-	/**
 	 * Get all {@link User} generated {@link AnalysisOutputFile} info
 	 *
 	 * @param userId {@link User} id
@@ -147,31 +134,6 @@ public class AnalysisAjaxController {
 		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
 	}
 
-	/**
-	 * Get analysis output file information for all analyses shared with a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	@RequestMapping(value = "/project/{projectId}/shared-analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(
-			@PathVariable Long projectId) {
-		return analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(projectId);
-	}
-
-	/**
-	 * Get analysis output file information for all automated analyses for a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	@RequestMapping(value = "/project/{projectId}/automated-analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(
-			@PathVariable Long projectId) {
-		return analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
-	}
 
 	/**
 	 * Update an analysis email pipeline completion result

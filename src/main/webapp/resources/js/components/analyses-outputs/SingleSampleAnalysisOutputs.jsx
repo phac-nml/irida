@@ -1,15 +1,15 @@
 import React from "react";
 import { Button, Input, notification, Row, Space, Table } from "antd";
 
-import { IconDownloadFile } from "../../../../components/icons/Icons";
+import { IconDownloadFile } from "../icons/Icons";
 
-import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { dateColumnFormat } from "../ant.design/table-renderers";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import {
   downloadIndividualOutputFile,
   downloadSelectedOutputFiles,
   prepareAnalysisOutputsDownload,
-} from "../../../../apis/projects/analyses";
+} from "../../apis/analyses/analyses";
 
 const { Search } = Input;
 

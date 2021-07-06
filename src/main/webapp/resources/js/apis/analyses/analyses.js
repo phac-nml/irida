@@ -12,7 +12,7 @@ const DOWNLOAD_BASE_URL = setBaseUrl("/ajax/analysis/download");
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/projects/analyses-outputs`),
+    baseUrl: setBaseUrl(`/ajax/analyses-outputs`),
   }),
   tagTypes: ["ProjectSampleAnalysisOutputInfo"],
   endpoints: (build) => ({
@@ -28,12 +28,20 @@ export const singleSampleAnalysisOutputsApi = createApi({
       }),
       invalidateTags: ["ProjectSampleAnalysisOutputInfo"],
     }),
+    getUserSingleSampleAnalysisOutputs: build.query({
+      query: () => ({
+        url: `/user`,
+        method: `GET`,
+      }),
+      invalidateTags: ["ProjectSampleAnalysisOutputInfo"],
+    }),
   }),
 });
 
 export const {
   useGetSharedSingleSampleAnalysisOutputsQuery,
   useGetAutomatedSingleSampleAnalysisOutputsQuery,
+  useGetUserSingleSampleAnalysisOutputsQuery,
 } = singleSampleAnalysisOutputsApi;
 
 /**
