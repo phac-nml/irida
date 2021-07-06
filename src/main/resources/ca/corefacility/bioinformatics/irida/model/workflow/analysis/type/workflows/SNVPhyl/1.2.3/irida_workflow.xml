@@ -81,5 +81,11 @@
 			<url>https://toolshed.g2.bx.psu.edu</url>
 			<revision>bc72925159fc</revision>
 		</repository>
+		<repository>
+			<name>bcftools_view</name>
+			<owner>iuc</owner>
+			<url>https://toolshed.g2.bx.psu.edu</url>
+			<revision>98d5499ead46</revision>
+		</repository>
 	</toolRepositories>
 </iridaWorkflow>
