@@ -24,7 +24,7 @@ The install progress can be monitored in the Galaxy log files `galaxy/*.log`.  O
 
 ### Possible issues
 
-If, after installing all the above tools and testing the pipeline in IRIDA you get the error `GalaxyResponseException{status=400, responseBody={"err_msg": {"sec_filter|select_genotype"` as described in <https://github.com/phac-nml/irida/issues/1018> then you may need to take the following steps.
+If, after installing all the above tools and testing the pipeline in IRIDA you get the error `GalaxyResponseException{status=400, responseBody={"err_msg": {"sec_filter|select_genotype"...` as described in <https://github.com/phac-nml/irida/issues/1018> then you may need to take the following steps.
 
 1. Find the existing version of `bcftools_view` installed in Galaxy.
 2. Uninstall the existing version of `bcftools_view`.
@@ -57,7 +57,7 @@ If everything was successfull then all dependencies for this pipeline have been 
 
 [SNVPhyl]: http://snvphyl.readthedocs.io
 [bc72925159fc]: https://toolshed.g2.bx.psu.edu/view/nml/suite_snvphyl_1_2_3/bc72925159fc
-[bc72925159fc]: https://toolshed.g2.bx.psu.edu/view/iuc/bcftools_view/98d5499ead46
+[98d5499ead46]: https://toolshed.g2.bx.psu.edu/view/iuc/bcftools_view/98d5499ead46
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [SNVPhyl Galaxy Workflow]: ../test/snvphyl/snvphyl_workflow.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg
