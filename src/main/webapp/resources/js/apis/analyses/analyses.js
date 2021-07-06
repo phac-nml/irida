@@ -29,6 +29,7 @@ export const singleSampleAnalysisOutputsApi = createApi({
       invalidateTags: ["ProjectSampleAnalysisOutputInfo"],
     }),
     getUserSingleSampleAnalysisOutputs: build.query({
+      // Gets the single sample analysis outputs for the currently logged in user
       query: () => ({
         url: `/user`,
         method: `GET`,
@@ -45,7 +46,7 @@ export const {
 } = singleSampleAnalysisOutputsApi;
 
 /**
- * Download the selected individual file
+ * Download the selected  individual single sample analysis output file
  * @param {submissionId} the submission identifier
  * @param {fileId} the analysis output file id
  * @param {fileName} the name to give the downloaded file
@@ -58,7 +59,7 @@ export function downloadIndividualOutputFile(submissionId, fileId, fileName) {
 }
 
 /**
- * Download selected files which were prepared in the call to `prepareAnalysisOutputsDownload`
+ * Download selected single sample analysis output files which were prepared in the call to `prepareAnalysisOutputsDownload`
  * @param {zipFolderName} the name to give the downloaded zip folder containing the selected files
  */
 export function downloadSelectedOutputFiles(zipFolderName) {
