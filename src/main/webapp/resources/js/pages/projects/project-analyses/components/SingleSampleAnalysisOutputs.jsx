@@ -1,11 +1,15 @@
 import React from "react";
-import { Button, Input, Row, Space, Table } from "antd";
+import { Button, Input, notification, Row, Space, Table } from "antd";
 
-import { SPACE_XS } from "../../../../styles/spacing";
 import { IconDownloadFile } from "../../../../components/icons/Icons";
 
 import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import {
+  downloadIndividualOutputFile,
+  downloadSelectedOutputFiles,
+  prepareAnalysisOutputsDownload,
+} from "../../../../apis/projects/analyses";
 
 const { Search } = Input;
 
@@ -23,12 +27,20 @@ export default function SingleSampleAnalysisOutputs({
   isLoading,
   projectId,
 }) {
-  const [selected, setSelected] = React.useState([]);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  /*
+    Even though we are setting the checkbox value to the row data we also store the row keys
+    which are used for clearing the selected checkboxes after a download has started
+  */
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [filteredOutputs, setFilteredOutputs] = React.useState(null);
 
   // Ant Design Table options
   const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
   const DEFAULT_PAGE_SIZE = 10;
+
+  // Regex for getting file name from path
+  const FILENAME_REGEX = /.*\/(.+\.\w+)/;
 
   const columns = [
     {
@@ -60,9 +72,9 @@ export default function SingleSampleAnalysisOutputs({
       key: "fileName",
       dataIndex: "filePath",
       render(filePath, record) {
-        let splitItems = filePath.split("/");
-        let fileName = splitItems[splitItems.length - 1];
-        return fileName + " (" + record.analysisOutputFileKey + ")";
+        return (
+          getFilename(filePath) + " (" + record.analysisOutputFileKey + ")"
+        );
       },
     },
     {
@@ -110,14 +122,68 @@ export default function SingleSampleAnalysisOutputs({
     },
   ];
 
-  // Get the selected row ids (AnalysisOutputFile id)
+  // Get the selected row objects
   let rowSelection;
   rowSelection = {
-    selectedRowKeys: selected,
-    onChange: (selectedRowKeys) => setSelected(selectedRowKeys),
+    selectedRows: selectedRows,
+    selectedRowKeys: selectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedRows(selectedRows);
+      setSelectedRowKeys(selectedRowKeys);
+    },
     getCheckboxProps: (record) => ({
-      name: record.analysisOutputFileId,
+      name: `analysis-output-file-id-${record.analysisOutputFileId}`,
     }),
+  };
+
+  // Function to get file name from file path using regex
+  const getFilename = (path) => {
+    return path.replace(FILENAME_REGEX, "$1");
+  };
+
+  // Function to download an individual or collection of analysis output files
+  const downloadSelectedFiles = () => {
+    const currentlySelectedFiles = rowSelection.selectedRows;
+    if (currentlySelectedFiles.length === 1) {
+      const {
+        analysisSubmissionId,
+        analysisOutputFileId,
+        sampleName,
+        sampleId,
+        filePath,
+      } = currentlySelectedFiles[0];
+
+      // Custom file name
+      const fileName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
+        filePath
+      )}`;
+      //Download the selected output file
+      downloadIndividualOutputFile(
+        analysisSubmissionId,
+        analysisOutputFileId,
+        fileName
+      );
+    } else if (currentlySelectedFiles.length > 1) {
+      // Remove the workflowDescription from the objects as the server expects objects without it
+      const outputsToDownload = currentlySelectedFiles.map(
+        ({ workflowDescription, ...keepAttrs }) => keepAttrs
+      );
+
+      // Prepare the selected files and download
+      prepareAnalysisOutputsDownload(outputsToDownload).then(() => {
+        // Custom zipped directory name
+        const zipFolderName = `${
+          projectId ? `projectId-${projectId}` : `user`
+        }-batch-download-analysis-output-files`;
+        notification.success({
+          message: "Starting download of selected files",
+        });
+        //Download the selected output files into a zip folder
+        downloadSelectedOutputFiles(zipFolderName);
+      });
+    }
+    setSelectedRows([]);
+    setSelectedRowKeys([]);
   };
 
   // Function to filter out outputs by the search term
@@ -146,7 +212,11 @@ export default function SingleSampleAnalysisOutputs({
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Row justify={"space-between"}>
-        <Button icon={<IconDownloadFile />}>
+        <Button
+          icon={<IconDownloadFile />}
+          onClick={downloadSelectedFiles}
+          disabled={!selectedRows.length}
+        >
           {i18n("SingleSampleAnalysisOutputs.download")}
         </Button>
         <Search
