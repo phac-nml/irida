@@ -27,7 +27,12 @@ export default function SingleSampleAnalysisOutputs({
   isLoading,
   projectId,
 }) {
-  const [selected, setSelected] = React.useState([]);
+  const [selectedRows, setSelectedRows] = React.useState([]);
+  /*
+    Even though we are setting the checkbox value to the row data we also store the row keys
+    which are used for clearing the selected checkboxes after a download has started
+  */
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [filteredOutputs, setFilteredOutputs] = React.useState(null);
 
   // Ant Design Table options
@@ -120,9 +125,11 @@ export default function SingleSampleAnalysisOutputs({
   // Get the selected row objects
   let rowSelection;
   rowSelection = {
-    selectedRows: selected,
+    selectedRows: selectedRows,
+    selectedRowKeys: selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelected(selectedRows);
+      setSelectedRows(selectedRows);
+      setSelectedRowKeys(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
       name: `analysis-output-file-id-${record.analysisOutputFileId}`,
@@ -130,14 +137,13 @@ export default function SingleSampleAnalysisOutputs({
   };
 
   // Function to get file name from file path using regex
-  function getFilename(path) {
+  const getFilename = (path) => {
     return path.replace(FILENAME_REGEX, "$1");
-  }
+  };
 
   // Function to download an individual or collection of analysis output files
   const downloadSelectedFiles = () => {
     const currentlySelectedFiles = rowSelection.selectedRows;
-
     if (currentlySelectedFiles.length === 1) {
       const {
         analysisSubmissionId,
@@ -176,6 +182,8 @@ export default function SingleSampleAnalysisOutputs({
         downloadSelectedOutputFiles(zipFolderName);
       });
     }
+    setSelectedRows([]);
+    setSelectedRowKeys([]);
   };
 
   // Function to filter out outputs by the search term
@@ -207,7 +215,7 @@ export default function SingleSampleAnalysisOutputs({
         <Button
           icon={<IconDownloadFile />}
           onClick={downloadSelectedFiles}
-          disabled={!selected.length}
+          disabled={!selectedRows.length}
         >
           {i18n("SingleSampleAnalysisOutputs.download")}
         </Button>
