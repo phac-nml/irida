@@ -4,14 +4,13 @@ import { setHeaders } from "../services/rootReducer"
 import { navigate } from "@reach/router"
 import {
   notification,
-  Space,
   Typography,
 } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
+import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 
-const { Text, Title } = Typography
+const { Text } = Typography
 
 /**
  * React component that displays Step #1 of the Sample Metadata Uploader.
@@ -19,7 +18,7 @@ const { Text, Title } = Typography
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportFileUploader({ projectId }) {
+export function SampleMetadataImportUploadFile({ projectId }) {
   const dispatch = useDispatch();
 
   const options = {
@@ -31,33 +30,26 @@ export function SampleMetadataImportFileUploader({ projectId }) {
       const { status } = info.file;
       if (status === 'done') {
         notification.success({
-          message: i18n("SampleMetadataImportFileUploader.success", info.file.name),
+          message: i18n("SampleMetadataImportUploadFile.success", info.file.name),
         });
         dispatch(setHeaders(info.file.response.headers, info.file.response.sampleNameColumn));
         navigate('headers');
       } else if (status === 'error') {
         notification.error({
-          message: i18n("SampleMetadataImportFileUploader.error", info.file.name),
+          message: i18n("SampleMetadataImportUploadFile.error", info.file.name),
         });
       }
     },
   }
 
   return (
-    <>
-      <Space direction="vertical" size="large" style={{ width: `100%` }}>
-        <Title level={3}>{i18n("SampleMetadataImportFileUploader.title")}</Title>
-        <Text type="secondary">
-          {i18n("SampleMetadataImportFileUploader.intro")}
-        </Text>
-        <SampleMetadataImportSteps currentStep={0} />
-        <DragUpload
-          className="t-sample-metadata-file-uploader"
-          uploadText={i18n("SampleMetadataImportFileUploader.dropzone")}
-          uploadHint={<Text strong>{i18n("SampleMetadataImportFileUploader.warning")}</Text>}
-          options={options}
-        />
-      </Space>
-    </>
+    <SampleMetadataImportWizard current={1}>
+      <DragUpload
+        className="t-sample-metadata-file-uploader"
+        uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
+        uploadHint={<Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>}
+        options={options}
+      />
+    </SampleMetadataImportWizard>
   );
 }
