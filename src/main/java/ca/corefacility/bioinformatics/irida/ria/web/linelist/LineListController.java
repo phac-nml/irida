@@ -80,16 +80,30 @@ public class LineListController {
 		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project);
 
-		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
-				metadataTemplateFields);
+		Map<Long, Set<MetadataEntry>> metadataForProject;
 
-		final Map<Long, Set<MetadataEntry>> metadataForProject = metadataResponse.getMetadata();
+		//check that we have some fields
+		if (!metadataTemplateFields.isEmpty()) {
+			//if we have fields, get all the metadata
+			ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
+					metadataTemplateFields);
+
+			metadataForProject = metadataResponse.getMetadata();
+		} else {
+			//if we have no fields, just give an empty map.  We'll just show the date fields
+			metadataForProject = new HashMap<>();
+		}
 
 		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
 
 		return projectSamples.stream()
 				.map(sample -> {
-					Set<MetadataEntry> metadata = metadataForProject.get(sample.getId());
+					Set<MetadataEntry> metadata = null;
+					if (metadataForProject.containsKey(sample.getId())) {
+						metadata = metadataForProject.get(sample.getId());
+					} else {
+						metadata = new HashSet<>();
+					}
 
 					//check if the project owns the sample
 					boolean ownership = !lockedSamplesInProject.contains(sample.getId());
