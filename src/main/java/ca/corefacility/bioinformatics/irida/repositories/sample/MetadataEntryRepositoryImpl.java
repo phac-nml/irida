@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -17,6 +14,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Implementation of the custom methods for retrieving {@link MetadataEntry}
@@ -36,6 +35,8 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 	 */
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project,
 			List<MetadataTemplateField> requestedFields) {
+		checkArgument(!requestedFields.isEmpty(), "requestedFields must not be empty");
+
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());

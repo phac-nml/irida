@@ -215,6 +215,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
 	public ProjectMetadataResponse getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
+		checkArgument(!fields.isEmpty(), "fields must not be empty");
 		Map<Long, Set<MetadataEntry>> metadataForProject = metadataEntryRepository.getMetadataForProject(project,
 				fields);
 
