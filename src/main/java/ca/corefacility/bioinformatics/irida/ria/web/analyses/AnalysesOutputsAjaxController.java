@@ -53,8 +53,7 @@ public class AnalysesOutputsAjaxController {
 	 * @param principal Currently logged in user.
 	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} user single sample analysis outputs
 	 */
-	@RequestMapping(value = "/user")
-	@ResponseBody
+	@GetMapping(value = "/user")
 	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getAllUserAnalysisOutputInfo(Principal principal) {
 		return ResponseEntity.ok(uiAnalysesOutputsService.getUserSingleSampleOutputs(principal));
 	}
