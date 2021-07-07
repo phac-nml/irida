@@ -56,7 +56,7 @@ export function ProjectUserGroupsTable({ projectId }) {
     },
   ];
 
-  if (project.canManage || project.canManageRemote) {
+  if (project.canManageRemote) {
     columns.push({
       align: "right",
       render(text, group) {
@@ -77,7 +77,7 @@ export function ProjectUserGroupsTable({ projectId }) {
   return (
     <PagedTable
       buttons={[
-        project.canManage || project.canManageRemote ? (
+        project.canManageRemote ? (
           <AddGroupButton
             key="add-group-btn"
             defaultRole="PROJECT_USER"
