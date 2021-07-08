@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,8 +71,8 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
 	@ResponseBody
-	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, @RequestParam long projectId,
-			@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<SampleMetadataStorage> createProjectSampleMetadata(HttpSession session,
+			@RequestParam long projectId, @RequestParam("file") MultipartFile file) {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try {
@@ -102,7 +103,7 @@ public class ProjectSampleMetadataAjaxController {
 		}
 
 		session.setAttribute("pm-" + projectId, storage);
-		return storage;
+		return ResponseEntity.ok(storage);
 	}
 
 	/**
@@ -115,8 +116,8 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@RequestMapping(value = "/upload/setSampleColumn", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> setProjectSampleMetadataSampleId(HttpSession session, @RequestParam long projectId,
-			@RequestParam String sampleNameColumn) {
+	public ResponseEntity<Map<String, Object>> setProjectSampleMetadataSampleId(HttpSession session,
+			@RequestParam long projectId, @RequestParam String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
@@ -145,7 +146,7 @@ public class ProjectSampleMetadataAjaxController {
 			stored.saveMissing(missing);
 		}
 
-		return ImmutableMap.of("result", "complete");
+		return ResponseEntity.ok(ImmutableMap.of("result", "complete"));
 	}
 
 	/**
@@ -158,7 +159,7 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@RequestMapping(value = "/upload/save", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session,
+	public ResponseEntity<Map<String, Object>> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam long projectId) {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
@@ -222,10 +223,11 @@ public class ProjectSampleMetadataAjaxController {
 					messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
 		}
 		if (errors.size() == 0) {
-			return ImmutableMap.of("success",
-					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale));
+			return ResponseEntity.ok(ImmutableMap.of("success",
+					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale)));
 		}
-		return errors;
+		return ResponseEntity.badRequest()
+				.body(errors);
 	}
 
 	/**
@@ -248,7 +250,8 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@RequestMapping("/upload/getMetadata")
 	@ResponseBody
-	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, @RequestParam long projectId) {
-		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+	public ResponseEntity<SampleMetadataStorage> getProjectSampleMetadata(HttpSession session,
+			@RequestParam long projectId) {
+		return ResponseEntity.ok((SampleMetadataStorage) session.getAttribute("pm-" + projectId));
 	}
 }
