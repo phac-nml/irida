@@ -45,6 +45,7 @@ public class UIMetadataImportService {
 	/**
 	 * Parse metadata from an csv file.
 	 *
+	 * @param projectId   {@link Long} The project identifier.
 	 * @param inputStream The inputStream of the csv file.
 	 * @return {@link SampleMetadataStorage} contains the metadata from file.
 	 * @throws IOException thrown if the extension does not exist.
@@ -85,6 +86,7 @@ public class UIMetadataImportService {
 	/**
 	 * Parse metadata from an excel file.
 	 *
+	 * @param projectId   {@link Long} The project identifier.
 	 * @param inputStream The inputStream of the excel file.
 	 * @param extension   The extension of the excel file.
 	 * @return {@link SampleMetadataStorage} contains the metadata from file.
