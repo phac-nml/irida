@@ -7,12 +7,12 @@ import axios from "axios";
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 
-const DOWNLOAD_BASE_URL = setBaseUrl("/ajax/analysis/download");
+const ANALYSES_OUTPUTS_BASE_URL = setBaseUrl("/ajax/analyses-outputs");
 
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/analyses-outputs`),
+    baseUrl: ANALYSES_OUTPUTS_BASE_URL,
   }),
   tagTypes: ["ProjectSampleAnalysisOutputInfo"],
   endpoints: (build) => ({
@@ -51,9 +51,13 @@ export const {
  * @param {fileId} the analysis output file id
  * @param {fileName} the name to give the downloaded file
  */
-export function downloadIndividualOutputFile(submissionId, fileId, fileName) {
+export function downloadIndividualOutputFile(
+  submissionId,
+  fileId,
+  fileName = ""
+) {
   window.open(
-    `${DOWNLOAD_BASE_URL}/${submissionId}/file/${fileId}?filename=${fileName}`,
+    `${ANALYSES_OUTPUTS_BASE_URL}/download/file?analysisSubmissionId=${submissionId}&fileId=${fileId}&filename=${fileName}`,
     "_blank"
   );
 }
@@ -64,7 +68,7 @@ export function downloadIndividualOutputFile(submissionId, fileId, fileName) {
  */
 export function downloadSelectedOutputFiles(zipFolderName) {
   window.open(
-    `${DOWNLOAD_BASE_URL}/selection?filename=${zipFolderName}`,
+    `${ANALYSES_OUTPUTS_BASE_URL}/download/selection?filename=${zipFolderName}`,
     "_blank"
   );
 }
@@ -78,7 +82,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${DOWNLOAD_BASE_URL}/prepare`,
+      url: `${ANALYSES_OUTPUTS_BASE_URL}/download/prepare`,
       data: outputs,
     });
     return { data };

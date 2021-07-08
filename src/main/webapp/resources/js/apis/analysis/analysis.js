@@ -8,6 +8,8 @@ const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
 const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
 
+const ANALYES_OUTPUTS_URL = setBaseUrl(`/ajax/analyses-outputs`);
+
 /*
  * Get all the data required for the analysis on load
  * @param {number} submissionId Submission ID
@@ -265,7 +267,7 @@ export async function getDataViaLines({ submissionId, fileId, start, end }) {
  */
 export function downloadOutputFile({ submissionId, fileId }) {
   window.open(
-    `${ANALYSIS_URL}/download/${submissionId}/file/${fileId}`,
+    `${ANALYES_OUTPUTS_URL}/download/file?analysisSubmissionId=${submissionId}&fileId=${fileId}`,
     "_blank"
   );
 }

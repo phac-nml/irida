@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
  * for batch download of the selected files.
  */
 @Component
-@Scope("session")
 public class AnalysisOutputFileDownloadManager {
 
 	private AnalysisSubmissionService analysisSubmissionService;
