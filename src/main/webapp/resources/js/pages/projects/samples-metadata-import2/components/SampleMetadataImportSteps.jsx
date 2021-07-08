@@ -12,7 +12,7 @@ const { Step } = Steps;
  */
 export function SampleMetadataImportSteps({ currentStep }) {
   return (
-    <Steps current={currentStep}>
+    <Steps current={currentStep} >
       <Step title="Upload File" />
       <Step title="Map Headers" />
       <Step title="Review Data" />

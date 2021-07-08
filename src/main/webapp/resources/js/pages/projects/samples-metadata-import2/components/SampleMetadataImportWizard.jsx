@@ -19,7 +19,7 @@ export function SampleMetadataImportWizard({ currentStep, children }) {
       <Text type="secondary">
         {i18n("SampleMetadataImportWizard.intro")}
       </Text>
-      <SampleMetadataImportSteps current={currentStep} />
+      <SampleMetadataImportSteps currentStep={currentStep} />
       {children}
     </Space>
   );

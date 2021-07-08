@@ -43,7 +43,7 @@ export function SampleMetadataImportUploadFile({ projectId }) {
   }
 
   return (
-    <SampleMetadataImportWizard current={1}>
+    <SampleMetadataImportWizard currentStep={0}>
       <DragUpload
         className="t-sample-metadata-file-uploader"
         uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}

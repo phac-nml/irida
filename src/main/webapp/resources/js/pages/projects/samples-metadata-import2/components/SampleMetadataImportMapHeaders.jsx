@@ -27,7 +27,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
 
   return (
-    <SampleMetadataImportWizard current={0}>
+    <SampleMetadataImportWizard currentStep={1}>
       <Text>
         {i18n("SampleMetadataImportMapHeaders.description")}
       </Text>
