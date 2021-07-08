@@ -70,20 +70,19 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 					project, field);
 
 			ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
-
-			ProjectRole userProjectRole = ProjectRole.PROJECT_USER;
 			if (projectJoinForUser != null) {
-				userProjectRole = projectJoinForUser.getProjectRole();
-			}
 
-			//if there's no restriction, add it at the base level
-			if (restrictionForFieldAndProject == null) {
-				restrictionForFieldAndProject = new MetadataRestriction(project, field, ProjectRole.PROJECT_USER);
-			}
+				ProjectRole userProjectRole = projectJoinForUser.getProjectRole();
 
-			if (userProjectRole.getLevel() >= restrictionForFieldAndProject.getLevel()
-					.getLevel()) {
-				return true;
+				//if there's no restriction, add it at the base level
+				if (restrictionForFieldAndProject == null) {
+					restrictionForFieldAndProject = new MetadataRestriction(project, field, ProjectRole.PROJECT_USER);
+				}
+
+				if (userProjectRole.getLevel() >= restrictionForFieldAndProject.getLevel()
+						.getLevel()) {
+					return true;
+				}
 			}
 		}
 
