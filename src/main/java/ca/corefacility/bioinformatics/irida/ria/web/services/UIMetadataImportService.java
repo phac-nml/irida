@@ -189,7 +189,8 @@ public class UIMetadataImportService {
 	/**
 	 * Extract the headers from an excel file.
 	 *
-	 * @param row {@link Row} First row from the excel file.
+	 * @param projectId {@link Long} The project identifier.
+	 * @param row       {@link Row} First row from the excel file.
 	 * @return {@link String} column name.
 	 */
 	private String findColumnName(Long projectId, Map<String, String> row) {

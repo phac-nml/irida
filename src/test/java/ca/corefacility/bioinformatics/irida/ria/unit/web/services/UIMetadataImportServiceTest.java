@@ -14,50 +14,67 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class UIMetadataImportServiceTest {
+	private final Long PROJECT_ID = 1L;
+	private final Project project = new Project();
+	private final Sample sample = new Sample();
 	private UIMetadataImportService service;
+	private ProjectService projectService;
+	private SampleService sampleService;
 
 	@Before
 	public void setUp() {
-		ProjectService projectService = Mockito.mock(ProjectService.class);
-		SampleService sampleService = Mockito.mock(SampleService.class);
+		this.projectService = Mockito.mock(ProjectService.class);
+		this.sampleService = Mockito.mock(SampleService.class);
 		service = new UIMetadataImportService(projectService, sampleService);
 	}
 
 	@Test
 	public void parseCSV() {
 		try {
-			Long projectId = 1L;
-			SampleMetadataStorage expected_storage = new SampleMetadataStorage();
-			List<String> headers_list = new ArrayList<>();
-			headers_list.add("header1");
-			headers_list.add("header2");
-			headers_list.add("header3");
-			expected_storage.saveHeaders(headers_list);
-			List<Map<String, String>> rows = new ArrayList<>();
-			Map<String, String> rowMap = new HashMap<>();
-			rowMap.put("header1", "value1");
-			rowMap.put("header2", "value2");
-			rowMap.put("header3", "value3");
-			rows.add(rowMap);
-			expected_storage.saveRows(rows);
+			SampleMetadataStorage expected_storage = getSampleMetadataStorage();
+
+			project.setId(PROJECT_ID);
+			when(projectService.read(PROJECT_ID)).thenReturn(project);
+			when(sampleService.getSampleBySampleName(project, "value2")).thenReturn(sample);
 
 			MockMultipartFile file = new MockMultipartFile("file", "test.csv", MediaType.TEXT_PLAIN_VALUE,
 					"header1,header2,header3\nvalue1,value2,value3".getBytes());
 
 			byte[] byteArr = file.getBytes();
 			InputStream inputStream = new ByteArrayInputStream(byteArr);
-			SampleMetadataStorage actual_storage = service.parseCSV(projectId, inputStream);
+			SampleMetadataStorage actual_storage = service.parseCSV(PROJECT_ID, inputStream);
 			assertEquals(actual_storage, expected_storage);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private SampleMetadataStorage getSampleMetadataStorage() {
+		SampleMetadataStorage expected_storage = new SampleMetadataStorage();
+		List<String> headers_list = new ArrayList<>();
+		headers_list.add("header1");
+		headers_list.add("header2");
+		headers_list.add("header3");
+		expected_storage.saveHeaders(headers_list);
+		List<Map<String, String>> rows = new ArrayList<>();
+		Map<String, String> rowMap = new HashMap<>();
+		rowMap.put("header1", "value1");
+		rowMap.put("header2", "value2");
+		rowMap.put("header3", "value3");
+		rows.add(rowMap);
+		expected_storage.saveRows(rows);
+		expected_storage.setSampleNameColumn("header2");
+		return expected_storage;
 	}
 }
