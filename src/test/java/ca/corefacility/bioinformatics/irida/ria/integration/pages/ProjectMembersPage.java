@@ -48,6 +48,13 @@ public class ProjectMembersPage extends AbstractPage {
 		return PageFactory.initElements(driver, ProjectMembersPage.class);
 	}
 
+	public static ProjectMembersPage goToRemoteProject(WebDriver driver, Long projectId) {
+		get(driver, "projects/"+ projectId +"/settings/members");
+		table = AntTable.getTable(driver);
+		addMemberButton = AddMemberButton.getAddMemberButton(driver);
+		return PageFactory.initElements(driver, ProjectMembersPage.class);
+	}
+
 	public String getPageHeaderTitle() {
 		return title.getText();
 	}

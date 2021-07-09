@@ -11,6 +11,8 @@ Changes
 * [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
 * [UI]: Update of Create New Project page to use Ant Design.
 * [Developer]: Updated Redux Toolkit to stable version 1.6.2
+* [Workflow]: SNVPhyl has been updated to version `1.2.3` to fix an installation issue (<https://github.com/phac-nml/irida/issues/1018>). Since this updates a pipeline you will have to upgrade the Galaxy tool suite for SNVPhyl as described in our [instllation documentation](https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/phylogenomics/). (21.05.2)
+* [UI]: Fixed bug which prevented a manager on a remote project from adding/removing members and groups. (21.05.2)
 
 21.01 to 21.05
 --------------
