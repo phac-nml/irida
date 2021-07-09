@@ -8,9 +8,17 @@ export const metadataImportApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ["MetadataImport"],
   endpoints: (build) => ({
-    getMetadataForProject: build.query({
+    createProjectSampleMetadata: build.query({
       query: (projectId) => ({
-        url: `/sample-metadata/upload/getMetadata`,
+        url: `/upload/getMetadata`,
+        params: {
+          projectId,
+        }
+      }),
+    }),
+    clearProjectSampleMetadata: build.query({
+      query: (projectId) => ({
+        url: `/upload/clear`,
         params: {
           projectId,
         }
@@ -20,5 +28,6 @@ export const metadataImportApi = createApi({
 });
 
 export const {
-  useGetMetadataForProjectQuery
+  useCreateProjectSampleMetadataQuery,
+  useClearProjectSampleMetadataQuery,
 } = metadataImportApi;

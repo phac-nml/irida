@@ -9,6 +9,7 @@ import {
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
+import { useCreateProjectSampleMetadataQuery, useClearProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
 
@@ -20,6 +21,8 @@ const { Text } = Typography
  */
 export function SampleMetadataImportUploadFile({ projectId }) {
   const dispatch = useDispatch();
+
+  useClearProjectSampleMetadataQuery(projectId);
 
   const options = {
     multiple: false,

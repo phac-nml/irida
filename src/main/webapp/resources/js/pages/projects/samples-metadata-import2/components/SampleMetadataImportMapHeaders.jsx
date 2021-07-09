@@ -11,8 +11,7 @@ import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRa
 
 const { Text } = Typography
 
-function back() {
-  // TODO: clear storage?
+function Back() {
   navigate(-1);
 }
 
@@ -40,7 +39,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
           </BlockRadioInput>
         ))}
       </Radio.Group>
-      <Button onClick={back}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
+      <Button onClick={() => Back()}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
     </SampleMetadataImportWizard>
   );
 }
