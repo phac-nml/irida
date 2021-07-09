@@ -193,17 +193,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@PostFilter("hasPermission(filterObject, 'canReadMetadataEntry')")
 	@Override
 	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
 		return metadataEntryRepository.getMetadataForSample(sample);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
-	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields) {
-		return metadataEntryRepository.getMetadataForSampleAndField(sample,fields);
 	}
 
 	/**
@@ -222,6 +215,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
 	public ProjectMetadataResponse getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
+		checkArgument(!fields.isEmpty(), "fields must not be empty");
 		Map<Long, Set<MetadataEntry>> metadataForProject = metadataEntryRepository.getMetadataForProject(project,
 				fields);
 

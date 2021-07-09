@@ -517,6 +517,7 @@ public class SampleServiceImplIT {
 	}
 
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
+	@Test
 	public void testManagerReadAllMetadata() {
 		Project project = projectService.read(1L);
 
@@ -543,6 +544,25 @@ public class SampleServiceImplIT {
 		assertEquals("should be 2 fields", 2, fields.size());
 		assertTrue(fields.contains(field1));
 		assertTrue(fields.contains(field2));
+	}
+
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
+	@Test
+	public void testReadSampleMetadata() {
+
+		Sample sample = sampleService.read(1L);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
+
+		assertEquals("should be 2 entries", 2, metadataForSample.size());
+	}
+
+	@Test
+	@WithMockUser(username = "test", roles = "USER")
+	public void testReadSampleMetadataAsUser() {
+		Sample sample = sampleService.read(1L);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
+
+		assertEquals("should be 1 entries", 1, metadataForSample.size());
 	}
 
 	private void assertSampleNotFound(Long id) {
