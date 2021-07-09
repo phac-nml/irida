@@ -3,6 +3,7 @@ Changes
 
 21.05 to 21.09
 --------------
+* [Workflow]: SNVPhyl has been updated to version `1.2.3` to fix an installation issue (<https://github.com/phac-nml/irida/issues/1018>). Since this updates a pipeline you will have to upgrade the Galaxy tool suite for SNVPhyl as described in our [instllation documentation](https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/phylogenomics/). (21.05.2)
 * [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page. (21.05.1)
 * [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
 * [UI]: Fixed bug which prevented a manager on a remote project from adding/removing members and groups. (21.05.2)
