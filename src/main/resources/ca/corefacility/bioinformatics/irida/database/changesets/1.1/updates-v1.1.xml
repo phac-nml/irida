@@ -7,6 +7,8 @@
 
 	<changeSet id="2" author="fbristow">
 
+		<validCheckSum>7:0e92e8c480456b96ccf27a2525fc1460</validCheckSum>
+		<validCheckSum>7:bbf639d099b7062e272ddf1f18d9e731</validCheckSum>
 		<!-- vestige of old model concept where sequence files could exist as part 
 			of a project. -->
 		<dropTable tableName="sequencefile_project" />
@@ -89,6 +91,8 @@
 		<!-- a) drop the id column. -->
 		<dropColumn columnName="id" tableName="system_role" />
 		<!-- b) add a primary key constraint on the name column. -->
+		<dropUniqueConstraint constraintName="UK_3qbj4kdbey8f8wgabcel8i7io"
+							  tableName="system_role" uniqueColumns="name" />
 		<addPrimaryKey columnNames="name" constraintName="PK_SYSTEM_ROLE"
 			tableName="system_role" />
 		<!-- 3) add a new foreign key constraint on the user.system_role column. -->
