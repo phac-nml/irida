@@ -10,7 +10,6 @@ import {
   IconCloudUpload,
   IconQuestion,
 } from "../../../../../components/icons/Icons";
-import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
@@ -85,7 +84,7 @@ export class ToolbarComponent extends Component {
                 </Button>
                 <Button
                   className="t-import-metadata-btn"
-                  href={setBaseUrl(`/projects/sample-metadata/upload2/file?projectId=${window.project.id}`)}
+                  href={urls.import+"2/file"}
                   tour="tour-import"
                 >
                   <IconCloudUpload />

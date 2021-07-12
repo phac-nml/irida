@@ -9,9 +9,9 @@ import store from "./store";
 
 render(
     <Provider store={store}>
-        <Router basepath={setBaseUrl("/projects/sample-metadata/upload2")}>
-            <SampleMetadataImportUploadFile path="/file" projectId={window.project.id} />
-            <SampleMetadataImportMapHeaders path="/headers" projectId={window.project.id} />
+        <Router basepath={setBaseUrl("/projects/:projectId/sample-metadata/upload2")}>
+            <SampleMetadataImportUploadFile path="/file" />
+            <SampleMetadataImportMapHeaders path="/headers" />
         </Router>
     </Provider>,
     document.querySelector("#samples-metadata-import-root")
