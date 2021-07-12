@@ -103,7 +103,6 @@ public class GalaxyHistoriesServiceIT {
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
 
-	private static final Long ANALYSIS_SUBMISSION_ID = 1L;
 
 	/**
 	 * Sets up files for history tests.
