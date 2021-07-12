@@ -69,7 +69,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
-	@RequestMapping(value = "/upload/file", method = RequestMethod.POST)
+	@PostMapping("/upload/file")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> createProjectSampleMetadata(HttpSession session,
 			@RequestParam long projectId, @RequestParam("file") MultipartFile file) {
@@ -114,7 +114,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
 	 * @return {@link Map} containing
 	 */
-	@RequestMapping(value = "/upload/setSampleColumn", method = RequestMethod.POST)
+	@PostMapping("/upload/setSampleColumn")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> setProjectSampleMetadataSampleId(HttpSession session,
 			@RequestParam long projectId, @RequestParam String sampleNameColumn) {
@@ -157,7 +157,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param projectId {@link Long} identifier for the current project
 	 * @return {@link Map} of potential errors.
 	 */
-	@RequestMapping(value = "/upload/save", method = RequestMethod.POST)
+	@PostMapping("/upload/save")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam long projectId) {
@@ -236,7 +236,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	@RequestMapping("/upload/clear")
+	@GetMapping("/upload/clear")
 	public void clearProjectSampleMetadata(HttpSession session, @RequestParam long projectId) {
 		session.removeAttribute("pm-" + projectId);
 	}
@@ -248,7 +248,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
-	@RequestMapping("/upload/getMetadata")
+	@GetMapping("/upload/getMetadata")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> getProjectSampleMetadata(HttpSession session,
 			@RequestParam long projectId) {
