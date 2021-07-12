@@ -3,6 +3,10 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata`);
 
+/**
+ * Redux API for Sample Metadata
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {createProjectSampleMetadata: *, clearProjectSampleMetadata: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {createProjectSampleMetadata: *, clearProjectSampleMetadata: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
+ */
 export const metadataImportApi = createApi({
   reducerPath: `metadataImportApi`,
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
