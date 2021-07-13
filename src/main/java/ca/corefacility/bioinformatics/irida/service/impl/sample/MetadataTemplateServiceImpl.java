@@ -239,9 +239,24 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Override
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role) {
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role,
+			boolean includeTemplateFields) {
 		//get all fields for the project
 		List<MetadataTemplateField> metadataFieldsForProject = fieldRepository.getMetadataFieldsForProject(project);
+
+		if (includeTemplateFields) {
+			//add all the metadata template fields to the list of fields to restrict
+			List<ProjectMetadataTemplateJoin> templatesForProject = getMetadataTemplatesForProject(project);
+			for (ProjectMetadataTemplateJoin join : templatesForProject) {
+				MetadataTemplate template = join.getObject();
+				List<MetadataTemplateField> templateFields = template.getFields();
+				for (MetadataTemplateField field : templateFields) {
+					if (!metadataFieldsForProject.contains(field)) {
+						metadataFieldsForProject.add(field);
+					}
+				}
+			}
+		}
 
 		//get all restrictions for the project
 		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository.getRestrictionForProject(
@@ -282,7 +297,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
-	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project) {
+	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project,
+			boolean includeTemplateFields) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getPrincipal();
@@ -300,7 +316,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			projectRole = projectJoinForUser.getProjectRole();
 		}
 
-		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole);
+		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole,
+				includeTemplateFields);
 
 		return permittedFieldsForRole;
 	}

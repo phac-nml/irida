@@ -54,7 +54,7 @@ public class LineListControllerTest {
 		long projectId = 1L;
 		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
-		verify(metadataTemplateService, times(1)).getPermittedFieldsForCurrentUser(any(Project.class));
+		verify(metadataTemplateService, times(1)).getPermittedFieldsForCurrentUser(any(Project.class), true);
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class LineListControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(sampleService.getMetadataForProject(project, fieldList)).thenReturn(new ProjectMetadataResponse(project,metadata));
 		when(sampleService.getSamplesForProjectShallow(project)).thenReturn(Lists.newArrayList(s1, s2));
-		when(metadataTemplateService.getPermittedFieldsForCurrentUser(project)).thenReturn(fieldList);
+		when(metadataTemplateService.getPermittedFieldsForCurrentUser(project, true)).thenReturn(fieldList);
 		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController.getProjectSamplesMetadataEntries(
 				projectId);
 
