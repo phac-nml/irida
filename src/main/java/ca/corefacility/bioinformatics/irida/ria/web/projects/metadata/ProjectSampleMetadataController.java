@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataFileImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -44,18 +44,18 @@ public class ProjectSampleMetadataController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final UIMetadataImportService metadataImportService;
+	private final UIMetadataFileImportService metadataFileImportService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
 			SampleService sampleService, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, UIMetadataImportService metadataImportService) {
+			ProjectControllerUtils projectControllerUtils, UIMetadataFileImportService metadataFileImportService) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
-		this.metadataImportService = metadataImportService;
+		this.metadataFileImportService = metadataFileImportService;
 	}
 
 	/**
@@ -84,11 +84,11 @@ public class ProjectSampleMetadataController {
 			// Check the file type
 			switch (extension) {
 			case "csv":
-				storage = metadataImportService.parseCSV(projectId, inputStream);
+				storage = metadataFileImportService.parseCSV(projectId, inputStream);
 				break;
 			case "xlsx":
 			case "xls":
-				storage = metadataImportService.parseExcel(projectId, inputStream, extension);
+				storage = metadataFileImportService.parseExcel(projectId, inputStream, extension);
 				break;
 			default:
 				// Should never reach here as the uploader limits to .csv, .xlsx and .xlx files.

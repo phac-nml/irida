@@ -17,18 +17,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataFileImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class UIMetadataImportServiceTest {
+public class UIMetadataFileImportServiceTest {
 	private final Long PROJECT_ID = 1L;
 	private final Project project = new Project();
 	private final Sample sample = new Sample();
-	private UIMetadataImportService service;
+	private UIMetadataFileImportService service;
 	private ProjectService projectService;
 	private SampleService sampleService;
 
@@ -36,7 +36,7 @@ public class UIMetadataImportServiceTest {
 	public void setUp() {
 		this.projectService = Mockito.mock(ProjectService.class);
 		this.sampleService = Mockito.mock(SampleService.class);
-		service = new UIMetadataImportService(projectService, sampleService);
+		service = new UIMetadataFileImportService(projectService, sampleService);
 	}
 
 	@Test
