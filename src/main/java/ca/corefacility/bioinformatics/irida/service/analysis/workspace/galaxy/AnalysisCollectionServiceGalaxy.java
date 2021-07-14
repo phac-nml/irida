@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -20,11 +21,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatas
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A service for constructing dataset collections of input files for workflows
@@ -79,11 +78,14 @@ public class AnalysisCollectionServiceGalaxy {
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
 		description.setName(COLLECTION_NAME_SINGLE);
 
-		IridaTemporaryFile iridaTemporaryFile = null;
+		IridaTemporaryFile iridaTemporaryFile;
+		List<IridaTemporaryFile> filesToCleanUp = new ArrayList<>();
+
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Sample sample : sampleSequenceFiles.keySet()) {
 			SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
 			iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(sequenceFile.getSequenceFile().getFile(), "analysis");
+			filesToCleanUp.add(iridaTemporaryFile);
 			samplesMap.put(iridaTemporaryFile.getFile(), sample);
 		}
 
@@ -105,8 +107,17 @@ public class AnalysisCollectionServiceGalaxy {
 
 			description.addDatasetElement(datasetElement);
 		}
-		if(iridaTemporaryFile != null) {
-			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+
+		if(filesToCleanUp.size() > 0) {
+			for(IridaTemporaryFile itf : filesToCleanUp) {
+				try {
+					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(itf);
+				} catch (StorageException e) {
+					throw new StorageException(e.getMessage());
+				} finally {
+					Files.delete(itf.getFile());
+				}
+			}
 		}
 		return galaxyHistoriesService.constructCollection(description, workflowHistory);
 	}
@@ -133,8 +144,10 @@ public class AnalysisCollectionServiceGalaxy {
 		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
 		description.setName(COLLECTION_NAME_PAIRED);
 
-		IridaTemporaryFile iridaTemporaryFileForward = null;
-		IridaTemporaryFile iridaTemporaryFileReverse = null;
+		IridaTemporaryFile iridaTemporaryFileForward;
+		IridaTemporaryFile iridaTemporaryFileReverse;
+
+		List<IridaTemporaryFile> filesToCleanUp = new ArrayList<>();
 
 		Map<Sample, Path> samplesMapPairForward = new HashMap<>();
 		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
@@ -146,6 +159,9 @@ public class AnalysisCollectionServiceGalaxy {
 
 			iridaTemporaryFileForward = iridaFileStorageUtility.getTemporaryFile(fileForward.getFile(), "analysis");
 			iridaTemporaryFileReverse = iridaFileStorageUtility.getTemporaryFile(fileReverse.getFile(), "analysis");
+
+			filesToCleanUp.add(iridaTemporaryFileForward);
+			filesToCleanUp.add(iridaTemporaryFileReverse);
 
 			samplesMapPairForward.put(sample, iridaTemporaryFileForward.getFile());
 			samplesMapPairReverse.put(sample, iridaTemporaryFileReverse.getFile());
@@ -186,14 +202,39 @@ public class AnalysisCollectionServiceGalaxy {
 				description.addDatasetElement(pairedElement);
 			}
 		}
-		if(iridaTemporaryFileForward != null) {
-			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFileForward);
-		}
 
-		if(iridaTemporaryFileReverse != null) {
-			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFileReverse);
+		if(filesToCleanUp.size() > 0) {
+			try {
+				cleanupTemporaryGalaxyFiles(filesToCleanUp);
+			} catch (StorageException e) {
+				throw new StorageException(e.getMessage());
+			} catch (IOException e) {
+				throw new IOException(e.getMessage());
+			}
 		}
 
 		return galaxyHistoriesService.constructCollection(description, workflowHistory);
+	}
+
+	/**
+	 * Clean up any temporary files that were downloaded and uploaded to Galaxy
+	 * from an object store
+	 *
+	 * @param filesToCleanUp A list of {@link IridaTemporaryFile}'s to cleanup.
+	 * @throws IOException If there was an error cleaning up the temporary file
+	 */
+	private void cleanupTemporaryGalaxyFiles(List<IridaTemporaryFile> filesToCleanUp) throws IOException {
+		for (IridaTemporaryFile itf : filesToCleanUp) {
+			/*
+			 * If there was an error when cleaning up the downloaded temporary files then throw an exception
+			 * and try to delete the temporary file again so it is not left behind
+			 */
+			try {
+				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(itf);
+			} catch (StorageException e) {
+				Files.delete(itf.getFile());
+				throw new StorageException(e.getMessage());
+			}
+		}
 	}
 }

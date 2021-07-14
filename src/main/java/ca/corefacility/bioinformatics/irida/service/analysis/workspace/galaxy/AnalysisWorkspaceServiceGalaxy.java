@@ -299,7 +299,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	private void prepareReferenceFile(ReferenceFile referenceFile, History workflowHistory, String referenceFileLabel,
 			WorkflowDetails workflowDetails, WorkflowInvocationInputs inputs)
-			throws UploadException, GalaxyDatasetException, WorkflowException {
+			throws UploadException, GalaxyDatasetException, WorkflowException, IOException {
 
 		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(referenceFile.getFile());
 
@@ -312,7 +312,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setInput(workflowReferenceFileInputId,
 				new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
 
-		iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+		/*
+		 * If there was an error when cleaning up the downloaded temporary files then throw an exception
+		 * and try to delete the temporary file again so it is not left behind
+		 */
+		try {
+			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+		} catch (StorageException e) {
+			Files.delete(iridaTemporaryFile.getFile());
+			throw new StorageException(e.getMessage());
+		}
 	}
 
 	/**
