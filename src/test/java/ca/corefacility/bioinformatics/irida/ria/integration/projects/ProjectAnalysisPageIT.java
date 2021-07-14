@@ -34,4 +34,20 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should only be 1 analysis remaining after deletion", 1,
 				projectAnalysesPage.getNumberOfAnalysesDisplayed());
 	}
+
+	@Test
+	public void testGetSharedSingleSampleAnalysisOutputs() {
+		LoginPage.loginAsManager(driver());
+		projectAnalysesPage = ProjectAnalysesPage.initializeProjectAnalysesSharedSingleSampleAnalysisOutputsPage(driver(), 1);
+
+		checkTranslations(projectAnalysesPage, ImmutableList.of("project-analyses"), null);
+	}
+
+	@Test
+	public void testGetAutomatedSingleSampleAnalysisOutputs() {
+		LoginPage.loginAsManager(driver());
+		projectAnalysesPage = ProjectAnalysesPage.initializeProjectAnalysesAutomatedSingleSampleAnalysisOutputsPage(driver(), 1);
+
+		checkTranslations(projectAnalysesPage, ImmutableList.of("project-analyses"), null);
+	}
 }
