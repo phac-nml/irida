@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,11 +69,8 @@ public class UIMetadataImportService {
 	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, long projectId, MultipartFile file) {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
-		try {
+		try (InputStream inputStream = file.getInputStream()) {
 			String filename = file.getOriginalFilename();
-			byte[] byteArr = file.getBytes();
-			InputStream inputStream = new ByteArrayInputStream(byteArr);
-
 			String extension = Files.getFileExtension(filename);
 
 			// Check the file type
@@ -90,7 +86,7 @@ public class UIMetadataImportService {
 				// Should never reach here as the uploader limits to .csv, .xlsx and .xlx files.
 				throw new MetadataImportFileTypeNotSupportedError(extension);
 			}
-			inputStream.close();
+
 		} catch (FileNotFoundException e) {
 			logger.debug("No file found for uploading an excel file of metadata.");
 		} catch (IOException e) {
