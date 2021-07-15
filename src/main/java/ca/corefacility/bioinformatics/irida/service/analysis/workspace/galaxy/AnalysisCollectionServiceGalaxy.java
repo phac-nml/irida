@@ -21,7 +21,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatas
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -131,6 +130,7 @@ public class AnalysisCollectionServiceGalaxy {
 	 * given files.
 	 * @throws ExecutionManagerException If there was an error uploading the files.
 	 * @throws IOException               If there was an error reading the sequence file.
+	 * @throws StorageException          If there was an error removing a temporary file
 	 */
 	public CollectionResponse uploadSequenceFilesPaired(
 			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
