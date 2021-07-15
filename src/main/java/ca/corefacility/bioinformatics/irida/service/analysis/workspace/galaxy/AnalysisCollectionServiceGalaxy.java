@@ -74,52 +74,48 @@ public class AnalysisCollectionServiceGalaxy {
 			Map<Sample, SingleEndSequenceFile> sampleSequenceFiles, History workflowHistory,
 			Library workflowLibrary) throws ExecutionManagerException, IOException {
 
-		CollectionDescription description = new CollectionDescription();
-		description.setCollectionType(DatasetCollectionType.LIST.toString());
-		description.setName(COLLECTION_NAME_SINGLE);
-
-		IridaTemporaryFile iridaTemporaryFile;
 		List<IridaTemporaryFile> filesToCleanUp = new ArrayList<>();
+		try {
+			CollectionDescription description = new CollectionDescription();
+			description.setCollectionType(DatasetCollectionType.LIST.toString());
+			description.setName(COLLECTION_NAME_SINGLE);
 
-		Map<Path, Sample> samplesMap = new HashMap<>();
-		for (Sample sample : sampleSequenceFiles.keySet()) {
-			SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
-			iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(sequenceFile.getSequenceFile().getFile(), "analysis");
-			filesToCleanUp.add(iridaTemporaryFile);
-			samplesMap.put(iridaTemporaryFile.getFile(), sample);
-		}
+			IridaTemporaryFile iridaTemporaryFile;
 
-		// upload files to library and then to a history
-		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(samplesMap.keySet(),
-				workflowHistory, workflowLibrary, dataStorageType);
-
-		for (Path sequenceFilePath : samplesMap.keySet()) {
-			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
-				throw new UploadException("Error, no corresponding history item found for " + sequenceFilePath);
+			Map<Path, Sample> samplesMap = new HashMap<>();
+			for (Sample sample : sampleSequenceFiles.keySet()) {
+				SingleEndSequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+				iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(sequenceFile.getSequenceFile()
+						.getFile(), "analysis");
+				filesToCleanUp.add(iridaTemporaryFile);
+				samplesMap.put(iridaTemporaryFile.getFile(), sample);
 			}
 
-			Sample sample = samplesMap.get(sequenceFilePath);
-			String datasetHistoryId = pathHistoryDatasetId.get(sequenceFilePath);
+			// upload files to library and then to a history
+			Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(samplesMap.keySet(),
+					workflowHistory, workflowLibrary, dataStorageType);
 
-			HistoryDatasetElement datasetElement = new HistoryDatasetElement();
-			datasetElement.setId(datasetHistoryId);
-			datasetElement.setName(sample.getSampleName());
-
-			description.addDatasetElement(datasetElement);
-		}
-
-		if(filesToCleanUp.size() > 0) {
-			for(IridaTemporaryFile itf : filesToCleanUp) {
-				try {
-					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(itf);
-				} catch (StorageException e) {
-					throw new StorageException(e.getMessage());
-				} finally {
-					Files.delete(itf.getFile());
+			for (Path sequenceFilePath : samplesMap.keySet()) {
+				if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
+					throw new UploadException("Error, no corresponding history item found for " + sequenceFilePath);
 				}
+
+				Sample sample = samplesMap.get(sequenceFilePath);
+				String datasetHistoryId = pathHistoryDatasetId.get(sequenceFilePath);
+
+				HistoryDatasetElement datasetElement = new HistoryDatasetElement();
+				datasetElement.setId(datasetHistoryId);
+				datasetElement.setName(sample.getSampleName());
+
+				description.addDatasetElement(datasetElement);
+			}
+			return galaxyHistoriesService.constructCollection(description, workflowHistory);
+		} finally {
+			if (filesToCleanUp.size() > 0) {
+				cleanupTemporaryGalaxyFiles(filesToCleanUp);
 			}
 		}
-		return galaxyHistoriesService.constructCollection(description, workflowHistory);
+
 	}
 
 	/**
@@ -138,92 +134,86 @@ public class AnalysisCollectionServiceGalaxy {
 	 */
 	public CollectionResponse uploadSequenceFilesPaired(
 			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory,
-			Library workflowLibrary) throws ExecutionManagerException, IOException {
-
-		CollectionDescription description = new CollectionDescription();
-		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
-		description.setName(COLLECTION_NAME_PAIRED);
-
-		IridaTemporaryFile iridaTemporaryFileForward;
-		IridaTemporaryFile iridaTemporaryFileReverse;
+			Library workflowLibrary) throws ExecutionManagerException, IOException, StorageException {
 
 		List<IridaTemporaryFile> filesToCleanUp = new ArrayList<>();
+		try {
+			CollectionDescription description = new CollectionDescription();
+			description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
+			description.setName(COLLECTION_NAME_PAIRED);
 
-		Map<Sample, Path> samplesMapPairForward = new HashMap<>();
-		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
-		Set<Path> pathsToUpload = new HashSet<>();
-		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
-			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
-			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
-			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
+			IridaTemporaryFile iridaTemporaryFileForward;
+			IridaTemporaryFile iridaTemporaryFileReverse;
 
-			iridaTemporaryFileForward = iridaFileStorageUtility.getTemporaryFile(fileForward.getFile(), "analysis");
-			iridaTemporaryFileReverse = iridaFileStorageUtility.getTemporaryFile(fileReverse.getFile(), "analysis");
+			Map<Sample, Path> samplesMapPairForward = new HashMap<>();
+			Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
+			Set<Path> pathsToUpload = new HashSet<>();
+			for (Sample sample : sampleSequenceFilesPaired.keySet()) {
+				SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
+				SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
+				SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
-			filesToCleanUp.add(iridaTemporaryFileForward);
-			filesToCleanUp.add(iridaTemporaryFileReverse);
+				iridaTemporaryFileForward = iridaFileStorageUtility.getTemporaryFile(fileForward.getFile(), "analysis");
+				iridaTemporaryFileReverse = iridaFileStorageUtility.getTemporaryFile(fileReverse.getFile(), "analysis");
 
-			samplesMapPairForward.put(sample, iridaTemporaryFileForward.getFile());
-			samplesMapPairReverse.put(sample, iridaTemporaryFileReverse.getFile());
-			pathsToUpload.add(iridaTemporaryFileForward.getFile());
-			pathsToUpload.add(iridaTemporaryFileReverse.getFile());
-		}
+				filesToCleanUp.add(iridaTemporaryFileForward);
+				filesToCleanUp.add(iridaTemporaryFileReverse);
 
-		// upload files to library and then to a history
-		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
-				workflowHistory, workflowLibrary, dataStorageType);
-
-		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
-			Path fileForward = samplesMapPairForward.get(sample);
-			Path fileReverse = samplesMapPairReverse.get(sample);
-
-			if (!pathHistoryDatasetId.containsKey(fileForward)) {
-				throw new UploadException("Error, no corresponding history item found for " + fileForward);
-			} else if (!pathHistoryDatasetId.containsKey(fileReverse)) {
-				throw new UploadException("Error, no corresponding history item found for " + fileReverse);
-			} else {
-				String datasetHistoryIdForward = pathHistoryDatasetId.get(fileForward);
-				String datasetHistoryIdReverse = pathHistoryDatasetId.get(fileReverse);
-
-				CollectionElement pairedElement = new CollectionElement();
-				pairedElement.setName(sample.getSampleName());
-				pairedElement.setCollectionType(DatasetCollectionType.PAIRED.toString());
-
-				HistoryDatasetElement datasetElementForward = new HistoryDatasetElement();
-				datasetElementForward.setId(datasetHistoryIdForward);
-				datasetElementForward.setName(FORWARD_NAME);
-				pairedElement.addCollectionElement(datasetElementForward);
-
-				HistoryDatasetElement datasetElementReverse = new HistoryDatasetElement();
-				datasetElementReverse.setId(datasetHistoryIdReverse);
-				datasetElementReverse.setName(REVERSE_NAME);
-				pairedElement.addCollectionElement(datasetElementReverse);
-
-				description.addDatasetElement(pairedElement);
+				samplesMapPairForward.put(sample, iridaTemporaryFileForward.getFile());
+				samplesMapPairReverse.put(sample, iridaTemporaryFileReverse.getFile());
+				pathsToUpload.add(iridaTemporaryFileForward.getFile());
+				pathsToUpload.add(iridaTemporaryFileReverse.getFile());
 			}
-		}
 
-		if(filesToCleanUp.size() > 0) {
-			try {
+			// upload files to library and then to a history
+			Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
+					workflowHistory, workflowLibrary, dataStorageType);
+
+			for (Sample sample : sampleSequenceFilesPaired.keySet()) {
+				Path fileForward = samplesMapPairForward.get(sample);
+				Path fileReverse = samplesMapPairReverse.get(sample);
+
+				if (!pathHistoryDatasetId.containsKey(fileForward)) {
+					throw new UploadException("Error, no corresponding history item found for " + fileForward);
+				} else if (!pathHistoryDatasetId.containsKey(fileReverse)) {
+					throw new UploadException("Error, no corresponding history item found for " + fileReverse);
+				} else {
+					String datasetHistoryIdForward = pathHistoryDatasetId.get(fileForward);
+					String datasetHistoryIdReverse = pathHistoryDatasetId.get(fileReverse);
+
+					CollectionElement pairedElement = new CollectionElement();
+					pairedElement.setName(sample.getSampleName());
+					pairedElement.setCollectionType(DatasetCollectionType.PAIRED.toString());
+
+					HistoryDatasetElement datasetElementForward = new HistoryDatasetElement();
+					datasetElementForward.setId(datasetHistoryIdForward);
+					datasetElementForward.setName(FORWARD_NAME);
+					pairedElement.addCollectionElement(datasetElementForward);
+
+					HistoryDatasetElement datasetElementReverse = new HistoryDatasetElement();
+					datasetElementReverse.setId(datasetHistoryIdReverse);
+					datasetElementReverse.setName(REVERSE_NAME);
+					pairedElement.addCollectionElement(datasetElementReverse);
+
+					description.addDatasetElement(pairedElement);
+				}
+			}
+			return galaxyHistoriesService.constructCollection(description, workflowHistory);
+		} finally {
+			if (filesToCleanUp.size() > 0) {
 				cleanupTemporaryGalaxyFiles(filesToCleanUp);
-			} catch (StorageException e) {
-				throw new StorageException(e.getMessage());
-			} catch (IOException e) {
-				throw new IOException(e.getMessage());
 			}
 		}
 
-		return galaxyHistoriesService.constructCollection(description, workflowHistory);
 	}
 
 	/**
-	 * Clean up any temporary files that were downloaded and uploaded to Galaxy
+	 * Clean up a collection of temporary files that were downloaded and uploaded to Galaxy
 	 * from an object store
 	 *
 	 * @param filesToCleanUp A list of {@link IridaTemporaryFile}'s to cleanup.
-	 * @throws IOException If there was an error cleaning up the temporary file
 	 */
-	private void cleanupTemporaryGalaxyFiles(List<IridaTemporaryFile> filesToCleanUp) throws IOException {
+	private void cleanupTemporaryGalaxyFiles(List<IridaTemporaryFile> filesToCleanUp) {
 		for (IridaTemporaryFile itf : filesToCleanUp) {
 			/*
 			 * If there was an error when cleaning up the downloaded temporary files then throw an exception
@@ -232,7 +222,6 @@ public class AnalysisCollectionServiceGalaxy {
 			try {
 				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(itf);
 			} catch (StorageException e) {
-				Files.delete(itf.getFile());
 				throw new StorageException(e.getMessage());
 			}
 		}
