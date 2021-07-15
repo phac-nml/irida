@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -139,27 +140,27 @@ public class UIMetadataImportService {
 	}
 
 	/**
-	 * Save uploaded metadata to the
+	 * Save uploaded metadata
 	 *
 	 * @param locale    {@link Locale} of the current user.
 	 * @param session   {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current project
-	 * @return {@link Map} of potential errors.
+	 * @return {@link ProjectSampleMetadataResponse} that returns a message and potential errors.
 	 */
-	public Map<String, Object> saveProjectSampleMetadata(Locale locale, HttpSession session, long projectId) {
+	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, long projectId) {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
-		Map<String, Object> errors = new HashMap<>();
 		Project project = projectService.read(projectId);
-
+		ProjectSampleMetadataResponse response = new ProjectSampleMetadataResponse();
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+
 		if (stored == null) {
-			errors.put("stored-error", true);
+			response.setMessageKey("stored-error");
 		}
 
 		List<Sample> samplesToUpdate = new ArrayList<>();
-
 		List<Map<String, String>> found = stored.getFound();
+
 		if (found != null) {
 			// Lets try to get a sample
 			String sampleNameColumn = stored.getSampleNameColumn();
@@ -202,17 +203,21 @@ public class UIMetadataImportService {
 			}
 
 			if (errorList.size() > 0) {
-				errors.put("save-errors", errorList);
+				response.setMessageKey("save-error");
+				response.setErrorList(errorList);
 			}
 		} else {
-			errors.put("found-error",
-					messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
+			response.setMessageKey("found-error");
+			response.setMessage(messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
 		}
-		if (errors.size() == 0) {
-			return ImmutableMap.of("success",
+
+		if (response.getMessageKey() == null) {
+			response.setMessageKey("success");
+			response.setMessage(
 					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale));
 		}
-		return errors;
+
+		return response;
 	}
 
 	/**

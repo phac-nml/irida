@@ -16,6 +16,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;;
 
 /**
@@ -76,15 +79,19 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@PostMapping("/upload/save")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> saveProjectSampleMetadata(Locale locale, HttpSession session,
+	public ResponseEntity<ProjectSampleMetadataResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam long projectId) {
-		Map<String, Object> response = metadataImportService.saveProjectSampleMetadata(locale, session, projectId);
 
-		if (response.containsKey("success")) {
+		ProjectSampleMetadataResponse response = metadataImportService.saveProjectSampleMetadata(locale, session,
+				projectId);
+
+		if (response.getMessageKey()
+				.equals("success")) {
 			return ResponseEntity.ok(response);
+		} else {
+			return ResponseEntity.badRequest()
+					.body(response);
 		}
-		return ResponseEntity.badRequest()
-				.body(response);
 	}
 
 	/**
