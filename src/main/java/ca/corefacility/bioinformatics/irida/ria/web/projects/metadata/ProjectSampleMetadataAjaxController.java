@@ -63,10 +63,10 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@PostMapping("/upload/setSampleColumn")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> setProjectSampleMetadataSampleId(HttpSession session,
+	public ResponseEntity<AjaxResponse> setProjectSampleMetadataSampleId(HttpSession session,
 			@RequestParam long projectId, @RequestParam String sampleNameColumn) {
-		return ResponseEntity.ok(
-				metadataImportService.setProjectSampleMetadataSampleId(session, projectId, sampleNameColumn));
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				metadataImportService.setProjectSampleMetadataSampleId(session, projectId, sampleNameColumn)));
 	}
 
 	/**

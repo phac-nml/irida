@@ -104,10 +104,9 @@ public class UIMetadataImportService {
 	 * @param session          {@link HttpSession}.
 	 * @param projectId        {@link Long} identifier for the current {@link Project}.
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
-	 * @return {@link Map} containing a complete message.
+	 * @return {@link String} containing a complete message.
 	 */
-	public Map<String, Object> setProjectSampleMetadataSampleId(HttpSession session, long projectId,
-			String sampleNameColumn) {
+	public String setProjectSampleMetadataSampleId(HttpSession session, long projectId, String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
@@ -136,7 +135,7 @@ public class UIMetadataImportService {
 			stored.saveMissing(missing);
 		}
 
-		return ImmutableMap.of("result", "complete");
+		return "complete";
 	}
 
 	/**
