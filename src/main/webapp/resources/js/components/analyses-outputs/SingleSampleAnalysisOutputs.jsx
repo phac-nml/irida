@@ -61,6 +61,7 @@ export default function SingleSampleAnalysisOutputs({
                 : `/samples/${record.sampleId}`
             )}
             target="_blank"
+            className="t-sample-name"
           >
             {sampleName}
           </a>
