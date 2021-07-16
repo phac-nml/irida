@@ -31,7 +31,7 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test deleting an analysis
 		projectAnalysesPage.deleteAnalysis(1);
-		assertEquals("Should only be 1 analysis remaining after deletion", 3,
+		assertEquals("Should only be 3 analysis remaining after deletion", 3,
 				projectAnalysesPage.getNumberOfAnalysesDisplayed());
 	}
 
