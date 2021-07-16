@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -83,8 +84,8 @@ public class UIProjectReferenceFileService {
 					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project,
 							referenceFile);
 					ReferenceFile refFile = join.getObject();
-					String filesize = iridaFileStorageUtility.getFileSize(refFile.getFile());
-					referenceFiles.add(new UIReferenceFile(join, filesize));
+					Long filesize = iridaFileStorageUtility.getFileSizeBytes(refFile.getFile());
+					referenceFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
 				} else {
 					/*
 					Creates the reference file and saves it to the reference file repository

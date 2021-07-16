@@ -58,7 +58,6 @@ public class ChecksumFileProcessor implements FileProcessor {
 				String shaDigest = DigestUtils.sha256Hex(is);
 				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
 				file.setUploadSha256(shaDigest);
-
 				fileRepository.saveMetadata(file);
 			} catch (IOException e) {
 				throw new FileProcessorException("could not calculate checksum", e);

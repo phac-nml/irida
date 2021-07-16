@@ -63,7 +63,8 @@ public class GalaxyHistoriesService {
 	private ToolsClient toolsClient;
 	
 	private GalaxyLibrariesService librariesService;
-	
+
+
 	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
@@ -148,8 +149,7 @@ public class GalaxyHistoriesService {
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
 		checkNotNull(history.getId(), "history id is null");
-		checkState(path.toFile()
-				.exists(), "path " + path + " does not exist");
+		checkState(path.toFile().exists(), "path " + path + " does not exist");
 
 		File file = path.toFile();
 
@@ -170,7 +170,8 @@ public class GalaxyHistoriesService {
 
 			throw new UploadException(message);
 		} else {
-			return getDatasetForFileInHistory(file.getName(), history.getId());
+			Dataset dataset = getDatasetForFileInHistory(file.getName(), history.getId());
+			return dataset;
 		}
 	}
 	

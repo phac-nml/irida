@@ -13,3 +13,4 @@
     <include file="remove-sample-metadata-entry.xml"
              relativeToChangelogFile="true"/>
 </databaseChangeLog>
+

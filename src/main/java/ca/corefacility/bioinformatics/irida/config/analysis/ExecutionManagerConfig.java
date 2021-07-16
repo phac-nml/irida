@@ -89,6 +89,7 @@ public class ExecutionManagerConfig {
 
 	@Autowired
 	private Validator validator;
+
 	
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
