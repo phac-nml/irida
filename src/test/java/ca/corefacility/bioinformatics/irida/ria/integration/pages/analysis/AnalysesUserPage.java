@@ -16,6 +16,9 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(css = "tbody.ant-table-tbody .t-name")
 	private List<WebElement> rows;
 
+	@FindBy(css = "tbody.ant-table-tbody .t-sample-name")
+	private List<WebElement> singleSampleAnalysisOutputsRows;
+
 	@FindBy(css = ".ant-table-selection-column .ant-checkbox-wrapper")
 	private List<WebElement> rowCheckboxes;
 
@@ -37,6 +40,17 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "root")
 	private WebElement rootDiv;
 
+	@FindBy(css = ".ant-input-search .ant-input")
+	private WebElement outputsSearchInput;
+
+	@FindBy(className = "ant-input-search-button")
+	private WebElement outputsSearchInputSubmit;
+
+	@FindBy(className = "ant-input-clear-icon")
+	private WebElement outputsSearchInputClearBtn;
+
+
+
 	public AnalysesUserPage(WebDriver driver) {
 		super(driver);
 	}
@@ -53,6 +67,24 @@ public class AnalysesUserPage extends AbstractPage {
 
 	public int getNumberOfAnalysesDisplayed() {
 		return rows.size();}
+
+	public int getNumberSingleSampleAnalysisOutputsDisplayed() {
+		return singleSampleAnalysisOutputsRows.size();
+	}
+
+	public void searchOutputs(String searchStr) {
+		waitForElementToBeClickable(outputsSearchInputSubmit);
+		outputsSearchInput.sendKeys(searchStr);
+		outputsSearchInputSubmit.click();
+		waitForElementVisible(By.className("ant-input-clear-icon"));
+	}
+
+	public void clearSearchOutputs() {
+		waitForElementToBeClickable(outputsSearchInputClearBtn);
+		outputsSearchInputClearBtn.click();
+		outputsSearchInputSubmit.click();
+		waitForElementInvisible(By.className("ant-input-clear-icon"));
+	}
 
 	public void searchForAnalysisByName(String name) {
 		waitForElementToBeClickable(nameFilterButton);

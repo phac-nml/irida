@@ -47,6 +47,7 @@ public class ProjectSampleAnalysisOutputInfo {
 		this.userId = userId;
 		this.userFirstName = userFirstName;
 		this.userLastName = userLastName;
+		this.workflowDescription = null;
 	}
 
 	@Override

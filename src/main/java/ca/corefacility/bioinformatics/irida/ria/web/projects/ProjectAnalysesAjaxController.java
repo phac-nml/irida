@@ -49,11 +49,4 @@ public class ProjectAnalysesAjaxController {
 		return ResponseEntity.ok(uiProjectAnalysesService.getAutomatedSingleSampleOutputs(projectId));
 	}
 
-//	@GetMapping("/download-shared")
-//	public void downloadSharedSingleSampleOutputs(@RequestParam Long projectId) {
-//	}
-//
-//	@GetMapping("/download-automated")
-//	public void downloadAutomatedSingleSampleOutputs(@RequestParam Long projectId) {
-//	}
 }
