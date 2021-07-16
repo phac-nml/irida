@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -30,6 +31,7 @@ import com.github.jsonldjava.shaded.com.google.common.base.Strings;
  * UI Service for all things related to project single sample analysis outputs.
  */
 @Component
+@Scope("session")
 public class UIAnalysesOutputsService {
 
 	private AnalysisSubmissionService analysisSubmissionService;
