@@ -214,16 +214,22 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @param filesToCleanUp A list of {@link IridaTemporaryFile}'s to cleanup.
 	 */
 	private void cleanupTemporaryGalaxyFiles(List<IridaTemporaryFile> filesToCleanUp) {
+		List<String> exceptions = new ArrayList<>();
 		for (IridaTemporaryFile itf : filesToCleanUp) {
 			/*
-			 * If there was an error when cleaning up the downloaded temporary files then throw an exception
-			 * and try to delete the temporary file again so it is not left behind
+			 * If there was an error when cleaning up the downloaded temporary
+			 * files then add exception message to the list of exception messages
 			 */
 			try {
 				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(itf);
 			} catch (StorageException e) {
-				throw new StorageException(e.getMessage());
+				exceptions.add(e.getMessage());
 			}
+		}
+		if(exceptions.size() > 0) {
+			// Throw StorageException if there were any exceptions in the for loop above
+			String exceptionMsg = String.join("\n", exceptions);
+			throw new StorageException(exceptionMsg);
 		}
 	}
 }
