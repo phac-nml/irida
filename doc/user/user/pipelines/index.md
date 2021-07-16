@@ -278,17 +278,14 @@ You will see a table of your single sample analysis output files:
 
 ![](images/batch-download-user-outputs.png)
 
-You can apply filters to any columns by clicking the column menu icon, for example, applying a filter to the `File` column:
+You can filter the outputs using the search box and hitting the enter key or clicking the magnifying glass icon next to the search box. The following fields are searched:
+- Sample Name
+- File
+- Analysis Type
+- Pipeline
+- Submitter
 
-![](images/batch-download-column-filter-open.png)
-
-Filtering for files with `contigs` in the filename:
-
-![](images/batch-download-filtering-on-contains-contigs.png)
-
-You will then see a filter icon displayed beside the column name ![](images/batch-download-column-filter-icon.png)
-
-You can select the files you wish to download using the checkboxes or by holding the `Ctrl` or `Shift` keys as you click on the rows for the files you wish to download. 
+You can select the files you wish to download using the checkboxes.
 
 ![](images/batch-download-multiselect-refine.png)
 
@@ -300,7 +297,6 @@ Click **Download** to download. Depending on the number of files you have select
 
 Single files will be downloaded as is, while multiple files will downloaded bundled together in ZIP file. 
 
-![](images/download-confirmation-ff.png) 
 
 ## Errors when executing pipelines
 
