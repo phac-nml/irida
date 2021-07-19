@@ -1,4 +1,8 @@
-import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAction,
+  createAsyncThunk,
+  createReducer,
+} from "@reduxjs/toolkit";
 
 export const setDestinationProject = createAction(
   `shareReducer/setDestinationProject`,
@@ -35,7 +39,7 @@ export const removeSample = createAction(
 
 export const copySamples = createAsyncThunk(
   `shareReducer/copySamples`,
-  async ({}, { getState }) => {
+  async (_, { getState }) => {
     const state = getState();
     console.log(state);
   }
@@ -46,35 +50,34 @@ const storedState = (() => {
   return sharedString ? JSON.parse(sharedString) : {};
 })();
 
-const shareReducer = createSlice({
-  name: `shareReducer`,
-  initialState: { ...storedState, owner: true, step: 0 },
-  reducers: {
-    setDestinationProject: (state, action) => {
-      state.destination = action.payload.project;
-    },
-    updatedSamplesOwnerStatus: (state, action) => {
-      state.owner = action.payload.owner;
-    },
-    setFields: (state, action) => {
-      state.fields = action.payload.fields;
-    },
-    updateFields: (state, action) => {
-      state.fields[action.payload.index].target.restriction =
-        action.payload.value;
-    },
-    setNextStep: (state) => {
-      state.step = state.step + 1;
-    },
-    setPreviousStep: (state) => {
-      state.step = state.step - 1;
-    },
-    removeSample: (state, action) => {
-      const samples = [...state.samples];
-      samples.splice(action.payload.index, 1);
-      state.samples = samples;
-    },
-  },
-});
-
-export default shareReducer.reducer;
+export default createReducer(
+  { ...storedState, owner: true, step: 0 },
+  (builder) => {
+    builder
+      .addCase(setDestinationProject, (state, action) => {
+        state.destination = action.payload.project;
+      })
+      .addCase(updatedSamplesOwnerStatus, (state, action) => {
+        state.owner = action.payload.owner;
+      })
+      .addCase(setFields, (state, action) => {
+        state.fields = action.payload.fields;
+      })
+      .addCase(updateFields, (state, action) => {
+        state.fields[action.payload.index].target.restriction =
+          action.payload.value;
+      })
+      .addCase(setNextStep, (state) => {
+        console.log("HELLO");
+        state.step = state.step + 1;
+      })
+      .addCase(setPreviousStep, (state) => {
+        state.step = state.step - 1;
+      })
+      .addCase(removeSample, (state, action) => {
+        const samples = [...state.samples];
+        samples.splice(action.payload.index, 1);
+        state.samples = samples;
+      });
+  }
+);
