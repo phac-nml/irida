@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,12 +14,15 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CopySamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSample;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -37,32 +39,37 @@ public class UISampleService {
 	private final UpdateSamplePermission updateSamplePermission;
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
+	private final UIMetadataService uiMetadataService;
 	private final UICartService cartService;
 
 	@Autowired
-	public UISampleService(SampleService sampleService, ProjectService projectService, UpdateSamplePermission updateSamplePermission,
-			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
+	public UISampleService(SampleService sampleService, ProjectService projectService,
+			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
+			GenomeAssemblyService genomeAssemblyService, UIMetadataService uiMetadataService, UICartService cartService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
+		this.uiMetadataService = uiMetadataService;
 		this.cartService = cartService;
 	}
 
 	/**
 	 * Get full details, including metadata for a {@link Sample}
 	 *
-	 * @param id Identifier for a {@link Sample}
+	 * @param id        Identifier for a {@link Sample}
+	 * @param projectId Identifier for a {@link Project} the sample belongs to
 	 * @return {@link SampleDetails}
 	 */
-	public SampleDetails getSampleDetails(Long id) {
+	public SampleDetails getSampleDetails(Long id, Long projectId) {
 		Sample sample = sampleService.read(id);
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
-		return new SampleDetails(sample, isModifiable, metadataForSample, cartService.isSampleInCart(id));
+		Long projectIdentifier = projectId != null ? projectId : cartService.isSampleInCart(sample.getId());
+		return new SampleDetails(sample, isModifiable, metadataForSample, projectIdentifier);
 	}
 
 	/**
@@ -102,7 +109,9 @@ public class UISampleService {
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
 			SequencingObject obj = join.getObject();
-			enhanceQcEntries(obj, project);
+			if (project != null) {
+				enhanceQcEntries(obj, project);
+			}
 			filePairs.add(obj);
 		}
 
@@ -156,6 +165,29 @@ public class UISampleService {
 		return genomeAssemblyJoins.stream()
 				.map(SampleGenomeAssemblyJoin::getObject)
 				.collect(Collectors.toList());
+	}
+
+	public List<ShareSample> getSamplesById(List<Long> sampleIds, Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Long> lockedIds = sampleService.getLockedSamplesInProject(project);
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
+		return samples.stream()
+				.map(sample -> new ShareSample(sample.getId(), sample.getLabel(), !lockedIds.contains(sample.getId())))
+				.collect(Collectors.toList());
+	}
+
+	public List<Long> getCommonSampleIdentifiers(Long projectId, List<Long> sampleIds) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = sampleService.getSamplesInProject(project, sampleIds);
+		return samples.stream().map(Sample::getId).collect(Collectors.toList());
+	}
+
+	public void copySamplesToProject(CopySamplesRequest request) {
+		Project current = projectService.read(request.getOriginal());
+		Project destination = projectService.read(request.getDestination());
+		Collection<Sample> samples = (Collection<Sample>) sampleService.readMultiple(request.getSampleIds());
+		projectService.shareSamples(current, destination, samples, request.isOwner());
+		uiMetadataService.setMetadataFieldRestrictions(destination, request.getFields());
 	}
 
 	/**

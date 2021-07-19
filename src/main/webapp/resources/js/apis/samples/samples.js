@@ -9,9 +9,11 @@ const URL = setBaseUrl(`ajax/samples`);
  * @param {number} id - identifier for a sample
  * @returns {Promise<any>}
  */
-export const fetchSampleDetails = async (id) => {
+export const fetchSampleDetails = async (id, projectId) => {
   try {
-    const { data } = await axios.get(`${URL}/${id}/details`);
+    const { data } = await axios.get(
+      `${URL}/${id}/details${projectId ? `?projectId=${projectId}` : ""}`
+    );
     return data;
   } catch (e) {
     return Promise.reject(e.response.data.error);
@@ -27,7 +29,7 @@ export const fetchSampleDetails = async (id) => {
 export async function fetchSampleFiles({ sampleId, projectId }) {
   try {
     const response = await axios(
-      `${URL}/${sampleId}/files${projectId ? `?projectId=${projectId}` : null}`
+      `${URL}/${sampleId}/files${projectId ? `?projectId=${projectId}` : ""}`
     );
     return response.data;
   } catch (e) {

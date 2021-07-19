@@ -1,5 +1,5 @@
-import React from "react";
 import { Button, Modal, Skeleton, Typography } from "antd";
+import React from "react";
 import { fetchSampleDetails } from "../../apis/samples/samples";
 import { SampleDetails } from "./components/SampleDetails";
 
@@ -8,6 +8,7 @@ const { Text } = Typography;
 /**
  * React component to render details (metadata and files) for a sample.
  * @param sampleId - identifier for a sample
+ * @param projectId - identifier for the project the sample belong to
  * @param removeSample - function to remove the sample from the cart.
  * @param children
  * @returns {JSX.Element}
@@ -15,7 +16,8 @@ const { Text } = Typography;
  */
 export function SampleDetailViewer({
   sampleId,
-  removeSample = Function.prototype,
+  projectId,
+  removeSample,
   children,
 }) {
   const [loading, setLoading] = React.useState(true);
@@ -24,11 +26,11 @@ export function SampleDetailViewer({
 
   React.useEffect(() => {
     if (visible) {
-      fetchSampleDetails(sampleId)
+      fetchSampleDetails(sampleId, projectId)
         .then(setDetails)
         .then(() => setLoading(false));
     }
-  }, [visible]);
+  }, [sampleId, visible]);
 
   const removeSampleFromCart = () => {
     removeSample({ projectId: details.projectId, sampleId });
@@ -61,14 +63,16 @@ export function SampleDetailViewer({
                     {details.sample.sampleName}
                   </span>
                 </Text>
-                <Button
-                  size="small"
-                  danger
-                  style={{ marginRight: 30 }}
-                  onClick={removeSampleFromCart}
-                >
-                  {i18n("SampleDetailsSidebar.removeFromCart")}
-                </Button>
+                {typeof removeSample === "function" && (
+                  <Button
+                    size="small"
+                    danger
+                    style={{ marginRight: 30 }}
+                    onClick={removeSampleFromCart}
+                  >
+                    {i18n("SampleDetailsSidebar.removeFromCart")}
+                  </Button>
+                )}
               </div>
             )
           }

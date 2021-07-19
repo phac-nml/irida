@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -200,5 +201,11 @@ public class UIProjectsService {
 	 */
 	public void deleteProject(Long projectId) throws EntityNotFoundException {
 		projectService.delete(projectId);
+	}
+
+	public List<Project> getProjectToShare(Long current) {
+		Project project = projectService.read(current);
+		Page<Project> pagedProjects = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE, Sort.Direction.ASC, "name");
+		return pagedProjects.getContent();
 	}
 }

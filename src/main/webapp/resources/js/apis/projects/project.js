@@ -9,7 +9,7 @@ const BASE_URL = `ajax/project/details`;
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {updateProjectCoverage: *, getProjectDetails: *, updateProjectDetails: *, updateProjectPriority: *, updateDefaultMetadataTemplate: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {updateProjectCoverage: *, getProjectDetails: *, updateProjectDetails: *, updateProjectPriority: *, updateDefaultMetadataTemplate: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 export const projectApi = createApi({
-  reducerPath: `projectsApi`,
+  reducerPath: `projectApi`,
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),

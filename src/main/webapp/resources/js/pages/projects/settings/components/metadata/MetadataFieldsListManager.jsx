@@ -1,8 +1,8 @@
 import { Button, Empty, notification, Select, Space, Table } from "antd";
 import React from "react";
 import {
-  getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
+  useGetMetadataRestrictionsQuery,
   useUpdateProjectMetadataFieldRestrictionMutation,
 } from "../../../../../apis/metadata/field";
 import { HelpPopover } from "../../../../../components/popovers";
@@ -16,7 +16,7 @@ import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
  * @returns {JSX.Element|string}
  */
 export default function MetadataFieldsListManager({ projectId }) {
-  const [restrictions, setRestrictions] = React.useState([]);
+  const { data: restrictions } = useGetMetadataRestrictionsQuery();
   const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
     projectId
   );
@@ -25,12 +25,6 @@ export default function MetadataFieldsListManager({ projectId }) {
   ] = useUpdateProjectMetadataFieldRestrictionMutation();
 
   const [{ selected, selectedItems }, { setSelected }] = useTableSelect(fields);
-
-  React.useEffect(() => {
-    getMetadataRestrictions()
-      .then(setRestrictions)
-      .catch((message) => notification.error(message));
-  }, []);
 
   const changeFieldRestriction = (field, restriction) => {
     updateProjectMetadataFieldRestriction({

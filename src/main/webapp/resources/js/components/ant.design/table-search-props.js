@@ -1,30 +1,29 @@
-import React from "react";
 import { Button, Input } from "antd";
+import React from "react";
 import { IconSearch } from "../icons/Icons";
 
 function getTextSearchProps(dataIndex) {
-  let searchInput;
+  const inputRef = React.createRef();
+
   return {
-    onFilterDropdownVisibleChange: visible => {
+    onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
-        setTimeout(() => searchInput.select());
+        setTimeout(() => inputRef.current.select());
       }
     },
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={node => {
-            searchInput = node;
-          }}
+          ref={inputRef}
           className="t-name-filter"
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => confirm()}
@@ -49,7 +48,7 @@ function getTextSearchProps(dataIndex) {
           Reset
         </Button>
       </div>
-    )
+    ),
   };
 }
 

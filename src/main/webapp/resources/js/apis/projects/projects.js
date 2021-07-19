@@ -1,10 +1,42 @@
 /**
  * @file API the ProjectAjaxController
  */
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`ajax/projects`);
+
+export const projectsApi = createApi({
+  reducerPath: `projectsApi`,
+  baseQuery: fetchBaseQuery({ baseUrl: URL }),
+  tagTypes: [],
+  endpoints: (build) => ({
+    getProjectsManagedByUser: build.query({
+      query: (currentId) => ({
+        url: `/share-samples/projects`,
+        params: {
+          current: currentId,
+        },
+      }),
+    }),
+    getCommonSampleIdentifiers: build.query({
+      query: ({ projectId, sampleIds }) => ({
+        url: `/share-samples/sampleIds`,
+        method: "POST",
+        params: {
+          projectId,
+        },
+        body: sampleIds,
+      }),
+    }),
+  }),
+});
+
+export const {
+  useGetProjectsManagedByUserQuery,
+  useGetCommonSampleIdentifiersQuery,
+} = projectsApi;
 
 /**
  * Returns the projects on the current page of the projects table.
@@ -30,4 +62,20 @@ export async function getPagedProjectsForUser(params) {
  */
 export async function getProjectRoles() {
   return await axios.get(`${URL}/roles`).then(({ data }) => data);
+}
+
+export async function copySamples({
+  original,
+  destination,
+  sampleIds,
+  owner,
+  fields,
+}) {
+  return axios.post(`${URL}/share-samples/copy`, {
+    original,
+    destination,
+    sampleIds,
+    owner,
+    fields,
+  });
 }

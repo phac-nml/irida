@@ -1,8 +1,11 @@
 import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
   BellOutlined,
   BoldOutlined,
   CalendarTwoTone,
   CheckCircleOutlined,
+  CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
@@ -37,6 +40,7 @@ import {
   RocketOutlined,
   SearchOutlined,
   SettingOutlined,
+  ShareAltOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -196,6 +200,12 @@ export const IconCalendarTwoTone = ({ ...props }) => (
   <CalendarTwoTone {...props} />
 );
 
+export const IconShareSamples = ({ ...props }) => (
+  <ShareAltOutlined {...props} />
+);
+
+export const IconCheck = ({ ...props }) => <CheckOutlined {...props} />;
+
 /*
 File Type Icons
  */
@@ -227,3 +237,12 @@ export const IconCheckCircle = ({ ...props }) => (
 );
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
+
+/*
+Arrows
+ */
+export const IconArrowRight = ({ ...props }) => (
+  <ArrowRightOutlined {...props} />
+);
+
+export const IconArrowLeft = ({ ...props }) => <ArrowLeftOutlined {...props} />;
