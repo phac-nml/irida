@@ -210,7 +210,7 @@ public class ProjectSampleMetadataController {
 
 			} catch (EntityNotFoundException e) {
 				// This really should not happen, but hey, you never know!
-				errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
+				errorList.add(messageSource.getMessage("server.metadataimport.results.save.sample-not-found",
 						new Object[] { e.getMessage() }, locale));
 			}
 
@@ -219,11 +219,12 @@ public class ProjectSampleMetadataController {
 			}
 		} else {
 			errors.put("found-error",
-					messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
+					messageSource.getMessage("server.metadataimport.results.save.found-error", new Object[] {},
+							locale));
 		}
 		if (errors.size() == 0) {
-			return ImmutableMap.of("success",
-					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale));
+			return ImmutableMap.of("success", messageSource.getMessage("server.metadataimport.results.save.success",
+					new Object[] { found.size() }, locale));
 		}
 		return errors;
 	}
