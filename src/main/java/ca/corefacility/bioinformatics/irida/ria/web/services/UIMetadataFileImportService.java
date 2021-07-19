@@ -60,9 +60,9 @@ public class UIMetadataFileImportService {
 		List<Map<String, String>> rows = new ArrayList<>();
 
 		// save headers
-		Map<String, Integer> headers_set = parser.getHeaderMap();
-		List<String> headers_list = new ArrayList<>(headers_set.keySet());
-		storage.saveHeaders(headers_list);
+		Map<String, Integer> headersSet = parser.getHeaderMap();
+		List<String> headersList = new ArrayList<>(headersSet.keySet());
+		storage.saveHeaders(headersList);
 
 		// save data
 		for (CSVRecord row : parser) {
