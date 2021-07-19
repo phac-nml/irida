@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataFileImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -44,18 +44,18 @@ public class ProjectSampleMetadataController {
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final UIMetadataImportService metadataImportService;
+	private final UIMetadataFileImportService metadataFileImportService;
 
 	@Autowired
 	public ProjectSampleMetadataController(MessageSource messageSource, ProjectService projectService,
 			SampleService sampleService, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, UIMetadataImportService metadataImportService) {
+			ProjectControllerUtils projectControllerUtils, UIMetadataFileImportService metadataFileImportService) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectControllerUtils = projectControllerUtils;
-		this.metadataImportService = metadataImportService;
+		this.metadataFileImportService = metadataFileImportService;
 	}
 
 	/**
@@ -84,11 +84,11 @@ public class ProjectSampleMetadataController {
 			// Check the file type
 			switch (extension) {
 			case "csv":
-				storage = metadataImportService.parseCSV(inputStream);
+				storage = metadataFileImportService.parseCSV(projectId, inputStream);
 				break;
 			case "xlsx":
 			case "xls":
-				storage = metadataImportService.parseExcel(inputStream, extension);
+				storage = metadataFileImportService.parseExcel(projectId, inputStream, extension);
 				break;
 			default:
 				// Should never reach here as the uploader limits to .csv, .xlsx and .xlx files.
@@ -210,7 +210,7 @@ public class ProjectSampleMetadataController {
 
 			} catch (EntityNotFoundException e) {
 				// This really should not happen, but hey, you never know!
-				errorList.add(messageSource.getMessage("metadata.results.save.sample-not-found",
+				errorList.add(messageSource.getMessage("server.metadataimport.results.save.sample-not-found",
 						new Object[] { e.getMessage() }, locale));
 			}
 
@@ -219,11 +219,12 @@ public class ProjectSampleMetadataController {
 			}
 		} else {
 			errors.put("found-error",
-					messageSource.getMessage("metadata.results.save.found-error", new Object[] {}, locale));
+					messageSource.getMessage("server.metadataimport.results.save.found-error", new Object[] {},
+							locale));
 		}
 		if (errors.size() == 0) {
-			return ImmutableMap.of("success",
-					messageSource.getMessage("metadata.results.save.success", new Object[] { found.size() }, locale));
+			return ImmutableMap.of("success", messageSource.getMessage("server.metadataimport.results.save.success",
+					new Object[] { found.size() }, locale));
 		}
 		return errors;
 	}

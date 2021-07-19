@@ -84,7 +84,7 @@ export class ToolbarComponent extends Component {
                 </Button>
                 <Button
                   className="t-import-metadata-btn"
-                  href={urls.import+"2"}
+                  href={urls.import+"2/file"}
                   tour="tour-import"
                 >
                   <IconCloudUpload />
