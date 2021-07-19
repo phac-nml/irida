@@ -7,9 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -37,27 +35,27 @@ import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Integration tests for the sample service.
- *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -83,6 +81,8 @@ public class SampleServiceImplIT {
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 	@Autowired
 	private SampleRepository sampleRepository;
+	@Autowired
+	private MetadataTemplateService metadataTemplateService;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -111,13 +111,20 @@ public class SampleServiceImplIT {
 		Project p = projectService.read(1L);
 
 		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+						.stream()
+						.map(t -> t.getObject()
+								.getId())
 						.collect(Collectors.toList()));
 		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2)
+						.stream()
+						.map(t -> t.getObject()
+								.getId())
 						.collect(Collectors.toList()));
 		assertTrue("Sample 3 should have no genome assemblies before",
-				sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty());
+				sampleGenomeAssemblyJoinRepository.findBySample(sample3)
+						.isEmpty());
 
 		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
 				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
@@ -135,10 +142,14 @@ public class SampleServiceImplIT {
 
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
-				objectService.getSequencingObjectsForSample(merged).size());
+				objectService.getSequencingObjectsForSample(merged)
+						.size());
 
 		assertEquals("Sample 1 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+						.stream()
+						.map(t -> t.getObject()
+								.getId())
 						.collect(Collectors.toList()));
 	}
 
@@ -154,13 +165,20 @@ public class SampleServiceImplIT {
 		Project p = projectService.read(1L);
 
 		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample1).stream().map(t -> t.getObject().getId())
+				sampleGenomeAssemblyJoinRepository.findBySample(sample1)
+						.stream()
+						.map(t -> t.getObject()
+								.getId())
 						.collect(Collectors.toList()));
 		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
+				sampleGenomeAssemblyJoinRepository.findBySample(sample2)
+						.stream()
+						.map(t -> t.getObject()
+								.getId())
 						.collect(Collectors.toList()));
 		assertTrue("Sample 3 should have no genome assemblies before",
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty());
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+						.isEmpty());
 
 		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
 				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
@@ -182,10 +200,14 @@ public class SampleServiceImplIT {
 
 		// the merged sample should have 3 sequence files
 		assertEquals("Merged sample should have 3 sequence files", 3,
-				objectService.getSequencingObjectsForSample(merged).size());
+				objectService.getSequencingObjectsForSample(merged)
+						.size());
 
 		assertEquals("Sample 3 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
+				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+						.stream()
+						.map(t -> t.getObject()
+								.getId())
 						.collect(Collectors.toList()));
 	}
 
@@ -244,7 +266,8 @@ public class SampleServiceImplIT {
 		Long sampleID = 2L;
 		Long projectID = 1L;
 		Project p = projectService.read(projectID);
-		Sample s = sampleService.getSampleForProject(p, sampleID).getObject();
+		Sample s = sampleService.getSampleForProject(p, sampleID)
+				.getObject();
 
 		assertNotNull("Sample was not populated.", s);
 		assertEquals("Wrong external id.", sampleID, s.getId());
@@ -313,7 +336,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests getting the total bases for a sample as an admin user.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -328,7 +351,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests getting the total bases for a sample as a regular user.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -343,7 +366,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests failing to get bases for a sample for a user not on the project.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test(expected = AccessDeniedException.class)
@@ -357,7 +380,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests failing to get coverage for a sample for a user not on the project.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test(expected = AccessDeniedException.class)
@@ -371,7 +394,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests getting the coverage as a regular user.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -386,7 +409,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests esimating coverage with a reference file.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -404,7 +427,7 @@ public class SampleServiceImplIT {
 
 	/**
 	 * Tests failing to get the coverage for a sample with no fastqc results.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test(expected = SequenceFileAnalysisException.class)
@@ -415,10 +438,10 @@ public class SampleServiceImplIT {
 
 		sampleService.estimateCoverageForSample(s, 500);
 	}
-	
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testGetSampleOrganismForProject(){
+	public void testGetSampleOrganismForProject() {
 		Project p = projectService.read(1L);
 		List<String> organisms = sampleService.getSampleOrganismsForProject(p);
 		assertEquals("should be 2 organisms", 2, organisms.size());
@@ -429,15 +452,15 @@ public class SampleServiceImplIT {
 	public void testGetSamplesForAnalysisSubmission() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
-		
+
 		assertEquals("should be 2 samples", 2, samples.size());
-		
+
 		Set<Long> ids = Sets.newHashSet(8L, 9L);
 		samples.forEach(s -> ids.remove(s.getId()));
-		
+
 		assertTrue("all sample ids should be found", ids.isEmpty());
 	}
-	
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testGetQCEntiresForSample() {
@@ -446,7 +469,7 @@ public class SampleServiceImplIT {
 
 		assertEquals("should be 1 qc entry", 1L, qcEntriesForSample.size());
 	}
-	
+
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testGetQCEntiresForSampleNotAllowed() {
@@ -454,7 +477,94 @@ public class SampleServiceImplIT {
 		s.setId(1L);
 		sampleService.getQCEntriesForSample(s);
 	}
-	
+
+	@Test
+	@WithMockUser(username = "test", roles = "USER")
+	public void testGetPartialMetadataAsUser() {
+		Project project = projectService.read(1L);
+
+		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+				project);
+
+		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProject(project,
+				permittedFieldsForCurrentUser);
+
+		Map<Long, Set<MetadataEntry>> metadata = metadataForProject.getMetadata();
+
+		Set<MetadataEntry> metadataEntries = metadata.values()
+				.iterator()
+				.next();
+
+		assertEquals("should only be 1 metadata entry", 1, metadataEntries.size());
+		assertEquals("only field1 should be available", "field1", metadataEntries.iterator()
+				.next()
+				.getField()
+				.getLabel());
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "test", roles = "USER")
+	public void testGetDisallowedMetadata() {
+		Project project = projectService.read(1L);
+
+		MetadataTemplateField field1 = metadataTemplateService.readMetadataField(1L);
+		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(
+				2L); //user shouldn't be able to read this one in the project
+
+		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
+
+		sampleService.getMetadataForProject(project, metadataTemplateFields);
+	}
+
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
+	@Test
+	public void testManagerReadAllMetadata() {
+		Project project = projectService.read(1L);
+
+		MetadataTemplateField field1 = metadataTemplateService.readMetadataField(1L);
+		MetadataTemplateField field2 = metadataTemplateService.readMetadataField(2L);
+
+		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
+
+		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProject(project,
+				metadataTemplateFields);
+
+		Map<Long, Set<MetadataEntry>> metadata = metadataForProject.getMetadata();
+
+		Set<MetadataEntry> metadataEntries = metadata.values()
+				.iterator()
+				.next();
+
+		assertEquals("should be 2 metadata entries", 2, metadataEntries.size());
+
+		List<MetadataTemplateField> fields = metadataEntries.stream()
+				.map(MetadataEntry::getField)
+				.collect(Collectors.toList());
+
+		assertEquals("should be 2 fields", 2, fields.size());
+		assertTrue(fields.contains(field1));
+		assertTrue(fields.contains(field2));
+	}
+
+	@WithMockUser(username = "fbristow", roles = "MANAGER")
+	@Test
+	public void testReadSampleMetadata() {
+
+		Sample sample = sampleService.read(1L);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
+
+		assertEquals("should be 2 entries", 2, metadataForSample.size());
+	}
+
+	@Test
+	@WithMockUser(username = "test", roles = "USER")
+	public void testReadSampleMetadataAsUser() {
+		Sample sample = sampleService.read(1L);
+		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
+
+		assertEquals("should be 1 entries", 1, metadataForSample.size());
+	}
+
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);

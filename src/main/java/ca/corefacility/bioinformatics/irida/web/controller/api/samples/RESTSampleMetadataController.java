@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.api.samples;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -94,15 +93,14 @@ public class RESTSampleMetadataController {
 		//get the project and samples for the project
 		Project project = projectService.read(projectId);
 
-		List<MetadataFieldResponse> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
+		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project);
-		List<MetadataTemplateField> metadataTemplateFields = permittedFieldsForCurrentUser.stream()
-				.map(MetadataFieldResponse::getField)
-				.collect(Collectors.toList());
 
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project,
+		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
 				metadataTemplateFields);
+
+		final Map<Long, Set<MetadataEntry>> metadataForProject = metadataResponse.getMetadata();
 
 		//for each sample
 		for (Sample s : samples) {

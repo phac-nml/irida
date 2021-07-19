@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -76,15 +77,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 
 	/**
-	 * Get the {@link MetadataEntry} set associated with a given {@link Sample} for the selected {@link MetadataTemplateField}
-	 *
-	 * @param sample the {@link Sample} to read fields for
-	 * @param fields the {@link MetadataTemplateField}s to request
-	 * @return the collection of {@link MetadataEntry} for the given {@link Sample}
-	 */
-	public Set<MetadataEntry> getMetadataForSample(Sample sample, Collection<MetadataTemplateField> fields);
-
-	/**
 	 * Get a list of {@link Sample} ids that are locked in this project.  This method exists as a faster way of determining ownership than getting the full {@link ProjectSampleJoin}
 	 *
 	 * @param project the {@link Project} to check
@@ -95,11 +87,11 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	/**
 	 * Get the metadata collections for an entire project.  This will return a Map of {@link Sample} ID with a Set of the {@link MetadataEntry}s
 	 *
-	 * @param project the {@link Project} to get metadata for
-	 * @param fields the fields to get metadata fro from the project
+	 * @param project the {@link Project} to get metadata for.
+	 * @param fields the fields to get metadata from in the project.  This must not be empty.
 	 * @return a map of metadata
 	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project, List<MetadataTemplateField> fields);
+	public ProjectMetadataResponse getMetadataForProject(Project project, List<MetadataTemplateField> fields);
 	
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

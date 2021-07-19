@@ -1,13 +1,16 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata;
 
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.envers.Audited;
+import java.util.Objects;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+
+import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -36,7 +39,7 @@ public class MetadataEntry {
 	@JoinColumn(name = "field_id", nullable = false)
 	private MetadataTemplateField field;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sample_id", nullable = false)
 	private Sample sample;
 
@@ -119,5 +122,10 @@ public class MetadataEntry {
 	@JsonIgnore
 	public void setSample(Sample sample) {
 		this.sample = sample;
+	}
+
+	@JsonIgnore
+	public Sample getSample() {
+		return sample;
 	}
 }

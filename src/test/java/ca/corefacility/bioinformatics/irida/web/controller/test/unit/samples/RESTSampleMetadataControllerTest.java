@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataFieldResponse;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -56,18 +55,14 @@ public class RESTSampleMetadataControllerTest {
 		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
 		List<MetadataTemplateField> fieldList = Lists.newArrayList(f1);
 
-		List<MetadataFieldResponse> fieldResponses = fieldList.stream()
-				.map(f -> new MetadataFieldResponse(p1, f))
-				.collect(Collectors.toList());
-
 		Map<Long, Set<MetadataEntry>> metadata = new HashMap<>();
 		metadata.put(s1.getId(), Sets.newHashSet(new MetadataEntry("value", "text", f1)));
 		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", f1)));
 
 		when(projectService.read(p1.getId())).thenReturn(p1);
 		when(sampleService.getSamplesForProjectShallow(p1)).thenReturn(Lists.newArrayList(s1, s2));
-		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1)).thenReturn(fieldResponses);
-		when(sampleService.getMetadataForProject(p1, fieldList)).thenReturn(metadata);
+		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1)).thenReturn(fieldList);
+		when(sampleService.getMetadataForProject(p1, fieldList)).thenReturn(new ProjectMetadataResponse(p1,metadata));
 
 		ModelMap modelMap = metadataController.getProjectSampleMetadata(p1.getId());
 
