@@ -13,10 +13,10 @@ const { Step } = Steps;
 export function SampleMetadataImportSteps({ currentStep }) {
   return (
     <Steps current={currentStep} >
-      <Step title="Upload File" />
-      <Step title="Map Headers" />
-      <Step title="Review Data" />
-      <Step title="Complete" />
+      <Step title={i18n("SampleMetadataImportSteps.step1")} />
+      <Step title={i18n("SampleMetadataImportSteps.step2")} />
+      <Step title={i18n("SampleMetadataImportSteps.step3")} />
+      <Step title={i18n("SampleMetadataImportSteps.step4")} />
     </Steps>
   );
 }
