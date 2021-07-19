@@ -9,7 +9,7 @@ public class ProjectSampleMetadataResponse {
 
 	private String messageKey;
 	private String message;
-	private List errorList;
+	private List<String> errorList;
 
 	public ProjectSampleMetadataResponse() {
 	}
@@ -30,11 +30,11 @@ public class ProjectSampleMetadataResponse {
 		this.message = message;
 	}
 
-	public List getErrorList() {
+	public List<String> getErrorList() {
 		return errorList;
 	}
 
-	public void setErrorList(List errorList) {
+	public void setErrorList(List<String> errorList) {
 		this.errorList = errorList;
 	}
 }
