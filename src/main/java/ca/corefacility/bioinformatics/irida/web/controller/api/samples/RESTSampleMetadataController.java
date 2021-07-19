@@ -94,7 +94,7 @@ public class RESTSampleMetadataController {
 		Project project = projectService.read(projectId);
 
 		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
 		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,

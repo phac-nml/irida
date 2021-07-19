@@ -78,7 +78,7 @@ public class LineListController {
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
 		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		Map<Long, Set<MetadataEntry>> metadataForProject;
 
@@ -238,11 +238,13 @@ public class LineListController {
 		4. Create an AgGridColumn for the field and add it to the template.
 		 */
 		for (MetadataTemplateField field : template.getFields()) {
-			int index = allFieldsLabels.indexOf(field.getFieldKey());
-			allFieldsAgGridColumns.remove(index);
-			allFieldsLabels.remove(index);
-			// Need to add parameter for if they have permissions to edit.
-			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
+			if(allFieldsLabels.contains(field.getFieldKey())) {
+				int index = allFieldsLabels.indexOf(field.getFieldKey());
+				allFieldsAgGridColumns.remove(index);
+				allFieldsLabels.remove(index);
+				// Need to add parameter for if they have permissions to edit.
+				templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
+			}
 		}
 
 		// Add the "icon" to the template columns
@@ -325,14 +327,11 @@ public class LineListController {
 		Project project = projectService.read(projectId);
 
 		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
 				.collect(Collectors.toSet());
 
-		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
 
 		/*
 		IGNORED TEMPLATE FIELDS:
@@ -342,20 +341,6 @@ public class LineListController {
 		sent down to the UI.
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
-
-		//TODO: fields in templates here will be added to the fields list even if a user isn't permitted to read them.  Needs refactored
-		/*
-		Get all unique fields from the templates.
-		 */
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
-			List<MetadataTemplateField> templateFields = template.getFields();
-			for (MetadataTemplateField field : templateFields) {
-				if (!staticMetadataFields.contains(field)) {
-					fieldSet.add(field);
-				}
-			}
-		}
 
 		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))

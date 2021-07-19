@@ -484,7 +484,7 @@ public class SampleServiceImplIT {
 		Project project = projectService.read(1L);
 
 		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProject(project,
 				permittedFieldsForCurrentUser);
