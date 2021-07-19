@@ -30,7 +30,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
       <Text>
         {i18n("SampleMetadataImportMapHeaders.description")}
       </Text>
-      <Radio.Group style={{ width: `100%` }} defaultValue={sampleNameColumn}>
+      <Radio.Group style={{ width: `100%` }} defaultValue={sampleNameColumn ? sampleNameColumn : headers[0]}>
         {headers.map((header, index) => (
           <BlockRadioInput key={`radio-item-header-${index}`}>
             <Radio key={`radio-header-${index}`} value={header}>
