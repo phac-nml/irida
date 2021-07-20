@@ -58,7 +58,7 @@ export function ShareSamplesList({ projectId }) {
         <List.Item.Meta
           avatar={
             <ShareStatusAvatar
-              locked={sample.locked}
+              locked={!sample.owner}
               remote={projectDetails?.remote}
             />
           }
@@ -83,7 +83,7 @@ export function ShareSamplesList({ projectId }) {
   const getLockedMessage = (locked) =>
     locked
       ? "Samples will be locked from modification."
-      : "Allow modification of samples in destination project";
+      : "Unlocked samples will be modifiable in the target project";
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>

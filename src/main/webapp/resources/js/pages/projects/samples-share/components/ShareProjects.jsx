@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsManagedByUserQuery } from "../../../../apis/projects/projects";
 import { IconArrowRight } from "../../../../components/icons/Icons";
-import { setTargetProject, setNextStep } from "../services/shareSlice";
+import { setNextStep, setTargetProject } from "../services/shareSlice";
 
 /**
  * React component to select the destination project.
@@ -14,7 +14,7 @@ import { setTargetProject, setNextStep } from "../services/shareSlice";
 export function ShareProjects({ projectId }) {
   const dispatch = useDispatch();
   const { data: projects } = useGetProjectsManagedByUserQuery(projectId);
-  const { destination } = useSelector((state) => state.reducer);
+  const { target } = useSelector((state) => state.reducer);
   const [options, setOptions] = React.useState([]);
 
   /**
@@ -51,7 +51,7 @@ export function ShareProjects({ projectId }) {
         size="large"
         style={{ width: `100%` }}
         onChange={onChange}
-        value={destination?.name}
+        value={target?.name}
         filterOption={(input, option) => {
           return option.children.props.children[0]
             .toLowerCase()
@@ -62,7 +62,7 @@ export function ShareProjects({ projectId }) {
       </Select>
 
       <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-        <Button onClick={() => dispatch(setNextStep())} disabled={!destination}>
+        <Button onClick={() => dispatch(setNextStep())} disabled={!target}>
           <Space>
             <span>Review Samples</span>
             <IconArrowRight />
