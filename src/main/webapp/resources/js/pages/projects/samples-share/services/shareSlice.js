@@ -34,6 +34,12 @@ export const copySamples = createAsyncThunk(
   }
 );
 
+/*
+When a user selects the samples they want to copy and selects "Copy Samples", tbe
+selected sample information is stored im session storage since it can become quite
+large.  When this page loads we are simply retrieving that information out of
+the session and converting it back to a json object for use as the initial state.
+ */
 const storedState = (() => {
   const sharedString = sessionStorage.getItem("share");
   return sharedString ? JSON.parse(sharedString) : {};
