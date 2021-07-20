@@ -8,14 +8,15 @@ import {
 import { IconArrowLeft } from "../../../../components/icons/Icons";
 import {
   setFields,
-  setNextStep,
   setPreviousStep,
   updateFields,
 } from "../services/shareSlice";
 
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();
-  const { target = {}, fields = [] } = useSelector((state) => state.reducer);
+  const { target = {}, fields = [], samples, locked } = useSelector(
+    (state) => state.reducer
+  );
   const { data: restrictions = [] } = useGetMetadataRestrictionsQuery();
 
   const ROLES = {
@@ -105,6 +106,10 @@ export function ShareMetadataFields({ projectId }) {
     );
   };
 
+  const copyToTarget = () => {
+    console.log({ samples, locked, fields, target });
+  };
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Form>
@@ -158,7 +163,7 @@ export function ShareMetadataFields({ projectId }) {
             <span>Review Samples</span>
           </Space>
         </Button>
-        <Button type="primary" onClick={() => dispatch(setNextStep())}>
+        <Button type="primary" onClick={copyToTarget}>
           <Space>
             <span>Copy Samples</span>
           </Space>
