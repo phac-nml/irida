@@ -15,9 +15,7 @@ import {
 
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();
-  const { destination = {}, fields = [] } = useSelector(
-    (state) => state.reducer
-  );
+  const { target = {}, fields = [] } = useSelector((state) => state.reducer);
   const { data: restrictions = [] } = useGetMetadataRestrictionsQuery();
 
   const ROLES = {
@@ -29,28 +27,29 @@ export function ShareMetadataFields({ projectId }) {
     data: currentFields,
     isLoading: currentLoading,
   } = useGetMetadataFieldsForProjectQuery(projectId);
+
   const {
-    data: destinationFields,
-    isLoading: destinationLoading,
-  } = useGetMetadataFieldsForProjectQuery(destination.identifier, {
-    skip: destination.identifier === undefined,
+    data: targetFields,
+    isLoading: targetLoading,
+  } = useGetMetadataFieldsForProjectQuery(target.identifier, {
+    skip: target.identifier === undefined,
   });
 
-  const getPermissionStatus = (current, destination) => {
+  const getPermissionStatus = (current, target) => {
     const currentRestriction = restrictions.findIndex(
       (restriction) => restriction.value === item.current.restriction
     );
-    const destinationRestriction = restrictions.findIndex(
+    const targetRestriction = restrictions.findIndex(
       (restriction) => restriction.value === item.target.restriction
     );
 
-    return currentRestriction - destinationRestriction;
+    return currentRestriction - targetRestriction;
   };
 
   React.useEffect(() => {
-    if (!currentLoading && !destinationLoading) {
+    if (!currentLoading && !targetLoading) {
       const merged = currentFields.map((current) => {
-        const target = destinationFields?.find(
+        const target = targetFields?.find(
           (element) => element.label === current.label
         );
         return {
@@ -63,7 +62,7 @@ export function ShareMetadataFields({ projectId }) {
       });
       dispatch(setFields(merged));
     }
-  }, [destinationFields, destinationLoading, currentFields, currentLoading]);
+  }, [targetFields, targetLoading, currentFields, currentLoading]);
 
   const updateRestriction = (index, value) => {
     dispatch(updateFields(index, value));
@@ -73,20 +72,20 @@ export function ShareMetadataFields({ projectId }) {
     const current = restrictions.findIndex(
       (restriction) => restriction.value === item.current.restriction
     );
-    const destination = restrictions.findIndex(
+    const target = restrictions.findIndex(
       (restriction) => restriction.value === item.target.restriction
     );
 
-    const loweredPermission = current > destination;
-    const higherPermission = current < destination;
+    const loweredPermission = current > target;
+    const higherPermission = current < target;
 
     const feedback = {
       hasFeedback: true,
       validateStatus: loweredPermission ? "warning" : "success",
       help: loweredPermission
-        ? "Permissions are less secure in the destination project"
+        ? "Permissions are less secure in the target project"
         : higherPermission
-        ? "Permissions are more secure in the destination project"
+        ? "Permissions are more secure in the target project"
         : "Permissions have not been changed",
     };
 
@@ -110,7 +109,7 @@ export function ShareMetadataFields({ projectId }) {
     <Space direction="vertical" style={{ display: "block" }}>
       <Form>
         <Table
-          loading={currentLoading && destinationLoading}
+          loading={currentLoading && targetLoading}
           pagination={{ hideOnSinglePage: true, pageSize: fields?.length }}
           rowKey={(item) => `field-${item.current.id}`}
           locale={{
@@ -128,9 +127,7 @@ export function ShareMetadataFields({ projectId }) {
                     {!item.target.exists && (
                       <Popover
                         placement={"right"}
-                        content={
-                          "This field do exist in the destination project."
-                        }
+                        content={"This field do exist in the target project."}
                       >
                         <Tag color="green">NEW</Tag>
                       </Popover>
@@ -145,7 +142,7 @@ export function ShareMetadataFields({ projectId }) {
               render: (text) => ROLES[text],
             },
             {
-              title: "Destination Project Restrictions",
+              title: "target Project Restrictions",
               dataIndex: ["target", "restriction"],
               render: renderRestriction,
               width: 500,

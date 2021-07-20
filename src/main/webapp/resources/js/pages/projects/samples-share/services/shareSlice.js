@@ -62,9 +62,6 @@ export const shareSlice = createSlice({
     setPreviousStep: (state) => {
       state.step = state.step - 1;
     },
-    setFields: (state, action) => {
-      state.fields = action.payload.fields;
-    },
     updateFields: (state, action) => {
       state.fields[action.payload.index].target.restriction =
         action.payload.value;
@@ -82,6 +79,9 @@ export const shareSlice = createSlice({
       })
       .addCase(setSamplesLockedStatus, (state, action) => {
         state.locked = action.payload.locked;
+      })
+      .addCase(setFields, (state, action) => {
+        state.fields = action.payload.fields;
       });
   },
 });
