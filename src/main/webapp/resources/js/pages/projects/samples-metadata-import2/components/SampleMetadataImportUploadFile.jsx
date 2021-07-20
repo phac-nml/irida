@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setHeaders } from "../services/rootReducer"
 import { navigate } from "@reach/router"
@@ -21,6 +21,7 @@ const { Text } = Typography
  */
 export function SampleMetadataImportUploadFile({ projectId }) {
   const dispatch = useDispatch();
+  const [status, setStatus] = useState("process");
 
   useClearProjectSampleMetadataQuery(projectId);
 
@@ -38,6 +39,7 @@ export function SampleMetadataImportUploadFile({ projectId }) {
         dispatch(setHeaders(info.file.response.headers, info.file.response.sampleNameColumn));
         navigate('headers');
       } else if (status === 'error') {
+        setStatus("error");
         notification.error({
           message: i18n("SampleMetadataImportUploadFile.error", info.file.name),
         });
@@ -46,7 +48,7 @@ export function SampleMetadataImportUploadFile({ projectId }) {
   }
 
   return (
-    <SampleMetadataImportWizard currentStep={0}>
+    <SampleMetadataImportWizard currentStep={0} currentStatus={status}>
       <DragUpload
         className="t-sample-metadata-file-uploader"
         uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}

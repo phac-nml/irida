@@ -10,9 +10,9 @@ const { Step } = Steps;
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportSteps({ currentStep }) {
+export function SampleMetadataImportSteps({ currentStep, currentStatus }) {
   return (
-    <Steps current={currentStep} >
+    <Steps current={currentStep} status={currentStatus}>
       <Step title={i18n("SampleMetadataImportSteps.step1")} />
       <Step title={i18n("SampleMetadataImportSteps.step2")} />
       <Step title={i18n("SampleMetadataImportSteps.step3")} />

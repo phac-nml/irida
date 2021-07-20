@@ -12,14 +12,14 @@ const { Text, Title } = Typography
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportWizard({ currentStep, children }) {
+export function SampleMetadataImportWizard({ currentStep, currentStatus, children }) {
   return (
     <Space direction="vertical" size="large" style={{ width: `100%` }}>
       <Title level={3}>{i18n("SampleMetadataImportWizard.title")}</Title>
       <Text type="secondary">
         {i18n("SampleMetadataImportWizard.intro")}
       </Text>
-      <SampleMetadataImportSteps currentStep={currentStep} />
+      <SampleMetadataImportSteps currentStep={currentStep} currentStatus={currentStatus} />
       {children}
     </Space>
   );
