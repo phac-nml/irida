@@ -57,7 +57,6 @@ export const shareSlice = createSlice({
         action.payload.value;
     },
     setNextStep: (state) => {
-      console.log("HELLO");
       state.step = state.step + 1;
     },
     setPreviousStep: (state) => {
