@@ -1,11 +1,18 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-export const setDestinationProject = createAction(
+/*
+Action to set the target project (project that will receive the samples)
+ */
+export const setTargetProject = createAction(
   `share/setDestinationProject`,
   (project) => ({ payload: { project } })
 );
 
-export const updatedSamplesOwnerStatus = createAction(
+/*
+Action to set the ownership permissions on a sample.  If "locked", samples will
+not be modifiable or movable in the target project.
+ */
+export const setSamplesLockedStatus = createAction(
   `share/updatedSamplesOwnerStatus`,
   (owner) => ({ payload: { owner } })
 );
@@ -47,13 +54,19 @@ const storedState = (() => {
 
 export const shareSlice = createSlice({
   name: "share",
-  initialState: { ...storedState, owner: true, step: 0 },
+  initialState: { ...storedState, locked: false, step: 0 },
   reducers: {
-    setDestinationProject: (state, action) => {
+    setNextStep: (state) => {
+      state.step = state.step + 1;
+    },
+    setPreviousStep: (state) => {
+      state.step = state.step - 1;
+    },
+    setTargetProject: (state, action) => {
       state.destination = action.payload.project;
     },
-    updatedSamplesOwnerStatus: (state, action) => {
-      state.owner = action.payload.owner;
+    setSamplesLockedStatus: (state, action) => {
+      state.locked = action.payload.locked;
     },
     setFields: (state, action) => {
       state.fields = action.payload.fields;
@@ -61,12 +74,6 @@ export const shareSlice = createSlice({
     updateFields: (state, action) => {
       state.fields[action.payload.index].target.restriction =
         action.payload.value;
-    },
-    setNextStep: (state) => {
-      state.step = state.step + 1;
-    },
-    setPreviousStep: (state) => {
-      state.step = state.step - 1;
     },
     removeSample: (state, action) => {
       const samples = [...state.samples];

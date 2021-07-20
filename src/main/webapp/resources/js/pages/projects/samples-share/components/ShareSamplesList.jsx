@@ -16,13 +16,13 @@ import {
   removeSample,
   setNextStep,
   setPreviousStep,
-  updatedSamplesOwnerStatus,
+  setSamplesLockedStatus,
 } from "../services/shareSlice";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ projectId }) {
   const dispatch = useDispatch();
-  const { owner, destination = {}, samples } = useSelector(
+  const { locked, destination = {}, samples } = useSelector(
     (state) => state.reducer
   );
 
@@ -58,7 +58,7 @@ export function ShareSamplesList({ projectId }) {
         <List.Item.Meta
           avatar={
             <ShareStatusAvatar
-              owner={sample.owner}
+              locked={sample.locked}
               remote={projectDetails?.remote}
             />
           }
@@ -77,13 +77,13 @@ export function ShareSamplesList({ projectId }) {
     );
   };
 
-  const updateOwnerShip = (checked) =>
-    dispatch(updatedSamplesOwnerStatus(checked));
+  const updateLockedStatus = (checked) =>
+    dispatch(setSamplesLockedStatus(checked));
 
-  const getOwnershipMessage = (owner) =>
-    owner
-      ? " Allow modification of samples in destination project"
-      : "Samples will be locked from modification.";
+  const getLockedMessage = (locked) =>
+    locked
+      ? "Samples will be locked from modification."
+      : "Allow modification of samples in destination project";
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
@@ -109,12 +109,12 @@ export function ShareSamplesList({ projectId }) {
       {!isLoading && !projectDetails.remote ? (
         <Space>
           <Switch
-            checkedChildren={<IconCheck />}
-            unCheckedChildren={<IconLocked />}
-            checked={owner}
-            onChange={updateOwnerShip}
+            checkedChildren={<IconLocked />}
+            unCheckedChildren={<IconCheck />}
+            checked={locked}
+            onChange={updateLockedStatus}
           />
-          <Typography.Text strong>{getOwnershipMessage(owner)}</Typography.Text>
+          <Typography.Text strong>{getLockedMessage(locked)}</Typography.Text>
         </Space>
       ) : null}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
