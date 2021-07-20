@@ -18,6 +18,8 @@ function ShareSamples({ projectId }) {
     (state) => state.reducer
   );
 
+  console.log(step);
+
   React.useEffect(() => {
     if (
       !sharedProjectId ||

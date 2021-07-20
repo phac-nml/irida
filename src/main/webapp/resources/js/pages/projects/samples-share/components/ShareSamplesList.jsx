@@ -17,7 +17,7 @@ import {
   setNextStep,
   setPreviousStep,
   updatedSamplesOwnerStatus,
-} from "../services/shareReducer";
+} from "../services/shareSlice";
 import { ShareStatusAvatar } from "./ShareStatusAvatar";
 
 export function ShareSamplesList({ projectId }) {
@@ -107,9 +107,6 @@ export function ShareSamplesList({ projectId }) {
         </VList>
       </List>
       {!isLoading && !projectDetails.remote ? (
-        // <Checkbox checked={owner} onChange={updateOwnerShip}>
-        //   Allow modification of samples in destination project
-        // </Checkbox>
         <Space>
           <Switch
             checkedChildren={<IconCheck />}
