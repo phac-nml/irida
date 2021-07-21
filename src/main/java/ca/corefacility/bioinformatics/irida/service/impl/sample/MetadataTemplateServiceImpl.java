@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -27,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
@@ -44,20 +42,17 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		implements MetadataTemplateService {
 
 	private MetadataTemplateRepository metadataTemplateRepository;
-	private ProjectMetadataTemplateJoinRepository pmtRepository;
 	private MetadataFieldRepository fieldRepository;
 	private MetadataRestrictionRepository metadataRestrictionRepository;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 
 	@Autowired
-	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmtRepository, MetadataFieldRepository fieldRepository,
+	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository, MetadataFieldRepository fieldRepository,
 			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
 		super(repository, validator, MetadataTemplate.class);
 		this.metadataTemplateRepository = metadataTemplateRepository;
-		this.pmtRepository = pmtRepository;
 		this.fieldRepository = fieldRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 		this.userRepository = userRepository;

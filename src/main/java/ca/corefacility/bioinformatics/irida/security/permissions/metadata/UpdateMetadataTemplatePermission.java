@@ -1,14 +1,10 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.metadata;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
