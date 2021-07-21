@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
@@ -48,4 +49,7 @@ public interface MetadataFieldRepository
 	 */
 	@Query("from StaticMetadataTemplateField m where TYPE(m) = StaticMetadataTemplateField")
 	public List<StaticMetadataTemplateField> findStaticMetadataFields();
+
+	@Query("FROM MetadataTemplateField m WHERE ?1 in elements(m.templates)")
+	public List<MetadataTemplateField> getFieldsForTemplate(MetadataTemplate template);
 }
