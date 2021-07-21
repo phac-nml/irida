@@ -47,6 +47,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	private Date modifiedDate;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@NotNull
 	private Project project;
 
 	public MetadataTemplate() {
