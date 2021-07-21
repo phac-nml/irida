@@ -76,15 +76,7 @@ public class UIMetadataFileImportService {
 			rows.add(rowMap);
 		}
 		storage.saveRows(rows);
-
-		String sampleNameCol = null;
-		int col = 0;
-		int numRows = rows.size();
-		while (sampleNameCol == null && col < numRows) {
-			sampleNameCol = findColumnName(projectId, rows.get(col));
-			col++;
-		}
-		storage.setSampleNameColumn(sampleNameCol);
+		storage.setSampleNameColumn(findColumnName(projectId, rows));
 		parser.close();
 
 		return storage;
@@ -159,15 +151,7 @@ public class UIMetadataFileImportService {
 			rows.add(rowMap);
 		}
 		storage.saveRows(rows);
-
-		String sampleNameCol = null;
-		int col = 0;
-		int numRows = rows.size();
-		while (sampleNameCol == null && col < numRows) {
-			sampleNameCol = findColumnName(projectId, rows.get(col));
-			col++;
-		}
-		storage.setSampleNameColumn(sampleNameCol);
+		storage.setSampleNameColumn(findColumnName(projectId, rows));
 
 		return storage;
 	}
@@ -204,13 +188,33 @@ public class UIMetadataFileImportService {
 	}
 
 	/**
-	 * Extract the headers from an excel file.
+	 * Find the sample name column, given the rows of a file.
 	 *
 	 * @param projectId {@link Long} The project identifier.
-	 * @param row       {@link Row} First row from the excel file.
+	 * @param rows      {@link Row} The rows from the excel file.
 	 * @return {@link String} column name.
 	 */
-	private String findColumnName(Long projectId, Map<String, String> row) {
+	private String findColumnName(Long projectId, List<Map<String, String>> rows) {
+		String columnName = null;
+		int col = 0;
+		int numRows = rows.size();
+
+		while (columnName == null && col < numRows) {
+			columnName = findColumnNameInRow(projectId, rows.get(col));
+			col++;
+		}
+
+		return columnName;
+	}
+
+	/**
+	 * Find the sample name column, given a row of a file.
+	 *
+	 * @param projectId {@link Long} The project identifier.
+	 * @param row       {@link Row} A row from the excel file.
+	 * @return {@link String} column name.
+	 */
+	private String findColumnNameInRow(Long projectId, Map<String, String> row) {
 		String columnName = null;
 		Project project = projectService.read(projectId);
 		Iterator<Map.Entry<String, String>> iterator = row.entrySet()
