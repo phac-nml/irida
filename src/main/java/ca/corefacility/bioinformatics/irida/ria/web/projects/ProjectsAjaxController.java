@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CopySamplesRequest;
@@ -65,8 +66,8 @@ public class ProjectsAjaxController {
 		return sampleService.getCommonSampleIdentifiers(projectId, sampleIds);
 	}
 
-	@PostMapping("/share-samples/copy")
-	public void copySamplesToProject(@RequestBody CopySamplesRequest request) {
-
+	@PutMapping("/share-samples/copy")
+	public ResponseEntity<AjaxResponse> copySamplesToProject(@RequestBody CopySamplesRequest request) {
+		return ResponseEntity.ok(new AjaxResponse());
 	}
 }

@@ -30,12 +30,20 @@ export const projectsApi = createApi({
         body: sampleIds,
       }),
     }),
+    shareSamplesToProject: build.mutation({
+      query: ({ original, destination, sampleIds, owner, fields }) => ({
+        url: `/share-samples/copy`,
+        method: "PUT",
+        body: { original, destination, sampleIds, owner, fields },
+      }),
+    }),
   }),
 });
 
 export const {
   useGetProjectsManagedByUserQuery,
   useGetCommonSampleIdentifiersQuery,
+  useShareSamplesToProjectMutation,
 } = projectsApi;
 
 /**

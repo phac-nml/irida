@@ -63,8 +63,7 @@ export const shareSlice = createSlice({
       state.step = state.step - 1;
     },
     updateFields: (state, action) => {
-      state.fields[action.payload.index].target.restriction =
-        action.payload.value;
+      state.fields[action.payload.index].restriction = action.payload.value;
     },
     removeSample: (state, action) => {
       const samples = [...state.samples];

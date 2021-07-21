@@ -15,9 +15,7 @@ import {
 
 export function ShareMetadataFields({ projectId }) {
   const dispatch = useDispatch();
-  const { target = {}, fields = [], samples, locked } = useSelector(
-    (state) => state.reducer
-  );
+  const { target, fields } = useSelector((state) => state.reducer);
   const { data: restrictions = [] } = useGetMetadataRestrictionsQuery();
 
   const ROLES = {
@@ -37,34 +35,28 @@ export function ShareMetadataFields({ projectId }) {
     skip: target.identifier === undefined,
   });
 
-  const getPermissionStatus = (current, target) => {
-    const currentRestriction = restrictions.findIndex(
-      (restriction) => restriction.value === item.current.restriction
-    );
-    const targetRestriction = restrictions.findIndex(
-      (restriction) => restriction.value === item.target.restriction
-    );
-
-    return currentRestriction - targetRestriction;
-  };
-
   React.useEffect(() => {
-    if (!currentLoading && !targetLoading) {
-      const merged = currentFields.map((current) => {
-        const target = targetFields?.find(
-          (element) => element.label === current.label
-        );
-        return {
-          current,
-          target:
-            target !== undefined
-              ? { ...target, exists: true }
-              : { ...current, exists: false },
-        };
-      });
-      dispatch(setFields(merged));
+    if (!fields) {
+      if (!currentLoading && !targetLoading) {
+        const merged = currentFields.map((current) => {
+          const target = targetFields?.find(
+            (element) => element.label === current.label
+          );
+          return target !== undefined
+            ? { ...target, exists: true }
+            : { ...current, exists: false };
+        });
+        dispatch(setFields(merged));
+      }
     }
-  }, [targetFields, targetLoading, currentFields, currentLoading]);
+  }, [
+    targetFields,
+    targetLoading,
+    currentFields,
+    currentLoading,
+    fields,
+    dispatch,
+  ]);
 
   const updateRestriction = (index, value) => {
     dispatch(updateFields(index, value));
@@ -72,10 +64,10 @@ export function ShareMetadataFields({ projectId }) {
 
   const renderRestriction = (text, item, index) => {
     const current = restrictions.findIndex(
-      (restriction) => restriction.value === item.current.restriction
+      (restriction) => restriction.value === currentFields[index].restriction
     );
     const target = restrictions.findIndex(
-      (restriction) => restriction.value === item.target.restriction
+      (restriction) => restriction.value === item.restriction
     );
 
     const loweredPermission = current > target;
@@ -107,54 +99,52 @@ export function ShareMetadataFields({ projectId }) {
     );
   };
 
-  const copyToTarget = () => {
-    console.log({ samples, locked, fields, target });
-  };
-
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Form>
         <Table
-          loading={currentLoading && targetLoading}
+          dataSource={fields}
+          loading={!fields}
           pagination={{ hideOnSinglePage: true, pageSize: fields?.length }}
-          rowKey={(item) => `field-${item.current.id}`}
+          rowKey={(item) => `field-${item.id}`}
           locale={{
             emptyText:
               "__There are no metadata fields being copied for these samples__",
           }}
           columns={[
             {
-              title: "Field",
-              dataIndex: ["current", "label"],
+              title: "Field Name",
+              dataIndex: "label",
+            },
+            {
+              title: "Exists in Target project",
+              dataIndex: "label",
               render: (text, item) => {
                 return (
-                  <Space>
-                    {text}
-                    {!item.target.exists && (
-                      <Popover
-                        placement={"right"}
-                        content={"This field do exist in the target project."}
-                      >
-                        <Tag color="green">NEW</Tag>
-                      </Popover>
-                    )}
-                  </Space>
+                  !item.exists && (
+                    <Popover
+                      placement={"right"}
+                      content={"This field do exist in the target project."}
+                    >
+                      <Tag color="green">NEW</Tag>
+                    </Popover>
+                  )
                 );
               },
             },
             {
               title: "Current Project Restrictions",
-              dataIndex: ["current", "restriction"],
-              render: (text) => ROLES[text],
+              dataIndex: "label",
+              render: (text, item, index) =>
+                ROLES[currentFields[index].restriction],
             },
             {
               title: "target Project Restrictions",
-              dataIndex: ["target", "restriction"],
+              dataIndex: "restriction",
               render: renderRestriction,
               width: 500,
             },
           ]}
-          dataSource={fields}
         />
       </Form>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -166,7 +156,7 @@ export function ShareMetadataFields({ projectId }) {
         </Button>
         <Button onClick={() => dispatch(setNextStep())}>
           <Space>
-            <span>Copy Samples</span>
+            <span>Submit</span>
           </Space>
         </Button>
       </div>

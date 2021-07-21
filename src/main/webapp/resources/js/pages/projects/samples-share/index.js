@@ -8,7 +8,7 @@ import { ShareFinish } from "./components/ShareFinish";
 import { ShareMetadataFields } from "./components/ShareMetadataFields";
 import { ShareProjects } from "./components/ShareProjects";
 import { ShareSamplesList } from "./components/ShareSamplesList";
-import { ShareSummary } from "./components/ShareSummary";
+import { ShareSubmit } from "./components/ShareSubmit";
 import store from "./store";
 
 const { useBreakpoint } = Grid;
@@ -18,8 +18,6 @@ function ShareSamples({ projectId }) {
   const { samples, projectId: sharedProjectId, step } = useSelector(
     (state) => state.reducer
   );
-
-  console.log(step);
 
   React.useEffect(() => {
     if (
@@ -36,7 +34,7 @@ function ShareSamples({ projectId }) {
     <ShareProjects key="projects" projectId={projectId} />,
     <ShareSamplesList key="samples" projectId={projectId} />,
     <ShareMetadataFields key="fields" projectId={projectId} />,
-    <ShareSummary key="summary" />,
+    <ShareSubmit key="summary" projectId={projectId} />,
     <ShareFinish key="finish" />,
   ];
 
@@ -50,7 +48,7 @@ function ShareSamples({ projectId }) {
           <Steps.Step title={"DESTINATION PROJECT"} />
           <Steps.Step title={"REVIEW SAMPLES"} />
           <Steps.Step title={"METADATA FIELD RESTRICTIONS"} />
-          <Steps.Step title={"SUMMARY"} />
+          <Steps.Step title={"SUBMIT"} />
         </Steps>
       </Col>
       <Col xs={24}>{steps[step]}</Col>
