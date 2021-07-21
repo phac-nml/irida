@@ -33,6 +33,10 @@ public class MetadataTemplateField {
 	@OneToMany(mappedBy = "field", cascade = CascadeType.ALL)
 	private List<MetadataEntry> metadataEntries;
 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinTable(joinColumns = @JoinColumn(name = "fields_id"))
+	private List<MetadataTemplate> templates;
+
 	public MetadataTemplateField() {
 	}
 
