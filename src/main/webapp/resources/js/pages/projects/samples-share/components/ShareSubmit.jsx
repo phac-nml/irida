@@ -29,7 +29,7 @@ export function ShareSubmit({ projectId }) {
       destination: target.identifier,
       sampleIds: samples.map((s) => s.id),
       owner: !locked,
-      fields: fields.target,
+      fields,
     });
   }, [
     fields,

@@ -22,6 +22,9 @@ public class ProjectMetadataField {
 		this.restriction = restriction;
 	}
 
+	public ProjectMetadataField() {
+	}
+
 	public Long getId() {
 		return id;
 	}
