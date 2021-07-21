@@ -40,7 +40,7 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
       .finally(() => setLoading(false));
   };
 
-  return project.canManage ? (
+  return project.canManageRemote ? (
     <Select
       className="t-role-select"
       value={role}

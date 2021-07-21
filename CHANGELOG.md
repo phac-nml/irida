@@ -6,6 +6,13 @@ Changes
 * [Developer]: Added pipeline plugin path configuration option
 * [UI]: Update of Project Activities page to use Ant Design.
 * [UI]: Fixes bug where the page title on Remote IRIDA Connections page was not displaying properly.
+* [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page. (21.05.1)
+* [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
+* [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
+* [UI]: Update of Create New Project page to use Ant Design.
+* [Developer]: Updated Redux Toolkit to stable version 1.6.2
+* [Workflow]: SNVPhyl has been updated to version `1.2.3` to fix an installation issue (<https://github.com/phac-nml/irida/issues/1018>). Since this updates a pipeline you will have to upgrade the Galaxy tool suite for SNVPhyl as described in our [instllation documentation](https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/phylogenomics/). (21.05.2)
+* [UI]: Fixed bug which prevented a manager on a remote project from adding/removing members and groups. (21.05.2)
 
 21.01 to 21.05
 --------------

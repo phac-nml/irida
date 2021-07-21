@@ -10,12 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -83,8 +86,9 @@ public class RESTRootController {
 	 * @param request Incoming HTTP request object to check the user's role.
 	 * @return a response to the client.
 	 */
+	@Operation(operationId = "getLinks", summary = "Get the set of links used to discover the API", description = "Get the set of links used to discover the API.", tags = "api")
 	@RequestMapping(method = RequestMethod.GET, value = "/api")
-	public ModelMap getLinks(final HttpServletRequest request) {
+	public ResponseResource<RootResource> getLinks(final HttpServletRequest request) {
 		logger.debug("Discovering application");
 		RootResource resource = new RootResource();
 		List<Link> links = new ArrayList<>();
@@ -104,11 +108,10 @@ public class RESTRootController {
 		// add all of the links to the response
 		resource.add(links);
 
-		ModelMap map = new ModelMap();
-		map.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+		ResponseResource<RootResource> responseObject = new ResponseResource<>(resource);
 
 		// respond to the client
-		return map;
+		return responseObject;
 	}
 
 	/**
@@ -116,11 +119,11 @@ public class RESTRootController {
 	 *
 	 * @return a response to the client
 	 */
+	@Operation(operationId = "version", summary = "Get the current API build version", description = "Get the current API build version.", tags = "api")
 	@RequestMapping(method = RequestMethod.GET, value = "/api/version")
-	public ModelMap version() {
-		ModelMap mm = new ModelMap();
-		mm.put("version", iridaVersion);
-		return mm;
+	public ResponseVersion version() {
+		ResponseVersion responseObject = new ResponseVersion(iridaVersion);
+		return responseObject;
 	}
 
 	/**
@@ -139,5 +142,21 @@ public class RESTRootController {
 			links.add(link);
 		}
 		return links;
+	}
+
+	/**
+	 * A convenient class for returning the api version.
+	 */
+	public class ResponseVersion {
+		private String version;
+
+		public ResponseVersion(String version) {
+			this.version = version;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
 	}
 }

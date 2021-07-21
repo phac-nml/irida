@@ -2,9 +2,10 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -16,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleMetadataResponse;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 
 import com.google.common.collect.ImmutableMap;
@@ -64,10 +64,10 @@ public class RESTSampleMetadataControllerTest {
 		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1)).thenReturn(fieldList);
 		when(sampleService.getMetadataForProject(p1, fieldList)).thenReturn(new ProjectMetadataResponse(p1,metadata));
 
-		ModelMap modelMap = metadataController.getProjectSampleMetadata(p1.getId());
+		ResponseResource<ResourceCollection<SampleMetadataResponse>> responseResource = metadataController.getProjectSampleMetadata(
+				p1.getId());
 
-		ResourceCollection<SampleMetadataResponse> responses = (ResourceCollection) modelMap.get(
-				RESTGenericController.RESOURCE_NAME);
+		ResourceCollection<SampleMetadataResponse> responses = responseResource.getResource();
 
 		assertEquals(2, responses.size());
 		for (SampleMetadataResponse response : responses) {
@@ -94,10 +94,9 @@ public class RESTSampleMetadataControllerTest {
 		when(sampleService.read(s1.getId())).thenReturn(s1);
 		when(sampleService.getMetadataForSample(s1)).thenReturn(Sets.newHashSet(entry1));
 
-		ModelMap sampleMetadata = metadataController.getSampleMetadata(s1.getId());
+		ResponseResource<SampleMetadataResponse> sampleMetadata = metadataController.getSampleMetadata(s1.getId());
 
-		SampleMetadataResponse response = (SampleMetadataResponse) sampleMetadata.get(
-				RESTGenericController.RESOURCE_NAME);
+		SampleMetadataResponse response = sampleMetadata.getResource();
 
 		verify(sampleService).getMetadataForSample(s1);
 
