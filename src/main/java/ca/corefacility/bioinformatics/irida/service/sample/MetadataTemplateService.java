@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -23,7 +22,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 *
 	 * @param template the {@link MetadataTemplate} to create
 	 * @param project  the {@link Project} to create the template in
-	 * @return a {@link ProjectMetadataTemplateJoin}
+	 * @return a {@link MetadataTemplate}
 	 */
 	public MetadataTemplate createMetadataTemplateInProject(MetadataTemplate template, Project project);
 
@@ -47,7 +46,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Get a list of {@link MetadataTemplate}s for a given {@link Project}
 	 *
 	 * @param project the {@link Project}
-	 * @return a list of {@link ProjectMetadataTemplateJoin}
+	 * @return a list of {@link MetadataTemplate}
 	 */
 	public List<MetadataTemplate> getMetadataTemplatesForProject(Project project);
 
