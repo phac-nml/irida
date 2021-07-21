@@ -8,6 +8,7 @@ import {
 import { IconArrowLeft } from "../../../../components/icons/Icons";
 import {
   setFields,
+  setNextStep,
   setPreviousStep,
   updateFields,
 } from "../services/shareSlice";
@@ -163,7 +164,7 @@ export function ShareMetadataFields({ projectId }) {
             <span>Review Samples</span>
           </Space>
         </Button>
-        <Button type="primary" onClick={copyToTarget}>
+        <Button onClick={() => dispatch(setNextStep())}>
           <Space>
             <span>Copy Samples</span>
           </Space>
