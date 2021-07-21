@@ -22,5 +22,8 @@
         </sql>
 
         <addNotNullConstraint tableName="metadata_template" columnName="project_id" columnDataType="bigint(20)"/>
+
+        <dropTable tableName="project_metadata_template"/>
+        <dropTable tableName="project_metadata_template_AUD"/>
     </changeSet>
 </databaseChangeLog>
