@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
  * Stores a collection of {@link MetadataTemplateField}s that will often used together
@@ -46,8 +47,8 @@ public class MetadataTemplate implements MutableIridaThing {
 	@LastModifiedDate
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "template")
-	private List<ProjectMetadataTemplateJoin> projects;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	private Project project;
 
 	public MetadataTemplate() {
 	}

@@ -1031,10 +1031,9 @@ public class AnalysisAjaxController {
 				projectIds.add(project.getId());
 
 				// Get the templates for the project
-				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService.getMetadataTemplatesForProject(
+				List<MetadataTemplate> templateList = metadataTemplateService.getMetadataTemplatesForProject(
 						project);
-				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
-					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+				for (MetadataTemplate metadataTemplate : templateList) {
 					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
 							metadataTemplate.getId());
 					templates.add(templateMap);

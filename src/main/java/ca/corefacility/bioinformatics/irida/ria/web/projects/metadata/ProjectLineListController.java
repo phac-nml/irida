@@ -170,12 +170,8 @@ public class ProjectLineListController {
 	@ResponseBody
 	public List<MetadataTemplate> getMetadataTemplates(@PathVariable long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<MetadataTemplate> templates = new ArrayList<>();
+		List<MetadataTemplate> templates = metadataTemplateService.getMetadataTemplatesForProject(project);
 
-		for (ProjectMetadataTemplateJoin join : joins) {
-			templates.add(join.getObject());
-		}
 		return templates;
 	}
 

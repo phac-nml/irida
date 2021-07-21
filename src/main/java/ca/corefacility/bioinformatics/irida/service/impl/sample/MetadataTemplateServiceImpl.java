@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataTemplate>
 		implements MetadataTemplateService {
 
+	private MetadataTemplateRepository metadataTemplateRepository;
 	private ProjectMetadataTemplateJoinRepository pmtRepository;
 	private MetadataFieldRepository fieldRepository;
 	private MetadataRestrictionRepository metadataRestrictionRepository;
@@ -55,6 +56,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
 		super(repository, validator, MetadataTemplate.class);
+		this.metadataTemplateRepository = metadataTemplateRepository;
 		this.pmtRepository = pmtRepository;
 		this.fieldRepository = fieldRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
@@ -108,8 +110,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project) {
-		return pmtRepository.getMetadataTemplatesForProject(project);
+	public List<MetadataTemplate> getMetadataTemplatesForProject(Project project) {
+		return metadataTemplateRepository.getMetadataTemplatesForProject(project);
 	}
 
 	@PreAuthorize("permitAll()")

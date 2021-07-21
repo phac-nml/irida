@@ -92,11 +92,10 @@ public class ProjectControllerUtils {
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
     public List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
-		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService
+		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateService
 				.getMetadataTemplatesForProject(project);
 		List<Map<String, String>> templates = new ArrayList<>();
-		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			MetadataTemplate template = projectMetadataTemplateJoin.getObject();
+		for (MetadataTemplate template : metadataTemplatesForProject) {
 			templates.add(ImmutableMap.of("label", template.getLabel(), "id", String.valueOf(template.getId())));
 		}
 		return templates;

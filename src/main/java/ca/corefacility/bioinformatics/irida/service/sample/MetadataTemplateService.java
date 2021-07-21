@@ -49,7 +49,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param project the {@link Project}
 	 * @return a list of {@link ProjectMetadataTemplateJoin}
 	 */
-	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
+	public List<MetadataTemplate> getMetadataTemplatesForProject(Project project);
 
 	/**
 	 * Get a {@link MetadataTemplateField} by its {@link Long} identifier

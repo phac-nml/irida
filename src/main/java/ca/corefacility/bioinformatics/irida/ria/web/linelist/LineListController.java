@@ -167,15 +167,14 @@ public class LineListController {
 		Need all MetadataTemplate fields (either already on the project, or in templates associated with the project).
 		 */
 		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+		List<MetadataTemplate> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
 
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
+		for (MetadataTemplate template : templateJoins) {
 			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
 			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, canEdit);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
@@ -331,7 +330,7 @@ public class LineListController {
 				.collect(Collectors.toSet());
 
 		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
+		List<MetadataTemplate> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
 				project);
 
 		/*
@@ -347,8 +346,7 @@ public class LineListController {
 		/*
 		Get all unique fields from the templates.
 		 */
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
+		for (MetadataTemplate template : templateJoins) {
 			List<MetadataTemplateField> templateFields = template.getFields();
 			for (MetadataTemplateField field : templateFields) {
 				if (!staticMetadataFields.contains(field)) {
