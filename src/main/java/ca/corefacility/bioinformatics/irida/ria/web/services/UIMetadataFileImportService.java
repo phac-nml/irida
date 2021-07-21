@@ -75,9 +75,16 @@ public class UIMetadataFileImportService {
 			}
 			rows.add(rowMap);
 		}
-
 		storage.saveRows(rows);
-		storage.setSampleNameColumn(findColumnName(projectId, rows.get(0)));
+
+		String sampleNameCol = null;
+		int col = 0;
+		int numRows = rows.size();
+		while (sampleNameCol == null && col < numRows) {
+			sampleNameCol = findColumnName(projectId, rows.get(col));
+			col++;
+		}
+		storage.setSampleNameColumn(sampleNameCol);
 		parser.close();
 
 		return storage;
@@ -152,7 +159,15 @@ public class UIMetadataFileImportService {
 			rows.add(rowMap);
 		}
 		storage.saveRows(rows);
-		storage.setSampleNameColumn(findColumnName(projectId, rows.get(0)));
+
+		String sampleNameCol = null;
+		int col = 0;
+		int numRows = rows.size();
+		while (sampleNameCol == null && col < numRows) {
+			sampleNameCol = findColumnName(projectId, rows.get(col));
+			col++;
+		}
+		storage.setSampleNameColumn(sampleNameCol);
 
 		return storage;
 	}
