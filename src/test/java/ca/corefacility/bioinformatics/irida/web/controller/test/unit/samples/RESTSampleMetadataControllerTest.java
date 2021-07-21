@@ -61,7 +61,7 @@ public class RESTSampleMetadataControllerTest {
 
 		when(projectService.read(p1.getId())).thenReturn(p1);
 		when(sampleService.getSamplesForProjectShallow(p1)).thenReturn(Lists.newArrayList(s1, s2));
-		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1)).thenReturn(fieldList);
+		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1, true)).thenReturn(fieldList);
 		when(sampleService.getMetadataForProject(p1, fieldList)).thenReturn(new ProjectMetadataResponse(p1,metadata));
 
 		ResponseResource<ResourceCollection<SampleMetadataResponse>> responseResource = metadataController.getProjectSampleMetadata(

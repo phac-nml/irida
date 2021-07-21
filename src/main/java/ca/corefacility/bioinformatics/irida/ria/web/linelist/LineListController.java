@@ -77,7 +77,7 @@ public class LineListController {
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
 		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		Map<Long, Set<MetadataEntry>> metadataForProject;
 
@@ -322,7 +322,7 @@ public class LineListController {
 		Project project = projectService.read(projectId);
 
 		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
 				.collect(Collectors.toSet());

@@ -149,13 +149,14 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param role    the {@link ProjectRole} to request
 	 * @return the {@link MetadataTemplateField} the given role can read
 	 */
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role);
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role, boolean includeTemplateFields);
 
 	/**
 	 * Get all {@link MetadataTemplateField} that the currently logged in user is allowed to read
 	 *
 	 * @param project the {@link Project} to request fields from
+	 * @param includeTemplateFields
 	 * @return a list of {@link MetadataTemplateField} collecting the allowed {@link MetadataTemplateField}
 	 */
-	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project);
+	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project, boolean includeTemplateFields);
 }
