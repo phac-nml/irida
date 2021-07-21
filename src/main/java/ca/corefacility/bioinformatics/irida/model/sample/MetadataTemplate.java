@@ -58,6 +58,12 @@ public class MetadataTemplate implements MutableIridaThing {
 		this.fields = fields;
 	}
 
+	public MetadataTemplate(String name, List<MetadataTemplateField> fields, Project project) {
+		this.name = name;
+		this.fields = fields;
+		this.project = project;
+	}
+
 	@Override
 	public void setId(Long id) {
 		this.id = id;
@@ -110,5 +116,13 @@ public class MetadataTemplate implements MutableIridaThing {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
+	public Project getProject() {
+		return project;
 	}
 }

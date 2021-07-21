@@ -116,9 +116,8 @@ public class ProjectSamplesMetadataTemplateController {
 			metadataTemplate.setFields(templateFields);
 			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService.createMetadataTemplateInProject(
+			metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(
 					new MetadataTemplate(name, templateFields), project);
-			metadataTemplate = projectMetadataTemplateJoin.getObject();
 		}
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}

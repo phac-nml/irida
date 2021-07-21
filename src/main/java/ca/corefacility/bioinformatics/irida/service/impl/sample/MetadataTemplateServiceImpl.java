@@ -97,12 +97,13 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Transactional
-	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project) {
+	public MetadataTemplate createMetadataTemplateInProject(MetadataTemplate template, Project project) {
+		template.setProject(project);
 		template = create(template);
 
 		ProjectMetadataTemplateJoin join = pmtRepository.save(new ProjectMetadataTemplateJoin(project, template));
 
-		return join;
+		return template;
 	}
 
 	/**

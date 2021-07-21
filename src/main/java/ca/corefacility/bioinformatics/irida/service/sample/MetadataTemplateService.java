@@ -25,7 +25,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param project  the {@link Project} to create the template in
 	 * @return a {@link ProjectMetadataTemplateJoin}
 	 */
-	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project);
+	public MetadataTemplate createMetadataTemplateInProject(MetadataTemplate template, Project project);
 
 	/**
 	 * Deleta a {@link MetadataTemplate} from a {@link Project}

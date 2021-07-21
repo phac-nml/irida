@@ -298,9 +298,8 @@ public class LineListController {
 		if (template.getId() == null) {
 			// NO ID means that this is a new template
 			metadataTemplate = new MetadataTemplate(template.getName(), fields);
-			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate,
-					project);
-			metadataTemplate = join.getObject();
+			metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate, project);
+
 			response.setStatus(HttpServletResponse.SC_CREATED);
 		} else {
 			metadataTemplate = metadataTemplateService.read(template.getId());

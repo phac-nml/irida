@@ -127,7 +127,7 @@ public class Project extends IridaResourceSupport
 	private List<ProjectReferenceFileJoin> referenceFiles;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectMetadataTemplateJoin> metadataTemplates;
+	private List<MetadataTemplate> metadataTemplates;
 
 	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "project")

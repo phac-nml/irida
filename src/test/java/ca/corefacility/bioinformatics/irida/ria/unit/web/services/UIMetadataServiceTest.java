@@ -54,7 +54,7 @@ public class UIMetadataServiceTest {
 				ImmutableList.of(template));
 		MetadataTemplate newTemplate = new MetadataTemplate(template.getName(), template.getFields());
 		newTemplate.setId(NEW_TEMPLATE_ID);
-		when(templateService.createMetadataTemplateInProject(template, project)).thenReturn(new ProjectMetadataTemplateJoin(project, newTemplate));
+		when(templateService.createMetadataTemplateInProject(template, project)).thenReturn(template);
 	}
 
 	@Test

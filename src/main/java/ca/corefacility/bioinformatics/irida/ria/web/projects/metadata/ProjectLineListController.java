@@ -150,10 +150,10 @@ public class ProjectLineListController {
 			metadataFields.add(metadataField);
 		}
 		MetadataTemplate metadataTemplate = new MetadataTemplate(templateName, metadataFields);
-		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
+		metadataTemplate = metadataTemplateService
 				.createMetadataTemplateInProject(metadataTemplate, project);
 
-		return ImmutableMap.of("templateId", projectMetadataTemplateJoin.getObject().getId());
+		return ImmutableMap.of("templateId", metadataTemplate.getId());
 	}
 
 	/**
@@ -214,8 +214,7 @@ public class ProjectLineListController {
 			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
 		} else  {
 			template = new MetadataTemplate(name, metadataFields);
-			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template, project);
-			template = join.getObject();
+			template = metadataTemplateService.createMetadataTemplateInProject(template, project);
 			message = messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale);
 		}
 		return ImmutableMap.of(
