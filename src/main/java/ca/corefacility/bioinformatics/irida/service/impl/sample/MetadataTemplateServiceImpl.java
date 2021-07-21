@@ -52,7 +52,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
 		super(repository, validator, MetadataTemplate.class);
-		this.metadataTemplateRepository = metadataTemplateRepository;
+		this.metadataTemplateRepository = repository;
 		this.fieldRepository = fieldRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 		this.userRepository = userRepository;

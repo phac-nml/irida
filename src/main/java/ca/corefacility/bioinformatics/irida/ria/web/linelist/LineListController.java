@@ -236,11 +236,13 @@ public class LineListController {
 		4. Create an AgGridColumn for the field and add it to the template.
 		 */
 		for (MetadataTemplateField field : template.getFields()) {
-			int index = allFieldsLabels.indexOf(field.getFieldKey());
-			allFieldsAgGridColumns.remove(index);
-			allFieldsLabels.remove(index);
-			// Need to add parameter for if they have permissions to edit.
-			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
+			if(allFieldsLabels.contains(field.getFieldKey())) {
+				int index = allFieldsLabels.indexOf(field.getFieldKey());
+				allFieldsAgGridColumns.remove(index);
+				allFieldsLabels.remove(index);
+				// Need to add parameter for if they have permissions to edit.
+				templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
+			}
 		}
 
 		// Add the "icon" to the template columns
@@ -339,19 +341,6 @@ public class LineListController {
 		sent down to the UI.
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
-
-		//TODO: fields in templates here will be added to the fields list even if a user isn't permitted to read them.  Needs refactored
-		/*
-		Get all unique fields from the templates.
-		 */
-		for (MetadataTemplate template : templateJoins) {
-			List<MetadataTemplateField> templateFields = template.getFields();
-			for (MetadataTemplateField field : templateFields) {
-				if (!staticMetadataFields.contains(field)) {
-					fieldSet.add(field);
-				}
-			}
-		}
 
 		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))
