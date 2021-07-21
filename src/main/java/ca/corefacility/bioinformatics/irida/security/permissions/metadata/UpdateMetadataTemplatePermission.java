@@ -22,14 +22,12 @@ public class UpdateMetadataTemplatePermission extends RepositoryBackedPermission
 	public static final String PERMISSION_PROVIDED = "canUpdateMetadataTemplate";
 
 	private ManageLocalProjectSettingsPermission projectPermission;
-	private ProjectMetadataTemplateJoinRepository pmRepository;
 
 	@Autowired
 	public UpdateMetadataTemplatePermission(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmRepository, ManageLocalProjectSettingsPermission projectPermission) {
+			ManageLocalProjectSettingsPermission projectPermission) {
 		super(MetadataTemplate.class, Long.class, repository);
 		this.projectPermission = projectPermission;
-		this.pmRepository = pmRepository;
 	}
 
 	/**
@@ -46,10 +44,7 @@ public class UpdateMetadataTemplatePermission extends RepositoryBackedPermission
 	@Override
 	protected boolean customPermissionAllowed(Authentication authentication, MetadataTemplate targetDomainObject) {
 
-		List<ProjectMetadataTemplateJoin> projects = pmRepository.getProjectsForMetadataTemplate(targetDomainObject);
-
-		return projects.stream()
-				.anyMatch(j -> projectPermission.customPermissionAllowed(authentication, j.getSubject()));
+		return projectPermission.customPermissionAllowed(authentication, targetDomainObject.getProject());
 	}
 
 }

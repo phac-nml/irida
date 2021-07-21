@@ -22,14 +22,12 @@ public class ReadMetadataTemplatePermission extends RepositoryBackedPermission<M
 	public static final String PERMISSION_PROVIDED = "canReadMetadataTemplate";
 
 	private ReadProjectPermission projectPermission;
-	private ProjectMetadataTemplateJoinRepository pmRepository;
 
 	@Autowired
 	public ReadMetadataTemplatePermission(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmRepository, ReadProjectPermission projectPermission) {
+			ReadProjectPermission projectPermission) {
 		super(MetadataTemplate.class, Long.class, repository);
 		this.projectPermission = projectPermission;
-		this.pmRepository = pmRepository;
 	}
 
 	/**
@@ -46,10 +44,7 @@ public class ReadMetadataTemplatePermission extends RepositoryBackedPermission<M
 	@Override
 	protected boolean customPermissionAllowed(Authentication authentication, MetadataTemplate targetDomainObject) {
 
-		List<ProjectMetadataTemplateJoin> projects = pmRepository.getProjectsForMetadataTemplate(targetDomainObject);
-
-		return projects.stream()
-				.anyMatch(j -> projectPermission.customPermissionAllowed(authentication, j.getSubject()));
+		return projectPermission.isAllowed(authentication, targetDomainObject.getProject());
 	}
 
 }

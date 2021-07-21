@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * Repository for storing and reading {@link ProjectMetadataTemplateJoin}s
  */
+@Deprecated
 public interface ProjectMetadataTemplateJoinRepository extends IridaJpaRepository<ProjectMetadataTemplateJoin, Long> {
 	/**
 	 * Get a {@link List} of {@link ProjectMetadataTemplateJoin} related to a

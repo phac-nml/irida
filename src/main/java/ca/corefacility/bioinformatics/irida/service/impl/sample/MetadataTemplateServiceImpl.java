@@ -101,8 +101,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		template.setProject(project);
 		template = create(template);
 
-		ProjectMetadataTemplateJoin join = pmtRepository.save(new ProjectMetadataTemplateJoin(project, template));
-
 		return template;
 	}
 

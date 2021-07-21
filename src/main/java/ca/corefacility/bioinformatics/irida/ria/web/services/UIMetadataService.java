@@ -64,10 +64,9 @@ public class UIMetadataService {
 	 */
 	public ProjectMetadataTemplate createMetadataTemplate(MetadataTemplate template, Long projectId) {
 		Project project = projectService.read(projectId);
-		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
-		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, join.getObject()
-				.getFields());
-		return new ProjectMetadataTemplate(join.getObject(), fields);
+		template = templateService.createMetadataTemplateInProject(template, project);
+		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, template.getFields());
+		return new ProjectMetadataTemplate(template, fields);
 	}
 
 	/**

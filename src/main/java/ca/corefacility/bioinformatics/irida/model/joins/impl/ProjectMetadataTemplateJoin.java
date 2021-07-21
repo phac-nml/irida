@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 @Table(name = "project_metadata_template")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@Deprecated
 public class ProjectMetadataTemplateJoin implements Join<Project, MetadataTemplate> {
 
 	@Id
