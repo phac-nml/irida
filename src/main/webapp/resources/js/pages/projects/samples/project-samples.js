@@ -24,6 +24,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 
 import "./linker/Linker";
 import "./add-sample/AddSampleButton";
+import "./samples-share";
 
 /*
 This is required to use select2 inside a modal.
@@ -347,6 +348,7 @@ const config = Object.assign({}, tableConfig, {
       projectId: data.projectId,
       id: data.id,
       sampleName: data.sampleName,
+      owner: data.owner,
     });
     /*
     If there are QC errors, highlight the row
