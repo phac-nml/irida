@@ -230,6 +230,18 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return metadataRestrictionRepository.save(metadataRestrictionForFieldAndProject);
 	}
 
+	@PreAuthorize("hasPermission(#template, 'canReadMetadataTemplate')")
+	public List<MetadataTemplateField> getPermittedFieldsForTemplate(MetadataTemplate template) {
+		List<MetadataTemplateField> fieldsForTemplate = fieldRepository.getMetadataFieldsForTemplate(template);
+
+		List<MetadataTemplateField> permittedFieldsForCurrentUser = getPermittedFieldsForCurrentUser(
+				template.getProject(), true);
+
+		return fieldsForTemplate.stream()
+				.filter(f -> permittedFieldsForCurrentUser.contains(f))
+				.collect(Collectors.toList());
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -244,7 +256,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			//add all the metadata template fields to the list of fields to restrict
 			List<MetadataTemplate> templatesForProject = getMetadataTemplatesForProject(project);
 			for (MetadataTemplate template : templatesForProject) {
-				List<MetadataTemplateField> templateFields = template.getFields();
+
+				List<MetadataTemplateField> templateFields = fieldRepository.getMetadataFieldsForTemplate(template);
 				for (MetadataTemplateField field : templateFields) {
 					if (!metadataFieldsForProject.contains(field)) {
 						metadataFieldsForProject.add(field);

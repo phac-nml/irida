@@ -27,7 +27,7 @@ public class MetadataTemplate implements MutableIridaThing {
 	private Long id;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(joinColumns = @JoinColumn(name = "metadata_template_id"))
+	@JoinTable(name = "metadata_template_metadata_field", joinColumns = @JoinColumn(name = "metadata_template_id"))
 	private List<MetadataTemplateField> fields;
 
 	@NotNull
@@ -74,10 +74,12 @@ public class MetadataTemplate implements MutableIridaThing {
 		return id;
 	}
 
+	@Deprecated
 	public List<MetadataTemplateField> getFields() {
 		return fields;
 	}
 
+	@Deprecated
 	public void setFields(List<MetadataTemplateField> fields) {
 		this.fields = fields;
 	}

@@ -212,6 +212,9 @@ public class LineListController {
 		AgGridColumn iconCol = allFieldsAgGridColumns.get(0);
 		AgGridColumn sampleNameCol = allFieldsAgGridColumns.get(1);
 
+		List<MetadataTemplateField> permittedFieldsForTemplate = metadataTemplateService.getPermittedFieldsForTemplate(
+				template);
+
 		/*
 		Need to remove the sample since allFields begins with the sample.
 		 */
@@ -235,14 +238,13 @@ public class LineListController {
 		3. Remove the label from the allFieldsLabels to maintain proper indexing.
 		4. Create an AgGridColumn for the field and add it to the template.
 		 */
-		for (MetadataTemplateField field : template.getFields()) {
-			if(allFieldsLabels.contains(field.getFieldKey())) {
-				int index = allFieldsLabels.indexOf(field.getFieldKey());
-				allFieldsAgGridColumns.remove(index);
-				allFieldsLabels.remove(index);
-				// Need to add parameter for if they have permissions to edit.
-				templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
-			}
+		for (MetadataTemplateField field : permittedFieldsForTemplate) {
+			int index = allFieldsLabels.indexOf(field.getFieldKey());
+			allFieldsAgGridColumns.remove(index);
+			allFieldsLabels.remove(index);
+			// Need to add parameter for if they have permissions to edit.
+			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
+
 		}
 
 		// Add the "icon" to the template columns
@@ -328,10 +330,6 @@ public class LineListController {
 
 		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
 				.collect(Collectors.toSet());
-
-		// Need to get all the fields from the templates too!
-		List<MetadataTemplate> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
 
 		/*
 		IGNORED TEMPLATE FIELDS:

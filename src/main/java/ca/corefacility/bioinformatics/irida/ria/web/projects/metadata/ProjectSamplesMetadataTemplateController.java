@@ -145,7 +145,7 @@ public class ProjectSamplesMetadataTemplateController {
 	@RequestMapping(value = "/{templateId}/excel")
 	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> fields = template.getFields();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForTemplate(template);
 		List<String> headers = fields.stream()
 				.map(MetadataTemplateField::getLabel)
 				.collect(Collectors.toList());

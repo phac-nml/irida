@@ -50,6 +50,6 @@ public interface MetadataFieldRepository
 	@Query("from StaticMetadataTemplateField m where TYPE(m) = StaticMetadataTemplateField")
 	public List<StaticMetadataTemplateField> findStaticMetadataFields();
 
-	@Query("FROM MetadataTemplateField m WHERE ?1 in elements(m.templates)")
-	public List<MetadataTemplateField> getFieldsForTemplate(MetadataTemplate template);
+	@Query("SELECT t.fields FROM MetadataTemplate t WHERE t=?1")
+	public List<MetadataTemplateField> getMetadataFieldsForTemplate(MetadataTemplate template);
 }

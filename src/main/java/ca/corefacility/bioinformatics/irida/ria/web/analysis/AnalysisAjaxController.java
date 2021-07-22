@@ -1053,7 +1053,8 @@ public class AnalysisAjaxController {
 	@ResponseBody
 	public Map<String, Object> getMetadataTemplateFields(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> metadataFields = template.getFields();
+
+		List<MetadataTemplateField> metadataFields = metadataTemplateService.getPermittedFieldsForTemplate(template);
 		List<String> fields = new ArrayList<>();
 		for (MetadataTemplateField metadataField : metadataFields) {
 			fields.add(metadataField.getLabel());

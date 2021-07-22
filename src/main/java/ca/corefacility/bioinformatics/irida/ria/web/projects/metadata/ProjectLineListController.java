@@ -110,7 +110,10 @@ public class ProjectLineListController {
 	@ResponseBody
 	public List<MetadataTemplateField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		return template.getFields();
+		List<MetadataTemplateField> permittedFieldsForTemplate = metadataTemplateService.getPermittedFieldsForTemplate(
+				template);
+
+		return permittedFieldsForTemplate;
 	}
 
 	/**

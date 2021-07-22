@@ -45,10 +45,14 @@ public class UIMetadataService {
 	 */
 	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplate> joins = templateService.getMetadataTemplatesForProject(project);
-		return joins.stream()
+		List<MetadataTemplate> templates = templateService.getMetadataTemplatesForProject(project);
+
+		return templates.stream()
 				.map(template -> {
-					List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, template.getFields());
+					List<MetadataTemplateField> permittedFieldsForTemplate = templateService.getPermittedFieldsForTemplate(
+							template);
+					List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project,
+							permittedFieldsForTemplate);
 					return new ProjectMetadataTemplate(template, fields);
 				})
 				.collect(Collectors.toList());
@@ -64,7 +68,9 @@ public class UIMetadataService {
 	public ProjectMetadataTemplate createMetadataTemplate(MetadataTemplate template, Long projectId) {
 		Project project = projectService.read(projectId);
 		template = templateService.createMetadataTemplateInProject(template, project);
-		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, template.getFields());
+		List<MetadataTemplateField> permittedFieldsForTemplate = templateService.getPermittedFieldsForTemplate(
+				template);
+		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, permittedFieldsForTemplate);
 		return new ProjectMetadataTemplate(template, fields);
 	}
 
