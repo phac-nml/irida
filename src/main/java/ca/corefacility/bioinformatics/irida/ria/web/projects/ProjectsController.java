@@ -319,6 +319,14 @@ public class ProjectsController {
 		return "projects/project_settings";
 	}
 
+	/**
+	 * Get the project share samples page
+	 *
+	 * @param projectId - identifier for the {@link Project} currently being viewed
+	 * @param principal - Currently logged in used
+	 * @param model     Spring UI model
+	 * @return path to the html page
+	 */
 	@RequestMapping("/projects/{projectId}/samples-share")
 	public String getProjectSamplesSharePage(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
