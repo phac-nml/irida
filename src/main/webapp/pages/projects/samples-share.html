@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
+    <title th:text="${project.label}"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/samples-share.bundle.css}" />
+  </head>
+  <body>
+    <div id="root" layout:fragment="main"></div>
+
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/samples-share.bundle.js}"></script>
+    </th:block>
+  </body>
+</html>
