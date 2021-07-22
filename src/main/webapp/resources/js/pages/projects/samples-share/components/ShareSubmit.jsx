@@ -2,7 +2,8 @@ import { Result } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useShareSamplesToProjectMutation } from "../../../../apis/projects/projects";
-import { IconCheck, IconLoading } from "../../../../components/icons/Icons";
+import { IconLoading } from "../../../../components/icons/Icons";
+import { ShareSuccess } from "./ShareSuccess";
 
 /**
  * React component to submit copy samples to the server.
@@ -11,18 +12,21 @@ import { IconCheck, IconLoading } from "../../../../components/icons/Icons";
  * @constructor
  */
 export function ShareSubmit({ projectId }) {
-  const loading = false;
   const { target, fields, samples, locked } = useSelector(
     (state) => state.reducer
   );
 
-  console.log({ target, fields, samples, locked });
-
   const [
     shareSamplesToProject,
-    { isLoading, isUpdating },
+    { isLoading, isSuccess, ...rest },
   ] = useShareSamplesToProjectMutation();
 
+  console.log(rest);
+
+  /*
+  When this component is rendered, it is time to submit the request to copy these
+  samples to the target project.
+   */
   React.useEffect(() => {
     shareSamplesToProject({
       original: projectId,
@@ -40,15 +44,12 @@ export function ShareSubmit({ projectId }) {
     target.identifier,
   ]);
 
-  return loading ? (
+  return isLoading ? (
     <Result
       icon={<IconLoading />}
       title={`Submitting samples ${samples.length} to be copied to ${target.label}`}
     />
-  ) : (
-    <Result
-      icon={<IconCheck />}
-      title={`You are about to submit ${samples.length} to be copied to ${target.label}`}
-    />
-  );
+  ) : isSuccess ? (
+    <ShareSuccess count={samples.length} target={target} />
+  ) : null;
 }

@@ -4,11 +4,11 @@ import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { ShareFinish } from "./components/ShareFinish";
 import { ShareMetadataFields } from "./components/ShareMetadataFields";
 import { ShareProjects } from "./components/ShareProjects";
 import { ShareSamplesList } from "./components/ShareSamplesList";
 import { ShareSubmit } from "./components/ShareSubmit";
+import { ShareSuccess } from "./components/ShareSuccess";
 import store from "./store";
 
 const { useBreakpoint } = Grid;
@@ -35,7 +35,7 @@ function ShareSamples({ projectId }) {
     <ShareSamplesList key="samples" projectId={projectId} />,
     <ShareMetadataFields key="fields" projectId={projectId} />,
     <ShareSubmit key="summary" projectId={projectId} />,
-    <ShareFinish key="finish" />,
+    <ShareSuccess key="finish" />,
   ];
 
   return (
