@@ -69,6 +69,7 @@ public class ProjectsAjaxController {
 
 	@PutMapping("/share-samples/copy")
 	public ResponseEntity<AjaxResponse> copySamplesToProject(@RequestBody CopySamplesRequest request) {
+		sampleService.copySamplesToProject(request);
 		return ResponseEntity.ok(new AjaxSuccessResponse("YAY"));
 	}
 }
