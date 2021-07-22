@@ -52,7 +52,7 @@ public class UIMetadataServiceTest {
 		when(templateService.getMetadataTemplatesForProject(project)).thenReturn(
 				ImmutableList.of(template));
 		when(templateService.getPermittedFieldsForTemplate(template)).thenReturn(ImmutableList.of(templateField));
-		MetadataTemplate newTemplate = new MetadataTemplate(template.getName(), template.getFields());
+		MetadataTemplate newTemplate = new MetadataTemplate(template.getName(), ImmutableList.of(templateField));
 		newTemplate.setId(NEW_TEMPLATE_ID);
 		when(templateService.createMetadataTemplateInProject(template, project)).thenReturn(newTemplate);
 		when(templateService.getPermittedFieldsForTemplate(newTemplate)).thenReturn(ImmutableList.of(templateField));
