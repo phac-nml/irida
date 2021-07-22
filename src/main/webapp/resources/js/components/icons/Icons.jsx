@@ -9,6 +9,7 @@ import {
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
+  CopyOutlined,
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
@@ -145,6 +146,8 @@ export const IconBell = ({ ...props }) => <BellOutlined {...props} />;
 export const IconLaunchPipeline = ({ ...props }) => (
   <RocketOutlined {...props} />
 );
+
+export const IconShare = ({ ...props }) => <CopyOutlined {...props} />;
 
 /*
 Editor Icons

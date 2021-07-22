@@ -23,8 +23,7 @@ module.exports = {
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
   "project-samples-merge":
     "./resources/js/pages/projects/samples/modals/samples-merge.js",
-  "project-samples-copy":
-    "./resources/js/pages/projects/samples/modals/samples-copy.js",
+  "samples-share": "./resources/js/pages/projects/samples-share",
   "project-samples-remove":
     "./resources/js/pages/projects/samples/modals/samples-remove.js",
   "project-samples-filter":

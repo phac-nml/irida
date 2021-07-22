@@ -319,6 +319,13 @@ public class ProjectsController {
 		return "projects/project_settings";
 	}
 
+	@RequestMapping("/projects/{projectId}/samples-share")
+	public String getProjectSamplesSharePage(@PathVariable Long projectId, Principal principal, Model model) {
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/samples-share";
+	}
+
 	/**
 	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
 	 * <p>
