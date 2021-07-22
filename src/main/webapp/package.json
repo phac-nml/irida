@@ -89,7 +89,7 @@
     "sortablejs": "^1.5.1",
     "styled-components": "^5.2.1",
     "tslib": "^2.1.0",
-    "xlsx": "^0.13.0"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",
