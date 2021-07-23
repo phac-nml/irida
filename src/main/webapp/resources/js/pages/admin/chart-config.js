@@ -67,7 +67,7 @@ export function getTinyChartConfiguration(data) {
     autoFit: true,
     height: 80,
     columnWidthRatio: 1,
-    tooltip: false,
+    tooltip: { showMarkers: false },
   };
 
   return config;
