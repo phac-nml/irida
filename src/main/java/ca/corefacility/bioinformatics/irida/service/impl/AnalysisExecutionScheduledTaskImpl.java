@@ -301,12 +301,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			workflowError = true;
 		}
 
-		/**
-		 * If a user has requested an email on completion, send an email if the workflow completed successfully or in error.
-		 * If a user has requested an email only on error, send one if the workflow completed in error.
-		 */
-		if ((analysisSubmission.getEmailPipelineResultCompleted() && (workflowCompleted || workflowError)) || (
-				analysisSubmission.getEmailPipelineResultError() && workflowError)) {
+		//if the workflow is completed, send an email if they've asked for a completion email
+		boolean emailCompleted = workflowCompleted && analysisSubmission.getEmailPipelineResultCompleted();
+		//if the workflow has errored, send an email if they asked for an error OR completion email
+		boolean emailError = workflowError && (analysisSubmission.getEmailPipelineResultCompleted()
+				|| analysisSubmission.getEmailPipelineResultError());
+
+		if (emailCompleted || emailError) {
 			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 
