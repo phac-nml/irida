@@ -230,6 +230,10 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return metadataRestrictionRepository.save(metadataRestrictionForFieldAndProject);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@PreAuthorize("hasPermission(#template, 'canReadMetadataTemplate')")
 	public List<MetadataTemplateField> getPermittedFieldsForTemplate(MetadataTemplate template) {
 		List<MetadataTemplateField> fieldsForTemplate = fieldRepository.getMetadataFieldsForTemplate(template);
