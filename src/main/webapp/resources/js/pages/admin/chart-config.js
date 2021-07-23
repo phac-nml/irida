@@ -68,6 +68,10 @@ export function getTinyChartConfiguration(data) {
     height: 80,
     columnWidthRatio: 1,
     tooltip: { showMarkers: false },
+    label: {
+      position: 'middle',
+      style: { fill: '#FFFFFF', opacity: 0.6 },
+    },
   };
 
   return config;
