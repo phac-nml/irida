@@ -11,4 +11,6 @@ export default configureStore({
     reducer: rootReducer,
     [metadataImportApi.reducerPath]: metadataImportApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(metadataImportApi.middleware),
 });
