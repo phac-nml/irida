@@ -7,6 +7,8 @@ import {
   useCountQuery,
   useEmptyMutation,
   useGetCartQuery,
+  useRemoveProjectMutation,
+  useRemoveSampleMutation,
 } from "../../../apis/cart/cart";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
@@ -66,12 +68,7 @@ const EmptyCartButton = styled(Button)`
   }
 `;
 
-export default function CartSamples({
-  applyFilter,
-  displaySample,
-  removeSample,
-  removeProject,
-}) {
+export default function CartSamples({ applyFilter, displaySample }) {
   const { data: count = 0, refetch: refetchCount } = useCountQuery();
   const { data: samples, isSuccess, isFetching, refetch } = useGetCartQuery(
     undefined,
@@ -80,10 +77,12 @@ export default function CartSamples({
     }
   );
   const [emptyCart] = useEmptyMutation();
+  const [removeSample] = useRemoveSampleMutation();
+  const [removeProject] = useRemoveProjectMutation();
 
   const filterSamples = (e) => applyFilter(e.target.value);
 
-  const removeOneProject = (id) => removeProject(id);
+  const removeOneProject = (id) => removeProject({ id });
 
   const renderSample = ({ index, data, style }) => {
     const sample = samples[index];
@@ -93,7 +92,7 @@ export default function CartSamples({
         data={sample}
         style={style}
         displaySample={displaySample}
-        removeSample={() => removeSample(sample.project.id, sample.id)}
+        removeSample={() => removeSample({ sampleId: sample.id })}
         removeProject={removeOneProject}
       />
     );

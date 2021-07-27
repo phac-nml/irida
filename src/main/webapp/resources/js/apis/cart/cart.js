@@ -14,6 +14,11 @@ export const cartApi = createApi({
     count: build.query({
       query: () => ({ url: "/count" }),
       providesTags: (result) => [{ type: "CartCount", id: "LIST" }],
+      transformResponse: (response) => {
+        console.log(response);
+        cartUpdated(response);
+        return response;
+      },
     }),
     getCart: build.query({
       query: () => ({
@@ -40,14 +45,14 @@ export const cartApi = createApi({
       invalidatesTags: () => ["CartCount", { type: "CartCount", id: "LIST" }],
     }),
     removeProject: build.mutation({
-      query: (id) => ({
+      query: ({ id }) => ({
         url: "/project",
         params: { id },
       }),
       invalidatesTags: [{ type: "Sample", id: "LIST" }, "CartCount"],
     }),
     removeSample: build.mutation({
-      query: (sampleId) => ({
+      query: ({ sampleId }) => ({
         url: "/samples",
         method: "DELETE",
         params: { sampleId },
