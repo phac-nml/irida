@@ -78,7 +78,6 @@
 				<enabled>true</enabled>
 			</releases>
 		</repository>
-		<!-- https://spring.io/blog/2020/10/29/notice-of-permissions-changes-to-repo-spring-io-fall-and-winter-2020 -->
 		<repository>
 			<id>spring-milestones</id>
 			<url>https://repo.spring.io/milestone/</url>
