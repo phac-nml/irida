@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -36,7 +37,8 @@ public class UICartServiceTest {
 		ProjectService projectService = Mockito.mock(ProjectService.class);
 		SampleService sampleService = Mockito.mock(SampleService.class);
 		MessageSource messageSource = Mockito.mock(MessageSource.class);
-		service = new UICartService(cart, projectService, sampleService, messageSource);
+		UpdateSamplePermission updateSamplePermission = Mockito.mock(UpdateSamplePermission.class);
+		service = new UICartService(cart, projectService, sampleService, updateSamplePermission, messageSource);
 
 		SAMPLE_1.setId(1L);
 		SAMPLE_2.setId(2L);
