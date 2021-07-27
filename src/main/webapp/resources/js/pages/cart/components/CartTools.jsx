@@ -1,14 +1,14 @@
-import React, { Component, lazy, Suspense } from "react";
-
 import { Location, navigate, Router } from "@reach/router";
 import { Row } from "antd";
+import React, { Component, lazy, Suspense } from "react";
 import styled from "styled-components";
-import { CartToolsMenu } from "./CartToolsMenu";
-import { grey1 } from "../../../styles/colors";
-import { SPACE_MD } from "../../../styles/spacing";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { CartToolsMenu } from "./CartToolsMenu";
+import { ShareLayout } from "./share";
 
 /*
 Lazy loaded since we do not need it unless we came from galaxy.
@@ -47,7 +47,7 @@ export default class CartTools extends Component {
     super(props);
 
     this.state = {
-      fromGalaxy: typeof window.GALAXY !== "undefined"
+      fromGalaxy: typeof window.GALAXY !== "undefined",
     };
   }
 
@@ -75,8 +75,8 @@ export default class CartTools extends Component {
     // Remove the galaxy tab and redirect to the pipelines page.
     if (this.state.fromGalaxy) {
       this.setState(
-        prevState => ({
-          fromGalaxy: false
+        (prevState) => ({
+          fromGalaxy: false,
         }),
         () => {
           navigate(setBaseUrl(`cart/pipelines`));
@@ -97,7 +97,7 @@ export default class CartTools extends Component {
             text: i18n("CartTools.menu.galaxy"),
             component: (
               <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
-            )
+            ),
           }
         : null,
       {
@@ -113,8 +113,13 @@ export default class CartTools extends Component {
             automatedProject={window.PAGE.automatedProject}
             default={!this.state.fromGalaxy}
           />
-        )
-      }
+        ),
+      },
+      {
+        link: setBaseUrl(`cart/share`),
+        text: i18n("SHARE SAMPLES"),
+        component: <ShareLayout key="share" path={setBaseUrl(`cart/share`)} />,
+      },
     ].filter(Boolean);
 
     return (
@@ -129,7 +134,7 @@ export default class CartTools extends Component {
                 collapsed={this.props.collapsed}
               />
               <ToolsInner>
-                <Router>{paths.map(path => path.component)}</Router>
+                <Router>{paths.map((path) => path.component)}</Router>
               </ToolsInner>
             </>
           )}

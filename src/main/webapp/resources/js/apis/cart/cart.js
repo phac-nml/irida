@@ -1,9 +1,69 @@
-import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { cartUpdated } from "../../utilities/events-utilities";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { notification } from "antd";
+import axios from "axios";
+import { cartUpdated } from "../../utilities/events-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
+
+export const cartApi = createApi({
+  reducerPath: `cartApi`,
+  baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
+  tagTypes: ["Sample", "cart", "CartCount"],
+  endpoints: (build) => ({
+    count: build.query({
+      query: () => ({ url: "/count" }),
+      providesTags: (result) => [{ type: "CartCount", id: "LIST" }],
+    }),
+    getCart: build.query({
+      query: () => ({
+        url: "/samples",
+        providesTags: (result) =>
+          result
+            ? [
+                ...result.map(({ id }) => ({ type: "Sample", id })),
+                { type: "Sample", id: "LIST" },
+              ]
+            : [{ type: "Sample", id: "LIST" }],
+      }),
+      transformResponse(response, meta) {
+        return response
+          .map((project) => {
+            const { samples, ...p } = project;
+            return project.samples.map((sample) => ({ ...sample, project: p }));
+          })
+          .flat();
+      },
+    }),
+    empty: build.mutation({
+      query: () => ({ url: "", method: "DELETE" }),
+      invalidatesTags: () => ["CartCount", { type: "CartCount", id: "LIST" }],
+    }),
+    removeProject: build.mutation({
+      query: (id) => ({
+        url: "/project",
+        params: { id },
+      }),
+      invalidatesTags: [{ type: "Sample", id: "LIST" }, "CartCount"],
+    }),
+    removeSample: build.mutation({
+      query: (sampleId) => ({
+        url: "/samples",
+        method: "DELETE",
+        params: { sampleId },
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Sample", id }],
+    }),
+  }),
+});
+
+export const {
+  useGetCartQuery,
+  useCountQuery,
+  useEmptyMutation,
+  useRemoveProjectMutation,
+  useRemoveSampleMutation,
+} = cartApi;
 
 const updateCart = (data) => {
   data.notifications.forEach((n) => notification[n.type](n));
@@ -48,23 +108,6 @@ export const getCart = async () =>
  */
 export const getCartIds = async () =>
   axios.get(`${AJAX_URL}/ids`).then((response) => ({ ids: response.data }));
-
-/**
- * Get the samples for projects by their project identifiers.
- * @param ids - List of identifiers for projects in the cart
- * @returns {Promise<AxiosResponse<any>>}
- */
-export const getSamplesForProjects = async (ids) =>
-  axios
-    .get(`${AJAX_URL}/samples?${ids.map((id) => `ids=${id}`).join("&")}`)
-    .then(({ data }) =>
-      data
-        .map((project) => {
-          const { samples, ...p } = project;
-          return project.samples.map((sample) => ({ ...sample, project: p }));
-        })
-        .flat()
-    );
 
 /**
  * Remove all samples from the cart

@@ -1,16 +1,14 @@
 import { call, put, take } from "redux-saga/effects";
-import { actions, types } from "../reducers/cart";
-import { types as appTypes } from "../reducers/app";
 import {
   emptyCart,
   getCartCount,
-  getCartIds,
-  getSamplesForProjects,
   putSampleInCart,
   removeProject,
   removeSample,
 } from "../../apis/cart/cart";
 import { FIELDS } from "../../pages/projects/linelist/constants";
+import { types as appTypes } from "../reducers/app";
+import { actions, types } from "../reducers/cart";
 
 /**
  * Saga to initialize the number of samples in the cart.
@@ -77,11 +75,4 @@ export function* removeProjectFromCart() {
     const count = yield call(removeProject, payload.id);
     yield put(actions.updated({ count }));
   }
-}
-
-export function* loadFullCart() {
-  yield take(types.LOAD_CART);
-  const { ids } = yield call(getCartIds);
-  const samples = yield call(getSamplesForProjects, ids);
-  yield put(actions.cartLoaded(samples));
 }

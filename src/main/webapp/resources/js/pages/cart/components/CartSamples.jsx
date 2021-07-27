@@ -1,16 +1,17 @@
-import React from "react";
-
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import styled from "styled-components";
-import { SPACE_SM } from "../../../styles/spacing";
-import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
-import AutoSizer from "react-virtualized-auto-sizer";
 import { Button, Input } from "antd";
+import React from "react";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
-import { actions } from "../../../redux/reducers/cart";
-import { SampleRenderer } from "./SampleRenderer";
+import styled from "styled-components";
+import {
+  useCountQuery,
+  useEmptyMutation,
+  useGetCartQuery,
+} from "../../../apis/cart/cart";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
+import { SPACE_SM } from "../../../styles/spacing";
+import { SampleRenderer } from "./SampleRenderer";
 
 const { Search } = Input;
 
@@ -65,14 +66,21 @@ const EmptyCartButton = styled(Button)`
   }
 `;
 
-function CartSamplesComponent({
-  samples,
+export default function CartSamples({
   applyFilter,
-  emptyCart,
   displaySample,
   removeSample,
   removeProject,
 }) {
+  const { data: count = 0, refetch: refetchCount } = useCountQuery();
+  const { data: samples, isSuccess, isFetching, refetch } = useGetCartQuery(
+    undefined,
+    {
+      skip: !count || count === 0,
+    }
+  );
+  const [emptyCart] = useEmptyMutation();
+
   const filterSamples = (e) => applyFilter(e.target.value);
 
   const removeOneProject = (id) => removeProject(id);
@@ -91,59 +99,43 @@ function CartSamplesComponent({
     );
   };
 
+  const empty = () => emptyCart().then(refetchCount);
+
   return (
     <Wrapper>
-      <CartTools>
-        <Search onChange={filterSamples} />
-      </CartTools>
-      <CartSamplesWrapper className="t-samples-list">
-        <AutoSizer>
-          {({ height = 600, width = 400 }) => (
-            <VList
-              itemCount={samples.length}
-              itemSize={75}
-              height={height}
-              width={width}
+      {isFetching ? (
+        <p>LOADING</p>
+      ) : (
+        <>
+          <CartTools>
+            <Search onChange={filterSamples} />
+          </CartTools>
+          <CartSamplesWrapper className="t-samples-list">
+            <AutoSizer>
+              {({ height = 600, width = 400 }) => (
+                <VList
+                  itemCount={samples.length}
+                  itemSize={75}
+                  height={height}
+                  width={width}
+                >
+                  {renderSample}
+                </VList>
+              )}
+            </AutoSizer>
+          </CartSamplesWrapper>
+          <ButtonsPanelBottom>
+            <EmptyCartButton
+              className="t-empty-cart-btn"
+              type="danger"
+              block
+              onClick={empty}
             >
-              {renderSample}
-            </VList>
-          )}
-        </AutoSizer>
-      </CartSamplesWrapper>
-      <ButtonsPanelBottom>
-        <EmptyCartButton
-          className="t-empty-cart-btn"
-          type="danger"
-          block
-          onClick={emptyCart}
-        >
-          {i18n("cart.clear")}
-        </EmptyCartButton>
-      </ButtonsPanelBottom>
+              {i18n("cart.clear")}
+            </EmptyCartButton>
+          </ButtonsPanelBottom>
+        </>
+      )}
     </Wrapper>
   );
 }
-
-CartSamplesComponent.propTypes = {
-  removeSample: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  samples: state.cart.filteredSamples,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  applyFilter: (filter) => dispatch(actions.applyFilter(filter)),
-  emptyCart: () => dispatch(actions.emptyCart()),
-  removeSample: (projectId, sampleId) =>
-    dispatch(actions.removeSample(projectId, sampleId)),
-  removeProject: (id) => dispatch(actions.removeProject(id)),
-});
-
-const CartSamples = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CartSamplesComponent);
-
-export default CartSamples;

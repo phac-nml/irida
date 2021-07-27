@@ -1,23 +1,23 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { Layout } from "antd";
-import { actions } from "../../../redux/reducers/cart";
+import React, { lazy, Suspense, useState } from "react";
+import { useCountQuery } from "../../../apis/cart/cart";
 
 const CartSamples = lazy(() => import("./CartSider"));
 const CartTools = lazy(() => import("./CartTools"));
 
 const { Content } = Layout;
 
-function CartComponent({ count = 0, loadCart }) {
+export function Cart() {
   const [collapsed, setCollapsed] = useState(false);
 
-  useEffect(() => {
-    setCollapsed(count === 0);
-    if (count !== 0) {
-      loadCart();
-    }
-  }, [count]);
+  const { data: count = 0 } = useCountQuery();
+
+  // useEffect(() => {
+  //   setCollapsed(count === 0);
+  //   if (count !== 0) {
+  //     loadCart();
+  //   }
+  // }, [count]);
 
   const toggleSidebar = () => setCollapsed(!collapsed);
 
@@ -39,17 +39,17 @@ function CartComponent({ count = 0, loadCart }) {
   );
 }
 
-CartComponent.propTypes = {
-  count: PropTypes.number,
-};
-
-const mapStateToProps = (state) => ({
-  count: state.cart.count,
-  initialized: state.cart.initialized,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  loadCart: () => dispatch(actions.loadCart()),
-});
-
-export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);
+// CartComponent.propTypes = {
+//   count: PropTypes.number,
+// };
+//
+// const mapStateToProps = (state) => ({
+//   count: state.cart.count,
+//   initialized: state.cart.initialized,
+// });
+//
+// const mapDispatchToProps = (dispatch) => ({
+//   loadCart: () => dispatch(actions.loadCart()),
+// });
+//
+// export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);

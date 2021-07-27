@@ -55,8 +55,8 @@ public class CartAjaxController {
 	 * @param locale   Current users locale
 	 * @return the number of samples currently in the cart
 	 */
-	@DeleteMapping("/sample/{sampleId}")
-	public ResponseEntity<CartUpdateResponse> removeSample(@PathVariable Long sampleId, Locale locale) {
+	@DeleteMapping("/sample")
+	public ResponseEntity<CartUpdateResponse> removeSample(@RequestParam Long sampleId, Locale locale) {
 		return ResponseEntity.ok(service.removeSample(sampleId, locale));
 	}
 
@@ -97,7 +97,7 @@ public class CartAjaxController {
 	 * @return Samples that are currently in the cart for specific projects
 	 */
 	@GetMapping("/samples")
-	public ResponseEntity<List<CartProjectModel>> getCartSamplesForProjects(@RequestParam List<Long> ids) {
-		return ResponseEntity.ok(service.getSamplesForProjects(ids));
+	public ResponseEntity<List<CartProjectModel>> getCartSamplesForProjects() {
+		return ResponseEntity.ok(service.getSamplesForProjects());
 	}
 }
