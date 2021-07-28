@@ -42,6 +42,10 @@ export const cartApi = createApi({
     empty: build.mutation({
       query: () => ({ url: "", method: "DELETE" }),
       invalidatesTags: () => ["CartCount", "Samples"],
+      transformResponse: (response) => {
+        cartUpdated(0);
+        return response;
+      },
     }),
     removeProject: build.mutation({
       query: ({ id }) => ({
@@ -50,6 +54,11 @@ export const cartApi = createApi({
         params: { id },
       }),
       invalidatesTags: [{ type: "Samples", id: "LIST" }, "CartCount"],
+      transformResponse: (response) => {
+        console.log(response);
+        cartUpdated(response.count);
+        return response.notifications[0];
+      },
     }),
     removeSample: build.mutation({
       query: ({ sampleId }) => ({
@@ -57,6 +66,10 @@ export const cartApi = createApi({
         method: "DELETE",
         params: { sampleId },
       }),
+      transformResponse: (response) => {
+        cartUpdated(response.count);
+        return response.notifications[0];
+      },
       invalidatesTags: (result, error, { sampleId }) => [
         { type: "Samples", id: sampleId },
       ],

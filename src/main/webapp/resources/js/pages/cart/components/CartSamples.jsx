@@ -4,7 +4,6 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 import styled from "styled-components";
 import {
-  useCountQuery,
   useEmptyMutation,
   useGetCartQuery,
   useRemoveProjectMutation,
@@ -71,13 +70,12 @@ const EmptyCartButton = styled(Button)`
 
 export default function CartSamples({ displaySample }) {
   const [samples, setSamples] = React.useState([]);
-  const { data: count = 0, refetch: refetchCount } = useCountQuery();
-  const { data: allSamples, isSuccess, isFetching, refetch } = useGetCartQuery(
-    undefined,
-    {
-      skip: !count || count === 0,
-    }
-  );
+  const {
+    data: allSamples,
+    isSuccess,
+    isFetching,
+    refetch,
+  } = useGetCartQuery();
   const [emptyCart] = useEmptyMutation();
   const [removeSample] = useRemoveSampleMutation();
   const [removeProject] = useRemoveProjectMutation();
@@ -94,10 +92,14 @@ export default function CartSamples({ displaySample }) {
     );
   };
 
-  const removeOneProject = (id) => removeProject({ id }).then(refetch);
+  const removeOneProject = (id) =>
+    removeProject({ id }).then(({ data }) => {
+      notification.success({ message: data.message });
+      refetch();
+    });
   const removeOneSample = (sampleId) =>
     removeSample({ sampleId }).then(({ data }) => {
-      notification.success({ message: data.notifications[0].message });
+      notification.success({ message: data.message });
       refetch();
     });
 
@@ -115,7 +117,7 @@ export default function CartSamples({ displaySample }) {
     );
   };
 
-  const empty = () => emptyCart().then(refetchCount);
+  const empty = () => emptyCart();
 
   return (
     <Wrapper>
@@ -123,7 +125,7 @@ export default function CartSamples({ displaySample }) {
         <Space size="middle">
           <Spin size="large" />
         </Space>
-      ) : count === 0 ? (
+      ) : !samples || samples.length === 0 ? (
         <Empty
           image={<IconShoppingCart style={{ fontSize: 100, color: blue6 }} />}
           description={i18n("CartEmpty.heading")}
