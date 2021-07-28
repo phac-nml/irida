@@ -9,13 +9,12 @@ const AJAX_URL = setBaseUrl(`/ajax/cart`);
 export const cartApi = createApi({
   reducerPath: `cartApi`,
   baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
-  tagTypes: ["Sample", "cart", "CartCount"],
+  tagTypes: ["Samples", "CartCount"],
   endpoints: (build) => ({
     count: build.query({
       query: () => ({ url: "/count" }),
-      providesTags: (result) => [{ type: "CartCount", id: "LIST" }],
+      providesTags: ["CartCount"],
       transformResponse: (response) => {
-        console.log(response);
         cartUpdated(response);
         return response;
       },
@@ -23,14 +22,14 @@ export const cartApi = createApi({
     getCart: build.query({
       query: () => ({
         url: "/samples",
-        providesTags: (result) =>
-          result
-            ? [
-                ...result.map(({ id }) => ({ type: "Sample", id })),
-                { type: "Sample", id: "LIST" },
-              ]
-            : [{ type: "Sample", id: "LIST" }],
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Samples", id })),
+              { type: "Samples", id: "LIST" },
+            ]
+          : [{ type: "Samples", id: "LIST" }],
       transformResponse(response, meta) {
         return response
           .map((project) => {
@@ -42,22 +41,25 @@ export const cartApi = createApi({
     }),
     empty: build.mutation({
       query: () => ({ url: "", method: "DELETE" }),
-      invalidatesTags: () => ["CartCount", { type: "CartCount", id: "LIST" }],
+      invalidatesTags: () => ["CartCount", "Samples"],
     }),
     removeProject: build.mutation({
       query: ({ id }) => ({
         url: "/project",
+        method: "DELETE",
         params: { id },
       }),
-      invalidatesTags: [{ type: "Sample", id: "LIST" }, "CartCount"],
+      invalidatesTags: [{ type: "Samples", id: "LIST" }, "CartCount"],
     }),
     removeSample: build.mutation({
       query: ({ sampleId }) => ({
-        url: "/samples",
+        url: "/sample",
         method: "DELETE",
         params: { sampleId },
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Sample", id }],
+      invalidatesTags: (result, error, { sampleId }) => [
+        { type: "Samples", id: sampleId },
+      ],
     }),
   }),
 });

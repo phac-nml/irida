@@ -1,4 +1,4 @@
-import { Button, Input } from "antd";
+import { Button, Empty, Input, notification, Space, Spin } from "antd";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
@@ -10,6 +10,7 @@ import {
   useRemoveProjectMutation,
   useRemoveSampleMutation,
 } from "../../../apis/cart/cart";
+import { IconShoppingCart } from "../../../components/icons/Icons";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
@@ -68,9 +69,10 @@ const EmptyCartButton = styled(Button)`
   }
 `;
 
-export default function CartSamples({ applyFilter, displaySample }) {
+export default function CartSamples({ displaySample }) {
+  const [samples, setSamples] = React.useState([]);
   const { data: count = 0, refetch: refetchCount } = useCountQuery();
-  const { data: samples, isSuccess, isFetching, refetch } = useGetCartQuery(
+  const { data: allSamples, isSuccess, isFetching, refetch } = useGetCartQuery(
     undefined,
     {
       skip: !count || count === 0,
@@ -80,9 +82,24 @@ export default function CartSamples({ applyFilter, displaySample }) {
   const [removeSample] = useRemoveSampleMutation();
   const [removeProject] = useRemoveProjectMutation();
 
-  const filterSamples = (e) => applyFilter(e.target.value);
+  React.useEffect(() => {
+    setSamples(allSamples);
+  }, [allSamples]);
 
-  const removeOneProject = (id) => removeProject({ id });
+  const filterSamples = (e) => {
+    setSamples(
+      allSamples.filter((sample) =>
+        sample.label.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+    );
+  };
+
+  const removeOneProject = (id) => removeProject({ id }).then(refetch);
+  const removeOneSample = (sampleId) =>
+    removeSample({ sampleId }).then(({ data }) => {
+      notification.success({ message: data.notifications[0].message });
+      refetch();
+    });
 
   const renderSample = ({ index, data, style }) => {
     const sample = samples[index];
@@ -92,7 +109,7 @@ export default function CartSamples({ applyFilter, displaySample }) {
         data={sample}
         style={style}
         displaySample={displaySample}
-        removeSample={() => removeSample({ sampleId: sample.id })}
+        removeSample={() => removeOneSample(sample.id)}
         removeProject={removeOneProject}
       />
     );
@@ -103,7 +120,14 @@ export default function CartSamples({ applyFilter, displaySample }) {
   return (
     <Wrapper>
       {isFetching ? (
-        <p>LOADING</p>
+        <Space size="middle">
+          <Spin size="large" />
+        </Space>
+      ) : count === 0 ? (
+        <Empty
+          image={<IconShoppingCart style={{ fontSize: 100, color: blue6 }} />}
+          description={i18n("CartEmpty.heading")}
+        />
       ) : (
         <>
           <CartTools>
