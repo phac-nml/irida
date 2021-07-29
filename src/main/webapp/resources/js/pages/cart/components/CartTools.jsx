@@ -1,13 +1,12 @@
-import { Location, navigate, Router } from "@reach/router";
-import { Row } from "antd";
-import React, { Component, lazy, Suspense } from "react";
+import { Link, navigate, Router } from "@reach/router";
+import { Menu, Row } from "antd";
+import React, { lazy, Suspense } from "react";
 import styled from "styled-components";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { CartToolsMenu } from "./CartToolsMenu";
 import { ShareLayout } from "./share";
 
 /*
@@ -39,107 +38,85 @@ const ToolsInner = styled.div`
   overflow-x: auto;
 `;
 
-/**
- * Wrapper component for functionality available in the cart.
- */
-export default class CartTools extends Component {
-  constructor(props) {
-    super(props);
+const MenuWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 65px;
+  border-bottom: ${BORDERED_LIGHT};
+  width: 100%;
 
-    this.state = {
-      fromGalaxy: typeof window.GALAXY !== "undefined",
-    };
+  .ant-menu {
+    line-height: 65px;
+    background-color: transparent;
   }
+`;
 
-  componentDidMount() {
-    if (this.state.fromGalaxy) {
+export default function CartTools({ count, toggleSidebar }) {
+  const [fromGalaxy, setFromGalaxy] = React.useState(
+    () => typeof window.GALAXY !== "undefined"
+  );
+
+  React.useEffect(() => {
+    function removeGalaxy() {
+      setFromGalaxy(false);
+      navigate(setBaseUrl(`cart/pipelines`));
+    }
+
+    if (fromGalaxy) {
       /*
       If this is within a galaxy session, the user has the opportunity to remove the session
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
       from the UI, and the user is redirected to the pipelines page.
        */
-      document.body.addEventListener("galaxy:removal", this.removeGalaxy);
+      document.body.addEventListener("galaxy:removal", removeGalaxy);
     }
-  }
 
-  componentWillUnmount() {
-    if (this.state.fromGalaxy) {
-      /*
-      Remove the galaxy listener to prevent leakage.
-       */
-      this.removeGalaxyListener();
-    }
-  }
+    return () => {
+      document.body.removeEventListener("galaxy:removal", removeGalaxy);
+    };
+  }, [fromGalaxy]);
 
-  removeGalaxy = () => {
-    // Remove the galaxy tab and redirect to the pipelines page.
-    if (this.state.fromGalaxy) {
-      this.setState(
-        (prevState) => ({
-          fromGalaxy: false,
-        }),
-        () => {
-          navigate(setBaseUrl(`cart/pipelines`));
-          this.removeGalaxyListener();
-        }
-      );
-    }
-  };
-
-  removeGalaxyListener = () =>
-    document.body.removeEventListener("galaxy:removal", this.removeGalaxy);
-
-  render() {
-    const paths = [
-      this.state.fromGalaxy
-        ? {
-            link: setBaseUrl(`cart/galaxy`),
-            text: i18n("CartTools.menu.galaxy"),
-            component: (
-              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
-            ),
-          }
-        : null,
-      {
-        link: setBaseUrl(`cart/pipelines`),
-        text: i18n("CartTools.menu.pipelines"),
-        component: (
+  return (
+    <ToolsWrapper>
+      <MenuWrapper>
+        <Menu
+          mode="horizontal"
+          selectedKeys={["pipelines"]}
+          style={{ borderBottom: BORDERED_LIGHT }}
+        >
+          {fromGalaxy && (
+            <Menu.Item key="galaxy">
+              <Link to={setBaseUrl(`cart/galaxy`)}>
+                {i18n("CartTools.menu.galaxy")}
+              </Link>
+            </Menu.Item>
+          )}
+          <Menu.Item key="pipelines">
+            <Link to={setBaseUrl(`cart/pipelines`)}>
+              {i18n("CartTools.menu.pipelines")}
+            </Link>
+          </Menu.Item>
+          <Menu.SubMenu key="samples" title={"SAMPLE UTILITIES"}>
+            <Menu.Item key="share">
+              <Link to={setBaseUrl(`cart/share`)}>Share Samples</Link>
+            </Menu.Item>
+          </Menu.SubMenu>
+        </Menu>
+      </MenuWrapper>
+      <ToolsInner>
+        <Router>
+          {fromGalaxy && (
+            <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
+          )}
           <Pipelines
             key="pipelines"
             path={setBaseUrl(`cart/pipelines`)}
-            displaySelect={
-              this.props.count > 0 || window.PAGE.automatedProject != null
-            }
-            automatedProject={window.PAGE.automatedProject}
-            default={!this.state.fromGalaxy}
+            displaySelect={!!count || window.PAGE.automatedProject != null}
           />
-        ),
-      },
-      {
-        link: setBaseUrl(`cart/share`),
-        text: i18n("SHARE SAMPLES"),
-        component: <ShareLayout key="share" path={setBaseUrl(`cart/share`)} />,
-      },
-    ].filter(Boolean);
-
-    return (
-      <ToolsWrapper>
-        <Location>
-          {({ location }) => (
-            <>
-              <CartToolsMenu
-                pathname={location.pathname}
-                paths={paths}
-                toggleSidebar={this.props.toggleSidebar}
-                collapsed={this.props.collapsed}
-              />
-              <ToolsInner>
-                <Router>{paths.map((path) => path.component)}</Router>
-              </ToolsInner>
-            </>
-          )}
-        </Location>
-      </ToolsWrapper>
-    );
-  }
+          <ShareLayout key="share" path={setBaseUrl(`cart/share`)} />
+        </Router>
+      </ToolsInner>
+    </ToolsWrapper>
+  );
 }
