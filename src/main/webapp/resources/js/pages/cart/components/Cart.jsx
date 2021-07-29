@@ -12,13 +12,6 @@ export function Cart() {
 
   const { data: count = 0 } = useCountQuery();
 
-  // useEffect(() => {
-  //   setCollapsed(count === 0);
-  //   if (count !== 0) {
-  //     loadCart();
-  //   }
-  // }, [count]);
-
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (
@@ -38,18 +31,3 @@ export function Cart() {
     </Content>
   );
 }
-
-// CartComponent.propTypes = {
-//   count: PropTypes.number,
-// };
-//
-// const mapStateToProps = (state) => ({
-//   count: state.cart.count,
-//   initialized: state.cart.initialized,
-// });
-//
-// const mapDispatchToProps = (dispatch) => ({
-//   loadCart: () => dispatch(actions.loadCart()),
-// });
-//
-// export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);

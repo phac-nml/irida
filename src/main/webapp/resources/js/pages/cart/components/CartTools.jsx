@@ -1,4 +1,4 @@
-import { Link, navigate, Router } from "@reach/router";
+import { Link, Location, navigate, Router } from "@reach/router";
 import { Menu, Row } from "antd";
 import React, { lazy, Suspense } from "react";
 import styled from "styled-components";
@@ -52,7 +52,9 @@ const MenuWrapper = styled.div`
   }
 `;
 
-export default function CartTools({ count, toggleSidebar }) {
+function CartToolsContent({ count, toggleSidebar, location }) {
+  console.log(location);
+  const [current, setCurrent] = React.useState(location.pathname);
   const [fromGalaxy, setFromGalaxy] = React.useState(
     () => typeof window.GALAXY !== "undefined"
   );
@@ -64,6 +66,7 @@ export default function CartTools({ count, toggleSidebar }) {
     }
 
     if (fromGalaxy) {
+      setCurrent("galaxy");
       /*
       If this is within a galaxy session, the user has the opportunity to remove the session
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
@@ -82,41 +85,55 @@ export default function CartTools({ count, toggleSidebar }) {
       <MenuWrapper>
         <Menu
           mode="horizontal"
-          selectedKeys={["pipelines"]}
+          selectedKeys={[current]}
           style={{ borderBottom: BORDERED_LIGHT }}
+          onClick={(e) => setCurrent(e.key)}
         >
           {fromGalaxy && (
-            <Menu.Item key="galaxy">
+            <Menu.Item key="/cart/galaxy">
               <Link to={setBaseUrl(`cart/galaxy`)}>
                 {i18n("CartTools.menu.galaxy")}
               </Link>
             </Menu.Item>
           )}
-          <Menu.Item key="pipelines">
+          <Menu.Item key="/cart/pipelines">
             <Link to={setBaseUrl(`cart/pipelines`)}>
               {i18n("CartTools.menu.pipelines")}
             </Link>
           </Menu.Item>
-          <Menu.SubMenu key="samples" title={"SAMPLE UTILITIES"}>
+          <Menu.SubMenu
+            key="/cart/samples"
+            title={i18n("CartTools.menu.samples")}
+          >
             <Menu.Item key="share">
-              <Link to={setBaseUrl(`cart/share`)}>Share Samples</Link>
+              <Link to={setBaseUrl(`cart/share`)}>
+                {i18n("CartTools.menu.samples.share")}
+              </Link>
             </Menu.Item>
           </Menu.SubMenu>
         </Menu>
       </MenuWrapper>
       <ToolsInner>
-        <Router>
+        <Router basepath={setBaseUrl("/cart")}>
           {fromGalaxy && (
-            <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
+            <GalaxyComponent key="galaxy" path={setBaseUrl(`galaxy`)} />
           )}
           <Pipelines
             key="pipelines"
-            path={setBaseUrl(`cart/pipelines`)}
+            path={setBaseUrl(`pipelines`)}
             displaySelect={!!count || window.PAGE.automatedProject != null}
           />
-          <ShareLayout key="share" path={setBaseUrl(`cart/share`)} />
+          <ShareLayout key="share" path={setBaseUrl(`share`)} />
         </Router>
       </ToolsInner>
     </ToolsWrapper>
+  );
+}
+
+export default function CartTools({ ...props }) {
+  return (
+    <Location>
+      {({ location }) => <CartToolsContent {...props} location={location} />}
+    </Location>
   );
 }
