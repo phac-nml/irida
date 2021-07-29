@@ -11,6 +11,13 @@ export const cartApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
   tagTypes: ["Samples", "CartCount"],
   endpoints: (build) => ({
+    /*
+   Get all the samples in the cart.  This is specially formatted for the create new project page
+   where samples need to be broken down into locked and unlocked samples.
+    */
+    getCartSamples: build.query({
+      query: () => ({ url: "/all-samples" }),
+    }),
     count: build.query({
       query: () => ({ url: "/count" }),
       providesTags: ["CartCount"],

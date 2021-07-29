@@ -73,6 +73,7 @@ public class ProjectSyncPage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
 		submitBtn.click();
+		waitForTime(500);
 	}
 
 }

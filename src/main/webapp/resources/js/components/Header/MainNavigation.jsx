@@ -11,6 +11,7 @@ import "./main-navigation/style.css";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const isManager = window.TL._USER.systemRole === "ROLE_MANAGER";
 
   return (
     <Row
@@ -84,6 +85,13 @@ export function MainNavigation() {
           <Menu.Item icon={<CartLink />} key="cart" />
           {!isAdmin && (
             <Menu.SubMenu title={<IconCog />}>
+              {isManager && (
+              <Menu.Item key="user:users">
+                <a href={setBaseUrl("/users")}>
+                  {i18n("nav.main.users-list")}
+                </a>
+              </Menu.Item>
+              )}
               <Menu.Item key="user:groups">
                 <a href={setBaseUrl("/groups")}>
                   {i18n("nav.main.groups-list")}

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
@@ -98,5 +99,16 @@ public class CartAjaxController {
 	@GetMapping("/samples")
 	public ResponseEntity<List<CartProjectModel>> getCartSamplesForProjects() {
 		return ResponseEntity.ok(service.getSamplesForProjects());
+	}
+
+	/**
+	 * Get a list of all samples in the cart, these will be separated out into samples that the user
+	 * can and cannot modify.
+	 *
+	 * @return list of samples that are in the cart.
+	 */
+	@RequestMapping("/all-samples")
+	public ResponseEntity<AjaxResponse> getAllSamplesInCart() {
+		return ResponseEntity.ok(service.getCartSamplesForNewProject());
 	}
 }
