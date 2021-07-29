@@ -28,10 +28,12 @@
 	<metadata_field/>
 	<metadata_entry/>
 	<pipeline_metadata_entry/>
-	<metadata_template/>
+
 
 	<project />
 	<related_project />
+
+	<metadata_template/>
 
 	<tool_execution />
 	<tool_execution_parameters />
