@@ -18,7 +18,12 @@ const { Title } = Typography;
  * @constructor
  */
 export default function ProjectSynchronizationSettings({ projectId }) {
-  const syncNowEnabledStates = ["SYNCHRONIZED", "ERROR", "UNAUTHORIZED"];
+  const syncNowEnabledStates = [
+    "ERROR",
+    "SYNCHRONIZED",
+    "UNAUTHORIZED",
+    "UNSYNCHRONIZED",
+  ];
   const [remoteProjectData, setRemoteProjectData] = useState(null);
   const [disableSyncNow, setDisableSyncNow] = useState(false);
 

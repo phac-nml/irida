@@ -78,7 +78,7 @@ export default function MetadataTemplates({ projectId }) {
   }, [existingTemplates, fields]);
 
   const [BASE_URL] = React.useState(() =>
-    setBaseUrl(`/projects/${projectId}/metadata-templates`)
+    setBaseUrl(`/projects/${projectId}/templates`)
   );
 
   /**

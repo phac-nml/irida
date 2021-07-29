@@ -11,7 +11,7 @@ JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
 TMP_DIRECTORY=`mktemp -d /tmp/irida-test-XXXXXXXX`
 chmod 777 $TMP_DIRECTORY # Needs to be world-accessible so that Docker/Galaxy can access
 
-GALAXY_DOCKER=phacnml/galaxy-irida-20.05:20.09-it
+GALAXY_DOCKER=phacnml/galaxy-irida-20.09:21.05.2-it
 GALAXY_DOCKER_NAME=irida-galaxy-test
 GALAXY_PORT=48889
 GALAXY_URL=http://localhost:$GALAXY_PORT
@@ -30,6 +30,8 @@ DO_KILL_DOCKER=true
 NO_CLEANUP=false
 HEADLESS=true
 SELENIUM_DOCKER=false
+
+OPEN_API_FILE=doc/swagger-ui/open-api.json
 
 if [ -z "$DB_MAX_WAIT_MILLIS" ];
 then
@@ -57,7 +59,7 @@ check_dependencies() {
 }
 
 pretest_cleanup() {
-  JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
+	JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
 
 	if [ "$NO_CLEANUP" = true ];
 	then
@@ -93,12 +95,14 @@ tmp_dir_cleanup() {
 	rm -rf $SEQUENCE_FILE_DIR/*
 	rm -rf $REFERENCE_FILE_DIR/*
 	rm -rf $OUTPUT_FILE_DIR/*
+	rm -f $OPEN_API_FILE
 }
 
 posttest_cleanup() {
-        rm -rf $SEQUENCE_FILE_DIR
-        rm -rf $REFERENCE_FILE_DIR
-        rm -rf $OUTPUT_FILE_DIR
+	rm -rf $SEQUENCE_FILE_DIR
+	rm -rf $REFERENCE_FILE_DIR
+	rm -rf $OUTPUT_FILE_DIR
+	rm -f $OPEN_API_FILE
 }
 
 exit_error() {
@@ -166,8 +170,15 @@ test_doc() {
 	return $exit_code
 }
 
+test_open_api() {
+	mvn clean verify -B -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Djdbc.url=$JDBC_URL -Djdbc.pool.maxWait=$DB_MAX_WAIT_MILLIS
+	test -f $OPEN_API_FILE
+	exit_code=$?
+	return $exit_code
+}
+
 test_all() {
-	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc;
+	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc test_open_api;
 	do
 		tmp_dir_cleanup
 		eval $test_profile
@@ -196,7 +207,7 @@ then
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, doc_testing, all}."
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, doc_testing, open_api_testing, all}."
 	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
 	echo -e "$0 service_testing\n"
@@ -296,6 +307,13 @@ case "$1" in
 		shift
 		#pretest_cleanup
 		test_doc $@
+		exit_code=$?
+		posttest_cleanup
+	;;
+	open_api_testing)
+		shift
+		pretest_cleanup
+		test_open_api $@
 		exit_code=$?
 		posttest_cleanup
 	;;

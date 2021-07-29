@@ -1,23 +1,23 @@
+import { Button, Dropdown, Input, Menu, Table } from "antd";
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Dropdown, Input, Menu, Table, Typography } from "antd";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
-import { PageWrapper } from "../../../components/page/PageWrapper";
 import {
   dateColumnFormat,
   idColumnFormat,
-  nameColumnFormat
+  nameColumnFormat,
 } from "../../../components/ant.design/table-renderers";
-import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   IconDropDown,
   IconFile,
   IconFileExcel,
-  IconSwap
+  IconPlusCircle,
+  IconSwap,
 } from "../../../components/icons/Icons";
-import { AddNewButton } from "../../../components/Buttons/AddNewButton";
-
-const { Text } = Typography;
+import { PageWrapper } from "../../../components/page/PageWrapper";
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
+import { primaryColour } from "../../../utilities/theme-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { CreateNewProject } from "../create";
 
 const initialState = {
   loading: true, // true when table fetching data
@@ -26,12 +26,12 @@ const initialState = {
   pageSize: 10, // Current table size
   total: undefined, // Total number of elements in the table
   order: "descend", // Sort direction
-  field: "modifiedDate" // Sort field
+  field: "modifiedDate", // Sort field
 };
 
 const TYPES = {
   SEARCH: "PROJECTS/SEARCH",
-  TABLE_CHANGE: "PROJECTS/TABLE_CHANGE"
+  TABLE_CHANGE: "PROJECTS/TABLE_CHANGE",
 };
 
 const reducer = (state, action) => {
@@ -42,7 +42,7 @@ const reducer = (state, action) => {
        */
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     case TYPES.SEARCH:
       /*
@@ -50,7 +50,7 @@ const reducer = (state, action) => {
        */
       return {
         ...state,
-        search: action.payload.search
+        search: action.payload.search,
       };
     default:
       throw new Error(`No action found for type: ${action.type}`);
@@ -75,9 +75,9 @@ export function ProjectsTable() {
       pageSize: state.pageSize,
       sortField: state.field,
       sortDirection: state.order,
-      search: state.search
+      search: state.search,
     };
-    getPagedProjectsForUser(params).then(data => {
+    getPagedProjectsForUser(params).then((data) => {
       setProjects(data.models);
       setTotal(data.total);
       setLoading(false);
@@ -93,64 +93,64 @@ export function ProjectsTable() {
         pageSize,
         current,
         order: order || "descend",
-        field: field || "modifiedDate"
-      }
+        field: field || "modifiedDate",
+      },
     });
   };
 
-  const onSearch = value =>
+  const onSearch = (value) =>
     dispatch({
       type: TYPES.SEARCH,
       payload: {
         search: value,
-        current: 1
-      }
+        current: 1,
+      },
     });
 
   const columns = [
     {
       ...idColumnFormat(),
-      title: i18n("ProjectsTable_th_id")
+      title: i18n("ProjectsTable_th_id"),
     },
     {
       title: "",
       dataIndex: "remote",
       key: "remote",
       width: 50,
-      render: remote =>
+      render: (remote) =>
         remote ? (
           <IconSwap title="Remote Project" style={{ cursor: "help" }} />
-        ) : null
+        ) : null,
     },
     {
       ...nameColumnFormat({ url: setBaseUrl(`projects`) }),
-      title: i18n("ProjectsTable_th_name")
+      title: i18n("ProjectsTable_th_name"),
     },
     {
       title: i18n("ProjectsTable_th_organism"),
       dataIndex: "organism",
       key: "organism",
-      sorter: true
+      sorter: true,
     },
     {
       title: i18n("ProjectsTable_th_samples"),
       dataIndex: "samples",
       key: "samples",
-      width: 100
+      width: 100,
     },
     {
       ...dateColumnFormat(),
       title: i18n("ProjectsTable_th_created_date"),
       dataIndex: "createdDate",
-      key: "created"
+      key: "created",
     },
     {
       ...dateColumnFormat(),
       title: i18n("ProjectsTable_th_modified_date"),
       dataIndex: "modifiedDate",
       key: "modified",
-      defaultSortOrder: "descend"
-    }
+      defaultSortOrder: "descend",
+    },
   ];
 
   const IS_ADMIN = window.location.href.endsWith("all");
@@ -178,21 +178,26 @@ export function ProjectsTable() {
   );
 
   return (
-    <PageWrapper title={i18n("ProjectsTable_header")}
-       headerExtras={
-         <AddNewButton
-           href={setBaseUrl(`projects/new`)}
-           text={i18n("ProjectsTable_create_new_project")}
-           className="t-create-new-project-btn"
-         />
-       }
+    <PageWrapper
+      title={i18n("ProjectsTable_header")}
+      headerExtras={
+        <CreateNewProject>
+          <Button
+            text={i18n("ProjectsTable_create_new_project")}
+            className="t-create-new-project-btn"
+            icon={<IconPlusCircle twoToneColor={primaryColour} />}
+          >
+            {i18n("ProjectsTable_create_new_project")}
+          </Button>
+        </CreateNewProject>
+      }
     >
       <div>
         <div
           style={{
             paddingBottom: SPACE_MD,
             display: "flex",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <Dropdown overlay={exportMenu} key="export">
@@ -204,11 +209,11 @@ export function ProjectsTable() {
           <Input.Search style={{ width: 300 }} onSearch={onSearch} />
         </div>
         <Table
-          rowKey={record => record.id}
+          rowKey={(record) => record.id}
           loading={loading}
           pagination={{
             total: total,
-            pageSize: state.pageSize
+            pageSize: state.pageSize,
           }}
           scroll={{ x: "max-content" }}
           columns={columns}

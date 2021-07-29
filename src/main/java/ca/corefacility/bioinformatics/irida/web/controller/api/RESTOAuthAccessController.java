@@ -16,7 +16,6 @@ import com.google.common.base.Joiner;
 
 /**
  * Controller class for serving custom OAuth2 confirmation pages
- *
  */
 @Controller
 @SessionAttributes("authorizationRequest")
@@ -25,7 +24,8 @@ public class RESTOAuthAccessController {
 
 	/**
 	 * Basic access confirmation controller for OAuth2
-	 * @param model Model objects to be passed to the view
+	 *
+	 * @param model     Model objects to be passed to the view
 	 * @param principal The principal user making the auth request
 	 * @return A ModelAndView for the access_confirmation page
 	 */
@@ -33,15 +33,16 @@ public class RESTOAuthAccessController {
 	public ModelAndView getAccessConfirmation(Map<String, Object> model, Principal principal) {
 		//get the authorization request from the model
 		AuthorizationRequest clientAuth = (AuthorizationRequest) model.remove("authorizationRequest");
-		
+
 		logger.trace("Token request recieved from " + clientAuth.getClientId() + " for " + principal.getName());
 		//get a list of the scopes from the request
 		Set<String> scopes = clientAuth.getScope();
-		String join = Joiner.on(" & ").join(scopes);
-		
+		String join = Joiner.on(" & ")
+				.join(scopes);
+
 		//add necessary information to the model
 		model.put("auth_request", clientAuth);
-		model.put("scopes",join);
+		model.put("scopes", join);
 		model.put("principal", principal);
 
 		return new ModelAndView("oauth/access_confirmation", model);
