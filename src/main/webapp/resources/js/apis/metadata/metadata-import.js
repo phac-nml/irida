@@ -28,10 +28,20 @@ export const metadataImportApi = createApi({
         }
       }),
     }),
+    setColumnProjectSampleMetadata: build.query({
+      query: (projectId, sampleNameColumn) => ({
+        url: `/upload/setSampleColumn`,
+       method: 'POST',
+        params: {
+          projectId, sampleNameColumn
+        }
+      }),
+    }),
   })
 });
 
 export const {
   useCreateProjectSampleMetadataQuery,
   useClearProjectSampleMetadataQuery,
+  useSetColumnProjectSampleMetadataQuery
 } = metadataImportApi;
