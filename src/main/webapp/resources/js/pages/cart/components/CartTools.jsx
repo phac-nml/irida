@@ -2,6 +2,7 @@ import { Link, Location, navigate, Router } from "@reach/router";
 import { Menu, Row } from "antd";
 import React, { lazy, Suspense } from "react";
 import styled from "styled-components";
+import { AnalysesQueue } from "../../../components/AnalysesQueue";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { grey1 } from "../../../styles/colors";
@@ -112,6 +113,9 @@ function CartToolsContent({ count, toggleSidebar, location }) {
             </Menu.Item>
           </Menu.SubMenu>
         </Menu>
+        <span style={{ paddingRight: SPACE_MD }}>
+          <AnalysesQueue />
+        </span>
       </MenuWrapper>
       <ToolsInner>
         <Router basepath={setBaseUrl("/cart")}>

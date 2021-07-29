@@ -121,6 +121,9 @@ export default function CartSamples({ displaySample }) {
 
   return (
     <Wrapper>
+      <CartTools>
+        <Search onChange={filterSamples} />
+      </CartTools>
       {isFetching ? (
         <Space size="middle">
           <Spin size="large" />
@@ -132,9 +135,6 @@ export default function CartSamples({ displaySample }) {
         />
       ) : (
         <>
-          <CartTools>
-            <Search onChange={filterSamples} />
-          </CartTools>
           <CartSamplesWrapper className="t-samples-list">
             <AutoSizer>
               {({ height = 600, width = 400 }) => (
