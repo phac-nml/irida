@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import { cartApi } from "../../apis/cart/cart";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { Cart } from "./components/Cart";
-import { cartSlice } from "./services/cartSlice";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -15,20 +14,9 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`dist/`);
 
-// const store = getStore(
-//   {},
-//   {
-//     empty,
-//     removeSampleFromCart,
-//     removeProjectFromCart,
-//     loadFullCart,
-//   }
-// );
-
 const store = configureStore({
   reducer: {
     [cartApi.reducerPath]: cartApi.reducer,
-    [cartSlice.name]: cartSlice.reducer,
   },
 });
 

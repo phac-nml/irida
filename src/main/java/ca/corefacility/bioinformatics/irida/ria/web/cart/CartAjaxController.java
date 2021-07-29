@@ -93,7 +93,6 @@ public class CartAjaxController {
 	/**
 	 * Get the samples that are in the cart for a specific project
 	 *
-	 * @param ids List of project identifiers to get the samples for.
 	 * @return Samples that are currently in the cart for specific projects
 	 */
 	@GetMapping("/samples")
