@@ -17,9 +17,11 @@ import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
  */
 export default function MetadataFieldsListManager({ projectId }) {
   const [restrictions, setRestrictions] = React.useState([]);
-  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
-    projectId
-  );
+  const {
+    data: fields,
+    isLoading,
+    refetch: refetchFields,
+  } = useGetMetadataFieldsForProjectQuery(projectId);
   const [
     updateProjectMetadataFieldRestriction,
   ] = useUpdateProjectMetadataFieldRestrictionMutation();
@@ -37,7 +39,10 @@ export default function MetadataFieldsListManager({ projectId }) {
       projectId,
       fieldId: field.id,
       projectRole: restriction,
-    }).then(({ data }) => notification.success({ message: data.message }));
+    }).then(({ data }) => {
+      notification.success({ message: data.message });
+      refetchFields();
+    });
   };
 
   const columns = [
