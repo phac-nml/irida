@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
  */
 @Component
 public class UIMetadataService {
+	private static final Logger logger = LoggerFactory.getLogger(UIMetadataService.class);
+
 	private final ProjectService projectService;
 	private final MetadataTemplateService templateService;
 	private final MessageSource messageSource;
@@ -83,10 +87,15 @@ public class UIMetadataService {
 	 * @throws Exception if there is an error updating the template
 	 */
 	public String updateMetadataTemplate(MetadataTemplate template, Locale locale) throws Exception {
+		//get the current project for the template and set it on the updated version
+		MetadataTemplate read = templateService.read(template.getId());
+		template.setProject(read.getProject());
+
 		try {
 			templateService.updateMetadataTemplateInProject(template);
 			return messageSource.getMessage("server.MetadataTemplateManager.update-success", new Object[] {}, locale);
 		} catch (Exception e) {
+			logger.error("Couldn't update metadata template", e);
 			throw new Exception(
 					messageSource.getMessage("server.MetadataTemplateManager.update-error", new Object[] {}, locale));
 		}
