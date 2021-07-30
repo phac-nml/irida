@@ -140,7 +140,7 @@ export default function CartSamples({ displaySample }) {
               {({ height = 600, width = 400 }) => (
                 <VList
                   itemCount={samples.length}
-                  itemSize={75}
+                  itemSize={50}
                   height={height}
                   width={width}
                 >

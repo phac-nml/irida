@@ -1,12 +1,8 @@
-import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
+import { Button, Dropdown, Menu, Space, Tag, Tooltip } from "antd";
 
 import PropTypes from "prop-types";
 import React from "react";
-import {
-  IconDropDown,
-  IconFolder,
-  IconLocked,
-} from "../../../components/icons/Icons";
+import { IconDropDown, IconLocked } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
@@ -103,27 +99,26 @@ export class SampleRenderer extends React.Component {
               </Tooltip>
             )}
           </Space>
-          <Dropdown
-            overlay={
-              <DeleteMenu
-                removeSample={() =>
-                  this.props.removeSample(sample.project.id, sample.id)
-                }
-                removeProject={this.removeProject}
-              />
-            }
-            trigger={["hover"]}
-          >
-            <IconDropDown className="t-delete-menu-btn" />
-          </Dropdown>
-        </div>
-        <div>
-          <span>
-            <IconFolder style={{ marginRight: SPACE_XS }} />
-            <a href={setBaseUrl(`projects/${sample.project.id}`)}>
-              {sample.project.label}
-            </a>
-          </span>
+          <Space>
+            <Tag color="blue" closable onClose={this.removeProject}>
+              <a href={setBaseUrl(`projects/${sample.project.id}`)}>
+                {sample.project.label}
+              </a>
+            </Tag>
+            <Dropdown
+              overlay={
+                <DeleteMenu
+                  removeSample={() =>
+                    this.props.removeSample(sample.project.id, sample.id)
+                  }
+                  removeProject={this.removeProject}
+                />
+              }
+              trigger={["hover"]}
+            >
+              <IconDropDown className="t-delete-menu-btn" />
+            </Dropdown>
+          </Space>
         </div>
       </div>
     );
