@@ -299,13 +299,4 @@ public class Project extends IridaResourceSupport
 		this.analysisPriority = analysisPriority;
 	}
 
-	@Deprecated
-	public MetadataTemplate getDefaultMetadataTemplate() {
-		return null;
-	}
-
-	@Deprecated
-	public void setDefaultMetadataTemplate(MetadataTemplate defaultMetadataTemplate) {
-
-	}
 }
