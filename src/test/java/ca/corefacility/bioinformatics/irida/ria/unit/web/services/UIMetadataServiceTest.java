@@ -78,9 +78,10 @@ public class UIMetadataServiceTest {
 
 	@Test
 	public void testSetProjectDefaultMetadataTemplate() throws Exception {
+		when(templateService.read(NEW_TEMPLATE_ID)).thenReturn(template);
 		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID, Locale.ENGLISH);
 		verify(templateService, times(1)).read(NEW_TEMPLATE_ID);
-		verify(projectService, times(1)).update(project);
+		verify(templateService).updateDefaultMetadataTemplateForProject(project, template);
 	}
 
 	@Test
