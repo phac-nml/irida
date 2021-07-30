@@ -31,5 +31,8 @@
 
         <dropTable tableName="project_metadata_template"/>
         <dropTable tableName="project_metadata_template_AUD"/>
+
+        <dropColumn tableName="project" columnName="default_metadata_template"/>
+        <dropColumn tableName="project_AUD" columnName="default_metadata_template"/>
     </changeSet>
 </databaseChangeLog>
