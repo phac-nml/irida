@@ -1,11 +1,12 @@
 import { Link, Location, navigate, Router } from "@reach/router";
-import { Menu, Row } from "antd";
+import { Button, Menu, Row, Space } from "antd";
 import React, { lazy, Suspense } from "react";
 import styled from "styled-components";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
+import { IconMenuFold, IconMenuUnfold } from "../../../components/icons/Icons";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
-import { grey1 } from "../../../styles/colors";
+import { grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareLayout } from "./share";
@@ -53,7 +54,7 @@ const MenuWrapper = styled.div`
   }
 `;
 
-function CartToolsContent({ count, toggleSidebar, location }) {
+function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
   console.log(location);
   const [current, setCurrent] = React.useState(location.pathname);
   const [fromGalaxy, setFromGalaxy] = React.useState(
@@ -113,9 +114,20 @@ function CartToolsContent({ count, toggleSidebar, location }) {
             </Menu.Item>
           </Menu.SubMenu>
         </Menu>
-        <span style={{ paddingRight: SPACE_MD }}>
+        <Space align="center" style={{ padding: `0 ${SPACE_MD}` }}>
           <AnalysesQueue />
-        </span>
+          <Button
+            type="link"
+            onClick={toggleSidebar}
+            icon={
+              collapsed ? (
+                <IconMenuFold style={{ color: grey6, fontSize: 24 }} />
+              ) : (
+                <IconMenuUnfold style={{ color: grey6, fontSize: 24 }} />
+              )
+            }
+          />
+        </Space>
       </MenuWrapper>
       <ToolsInner>
         <Router basepath={setBaseUrl("/cart")}>
