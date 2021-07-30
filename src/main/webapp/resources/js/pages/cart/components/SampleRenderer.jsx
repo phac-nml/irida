@@ -1,12 +1,16 @@
-import React from "react";
+import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
 
 import PropTypes from "prop-types";
-import { Button, Dropdown, Menu } from "antd";
+import React from "react";
+import {
+  IconDropDown,
+  IconFolder,
+  IconLocked,
+} from "../../../components/icons/Icons";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { IconDropDown, IconFolder } from "../../../components/icons/Icons";
-import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 
 const DeleteMenu = ({ removeSample, removeProject }) => (
   <Menu
@@ -76,11 +80,11 @@ export class SampleRenderer extends React.Component {
           key={sample.id}
           style={{
             display: "flex",
-            alignItems: "center",
+            justifyContent: "space-between",
             marginBottom: SPACE_XS,
           }}
         >
-          <div style={{ flexGrow: 1 }}>
+          <Space>
             <SampleDetailViewer
               sampleId={sample.id}
               removeSample={this.props.removeSample}
@@ -93,7 +97,12 @@ export class SampleRenderer extends React.Component {
                 {sample.label}
               </Button>
             </SampleDetailViewer>
-          </div>
+            {this.props.data.locked && (
+              <Tooltip placement="right" title={i18n("SampleRenderer.locked")}>
+                <IconLocked />
+              </Tooltip>
+            )}
+          </Space>
           <Dropdown
             overlay={
               <DeleteMenu

@@ -203,12 +203,12 @@ public class UICartService {
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toList());
 
-			List<CartSampleModel> samples = new ArrayList<>();
-			for (Sample sample : sampleService.readMultiple(sampleIds)) {
-				CartSampleModel cartSampleModel = new CartSampleModel(sample);
-				samples.add(cartSampleModel);
-			}
+			List<CartSampleModel> samples = sampleIds.stream()
+					.map(id -> sampleService.getSampleForProject(project, id))
+					.map(join -> new CartSampleModel(join.getObject(), join.isOwner()))
+					.collect(Collectors.toList());
 			cartProjectModel.setSamples(samples);
+
 			models.add(cartProjectModel);
 		}
 		return models;
