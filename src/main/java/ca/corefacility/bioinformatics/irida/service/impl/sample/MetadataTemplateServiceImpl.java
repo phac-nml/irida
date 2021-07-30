@@ -331,6 +331,9 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return permittedFieldsForRole;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
 	public MetadataTemplate getDefaultTemplateForProject(Project project) {
@@ -349,6 +352,9 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return template;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	@Override
 	@Transactional
@@ -366,10 +372,13 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return template;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
 	@Override
 	@Transactional
-	public void removeDefaulteMetadataTemplateForProject(Project project) {
+	public void removeDefaultMetadataTemplateForProject(Project project) {
 		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
 		if(originalDefault != null) {
 			originalDefault.setProjectDefault(false);

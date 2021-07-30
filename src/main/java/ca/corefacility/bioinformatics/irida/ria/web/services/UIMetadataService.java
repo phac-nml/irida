@@ -177,7 +177,7 @@ public class UIMetadataService {
 		try {
 			Project project = projectService.read(projectId);
 			if (templateId == 0) {
-				templateService.removeDefaulteMetadataTemplateForProject(project);
+				templateService.removeDefaultMetadataTemplateForProject(project);
 			} else {
 				MetadataTemplate metadataTemplate = templateService.read(templateId);
 				templateService.updateDefaultMetadataTemplateForProject(project, metadataTemplate);

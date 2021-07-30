@@ -169,8 +169,27 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 */
 	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project, boolean includeTemplateFields);
 
+	/**
+	 * Get the default {@link MetadataTemplate} for the given {@link Project} (if one exists)
+	 *
+	 * @param project the {@link Project} to get the template for
+	 * @return the default {@link MetadataTemplate} if one is set
+	 */
 	public MetadataTemplate getDefaultTemplateForProject(Project project);
 
+	/**
+	 * Update which {@link MetadataTemplate} is the default for the given {@link Project}
+	 *
+	 * @param project  the {@link Project} to set a template on
+	 * @param template the {@link MetadataTemplate} to set
+	 * @return the new default {@link MetadataTemplate}
+	 */
 	public MetadataTemplate updateDefaultMetadataTemplateForProject(Project project, MetadataTemplate template);
-	public void removeDefaulteMetadataTemplateForProject(Project project);
+
+	/**
+	 * Remove the default {@link MetadataTemplate} from the project.  It will now use all fields as default
+	 *
+	 * @param project the {@link Project} to remove the template from
+	 */
+	public void removeDefaultMetadataTemplateForProject(Project project);
 }
