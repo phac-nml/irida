@@ -10,15 +10,21 @@
                 <constraints referencedTableName="project" referencedColumnNames="id"
                              foreignKeyName="FK_METADATA_TEMPLATE_PROJECT"/>
             </column>
+            <column name="project_default" type="bit(1)" value="0"/>
         </addColumn>
 
         <addColumn tableName="metadata_template_AUD">
             <column name="project_id" type="bigint(20)"/>
+            <column name="project_default" type="bit(1)"/>
         </addColumn>
 
         <sql>
             UPDATE metadata_template m INNER JOIN project_metadata_template t ON m.id=t.template_ID SET
             m.project_id=t.project_id;
+        </sql>
+
+        <sql>
+            UPDATE metadata_template m INNER JOIN project p ON p.default_metadata_template=m.id SET m.project_default=1;
         </sql>
 
         <addNotNullConstraint tableName="metadata_template" columnName="project_id" columnDataType="bigint(20)"/>

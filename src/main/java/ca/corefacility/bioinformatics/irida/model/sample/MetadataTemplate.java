@@ -50,18 +50,23 @@ public class MetadataTemplate implements MutableIridaThing {
 	@NotNull
 	private Project project;
 
+	@Column(name = "project_default")
+	private Boolean projectDefault;
+
 	public MetadataTemplate() {
 	}
 
 	public MetadataTemplate(String name, List<MetadataTemplateField> fields) {
 		this.name = name;
 		this.fields = fields;
+		this.projectDefault = false;
 	}
 
 	public MetadataTemplate(String name, List<MetadataTemplateField> fields, Project project) {
 		this.name = name;
 		this.fields = fields;
 		this.project = project;
+		this.projectDefault = false;
 	}
 
 	@Override
@@ -120,5 +125,13 @@ public class MetadataTemplate implements MutableIridaThing {
 
 	public Project getProject() {
 		return project;
+	}
+
+	public Boolean isProjectDefault() {
+		return projectDefault;
+	}
+
+	public void setProjectDefault(Boolean projectDefault) {
+		this.projectDefault = projectDefault;
 	}
 }

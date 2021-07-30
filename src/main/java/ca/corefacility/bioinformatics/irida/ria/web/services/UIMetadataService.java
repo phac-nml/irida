@@ -177,11 +177,11 @@ public class UIMetadataService {
 		try {
 			Project project = projectService.read(projectId);
 			if (templateId == 0) {
-				project.setDefaultMetadataTemplate(null);
+				templateService.removeDefaulteMetadataTemplateForProject(project);
 			} else {
-				project.setDefaultMetadataTemplate(templateService.read(templateId));
+				MetadataTemplate metadataTemplate = templateService.read(templateId);
+				templateService.updateDefaultMetadataTemplateForProject(project, metadataTemplate);
 			}
-			projectService.update(project);
 			return messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale);
 		} catch (Exception e) {
 			throw new Exception(

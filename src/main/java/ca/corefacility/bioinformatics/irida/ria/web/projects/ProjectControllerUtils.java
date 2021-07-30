@@ -76,7 +76,8 @@ public class ProjectControllerUtils {
 		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);
 
-		Long defaultMetadataTemplateId = project.getDefaultMetadataTemplate() != null ? project.getDefaultMetadataTemplate().getId() : 0;
+		MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
+		Long defaultMetadataTemplateId = defaultTemplateForProject != null ? defaultTemplateForProject.getId() : 0;
 		model.addAttribute("defaultMetadataTemplateId", defaultMetadataTemplateId);
 	}
 

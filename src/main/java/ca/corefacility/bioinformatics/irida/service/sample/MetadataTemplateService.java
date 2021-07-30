@@ -168,4 +168,9 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return a list of {@link MetadataTemplateField} collecting the allowed {@link MetadataTemplateField}
 	 */
 	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project, boolean includeTemplateFields);
+
+	public MetadataTemplate getDefaultTemplateForProject(Project project);
+
+	public MetadataTemplate updateDefaultMetadataTemplateForProject(Project project, MetadataTemplate template);
+	public void removeDefaulteMetadataTemplateForProject(Project project);
 }

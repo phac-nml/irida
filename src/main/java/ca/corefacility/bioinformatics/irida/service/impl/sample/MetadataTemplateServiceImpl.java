@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -334,4 +331,49 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return permittedFieldsForRole;
 	}
 
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public MetadataTemplate getDefaultTemplateForProject(Project project) {
+		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateRepository.getMetadataTemplatesForProject(
+				project);
+
+		Optional<MetadataTemplate> templateOptional = metadataTemplatesForProject.stream()
+				.filter(MetadataTemplate::isProjectDefault)
+				.findFirst();
+
+		MetadataTemplate template = null;
+		if(templateOptional.isPresent()){
+			template = templateOptional.get();
+		}
+
+		return template;
+	}
+
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
+	@Override
+	@Transactional
+	public MetadataTemplate updateDefaultMetadataTemplateForProject(Project project, MetadataTemplate template) {
+
+		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
+		if(originalDefault != null) {
+			originalDefault.setProjectDefault(false);
+			metadataTemplateRepository.save(originalDefault);
+		}
+
+		template.setProjectDefault(true);
+		metadataTemplateRepository.save(template);
+
+		return template;
+	}
+
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
+	@Override
+	@Transactional
+	public void removeDefaulteMetadataTemplateForProject(Project project) {
+		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
+		if(originalDefault != null) {
+			originalDefault.setProjectDefault(false);
+			metadataTemplateRepository.save(originalDefault);
+		}
+	}
 }
