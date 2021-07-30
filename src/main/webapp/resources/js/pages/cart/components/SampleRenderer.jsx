@@ -1,34 +1,12 @@
-import { Button, Dropdown, Menu, Space, Tag, Tooltip } from "antd";
+import { Button, Space, Tag, Tooltip } from "antd";
 
 import PropTypes from "prop-types";
 import React from "react";
-import { IconDropDown, IconLocked } from "../../../components/icons/Icons";
+import { IconLocked, IconRemove } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-
-const DeleteMenu = ({ removeSample, removeProject }) => (
-  <Menu
-    className="t-delete-menu"
-    style={{
-      border: `1px solid ${grey4}`,
-      borderRadius: 2,
-      boxShadow: `0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)`,
-    }}
-  >
-    <Menu.Item>
-      <div onClick={removeSample} className="t-delete-sample">
-        {i18n("SampleRenderer.remove.sample")}
-      </div>
-    </Menu.Item>
-    <Menu.Item>
-      <div onClick={removeProject} className="t-delete-project">
-        {i18n("SampleRenderer.remove.project")}
-      </div>
-    </Menu.Item>
-  </Menu>
-);
 
 /**
  * Component to display sample information on the Cart page.  This is used
@@ -100,24 +78,31 @@ export class SampleRenderer extends React.Component {
             )}
           </Space>
           <Space>
-            <Tag color="blue" closable onClose={this.removeProject}>
+            <Tag
+              color="blue"
+              closable
+              onClose={this.removeProject}
+              closeIcon={
+                <Tooltip
+                  placement="topRight"
+                  title={i18n("SampleRenderer.remove.project")}
+                >
+                  <IconRemove />
+                </Tooltip>
+              }
+            >
               <a href={setBaseUrl(`projects/${sample.project.id}`)}>
                 {sample.project.label}
               </a>
             </Tag>
-            <Dropdown
-              overlay={
-                <DeleteMenu
-                  removeSample={() =>
-                    this.props.removeSample(sample.project.id, sample.id)
-                  }
-                  removeProject={this.removeProject}
-                />
+            <Button
+              type="text"
+              icon={<IconRemove />}
+              size="small"
+              onClick={() =>
+                this.props.removeSample(sample.project.id, sample.id)
               }
-              trigger={["hover"]}
-            >
-              <IconDropDown className="t-delete-menu-btn" />
-            </Dropdown>
+            />
           </Space>
         </div>
       </div>
