@@ -1,4 +1,6 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSampleNameColumn } from "../services/rootReducer"
 import { navigate } from "@reach/router"
 import {
   Button,
@@ -7,20 +9,13 @@ import {
   Typography,
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useSelector } from "react-redux";
 import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
-import { useSetColumnProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
+import { useSetColumnProjectSampleMetadataMutation  } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
 
 function Back() {
   navigate(-1);
-}
-
-function setSampleColumn(projectId, {sampleNameColumnRadio}) {
-  console.log(projectId, sampleNameColumnRadio);
-//   useSetColumnProjectSampleMetadataQuery({ projectId, sampleNameColumnRadio }).then(() =>
-  navigate('review');
 }
 
 /**
@@ -30,9 +25,10 @@ function setSampleColumn(projectId, {sampleNameColumnRadio}) {
  * @constructor
  */
 export function SampleMetadataImportMapHeaders({ projectId }) {
-
+  const dispatch = useDispatch();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
   const [form] = Form.useForm();
+  const [updateColumn] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
 
   React.useEffect(() => {
     form.setFieldsValue({
@@ -41,8 +37,8 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
   }, []);
 
   const onFinish = (values) => {
-    console.log(values);
-    setSampleColumn(projectId, values);
+    updateColumn({projectId: projectId, sampleNameColumn: values.sampleNameColumnRadio});
+    navigate('review');
   };
 
   return (
@@ -55,10 +51,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
         onFinish={onFinish}
         name="setSampleNameColumnForm"
       >
-        <Form.Item
-          name="sampleNameColumnRadio"
-          rules={[{ required: true }]}
-        >
+        <Form.Item name="sampleNameColumnRadio">
           <Radio.Group style={{ width: `100%` }}>
             {headers.map((header, index) => (
               <BlockRadioInput key={`radio-item-header-${index}`}>
