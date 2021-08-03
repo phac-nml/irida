@@ -32,6 +32,8 @@
         <dropTable tableName="project_metadata_template"/>
         <dropTable tableName="project_metadata_template_AUD"/>
 
+        <dropForeignKeyConstraint baseTableName="project" constraintName="FK_PROJECT_METADATA_TEMPLATE"/>
+
         <dropColumn tableName="project" columnName="default_metadata_template"/>
         <dropColumn tableName="project_AUD" columnName="default_metadata_template"/>
     </changeSet>
