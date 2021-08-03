@@ -28,14 +28,22 @@ export const metadataImportApi = createApi({
         }
       }),
     }),
+    getProjectSampleMetadata: build.query({
+      query: (projectId) => ({
+        url: `/upload/getMetadata`,
+        params: {
+          projectId,
+        }
+      }),
+    }),
     setColumnProjectSampleMetadata: build.mutation({
       query: ({projectId, sampleNameColumn}) => ({
-        url: `/upload/setSampleColumn?projectId=${projectId}&sampleNameColumn=${sampleNameColumn}`,
+        url: `/upload/setSampleColumn`,
         method: 'POST',
-//        params: {
-//          projectId,
-//          sampleNameColumn,
-//        }
+        params: {
+          projectId,
+          sampleNameColumn,
+        }
       }),
     }),
   })
@@ -44,5 +52,6 @@ export const metadataImportApi = createApi({
 export const {
   useCreateProjectSampleMetadataQuery,
   useClearProjectSampleMetadataQuery,
+  useGetProjectSampleMetadataQuery,
   useSetColumnProjectSampleMetadataMutation,
 } = metadataImportApi;
