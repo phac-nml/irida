@@ -10,7 +10,9 @@
                 <constraints referencedTableName="project" referencedColumnNames="id"
                              foreignKeyName="FK_METADATA_TEMPLATE_PROJECT"/>
             </column>
-            <column name="project_default" type="bit(1)" value="0"/>
+            <column name="project_default" type="bit(1)" value="0">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
 
         <addColumn tableName="metadata_template_AUD">

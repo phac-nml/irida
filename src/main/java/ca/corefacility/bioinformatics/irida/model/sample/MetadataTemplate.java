@@ -51,7 +51,8 @@ public class MetadataTemplate implements MutableIridaThing {
 	private Project project;
 
 	@Column(name = "project_default")
-	private Boolean projectDefault;
+	@NotNull
+	private boolean projectDefault;
 
 	public MetadataTemplate() {
 	}
@@ -127,11 +128,11 @@ public class MetadataTemplate implements MutableIridaThing {
 		return project;
 	}
 
-	public Boolean isProjectDefault() {
+	public boolean isProjectDefault() {
 		return projectDefault;
 	}
 
-	public void setProjectDefault(Boolean projectDefault) {
+	public void setProjectDefault(boolean projectDefault) {
 		this.projectDefault = projectDefault;
 	}
 }
