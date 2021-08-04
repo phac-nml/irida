@@ -62,7 +62,6 @@ export const cartApi = createApi({
       }),
       invalidatesTags: [{ type: "Samples", id: "LIST" }, "CartCount"],
       transformResponse: (response) => {
-        console.log(response);
         cartUpdated(response.count);
         return response.notifications[0];
       },
