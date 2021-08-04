@@ -31,18 +31,3 @@ export function Cart() {
     </Content>
   );
 }
-
-// CartComponent.propTypes = {
-//   count: PropTypes.number,
-// };
-//
-// const mapStateToProps = (state) => ({
-//   count: state.cart.count,
-//   initialized: state.cart.initialized,
-// });
-//
-// const mapDispatchToProps = (dispatch) => ({
-//   loadCart: () => dispatch(actions.loadCart()),
-// });
-//
-// export const Cart = connect(mapStateToProps, mapDispatchToProps)(CartComponent);
