@@ -87,7 +87,7 @@ export class SampleRenderer extends React.Component {
                   placement="topRight"
                   title={i18n("SampleRenderer.remove.project")}
                 >
-                  <IconRemove />
+                  <IconRemove className="t-remove-project" />
                 </Tooltip>
               }
             >
@@ -97,6 +97,7 @@ export class SampleRenderer extends React.Component {
             </Tag>
             <Button
               type="text"
+              className="t-remove-sample"
               icon={<IconRemove />}
               size="small"
               onClick={() =>
