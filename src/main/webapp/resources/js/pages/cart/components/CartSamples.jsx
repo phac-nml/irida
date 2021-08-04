@@ -84,10 +84,10 @@ export default function CartSamples({ displaySample }) {
     setSamples(allSamples);
   }, [allSamples]);
 
-  const filterSamples = (e) => {
+  const filterSamples = (event) => {
     setSamples(
       allSamples.filter((sample) =>
-        sample.label.toLowerCase().includes(e.target.value.toLowerCase())
+        sample.label.toLowerCase().includes(event.target.value.toLowerCase())
       )
     );
   };

@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense } from "react";
 import { useCountQuery } from "../../../apis/cart/cart";
 
 const CartSamples = lazy(() => import("./CartSider"));
@@ -8,7 +8,7 @@ const CartTools = lazy(() => import("./CartTools"));
 const { Content } = Layout;
 
 export function Cart() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = React.useState(false);
 
   const { data: count = 0 } = useCountQuery();
 
