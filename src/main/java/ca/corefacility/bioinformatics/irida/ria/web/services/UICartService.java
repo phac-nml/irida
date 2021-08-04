@@ -191,7 +191,7 @@ public class UICartService {
 	 * @return {@link List} of {@link CartProjectModel}s containing project and sample information for items in the cart.
 	 */
 	public List<CartProjectModel> getSamplesForProjects() {
-		List<Project> projects = (List<Project>) projectService.readMultiple(this.getProjectIdsInCart());
+		List<Project> projects = (List<Project>) projectService.readMultiple(getProjectIdsInCart());
 		List<CartProjectModel> models = new ArrayList<>();
 
 		for (Project project : projects) {
