@@ -961,8 +961,8 @@ INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id) VALUES (21, "Mo
 
 
 -- METADATA TEMPLATES
-INSERT INTO `metadata_template` (id, created_date, modified_date, name, description, project_id) VALUES (1, '2016-06-10 08:05:53', '2016-07-10 08:05:53', 'Test Date Template 01', "Description of template #1. Think of all the interesting things that could be stored in here", 4);
-INSERT INTO `metadata_template` (id, created_date, modified_date, name, description, project_id) VALUES (2, '2016-07-10 04:45:53', '2016-07-10 08:05:53', 'Special Pathogen Template', "Spicy jalapeno bacon ipsum dolor amet pancetta alcatra jerky, beef leberkas cupim chuck tenderloin. Doner tongue brisket rump bresaola. Corned beef pancetta fatback burgdoggen. Boudin pancetta hamburger, pork shankle andouille landjaeger ground round.", 4);
+INSERT INTO `metadata_template` (id, created_date, modified_date, name, description, project_id, project_default) VALUES (1, '2016-06-10 08:05:53', '2016-07-10 08:05:53', 'Test Date Template 01', "Description of template #1. Think of all the interesting things that could be stored in here", 4, 0);
+INSERT INTO `metadata_template` (id, created_date, modified_date, name, description, project_id, project_default) VALUES (2, '2016-07-10 04:45:53', '2016-07-10 08:05:53', 'Special Pathogen Template', "Spicy jalapeno bacon ipsum dolor amet pancetta alcatra jerky, beef leberkas cupim chuck tenderloin. Doner tongue brisket rump bresaola. Corned beef pancetta fatback burgdoggen. Boudin pancetta hamburger, pork shankle andouille landjaeger ground round.", 4, 0);
 
 -- METADATA TEMPLATE METADATA FIELD
 -- METADATA TEMPLATE 1 FIELDS
