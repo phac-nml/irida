@@ -6,6 +6,11 @@ import { cartApi } from "../../apis/cart/cart";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { Cart } from "./components/Cart";
 
+/**
+ * @fileoverview This is the entry file for the Cart Page.  It uses a redux store,
+ * configured using the redux toolkit.
+ */
+
 /*
 WEBPACK PUBLIC PATH:
 Webpack does not know what the servlet context path is.  To fix this, webpack exposed

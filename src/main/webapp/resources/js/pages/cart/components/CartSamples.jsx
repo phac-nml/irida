@@ -68,11 +68,16 @@ const EmptyCartButton = styled(Button)`
   }
 `;
 
+/**
+ * React component to display a list of samples that are currently in the cart.
+ * @param {function} displaySample - function to open modal to display the sample details
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function CartSamples({ displaySample }) {
   const [samples, setSamples] = React.useState([]);
   const {
     data: allSamples,
-    isSuccess,
     isFetching,
     refetch,
   } = useGetCartQuery();
