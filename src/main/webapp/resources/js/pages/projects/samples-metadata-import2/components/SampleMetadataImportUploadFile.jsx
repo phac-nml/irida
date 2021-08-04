@@ -9,7 +9,7 @@ import {
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useCreateProjectSampleMetadataQuery, useClearProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
+import { useClearProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
 

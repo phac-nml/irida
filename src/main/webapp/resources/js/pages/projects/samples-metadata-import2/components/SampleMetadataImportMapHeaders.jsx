@@ -1,6 +1,5 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSampleNameColumn } from "../services/rootReducer"
 import { navigate } from "@reach/router"
 import {
   Button,
