@@ -4,17 +4,14 @@ import {
   Badge,
   Button,
   Space,
+  Table,
   Tabs,
   Typography,
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useGetProjectSampleMetadataQuery  } from "../../../../apis/metadata/metadata-import";
+import { useGetProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
-
-function Back() {
-  navigate(-1);
-}
 
 /**
  * React component that displays Step #3 of the Sample Metadata Uploader.
@@ -23,11 +20,23 @@ function Back() {
  * @constructor
  */
 export function SampleMetadataImportReview({ projectId }) {
-
-  const { data, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
+  const { data } = useGetProjectSampleMetadataQuery(projectId);
   const { TabPane } = Tabs;
-  console.log(data);
-  console.log(isSuccess);
+
+  const columns = data?.headers.map((header) => {
+    let item = { title: header, dataIndex: header };
+    return item;
+  });
+
+  const foundDataSource = data?.found.map((item, index) => {
+    let newItem = { ...item, key: index };
+    return newItem;
+  });
+
+  const missingDataSource = data?.missing.map((item, index) => {
+    let newItem = { ...item, key: index };
+    return newItem;
+  });
 
   return (
     <SampleMetadataImportWizard currentStep={2}>
@@ -36,13 +45,13 @@ export function SampleMetadataImportReview({ projectId }) {
       </Text>
       <Tabs type="card">
         <TabPane tab={<Space>Rows matching samples<Badge count={data?.found.length} style={{ backgroundColor: 'green' }} /></Space>} key="1">
-          Content of Tab Pane 1
+          <Table columns={columns} dataSource={foundDataSource} />
         </TabPane>
         <TabPane tab={<Space>Rows not matching samples<Badge count={data?.missing.length} /></Space>} key="2">
-          Content of Tab Pane 2
+          <Table columns={columns} dataSource={missingDataSource} />
         </TabPane>
       </Tabs>
-      <Button onClick={() => Back()}> {i18n("SampleMetadataImportReview.back")}</Button>
+      <Button onClick={() => navigate(-1)}> {i18n("SampleMetadataImportReview.back")}</Button>
     </SampleMetadataImportWizard>
   );
 }

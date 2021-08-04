@@ -10,13 +10,9 @@ import {
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
-import { useSetColumnProjectSampleMetadataMutation  } from "../../../../apis/metadata/metadata-import";
+import { useSetColumnProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
-
-function Back() {
-  navigate(-1);
-}
 
 /**
  * React component that displays Step #2 of the Sample Metadata Uploader.
@@ -37,7 +33,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
   }, []);
 
   const onFinish = (values) => {
-    updateColumn({projectId: projectId, sampleNameColumn: values.sampleNameColumnRadio});
+    updateColumn({ projectId: projectId, sampleNameColumn: values.sampleNameColumnRadio });
     navigate('review');
   };
 
@@ -49,7 +45,6 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
       <Form
         form={form}
         onFinish={onFinish}
-        name="setSampleNameColumnForm"
       >
         <Form.Item name="sampleNameColumnRadio">
           <Radio.Group style={{ width: `100%` }}>
@@ -63,7 +58,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
           </Radio.Group>
         </Form.Item>
         <Form.Item>
-          <Button onClick={() => Back()}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
+          <Button onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
           <Button htmlType="submit">{i18n("SampleMetadataImportMapHeaders.next")}</Button>
         </Form.Item>
       </Form>
