@@ -9,8 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
@@ -285,5 +287,15 @@ public class UICartService {
 		}
 
 		return new CartSamplesByUserPermissions(locked, unlocked);
+	}
+
+	public List<Project> getProjectsToShareTo() {
+		Set<Long> projects = getProjectIdsInCart();
+		User user = (User) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+		List<Join<Project, User>> usersProjects = projectService.getProjectsForUser(user);
+		return usersProjects.stream().map(Join::getSubject).filter(project -> projects.contains(project.getId())).collect(
+				Collectors.toUnmodifiableList());
 	}
 }
