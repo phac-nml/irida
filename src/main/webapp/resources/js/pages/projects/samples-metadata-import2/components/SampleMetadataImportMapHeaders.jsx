@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { navigate } from "@reach/router"
 import {
   Button,
-  Form,
   Radio,
   Typography,
 } from "antd";
@@ -21,18 +20,16 @@ const { Text } = Typography
  */
 export function SampleMetadataImportMapHeaders({ projectId }) {
   const dispatch = useDispatch();
+  const [column, setColumn] = useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
-  const [form] = Form.useForm();
   const [updateColumn] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
 
   React.useEffect(() => {
-    form.setFieldsValue({
-      sampleNameColumnRadio: sampleNameColumn ? sampleNameColumn : headers[0],
-    });
+    setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
   }, []);
 
-  const onFinish = (values) => {
-    updateColumn({ projectId: projectId, sampleNameColumn: values.sampleNameColumnRadio });
+  const onSubmit = () => {
+    updateColumn({ projectId: projectId, sampleNameColumn: column });
     navigate('review');
   };
 
@@ -41,26 +38,17 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
       <Text>
         {i18n("SampleMetadataImportMapHeaders.description")}
       </Text>
-      <Form
-        form={form}
-        onFinish={onFinish}
-      >
-        <Form.Item name="sampleNameColumnRadio">
-          <Radio.Group style={{ width: `100%` }}>
-            {headers.map((header, index) => (
-              <BlockRadioInput key={`radio-item-header-${index}`}>
-                <Radio key={`radio-header-${index}`} value={header}>
-                  {header}
-                </Radio>
-              </BlockRadioInput>
-            ))}
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item>
-          <Button onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
-          <Button htmlType="submit">{i18n("SampleMetadataImportMapHeaders.next")}</Button>
-        </Form.Item>
-      </Form>
+      <Radio.Group style={{ width: `100%` }} value={column} onChange={(e) => setColumn(e.target.value)}>
+        {headers.map((header, index) => (
+          <BlockRadioInput key={`radio-item-header-${index}`}>
+            <Radio key={`radio-header-${index}`} value={header}>
+              {header}
+            </Radio>
+          </BlockRadioInput>
+        ))}
+      </Radio.Group>
+      <Button onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
+      <Button onClick={onSubmit}>{i18n("SampleMetadataImportMapHeaders.next")}</Button>
     </SampleMetadataImportWizard>
   );
 }
