@@ -22,8 +22,9 @@ const { Text } = Typography
 export function SampleMetadataImportMapHeaders({ projectId }) {
   const dispatch = useDispatch();
   const [column, setColumn] = useState();
+  const [next, setNext] = useState(true);
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
-  const [updateColumn] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
+  const [updateColumn, {isError}] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
 
   React.useEffect(() => {
     setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
@@ -31,6 +32,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
 
   const onSubmit = () => {
     updateColumn({ projectId: projectId, sampleNameColumn: column });
+    setNext(isError);
     navigate('review');
   };
 
@@ -50,7 +52,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
       </Radio.Group>
       <div style={{display:'flex'}}>
         <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
-        <Button onClick={onSubmit} style={{marginLeft:'auto'}}>
+        <Button onClick={onSubmit} disabled={isError} style={{marginLeft:'auto'}}>
           {i18n("SampleMetadataImportMapHeaders.next")}
           <IconArrowRight />
         </Button>

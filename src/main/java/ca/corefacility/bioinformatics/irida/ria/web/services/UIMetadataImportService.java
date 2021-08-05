@@ -113,9 +113,6 @@ public class UIMetadataImportService {
 			stored.setSampleNameColumn(sampleNameColumn);
 			Project project = projectService.read(projectId);
 			List<Map<String, String>> rows = stored.getRows();
-
-			// Remove 'rows' since they are now going to be sorted into found and not found.
-			stored.removeRows();
 			List<Map<String, String>> found = new ArrayList<>();
 			List<Map<String, String>> missing = new ArrayList<>();
 
