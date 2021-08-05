@@ -1,18 +1,21 @@
-import { Steps, Typography } from "antd";
+import { Space, Steps, Typography } from "antd";
 import React from "react";
+import { useSelector } from "react-redux";
+import { ShareProject } from "./ShareProject";
 
 const { Step } = Steps;
 
 export function ShareLayout() {
-  const [current, setCurrent] = React.useState(0);
+  const current = useSelector((state) => state.share.current);
   return (
-    <>
-      <Typography.Title level={3}>Share Samples with Project</Typography.Title>
+    <Space direction="vertical" style={{ display: "block" }} size="large">
+      <Typography.Title level={3}>{i18n("ShareLayout.title")}</Typography.Title>
       <Steps current={current}>
         <Step title={i18n("ShareLayout.step.projects")} />
         <Step title={i18n("ShareLayout.step.samples")} />
         <Step title={i18n("ShareLayout.step.restrictions")} />
       </Steps>
-    </>
+      <ShareProject />
+    </Space>
   );
 }

@@ -80,11 +80,6 @@ export const cartApi = createApi({
         { type: "Samples", id: sampleId },
       ],
     }),
-  }),
-  getProjectsToShareTo: build.query({
-    query: () => {
-      // BUILD THIS.
-    }
   })
 });
 

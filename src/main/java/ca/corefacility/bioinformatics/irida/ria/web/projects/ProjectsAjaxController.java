@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -64,11 +65,16 @@ public class ProjectsAjaxController {
 	/**
 	 * Get a list of all roles available on a project
 	 *
-	 * @param locale - {@link Locale} of the current user
+	 * @param locale {@link Locale} of the current user
 	 * @return list of roles and their internationalized strings
 	 */
 	@RequestMapping("/roles")
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
 		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
+	}
+
+	@RequestMapping("/user")
+	public ResponseEntity<List<Project>> getUsersProjects(String query) {
+		return ResponseEntity.ok(projectsService.getProjectsForUser(query));
 	}
 }
