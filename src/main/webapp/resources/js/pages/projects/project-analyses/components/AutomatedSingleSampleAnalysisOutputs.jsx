@@ -5,7 +5,7 @@ import { useGetAutomatedSingleSampleAnalysisOutputsQuery } from "../../../../api
 const { Title } = Typography;
 
 /**
- * React component for getting the shared single sample analysis outputs
+ * React component for getting the automated single sample analysis outputs
  * and setting the layout for the page
  * @param projectId The project identifier
  * @returns {JSX.Element}
