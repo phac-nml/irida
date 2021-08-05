@@ -80,7 +80,7 @@ export const cartApi = createApi({
         { type: "Samples", id: sampleId },
       ],
     }),
-  })
+  }),
 });
 
 export const {
