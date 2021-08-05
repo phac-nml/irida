@@ -5,6 +5,9 @@ import { ShareProject } from "./ShareProject";
 
 const { Step } = Steps;
 
+/**
+ * React component for Sharing samples with other projects.
+ */
 export function ShareLayout() {
   const current = useSelector((state) => state.share.current);
   return (

@@ -4,17 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetProjectsForUserQuery } from "../../../../apis/projects/projects";
 import { nextStep, setProject } from "./shareSlice";
 
+/**
+ * React component to render a select field for selection of the project
+ * to share samples with.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareProject() {
   const project = useSelector((state) => state.share.project);
   const [query, setQuery] = React.useState("");
   const dispatch = useDispatch();
 
-  const {
-    data: projects = [],
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetProjectsForUserQuery(query);
+  const { data: projects = [], isFetching } = useGetProjectsForUserQuery(query);
 
   const setValue = (newValue) => {
     const project = projects.find((project) => project.identifier === newValue);
