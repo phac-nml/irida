@@ -44,7 +44,7 @@ const { Paragraph, Text } = Typography;
 export default function MetadataTemplateManager({ id, projectId }) {
   const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
 
-  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
+  const { data: templates, isFetching } = useGetTemplatesForProjectQuery(
     projectId
   );
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
@@ -62,7 +62,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
     are found then we redirect to the metadata fields page so the user can
     create one.
      */
-    if (!isLoading) {
+    if (!isFetching) {
       const found = templates.find((template) => template.identifier == id);
 
       if (found) {
@@ -70,16 +70,16 @@ export default function MetadataTemplateManager({ id, projectId }) {
         setTemplate(newTemplate);
         setFields(addKeysToList(fields, "field"));
       } else if (templates.length === 0) {
-        navigate(`../metadata-fields`).then(() =>
+        navigate(`../fields`).then(() =>
           notification.warn({ message: i18n("MetadataTemplate.no-templates") })
         );
       } else {
-        navigate(`../metadata-templates`).then(() =>
+        navigate(`../templates`).then(() =>
           notification.warn({ message: i18n("MetadataTemplate.not-found") })
         );
       }
     }
-  }, [id, isLoading, templates]);
+  }, [id, isFetching, templates]);
 
   React.useEffect(() => {
     if (Array.isArray(fields) && Array.isArray(allFields)) {
@@ -208,7 +208,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
       onBack={() => navigate("./")}
       extra={displayHeaderExtras(template)}
     >
-      <Skeleton loading={isLoading}>
+      <Skeleton loading={isFetching}>
         <List itemLayout="vertical" size="small">
           <List.Item>
             <List.Item.Meta
