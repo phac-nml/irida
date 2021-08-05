@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { useGetProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
+import { IconArrowLeft, IconArrowRight } from "../../../../components/icons/Icons";
 
 const { Text } = Typography
 
@@ -23,17 +24,17 @@ export function SampleMetadataImportReview({ projectId }) {
   const { data } = useGetProjectSampleMetadataQuery(projectId);
   const { TabPane } = Tabs;
 
-  const columns = data?.headers.map((header) => {
+  const columns = data?.headers?.map((header) => {
     let item = { title: header, dataIndex: header };
     return item;
   });
 
-  const foundDataSource = data?.found.map((item, index) => {
+  const foundDataSource = data?.found?.map((item, index) => {
     let newItem = { ...item, key: index };
     return newItem;
   });
 
-  const missingDataSource = data?.missing.map((item, index) => {
+  const missingDataSource = data?.missing?.map((item, index) => {
     let newItem = { ...item, key: index };
     return newItem;
   });
@@ -44,14 +45,20 @@ export function SampleMetadataImportReview({ projectId }) {
         {i18n("SampleMetadataImportReview.description")}
       </Text>
       <Tabs type="card">
-        <TabPane tab={<Space>Rows matching samples<Badge count={data?.found.length} style={{ backgroundColor: 'green' }} /></Space>} key="1">
+        <TabPane tab={<Space>Rows matching samples<Badge count={data?.found?.length} style={{ backgroundColor: 'green' }} /></Space>} key="1">
           <Table columns={columns} dataSource={foundDataSource} />
         </TabPane>
-        <TabPane tab={<Space>Rows not matching samples<Badge count={data?.missing.length} /></Space>} key="2">
+        <TabPane tab={<Space>Rows not matching samples<Badge count={data?.missing?.length} /></Space>} key="2">
           <Table columns={columns} dataSource={missingDataSource} />
         </TabPane>
       </Tabs>
-      <Button onClick={() => navigate(-1)}> {i18n("SampleMetadataImportReview.back")}</Button>
+      <div style={{display:'flex'}}>
+        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportReview.back")}</Button>
+        <Button style={{marginLeft:'auto'}}>
+          {i18n("SampleMetadataImportReview.next")}
+          <IconArrowRight />
+        </Button>
+      </div>
     </SampleMetadataImportWizard>
   );
 }

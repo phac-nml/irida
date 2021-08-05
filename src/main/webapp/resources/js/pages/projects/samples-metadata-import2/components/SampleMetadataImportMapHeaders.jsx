@@ -9,6 +9,7 @@ import {
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
 import { useSetColumnProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
+import { IconArrowLeft, IconArrowRight } from "../../../../components/icons/Icons";
 
 const { Text } = Typography
 
@@ -47,8 +48,13 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
           </BlockRadioInput>
         ))}
       </Radio.Group>
-      <Button onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
-      <Button onClick={onSubmit}>{i18n("SampleMetadataImportMapHeaders.next")}</Button>
+      <div style={{display:'flex'}}>
+        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
+        <Button onClick={onSubmit} style={{marginLeft:'auto'}}>
+          {i18n("SampleMetadataImportMapHeaders.next")}
+          <IconArrowRight />
+        </Button>
+      </div>
     </SampleMetadataImportWizard>
   );
 }
