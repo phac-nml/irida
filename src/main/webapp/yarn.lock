@@ -4059,15 +4059,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cfb@npm:~1.0.8":
-  version: 1.0.8
-  resolution: "cfb@npm:1.0.8"
+"cfb@npm:^1.1.4":
+  version: 1.2.0
+  resolution: "cfb@npm:1.2.0"
   dependencies:
-    commander: ^2.14.1
+    adler-32: ~1.2.0
+    crc-32: ~1.2.0
     printj: ~1.1.2
-  bin:
-    cfb: ./bin/cfb.njs
-  checksum: 90f575bd08ff57bb40abc8294dbc3186cbdafd7d04c64d3d3e19028a30fe4dfa3b6623fc0c43c35077eaf61692ec735d09f74e2643d2d4f01367468218601511
+  checksum: 5c5578970ebcefa1f02d93ea0ed64844bbc8b46b2eb7fabdcacce73e74a729351e50c32e3dbcb9443eca9d12cfd1b8de149a11e076df86b9633516f445a80099
   languageName: node
   linkType: hard
 
@@ -4153,21 +4152,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromedriver@npm:90.0.0":
-  version: 90.0.0
-  resolution: "chromedriver@npm:90.0.0"
+"chromedriver@npm:92.0.0":
+  version: 92.0.0
+  resolution: "chromedriver@npm:92.0.0"
   dependencies:
     "@testim/chrome-version": ^1.0.7
     axios: ^0.21.1
     del: ^6.0.0
     extract-zip: ^2.0.1
     https-proxy-agent: ^5.0.0
-    mkdirp: ^1.0.4
     proxy-from-env: ^1.1.0
     tcp-port-used: ^1.0.1
   bin:
     chromedriver: bin/chromedriver
-  checksum: 44bc22559ce5d0bd557bae6a1d2b32f96b6ac37f2ba0a44e1c662d5b7120cc0207ed55aa4d46b41dc3501d207210423e45774855fe8f13d2386152a9527a4e87
+  checksum: 56eacfb86717e8ccb4ddfc9a63ad55c701bd15eea65ad2eb432a10a08d3db14c2ba3dff0654c6e207af9e0939507343d5c40f1c6ba83642a2a9540ecaa837c20
   languageName: node
   linkType: hard
 
@@ -4400,7 +4398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^2.14.1, commander@npm:^2.20.0":
+"commander@npm:^2.20.0":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
   checksum: b73428e97de7624323f81ba13f8ed9271de487017432d18b4da3f07cfc528ad754bbd199004bd5d14e0ccd67d1fdfe0ec8dbbd4c438b401df3c4cc387bfd1daa
@@ -4421,10 +4419,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:~2.15.1":
-  version: 2.15.1
-  resolution: "commander@npm:2.15.1"
-  checksum: 3f19d787955782177639ded2a86ae2e6cb6bc7d025b5a4991b6d6edcfe9bc513481bb05d1444650e264129c268f57b7b955cf557dc215faa879a4ece63a31b22
+"commander@npm:~2.17.1":
+  version: 2.17.1
+  resolution: "commander@npm:2.17.1"
+  checksum: 017ef909a7871e0865879bf90cca0527c920010fe5a222b55ba7205baa1d336ea868b7dde4a060c8fc1ede85a1325cc79eef5e1f21170ac626d2ece82a58ad73
   languageName: node
   linkType: hard
 
@@ -6171,6 +6169,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fflate@npm:^0.3.8":
+  version: 0.3.11
+  resolution: "fflate@npm:0.3.11"
+  checksum: 3f9712b1bb5b84617cf3a0f6f18ddd84615e35563f676b97c955a086763bf5f814fa327e74ccd94b146b522e72082e0cb1538696be13428beb53f2b5e3dd4db2
+  languageName: node
+  linkType: hard
+
 "file-entry-cache@npm:^6.0.1":
   version: 6.0.1
   resolution: "file-entry-cache@npm:6.0.1"
@@ -7140,7 +7145,7 @@ fsevents@^2.1.2:
     bootstrap-daterangepicker: ^3.0.3
     browserslist: ^4.16.6
     chroma-js: ^1.3.4
-    chromedriver: 90.0.0
+    chromedriver: 92.0.0
     clipboard: ^1.7.1
     css-loader: ^5.0.1
     css-minimizer-webpack-plugin: ^1.2.0
@@ -7211,7 +7216,7 @@ fsevents@^2.1.2:
     tslib: ^2.1.0
     webpack: ^5.21.0
     webpack-cli: ^4.5.0
-    xlsx: ^0.13.0
+    xlsx: ^0.17.0
   languageName: unknown
   linkType: soft
 
@@ -12683,14 +12688,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"ssf@npm:~0.10.2":
-  version: 0.10.3
-  resolution: "ssf@npm:0.10.3"
+"ssf@npm:~0.11.2":
+  version: 0.11.2
+  resolution: "ssf@npm:0.11.2"
   dependencies:
     frac: ~1.1.2
-  bin:
-    ssf: bin/ssf.njs
-  checksum: f7f5f0e4c4b4b3771c0a0747a593379ef274bedbe14c1e885d42c1d93d4d35a75e9f0f3dafcbeb633eeaba6b692e74c4ff928331ad572a89c4c5760d69c99e91
+  checksum: c917f19a04accb5bc8ee9be7d0b1abf77a0a3588c7f30eb7b9eb5b58439eec13cd9c60b7cf2c024559ce2dc360a1f990260651cc2a50cc7b358463a4eec57b04
   languageName: node
   linkType: hard
 
@@ -14063,10 +14066,24 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"wmf@npm:~1.0.1":
+  version: 1.0.2
+  resolution: "wmf@npm:1.0.2"
+  checksum: a78653ce9f47645ca8c2cf966884be156aeb69a7c7bb9229a350bd0d61e96a05abaa4b8d83ee6dccaf8dc710cfd6a8b3f8c59584ab44194a8fdabf57e3f0f3d2
+  languageName: node
+  linkType: hard
+
 "word-wrap@npm:^1.2.3, word-wrap@npm:~1.2.3":
   version: 1.2.3
   resolution: "word-wrap@npm:1.2.3"
   checksum: 6526abd75d4409c76d1989cf2fbf6080b903db29824be3d17d0a0b8f6221486c76a021174eda2616cf311199787983c34bae3c5e7b51d2ad7476f2066cddb75a
+  languageName: node
+  linkType: hard
+
+"word@npm:~0.3.0":
+  version: 0.3.0
+  resolution: "word@npm:0.3.0"
+  checksum: dee95a1ce8a4996f8cd7f42674a43a96cfce16fab8e948183d8fdd6f04c2379836326ae92f9d76882819330dac69d3a09cccf537b52893fccb906bf708dd0d73
   languageName: node
   linkType: hard
 
@@ -14133,20 +14150,23 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"xlsx@npm:^0.13.0":
-  version: 0.13.5
-  resolution: "xlsx@npm:0.13.5"
+"xlsx@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "xlsx@npm:0.17.0"
   dependencies:
     adler-32: ~1.2.0
-    cfb: ~1.0.8
+    cfb: ^1.1.4
     codepage: ~1.14.0
-    commander: ~2.15.1
+    commander: ~2.17.1
     crc-32: ~1.2.0
     exit-on-epipe: ~1.0.1
-    ssf: ~0.10.2
+    fflate: ^0.3.8
+    ssf: ~0.11.2
+    wmf: ~1.0.1
+    word: ~0.3.0
   bin:
-    xlsx: ./bin/xlsx.njs
-  checksum: 23913dbcf64534d2e13ab9729a30d79c17f9d723d77e01fa31f957e03dd0098d26cdad5db9400436274d60ffabffe74a6230764259ad8cac30eb83e5f51a0a3b
+    xlsx: bin/xlsx.njs
+  checksum: b07cbeeceb6a4c25c48fa4dd57c589295fecdc6671f0c8ae66cc7b100ae61457b0d9f5a22cddbf4c412b559baf84991f1397f2f960c96c3e5aaf627590b8b7b4
   languageName: node
   linkType: hard
 
