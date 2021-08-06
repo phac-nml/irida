@@ -8,14 +8,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.*;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -24,9 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTUsersController;
 
@@ -78,8 +75,10 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException If removing a user will leave the project without an owner. Should NEVER be
 	 *                                      thrown in this method, but needs to be listed.
 	 */
+	@Operation(operationId = "getProjectHash", summary = "Get all users for the given a project", description = "Get all users for the given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
-	public ModelMap getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
+	public ResponseResource<ResourceCollection<User>> getUsersForProject(@PathVariable Long projectId)
+			throws ProjectWithoutOwnerException {
 		ResourceCollection<User> resources = new ResourceCollection<>();
 
 		// get all of the users belonging to this project
@@ -103,10 +102,9 @@ public class RESTProjectUsersController {
 				projectId)).withSelfRel());
 
 		// prepare the response for the client
-		ModelMap model = new ModelMap();
-		model.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
+		ResponseResource<ResourceCollection<User>> responseObject = new ResponseResource<>(resources);
 
-		return model;
+		return responseObject;
 	}
 
 	/**
@@ -120,9 +118,11 @@ public class RESTProjectUsersController {
 	 * @throws ProjectWithoutOwnerException this cannot actually be thrown, it's an artifact of using spring HATEOAS
 	 *                                      {@code linkTo} and {@code methodOn}.
 	 */
+	@Operation(operationId = "addUserToProject", summary = "Add a user to the given project", description = "Add a user to the given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
-	public ModelMap addUserToProject(@PathVariable Long projectId, @RequestBody Map<String, String> representation,
-			HttpServletResponse response) throws ProjectWithoutOwnerException {
+	public ResponseResource<LabelledRelationshipResource<Project, User>> addUserToProject(@PathVariable Long projectId,
+			@RequestBody Map<String, String> representation, HttpServletResponse response)
+			throws ProjectWithoutOwnerException {
 		// first, get the project
 		Project p = projectService.read(projectId);
 		String username = representation.get(USER_ID_KEY);
@@ -161,10 +161,9 @@ public class RESTProjectUsersController {
 		response.addHeader(HttpHeaders.LOCATION, location);
 		response.setStatus(HttpStatus.CREATED.value());
 		// prepare the response for the client
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, lrr);
+		ResponseResource<LabelledRelationshipResource<Project, User>> responseObject = new ResponseResource<>(lrr);
 
-		return modelMap;
+		return responseObject;
 	}
 
 	/**
@@ -176,9 +175,10 @@ public class RESTProjectUsersController {
 	 * Project}.
 	 * @throws ProjectWithoutOwnerException if removing this user will leave the project without an owner
 	 */
+	@Operation(operationId = "removeUserFromProject", summary = "Remove a user from a given project", description = "Remove a user from a given project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
-	public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId)
-			throws ProjectWithoutOwnerException {
+	public ResponseResource<RootResource> removeUserFromProject(@PathVariable Long projectId,
+			@PathVariable String userId) throws ProjectWithoutOwnerException {
 		// Read the project and user from the database
 		Project p = projectService.read(projectId);
 		User u = userService.getUserByUsername(userId);
@@ -196,9 +196,8 @@ public class RESTProjectUsersController {
 				.withRel(RESTProjectsController.REL_PROJECT));
 
 		// respond to the client
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
+		ResponseResource<RootResource> responseObject = new ResponseResource<>(response);
 
-		return modelMap;
+		return responseObject;
 	}
 }

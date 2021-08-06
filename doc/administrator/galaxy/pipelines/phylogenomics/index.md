@@ -11,7 +11,8 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 
 | Tool Name               | Tool Revision   | Toolshed Installable Revision | Toolshed              |
 |:-----------------------:|:---------------:|:-----------------------------:|:---------------------:|
-| **suite_snvphyl_1_2_2** | [77a9422303ce]  | 0                             | [Galaxy Main Shed][]  |
+| **suite_snvphyl_1_2_3** | [bc72925159fc]  | 0                             | [Galaxy Main Shed][]  |
+| **bcftools_view**       | [98d5499ead46]  | 13 (2021-04-13)               | [Galaxy Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
@@ -20,6 +21,15 @@ To install these tools, please proceed through the following steps.
 Please install all the Galaxy tools in the table above by logging into Galaxy, navigating to **Admin > Search and browse tool sheds**, searching for the appropriate **Tool Name** and installing the appropriate **Toolshed Installable Revision**.
 
 The install progress can be monitored in the Galaxy log files `galaxy/*.log`.  On completion you should see a message of `Installed` next to the tool when going to **Admin > Manage installed tool shed repositories**.
+
+### Possible issues
+
+If, after installing all the above tools and testing the pipeline in IRIDA you get the error `GalaxyResponseException{status=400, responseBody={"err_msg": {"sec_filter|select_genotype"...` as described in <https://github.com/phac-nml/irida/issues/1018> then you may need to take the following steps.
+
+1. Find the existing version of `bcftools_view` installed in Galaxy.
+2. Uninstall the existing version of `bcftools_view`.
+3. Install the new version of `bcftools_view` as described above.
+4. Test out the SNVPhyl pipeline again.
 
 ## Step 2: Testing Pipeline
 
@@ -46,7 +56,8 @@ A Galaxy workflow and some test data has been included with this documentation t
 If everything was successfull then all dependencies for this pipeline have been properly installed.
 
 [SNVPhyl]: http://snvphyl.readthedocs.io
-[77a9422303ce]: https://toolshed.g2.bx.psu.edu/view/nml/suite_snvphyl_1_2_2/77a9422303ce
+[bc72925159fc]: https://toolshed.g2.bx.psu.edu/view/nml/suite_snvphyl_1_2_3/bc72925159fc
+[98d5499ead46]: https://toolshed.g2.bx.psu.edu/view/iuc/bcftools_view/98d5499ead46
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [SNVPhyl Galaxy Workflow]: ../test/snvphyl/snvphyl_workflow.ga
 [upload-icon]: ../test/snvphyl/images/upload-icon.jpg

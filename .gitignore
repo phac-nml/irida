@@ -27,3 +27,5 @@ src/main/webapp/node
 !/src/main/webapp/.yarn/sdks
 !/src/main/webapp/.yarn/versions
 /src/main/webapp/.pnp.*
+
+doc/swagger-ui/open-api.json
