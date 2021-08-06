@@ -12,7 +12,7 @@
                              foreignKeyName="FK_METADATA_TEMPLATE_PROJECT"/>
             </column>
             <!-- Add new column for whether the template is the default for the project -->
-            <column name="project_default" type="bit(1)" value="0">
+            <column name="project_default" type="bit(1)" valueBoolean="false">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
