@@ -46,10 +46,10 @@ export function SampleMetadataImportReview({ projectId }) {
       </Text>
       <Tabs type="card">
         <TabPane tab={<Space>Rows matching samples<Badge count={data?.found?.length} style={{ backgroundColor: 'green' }} /></Space>} key="1">
-          <Table columns={columns} dataSource={foundDataSource} />
+          <Table columns={columns} dataSource={foundDataSource} scroll={{ x: 1500 }} />
         </TabPane>
         <TabPane tab={<Space>Rows not matching samples<Badge count={data?.missing?.length} /></Space>} key="2">
-          <Table columns={columns} dataSource={missingDataSource} />
+          <Table columns={columns} dataSource={missingDataSource} scroll={{ x: 1500 }} />
         </TabPane>
       </Tabs>
       <div style={{display:'flex'}}>
