@@ -23,7 +23,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
   const dispatch = useDispatch();
   const [column, setColumn] = useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
-  const [updateColumn, {isError}] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
+  const [updateColumn] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
 
   React.useEffect(() => {
     setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
@@ -41,17 +41,17 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
       </Text>
       <Radio.Group style={{ width: `100%` }} value={column} onChange={(e) => setColumn(e.target.value)}>
         {headers.map((header, index) => (
-          <BlockRadioInput key={`radio-item-header-${index}`}>
-            <Radio key={`radio-header-${index}`} value={header}>
+          <BlockRadioInput key={`metadata-uploader-radio-header-${index}`}>
+            <Radio key={`metadata-uploader-radio-header-${index}`} value={header}>
               {header}
             </Radio>
           </BlockRadioInput>
         ))}
       </Radio.Group>
-      <div style={{display:'flex'}}>
-        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
-        <Button onClick={onSubmit} style={{marginLeft:'auto'}}>
-          {i18n("SampleMetadataImportMapHeaders.next")}
+      <div style={{ display: 'flex' }}>
+        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.button.back")}</Button>
+        <Button onClick={onSubmit} style={{ marginLeft: 'auto' }}>
+          {i18n("SampleMetadataImportMapHeaders.button.next")}
           <IconArrowRight />
         </Button>
       </div>

@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { useGetProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
+import { green7 } from "../../../../styles/colors";
 import { IconArrowLeft, IconArrowRight } from "../../../../components/icons/Icons";
 
 const { Text } = Typography
@@ -45,17 +46,17 @@ export function SampleMetadataImportReview({ projectId }) {
         {i18n("SampleMetadataImportReview.description")}
       </Text>
       <Tabs type="card">
-        <TabPane tab={<Space>Rows matching samples<Badge count={data?.found?.length} style={{ backgroundColor: 'green' }} /></Space>} key="1">
+        <TabPane tab={<Space>{i18n("SampleMetadataImportReview.tab.found")}<Badge count={data?.found?.length} style={{ backgroundColor: green7 }} /></Space>} key="metadata-uploader-found-rows-tab">
           <Table columns={columns} dataSource={foundDataSource} scroll={{ x: 1500 }} />
         </TabPane>
-        <TabPane tab={<Space>Rows not matching samples<Badge count={data?.missing?.length} /></Space>} key="2">
+        <TabPane tab={<Space>{i18n("SampleMetadataImportReview.tab.missing")}<Badge count={data?.missing?.length} /></Space>} key="metadata-uploader-missing-rows-tab">
           <Table columns={columns} dataSource={missingDataSource} scroll={{ x: 1500 }} />
         </TabPane>
       </Tabs>
-      <div style={{display:'flex'}}>
-        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportReview.back")}</Button>
-        <Button style={{marginLeft:'auto'}}>
-          {i18n("SampleMetadataImportReview.next")}
+      <div style={{ display: 'flex' }}>
+        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
+        <Button style={{ marginLeft: 'auto' }}>
+          {i18n("SampleMetadataImportReview.button.next")}
           <IconArrowRight />
         </Button>
       </div>
