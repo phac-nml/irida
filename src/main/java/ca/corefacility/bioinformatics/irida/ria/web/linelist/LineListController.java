@@ -328,9 +328,6 @@ public class LineListController {
 		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project, true);
 
-		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
-				.collect(Collectors.toSet());
-
 		/*
 		IGNORED TEMPLATE FIELDS:
 		These fields are ignored here because they are not part of sample metadata, but instead part of the
@@ -339,6 +336,10 @@ public class LineListController {
 		sent down to the UI.
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
+
+		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
+				.filter(f -> !staticMetadataFields.contains(f))
+				.collect(Collectors.toSet());
 
 		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))
