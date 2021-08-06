@@ -337,6 +337,7 @@ public class LineListController {
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
 
+		//converting to set and removing fields that are in the staticMetadataFields above
 		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
 				.filter(f -> !staticMetadataFields.contains(f))
 				.collect(Collectors.toSet());
