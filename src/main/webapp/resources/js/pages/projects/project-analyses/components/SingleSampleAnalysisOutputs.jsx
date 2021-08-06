@@ -135,6 +135,7 @@ export default function SingleSampleAnalysisOutputs({
     getCheckboxProps: (record) => ({
       name: `analysis-output-file-id-${record.analysisOutputFileId}`,
     }),
+    fixed: true,
   };
 
   // Function to get file name from file path using regex

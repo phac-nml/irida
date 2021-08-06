@@ -174,7 +174,6 @@ public class ProjectsController {
 	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("project", project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		return "projects/project_analyses";
 	}
