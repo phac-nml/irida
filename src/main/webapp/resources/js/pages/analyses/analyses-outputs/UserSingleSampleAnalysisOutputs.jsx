@@ -17,7 +17,7 @@ export default function UserSingleSampleAnalysisOutputs() {
   } = useGetUserSingleSampleAnalysisOutputsQuery();
 
   return (
-    <PageWrapper title="Your Single Sample Analysis Outputs">
+    <PageWrapper title={i18n("UserSingleSampleAnalysisOutputs.title")}>
       <SingleSampleAnalysisOutputs
         outputs={userSingleSampleAnalysisOutputs}
         isLoading={isLoading}
