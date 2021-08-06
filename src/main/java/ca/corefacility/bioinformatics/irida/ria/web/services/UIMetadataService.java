@@ -130,7 +130,7 @@ public class UIMetadataService {
 	 */
 	public List<ProjectMetadataField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, true);
+		List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
 		return addRestrictionsToMetadataFields(project, fields);
 	}
 
