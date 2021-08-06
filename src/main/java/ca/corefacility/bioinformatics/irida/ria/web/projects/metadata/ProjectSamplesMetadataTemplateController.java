@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -116,9 +115,8 @@ public class ProjectSamplesMetadataTemplateController {
 			metadataTemplate.setFields(templateFields);
 			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService.createMetadataTemplateInProject(
+			metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(
 					new MetadataTemplate(name, templateFields), project);
-			metadataTemplate = projectMetadataTemplateJoin.getObject();
 		}
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
@@ -147,7 +145,7 @@ public class ProjectSamplesMetadataTemplateController {
 	@RequestMapping(value = "/{templateId}/excel")
 	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> fields = template.getFields();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForTemplate(template);
 		List<String> headers = fields.stream()
 				.map(MetadataTemplateField::getLabel)
 				.collect(Collectors.toList());
