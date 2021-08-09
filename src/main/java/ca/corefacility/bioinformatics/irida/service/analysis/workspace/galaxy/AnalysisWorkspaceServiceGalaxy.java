@@ -299,20 +299,27 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	private void prepareReferenceFile(ReferenceFile referenceFile, History workflowHistory, String referenceFileLabel,
 			WorkflowDetails workflowDetails, WorkflowInvocationInputs inputs)
-			throws UploadException, GalaxyDatasetException, WorkflowException {
+			throws UploadException, GalaxyDatasetException, WorkflowException, IOException {
 
-		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(referenceFile.getFile());
+		IridaTemporaryFile iridaTemporaryFile = null;
+		try {
+			iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(referenceFile.getFile());
 
-		Dataset referenceDataset = galaxyHistoriesService.fileToHistory(iridaTemporaryFile.getFile(), InputFileType.FASTA,
-				workflowHistory);
+			Dataset referenceDataset = galaxyHistoriesService.fileToHistory(iridaTemporaryFile.getFile(), InputFileType.FASTA,
+					workflowHistory);
 
-		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
-				referenceFileLabel);
+			String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
+					referenceFileLabel);
 
-		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
+			inputs.setInput(workflowReferenceFileInputId,
+					new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(),
+							WorkflowInvocationInputs.InputSourceType.HDA));
 
-		iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+		} finally {
+			if(iridaTemporaryFile != null) {
+				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+			}
+		}
 	}
 
 	/**
