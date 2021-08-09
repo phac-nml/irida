@@ -55,7 +55,6 @@ const MenuWrapper = styled.div`
 `;
 
 function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
-  console.log(location);
   const [current, setCurrent] = React.useState(location.pathname);
   const [fromGalaxy, setFromGalaxy] = React.useState(
     () => typeof window.GALAXY !== "undefined"
