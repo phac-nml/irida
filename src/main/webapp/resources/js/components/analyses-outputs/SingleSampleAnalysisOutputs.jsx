@@ -10,6 +10,7 @@ import {
   downloadSelectedOutputFiles,
   prepareAnalysisOutputsDownload,
 } from "../../apis/analyses/analyses";
+import debounce from "lodash/debounce";
 
 const { Search } = Input;
 
@@ -188,8 +189,9 @@ export default function SingleSampleAnalysisOutputs({
     setSelectedRowKeys([]);
   };
 
-  // Function to filter out outputs by the search term
-  const filterOutputsByTerm = (searchStr) => {
+  // Function to filter out outputs by the search term using debounce
+  const filterOutputsByTerm = debounce((event) => {
+    let searchStr = event.target.value;
     if (
       searchStr.trim() === "" ||
       searchStr === "undefined" ||
@@ -209,7 +211,7 @@ export default function SingleSampleAnalysisOutputs({
       );
       setFilteredOutputs(outputsContainingSearchValue);
     }
-  };
+  }, 300);
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
@@ -223,7 +225,7 @@ export default function SingleSampleAnalysisOutputs({
         </Button>
         <Search
           style={{ width: 300 }}
-          onSearch={filterOutputsByTerm}
+          onChange={filterOutputsByTerm}
           placeholder={i18n("SingleSampleAnalysisOutputs.searchPlaceholder")}
           allowClear
         />
