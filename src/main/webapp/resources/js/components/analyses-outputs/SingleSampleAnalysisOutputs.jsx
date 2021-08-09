@@ -178,7 +178,7 @@ export default function SingleSampleAnalysisOutputs({
           projectId ? `projectId-${projectId}` : `user`
         }-batch-download-analysis-output-files`;
         notification.success({
-          message: "Starting download of selected files",
+          message: i18n("SingleSampleAnalysisOutputs.startingDownload"),
         });
         //Download the selected output files into a zip folder
         downloadSelectedOutputFiles(zipFolderName);

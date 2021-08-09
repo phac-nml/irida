@@ -121,19 +121,6 @@ public class AnalysisAjaxController {
 		this.emailController = emailController;
 	}
 
-	/**
-	 * Get all {@link User} generated {@link AnalysisOutputFile} info
-	 *
-	 * @param userId {@link User} id
-	 * @return {@link User} generated {@link AnalysisOutputFile} info
-	 */
-	@RequestMapping(value = "/user/{userId}/analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(@PathVariable Long userId) {
-		final User user = userService.read(userId);
-		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
-	}
-
 
 	/**
 	 * Update an analysis email pipeline completion result

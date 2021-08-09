@@ -1,12 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analyses;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +28,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesOutputsSe
 @Scope("session")
 @RequestMapping("/ajax/analyses-outputs")
 public class AnalysesOutputsAjaxController {
-
+	private static final Logger logger = LoggerFactory.getLogger(AnalysesOutputsAjaxController.class);
 	private UIAnalysesOutputsService uiAnalysesOutputsService;
+	private MessageSource messageSource;
 
 	@Autowired
-	public AnalysesOutputsAjaxController(UIAnalysesOutputsService uiProjectAnalysesService) {
+	public AnalysesOutputsAjaxController(UIAnalysesOutputsService uiProjectAnalysesService, MessageSource messageSource) {
 		this.uiAnalysesOutputsService = uiProjectAnalysesService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -59,24 +65,30 @@ public class AnalysesOutputsAjaxController {
 	/**
 	 * Get all the user single sample analysis outputs
 	 *
-	 * @param principal Currently logged in user.
 	 * @return a response containing a list of filtered {@link ProjectSampleAnalysisOutputInfo} user single sample analysis outputs
 	 */
 	@GetMapping(value = "/user")
-	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getAllUserAnalysisOutputInfo(Principal principal) {
-		return ResponseEntity.ok(uiAnalysesOutputsService.getUserSingleSampleOutputs(principal));
+	public ResponseEntity<List<ProjectSampleAnalysisOutputInfo>> getAllUserAnalysisOutputInfo() {
+		return ResponseEntity.ok(uiAnalysesOutputsService.getUserSingleSampleOutputs());
 	}
 
 	/**
 	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
 	 *
-	 * @param outputs  Info for {@link AnalysisOutputFile} to download
-	 * @param response {@link HttpServletResponse}
+	 * @param locale  User's locale
+	 * @param outputs Info for {@link AnalysisOutputFile} to download
 	 */
 	@PostMapping(value = "/download/prepare")
-	public void prepareDownload(@RequestBody List<ProjectSampleAnalysisOutputInfo> outputs,
-			HttpServletResponse response) {
-		uiAnalysesOutputsService.prepareAnalysisOutputsSelectionDownload(outputs, response);
+	public void prepareDownload(@RequestBody List<ProjectSampleAnalysisOutputInfo> outputs, Locale locale) {
+		try {
+			uiAnalysesOutputsService.prepareAnalysisOutputsSelectionDownload(outputs);
+			ResponseEntity.status(HttpStatus.CREATED);
+		} catch (Exception e) {
+			String errorMessage = messageSource.getMessage("server.SingleSampleAnalysisOutputs.prepare.error", new Object[] {},
+					locale);
+			logger.error(errorMessage, e);
+			ResponseEntity.status(HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	/**

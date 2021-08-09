@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -74,13 +74,14 @@ public class UIAnalysesOutputsService {
 	}
 
 	/**
-	 * Get all the automated single sample analysis outputs for the project
+	 * Get all the logged in user single sample analysis outputs
 	 *
-	 * @param principal Currently logged in user.
 	 * @return a list of filtered {@link ProjectSampleAnalysisOutputInfo} single sample analysis outputs for the user
 	 */
-	public List<ProjectSampleAnalysisOutputInfo> getUserSingleSampleOutputs(Principal principal) {
-		User user = userService.getUserByUsername(principal.getName());
+	public List<ProjectSampleAnalysisOutputInfo> getUserSingleSampleOutputs() {
+		User user = userService.getUserByUsername(SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName());
 		List<ProjectSampleAnalysisOutputInfo> userProjectSampleAnalysisOutputInfos = getSingleSampleAnalysisOutputsInfo(
 				analysisSubmissionService.getAllUserAnalysisOutputInfo(user));
 
@@ -97,12 +98,9 @@ public class UIAnalysesOutputsService {
 	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
 	 *
 	 * @param outputs  Info for {@link AnalysisOutputFile} to download
-	 * @param response {@link HttpServletResponse}
 	 */
-	public void prepareAnalysisOutputsSelectionDownload(List<ProjectSampleAnalysisOutputInfo> outputs,
-			HttpServletResponse response) {
+	public void prepareAnalysisOutputsSelectionDownload(List<ProjectSampleAnalysisOutputInfo> outputs) {
 		analysisOutputFileDownloadManager.setSelection(outputs);
-		response.setStatus(HttpServletResponse.SC_CREATED);
 	}
 
 	/**
