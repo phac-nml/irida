@@ -16,7 +16,7 @@ module.exports = {
   dashboard: "./resources/js/pages/dashboard.js",
   launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
-  "project-events": "./resources/js/pages/projects/project-events.js",
+  "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
@@ -32,7 +32,7 @@ module.exports = {
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-new": "./resources/js/pages/projects/projects-new.js",
+  "project-create": "./resources/js/pages/projects/create",
   "project-settings": "./resources/js/pages/projects/settings",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",

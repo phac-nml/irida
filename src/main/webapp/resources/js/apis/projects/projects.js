@@ -14,8 +14,7 @@ const URL = setBaseUrl(`ajax/projects`);
 export async function getPagedProjectsForUser(params) {
   try {
     const { data } = await axios.post(
-      `${URL}?admin=${window.location.href.includes("all")}
-  `,
+      `${URL}?admin=${window.location.href.includes("all")}`,
       params
     );
     return data;

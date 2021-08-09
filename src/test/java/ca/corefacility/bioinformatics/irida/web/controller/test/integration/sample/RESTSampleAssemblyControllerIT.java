@@ -4,10 +4,12 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.jayway.restassured.response.Response;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;

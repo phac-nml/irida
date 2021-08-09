@@ -1,13 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -20,27 +14,13 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectActivityPageIT extends AbstractIridaUIITChromeDriver {
-	public static final Long PROJECT_ID = 1L;
-	public static final String PROJECT_NAME = "project";
-	public static final String PROJECT_OWNER = "Mr. Manager";
-	public static final String PROJECT_CREATED_DATE = "12 Jul 2013";
-	public static final String PROJECT_ORGANISM = "E. coli";
-
-	private ProjectActivityPage detailsPage;
-
-	@Before
-	public void setUpTest() {
-		detailsPage = new ProjectActivityPage(driver());
-		LoginPage.loginAsManager(driver());
-	}
 
 	@Test
 	public void testDisplaysProjectEvent() {
-		detailsPage.goTo(PROJECT_ID);
-		List<WebElement> events = detailsPage.getEvents();
-		assertEquals(1, events.size());
-		WebElement next = events.iterator().next();
-		String className = next.getAttribute("class");
-		assertTrue(className.contains("user-role-event"));
+		LoginPage.loginAsManager(driver());
+		ProjectActivityPage page = ProjectActivityPage.goTo(driver());
+		Assert.assertEquals("Should be activities", 1, page.getNumberOfActivities());
+		Assert.assertEquals("Should be a add user role event", "project_user_role_updated", page.getActivityTypeForActivity(0));
+		Assert.assertFalse("Load more activities button should be disabled", page.isLoadMoreButtonEnabled());
 	}
 }

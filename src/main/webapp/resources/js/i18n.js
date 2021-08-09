@@ -22,7 +22,7 @@
  * @param {string} key
  * @returns {*}
  */
-const getTranslation = key => {
+const getTranslation = (key) => {
   const translations = Object.assign({}, ...window.translations);
   if (translations && translations[key]) return translations[key];
   throw new Error(`No internationalization string for key: ${key}`);
