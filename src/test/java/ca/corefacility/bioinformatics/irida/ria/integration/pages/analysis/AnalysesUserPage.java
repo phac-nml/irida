@@ -43,9 +43,6 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(css = ".ant-input-search .ant-input")
 	private WebElement outputsSearchInput;
 
-	@FindBy(className = "ant-input-search-button")
-	private WebElement outputsSearchInputSubmit;
-
 	@FindBy(className = "ant-input-clear-icon")
 	private WebElement outputsSearchInputClearBtn;
 
@@ -73,17 +70,14 @@ public class AnalysesUserPage extends AbstractPage {
 	}
 
 	public void searchOutputs(String searchStr) {
-		waitForElementToBeClickable(outputsSearchInputSubmit);
 		outputsSearchInput.sendKeys(searchStr);
-		outputsSearchInputSubmit.click();
-		waitForElementVisible(By.className("ant-input-clear-icon"));
+		waitForTime(500);
 	}
 
 	public void clearSearchOutputs() {
 		waitForElementToBeClickable(outputsSearchInputClearBtn);
 		outputsSearchInputClearBtn.click();
-		outputsSearchInputSubmit.click();
-		waitForElementInvisible(By.className("ant-input-clear-icon"));
+		waitForTime(500);
 	}
 
 	public void searchForAnalysisByName(String name) {

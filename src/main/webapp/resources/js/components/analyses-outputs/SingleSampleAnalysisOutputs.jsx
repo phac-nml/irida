@@ -192,11 +192,7 @@ export default function SingleSampleAnalysisOutputs({
   // Function to filter out outputs by the search term using debounce
   const filterOutputsByTerm = debounce((event) => {
     let searchStr = event.target.value;
-    if (
-      searchStr.trim() === "" ||
-      searchStr === "undefined" ||
-      searchStr === null
-    ) {
+    if (searchStr === "undefined" || searchStr === null) {
       setFilteredOutputs(null);
     } else {
       searchStr = String(searchStr).toLowerCase();

@@ -278,7 +278,7 @@ You will see a table of your single sample analysis output files:
 
 ![](images/batch-download-user-outputs.png)
 
-You can filter the outputs using the search box and hitting the enter key or clicking the magnifying glass icon next to the search box. The following fields are searched:
+You can filter the outputs using the search box, and the outputs are filtered as you type. The following fields are searched:
 - Sample Name
 - File
 - Analysis Type
