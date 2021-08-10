@@ -34,8 +34,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.*;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
 import org.springframework.security.ldap.authentication.PasswordComparisonAuthenticator;
@@ -45,7 +45,9 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 
 import javax.naming.NamingException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration for IRIDA's spring security modules
@@ -69,6 +71,40 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Value("${security.password.expiry}")
 	private int passwordExpiryInDays = -1;
+
+	@Value("${irida.administrative.authenitcation.mode}")
+	private String authenicationMode;
+
+	@Value("${irida.administrative.authenitcation.ldap.url}")
+	private String ldapUrl;
+
+	@Value("${irida.administrative.authenitcation.ldap.userdn}")
+	private String ldapUserDn;
+
+	@Value("${irida.administrative.authenitcation.ldap.password_attribute_name}")
+	private String ldapPasswordAttributeName;
+
+	@Value("${irida.administrative.authenitcation.ldap.password}")
+	private String ldapPassword;
+
+	@Value("${irida.administrative.authenitcation.ldap.set_referral}")
+	private String ldapSetReferral;
+
+	@Value("${irida.administrative.authenitcation.ldap.password_encoder}")
+	private String ldapPasswordEncoder;
+
+	@Value("${irida.administrative.authenitcation.adldap.url}")
+	private String adLdapUrl;
+
+	@Value("${irida.administrative.authenitcation.adldap.domain}")
+	private String adLdapDomain;
+
+	@Value("${irida.administrative.authenitcation.adldap.rootdn}")
+	private String adLdapRootDn;
+
+	@Value("${irida.administrative.authenitcation.adldap.searchfilter}")
+	private String adLdapSearchFilter;
+
 
 	/**
 	 * Loads all of the {@link BasePermission} sub-classes found in the security
@@ -111,9 +147,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 //				} catch (NamingException e) {
 //					e.printStackTrace();
 //				}
-				User user = userRepository.loadUserByUsername(username);
-				return user;
-
+				return userRepository.loadUserByUsername(username);
 			}
 			@Override
 			public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
@@ -135,39 +169,67 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 
-//	@Bean
-//	public AuthenticationProvider authenticationProvider() {
-//		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//		authenticationProvider.setUserDetailsService(userRepository);
-//		authenticationProvider.setPasswordEncoder(passwordEncoder());
-//
-//		/*
-//		Expire a user's password after the given number of days and force them to change it.
-//		 */
-//		if (passwordExpiryInDays != -1) {
-//			authenticationProvider
-//					.setPreAuthenticationChecks(new PasswordExpiryChecker(userRepository, passwordExpiryInDays));
-//		}
-//
-//		/*
-//		 * After a user has been authenticated, we want to allow them to change
-//		 * their password if the password is expired. The
-//		 * {@link IgnoreExpiredCredentialsForPasswordChangeChecker} allows
-//		 * authenticated users with expired credentials to invoke one method, the
-//		 * {@link UserService#changePassword(Long, String)} method.
-//		 */
-//		authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
-//		return authenticationProvider;
-//	}
-
-
+	/**
+	 * Builds and returns an AuthenticationProvider based on the authenicationMode variable
+	 *
+	 * @return AuthenticationProvider
+	 */
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
+		AuthenticationProvider provider;
+
+		switch(authenicationMode)
+		{
+			case "ldap":
+				provider = LdapAuthenticationProvider();
+				break;
+			case "adldap":
+				provider = ActiveDirectoryLdapAuthenticationProvider();
+				break;
+			default:
+				provider = DaoAuthenticationProvider();
+		}
+
+		return provider;
+	}
+
+	@Bean
+	public AuthenticationProvider DaoAuthenticationProvider() {
+		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+		authenticationProvider.setUserDetailsService(userRepository);
+		authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+		/*
+		Expire a user's password after the given number of days and force them to change it.
+		 */
+		if (passwordExpiryInDays != -1) {
+			authenticationProvider
+					.setPreAuthenticationChecks(new PasswordExpiryChecker(userRepository, passwordExpiryInDays));
+		}
+
+		/*
+		 * After a user has been authenticated, we want to allow them to change
+		 * their password if the password is expired. The
+		 * {@link IgnoreExpiredCredentialsForPasswordChangeChecker} allows
+		 * authenticated users with expired credentials to invoke one method, the
+		 * {@link UserService#changePassword(Long, String)} method.
+		 */
+		authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
+		return authenticationProvider;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuthenticationProvider LdapAuthenticationProvider() {
 		PasswordComparisonAuthenticator ldapAuthenticator = new PasswordComparisonAuthenticator(ldapContextSource());
 		ldapAuthenticator.setPasswordEncoder(ldapPasswordEncoder());
-		String[] userDnPatterns = {"cn={0},ou=Users"};
+		String[] userDnPatterns = {ldapUserDn};
 		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
-		ldapAuthenticator.setPasswordAttributeName("userPassword");
+		ldapAuthenticator.setPasswordAttributeName(ldapPasswordAttributeName);
 		ldapAuthenticator.afterPropertiesSet();
 
 		LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
@@ -184,30 +246,43 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean
 	public LdapContextSource ldapContextSource() {
 		LdapContextSource ldapContextSource = new LdapContextSource();
-		ldapContextSource.setUrl("ldap://localhost:10389/dc=example,dc=com");
-		ldapContextSource.setUserDn("uid=admin,ou=system");
-		ldapContextSource.setPassword("secret");
-//		ldapContextSource.setReferral("follow");
+		ldapContextSource.setUrl(ldapUrl);
+		ldapContextSource.setUserDn(ldapUserDn);
+		ldapContextSource.setPassword(ldapPassword);
+//		ldapContextSource.setReferral(ldapSetReferral);
 		ldapContextSource.afterPropertiesSet();
 		return ldapContextSource;
 
+	}
+
+	@Bean
+	public PasswordEncoder ldapPasswordEncoder(){
+		Map<String,PasswordEncoder> encoders = new HashMap<>();
+		encoders.put("bcrypt", new BCryptPasswordEncoder());
+		encoders.put("noop", NoOpPasswordEncoder.getInstance());
+		encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
+		encoders.put("scrypt", new SCryptPasswordEncoder());
+		encoders.put("sha256", new StandardPasswordEncoder());
+		return new DelegatingPasswordEncoder(ldapPasswordEncoder, encoders);
+	}
+
+	@Bean
+	public AuthenticationProvider ActiveDirectoryLdapAuthenticationProvider() {
+		ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
+				new ActiveDirectoryLdapAuthenticationProvider(adLdapDomain, adLdapUrl, adLdapRootDn);
+		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+		authenticationProvider.setConvertSubErrorCodesToExceptions(true);
+		// This does something important probably??
+		authenticationProvider.setUseAuthenticationRequestCredentials(true);
+		authenticationProvider.setSearchFilter(adLdapSearchFilter);
+
+		return authenticationProvider;
 	}
 
 	//this is what runs the configure() and builds it
 	@Bean(name = "userAuthenticationManager")
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public PasswordEncoder ldapPasswordEncoder(){
-		// TODO This is deprecated/insecure, need to figure out how we are expecting ldap to do auth
-		return new LdapShaPasswordEncoder();
 	}
 
 	@Bean
@@ -229,3 +304,43 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new DefaultWebSecurityExpressionHandler();
 	}
 }
+
+/**
+ * LDAP todo list
+ *
+ * password touching
+ *  create user
+ * 	update user (User edit)
+ * 		password boxes removed entirely?
+ * 		do a message for password managed by org
+ * 	password reset
+ * 		user details page
+ * 	    Login screen
+ *
+ * User creation
+ * 	inside irida and then link?
+ * 	if user doesn't have account, creates an account (Like this one)
+ * 		deal with creating a user flow
+ *
+ * Disable timer for password reset
+ *
+ * deal with password requirements on user objects
+ *  Code has password as a NOT NULL Field in the Database
+ *
+ *
+ *
+ * on login page, forgot password link
+ * 	only enabled if email is enabled, use as example for system level property
+ * 	same with "activate user" on the user creation page, if email is enabled/disabled (for UI stuff)
+ *
+ *
+ *
+ *
+ * LDAP Meeting notes
+ *
+ * using active directory
+ *   will probably need another auth provider for active directory
+ *
+ *
+ *
+ */
