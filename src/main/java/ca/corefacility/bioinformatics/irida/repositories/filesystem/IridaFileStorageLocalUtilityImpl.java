@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
@@ -30,11 +31,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkR
 @Component
 public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
-
+	private StorageType storageType;
 
 	@Autowired
 	public IridaFileStorageLocalUtilityImpl() {
-
+		this.storageType = StorageType.LOCAL;
 	}
 
 	/**
