@@ -233,6 +233,12 @@ public class UIProjectsService {
 		projectService.delete(projectId);
 	}
 
+	/**
+	 * Get all projects for a user based on a query (searching the name of the project)
+	 *
+	 * @param query To search the project name by
+	 * @return List of project the user has rights to that match the query
+	 */
 	public List<Project> getProjectsForUser(String query) {
 		User user = (User) SecurityContextHolder.getContext()
 				.getAuthentication()
