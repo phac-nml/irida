@@ -269,7 +269,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Future<AnalysisSubmission> returnedSubmission;
 
-		boolean finalWorkflowStatusSet = false;
+		boolean workflowCompleted = false;
+		boolean workflowError = false;
 
 		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
 		if (workflowStatus.errorOccurred()) {
@@ -277,7 +278,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
-			finalWorkflowStatusSet = true;
+			workflowError = true;
 		} else if (
 				workflowStatus.isRunning() ||
 				(workflowStatus.completedSuccessfully() && !analysisWorkspaceService.outputFilesExist(analysisSubmission))) {
@@ -289,7 +290,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
-			finalWorkflowStatusSet = true;
+			workflowCompleted = true;
 		} else {
 			// If one of the above combinations did not match, assume an error occurred.
 			logger.error("Workflow for analysis " + analysisSubmission
@@ -297,26 +298,17 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
-			finalWorkflowStatusSet = true;
+			workflowError = true;
 		}
 
-		/*
-		 The variable finalWorkflowStatusSet is set to true when an analysis
-		 has successfully completed or completed with an error and is used in
-		 the logic below.
-		 */
-		if (finalWorkflowStatusSet) {
+		//if the workflow is completed, send an email if they've asked for a completion email
+		boolean emailCompleted = workflowCompleted && analysisSubmission.getEmailPipelineResultCompleted();
+		//if the workflow has errored, send an email if they asked for an error OR completion email
+		boolean emailError = workflowError && (analysisSubmission.getEmailPipelineResultCompleted()
+				|| analysisSubmission.getEmailPipelineResultError());
 
-			/*
-			 If the analysis has finished with an error or completed successfully
-			 and the user selected to be emailed on completion or error, then the following code
-			 will be executed.
-			 */
-			if ((!analysisSubmission.getEmailPipelineResultCompleted()
-					&& analysisSubmission.getEmailPipelineResultError() && analysisSubmission.getAnalysisState()
-					.equals(AnalysisState.ERROR)) || analysisSubmission.getEmailPipelineResultCompleted()) {
-				emailController.sendPipelineStatusEmail(analysisSubmission);
-			}
+		if (emailCompleted || emailError) {
+			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 
 		return returnedSubmission;

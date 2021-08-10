@@ -70,15 +70,17 @@ public class AnalysesTableAjaxControllerTest {
 		mockMvc.perform(get("/ajax/analyses/states").accept(MediaType.APPLICATION_JSON).principal(mock(Principal.class)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].value", is("NEW")))
-				.andExpect(jsonPath("$[1].value", is("PREPARING")))
-				.andExpect(jsonPath("$[2].value", is("PREPARED")))
-				.andExpect(jsonPath("$[3].value", is("SUBMITTING")))
-				.andExpect(jsonPath("$[4].value", is("RUNNING")))
-				.andExpect(jsonPath("$[5].value", is("FINISHED_RUNNING")))
-				.andExpect(jsonPath("$[6].value", is("COMPLETING")))
-				.andExpect(jsonPath("$[7].value", is("COMPLETED")))
-				.andExpect(jsonPath("$[8].value", is("TRANSFERRED")))
-				.andExpect(jsonPath("$[9].value", is("POST_PROCESSING")));
+				.andExpect(jsonPath("$[1].value", is("DOWNLOADING")))
+				.andExpect(jsonPath("$[2].value", is("FINISHED_DOWNLOADING")))
+				.andExpect(jsonPath("$[3].value", is("PREPARING")))
+				.andExpect(jsonPath("$[4].value", is("PREPARED")))
+				.andExpect(jsonPath("$[5].value", is("SUBMITTING")))
+				.andExpect(jsonPath("$[6].value", is("RUNNING")))
+				.andExpect(jsonPath("$[7].value", is("FINISHED_RUNNING")))
+				.andExpect(jsonPath("$[8].value", is("COMPLETING")))
+				.andExpect(jsonPath("$[9].value", is("COMPLETED")))
+				.andExpect(jsonPath("$[10].value", is("TRANSFERRED")))
+				.andExpect(jsonPath("$[11].value", is("POST_PROCESSING")));
 	}
 
 	@Test

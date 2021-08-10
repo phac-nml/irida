@@ -31,9 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -43,8 +42,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
-public class SequenceFile extends IridaResourceSupport implements MutableIridaThing, Comparable<SequenceFile>,
-		VersionedFileFields<Long>, IridaSequenceFile, RemoteSynchronizable {
+public class SequenceFile extends IridaResourceSupport
+		implements MutableIridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile,
+		RemoteSynchronizable {
 
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFile.class);
 
@@ -54,6 +54,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	@NotNull(message = "{sequencefile.file.notnull}")
 	@Column(name = "file_path", unique = true)
+	@Schema(implementation = String.class)
 	private Path file;
 
 	@CreatedDate
@@ -112,9 +113,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	/**
 	 * Create a new {@link SequenceFile} with the given file Path
-	 * 
-	 * @param sampleFile
-	 *            The Path to a {@link SequenceFile}
+	 *
+	 * @param sampleFile The Path to a {@link SequenceFile}
 	 */
 	public SequenceFile(Path sampleFile) {
 		this();
@@ -179,11 +179,9 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	/**
 	 * Add one optional property to the map of properties
-	 * 
-	 * @param key
-	 *            The key of the property to add
-	 * @param value
-	 *            The value of the property to add
+	 *
+	 * @param key   The key of the property to add
+	 * @param value The value of the property to add
 	 */
 	@JsonAnySetter
 	public void addOptionalProperty(String key, String value) {
@@ -192,7 +190,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	/**
 	 * Get the Map of optional properties
-	 * 
+	 *
 	 * @return A {@code Map<String,String>} of all the optional propertie
 	 */
 	@JsonAnyGetter
@@ -202,9 +200,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	/**
 	 * Get an individual optional property
-	 * 
-	 * @param key
-	 *            The key of the property to read
+	 *
+	 * @param key The key of the property to read
 	 * @return A String of the property's value
 	 */
 	public String getOptionalProperty(String key) {
@@ -214,10 +211,9 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	/**
 	 * Set the Map of optional properties
-	 * 
-	 * @param optionalProperties
-	 *            A {@code Map<String,String>} of all the optional properties
-	 *            for this object
+	 *
+	 * @param optionalProperties A {@code Map<String,String>} of all the optional properties
+	 *                           for this object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {
 		this.optionalProperties = optionalProperties;
@@ -230,7 +226,8 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	@Override
 	public String getFileName() {
-		return getFile().getFileName().toString();
+		return getFile().getFileName()
+				.toString();
 	}
 
 	@JsonIgnore
@@ -240,12 +237,10 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 
 	/**
 	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
-	 * 
-	 * @param fastqcAnalysis
-	 *            the analysis to set.
-	 * @throws AnalysisAlreadySetException
-	 *             if the analysis has already been set for this
-	 *             {@link SequenceFile}.
+	 *
+	 * @param fastqcAnalysis the analysis to set.
+	 * @throws AnalysisAlreadySetException if the analysis has already been set for this
+	 *                                     {@link SequenceFile}.
 	 */
 	@JsonIgnore
 	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) throws AnalysisAlreadySetException {
@@ -272,7 +267,7 @@ public class SequenceFile extends IridaResourceSupport implements MutableIridaTh
 	 * checksum may not be the same as the sha256 for the current file. The
 	 * checksum from the originally uploaded file is saved so an uploader can
 	 * verify its file upload.
-	 * 
+	 *
 	 * @return the string sha256 for the uploaded file.
 	 */
 	public String getUploadSha256() {

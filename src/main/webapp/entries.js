@@ -16,7 +16,7 @@ module.exports = {
   dashboard: "./resources/js/pages/dashboard.js",
   launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
-  "project-events": "./resources/js/pages/projects/project-events.js",
+  "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import/index.js",
@@ -34,7 +34,7 @@ module.exports = {
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-new": "./resources/js/pages/projects/projects-new.js",
+  "project-create": "./resources/js/pages/projects/create",
   "project-settings": "./resources/js/pages/projects/settings",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
@@ -42,10 +42,7 @@ module.exports = {
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-analyses":
-    "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
-  "analysis-outputs-table":
-    "./resources/js/pages/analyses/analysis-outputs-table.js",
+  "project-analyses": "./resources/js/pages/projects/project-analyses/",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
@@ -60,4 +57,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
+  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
 };

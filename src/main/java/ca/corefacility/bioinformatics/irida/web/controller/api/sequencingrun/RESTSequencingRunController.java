@@ -4,22 +4,25 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -52,6 +55,52 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "listAllSequencingRun", summary = "Lists all sequencing runs", description = "Lists all sequencing runs.", tags = "sequencingrun")
+	@Override
+	public ResponseResource<ResourceCollection<SequencingRun>> listAllResources() {
+		return super.listAllResources();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "getSequencingRun", summary = "Find a sequencing run", description = "Get the sequencing run given the identifier.", tags = "sequencingrun")
+	@Override
+	public ResponseResource<SequencingRun> getResource(@PathVariable Long identifier) {
+		return super.getResource(identifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "createSequencingRun", summary = "Create a new sequencing run", description = "Create a new sequencing run.", tags = "sequencingrun")
+	@Override
+	public ResponseResource<SequencingRun> create(@RequestBody SequencingRun resource, HttpServletResponse response) {
+		return super.create(resource, response);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "deleteSequencingRun", summary = "Delete a sequencing run", description = "Delete a sequencing run given the identifier.", tags = "sequencingrun")
+	@Override
+	public ResponseResource<RootResource> delete(@PathVariable Long identifier) {
+		return super.delete(identifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Operation(operationId = "updateSequencingRun", summary = "Update a sequencing run", description = "Update a sequencing run", tags = "sequencingrun")
+	@Override
+	public ResponseResource<RootResource> update(@PathVariable Long identifier,
+			@RequestBody Map<String, Object> representation) {
+		return super.update(identifier, representation);
+	}
+
+	/**
 	 * Create a Sequencing run
 	 *
 	 * @param runType        The type of sequencing run to create
@@ -59,9 +108,10 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * @param response       HTTP response to add info to
 	 * @return the created run
 	 */
+	@Operation(operationId = "createSequencingRun", summary = "Create a sequencing run", description = "Create a sequencing run.", tags = "sequencingrun")
 	@RequestMapping(value = "/{runType}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ModelMap createSequencingRun(@PathVariable String runType, @RequestBody SequencingRun representation,
-			HttpServletResponse response) {
+	public ResponseResource<SequencingRun> createSequencingRun(@PathVariable String runType,
+			@RequestBody SequencingRun representation, HttpServletResponse response) {
 		logger.trace("creating sequencing run");
 
 		//Legacy for ensuring old uploaders pointing to /miseqrun get a sequencer type of 'miseq'

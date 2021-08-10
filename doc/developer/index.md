@@ -20,7 +20,8 @@ Tool Development
 * [IRIDA pipeline development](tools/pipelines)
 * [IRIDA workflow description](tools/pipelines/workflow-description)
 * [IRIDA REST API docs](rest/)
-* [REST API OAuth2 notes](authorization)
+* [IRIDA REST API OAuth2 notes](authorization)
+* [IRIDA REST API definition](../swagger-ui/index.html)
 
 
 User Interface development
