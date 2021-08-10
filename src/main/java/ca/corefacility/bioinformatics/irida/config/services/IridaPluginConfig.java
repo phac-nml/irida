@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.config.services;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 import org.pf4j.DefaultPluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,7 +23,8 @@ public class IridaPluginConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaPluginConfig.class);
 
-	private static final Path PIPELINE_PLUGIN_PATH = Paths.get("/etc/irida/plugins");
+	@Value("${pipeline.plugin.path}")
+	private String pipelinePluginPath;
 
 	/**
 	 * Get the list of IRIDA pipeline plugins
@@ -33,7 +34,8 @@ public class IridaPluginConfig {
 	 */
 	@Bean(name = "iridaPipelinePlugins")
 	public IridaPluginList iridaPipelinePlugins() {
-		DefaultPluginManager pluginManager = new DefaultPluginManager(PIPELINE_PLUGIN_PATH);
+		logger.debug("Scanning for pipeline plugins at " + pipelinePluginPath);
+		DefaultPluginManager pluginManager = new DefaultPluginManager(Paths.get(pipelinePluginPath));
 		pluginManager.setSystemVersion(IridaPlugin.PLUGIN_API_VERSION);
 		pluginManager.setExactVersionAllowed(true);
 

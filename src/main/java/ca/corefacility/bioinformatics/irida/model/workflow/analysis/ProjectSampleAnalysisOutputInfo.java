@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 
 /**
  * Class to store basic {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} and associated {@link ca.corefacility.bioinformatics.irida.model.sample.Sample}, {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission} information from a native SQL query.
@@ -24,6 +25,7 @@ public class ProjectSampleAnalysisOutputInfo {
 	private Long userId;
 	private String userFirstName;
 	private String userLastName;
+	private IridaWorkflowDescription workflowDescription;
 
 	public ProjectSampleAnalysisOutputInfo() {}
 
@@ -45,6 +47,7 @@ public class ProjectSampleAnalysisOutputInfo {
 		this.userId = userId;
 		this.userFirstName = userFirstName;
 		this.userLastName = userLastName;
+		this.workflowDescription = null;
 	}
 
 	@Override
@@ -196,5 +199,13 @@ public class ProjectSampleAnalysisOutputInfo {
 
 	public void setUserLastName(String userLastName) {
 		this.userLastName = userLastName;
+	}
+
+	public void setWorkflowDescription(IridaWorkflowDescription iridaWorkflowDescription) {
+		workflowDescription = iridaWorkflowDescription;
+	}
+
+	public IridaWorkflowDescription getWorkflowDescription() {
+		return workflowDescription;
 	}
 }

@@ -73,6 +73,10 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 	private List<View> defaultViews() {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
+		// MappingJackson2JsonView and @ResponseBody cannot be used together.
+		// This setting, serializes the object like @ResponseBody
+		// and removes the outer attribute key.
+		jsonView.setExtractValueFromSingleKeyModel(true);
 		jsonView.setPrettyPrint(true);
 
 		// add support for serializing Path data

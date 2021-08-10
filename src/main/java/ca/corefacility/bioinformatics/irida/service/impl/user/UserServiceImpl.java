@@ -129,6 +129,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	 * 
 	 * @param userRepository
 	 *            the repository used to store instances of {@link User}.
+	 * @param announcementUserJoinRepository
+	 *            the repository used to store instances of {@link AnnouncementUserJoin}.
 	 * @param validator
 	 *            the validator used to validate instances of {@link User}.
 	 * @param pujRepository

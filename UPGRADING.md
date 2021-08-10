@@ -4,6 +4,16 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+21.05 to 21.09
+--------------
+
+21.05.1 to 21.05.2
+------------------
+* The [SNVPhyl](https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/phylogenomics/) pipeline has been upgraded to version `1.2.3`. Please make sure to install the necessary tools in Galaxy.
+
+21.01.3 to 21.05
+--------------
+* This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
 
 21.01 to 21.01.3
 --------------
