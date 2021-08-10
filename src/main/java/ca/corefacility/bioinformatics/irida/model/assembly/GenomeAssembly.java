@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Defines a genome assembly which can be associated with a sample.
@@ -114,11 +115,13 @@ public abstract class GenomeAssembly extends IridaResourceSupport
 	 *
 	 * @return The assembly file.
 	 */
+	@Schema(implementation = String.class)
 	public abstract Path getFile();
 
 	@Override
 	public String getFileName() {
-		return getFile().getFileName().toString();
+		return getFile().getFileName()
+				.toString();
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -22,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.excep
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.errors.AjaxItemNotFoundException;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
@@ -49,12 +53,37 @@ public class UIProjectsService {
 	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
 
 	@Autowired
-	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource, ProjectOwnerPermission projectOwnerPermission, ManageLocalProjectSettingsPermission projectMembersPermission) {
+	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
+			ProjectOwnerPermission projectOwnerPermission,
+			ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
+	}
+
+	/**
+	 * Create a new project based on a request sent by the UI.
+	 *
+	 * @param request {@link CreateProjectRequest} containing (at the very least) the name for the project
+	 * @return the identifier for the newly created project
+	 * @throws EntityExistsException if the project already exists.
+	 * @throws ConstraintViolationException if there was a constraint violation with the parameters passed.
+	 */
+	public Long createProject(CreateProjectRequest request) throws EntityExistsException, ConstraintViolationException {
+		Project project = new Project(request.getName());
+		project.setProjectDescription(request.getDescription());
+		project.setOrganism(request.getOrganism());
+		project.setRemoteURL(request.getRemoteURL());
+
+		Project createdProject;
+		if (request.getSamples() != null) {
+			createdProject = projectService.createProjectWithSamples(project, request.getSamples(), !request.isLock());
+		} else {
+			createdProject = projectService.create(project);
+		}
+		return createdProject.getId();
 	}
 
 	/**
@@ -73,7 +102,7 @@ public class UIProjectsService {
 	 * Get the table contents for the projects listing table based on the user and table request.
 	 *
 	 * @param tableRequest - {@link TableRequest}
-	 * @param isAdmin - whether this is the full administration table or a user listing.
+	 * @param isAdmin      - whether this is the full administration table or a user listing.
 	 * @return {@link TableResponse} with the current list of projects
 	 */
 	public TableResponse getPagedProjects(TableRequest tableRequest, Boolean isAdmin) {
@@ -111,7 +140,7 @@ public class UIProjectsService {
 	 * Get information about a project as well as permissions
 	 *
 	 * @param projectId - The project to get info for
-	 * @param locale Current users locale
+	 * @param locale    Current users locale
 	 * @return {@link ProjectDetailsResponse}
 	 * @throws AjaxItemNotFoundException if project cannot be found
 	 */
@@ -134,7 +163,8 @@ public class UIProjectsService {
 
 			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
 		} catch (EntityNotFoundException e) {
-			throw new AjaxItemNotFoundException(messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[]{}, locale));
+			throw new AjaxItemNotFoundException(
+					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));
 		}
 	}
 

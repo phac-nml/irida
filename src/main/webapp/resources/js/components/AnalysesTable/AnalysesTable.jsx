@@ -3,12 +3,12 @@ import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { Button, Popconfirm } from "antd";
 import {
   dateColumnFormat,
-  nameColumnFormat
+  nameColumnFormat,
 } from "../ant.design/table-renderers";
 import {
   deleteAnalysisSubmissions,
   fetchAllPipelinesStates,
-  fetchAllPipelinesTypes
+  fetchAllPipelinesTypes,
 } from "../../apis/analysis/analysis";
 import { AnalysisState } from "./AnalysisState";
 import { AnalysisDuration } from "./AnalysisDuration";
@@ -25,11 +25,13 @@ const UPDATE_PROGRESS_DELAY = 60000;
 
 /**
  * Displays the Analyses Table for both user and admin pages.
+ * @param {boolean} canManage - If the current user can manage
+ * the project or not. Defaults to the window.PAGE variable if
+ * one is not passed in.
  * @returns {*}
  * @constructor
  */
-export function AnalysesTable() {
-  const CAN_MANAGE = window.PAGE.canManage;
+export function AnalysesTable({ canManage }) {
   const { updateTable } = useContext(PagedTableContext);
 
   /**
@@ -38,7 +40,7 @@ export function AnalysesTable() {
    * @param {array} ids
    * @returns {void | Promise<*>}
    */
-  const deleteAnalyses = ids =>
+  const deleteAnalyses = (ids) =>
     deleteAnalysisSubmissions({ ids }).then(updateTable);
 
   const [selected, setSelected] = useState([]);
@@ -58,11 +60,11 @@ export function AnalysesTable() {
   const columns = [
     {
       ...nameColumnFormat({
-        url: setBaseUrl(`analysis`)
+        url: setBaseUrl(`analysis`),
       }),
       title: i18n("analyses.analysis-name"),
       key: "name",
-      ...getTextSearchProps("name")
+      ...getTextSearchProps("name"),
     },
     {
       title: i18n("analyses.state"),
@@ -74,8 +76,14 @@ export function AnalysesTable() {
         return <IconTableFilter className="t-state" filtered={filtered} />;
       },
       render(state, data) {
-        return <AnalysisState state={state} analysisId={data.id} updateDelay={UPDATE_PROGRESS_DELAY} />;
-      }
+        return (
+          <AnalysisState
+            state={state}
+            analysisId={data.id}
+            updateDelay={UPDATE_PROGRESS_DELAY}
+          />
+        );
+      },
     },
     {
       title: i18n("analyses.type"),
@@ -85,58 +93,71 @@ export function AnalysesTable() {
       filterIcon(filtered) {
         return <IconTableFilter className="t-type" filtered={filtered} />;
       },
-      filters: pipelineTypes
+      filters: pipelineTypes,
     },
     {
       title: i18n("analyses.submitter"),
       key: "submitter",
       sorter: true,
-      dataIndex: "submitter"
+      dataIndex: "submitter",
     },
     {
       ...dateColumnFormat(),
       title: "Created Date",
       dataIndex: "createdDate",
-      key: "createdDate"
+      key: "createdDate",
     },
     {
       title: i18n("analysis.duration"),
       key: "duration",
       dataIndex: "duration",
       render(duration, data) {
-        return <AnalysisDuration state={data.state} duration={duration} analysisId={data.id} updateDelay={UPDATE_PROGRESS_DELAY} />
-      }
+        return (
+          <AnalysisDuration
+            state={data.state}
+            duration={duration}
+            analysisId={data.id}
+            updateDelay={UPDATE_PROGRESS_DELAY}
+          />
+        );
+      },
     },
     {
       title: "",
       key: "download",
       fixed: "right",
       render(text, record) {
-        return <AnalysisDownloadButton state={record.state.value} analysisId={record.id} updateDelay={UPDATE_PROGRESS_DELAY} />
-      }
-    }
+        return (
+          <AnalysisDownloadButton
+            state={record.state.value}
+            analysisId={record.id}
+            updateDelay={UPDATE_PROGRESS_DELAY}
+          />
+        );
+      },
+    },
   ];
 
   let rowSelection;
-  if (CAN_MANAGE) {
+  if (canManage) {
     rowSelection = {
       selectedRowKeys: selected,
-      onChange: selectedRowKeys => setSelected(selectedRowKeys),
-      getCheckboxProps: record => ({
+      onChange: (selectedRowKeys) => setSelected(selectedRowKeys),
+      getCheckboxProps: (record) => ({
         name: record.name,
-        disabled: !record.modifiable
-      })
+        disabled: !record.modifiable,
+      }),
     };
   }
 
-  const buttons = (
+  const buttons = canManage && (
     <Popconfirm
       placement="bottomRight"
       title={i18n("analyses.delete-confirm").replace(
         "[COUNT]",
         selected.length
       )}
-      onVisibleChange={visible => setDeleting(visible)}
+      onVisibleChange={(visible) => setDeleting(visible)}
       onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
     >
       <Button
@@ -156,7 +177,7 @@ export function AnalysesTable() {
         style={{
           marginBottom: SPACE_MD,
           display: "flex",
-          flexDirection: "row-reverse"
+          flexDirection: "row-reverse",
         }}
       >
         <AnalysesQueue />

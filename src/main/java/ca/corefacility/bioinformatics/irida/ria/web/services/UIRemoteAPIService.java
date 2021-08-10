@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.CreateRemoteProjectRequest;
@@ -116,8 +117,14 @@ public class UIRemoteAPIService {
     public AjaxCreateItemSuccessResponse createSynchronizedProject(CreateRemoteProjectRequest request) {
         Project project = projectRemoteService.read(request.getUrl());
         project.setId(null);
-        project.getRemoteStatus()
-                .setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+        if (request.getFrequency()
+                .equals(ProjectSyncFrequency.NEVER)) {
+            project.getRemoteStatus()
+                    .setSyncStatus(RemoteStatus.SyncStatus.UNSYNCHRONIZED);
+        } else {
+            project.getRemoteStatus()
+                    .setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+        }
         project.setSyncFrequency(request.getFrequency());
         project = projectService.create(project);
         return new AjaxCreateItemSuccessResponse(project.getId());

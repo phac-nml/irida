@@ -88,9 +88,9 @@ If there are automated single sample analysis output files, you will see them in
 
 ![](images/project-automated-outputs.png)
 
-*There are no automated analysis output files for this project `test1`.* 
+*There are no automated analysis output files for this project `Proj1`.*
 
-From these tables you can select which files you wish to download by filtering based on values in certain columns (e.g. `contigs` in the `File` column), clicking on the rows for the files you wish to download while holding the `Ctrl` or `Shift` buttons, and clicking the **Download** button to download your selected files. 
+From these tables you can select which files you wish to download by filtering based on values in certain columns (e.g. `contigs` in the `File` column) using the search box, selecting the checkboxes for the files you wish to download, and clicking the **Download** button to download your selected files.
 
 For more information on using the single analysis output file tables, see the [pipeline documentation page](../pipelines/#downloading-single-sample-analysis-output-files-in-batch).
 
@@ -115,6 +115,8 @@ Starting from [viewing project details](#viewing-project-details), you can view 
 Recent activities include adding or modifying project members and adding new samples to a project:
 
 ![Project recent activities.](images/project-recent-activities.png)
+
+By default, the 10 most recent activities wil be displayed.  Clicking the "Load More" button will load 10 more activties until all the activities are loaded.
 
 Managing project settings
 -------------------------
