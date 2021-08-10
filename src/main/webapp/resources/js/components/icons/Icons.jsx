@@ -1,7 +1,7 @@
-import React from "react";
 import {
-  AppstoreOutlined,
+  BellOutlined,
   BoldOutlined,
+  CalendarTwoTone,
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
@@ -34,7 +34,9 @@ import {
   PlusCircleTwoTone,
   QuestionCircleOutlined,
   QuestionOutlined,
+  RocketOutlined,
   SearchOutlined,
+  SettingOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -45,11 +47,14 @@ import {
   TableOutlined,
   TeamOutlined,
   UnorderedListOutlined,
-  UserOutlined,
   UploadOutlined,
-  CalendarTwoTone,
-  SettingOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
+  UsergroupAddOutlined,
+  UsergroupDeleteOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
+import React from "react";
 import { blue6 } from "../../styles/colors";
 
 /**
@@ -133,11 +138,13 @@ export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
 
-export const IconMetadataTemplate = ({ ...props }) => (
-  <AppstoreOutlined {...props} />
-);
-
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
+
+export const IconBell = ({ ...props }) => <BellOutlined {...props} />;
+
+export const IconLaunchPipeline = ({ ...props }) => (
+  <RocketOutlined {...props} />
+);
 
 /*
 Editor Icons
@@ -174,6 +181,16 @@ export const IconLogin = ({ ...props }) => <LoginOutlined {...props} />;
 export const IconMembers = ({ ...props }) => <TeamOutlined {...props} />;
 
 export const IconUser = ({ ...props }) => <UserOutlined {...props} />;
+
+export const IconUserAdd = (props) => <UserAddOutlined {...props} />;
+
+export const IconUserDelete = (props) => <UserDeleteOutlined {...props} />;
+
+export const IconUsergroupAdd = (props) => <UsergroupAddOutlined {...props} />;
+
+export const IconUsergroupDelete = (props) => (
+  <UsergroupDeleteOutlined {...props} />
+);
 
 export const IconCalendarTwoTone = ({ ...props }) => (
   <CalendarTwoTone {...props} />

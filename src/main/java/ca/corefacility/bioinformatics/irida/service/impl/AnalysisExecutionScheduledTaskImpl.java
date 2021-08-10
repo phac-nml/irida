@@ -22,11 +22,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -37,22 +37,22 @@ import com.google.common.collect.Sets;
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 
-	private Object prepareAnalysesLock = new Object();
-	private Object executeAnalysesLock = new Object();
-	private Object monitorRunningAnalysesLock = new Object();
-	private Object postProcessingLock = new Object();
-	private Object transferAnalysesResultsLock = new Object();
-	private Object cleanupAnalysesResultsLock = new Object();
+	private final Object prepareAnalysesLock = new Object();
+	private final Object executeAnalysesLock = new Object();
+	private final Object monitorRunningAnalysesLock = new Object();
+	private final Object postProcessingLock = new Object();
+	private final Object transferAnalysesResultsLock = new Object();
+	private final Object cleanupAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisExecutionService analysisExecutionService;
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
+	private final AnalysisExecutionService analysisExecutionService;
 	private final CleanupAnalysisSubmissionCondition cleanupCondition;
-	private GalaxyJobErrorsService galaxyJobErrorsService;
-	private JobErrorRepository jobErrorRepository;
+	private final GalaxyJobErrorsService galaxyJobErrorsService;
+	private final JobErrorRepository jobErrorRepository;
 	private final EmailController emailController;
-	private AnalysisWorkspaceService analysisWorkspaceService;
+	private final AnalysisWorkspaceService analysisWorkspaceService;
 
 
 	/**
@@ -269,7 +269,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Future<AnalysisSubmission> returnedSubmission;
 
-		boolean finalWorkflowStatusSet = false;
+		boolean workflowCompleted = false;
+		boolean workflowError = false;
 
 		// Immediately switch overall workflow state to "ERROR" if an error occurred, even if some tools are still running.
 		if (workflowStatus.errorOccurred()) {
@@ -277,7 +278,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
-			finalWorkflowStatusSet = true;
+			workflowError = true;
 		} else if (
 				workflowStatus.isRunning() ||
 				(workflowStatus.completedSuccessfully() && !analysisWorkspaceService.outputFilesExist(analysisSubmission))) {
@@ -289,7 +290,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
-			finalWorkflowStatusSet = true;
+			workflowCompleted = true;
 		} else {
 			// If one of the above combinations did not match, assume an error occurred.
 			logger.error("Workflow for analysis " + analysisSubmission
@@ -297,18 +298,16 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
-			finalWorkflowStatusSet = true;
+			workflowError = true;
 		}
 
-		/*
-		 The variable finalWorkflowStatusSet is set to true when an analysis
-		 has successfully completed or completed with an error and is used in
-		 the logic below. If the analysis has finished with an error or completed successfully
-		 and the user selected to be emailed on completion or on error, then the following code
-		 will be executed.
-		 */
-		if (finalWorkflowStatusSet && (analysisSubmission.getEmailPipelineResultCompleted()
-				|| analysisSubmission.getEmailPipelineResultError())) {
+		//if the workflow is completed, send an email if they've asked for a completion email
+		boolean emailCompleted = workflowCompleted && analysisSubmission.getEmailPipelineResultCompleted();
+		//if the workflow has errored, send an email if they asked for an error OR completion email
+		boolean emailError = workflowError && (analysisSubmission.getEmailPipelineResultCompleted()
+				|| analysisSubmission.getEmailPipelineResultError());
+
+		if (emailCompleted || emailError) {
 			emailController.sendPipelineStatusEmail(analysisSubmission);
 		}
 

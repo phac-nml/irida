@@ -78,11 +78,11 @@ tools:
 
   ### Tools for SNVPhyl v1.2.2 ###
 
-- name: "suite_snvphyl_1_2_2"
+- name: "suite_snvphyl_1_2_3"
   owner: "nml"
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
-  - "77a9422303ce"
+  - "bc72925159fc"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true
 
@@ -116,5 +116,26 @@ tools:
   tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
   revisions:
   - "17fcac7ddf54"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "rgi"
+  owner: "card"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "bfbfc24c5af2"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "staramr"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "4b9a8031ab74"
+  tool_panel_section_id: "irida"
+  install_tool_dependencies: true
+- name: "ectyper"
+  owner: "nml"
+  tool_shed_url: "https://toolshed.g2.bx.psu.edu/"
+  revisions:
+  - "08d801182fa1"
   tool_panel_section_id: "irida"
   install_tool_dependencies: true

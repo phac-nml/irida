@@ -1,6 +1,50 @@
 Changes
 =======
 
+21.05 to 21.09
+--------------
+* [Developer]: Added pipeline plugin path configuration option
+* [UI]: Update of Project Activities page to use Ant Design.
+* [UI]: Fixes bug where the page title on Remote IRIDA Connections page was not displaying properly.
+* [UI]: Fixed bug where a remote project in `UNSYNCHRONIZED` state would have the Sync buttons disabled on the Project Synchronization Settings page. (21.05.1)
+* [UI]: Added back `Users` option for managers in main navigation. (21.05.1)
+* [Documentation]: Added Swagger and OpenAPI to the IRIDA REST API documentation.
+* [UI]: Update of Create New Project page to use Ant Design.
+* [Developer]: Updated Redux Toolkit to stable version 1.6.2
+* [Workflow]: SNVPhyl has been updated to version `1.2.3` to fix an installation issue (<https://github.com/phac-nml/irida/issues/1018>). Since this updates a pipeline you will have to upgrade the Galaxy tool suite for SNVPhyl as described in our [instllation documentation](https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/phylogenomics/). (21.05.2)
+* [UI]: Fixed bug which prevented a manager on a remote project from adding/removing members and groups. (21.05.2)
+* [UI]: Fixed bug which caused newly created metadata templates to no be displayed after creation. (21.05.3)
+* [UI]: Fixed bug that would send many emails to users when they request a pipeline completion email. (21.05.3)
+* [Developer]: Updated `xlsx` to version 0.17.0
+* [Test]: Updated chromedriver to version 92.0.0.
+* [UI]: Updated Project Single Sample Analyses Outputs pages to use Ant Design.
+* [UI]: Updated Your Single Sample Analysis Outputs page to use Ant Design.
+
+21.01 to 21.05
+--------------
+* [UI]: Fixed bug which was preventing a user from viewing more than 5 rows of a tabular result file. (21.01.1)
+* [Developer]: Fixed webpack not outputting css bundle files.
+* [UI]: Updated to latest release of Ant Design (v4.12.3).
+* [Developer]: Fixed the advanced visualisation viewer for Phylogeny Tree with metadata.
+* [REST]: Added `ownership` option when copying sample to project in REST API (21.01.2)
+* [UI]: Update to the pipeline launch process.
+* [UI]: Fixed bug where filter menu was missing from the Analsyis Outputs Table.
+* [Developer/REST/UI]: Added announcements bell icon to main nav bar, added priority announcements modal at login, and refreshed user announcements page.
+* [UI]: Fixed bug where samples not rendering on project samples page when the config setting ngsarchive.linker.available is set to false.
+* [Developer]: Updated to Webpack v5 and Yarn v2.
+* [UI]: Updated create metadata template.
+* [Developer]: Updated to Yarn v2.4.1.
+* [Developer]: Cleaned up compile warnings related to deprecated methods in Spring, JSON parsing, and Galaxy connectivity.
+* [UI] Updated And Design to v4.15.0.
+* [Database]: Removed `sample_metadata_entry` table which should have been dropped in 21.01 release. (21.01.3)
+* [REST]: Added endpoint to request a full project's sample metadata at the same time.
+* [Developer]: Chromedriver updated to 90.
+* [Developer]: Updated `lodash` to v4.17.21 to fix security vulnerability.
+* [UI/REST]: Improved querying performance of metadata for line list and REST API.
+* [UI]: Complete upgrade of project settings to use Ant Design.
+* [Developer]: Removing many unnecessary files from the `.war` file build to reduce build size.
+* [UI]: Fixed issue where analyses page was not displaying for some IRIDA instances due to deprecated analysis states in their audit tables.
+
 20.09 to 21.01
 --------------
 * [UI]: Fixed bug where sequencing runs could not be deleted on sequencing runs details page. (20.09.1)

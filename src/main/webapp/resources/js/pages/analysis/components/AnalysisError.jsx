@@ -10,7 +10,7 @@
 import React, { Suspense, useContext, useEffect, useState } from "react";
 import { Button, Descriptions, Layout, Menu } from "antd";
 import { Link, Location, Router } from "@reach/router";
-import { AnalysisContext, isAdmin } from "../../../contexts/AnalysisContext";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 
 import { WarningAlert } from "../../../components/alerts/WarningAlert";

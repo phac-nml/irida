@@ -3,7 +3,7 @@
  * required for displaying analysis samples.
  */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AnalysisContext } from "../contexts/AnalysisContext";
 
 // Functions required by context

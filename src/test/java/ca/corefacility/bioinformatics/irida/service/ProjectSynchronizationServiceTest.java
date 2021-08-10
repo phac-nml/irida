@@ -33,6 +33,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -141,6 +142,7 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(projectService, times(3)).update(any(Project.class));
 		verify(projectRemoteService).getProjectHash(remoteProject);
+		assertNull((remoteProject).getDefaultMetadataTemplate());
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
@@ -166,6 +168,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(projectService, times(2)).update(any(Project.class));
 		verify(projectRemoteService).getProjectHash(remoteProject);
 		verifyZeroInteractions(sampleRemoteService);
+		assertNull((remoteProject).getDefaultMetadataTemplate());
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
@@ -187,6 +190,7 @@ public class ProjectSynchronizationServiceTest {
 
 		syncService.findMarkedProjectsToSync();
 
+		assertNull((remoteProject).getDefaultMetadataTemplate());
 		assertEquals(SyncStatus.UNAUTHORIZED, remoteProject.getRemoteStatus()
 				.getSyncStatus());
 
@@ -261,6 +265,24 @@ public class ProjectSynchronizationServiceTest {
 		
 		verify(pairRemoteService).mirrorSequencingObject(pair);
 		verify(objectService).createSequencingObjectInSample(pair, sample);
+	}
+
+	@Test
+	public void testSyncSampleNoFast5() {
+		Sample sample = new Sample();
+		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
+		sample.setRemoteStatus(sampleStatus);
+
+		when(sampleService.create(sample)).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
+		when(fast5ObjectRemoteService.getFast5FilesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
+
+		syncService.syncSample(sample, expired, Maps.newHashMap());
+
+		verify(projectService).addSampleToProject(expired, sample, true);
+		verify(assemblyRemoteService, times(0)).mirrorAssembly(any(UploadedAssembly.class));
+
+		assertEquals(SyncStatus.SYNCHRONIZED, sample.getRemoteStatus().getSyncStatus());
 	}
 
 	@Test

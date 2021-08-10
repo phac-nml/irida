@@ -3,6 +3,7 @@ import { Avatar, Col, Menu, Row, Space } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
 import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
+import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -10,6 +11,7 @@ import "./main-navigation/style.css";
 
 export function MainNavigation() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const isManager = window.TL._USER.systemRole === "ROLE_MANAGER";
 
   return (
     <Row
@@ -18,7 +20,7 @@ export function MainNavigation() {
         borderBottom: `2px solid ${primaryColour}`,
       }}
     >
-      <Col md={10} sm={24}>
+      <Col md={8} sm={24}>
         <a href={setBaseUrl("/")} style={{ padding: `0 ${SPACE_MD}` }}>
           <img
             style={{ height: 20 }}
@@ -70,7 +72,7 @@ export function MainNavigation() {
         </Menu>
       </Col>
       <Col
-        md={14}
+        md={16}
         sm={24}
         style={{
           display: "flex",
@@ -83,6 +85,13 @@ export function MainNavigation() {
           <Menu.Item icon={<CartLink />} key="cart" />
           {!isAdmin && (
             <Menu.SubMenu title={<IconCog />}>
+              {isManager && (
+              <Menu.Item key="user:users">
+                <a href={setBaseUrl("/users")}>
+                  {i18n("nav.main.users-list")}
+                </a>
+              </Menu.Item>
+              )}
               <Menu.Item key="user:groups">
                 <a href={setBaseUrl("/groups")}>
                   {i18n("nav.main.groups-list")}
@@ -134,6 +143,7 @@ export function MainNavigation() {
             <Menu.Divider />
             <Menu.Item disabled>{i18n("irida.version")}</Menu.Item>
           </Menu.SubMenu>
+          <AnnouncementsSubMenu />
           <Menu.SubMenu
             title={
               <Space>

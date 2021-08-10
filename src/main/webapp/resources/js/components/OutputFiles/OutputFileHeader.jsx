@@ -7,7 +7,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Button, Space, Typography } from "antd";
 import { convertFileSize } from "../../utilities/file-utilities";
-import { downloadOutputFile } from "../../apis/analysis/analysis";
+import { downloadIndividualOutputFile } from "../../apis/analyses/analyses";
 import { SPACE_MD, SPACE_XS } from "../../styles/spacing";
 import { FONT_SIZE_DEFAULT } from "../../styles/fonts";
 import styled from "styled-components";
@@ -50,10 +50,7 @@ export function OutputFileHeader({ output, extras = [] }) {
             marginLeft: SPACE_XS,
           }}
           onClick={() =>
-            downloadOutputFile({
-              submissionId: output.analysisSubmissionId,
-              fileId: output.id,
-            })
+            downloadIndividualOutputFile(output.analysisSubmissionId, output.id)
           }
           icon={<IconDownloadFile />}
           className="t-download-output-file-btn"

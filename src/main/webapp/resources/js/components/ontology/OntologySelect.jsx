@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
 import { Select } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { searchOntology } from "../../apis/ontology/taxonomy";
 import { useDebounce } from "../../hooks";
 
@@ -11,10 +11,16 @@ const { Option } = Select;
  * @param {string} term - initial value
  * @param {function} onTermSelected - callback for when a term is selected
  * @param {string} ontology - which ontology to query
+ * @param {boolean} autofocus - automatically focus on the input when loaded
  * @returns {*}
  * @constructor
  */
-export function OntologySelect({ term, onTermSelected, ontology }) {
+export function OntologySelect({
+  term,
+  onTermSelected,
+  ontology,
+  autofocus = true,
+}) {
   const [options, setOptions] = useState([]);
   const [query, setQuery] = useState("");
   const selectRef = useRef();
@@ -60,20 +66,24 @@ export function OntologySelect({ term, onTermSelected, ontology }) {
   }, [debouncedQuery]);
 
   useEffect(() => {
-    /*
+    if (autofocus) {
+      /*
     Focus on the select input when the component is mounted.
      */
-    selectRef.current.focus();
-  }, []);
+      selectRef.current.focus();
+    }
+  }, [autofocus]);
 
   return (
     <Select
+      allowClear={true}
       ref={selectRef}
       showSearch
       defaultValue={term || ""}
       notFoundContent={null}
       onSearch={setQuery}
       onSelect={onTermSelected}
+      onClear={onTermSelected}
       style={{ width: "100%" }}
     >
       {options}

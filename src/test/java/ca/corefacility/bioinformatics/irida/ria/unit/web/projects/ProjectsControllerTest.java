@@ -93,33 +93,6 @@ public class ProjectsControllerTest {
 				getUsersForProjectByRole());
 		when(projectService.getProjectsForUser(user)).thenReturn(projects);
 		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
-
-		assertEquals("Returns the correct Project Page", ProjectsController.SPECIFIC_PROJECT_PAGE,
-				controller.getProjectSpecificPage(projectId, model, principal));
-
-	}
-
-	@Test
-	public void testGetCreateProjectPage() {
-		Model model = new ExtendedModelMap();
-		String page = controller.getCreateProjectPage(false, model, false);
-		assertEquals("Reruns the correct New Project Page", "projects/project_new", page);
-		assertTrue("Model now has and error attribute", model.containsAttribute("errors"));
-	}
-
-	@Test
-	public void testCreateNewProject() {
-		Model model = new ExtendedModelMap();
-		String projectName = "Test Project";
-		Long projectId = 1002L;
-		Project project = new Project(projectName);
-		project.setId(projectId);
-		// Test creating project
-		when(projectService.create(any(Project.class))).thenReturn(project);
-		when(projectService.update(any(Project.class))).thenReturn(project);
-		String page = controller.createNewProject(model, new Project(projectName), false, false);
-		assertEquals("Returns the correct redirect to the collaborators page",
-				"redirect:/projects/" + projectId + "/settings", page);
 	}
 
 	@Test

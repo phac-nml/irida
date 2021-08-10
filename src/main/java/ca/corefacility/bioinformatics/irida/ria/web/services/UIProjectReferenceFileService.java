@@ -55,10 +55,8 @@ public class UIProjectReferenceFileService {
 	 * @throws UnsupportedReferenceFileContentError if content is invalid
 	 * @throws IOException if there is an I/O error
 	 */
-	public String addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
-		Project project = projectService.read(projectId);
-		logger.debug("Adding reference file to project " + projectId);
-
+	public List<UIReferenceFile> addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
+		List<UIReferenceFile> referenceFiles = new ArrayList<>();
 		try {
 			for (MultipartFile file : files) {
 				// Prepare a new reference file using the multipart file supplied by the caller
@@ -67,8 +65,27 @@ public class UIProjectReferenceFileService {
 				Path target = temp.resolve(file.getOriginalFilename());
 				file.transferTo(target.toFile());
 
-				ReferenceFile referenceFile = new ReferenceFile(target);
-				projectService.addReferenceFileToProject(project, referenceFile);
+				ReferenceFile referenceFile;
+
+				if (projectId != null) {
+					logger.debug("Adding reference file to project " + projectId);
+					/*
+					Just create the reference file object but don't save to the reference file
+					repository here as the ProjectService -> addReferenceFileToProject takes care of that
+					 */
+					referenceFile = new ReferenceFile(target);
+					Project project = projectService.read(projectId);
+					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
+					ReferenceFile refFile = join.getObject();
+					long filesize = Files.size(refFile.getFile());
+					referenceFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
+				} else {
+					/*
+					Creates the reference file and saves it to the reference file repository
+					 */
+					referenceFile = referenceFileService.create(new ReferenceFile(target));
+					referenceFiles.add(new UIReferenceFile(referenceFile));
+				}
 
 				// Clean up temporary files
 				Files.deleteIfExists(target);
@@ -83,7 +100,7 @@ public class UIProjectReferenceFileService {
 			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
 		}
 
-		return "Upload complete";
+		return referenceFiles;
 	}
 
 	/**
