@@ -1,5 +1,9 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 
+/**
+ * Redux action to set the project to share samples with
+ * @type {PayloadActionCreator<ReturnType<function(*): {payload: {project: *}}>["payload"], "share/setProject", function(*): {payload: {project: *}}>}
+ */
 export const setProject = createAction(
   `share/setProject`,
   function setProject(project) {
@@ -9,6 +13,10 @@ export const setProject = createAction(
   }
 );
 
+/**
+ * Redux slice for storing state for sharing sample with another project
+ * @type {Slice<{current: number}, {nextStep: reducers.nextStep}, string>}
+ */
 const shareSlice = createSlice({
   name: `share`,
   initialState: { current: 0 },
