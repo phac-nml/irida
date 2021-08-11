@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -57,7 +58,7 @@ public class UIMetadataFileImportService {
 				CSVFormat.RFC4180.withFirstRecordAsHeader()
 						.withTrim()
 						.withIgnoreEmptyLines());
-		List<Map<String, String>> rows = new ArrayList<>();
+		List<SampleMetadataStorageRow> rows = new ArrayList<>();
 
 		// save headers
 		Map<String, Integer> headersSet = parser.getHeaderMap();
@@ -73,7 +74,7 @@ public class UIMetadataFileImportService {
 						.get(key);
 				rowMap.put(key, value);
 			}
-			rows.add(rowMap);
+			rows.add(new SampleMetadataStorageRow(rowMap));
 		}
 		storage.saveRows(rows);
 		storage.setSampleNameColumn(findColumnName(projectId, rows));
@@ -117,7 +118,7 @@ public class UIMetadataFileImportService {
 		storage.saveHeaders(headers);
 
 		// Get the metadata out of the table.
-		List<Map<String, String>> rows = new ArrayList<>();
+		List<SampleMetadataStorageRow> rows = new ArrayList<>();
 		while (rowIterator.hasNext()) {
 			Map<String, String> rowMap = new HashMap<>();
 			Row row = rowIterator.next();
@@ -148,7 +149,7 @@ public class UIMetadataFileImportService {
 					}
 				}
 			}
-			rows.add(rowMap);
+			rows.add(new SampleMetadataStorageRow(rowMap));
 		}
 		storage.saveRows(rows);
 		storage.setSampleNameColumn(findColumnName(projectId, rows));
@@ -194,7 +195,7 @@ public class UIMetadataFileImportService {
 	 * @param rows      {@link Row} The rows from the excel file.
 	 * @return {@link String} column name.
 	 */
-	private String findColumnName(Long projectId, List<Map<String, String>> rows) {
+	private String findColumnName(Long projectId, List<SampleMetadataStorageRow> rows) {
 		String columnName = null;
 		int col = 0;
 		int numRows = rows.size();
@@ -214,10 +215,11 @@ public class UIMetadataFileImportService {
 	 * @param row       {@link Row} A row from the excel file.
 	 * @return {@link String} column name.
 	 */
-	private String findColumnNameInRow(Long projectId, Map<String, String> row) {
+	private String findColumnNameInRow(Long projectId, SampleMetadataStorageRow row) {
 		String columnName = null;
 		Project project = projectService.read(projectId);
-		Iterator<Map.Entry<String, String>> iterator = row.entrySet()
+		Iterator<Map.Entry<String, String>> iterator = row.getEntry()
+				.entrySet()
 				.iterator();
 
 		while (iterator.hasNext() && columnName == null) {

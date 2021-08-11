@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Used to store information relating to sample metadata during upload.
@@ -10,9 +11,7 @@ import java.util.Objects;
 public class SampleMetadataStorage {
 	private String sampleNameColumn;
 	private List<String> headers;
-	private List<Map<String, String>> rows;
-	private List<Map<String, String>> found;
-	private List<Map<String, String>> missing;
+	private List<SampleMetadataStorageRow> rows;
 
 	public void setSampleNameColumn(String sampleColumnName) {
 		this.sampleNameColumn = sampleColumnName;
@@ -27,33 +26,6 @@ public class SampleMetadataStorage {
 		this.headers = headers;
 	}
 
-	/**
-	 * Save the given rows
-	 *
-	 * @param rows the rows to save
-	 */
-	public void saveRows(List<Map<String, String>> rows) {
-		this.rows = rows;
-	}
-
-	/**
-	 * Save the found values
-	 *
-	 * @param found the found values
-	 */
-	public void saveFound(List<Map<String, String>> found) {
-		this.found = found;
-	}
-
-	/**
-	 * Save the missing values
-	 *
-	 * @param missing the missing values
-	 */
-	public void saveMissing(List<Map<String, String>> missing) {
-		this.missing = missing;
-	}
-
 	public String getSampleNameColumn() {
 		return sampleNameColumn;
 	}
@@ -62,16 +34,20 @@ public class SampleMetadataStorage {
 		return headers;
 	}
 
-	public List<Map<String, String>> getRows() {
+	public List<SampleMetadataStorageRow> getRows() {
 		return rows;
 	}
 
-	public List<Map<String, String>> getFound() {
-		return found;
+	public List<SampleMetadataStorageRow> getFoundRows() {
+		return rows == null ?
+				Collections.emptyList() :
+				rows.stream()
+						.filter((r) -> r != null && r.getFoundSampleId() != null)
+						.collect(Collectors.toList());
 	}
 
-	public List<Map<String, String>> getMissing() {
-		return missing;
+	public void saveRows(List<SampleMetadataStorageRow> rows) {
+		this.rows = rows;
 	}
 
 	/**
@@ -89,8 +65,7 @@ public class SampleMetadataStorage {
 			return false;
 		SampleMetadataStorage that = (SampleMetadataStorage) o;
 		return Objects.equals(sampleNameColumn, that.sampleNameColumn) && Objects.equals(headers, that.headers)
-				&& Objects.equals(rows, that.rows) && Objects.equals(found, that.found) && Objects.equals(missing,
-				that.missing);
+				&& Objects.equals(rows, that.rows);
 	}
-	
+
 }
