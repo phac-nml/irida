@@ -39,15 +39,7 @@ export function ShareProject() {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      <Form.Item
-        label={i18n("ShareProject.label")}
-        hasFeedback={projectSamplesInCart.length}
-        validateStatus={projectSamplesInCart.length ? "warning" : "success"}
-        help={
-          projectSamplesInCart.length > 0 &&
-          `Samples from this project are in the cart and will not be re-copied`
-        }
-      >
+      <Form.Item label={i18n("ShareProject.label")}>
         <Select
           autoFocus
           size="large"
