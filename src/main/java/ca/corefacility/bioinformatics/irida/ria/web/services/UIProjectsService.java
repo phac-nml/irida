@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -230,5 +231,31 @@ public class UIProjectsService {
 	 */
 	public void deleteProject(Long projectId) throws EntityNotFoundException {
 		projectService.delete(projectId);
+	}
+
+	/**
+	 * Get all projects for a user based on a query (searching the name of the project)
+	 *
+	 * @param query To search the project name by
+	 * @return List of project the user has rights to that match the query
+	 */
+	public List<Project> getProjectsForUser(String query) {
+		User user = (User) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+
+		boolean isAdmin = user.getSystemRole()
+				.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
+
+		Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));
+
+		Page<Project> paged;
+		if (isAdmin) {
+			paged = projectService.findAllProjects(query, 0, 10, sort);
+		} else {
+			paged = projectService.findProjectsForUser(query, 0, 10, sort);
+		}
+
+		return paged.getContent();
 	}
 }
