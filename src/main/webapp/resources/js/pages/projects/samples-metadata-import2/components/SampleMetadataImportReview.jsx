@@ -30,12 +30,12 @@ export function SampleMetadataImportReview({ projectId }) {
 
   const tagColumn = { title: '', dataIndex: 'tags', fixed: 'left', width: 70, render: (text, item) => { if (!item.foundSampleId) return (<Tag color="green">New</Tag>) } };
 
-  const sampleColumn = data?.headers?.filter(item => item == data?.sampleNameColumn).map((header) => {
+  const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map((header) => {
     let item = { title: header, dataIndex: header, fixed: 'left', width: 100, render: (text, item) => (<>{item.entry[header]}</>) };
     return item;
   });
 
-  const otherColumns = data?.headers?.filter(item => item != data?.sampleNameColumn).map((header) => {
+  const otherColumns = data?.headers?.filter(item => item !== data?.sampleNameColumn).map((header) => {
     let item = { title: header, dataIndex: header, render: (text, item) => (<>{item.entry[header]}</>) };
     return item;
   });
