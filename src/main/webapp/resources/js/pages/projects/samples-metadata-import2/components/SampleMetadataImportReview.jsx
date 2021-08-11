@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { navigate } from "@reach/router"
 import {
   Button,
@@ -20,37 +20,46 @@ const { Text } = Typography
  * @constructor
  */
 export function SampleMetadataImportReview({ projectId }) {
+  const [selected, setSelected] = useState([]);
   const { data } = useGetProjectSampleMetadataQuery(projectId);
-
-  const fileColumns = data?.headers?.map((header) => {
-    let item = { title: header, dataIndex: header, render: (text, item) => (<>{item.entry[header]}</>) };
-    return item;
-  });
-
-  const tagColumn = { title: '', dataIndex: 'tags', fixed: 'right', width: 70, render: (text, item) => { if (!item.foundSampleId) return (<Tag color="green">New</Tag>) } };
-
-  const columns = fileColumns?.concat(tagColumn);
 
   const dataSource = data?.rows?.map((item, index) => {
     let newItem = { ...item, key: index };
     return newItem;
   });
 
+  const tagColumn = { title: '', dataIndex: 'tags', fixed: 'left', width: 70, render: (text, item) => { if (!item.foundSampleId) return (<Tag color="green">New</Tag>) } };
+
+  const sampleColumn = data?.headers?.filter(item => item == data?.sampleNameColumn).map((header) => {
+    let item = { title: header, dataIndex: header, fixed: 'left', width: 100, render: (text, item) => (<>{item.entry[header]}</>) };
+    return item;
+  });
+
+  const otherColumns = data?.headers?.filter(item => item != data?.sampleNameColumn).map((header) => {
+    let item = { title: header, dataIndex: header, render: (text, item) => (<>{item.entry[header]}</>) };
+    return item;
+  });
+
+  const columns = sampleColumn?.concat(tagColumn).concat(otherColumns);
+
   const rowSelection = {
     fixed: true,
+    selectedRowKeys: selected,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      setSelected(selectedRowKeys);
     },
   };
+
+  useEffect(() => {
+    setSelected(dataSource?.map(item => {return item.key;}));
+  }, [data]);
 
   return (
     <SampleMetadataImportWizard currentStep={2}>
       <Text>
         {i18n("SampleMetadataImportReview.description")}
       </Text>
-
       <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 1500 }} />
-
       <div style={{ display: 'flex' }}>
         <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
         <Button style={{ marginLeft: 'auto' }}>
