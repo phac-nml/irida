@@ -28,7 +28,7 @@
 
     <project_user id="1" project_id="5" user_id="3"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  email_subscription="false" metadataRole="LEVEL_4"/>
 
     <metadata_field id="1" label="field1" type="text" DTYPE="MetadataTemplateField"/>
     <metadata_field id="2" label="field2" type="text" DTYPE="MetadataTemplateField"/>

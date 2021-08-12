@@ -20,8 +20,9 @@
 		modifiedDate="2013-07-18 14:20:19.0"  />
 	<project name="project2" id="2" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0"  />
+
 	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
-		createdDate="2013-07-18 14:20:19.0" email_subscription="false" />
+				  createdDate="2013-07-18 14:20:19.0" email_subscription="false" metadataRole="LEVEL_4"/>
 	<project_user project_id="2" user_id="1" projectRole="PROJECT_OWNER"
-		createdDate="2013-07-18 14:20:19.0" email_subscription="false" />
+				  createdDate="2013-07-18 14:20:19.0" email_subscription="false" metadataRole="LEVEL_4"/>
 </dataset>
