@@ -17,12 +17,7 @@ public class SampleMetadataStorage {
 		this.sampleNameColumn = sampleColumnName;
 	}
 
-	/**
-	 * Save the given headers
-	 *
-	 * @param headers the headers to save
-	 */
-	public void saveHeaders(List<String> headers) {
+	public void setHeaders(List<String> headers) {
 		this.headers = headers;
 	}
 
@@ -46,7 +41,7 @@ public class SampleMetadataStorage {
 						.collect(Collectors.toList());
 	}
 
-	public void saveRows(List<SampleMetadataStorageRow> rows) {
+	public void setRows(List<SampleMetadataStorageRow> rows) {
 		this.rows = rows;
 	}
 

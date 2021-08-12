@@ -128,7 +128,7 @@ public class UIMetadataImportService {
 				}
 				updatedRows.add(row);
 			}
-			stored.saveRows(updatedRows);
+			stored.setRows(updatedRows);
 		}
 
 		return "complete";

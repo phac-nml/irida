@@ -18,6 +18,9 @@ public class SampleMetadataStorageRow {
 		return entry;
 	}
 
+	/**
+	 * Returns the associated value to which the given key is mapped.
+	 */
 	public String getEntryValue(String name) {
 		return entry.get(name);
 	}

@@ -63,7 +63,7 @@ public class UIMetadataFileImportService {
 		// save headers
 		Map<String, Integer> headersSet = parser.getHeaderMap();
 		List<String> headersList = new ArrayList<>(headersSet.keySet());
-		storage.saveHeaders(headersList);
+		storage.setHeaders(headersList);
 
 		// save data
 		for (CSVRecord row : parser) {
@@ -76,7 +76,7 @@ public class UIMetadataFileImportService {
 			}
 			rows.add(new SampleMetadataStorageRow(rowMap));
 		}
-		storage.saveRows(rows);
+		storage.setRows(rows);
 		storage.setSampleNameColumn(findColumnName(projectId, rows));
 		parser.close();
 
@@ -115,7 +115,7 @@ public class UIMetadataFileImportService {
 		Iterator<Row> rowIterator = sheet.iterator();
 
 		List<String> headers = getWorkbookHeaders(rowIterator.next());
-		storage.saveHeaders(headers);
+		storage.setHeaders(headers);
 
 		// Get the metadata out of the table.
 		List<SampleMetadataStorageRow> rows = new ArrayList<>();
@@ -151,7 +151,7 @@ public class UIMetadataFileImportService {
 			}
 			rows.add(new SampleMetadataStorageRow(rowMap));
 		}
-		storage.saveRows(rows);
+		storage.setRows(rows);
 		storage.setSampleNameColumn(findColumnName(projectId, rows));
 
 		return storage;

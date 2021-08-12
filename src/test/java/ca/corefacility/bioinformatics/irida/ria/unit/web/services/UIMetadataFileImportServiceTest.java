@@ -67,14 +67,14 @@ public class UIMetadataFileImportServiceTest {
 		headers_list.add("header1");
 		headers_list.add("header2");
 		headers_list.add("header3");
-		expected_storage.saveHeaders(headers_list);
+		expected_storage.setHeaders(headers_list);
 		List<SampleMetadataStorageRow> rows = new ArrayList<>();
 		Map<String, String> rowMap = new HashMap<>();
 		rowMap.put("header1", "value1");
 		rowMap.put("header2", "value2");
 		rowMap.put("header3", "value3");
 		rows.add(new SampleMetadataStorageRow(rowMap));
-		expected_storage.saveRows(rows);
+		expected_storage.setRows(rows);
 		expected_storage.setSampleNameColumn("header2");
 		return expected_storage;
 	}

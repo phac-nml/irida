@@ -136,7 +136,7 @@ public class ProjectSampleMetadataController {
 					logger.trace("Sample in project" + project.getId() + "is not found.", e);
 				}
 			}
-			stored.saveRows(rows);
+			stored.setRows(rows);
 		}
 
 		return ImmutableMap.of("result", "complete");
