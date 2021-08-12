@@ -23,14 +23,14 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
   const dispatch = useDispatch();
   const [column, setColumn] = useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
-  const [updateColumn] = useSetColumnProjectSampleMetadataMutation(projectId, sampleNameColumn);
+  const [updateColumn] = useSetColumnProjectSampleMetadataMutation();
 
   React.useEffect(() => {
     setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
   }, []);
 
   const onSubmit = () => {
-    updateColumn({ projectId: projectId, sampleNameColumn: column });
+    updateColumn({ projectId, sampleNameColumn: column });
     navigate('review');
   };
 

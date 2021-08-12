@@ -9,7 +9,7 @@ import {
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useClearProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
+import { useClearProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
 
@@ -22,8 +22,11 @@ const { Text } = Typography
 export function SampleMetadataImportUploadFile({ projectId }) {
   const dispatch = useDispatch();
   const [status, setStatus] = useState("process");
+  const [clearStorage] = useClearProjectSampleMetadataMutation();
 
-  useClearProjectSampleMetadataQuery(projectId);
+  React.useEffect(() => {
+    clearStorage(projectId);
+  }, []);
 
   const options = {
     multiple: false,
