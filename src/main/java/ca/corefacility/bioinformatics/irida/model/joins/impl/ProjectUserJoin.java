@@ -3,22 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.joins.impl;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -92,14 +77,14 @@ public class ProjectUserJoin implements Join<Project, User> {
 		if (o instanceof ProjectUserJoin) {
 			ProjectUserJoin other = (ProjectUserJoin) o;
 			return Objects.equals(project, other.project) && Objects.equals(user, other.user) && Objects.equals(
-					projectRole, other.projectRole);
+					projectRole, other.projectRole) && Objects.equals(metadataRole, other.metadataRole);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(project, user, projectRole);
+		return Objects.hash(project, user, projectRole, metadataRole);
 	}
 
 	@Override
