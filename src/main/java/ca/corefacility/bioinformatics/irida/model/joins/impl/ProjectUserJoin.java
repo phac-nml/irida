@@ -58,6 +58,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 	public ProjectUserJoin() {
 		createdDate = new Date();
 		projectRole = ProjectRole.PROJECT_USER;
+		this.metadataRole = ProjectMetadataRole.LEVEL_1;
 		emailSubscription = false;
 	}
 
