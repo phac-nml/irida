@@ -39,5 +39,13 @@
             <column name="field_id" type="bigint(20)"/>
             <column name="level" type="varchar(255)"/>
         </createTable>
+
+        <addColumn tableName="project_user">
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4"/>
+        </addColumn>
+
+        <addColumn tableName="project_user_AUD">
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
