@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { navigate } from "@reach/router"
 import {
@@ -21,7 +21,7 @@ const { Text } = Typography
  */
 export function SampleMetadataImportMapHeaders({ projectId }) {
   const dispatch = useDispatch();
-  const [column, setColumn] = useState();
+  const [column, setColumn] = React.useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
   const [updateColumn] = useSetColumnProjectSampleMetadataMutation();
 

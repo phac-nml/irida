@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { navigate } from "@reach/router"
 import {
   Button,
@@ -20,9 +20,9 @@ const { Text } = Typography
  * @constructor
  */
 export function SampleMetadataImportReview({ projectId }) {
-  const [dataSource, setDataSource] = useState([]);
-  const [columns, setColumns] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [dataSource, setDataSource] = React.useState([]);
+  const [columns, setColumns] = React.useState([]);
+  const [selected, setSelected] = React.useState([]);
   const { data } = useGetProjectSampleMetadataQuery(projectId);
 
   const tagColumn = {
@@ -46,7 +46,7 @@ export function SampleMetadataImportReview({ projectId }) {
     },
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const dataSource = data?.rows?.map((item, index) => {
       let newItem = { ...item, key: index };
       return newItem;

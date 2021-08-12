@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { setHeaders } from "../services/rootReducer"
 import { navigate } from "@reach/router"
@@ -21,7 +21,7 @@ const { Text } = Typography
  */
 export function SampleMetadataImportUploadFile({ projectId }) {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState("process");
+  const [status, setStatus] = React.useState("process");
   const [clearStorage] = useClearProjectSampleMetadataMutation();
 
   React.useEffect(() => {
