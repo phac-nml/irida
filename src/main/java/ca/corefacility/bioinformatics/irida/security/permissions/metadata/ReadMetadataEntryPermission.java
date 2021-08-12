@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -72,14 +72,14 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 			ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
 			if (projectJoinForUser != null) {
 
-				ProjectRole userProjectRole = projectJoinForUser.getProjectRole();
+				ProjectMetadataRole metadataRole = projectJoinForUser.getMetadataRole();
 
 				//if there's no restriction, add it at the base level
 				if (restrictionForFieldAndProject == null) {
-					restrictionForFieldAndProject = new MetadataRestriction(project, field, ProjectRole.PROJECT_USER);
+					restrictionForFieldAndProject = new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_1);
 				}
 
-				if (userProjectRole.getLevel() >= restrictionForFieldAndProject.getLevel()
+				if (metadataRole.getLevel() >= restrictionForFieldAndProject.getLevel()
 						.getLevel()) {
 					return true;
 				}

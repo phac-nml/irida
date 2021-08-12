@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -91,7 +92,7 @@ public class ReadMetadataEntryPermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(manager, manager.getSystemRole());
 
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field)).thenReturn(
-				new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER));
+				new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4));
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
@@ -106,7 +107,7 @@ public class ReadMetadataEntryPermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(manager, manager.getSystemRole());
 
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field)).thenReturn(
-				new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER));
+				new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4));
 
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
@@ -119,7 +120,7 @@ public class ReadMetadataEntryPermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(manager, manager.getSystemRole());
 
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field)).thenReturn(
-				new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER));
+				new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4));
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
@@ -137,9 +138,9 @@ public class ReadMetadataEntryPermissionTest {
 
 		//2 projects with different restrictions
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field)).thenReturn(
-				new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER));
+				new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4));
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project2, field)).thenReturn(
-				new MetadataRestriction(project2, field, ProjectRole.PROJECT_USER));
+				new MetadataRestriction(project2, field, ProjectMetadataRole.LEVEL_1));
 
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true),
@@ -162,9 +163,9 @@ public class ReadMetadataEntryPermissionTest {
 
 		//2 projects with different restrictions
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field)).thenReturn(
-				new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER));
+				new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4));
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project2, field)).thenReturn(
-				new MetadataRestriction(project2, field, ProjectRole.PROJECT_USER));
+				new MetadataRestriction(project2, field, ProjectMetadataRole.LEVEL_1));
 
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project2, sample, true),
@@ -183,9 +184,9 @@ public class ReadMetadataEntryPermissionTest {
 
 		//2 projects with different restrictions
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project, field)).thenReturn(
-				new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER));
+				new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4));
 		when(metadataRestrictionRepository.getRestrictionForFieldAndProject(project2, field)).thenReturn(
-				new MetadataRestriction(project2, field, ProjectRole.PROJECT_USER));
+				new MetadataRestriction(project2, field, ProjectMetadataRole.LEVEL_1));
 
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project2, sample, true),

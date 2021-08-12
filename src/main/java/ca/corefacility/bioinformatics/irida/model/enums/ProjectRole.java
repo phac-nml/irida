@@ -38,6 +38,7 @@ public enum ProjectRole {
 		}
 	}
 
+	@Deprecated
 	public int getLevel() {
 		return level;
 	}

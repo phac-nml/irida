@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -146,7 +147,7 @@ public class MetadataAjaxController {
 	 */
 	@PatchMapping("/fields/restrictions")
 	public ResponseEntity<AjaxResponse> updateProjectMetadataFieldRestriction(@RequestParam Long projectId,
-			@RequestParam Long fieldId, @RequestParam ProjectRole projectRole, Locale locale) {
+			@RequestParam Long fieldId, @RequestParam ProjectMetadataRole projectRole, Locale locale) {
 		return ResponseEntity.ok(
 				new AjaxSuccessResponse(service.updateMetadataProjectField(projectId, fieldId, projectRole, locale)));
 	}

@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -214,7 +214,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Override
 	@Transactional
-	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role) {
+	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectMetadataRole role) {
 		MetadataRestriction metadataRestrictionForFieldAndProject = getMetadataRestrictionForFieldAndProject(project,
 				field);
 
@@ -248,7 +248,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Override
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role,
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectMetadataRole role,
 			boolean includeTemplateFields) {
 		//get all fields for the project
 		List<MetadataTemplateField> metadataFieldsForProject = fieldRepository.getMetadataFieldsForProject(project);
@@ -281,7 +281,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 					//if the restriction map contains the field
 					if (restrictionMap.containsKey(field)) {
 						MetadataRestriction metadataRestriction = restrictionMap.get(field);
-						ProjectRole restrictionRole = metadataRestriction.getLevel();
+						ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
 						//compare the restriction level to the given role.  If it's greater or equal, we're good
 						if (role.getLevel() >= restrictionRole.getLevel()) {
@@ -315,17 +315,17 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		User loggedInUser = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, loggedInUser);
 
-		ProjectRole projectRole;
+		ProjectMetadataRole metadataRole;
 
 		//if the user isn't on the project and the user is an admin, give them project owner powers
 		if (projectJoinForUser == null && loggedInUser.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
-			projectRole = ProjectRole.PROJECT_OWNER;
+			metadataRole = ProjectMetadataRole.LEVEL_4;
 		} else {
-			projectRole = projectJoinForUser.getProjectRole();
+			metadataRole = projectJoinForUser.getMetadataRole();
 		}
 
-		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole,
+		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, metadataRole,
 				includeTemplateFields);
 
 		return permittedFieldsForRole;

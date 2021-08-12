@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -156,7 +157,7 @@ public class UIMetadataService {
 	 * @param locale    Current users {@link Locale}
 	 * @return Message to user on the status of the update
 	 */
-	public String updateMetadataProjectField(Long projectId, Long fieldId, ProjectRole newRole, Locale locale) {
+	public String updateMetadataProjectField(Long projectId, Long fieldId, ProjectMetadataRole newRole, Locale locale) {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField field = templateService.readMetadataField(fieldId);
 		templateService.setMetadataRestriction(project, field, newRole);

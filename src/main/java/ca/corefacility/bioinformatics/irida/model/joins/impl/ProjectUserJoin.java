@@ -25,6 +25,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -32,10 +33,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * A join table and class for users and projects.
- * 
  */
 @Entity
-@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }) )
+@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectUserJoin implements Join<Project, User> {
@@ -55,6 +55,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private ProjectMetadataRole metadataRole;
 
 	@CreatedDate
 	@NotNull
@@ -87,8 +91,8 @@ public class ProjectUserJoin implements Join<Project, User> {
 	public boolean equals(Object o) {
 		if (o instanceof ProjectUserJoin) {
 			ProjectUserJoin other = (ProjectUserJoin) o;
-			return Objects.equals(project, other.project) && Objects.equals(user, other.user)
-					&& Objects.equals(projectRole, other.projectRole);
+			return Objects.equals(project, other.project) && Objects.equals(user, other.user) && Objects.equals(
+					projectRole, other.projectRole);
 		}
 		return false;
 	}
@@ -120,7 +124,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	/**
 	 * Get the user's role on the project
-	 * 
+	 *
 	 * @return A representation of the user's project role
 	 */
 	public ProjectRole getProjectRole() {
@@ -129,12 +133,19 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	/**
 	 * Set the user's role on the project
-	 * 
-	 * @param userRole
-	 *            The representation of the user's role on the project
+	 *
+	 * @param userRole The representation of the user's role on the project
 	 */
 	public void setProjectRole(ProjectRole userRole) {
 		this.projectRole = userRole;
+	}
+
+	public ProjectMetadataRole getMetadataRole() {
+		return metadataRole;
+	}
+
+	public void setMetadataRole(ProjectMetadataRole metadataRole) {
+		this.metadataRole = metadataRole;
 	}
 
 	public void setEmailSubscription(boolean emailSubscription) {

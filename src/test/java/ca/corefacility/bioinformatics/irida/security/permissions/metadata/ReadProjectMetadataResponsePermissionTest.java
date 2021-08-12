@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -104,7 +105,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		ProjectMetadataResponse metadataResponse = new ProjectMetadataResponse(project, entries);
 
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
-				Lists.newArrayList(new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER)));
+				Lists.newArrayList(new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4)));
 
 		assertFalse("permission should be denied", permission.isAllowed(authentication, metadataResponse));
 	}
@@ -123,7 +124,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		ProjectMetadataResponse metadataResponse = new ProjectMetadataResponse(project, entries);
 
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
-				Lists.newArrayList(new MetadataRestriction(project, field, ProjectRole.PROJECT_USER)));
+				Lists.newArrayList(new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_1)));
 
 		assertTrue("permission should be allowed", permission.isAllowed(authentication, metadataResponse));
 	}
@@ -145,8 +146,8 @@ public class ReadProjectMetadataResponsePermissionTest {
 
 		ProjectMetadataResponse metadataResponse = new ProjectMetadataResponse(project, entries);
 
-		MetadataRestriction restriction1 = new MetadataRestriction(project, field, ProjectRole.PROJECT_USER);
-		MetadataRestriction restriction2 = new MetadataRestriction(project, field2, ProjectRole.PROJECT_OWNER);
+		MetadataRestriction restriction1 = new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_1);
+		MetadataRestriction restriction2 = new MetadataRestriction(project, field2, ProjectMetadataRole.LEVEL_4);
 
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(restriction1, restriction2));
@@ -168,7 +169,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		ProjectMetadataResponse metadataResponse = new ProjectMetadataResponse(project, entries);
 
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
-				Lists.newArrayList(new MetadataRestriction(project, field, ProjectRole.PROJECT_OWNER)));
+				Lists.newArrayList(new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4)));
 
 		assertTrue("permission should be allowed", permission.isAllowed(authentication, metadataResponse));
 	}
@@ -193,8 +194,8 @@ public class ReadProjectMetadataResponsePermissionTest {
 
 		ProjectMetadataResponse metadataResponse = new ProjectMetadataResponse(project, entries);
 
-		MetadataRestriction restriction1 = new MetadataRestriction(project, field, ProjectRole.PROJECT_USER);
-		MetadataRestriction restriction2 = new MetadataRestriction(project, field2, ProjectRole.PROJECT_OWNER);
+		MetadataRestriction restriction1 = new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_1);
+		MetadataRestriction restriction2 = new MetadataRestriction(project, field2, ProjectMetadataRole.LEVEL_4);
 
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(restriction1, restriction2));

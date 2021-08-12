@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -140,7 +141,7 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @param role    the role level to set the restriction for
 	 * @return the created {@link MetadataRestriction}
 	 */
-	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role);
+	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectMetadataRole role);
 
 	/**
 	 * Get all {@link MetadataTemplateField} the current user is allowed to read for a {@link MetadataTemplate}
@@ -153,11 +154,11 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Get all {@link MetadataTemplateField} that are permitted to be read by a given {@link ProjectRole}
 	 *
 	 * @param project the {@link Project} to get fields for
-	 * @param role    the {@link ProjectRole} to request
+	 * @param role    the {@link ProjectMetadataRole} to request
 	 * @param includeTemplateFields whether to include fields from the project's associated {@link MetadataTemplate}s
 	 * @return the {@link MetadataTemplateField} the given role can read
 	 */
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role,
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectMetadataRole role,
 			boolean includeTemplateFields);
 
 	/**

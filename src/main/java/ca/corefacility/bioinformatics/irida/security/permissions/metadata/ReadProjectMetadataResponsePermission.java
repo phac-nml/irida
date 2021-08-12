@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -56,19 +57,19 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		}
 		ProjectMetadataResponse metadataResponse = (ProjectMetadataResponse) targetDomainObject;
 
-		//get the user & projec
+		//get the user & project
 		User user = userRepository.loadUserByUsername(authentication.getName());
 		Project project = metadataResponse.getProject();
 		ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
 
 		//get the user's role on the project
-		ProjectRole userProjectRole;
+		ProjectMetadataRole userProjectRole;
 		if (projectJoinForUser != null) {
-			userProjectRole = projectJoinForUser.getProjectRole();
+			userProjectRole = projectJoinForUser.getMetadataRole();
 		} else if (user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			//if the user isn't on the project but is an admin, treat them as a project owner
-			userProjectRole = ProjectRole.PROJECT_OWNER;
+			userProjectRole = ProjectMetadataRole.LEVEL_4;
 		} else {
 			//if the user is not otherwise on the project, they shouldn't be able to read anything
 			return false;
@@ -98,7 +99,7 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 					//if we have a restriction on a field, compare it against the user's role on the project
 					if (restrictionMap.containsKey(field)) {
 						MetadataRestriction metadataRestriction = restrictionMap.get(field);
-						ProjectRole restrictionRole = metadataRestriction.getLevel();
+						ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
 						/*
 						 * Compare the restriction level to the user's role.  If user's role is less, return the unauthorized field.
