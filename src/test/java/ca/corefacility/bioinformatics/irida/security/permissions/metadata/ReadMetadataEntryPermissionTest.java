@@ -97,7 +97,7 @@ public class ReadMetadataEntryPermissionTest {
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
-				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
 		assertTrue("should be allowed to read", permission.isAllowed(authentication, entry));
 	}
@@ -125,7 +125,7 @@ public class ReadMetadataEntryPermissionTest {
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
-				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		assertFalse("should not be allowed read", permission.isAllowed(authentication, entry));
 	}
@@ -147,10 +147,10 @@ public class ReadMetadataEntryPermissionTest {
 						new ProjectSampleJoin(project2, sample, true)));
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
-				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project2, manager)).thenReturn(
-				new ProjectUserJoin(project2, user, ProjectRole.PROJECT_USER));
+				new ProjectUserJoin(project2, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		assertTrue("should be allowed to read", permission.isAllowed(authentication, entry));
 	}
@@ -172,10 +172,11 @@ public class ReadMetadataEntryPermissionTest {
 						new ProjectSampleJoin(project, sample, true)));
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
-				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		assertFalse("should not be allowed to read", permission.isAllowed(authentication, entry));
 	}
+
 	@Test
 	public void testMultipleProjectsUserNotOnOneAllow() {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(manager, manager.getSystemRole());
@@ -193,7 +194,7 @@ public class ReadMetadataEntryPermissionTest {
 						new ProjectSampleJoin(project, sample, true)));
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
-				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
 		assertTrue("should be allowed to read", permission.isAllowed(authentication, entry));
 	}

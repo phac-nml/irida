@@ -68,6 +68,11 @@ public class ProjectUserJoin implements Join<Project, User> {
 		this.projectRole = projectRole;
 	}
 
+	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole, ProjectMetadataRole metadataRole) {
+		this(subject, object, projectRole);
+		this.metadataRole = metadataRole;
+	}
+
 	public Long getId() {
 		return this.id;
 	}

@@ -69,7 +69,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 
 		project = new Project("project");
 		when(projectUserJoinRepository.getProjectJoinForUser(project, user)).thenReturn(
-				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER));
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 	}
 
@@ -179,7 +179,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(admin, admin.getSystemRole());
 
 		when(projectUserJoinRepository.getProjectJoinForUser(project, admin)).thenReturn(
-				new ProjectUserJoin(project, admin, ProjectRole.PROJECT_USER));
+				new ProjectUserJoin(project, admin, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
 		MetadataEntry entry = new MetadataEntry("test", "text");
