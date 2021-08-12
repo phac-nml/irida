@@ -20,13 +20,10 @@ const { Text } = Typography
  * @constructor
  */
 export function SampleMetadataImportReview({ projectId }) {
+  const [dataSource, setDataSource] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [selected, setSelected] = useState([]);
   const { data } = useGetProjectSampleMetadataQuery(projectId);
-
-  const dataSource = data?.rows?.map((item, index) => {
-    let newItem = { ...item, key: index };
-    return newItem;
-  });
 
   const tagColumn = {
     title: '',
@@ -41,18 +38,6 @@ export function SampleMetadataImportReview({ projectId }) {
     onFilter: (value, record) => (value === 'new') ? record.foundSampleId === null : record.foundSampleId !== null,
   };
 
-  const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map((header) => {
-    let item = { title: header, dataIndex: header, fixed: 'left', width: 100, render: (text, item) => (<>{item.entry[header]}</>) };
-    return item;
-  });
-
-  const otherColumns = data?.headers?.filter(item => item !== data?.sampleNameColumn).map((header) => {
-    let item = { title: header, dataIndex: header, render: (text, item) => (<>{item.entry[header]}</>) };
-    return item;
-  });
-
-  const columns = sampleColumn?.concat(tagColumn).concat(otherColumns);
-
   const rowSelection = {
     fixed: true,
     selectedRowKeys: selected,
@@ -62,6 +47,25 @@ export function SampleMetadataImportReview({ projectId }) {
   };
 
   useEffect(() => {
+    const dataSource = data?.rows?.map((item, index) => {
+      let newItem = { ...item, key: index };
+      return newItem;
+    });
+
+    const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map((header) => {
+      let item = { title: header, dataIndex: header, fixed: 'left', width: 100, render: (text, item) => (<>{item.entry[header]}</>) };
+      return item;
+    });
+
+    const otherColumns = data?.headers?.filter(item => item !== data?.sampleNameColumn).map((header) => {
+      let item = { title: header, dataIndex: header, render: (text, item) => (<>{item.entry[header]}</>) };
+      return item;
+    });
+
+    const columns = sampleColumn?.concat(tagColumn).concat(otherColumns);
+
+    setDataSource(dataSource);
+    setColumns(columns);
     setSelected(dataSource?.map(item => { return item.key; }));
   }, [data]);
 
