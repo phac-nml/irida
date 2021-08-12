@@ -28,7 +28,18 @@ export function SampleMetadataImportReview({ projectId }) {
     return newItem;
   });
 
-  const tagColumn = { title: '', dataIndex: 'tags', fixed: 'left', width: 70, render: (text, item) => { if (!item.foundSampleId) return (<Tag color="green">New</Tag>) } };
+  const tagColumn = {
+    title: '',
+    dataIndex: 'tags',
+    fixed: 'left',
+    width: 70,
+    render: (text, item) => {
+      if (!item.foundSampleId)
+        return (<Tag color="green">New</Tag>)
+    },
+    filters: [{ text: 'New', value: 'new' }, { text: 'Existing', value: 'existing' }],
+    onFilter: (value, record) => (value === 'new') ? record.foundSampleId === null : record.foundSampleId !== null,
+  };
 
   const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map((header) => {
     let item = { title: header, dataIndex: header, fixed: 'left', width: 100, render: (text, item) => (<>{item.entry[header]}</>) };
@@ -51,7 +62,7 @@ export function SampleMetadataImportReview({ projectId }) {
   };
 
   useEffect(() => {
-    setSelected(dataSource?.map(item => {return item.key;}));
+    setSelected(dataSource?.map(item => { return item.key; }));
   }, [data]);
 
   return (
