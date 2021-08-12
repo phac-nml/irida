@@ -70,7 +70,7 @@ export function SampleMetadataImportReview({ projectId }) {
       <Text>
         {i18n("SampleMetadataImportReview.description")}
       </Text>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 1500 }} />
+      <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 1500, y: 4500 }} pagination={false}/>
       <div style={{ display: 'flex' }}>
         <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
         <Button style={{ marginLeft: 'auto' }}>
