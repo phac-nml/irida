@@ -5,15 +5,13 @@ package ca.corefacility.bioinformatics.irida.model.enums;
  */
 public enum ProjectRole {
 
-	PROJECT_USER("PROJECT_USER", 1),
-	PROJECT_OWNER("PROJECT_OWNER", 2);
+	PROJECT_USER("PROJECT_USER"),
+	PROJECT_OWNER("PROJECT_OWNER");
 
 	private String code;
-	private int level;
 
-	private ProjectRole(String code, int level) {
+	private ProjectRole(String code) {
 		this.code = code;
-		this.level = level;
 	}
 
 	@Override
@@ -36,11 +34,6 @@ public enum ProjectRole {
 		default:
 			return PROJECT_USER;
 		}
-	}
-
-	@Deprecated
-	public int getLevel() {
-		return level;
 	}
 }
 
