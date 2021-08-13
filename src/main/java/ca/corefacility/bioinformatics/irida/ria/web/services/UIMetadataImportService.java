@@ -118,13 +118,12 @@ public class UIMetadataImportService {
 
 			// Get the metadata out of the table.
 			for (SampleMetadataStorageRow row : rows) {
-				SampleMetadataStorageRow updatedRow = row;
 				try {
 					// If this throws an error than the sample does not exist.
 					Sample sample = sampleService.getSampleBySampleName(project, row.getEntryValue(sampleNameColumn));
 					row.setFoundSampleId(sample.getId());
 				} catch (EntityNotFoundException e) {
-					logger.trace("Sample in project" + project.getId() + " is not found.", e);
+					row.setFoundSampleId(null);
 				}
 				updatedRows.add(row);
 			}

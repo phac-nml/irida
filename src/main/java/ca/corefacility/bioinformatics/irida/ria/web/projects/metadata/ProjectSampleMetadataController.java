@@ -133,7 +133,7 @@ public class ProjectSampleMetadataController {
 					Sample sample = sampleService.getSampleBySampleName(project, row.getEntryValue(sampleNameColumn));
 					row.setFoundSampleId(sample.getId());
 				} catch (EntityNotFoundException e) {
-					logger.trace("Sample in project" + project.getId() + "is not found.", e);
+					row.setFoundSampleId(null);
 				}
 			}
 			stored.setRows(rows);
