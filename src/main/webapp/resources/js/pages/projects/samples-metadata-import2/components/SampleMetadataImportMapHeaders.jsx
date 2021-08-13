@@ -49,8 +49,8 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
         ))}
       </Radio.Group>
       <div style={{ display: 'flex' }}>
-        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.button.back")}</Button>
-        <Button onClick={onSubmit} style={{ marginLeft: 'auto' }}>
+        <Button className="t-metadata-uploader-file-button" icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.button.back")}</Button>
+        <Button className="t-metadata-uploader-preview-button" onClick={onSubmit} style={{ marginLeft: 'auto' }}>
           {i18n("SampleMetadataImportMapHeaders.button.next")}
           <IconArrowRight />
         </Button>

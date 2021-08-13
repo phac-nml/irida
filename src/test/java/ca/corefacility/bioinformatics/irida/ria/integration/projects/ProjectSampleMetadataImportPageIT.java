@@ -52,7 +52,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 						.doubleValue())
 				.collect(Collectors.toList());
 		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
-		formattedNumbers.forEach(num -> assertTrue("Found " + num + " that was not formatted properly", values.contains(Double.valueOf(num))));
+		formattedNumbers.forEach(num -> assertTrue("Found " + num + " that was not formatted properly",
+				values.contains(Double.valueOf(num))));
 
 	}
 

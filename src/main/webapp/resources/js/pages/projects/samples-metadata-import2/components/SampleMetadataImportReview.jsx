@@ -28,6 +28,7 @@ export function SampleMetadataImportReview({ projectId }) {
   const tagColumn = {
     title: '',
     dataIndex: 'tags',
+    className: 't-metadata-uploader-new-column',
     fixed: 'left',
     width: 70,
     render: (text, item) => {
@@ -74,10 +75,10 @@ export function SampleMetadataImportReview({ projectId }) {
       <Text>
         {i18n("SampleMetadataImportReview.description")}
       </Text>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 1500, y: 4500 }} pagination={false}/>
+      <Table className="t-metadata-uploader-review-table" rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 1500, y: 4500 }} pagination={false} />
       <div style={{ display: 'flex' }}>
-        <Button icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
-        <Button style={{ marginLeft: 'auto' }}>
+        <Button className="t-metadata-uploader-column-button" icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
+        <Button className="t-metadata-uploader-upload-button" style={{ marginLeft: 'auto' }}>
           {i18n("SampleMetadataImportReview.button.next")}
           <IconArrowRight />
         </Button>
