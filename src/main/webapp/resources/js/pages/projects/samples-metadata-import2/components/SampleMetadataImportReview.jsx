@@ -34,8 +34,8 @@ export function SampleMetadataImportReview({ projectId }) {
       if (!item.foundSampleId)
         return (<Tag color="green">New</Tag>)
     },
-    filters: [{ text: 'New', value: 'new' }, { text: 'Existing', value: 'existing' }],
-    onFilter: (value, record) => (value === 'new') ? record.foundSampleId === null : record.foundSampleId !== null,
+    filters: [{ text: i18n("SampleMetadataImportReview.table.filter.new"), value: 'new' }, { text: i18n("SampleMetadataImportReview.table.filter.existing"), value: 'existing' }],
+    onFilter: (value, record) => (value === 'new') ? !record.foundSampleId : record.foundSampleId,
   };
 
   const rowSelection = {
