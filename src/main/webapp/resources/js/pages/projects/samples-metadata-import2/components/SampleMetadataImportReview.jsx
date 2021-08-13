@@ -48,7 +48,7 @@ export function SampleMetadataImportReview({ projectId }) {
 
   React.useEffect(() => {
     const dataSource = data?.rows?.map((item, index) => {
-      let newItem = { ...item, key: index };
+      let newItem = { ...item, key: `metadata-uploader-row-${index}` };
       return newItem;
     });
 
