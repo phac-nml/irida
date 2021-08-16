@@ -33,7 +33,7 @@ export function SampleMetadataImportReview({ projectId }) {
     width: 70,
     render: (text, item) => {
       if (!item.foundSampleId)
-        return (<Tag color="green">New</Tag>)
+        return (<Tag color="green">{i18n("SampleMetadataImportReview.table.filter.new")}</Tag>)
     },
     filters: [{ text: i18n("SampleMetadataImportReview.table.filter.new"), value: 'new' }, { text: i18n("SampleMetadataImportReview.table.filter.existing"), value: 'existing' }],
     onFilter: (value, record) => (value === 'new') ? !record.foundSampleId : record.foundSampleId,
