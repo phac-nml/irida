@@ -75,7 +75,7 @@ export function SampleMetadataImportReview({ projectId }) {
       <Text>
         {i18n("SampleMetadataImportReview.description")}
       </Text>
-      <Table className="t-metadata-uploader-review-table" rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 1500, y: 4500 }} pagination={false} />
+      <Table className="t-metadata-uploader-review-table" rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: true, y: true }} pagination={false} />
       <div style={{ display: 'flex' }}>
         <Button className="t-metadata-uploader-column-button" icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
         <Button className="t-metadata-uploader-upload-button" style={{ marginLeft: 'auto' }}>
