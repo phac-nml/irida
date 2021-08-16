@@ -23,7 +23,7 @@ export const metadataImportApi = createApi({
     }),
     clearProjectSampleMetadata: build.mutation({
       query: (projectId) => ({
-      url: `/upload/clear`,
+        url: `/upload/clear`,
         params: {
           projectId,
         }
@@ -31,7 +31,7 @@ export const metadataImportApi = createApi({
       invalidatesTags: ["MetadataImport"],
     }),
     setColumnProjectSampleMetadata: build.mutation({
-      query: ({projectId, sampleNameColumn}) => ({
+      query: ({ projectId, sampleNameColumn }) => ({
         url: `/upload/setSampleColumn`,
         method: 'POST',
         params: {
@@ -42,7 +42,7 @@ export const metadataImportApi = createApi({
       invalidatesTags: ["MetadataImport"],
     }),
     saveProjectSampleMetadata: build.mutation({
-      query: ({projectId, sampleNameColumn}) => ({
+      query: ({ projectId, sampleNameColumn }) => ({
         url: `/upload/save`,
         method: 'POST',
         params: {

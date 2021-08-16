@@ -1,15 +1,12 @@
-import React from "react";
-import { navigate } from "@reach/router"
+import React from 'react'
+import { navigate } from '@reach/router'
+import { Button, Table, Tag, Typography } from 'antd'
+import { SampleMetadataImportWizard } from './SampleMetadataImportWizard'
+import { useGetProjectSampleMetadataQuery } from '../../../../apis/metadata/metadata-import'
 import {
-  Button,
-  Space,
-  Table,
-  Tag,
-  Typography,
-} from "antd";
-import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useGetProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
-import { IconArrowLeft, IconArrowRight } from "../../../../components/icons/Icons";
+  IconArrowLeft,
+  IconArrowRight,
+} from '../../../../components/icons/Icons'
 
 const { Text } = Typography
 
@@ -20,11 +17,9 @@ const { Text } = Typography
  * @constructor
  */
 export function SampleMetadataImportReview({ projectId }) {
-  const [dataSource, setDataSource] = React.useState([]);
-  const [columns, setColumns] = React.useState([]);
-  const [selected, setSelected] = React.useState([]);
-  const { data } = useGetProjectSampleMetadataQuery(projectId);
-
+  const [columns, setColumns] = React.useState([])
+  const [selected, setSelected] = React.useState([])
+  const { data = {}, isLoading } = useGetProjectSampleMetadataQuery(projectId)
   const tagColumn = {
     title: '',
     dataIndex: 'tags',
@@ -33,60 +28,99 @@ export function SampleMetadataImportReview({ projectId }) {
     width: 70,
     render: (text, item) => {
       if (!item.foundSampleId)
-        return (<Tag color="green">{i18n("SampleMetadataImportReview.table.filter.new")}</Tag>)
+        return (
+          <Tag color="green">
+            {i18n('SampleMetadataImportReview.table.filter.new')}
+          </Tag>
+        )
     },
-    filters: [{ text: i18n("SampleMetadataImportReview.table.filter.new"), value: 'new' }, { text: i18n("SampleMetadataImportReview.table.filter.existing"), value: 'existing' }],
-    onFilter: (value, record) => (value === 'new') ? !record.foundSampleId : record.foundSampleId,
-  };
+    filters: [
+      {
+        text: i18n('SampleMetadataImportReview.table.filter.new'),
+        value: 'new',
+      },
+      {
+        text: i18n('SampleMetadataImportReview.table.filter.existing'),
+        value: 'existing',
+      },
+    ],
+    onFilter: (value, record) =>
+      value === 'new' ? !record.foundSampleId : record.foundSampleId,
+  }
 
   const rowSelection = {
     fixed: true,
     selectedRowKeys: selected,
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelected(selectedRowKeys);
+      setSelected(selectedRowKeys)
     },
-  };
+  }
 
   React.useEffect(() => {
-    const dataSource = data?.rows?.map((item, index) => {
-      let newItem = { ...item, key: `metadata-uploader-row-${index}` };
-      return newItem;
-    });
+    if (!isLoading) {
+      const index = data.headers.findIndex(
+        (item) => item === data.sampleNameColumn,
+      )
 
-    const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map(header => ({
-      title: header,
-      dataIndex: header,
-      fixed: 'left',
-      width: 100,
-      render: (text, item) => <>{item.entry[header]}</>
-    }));
+      const headers = [...data.headers]
 
-    const otherColumns = data?.headers?.filter(item => item !== data?.sampleNameColumn).map(header => ({
-      title: header,
-      dataIndex: header,
-      render: (text, item) => <>{item.entry[header]}</>
-    }));
+      const sample = headers.splice(index, 1)[0]
 
-    const columns = sampleColumn?.concat(tagColumn).concat(otherColumns);
+      const sampleColumn = {
+        title: sample,
+        dataIndex: sample,
+        fixed: 'left',
+        width: 100,
+        render: (text, item) => <>{item.entry[sample]}</>,
+      }
 
-    setDataSource(dataSource);
-    setColumns(columns);
-    setSelected(dataSource?.map(item => { return item.key; }));
-  }, [data]);
+      const otherColumns = headers.map((header) => ({
+        title: header,
+        dataIndex: header,
+        render: (text, item) => <>{item.entry[header]}</>,
+      }))
+
+      const updatedColumns = [sampleColumn, tagColumn, ...otherColumns]
+
+      setColumns(updatedColumns)
+      setSelected(
+        data.rows.map((item) => {
+          return item.key
+        }),
+      )
+    }
+  }, [data, isLoading])
 
   return (
     <SampleMetadataImportWizard currentStep={2}>
-      <Text>
-        {i18n("SampleMetadataImportReview.description")}
-      </Text>
-      <Table className="t-metadata-uploader-review-table" rowSelection={rowSelection} columns={columns} dataSource={dataSource} scroll={{ x: 'max-content', y: 600 }} pagination={false} />
+      <Text>{i18n('SampleMetadataImportReview.description')}</Text>
+      <Table
+        className="t-metadata-uploader-review-table"
+        rowKey={(row) => row.entry[data.sampleNameColumn]}
+        loading={isLoading}
+        rowSelection={rowSelection}
+        columns={columns}
+         dataSource={data.rows}
+        scroll={{ x: 'max-content', y: 600 }}
+        pagination={false}
+      />
+
       <div style={{ display: 'flex' }}>
-        <Button className="t-metadata-uploader-column-button" icon={<IconArrowLeft />} onClick={() => navigate(-1)}>{i18n("SampleMetadataImportReview.button.back")}</Button>
-        <Button className="t-metadata-uploader-upload-button" style={{ marginLeft: 'auto' }}>
-          {i18n("SampleMetadataImportReview.button.next")}
+        <Button
+          className="t-metadata-uploader-column-button"
+          icon={<IconArrowLeft />}
+          onClick={() => navigate(-1)}
+        >
+          {i18n('SampleMetadataImportReview.button.back')}
+        </Button>
+        <Button
+          className="t-metadata-uploader-upload-button"
+          style={{ marginLeft: 'auto' }}
+        >
+          {i18n('SampleMetadataImportReview.button.next')}
           <IconArrowRight />
         </Button>
       </div>
     </SampleMetadataImportWizard>
-  );
+  )
 }
