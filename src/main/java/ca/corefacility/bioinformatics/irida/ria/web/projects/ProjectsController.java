@@ -162,47 +162,6 @@ public class ProjectsController {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
-
-	/**
-	 * Creates a new project and displays a list of users for the user to add to
-	 * the project
-	 *
-	 * @param model          {@link Model}
-	 * @param project        the {@link Project} to create
-	 * @param useCartSamples add all samples in the cart to the project
-	 * @param owner          lock sample modification from the new project
-	 * @return The name of the add users to project page
-	 */
-	@RequestMapping(value = "/projects/new", method = RequestMethod.POST)
-	public String createNewProject(final Model model, @ModelAttribute Project project,
-			@RequestParam(required = false, defaultValue = "false") boolean useCartSamples,
-			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
-
-		try {
-			if (useCartSamples) {
-				Map<Project, List<Sample>> cart = cartService.getFullCart();
-
-				List<Long> sampleIds = cart.entrySet()
-						.stream()
-						.flatMap(e -> e.getValue()
-								.stream()
-								.filter(this::canModifySample)
-								.map(Sample::getId))
-						.collect(Collectors.toList());
-
-				project = projectService.createProjectWithSamples(project, sampleIds, owner);
-			} else {
-				project = projectService.create(project);
-			}
-		} catch (ConstraintViolationException e) {
-			model.addAttribute("errors", getErrorsFromViolationException(e));
-			model.addAttribute("project", project);
-			return getCreateProjectPage(useCartSamples, model, owner);
-		}
-
-		return "redirect:/projects/" + project.getId() + "/settings/details";
-	}
-
 	@RequestMapping("/projects/{projectId}/samples-share")
 	public String getProjectSamplesCopyPage(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
