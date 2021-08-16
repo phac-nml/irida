@@ -53,15 +53,19 @@ export function SampleMetadataImportReview({ projectId }) {
       return newItem;
     });
 
-    const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map((header) => {
-      let item = { title: header, dataIndex: header, fixed: 'left', width: 100, render: (text, item) => (<>{item.entry[header]}</>) };
-      return item;
-    });
+    const sampleColumn = data?.headers?.filter(item => item === data?.sampleNameColumn).map(header => ({
+      title: header,
+      dataIndex: header,
+      fixed: 'left',
+      width: 100,
+      render: (text, item) => <>{item.entry[header]}</>
+    }));
 
-    const otherColumns = data?.headers?.filter(item => item !== data?.sampleNameColumn).map((header) => {
-      let item = { title: header, dataIndex: header, render: (text, item) => (<>{item.entry[header]}</>) };
-      return item;
-    });
+    const otherColumns = data?.headers?.filter(item => item !== data?.sampleNameColumn).map(header => ({
+      title: header,
+      dataIndex: header,
+      render: (text, item) => <>{item.entry[header]}</>
+    }));
 
     const columns = sampleColumn?.concat(tagColumn).concat(otherColumns);
 
