@@ -153,47 +153,6 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Gets the name of the template for the new project page
-	 *
-	 * @param useCartSamples Whether or not to use the samples in the cart when creating
-	 *                       the project
-	 * @param model          {@link Model}
-	 * @param owner          whether or not to lock the sample(s) from being modified from new
-	 *                       the project
-	 * @return The name of the create new project page
-	 */
-	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
-	public String getCreateProjectPage(
-			@RequestParam(name = "cart", required = false, defaultValue = "false") boolean useCartSamples,
-			final Model model,
-			@RequestParam(name = "lockSamples", required = false, defaultValue = "true") boolean owner) {
-		model.addAttribute("useCartSamples", useCartSamples);
-
-		Map<Project, List<Sample>> cart = cartService.getFullCart();
-
-		// Check which samples they can modify
-		Set<Sample> allowed = new HashSet<>();
-		Set<Sample> disallowed = new HashSet<>();
-
-		cart.values()
-				.forEach(set -> set.forEach(s -> {
-					if (canModifySample(s)) {
-						allowed.add(s);
-					} else {
-						disallowed.add(s);
-					}
-				}));
-
-		model.addAttribute("allowedSamples", allowed);
-		model.addAttribute("disallowedSamples", disallowed);
-
-		if (!model.containsAttribute("errors")) {
-			model.addAttribute("errors", new HashMap<>());
-		}
-		return CREATE_NEW_PROJECT_PAGE;
-	}
-
-	/**
 	 * Get the page to synchronize remote projects
 	 *
 	 * @return Name of the project sync page

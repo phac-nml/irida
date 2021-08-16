@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true",
     "annotation": "snvphyl",
     "format-version": "0.1",
-    "name": "SNVPhyl v1.2.2 Paired-End",
+    "name": "SNVPhyl v1.2.3 Paired-End",
     "steps": {
         "0": {
             "annotation": "",
@@ -32,7 +32,7 @@
                 {
                     "label": null,
                     "output_name": "output",
-                    "uuid": "aa5be25d-46d2-47c9-904a-d02403c1061b"
+                    "uuid": "077da4fa-04b4-4d34-b271-e9844d0077c7"
                 }
             ]
         },
@@ -53,7 +53,7 @@
             "outputs": [],
             "position": {
                 "left": 200,
-                "top": 310
+                "top": 309
             },
             "tool_id": null,
             "tool_state": "{\"optional\": false}",
@@ -64,7 +64,7 @@
                 {
                     "label": null,
                     "output_name": "output",
-                    "uuid": "91e3b578-0dfa-4bbd-8131-e4a2fb793be3"
+                    "uuid": "7c4fac08-6e78-4031-b394-696013960c4f"
                 }
             ]
         },
@@ -158,7 +158,7 @@
             ],
             "position": {
                 "left": 486,
-                "top": 321
+                "top": 320
             },
             "post_job_actions": {},
             "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/smalt/smalt/0.7.6+galaxy1",
@@ -250,7 +250,7 @@
             ],
             "position": {
                 "left": 772,
-                "top": 392
+                "top": 390
             },
             "post_job_actions": {
                 "RenameDatasetActionoutput_log": {
@@ -311,12 +311,12 @@
             ],
             "position": {
                 "left": 772,
-                "top": 554
+                "top": 550
             },
             "post_job_actions": {},
             "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_mpileup/bcftools_mpileup/1.10",
             "tool_shed_repository": {
-                "changeset_revision": "f65383c7ed49",
+                "changeset_revision": "0dbff46d5a1b",
                 "name": "bcftools_mpileup",
                 "owner": "iuc",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
@@ -412,7 +412,7 @@
             ],
             "position": {
                 "left": 1058,
-                "top": 321
+                "top": 320
             },
             "post_job_actions": {
                 "HideDatasetActionoutput_file": {
@@ -430,7 +430,7 @@
             },
             "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_call/bcftools_call/1.10",
             "tool_shed_repository": {
-                "changeset_revision": "5801eff9ac7e",
+                "changeset_revision": "072f606e2e69",
                 "name": "bcftools_call",
                 "owner": "iuc",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
@@ -481,12 +481,12 @@
             },
             "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_view/bcftools_view/1.10",
             "tool_shed_repository": {
-                "changeset_revision": "c4a9b38b435d",
+                "changeset_revision": "98d5499ead46",
                 "name": "bcftools_view",
                 "owner": "iuc",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             },
-            "tool_state": "{\"input_file\": {\"__class__\": \"ConnectedValue\"}, \"output_type\": \"b\", \"sec_filter\": {\"min_ac\": \"\", \"max_ac\": \"\", \"select_genotype\": \"__none__\", \"types\": null, \"exclude_types\": null, \"known_or_novel\": null, \"min_alleles\": \"\", \"max_alleles\": \"\", \"phased\": null, \"min_af\": \"\", \"max_af\": \"\", \"uncalled\": null, \"private\": null}, \"sec_output\": {\"drop_genotypes\": \"false\", \"header\": null, \"compression_level\": \"\", \"invert_targets_file\": \"false\"}, \"sec_restrict\": {\"apply_filters\": \"\", \"regions\": {\"regions_src\": \"__none__\", \"__current_case__\": 0}, \"targets\": {\"targets_src\": \"__none__\", \"__current_case__\": 0}, \"include\": \"\", \"exclude\": \"\"}, \"sec_subset\": {\"samples\": \"\", \"invert_samples\": \"false\", \"samples_file\": {\"__class__\": \"RuntimeValue\"}, \"invert_samples_file\": \"false\", \"force_samples\": \"false\", \"no_update\": \"false\", \"trim_alt_alleles\": \"false\"}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_state": "{\"input_file\": {\"__class__\": \"ConnectedValue\"}, \"output_type\": \"b\", \"sec_filter\": {\"min_ac\": \"\", \"max_ac\": \"\", \"select_genotype\": null, \"types\": null, \"exclude_types\": null, \"known_or_novel\": null, \"min_alleles\": \"\", \"max_alleles\": \"\", \"phased\": null, \"min_af\": \"\", \"max_af\": \"\", \"uncalled\": null, \"private\": null}, \"sec_output\": {\"drop_genotypes\": \"false\", \"header\": null, \"compression_level\": \"\", \"invert_targets_file\": \"false\"}, \"sec_restrict\": {\"apply_filters\": \"\", \"regions\": {\"regions_src\": \"__none__\", \"__current_case__\": 0}, \"targets\": {\"targets_src\": \"__none__\", \"__current_case__\": 0}, \"include\": \"\", \"exclude\": \"\"}, \"sec_subset\": {\"samples\": \"\", \"invert_samples\": \"false\", \"samples_file\": {\"__class__\": \"RuntimeValue\"}, \"invert_samples_file\": \"false\", \"force_samples\": \"false\", \"no_update\": \"false\", \"trim_alt_alleles\": \"false\"}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
             "tool_version": "1.10",
             "type": "tool",
             "uuid": "dc7c99fa-255b-4008-a352-422768e2083f",
@@ -754,12 +754,7 @@
                     "output_name": "phylip"
                 }
             },
-            "inputs": [
-                {
-                    "description": "runtime parameter for tool Regex Find And Replace",
-                    "name": "input"
-                }
-            ],
+            "inputs": [],
             "label": null,
             "name": "Regex Find And Replace",
             "outputs": [
@@ -788,7 +783,7 @@
                 "owner": "galaxyp",
                 "tool_shed": "toolshed.g2.bx.psu.edu"
             },
-            "tool_state": "{\"checks\": [{\"__index__\": 0, \"pattern\": \"'\", \"replacement\": \"\"}], \"input\": {\"__class__\": \"RuntimeValue\"}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_state": "{\"checks\": [{\"__index__\": 0, \"pattern\": \"'\", \"replacement\": \"\"}], \"input\": {\"__class__\": \"ConnectedValue\"}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
             "tool_version": "1.0.1",
             "type": "tool",
             "uuid": "ef09d1c7-5a20-4817-b81d-0a23d090cade",
@@ -822,7 +817,7 @@
             ],
             "position": {
                 "left": 2774,
-                "top": 342
+                "top": 340
             },
             "post_job_actions": {
                 "ChangeDatatypeActionout": {
@@ -926,8 +921,8 @@
             "workflow_outputs": [
                 {
                     "label": null,
-                    "output_name": "output_stats",
-                    "uuid": "eda0df2d-a3bf-48f8-b0f1-14a634842e5e"
+                    "output_name": "output_stdout",
+                    "uuid": "32e10655-c4e2-485e-8157-1b0dd72937ab"
                 },
                 {
                     "label": null,
@@ -936,8 +931,8 @@
                 },
                 {
                     "label": null,
-                    "output_name": "output_stdout",
-                    "uuid": "32e10655-c4e2-485e-8157-1b0dd72937ab"
+                    "output_name": "output_stats",
+                    "uuid": "eda0df2d-a3bf-48f8-b0f1-14a634842e5e"
                 }
             ]
         },
@@ -963,7 +958,7 @@
             ],
             "position": {
                 "left": 3060,
-                "top": 412
+                "top": 410
             },
             "post_job_actions": {
                 "RenameDatasetActionout": {
@@ -995,6 +990,6 @@
         }
     },
     "tags": [],
-    "uuid": "b164bd2b-675f-4b88-9b4c-6b072399baf1",
+    "uuid": "4a7fbdb1-e496-423e-a6a0-637d1f0469a1",
     "version": 1
 }

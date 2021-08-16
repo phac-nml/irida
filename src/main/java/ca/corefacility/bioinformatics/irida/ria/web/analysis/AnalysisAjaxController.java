@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -1031,10 +1030,9 @@ public class AnalysisAjaxController {
 				projectIds.add(project.getId());
 
 				// Get the templates for the project
-				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService.getMetadataTemplatesForProject(
+				List<MetadataTemplate> templateList = metadataTemplateService.getMetadataTemplatesForProject(
 						project);
-				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
-					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+				for (MetadataTemplate metadataTemplate : templateList) {
 					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
 							metadataTemplate.getId());
 					templates.add(templateMap);
@@ -1055,7 +1053,8 @@ public class AnalysisAjaxController {
 	@ResponseBody
 	public Map<String, Object> getMetadataTemplateFields(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> metadataFields = template.getFields();
+
+		List<MetadataTemplateField> metadataFields = metadataTemplateService.getPermittedFieldsForTemplate(template);
 		List<String> fields = new ArrayList<>();
 		for (MetadataTemplateField metadataField : metadataFields) {
 			fields.add(metadataField.getLabel());

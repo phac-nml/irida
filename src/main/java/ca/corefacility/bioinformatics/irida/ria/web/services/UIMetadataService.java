@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -26,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
  */
 @Component
 public class UIMetadataService {
+	private static final Logger logger = LoggerFactory.getLogger(UIMetadataService.class);
+
 	private final ProjectService projectService;
 	private final MetadataTemplateService templateService;
 	private final MessageSource messageSource;
@@ -46,11 +49,14 @@ public class UIMetadataService {
 	 */
 	public List<ProjectMetadataTemplate> getProjectMetadataTemplates(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<ProjectMetadataTemplateJoin> joins = templateService.getMetadataTemplatesForProject(project);
-		return joins.stream()
-				.map(join -> {
-					MetadataTemplate template = join.getObject();
-					List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, template.getFields());
+		List<MetadataTemplate> templates = templateService.getMetadataTemplatesForProject(project);
+
+		return templates.stream()
+				.map(template -> {
+					List<MetadataTemplateField> permittedFieldsForTemplate = templateService.getPermittedFieldsForTemplate(
+							template);
+					List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project,
+							permittedFieldsForTemplate);
 					return new ProjectMetadataTemplate(template, fields);
 				})
 				.collect(Collectors.toList());
@@ -65,10 +71,11 @@ public class UIMetadataService {
 	 */
 	public ProjectMetadataTemplate createMetadataTemplate(MetadataTemplate template, Long projectId) {
 		Project project = projectService.read(projectId);
-		ProjectMetadataTemplateJoin join = templateService.createMetadataTemplateInProject(template, project);
-		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, join.getObject()
-				.getFields());
-		return new ProjectMetadataTemplate(join.getObject(), fields);
+		template = templateService.createMetadataTemplateInProject(template, project);
+		List<MetadataTemplateField> permittedFieldsForTemplate = templateService.getPermittedFieldsForTemplate(
+				template);
+		List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, permittedFieldsForTemplate);
+		return new ProjectMetadataTemplate(template, fields);
 	}
 
 	/**
@@ -80,10 +87,15 @@ public class UIMetadataService {
 	 * @throws Exception if there is an error updating the template
 	 */
 	public String updateMetadataTemplate(MetadataTemplate template, Locale locale) throws Exception {
+		//get the current project for the template and set it on the updated version
+		MetadataTemplate read = templateService.read(template.getId());
+		template.setProject(read.getProject());
+
 		try {
 			templateService.updateMetadataTemplateInProject(template);
 			return messageSource.getMessage("server.MetadataTemplateManager.update-success", new Object[] {}, locale);
 		} catch (Exception e) {
+			logger.error("Couldn't update metadata template", e);
 			throw new Exception(
 					messageSource.getMessage("server.MetadataTemplateManager.update-error", new Object[] {}, locale));
 		}
@@ -118,7 +130,7 @@ public class UIMetadataService {
 	 */
 	public List<ProjectMetadataField> getMetadataFieldsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project);
+		List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
 		return addRestrictionsToMetadataFields(project, fields);
 	}
 
@@ -165,11 +177,11 @@ public class UIMetadataService {
 		try {
 			Project project = projectService.read(projectId);
 			if (templateId == 0) {
-				project.setDefaultMetadataTemplate(null);
+				templateService.removeDefaultMetadataTemplateForProject(project);
 			} else {
-				project.setDefaultMetadataTemplate(templateService.read(templateId));
+				MetadataTemplate metadataTemplate = templateService.read(templateId);
+				templateService.updateDefaultMetadataTemplateForProject(project, metadataTemplate);
 			}
-			projectService.update(project);
 			return messageSource.getMessage("server.metadata-template.set-default", new Object[] {}, locale);
 		} catch (Exception e) {
 			throw new Exception(

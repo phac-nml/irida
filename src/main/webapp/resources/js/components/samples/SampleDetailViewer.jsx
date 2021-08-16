@@ -17,9 +17,7 @@ const { Text } = Typography;
 export function SampleDetailViewer({
   sampleId,
   projectId,
-  removeSample,
-  children,
-}) {
+  removeSample, children }) {
   const [loading, setLoading] = React.useState(true);
   const [details, setDetails] = React.useState({});
   const [visible, setVisible] = React.useState(false);
@@ -63,7 +61,7 @@ export function SampleDetailViewer({
                     {details.sample.sampleName}
                   </span>
                 </Text>
-                {typeof removeSample === "function" && (
+                {removeSample && (
                   <Button
                     size="small"
                     danger

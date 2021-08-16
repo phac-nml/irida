@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -27,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectMetadataTemplateJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
@@ -43,19 +38,18 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataTemplate>
 		implements MetadataTemplateService {
 
-	private ProjectMetadataTemplateJoinRepository pmtRepository;
+	private MetadataTemplateRepository metadataTemplateRepository;
 	private MetadataFieldRepository fieldRepository;
 	private MetadataRestrictionRepository metadataRestrictionRepository;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 
 	@Autowired
-	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository,
-			ProjectMetadataTemplateJoinRepository pmtRepository, MetadataFieldRepository fieldRepository,
+	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository, MetadataFieldRepository fieldRepository,
 			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
 		super(repository, validator, MetadataTemplate.class);
-		this.pmtRepository = pmtRepository;
+		this.metadataTemplateRepository = repository;
 		this.fieldRepository = fieldRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 		this.userRepository = userRepository;
@@ -95,12 +89,11 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Transactional
-	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project) {
+	public MetadataTemplate createMetadataTemplateInProject(MetadataTemplate template, Project project) {
+		template.setProject(project);
 		template = create(template);
 
-		ProjectMetadataTemplateJoin join = pmtRepository.save(new ProjectMetadataTemplateJoin(project, template));
-
-		return join;
+		return template;
 	}
 
 	/**
@@ -108,8 +101,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project) {
-		return pmtRepository.getMetadataTemplatesForProject(project);
+	public List<MetadataTemplate> getMetadataTemplatesForProject(Project project) {
+		return metadataTemplateRepository.getMetadataTemplatesForProject(project);
 	}
 
 	@PreAuthorize("permitAll()")
@@ -237,11 +230,42 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasPermission(#template, 'canReadMetadataTemplate')")
+	public List<MetadataTemplateField> getPermittedFieldsForTemplate(MetadataTemplate template) {
+		List<MetadataTemplateField> fieldsForTemplate = fieldRepository.getMetadataFieldsForTemplate(template);
+
+		List<MetadataTemplateField> permittedFieldsForCurrentUser = getPermittedFieldsForCurrentUser(
+				template.getProject(), true);
+
+		return fieldsForTemplate.stream()
+				.filter(f -> permittedFieldsForCurrentUser.contains(f))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Override
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role) {
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role,
+			boolean includeTemplateFields) {
 		//get all fields for the project
 		List<MetadataTemplateField> metadataFieldsForProject = fieldRepository.getMetadataFieldsForProject(project);
+
+		if (includeTemplateFields) {
+			//add all the metadata template fields to the list of fields to restrict
+			List<MetadataTemplate> templatesForProject = getMetadataTemplatesForProject(project);
+			for (MetadataTemplate template : templatesForProject) {
+
+				List<MetadataTemplateField> templateFields = fieldRepository.getMetadataFieldsForTemplate(template);
+				for (MetadataTemplateField field : templateFields) {
+					if (!metadataFieldsForProject.contains(field)) {
+						metadataFieldsForProject.add(field);
+					}
+				}
+			}
+		}
 
 		//get all restrictions for the project
 		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository.getRestrictionForProject(
@@ -282,7 +306,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	 */
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
-	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project) {
+	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project,
+			boolean includeTemplateFields) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getPrincipal();
@@ -300,9 +325,64 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			projectRole = projectJoinForUser.getProjectRole();
 		}
 
-		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole);
+		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, projectRole,
+				includeTemplateFields);
 
 		return permittedFieldsForRole;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@Override
+	public MetadataTemplate getDefaultTemplateForProject(Project project) {
+		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateRepository.getMetadataTemplatesForProject(
+				project);
+
+		Optional<MetadataTemplate> templateOptional = metadataTemplatesForProject.stream()
+				.filter(MetadataTemplate::isProjectDefault)
+				.findFirst();
+
+		MetadataTemplate template = null;
+		if(templateOptional.isPresent()){
+			template = templateOptional.get();
+		}
+
+		return template;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
+	@Override
+	@Transactional
+	public MetadataTemplate updateDefaultMetadataTemplateForProject(Project project, MetadataTemplate template) {
+
+		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
+		if(originalDefault != null) {
+			originalDefault.setProjectDefault(false);
+			metadataTemplateRepository.save(originalDefault);
+		}
+
+		template.setProjectDefault(true);
+		metadataTemplateRepository.save(template);
+
+		return template;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
+	@Override
+	@Transactional
+	public void removeDefaultMetadataTemplateForProject(Project project) {
+		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
+		if(originalDefault != null) {
+			originalDefault.setProjectDefault(false);
+			metadataTemplateRepository.save(originalDefault);
+		}
+	}
 }

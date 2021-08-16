@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -50,12 +49,13 @@ public class UIMetadataServiceTest {
 		when(templateService.readMetadataField(anyLong())).thenReturn(templateField);
 
 		template.setFields(ImmutableList.of(templateField));
-		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = new ProjectMetadataTemplateJoin(project, template);
 		when(templateService.getMetadataTemplatesForProject(project)).thenReturn(
-				ImmutableList.of(projectMetadataTemplateJoin));
-		MetadataTemplate newTemplate = new MetadataTemplate(template.getName(), template.getFields());
+				ImmutableList.of(template));
+		when(templateService.getPermittedFieldsForTemplate(template)).thenReturn(ImmutableList.of(templateField));
+		MetadataTemplate newTemplate = new MetadataTemplate(template.getName(), ImmutableList.of(templateField));
 		newTemplate.setId(NEW_TEMPLATE_ID);
-		when(templateService.createMetadataTemplateInProject(template, project)).thenReturn(new ProjectMetadataTemplateJoin(project, newTemplate));
+		when(templateService.createMetadataTemplateInProject(template, project)).thenReturn(newTemplate);
+		when(templateService.getPermittedFieldsForTemplate(newTemplate)).thenReturn(ImmutableList.of(templateField));
 	}
 
 	@Test
@@ -78,9 +78,10 @@ public class UIMetadataServiceTest {
 
 	@Test
 	public void testSetProjectDefaultMetadataTemplate() throws Exception {
+		when(templateService.read(NEW_TEMPLATE_ID)).thenReturn(template);
 		service.setDefaultMetadataTemplate(NEW_TEMPLATE_ID, PROJECT_ID, Locale.ENGLISH);
 		verify(templateService, times(1)).read(NEW_TEMPLATE_ID);
-		verify(projectService, times(1)).update(project);
+		verify(templateService).updateDefaultMetadataTemplateForProject(project, template);
 	}
 
 	@Test

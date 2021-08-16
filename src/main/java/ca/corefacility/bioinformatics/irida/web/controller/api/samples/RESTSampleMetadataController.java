@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -22,9 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadat
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleMetadataResponse;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -38,7 +38,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class RESTSampleMetadataController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTSampleMetadataController.class);
 
-	//rel for getting an indiviual sample's metadata
+	//rel for getting an individual sample's metadata
 	public static final String METADATA_REL = "sample/metadata";
 
 	//rel for getting all metadata for a project
@@ -64,18 +64,18 @@ public class RESTSampleMetadataController {
 	 * @param sampleId the id of the {@link Sample} to get metadata for
 	 * @return the metadata for the sample
 	 */
+	@Operation(operationId = "getSampleMetadata", summary = "Find the metadata for a given sample", description = "Get the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.GET)
-	public ModelMap getSampleMetadata(@PathVariable Long sampleId) {
+	public ResponseResource<SampleMetadataResponse> getSampleMetadata(@PathVariable Long sampleId) {
 		logger.trace("Getting sample metadata for " + sampleId);
-		ModelMap modelMap = new ModelMap();
 		Sample s = sampleService.read(sampleId);
 
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(s);
 
 		SampleMetadataResponse response = buildSampleMetadataResponse(s, metadataForSample);
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
-		return modelMap;
+		ResponseResource<SampleMetadataResponse> responseObject = new ResponseResource<>(response);
+		return responseObject;
 	}
 
 	/**
@@ -84,17 +84,17 @@ public class RESTSampleMetadataController {
 	 * @param projectId the id of the {@link Project} to get metadata for
 	 * @return A collection of metadata for all the {@link Sample}s in the {@link Project}
 	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata")
-	public ModelMap getProjectSampleMetadata(final @PathVariable Long projectId) {
-		ModelMap modelMap = new ModelMap();
-
+	@Operation(operationId = "getProjectSampleMetadata", summary = "Find the metadata for all the samples of a given project", description = "Get all the sample metadata for a given project.", tags = "projects")
+	@RequestMapping(value = "/api/projects/{projectId}/samples/metadata", method = RequestMethod.GET)
+	public ResponseResource<ResourceCollection<SampleMetadataResponse>> getProjectSampleMetadata(
+			final @PathVariable Long projectId) {
 		ResourceCollection<SampleMetadataResponse> resources = new ResourceCollection<>();
 
 		//get the project and samples for the project
 		Project project = projectService.read(projectId);
 
 		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService.getPermittedFieldsForCurrentUser(
-				project);
+				project, true);
 
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
 		ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProject(project,
@@ -116,9 +116,8 @@ public class RESTSampleMetadataController {
 		resources.add(
 				linkTo(methodOn(RESTSampleMetadataController.class).getProjectSampleMetadata(projectId)).withSelfRel());
 
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
-
-		return modelMap;
+		ResponseResource<ResourceCollection<SampleMetadataResponse>> responseObject = new ResponseResource<>(resources);
+		return responseObject;
 	}
 
 	/**
@@ -129,8 +128,9 @@ public class RESTSampleMetadataController {
 	 * @param metadataMap the metadata to save to the {@link Sample}
 	 * @return the updated {@link Sample}
 	 */
+	@Operation(operationId = "saveSampleMetadata", summary = "Save the metadata for a given sample", description = "Save the metadata for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.POST)
-	public ModelMap saveSampleMetadata(@PathVariable Long sampleId,
+	public ResponseResource<SampleMetadataResponse> saveSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 
@@ -149,8 +149,9 @@ public class RESTSampleMetadataController {
 	 * @param metadataMap the new metadata
 	 * @return the updated {@link Sample}
 	 */
+	@Operation(operationId = "addSampleMetadata", summary = "Add new metadata fields for a given sample", description = "Add new metadata fields for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/metadata", method = RequestMethod.PUT)
-	public ModelMap addSampleMetadata(@PathVariable Long sampleId,
+	public ResponseResource<SampleMetadataResponse> addSampleMetadata(@PathVariable Long sampleId,
 			@RequestBody Map<String, MetadataEntry> metadataMap) {
 		Sample s = sampleService.read(sampleId);
 

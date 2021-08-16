@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -23,9 +22,9 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 *
 	 * @param template the {@link MetadataTemplate} to create
 	 * @param project  the {@link Project} to create the template in
-	 * @return a {@link ProjectMetadataTemplateJoin}
+	 * @return a {@link MetadataTemplate}
 	 */
-	public ProjectMetadataTemplateJoin createMetadataTemplateInProject(MetadataTemplate template, Project project);
+	public MetadataTemplate createMetadataTemplateInProject(MetadataTemplate template, Project project);
 
 	/**
 	 * Deleta a {@link MetadataTemplate} from a {@link Project}
@@ -47,9 +46,9 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * Get a list of {@link MetadataTemplate}s for a given {@link Project}
 	 *
 	 * @param project the {@link Project}
-	 * @return a list of {@link ProjectMetadataTemplateJoin}
+	 * @return a list of {@link MetadataTemplate}
 	 */
-	public List<ProjectMetadataTemplateJoin> getMetadataTemplatesForProject(Project project);
+	public List<MetadataTemplate> getMetadataTemplatesForProject(Project project);
 
 	/**
 	 * Get a {@link MetadataTemplateField} by its {@link Long} identifier
@@ -144,19 +143,53 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectRole role);
 
 	/**
+	 * Get all {@link MetadataTemplateField} the current user is allowed to read for a {@link MetadataTemplate}
+	 * @param template the {@link MetadataTemplate} to get fields for
+	 * @return a list of {@link MetadataTemplateField}
+	 */
+	public List<MetadataTemplateField> getPermittedFieldsForTemplate(MetadataTemplate template);
+
+	/**
 	 * Get all {@link MetadataTemplateField} that are permitted to be read by a given {@link ProjectRole}
 	 *
 	 * @param project the {@link Project} to get fields for
 	 * @param role    the {@link ProjectRole} to request
+	 * @param includeTemplateFields whether to include fields from the project's associated {@link MetadataTemplate}s
 	 * @return the {@link MetadataTemplateField} the given role can read
 	 */
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role);
+	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectRole role,
+			boolean includeTemplateFields);
 
 	/**
 	 * Get all {@link MetadataTemplateField} that the currently logged in user is allowed to read
 	 *
-	 * @param project the {@link Project} to request fields from
+	 * @param project               the {@link Project} to request fields from
+	 * @param includeTemplateFields whether to include fields from the project's associated {@link MetadataTemplate}s
 	 * @return a list of {@link MetadataTemplateField} collecting the allowed {@link MetadataTemplateField}
 	 */
-	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project);
+	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project, boolean includeTemplateFields);
+
+	/**
+	 * Get the default {@link MetadataTemplate} for the given {@link Project} (if one exists)
+	 *
+	 * @param project the {@link Project} to get the template for
+	 * @return the default {@link MetadataTemplate} if one is set
+	 */
+	public MetadataTemplate getDefaultTemplateForProject(Project project);
+
+	/**
+	 * Update which {@link MetadataTemplate} is the default for the given {@link Project}
+	 *
+	 * @param project  the {@link Project} to set a template on
+	 * @param template the {@link MetadataTemplate} to set
+	 * @return the new default {@link MetadataTemplate}
+	 */
+	public MetadataTemplate updateDefaultMetadataTemplateForProject(Project project, MetadataTemplate template);
+
+	/**
+	 * Remove the default {@link MetadataTemplate} from the project.  It will now use all fields as default
+	 *
+	 * @param project the {@link Project} to remove the template from
+	 */
+	public void removeDefaultMetadataTemplateForProject(Project project);
 }

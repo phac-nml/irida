@@ -2,9 +2,10 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
@@ -15,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 
 import com.google.common.collect.Lists;
@@ -60,12 +60,10 @@ public class RESTSampleAssemblyControllerTest {
 
 	@Test
 	public void testListAssemblies() {
-		ModelMap modelMap = controller.listAssembliesForSample(s1.getId());
+		ResponseResource<ResourceCollection<GenomeAssembly>> responseResource = controller.listAssembliesForSample(
+				s1.getId());
 
-		assertTrue("resources should exist", modelMap.containsAttribute(RESTGenericController.RESOURCE_NAME));
-
-		ResourceCollection<GenomeAssembly> readAssemblies = (ResourceCollection<GenomeAssembly>) modelMap.getAttribute(
-				RESTGenericController.RESOURCE_NAME);
+		ResourceCollection<GenomeAssembly> readAssemblies = responseResource.getResource();
 
 		assertEquals("should be the same number of assemblies", assemblies.size(), readAssemblies.size());
 
@@ -81,11 +79,10 @@ public class RESTSampleAssemblyControllerTest {
 
 	@Test
 	public void testReadAssembly() {
-		ModelMap modelMap = controller.readAssemblyForSample(s1.getId(), assemblyFromAnalysis.getId());
+		ResponseResource<GenomeAssembly> responseResource = controller.readAssemblyForSample(s1.getId(),
+				assemblyFromAnalysis.getId());
 
-		assertTrue("resource should exist", modelMap.containsAttribute(RESTGenericController.RESOURCE_NAME));
-
-		GenomeAssembly genomeAssembly = (GenomeAssembly) modelMap.getAttribute(RESTGenericController.RESOURCE_NAME);
+		GenomeAssembly genomeAssembly = responseResource.getResource();
 
 		assertNotNull("has self rel", genomeAssembly.getLink("self"));
 		assertEquals("should be same assembly", assemblyFromAnalysis.getId(), genomeAssembly.getId());
