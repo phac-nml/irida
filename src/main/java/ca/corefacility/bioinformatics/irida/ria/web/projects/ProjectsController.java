@@ -162,6 +162,15 @@ public class ProjectsController {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
+	@RequestMapping("/projects/{projectId}/share")
+	public String getProjectsSharePage(@PathVariable Long projectId, final Model model, final Principal principal) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
+		return "projects/project_share";
+	}
+
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
