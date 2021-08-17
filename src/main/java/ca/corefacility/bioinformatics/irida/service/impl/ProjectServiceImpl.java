@@ -507,10 +507,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		Page<ProjectUserJoin> searchProjectUsers = pujRepository.findAll(getProjectJoinsWithRole(user, projectRole),
-				PageRequest.of(0, Integer.MAX_VALUE, Sort.Direction.ASC, CREATED_DATE_SORT_PROPERTY));
-		return searchProjectUsers.getContent()
-				.contains(new ProjectUserJoin(project, user, projectRole));
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+
+		if (projectJoinForUser == null) {
+			return false;
+		}
+
+		return projectJoinForUser.getProjectRole()
+				.equals(projectRole);
 	}
 
 	/**

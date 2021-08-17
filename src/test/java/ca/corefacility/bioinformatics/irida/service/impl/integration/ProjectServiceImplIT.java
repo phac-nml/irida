@@ -412,7 +412,8 @@ public class ProjectServiceImplIT {
 	public void testUserHasProjectRole() {
 		User user = userService.read(3L);
 		Project project = projectService.read(2L);
-		assertTrue(projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
+		boolean userHasProjectRole = projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER);
+		assertTrue("User should have given project role", userHasProjectRole);
 	}
 
 	@Test

@@ -240,11 +240,7 @@ public class ProjectServiceImplTest {
 		Project p = project();
 		User u = new User();
 
-		List<ProjectUserJoin> joins = new ArrayList<>();
-		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
-		Page<ProjectUserJoin> page = new PageImpl<>(joins);
-
-		when(pujRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+		when(pujRepository.getProjectJoinForUser(p,u)).thenReturn(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
 
 		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
 	}
