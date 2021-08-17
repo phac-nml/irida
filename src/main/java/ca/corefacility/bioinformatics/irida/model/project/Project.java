@@ -1,10 +1,25 @@
 package ca.corefacility.bioinformatics.irida.model.project;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -16,21 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.URL;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A project object.
@@ -100,11 +102,6 @@ public class Project extends IridaResourceSupport
 	@Enumerated(EnumType.STRING)
 	private AnalysisSubmission.Priority analysisPriority;
 
-	@JsonIgnore
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL )
-	@JoinColumn(name = "default_metadata_template")
-	private MetadataTemplate defaultMetadataTemplate;
-
 	/*
 	 * This group of properties are here to ensure cascading deletion by JPA when a project is deleted.  They are not used within the class.
 	 */
@@ -127,7 +124,7 @@ public class Project extends IridaResourceSupport
 	private List<ProjectReferenceFileJoin> referenceFiles;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectMetadataTemplateJoin> metadataTemplates;
+	private List<MetadataTemplate> metadataTemplates;
 
 	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "project")
@@ -302,11 +299,4 @@ public class Project extends IridaResourceSupport
 		this.analysisPriority = analysisPriority;
 	}
 
-	public MetadataTemplate getDefaultMetadataTemplate() {
-		return defaultMetadataTemplate;
-	}
-
-	public void setDefaultMetadataTemplate(MetadataTemplate defaultMetadataTemplate) {
-		this.defaultMetadataTemplate = defaultMetadataTemplate;
-	}
 }

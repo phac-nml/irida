@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;

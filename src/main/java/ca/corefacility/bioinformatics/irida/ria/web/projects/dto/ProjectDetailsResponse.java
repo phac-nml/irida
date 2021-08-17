@@ -26,7 +26,7 @@ public class ProjectDetailsResponse extends AjaxResponse {
 	private Coverage coverage;
 	private boolean isRemote;
 
-	public ProjectDetailsResponse(Project project, boolean canManage, boolean canManageRemote) {
+	public ProjectDetailsResponse(Project project, boolean canManage, boolean canManageRemote, MetadataTemplate defaultMetadataTemplate) {
 		this.id = project.getId();
 		this.label = project.getName();
 		this.createdDate = project.getCreatedDate();
@@ -37,7 +37,7 @@ public class ProjectDetailsResponse extends AjaxResponse {
 		this.canManageRemote = canManageRemote;
 		this.isRemote = project.isRemote();
 
-		MetadataTemplate defaultTemplate = project.getDefaultMetadataTemplate();
+		MetadataTemplate defaultTemplate = defaultMetadataTemplate;
 		if (defaultTemplate != null) {
 			defaultMetadataTemplateId = defaultTemplate.getId();
 		}
