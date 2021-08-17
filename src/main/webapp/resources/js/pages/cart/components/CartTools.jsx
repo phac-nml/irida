@@ -9,7 +9,6 @@ import { BORDERED_LIGHT } from "../../../styles/borders";
 import { grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { ShareLayout } from "./share";
 
 /*
 Lazy loaded since we do not need it unless we came from galaxy.
@@ -102,16 +101,6 @@ function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
               {i18n("CartTools.menu.pipelines")}
             </Link>
           </Menu.Item>
-          <Menu.SubMenu
-            key="/cart/samples"
-            title={i18n("CartTools.menu.samples")}
-          >
-            <Menu.Item key="share">
-              <Link to={setBaseUrl(`cart/share`)}>
-                {i18n("CartTools.menu.samples.share")}
-              </Link>
-            </Menu.Item>
-          </Menu.SubMenu>
         </Menu>
         <Space align="center" style={{ padding: `0 ${SPACE_MD}` }}>
           <AnalysesQueue />
@@ -138,7 +127,6 @@ function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
             path={setBaseUrl(`pipelines`)}
             displaySelect={!!count || window.PAGE.automatedProject != null}
           />
-          <ShareLayout key="share" path={setBaseUrl(`share`)} />
         </Router>
       </ToolsInner>
     </ToolsWrapper>
