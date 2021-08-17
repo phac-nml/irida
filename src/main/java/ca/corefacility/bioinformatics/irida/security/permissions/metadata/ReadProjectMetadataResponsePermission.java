@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.metadata;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;

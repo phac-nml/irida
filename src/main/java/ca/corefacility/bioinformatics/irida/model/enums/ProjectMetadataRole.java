@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
+/**
+ * Role for a user's level of metadata access for a project.
+ */
 public enum ProjectMetadataRole {
 	LEVEL_1("LEVEL_1", 1),
 	LEVEL_2("LEVEL_2", 2),
