@@ -121,3 +121,21 @@ export const getCartCount = async () => {
   cartUpdated(count);
   return count;
 };
+
+/**
+ * Remove all samples from the cart
+ */
+export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
+
+/**
+ * Remove an individual sample from the cart.
+ * @param {number} projectId - Identifier for a project
+ * @param {number} sampleId - Identifier for a sample
+ * @returns {Promise<* | never>}
+ */
+export const removeSample = async (projectId, sampleId) => {
+  const { data } = await axios.delete(
+    `${AJAX_URL}/sample?sampleId=${sampleId}`
+  );
+  return updateCart(data);
+};
