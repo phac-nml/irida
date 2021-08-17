@@ -100,7 +100,7 @@ export function SampleMetadataImportReview({ projectId }) {
         loading={isLoading}
         rowSelection={rowSelection}
         columns={columns}
-         dataSource={data.rows}
+        dataSource={data.rows}
         scroll={{ x: 'max-content', y: 600 }}
         pagination={false}
       />
