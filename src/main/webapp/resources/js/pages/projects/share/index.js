@@ -1,6 +1,9 @@
-import { Table } from "antd";
+import { Select, Table } from "antd";
 import React from "react";
 import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { useGetProjectsToShareToQuery } from "../../../apis/projects/projects";
+import store from "./store";
 
 /**
  * Base component for sharing samples between projects.
@@ -10,27 +13,44 @@ import { render } from "react-dom";
  */
 function ShareSamples() {
   const [samples, setSamples] = React.useState();
-
-  /*
-  CURRENTLY THIS IS JUST TO HAVE SOMETHING ON THE PAGE AND SHOW THAT THE SAMPLES
-  GET HERE.  DON'T WORRY TOO MUCH ABOUT LOOKING THROUGH THIS YET.
-   */
+  const [currentId, setCurrentId] = React.useState();
+  const {
+    data: projects,
+    isLoading: projectLoading,
+  } = useGetProjectsToShareToQuery(currentId, {
+    skip: currentId === undefined,
+  });
 
   React.useEffect(() => {
     const stringData = window.sessionStorage.getItem("share");
     const data = JSON.parse(stringData);
 
     setSamples(data.samples);
+    setCurrentId(data.projectId);
   }, []);
 
   return (
-    <Table
-      loading={!samples}
-      dataSource={samples}
-      rowKey={(sample) => `sample-${sample.id}`}
-      columns={[{ title: "Name", dataIndex: "name" }]}
-    />
+    <>
+      <Select
+        style={{ width: `100%` }}
+        options={projects?.map((project) => ({
+          label: project.name,
+          value: project.identifier,
+        }))}
+      />
+      <Table
+        loading={!samples}
+        dataSource={samples}
+        rowKey={(sample) => `sample-${sample.id}`}
+        columns={[{ title: "Name", dataIndex: "name" }]}
+      />
+    </>
   );
 }
 
-render(<ShareSamples />, document.querySelector("#root"));
+render(
+  <Provider store={store}>
+    <ShareSamples />
+  </Provider>,
+  document.querySelector("#root")
+);
