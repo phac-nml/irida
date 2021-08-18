@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
+    <meta charset="UTF-8" />
     <title>Title</title>
-</head>
-<body>
-<h1>HOWDY</h1>
-</body>
+  </head>
+  <body>
+    <div id="root" layout:fragment="main">
+      <!--  Root react component: src/main/webapp/resources/js/pages/projects/share/index.js -->
+    </div>
+    <script
+      th:src="@{/dist/js/project-share.bundle.js}"
+      layout:fragment="scripts"
+    ></script>
+  </body>
 </html>
