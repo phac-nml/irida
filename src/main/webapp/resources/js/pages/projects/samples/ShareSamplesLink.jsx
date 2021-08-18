@@ -4,6 +4,14 @@ import { render } from "react-dom";
 import { IconShare } from "../../../components/icons/Icons";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+/**
+ * React component to render a link on the project samples page > sample tools
+ * menu to share samples with another project.  This stores the samples to
+ * session storage in the browser to be consumed on the share page.
+ *
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function ShareSamplesLink() {
   function handleClick() {
     const selected = window.$dt.select.selected()[0];
@@ -31,7 +39,7 @@ function ShareSamplesLink() {
 
   return (
     <Button type="link" icon={<IconShare />} onClick={handleClick}>
-      SHARE
+      {i18n("project.samples.nav.share")}
     </Button>
   );
 }
