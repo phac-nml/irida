@@ -95,15 +95,20 @@ export class SampleRenderer extends React.Component {
                 {sample.project.label}
               </a>
             </Tag>
-            <Button
-              type="text"
-              className="t-remove-sample"
-              icon={<IconRemove />}
-              size="small"
-              onClick={() =>
-                this.props.removeSample(sample.project.id, sample.id)
-              }
-            />
+            <Tooltip
+              placement="left"
+              title={i18n("SampleRenderer.remove.sample")}
+            >
+              <Button
+                type="text"
+                className="t-remove-sample"
+                icon={<IconRemove />}
+                size="small"
+                onClick={() =>
+                  this.props.removeSample(sample.project.id, sample.id)
+                }
+              />
+            </Tooltip>
           </Space>
         </div>
       </div>
