@@ -1,13 +1,13 @@
-import React, { Component, lazy, Suspense } from "react";
-
-import { Location, navigate, Router } from "@reach/router";
-import { Row } from "antd";
+import { Link, Location, navigate, Router } from "@reach/router";
+import { Button, Menu, Row, Space } from "antd";
+import React, { lazy, Suspense } from "react";
 import styled from "styled-components";
-import { CartToolsMenu } from "./CartToolsMenu";
-import { grey1 } from "../../../styles/colors";
-import { SPACE_MD } from "../../../styles/spacing";
+import { AnalysesQueue } from "../../../components/AnalysesQueue";
+import { IconMenuFold, IconMenuUnfold } from "../../../components/icons/Icons";
 import { Pipelines } from "../../../components/pipelines/Pipelines";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+import { grey1, grey6 } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /*
@@ -39,102 +39,104 @@ const ToolsInner = styled.div`
   overflow-x: auto;
 `;
 
-/**
- * Wrapper component for functionality available in the cart.
- */
-export default class CartTools extends Component {
-  constructor(props) {
-    super(props);
+const MenuWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 65px;
+  border-bottom: ${BORDERED_LIGHT};
+  width: 100%;
 
-    this.state = {
-      fromGalaxy: typeof window.GALAXY !== "undefined"
-    };
+  .ant-menu {
+    line-height: 65px;
+    background-color: transparent;
   }
+`;
 
-  componentDidMount() {
-    if (this.state.fromGalaxy) {
+function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
+  const [current, setCurrent] = React.useState(location.pathname);
+  const [fromGalaxy, setFromGalaxy] = React.useState(
+    () => typeof window.GALAXY !== "undefined"
+  );
+
+  React.useEffect(() => {
+    function removeGalaxy() {
+      setFromGalaxy(false);
+      navigate(setBaseUrl(`cart/pipelines`));
+    }
+
+    if (fromGalaxy) {
+      setCurrent("galaxy");
       /*
       If this is within a galaxy session, the user has the opportunity to remove the session
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
       from the UI, and the user is redirected to the pipelines page.
        */
-      document.body.addEventListener("galaxy:removal", this.removeGalaxy);
+      document.body.addEventListener("galaxy:removal", removeGalaxy);
     }
-  }
 
-  componentWillUnmount() {
-    if (this.state.fromGalaxy) {
-      /*
-      Remove the galaxy listener to prevent leakage.
-       */
-      this.removeGalaxyListener();
-    }
-  }
+    return () => {
+      document.body.removeEventListener("galaxy:removal", removeGalaxy);
+    };
+  }, [fromGalaxy]);
 
-  removeGalaxy = () => {
-    // Remove the galaxy tab and redirect to the pipelines page.
-    if (this.state.fromGalaxy) {
-      this.setState(
-        prevState => ({
-          fromGalaxy: false
-        }),
-        () => {
-          navigate(setBaseUrl(`cart/pipelines`));
-          this.removeGalaxyListener();
-        }
-      );
-    }
-  };
-
-  removeGalaxyListener = () =>
-    document.body.removeEventListener("galaxy:removal", this.removeGalaxy);
-
-  render() {
-    const paths = [
-      this.state.fromGalaxy
-        ? {
-            link: setBaseUrl(`cart/galaxy`),
-            text: i18n("CartTools.menu.galaxy"),
-            component: (
-              <GalaxyComponent key="galaxy" path={setBaseUrl(`cart/galaxy`)} />
-            )
-          }
-        : null,
-      {
-        link: setBaseUrl(`cart/pipelines`),
-        text: i18n("CartTools.menu.pipelines"),
-        component: (
+  return (
+    <ToolsWrapper>
+      <MenuWrapper>
+        <Menu
+          mode="horizontal"
+          selectedKeys={[current]}
+          style={{ borderBottom: BORDERED_LIGHT }}
+          onClick={(e) => setCurrent(e.key)}
+        >
+          {fromGalaxy && (
+            <Menu.Item key="/cart/galaxy">
+              <Link to={setBaseUrl(`cart/galaxy`)}>
+                {i18n("CartTools.menu.galaxy")}
+              </Link>
+            </Menu.Item>
+          )}
+          <Menu.Item key="/cart/pipelines">
+            <Link to={setBaseUrl(`cart/pipelines`)}>
+              {i18n("CartTools.menu.pipelines")}
+            </Link>
+          </Menu.Item>
+        </Menu>
+        <Space align="center" style={{ padding: `0 ${SPACE_MD}` }}>
+          <AnalysesQueue />
+          <Button
+            type="link"
+            onClick={toggleSidebar}
+            icon={
+              collapsed ? (
+                <IconMenuFold style={{ color: grey6, fontSize: 24 }} />
+              ) : (
+                <IconMenuUnfold style={{ color: grey6, fontSize: 24 }} />
+              )
+            }
+          />
+        </Space>
+      </MenuWrapper>
+      <ToolsInner>
+        <Router basepath={setBaseUrl("/cart")}>
+          {fromGalaxy && (
+            <GalaxyComponent key="galaxy" path={setBaseUrl(`galaxy`)} />
+          )}
           <Pipelines
             key="pipelines"
-            path={setBaseUrl(`cart/pipelines`)}
-            displaySelect={
-              this.props.count > 0 || window.PAGE.automatedProject != null
-            }
-            automatedProject={window.PAGE.automatedProject}
-            default={!this.state.fromGalaxy}
+            path={setBaseUrl(`pipelines`)}
+            displaySelect={!!count || window.PAGE.automatedProject != null}
           />
-        )
-      }
-    ].filter(Boolean);
+        </Router>
+      </ToolsInner>
+    </ToolsWrapper>
+  );
+}
 
-    return (
-      <ToolsWrapper>
-        <Location>
-          {({ location }) => (
-            <>
-              <CartToolsMenu
-                pathname={location.pathname}
-                paths={paths}
-                toggleSidebar={this.props.toggleSidebar}
-                collapsed={this.props.collapsed}
-              />
-              <ToolsInner>
-                <Router>{paths.map(path => path.component)}</Router>
-              </ToolsInner>
-            </>
-          )}
-        </Location>
-      </ToolsWrapper>
-    );
-  }
+export default function CartTools({ ...props }) {
+  return (
+    <Location>
+      {({ location }) => <CartToolsContent {...props} location={location} />}
+    </Location>
+  );
 }

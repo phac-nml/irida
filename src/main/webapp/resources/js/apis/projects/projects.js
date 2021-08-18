@@ -1,10 +1,28 @@
 /**
  * @file API the ProjectAjaxController
  */
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`ajax/projects`);
+
+export const projectsApi = createApi({
+  reducerPath: `projectsApi`,
+  baseQuery: fetchBaseQuery({ baseUrl: URL }),
+  tagTypes: ["Projects"],
+  endpoints: (build) => ({
+    getProjectsForUser: build.query({
+      query: (query) => ({
+        url: "/user",
+        params: { query },
+      }),
+      providesTags: ["Projects"],
+    }),
+  }),
+});
+
+export const { useGetProjectsForUserQuery } = projectsApi;
 
 /**
  * Returns the projects on the current page of the projects table.
