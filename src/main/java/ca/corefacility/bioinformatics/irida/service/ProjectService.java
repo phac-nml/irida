@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -91,20 +92,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}
 	 *
-	 * @param project
-	 * 		The project to update
-	 * @param user
-	 * 		The user to update
-	 * @param projectRole
-	 * 		The role to set
-	 *
+	 * @param project      The project to update
+	 * @param user         The user to update
+	 * @param projectRole  The role to set
+	 * @param metadataRole {@link ProjectMetadataRole} to set for the user
 	 * @return The newly updated role object
-	 * @throws ProjectWithoutOwnerException
-	 * 		If the role change would leave the project without an owner
+	 * @throws ProjectWithoutOwnerException If the role change would leave the project without an owner
 	 */
-	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
-			throws ProjectWithoutOwnerException;
-	
+	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole,
+			ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException;
+
 	/**
 	 * Update a {@link UserGroup}'s {@link ProjectRole} on a {@link Project}
 	 *
@@ -116,7 +113,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            The role to set
 	 *
 	 * @return The newly updated role object
-	 * 
+	 *
 	 * @throws ProjectWithoutOwnerException
 	 *             If updating the user group leaves the project without an
 	 *             owner

@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
@@ -278,8 +279,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'canManageLocalProjectSettings')")
-	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
-			throws ProjectWithoutOwnerException {
+	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole,
+			ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		if (projectJoinForUser == null) {
 			throw new EntityNotFoundException(
@@ -291,6 +292,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		projectJoinForUser.setProjectRole(projectRole);
+		projectJoinForUser.setMetadataRole(metadataRole);
 		return pujRepository.save(projectJoinForUser);
 	}
 

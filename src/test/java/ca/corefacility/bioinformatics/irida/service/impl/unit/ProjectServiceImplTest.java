@@ -37,6 +37,7 @@ import com.google.common.collect.Lists;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -306,16 +307,17 @@ public class ProjectServiceImplTest {
 		User user = new User();
 		User user2 = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		@SuppressWarnings("unchecked")
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
-				ProjectRole.PROJECT_OWNER), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER));
+				ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.save(oldJoin)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
 
-		Join<Project, User> updateUserProjectRole = projectService.updateUserProjectRole(project, user, projectRole);
+		Join<Project, User> updateUserProjectRole = projectService.updateUserProjectRole(project, user, projectRole, metadataRole);
 
 		assertNotNull(updateUserProjectRole);
 		ProjectUserJoin newJoin = (ProjectUserJoin) updateUserProjectRole;
@@ -331,10 +333,11 @@ public class ProjectServiceImplTest {
 		Project project = new Project("Project 1");
 		User user = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(null);
 
-		projectService.updateUserProjectRole(project, user, projectRole);
+		projectService.updateUserProjectRole(project, user, projectRole, metadataRole);
 	}
 
 	@Test(expected = ProjectWithoutOwnerException.class)
@@ -342,7 +345,8 @@ public class ProjectServiceImplTest {
 		Project project = new Project("Project 1");
 		User user = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, metadataRole);
 		@SuppressWarnings("unchecked")
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
 				ProjectRole.PROJECT_OWNER));
@@ -350,7 +354,7 @@ public class ProjectServiceImplTest {
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
 
-		projectService.updateUserProjectRole(project, user, projectRole);
+		projectService.updateUserProjectRole(project, user, projectRole, metadataRole);
 
 	}
 

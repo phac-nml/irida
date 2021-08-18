@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -81,7 +82,7 @@ public class UIProjectMembersServiceTest {
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
 				.removeUserFromProject(PROJECT, USER_3);
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
-				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_OWNER);
+				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 	}
 
 	@Test
@@ -108,13 +109,13 @@ public class UIProjectMembersServiceTest {
 
 	@Test
 	public void testUpdateUserRoleOnProject() throws ProjectWithoutOwnerException {
-		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
-		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER);
+		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
+		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 	}
 
 	@Test(expected = ProjectWithoutOwnerException.class)
 	public void testUpdateUserRoleOnProjectNoManager() throws UIProjectWithoutOwnerException {
-		service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
+		service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
 	}
 
 	@Test
