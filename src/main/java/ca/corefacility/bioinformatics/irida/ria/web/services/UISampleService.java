@@ -181,4 +181,9 @@ public class UISampleService {
 
 		obj.setQcEntries(availableEntries);
 	}
+
+	public List<Long> getSampleIdsForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		sampleService.get
+	}
 }

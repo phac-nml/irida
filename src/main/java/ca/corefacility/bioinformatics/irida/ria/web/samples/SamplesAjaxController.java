@@ -180,6 +180,11 @@ public class SamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
+	@GetMapping("/identifiers")
+	public List<Long> getSampleIdsForProject(@RequestParam Long projectId) {
+		return uiSampleService.getSampleIdsForProject(projectId);
+	}
+
 	/**
 	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
 	 * to a {@link Sample}

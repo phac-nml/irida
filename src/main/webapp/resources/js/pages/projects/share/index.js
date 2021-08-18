@@ -29,14 +29,20 @@ function ShareSamples() {
     setCurrentId(data.projectId);
   }, []);
 
+  const updateCurrentSampleIds = (projectId) => {
+    console.log(projectId);
+  };
+
   return (
     <>
       <Select
         style={{ width: `100%` }}
+        loading={projectLoading}
         options={projects?.map((project) => ({
           label: project.name,
           value: project.identifier,
         }))}
+        onChange={updateCurrentSampleIds}
       />
       <Table
         loading={!samples}
