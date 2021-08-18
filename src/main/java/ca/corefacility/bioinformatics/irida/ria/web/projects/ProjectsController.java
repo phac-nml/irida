@@ -162,6 +162,14 @@ public class ProjectsController {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
 
+	/**
+	 * Get the page to share samples between projects
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param model     Spring model for template variables
+	 * @param principal Currently logged in user
+	 * @return Path to the template for shareing samples
+	 */
 	@RequestMapping("/projects/{projectId}/share")
 	public String getProjectsSharePage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		Project project = projectService.read(projectId);
