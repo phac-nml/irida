@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -94,7 +95,8 @@ public class UIProjectUserGroupServiceTest {
 
 	@Test
 	public void testAddUserGroupToProject() {
-		NewMemberRequest newMemberRequest = new NewMemberRequest(1L, ProjectRole.PROJECT_OWNER.toString());
+		NewMemberRequest newMemberRequest = new NewMemberRequest(1L, ProjectRole.PROJECT_OWNER.toString(),
+				ProjectMetadataRole.LEVEL_4.toString());
 		service.addUserGroupToProject(1L, newMemberRequest, LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);

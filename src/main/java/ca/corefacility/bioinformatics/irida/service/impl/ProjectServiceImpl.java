@@ -174,7 +174,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.getAuthentication()
 				.getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
-		addUserToProject(project, user, ProjectRole.PROJECT_OWNER);
+		addUserToProject(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		return project;
 	}
 
@@ -232,9 +232,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
+	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role, ProjectMetadataRole metadataRole) {
 		try {
-			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
+			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role, metadataRole));
 			return join;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException(

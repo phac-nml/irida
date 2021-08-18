@@ -72,7 +72,7 @@ public class ProjectEventServiceImplIT {
 		Project project = projectService.read(1L);
 		User user = userService.read(2L);
 
-		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER);
+		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, PageRequest.of(0, 10));
 

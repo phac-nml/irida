@@ -115,15 +115,17 @@ public class UIProjectMembersServiceTest {
 
 	@Test(expected = ProjectWithoutOwnerException.class)
 	public void testUpdateUserRoleOnProjectNoManager() throws UIProjectWithoutOwnerException {
-		service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
+		service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(),
+				ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
 	}
 
 	@Test
 	public void testAddMemberToProject() {
-		NewMemberRequest request = new NewMemberRequest(USER_3.getId(),
-				ProjectRole.PROJECT_USER.toString());
+		NewMemberRequest request = new NewMemberRequest(USER_3.getId(), ProjectRole.PROJECT_USER.toString(),
+				ProjectMetadataRole.LEVEL_1.toString());
 		service.addMemberToProject(PROJECT_ID, request, LOCALE);
-		verify(projectService, times(1)).addUserToProject(PROJECT, USER_3, ProjectRole.PROJECT_USER);
+		verify(projectService, times(1)).addUserToProject(PROJECT, USER_3, ProjectRole.PROJECT_USER,
+				ProjectMetadataRole.LEVEL_1);
 	}
 
 	private Page<Join<Project, User>> getPagedUsersForProject() {

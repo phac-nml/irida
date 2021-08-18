@@ -35,6 +35,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -229,7 +230,7 @@ public class ProjectServiceImplIT {
 	public void testAddUserToProject() {
 		Project p = projectService.read(1L);
 		User u = userService.read(1L);
-		Join<Project, User> join = projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		Join<Project, User> join = projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		assertNotNull("Join was not populated.", join);
 		assertEquals("Join has wrong project.", p, join.getSubject());
 		assertEquals("Join has wrong user.", u, join.getObject());
@@ -243,8 +244,8 @@ public class ProjectServiceImplIT {
 	public void testAddUserToProjectTwice() {
 		Project p = projectService.read(1L);
 		User u = userService.read(1L);
-		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
-		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
+		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 	}
 
 	@Test
@@ -253,8 +254,8 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 		User u1 = userService.read(1L);
 		User u2 = userService.read(2L);
-		projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER);
-		projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
+		projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
+		projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 
 		Collection<Join<Project, User>> usersOnProject = userService.getUsersForProject(p);
 		assertEquals("Wrong number of users on project.", 2, usersOnProject.size());

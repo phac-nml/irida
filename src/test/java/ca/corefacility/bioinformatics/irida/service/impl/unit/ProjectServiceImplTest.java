@@ -152,11 +152,12 @@ public class ProjectServiceImplTest {
 		u.setId(1111L);
 		Project p = project();
 		ProjectRole r = ProjectRole.PROJECT_USER;
-		ProjectUserJoin join = new ProjectUserJoin(p, u, r);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin join = new ProjectUserJoin(p, u, r, metadataRole);
 
 		when(pujRepository.save(join)).thenReturn(join);
 
-		projectService.addUserToProject(p, u, r);
+		projectService.addUserToProject(p, u, r, metadataRole);
 
 		verify(pujRepository).save(join);
 	}
@@ -167,11 +168,12 @@ public class ProjectServiceImplTest {
 		u.setId(1111L);
 		Project p = project();
 		ProjectRole r = ProjectRole.PROJECT_USER;
-		ProjectUserJoin join = new ProjectUserJoin(p, u, r);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin join = new ProjectUserJoin(p, u, r, metadataRole);
 
 		when(pujRepository.save(join)).thenThrow(new DataIntegrityViolationException("Duplicates."));
 
-		projectService.addUserToProject(p, u, r);
+		projectService.addUserToProject(p, u, r, metadataRole);
 	}
 
 	@Test

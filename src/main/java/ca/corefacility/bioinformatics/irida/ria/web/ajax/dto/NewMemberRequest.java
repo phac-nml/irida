@@ -14,12 +14,15 @@ public class NewMemberRequest {
 	 */
 	private String role;
 
+	private String metadataRole;
+
 	public NewMemberRequest() {
 	}
 
-	public NewMemberRequest(Long id, String role) {
+	public NewMemberRequest(Long id, String role, String metadataRole) {
 		this.id = id;
 		this.role = role;
+		this.metadataRole = metadataRole;
 	}
 
 	public Long getId() {
@@ -36,5 +39,13 @@ public class NewMemberRequest {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getMetadataRole() {
+		return metadataRole;
+	}
+
+	public void setMetadataRole(String metadataRole) {
+		this.metadataRole = metadataRole;
 	}
 }
