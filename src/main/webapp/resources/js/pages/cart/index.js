@@ -6,7 +6,6 @@ import { cartApi } from "../../apis/cart/cart";
 import { projectsApi } from "../../apis/projects/projects";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { Cart } from "./components/Cart";
-import shareReducer from "./components/share/shareSlice";
 
 /**
  * @fileoverview This is the entry file for the Cart Page.  It uses a redux store,
@@ -25,7 +24,6 @@ const store = configureStore({
   reducer: {
     [cartApi.reducerPath]: cartApi.reducer,
     [projectsApi.reducerPath]: projectsApi.reducer,
-    share: shareReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(cartApi.middleware, projectsApi.middleware),
