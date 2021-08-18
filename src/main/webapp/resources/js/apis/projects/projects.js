@@ -9,11 +9,16 @@ const URL = setBaseUrl(`ajax/projects`);
 
 export const projectsApi = createApi({
   reducerPath: `projectsApi`,
-  baseQuery: fetchBaseQuery({
-    baseUrl: URL,
-  }),
-  tagTypes: ["Projects,"],
+  baseQuery: fetchBaseQuery({ baseUrl: URL }),
+  tagTypes: ["Projects"],
   endpoints: (build) => ({
+    getProjectsForUser: build.query({
+      query: (query) => ({
+        url: "/user",
+        params: { query },
+      }),
+      providesTags: ["Projects"],
+    }),
     getProjectsToShareTo: build.query({
       query: (currentId) => ({
         url: `/samples-share/projects?currentId=${currentId}`,
@@ -22,7 +27,8 @@ export const projectsApi = createApi({
   }),
 });
 
-export const { useGetProjectsToShareToQuery } = projectsApi;
+export const { useGetProjectsForUserQuery
+  useGetProjectsToShareToQuery} = projectsApi;
 
 /**
  * Returns the projects on the current page of the projects table.
