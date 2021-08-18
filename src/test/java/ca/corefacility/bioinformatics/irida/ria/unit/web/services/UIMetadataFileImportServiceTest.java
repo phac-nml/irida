@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataFileImportService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -66,14 +67,14 @@ public class UIMetadataFileImportServiceTest {
 		headers_list.add("header1");
 		headers_list.add("header2");
 		headers_list.add("header3");
-		expected_storage.saveHeaders(headers_list);
-		List<Map<String, String>> rows = new ArrayList<>();
+		expected_storage.setHeaders(headers_list);
+		List<SampleMetadataStorageRow> rows = new ArrayList<>();
 		Map<String, String> rowMap = new HashMap<>();
 		rowMap.put("header1", "value1");
 		rowMap.put("header2", "value2");
 		rowMap.put("header3", "value3");
-		rows.add(rowMap);
-		expected_storage.saveRows(rows);
+		rows.add(new SampleMetadataStorageRow(rowMap));
+		expected_storage.setRows(rows);
 		expected_storage.setSampleNameColumn("header2");
 		return expected_storage;
 	}

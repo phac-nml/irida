@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { navigate } from "@reach/router"
 import {
   Button,
@@ -6,14 +7,11 @@ import {
   Typography,
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useSelector } from "react-redux";
 import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
+import { useSetColumnProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
+import { IconArrowLeft, IconArrowRight } from "../../../../components/icons/Icons";
 
 const { Text } = Typography
-
-function Back() {
-  navigate(-1);
-}
 
 /**
  * React component that displays Step #2 of the Sample Metadata Uploader.
@@ -22,24 +20,41 @@ function Back() {
  * @constructor
  */
 export function SampleMetadataImportMapHeaders({ projectId }) {
-
+  const dispatch = useDispatch();
+  const [column, setColumn] = React.useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
+  const [updateColumn] = useSetColumnProjectSampleMetadataMutation();
+
+  React.useEffect(() => {
+    setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
+  }, []);
+
+  const onSubmit = () => {
+    updateColumn({ projectId, sampleNameColumn: column });
+    navigate('review');
+  };
 
   return (
     <SampleMetadataImportWizard currentStep={1}>
       <Text>
         {i18n("SampleMetadataImportMapHeaders.description")}
       </Text>
-      <Radio.Group style={{ width: `100%` }} defaultValue={sampleNameColumn ? sampleNameColumn : headers[0]}>
+      <Radio.Group style={{ width: `100%` }} value={column} onChange={(e) => setColumn(e.target.value)}>
         {headers.map((header, index) => (
-          <BlockRadioInput key={`radio-item-header-${index}`}>
-            <Radio key={`radio-header-${index}`} value={header}>
+          <BlockRadioInput key={`metadata-uploader-radio-header-${index}`}>
+            <Radio key={`metadata-uploader-radio-header-${index}`} value={header}>
               {header}
             </Radio>
           </BlockRadioInput>
         ))}
       </Radio.Group>
-      <Button onClick={() => Back()}> {i18n("SampleMetadataImportMapHeaders.back")}</Button>
+      <div style={{ display: 'flex' }}>
+        <Button className="t-metadata-uploader-file-button" icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.button.back")}</Button>
+        <Button className="t-metadata-uploader-preview-button" onClick={onSubmit} style={{ marginLeft: 'auto' }}>
+          {i18n("SampleMetadataImportMapHeaders.button.next")}
+          <IconArrowRight />
+        </Button>
+      </div>
     </SampleMetadataImportWizard>
   );
 }

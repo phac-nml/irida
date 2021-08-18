@@ -12,26 +12,51 @@ export const metadataImportApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ["MetadataImport"],
   endpoints: (build) => ({
-    createProjectSampleMetadata: build.query({
+    getProjectSampleMetadata: build.query({
       query: (projectId) => ({
         url: `/upload/getMetadata`,
         params: {
           projectId,
         }
       }),
+      providesTags: ["MetadataImport"],
     }),
-    clearProjectSampleMetadata: build.query({
+    clearProjectSampleMetadata: build.mutation({
       query: (projectId) => ({
         url: `/upload/clear`,
         params: {
           projectId,
         }
       }),
+      invalidatesTags: ["MetadataImport"],
+    }),
+    setColumnProjectSampleMetadata: build.mutation({
+      query: ({ projectId, sampleNameColumn }) => ({
+        url: `/upload/setSampleColumn`,
+        method: 'POST',
+        params: {
+          projectId,
+          sampleNameColumn,
+        }
+      }),
+      invalidatesTags: ["MetadataImport"],
+    }),
+    saveProjectSampleMetadata: build.mutation({
+      query: ({ projectId, sampleNameColumn }) => ({
+        url: `/upload/save`,
+        method: 'POST',
+        params: {
+          projectId,
+        }
+      }),
+      invalidatesTags: ["MetadataImport"],
     }),
   })
 });
 
 export const {
-  useCreateProjectSampleMetadataQuery,
-  useClearProjectSampleMetadataQuery,
+  useGetProjectSampleMetadataQuery,
+  useClearProjectSampleMetadataMutation,
+  useSetColumnProjectSampleMetadataMutation,
+  useSaveProjectSampleMetadataMutation,
 } = metadataImportApi;
