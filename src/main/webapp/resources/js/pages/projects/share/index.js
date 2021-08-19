@@ -27,12 +27,9 @@ function ShareSamples() {
     skip: !currentProject,
   });
 
-  const { data: sampleIds, isLoading } = useGetSampleIdsForProjectQuery(
-    projectId,
-    {
-      skip: !projectId,
-    }
-  );
+  const { data: sampleIds } = useGetSampleIdsForProjectQuery(projectId, {
+    skip: !projectId,
+  });
 
   React.useEffect(() => {
     setSamples(originalSamples);
