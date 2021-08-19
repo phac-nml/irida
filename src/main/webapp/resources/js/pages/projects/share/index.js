@@ -1,4 +1,4 @@
-import { Select, Table } from "antd";
+import { Form, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
@@ -14,7 +14,6 @@ import store from "./store";
  */
 function ShareSamples() {
   const [samples, setSamples] = React.useState([]);
-  const [existingSamples, setExistingSamples] = React.useState([]);
   const [projectId, setProjectId] = React.useState();
   const { samples: originalSamples, currentProject } = useSelector(
     (state) => state.shareReducer
@@ -41,7 +40,10 @@ function ShareSamples() {
   React.useEffect(() => {
     if (sampleIds) {
       setSamples(
-        originalSamples.filter((sample) => !sampleIds.includes(sample.id))
+        originalSamples.map((sample) => ({
+          ...sample,
+          exists: sampleIds.includes(sample.id),
+        }))
       );
     }
   }, [originalSamples, sampleIds]);
@@ -51,23 +53,38 @@ function ShareSamples() {
   };
 
   return (
-    <>
-      <Select
-        style={{ width: `100%` }}
-        loading={projectLoading}
-        options={projects?.map((project) => ({
-          label: project.name,
-          value: project.identifier,
-        }))}
-        onChange={updateCurrentSampleIds}
-      />
-      <Table
-        loading={!samples}
-        dataSource={samples}
-        rowKey={(sample) => `sample-${sample.id}`}
-        columns={[{ title: "Name", dataIndex: "name" }]}
-      />
-    </>
+    <Form layout="vertical">
+      <Space direction="vertical" style={{ display: "block" }} size="large">
+        <Form.Item label={"Select a project to share the samples with"}>
+          <Select
+            style={{ width: `100%` }}
+            loading={projectLoading}
+            options={projects?.map((project) => ({
+              label: project.name,
+              value: project.identifier,
+            }))}
+            onChange={updateCurrentSampleIds}
+          />
+        </Form.Item>
+        <Table
+          loading={!samples}
+          dataSource={samples}
+          rowKey={(sample) => `sample-${sample.id}`}
+          columns={[
+            {
+              title: "Name",
+              dataIndex: "name",
+            },
+            {
+              title: "",
+              dataIndex: "exists",
+              render: (text, sample) =>
+                sample.exists && <Tag color="red">EXISTS</Tag>,
+            },
+          ]}
+        />
+      </Space>
+    </Form>
   );
 }
 
