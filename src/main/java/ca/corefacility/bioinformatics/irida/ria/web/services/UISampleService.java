@@ -184,6 +184,9 @@ public class UISampleService {
 
 	public List<Long> getSampleIdsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
-		sampleService.get
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
+		return samples.stream()
+				.map(Sample::getId)
+				.collect(Collectors.toUnmodifiableList());
 	}
 }

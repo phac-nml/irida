@@ -3,6 +3,7 @@ import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { useGetProjectsToShareToQuery } from "../../../apis/projects/projects";
+import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import store from "./store";
 
 /**
@@ -13,13 +14,20 @@ import store from "./store";
  */
 function ShareSamples() {
   const [samples, setSamples] = React.useState();
+  const [projectId, setProjectId] = React.useState();
   const [currentId, setCurrentId] = React.useState();
   const {
     data: projects,
     isLoading: projectLoading,
   } = useGetProjectsToShareToQuery(currentId, {
-    skip: currentId === undefined,
+    skip: !currentId,
   });
+  const { data: sampleIds, isLoading } = useGetSampleIdsForProjectQuery(
+    projectId,
+    {
+      skip: !projectId,
+    }
+  );
 
   React.useEffect(() => {
     const stringData = window.sessionStorage.getItem("share");
@@ -30,7 +38,7 @@ function ShareSamples() {
   }, []);
 
   const updateCurrentSampleIds = (projectId) => {
-    console.log(projectId);
+    setProjectId(projectId);
   };
 
   return (
