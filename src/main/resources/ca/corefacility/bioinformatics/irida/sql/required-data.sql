@@ -263,7 +263,7 @@ INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES (DATE_SUB(NOW
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES (DATE_SUB(NOW(), INTERVAL 9 YEAR), DATE_SUB(NOW(), INTERVAL 9 YEAR), 'Project 186');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES (DATE_SUB(NOW(), INTERVAL 10 YEAR), DATE_SUB(NOW(), INTERVAL 10 YEAR), 'Project 187');
 
-INSERT INTO user_group_project(`created_date`, `project_role`, `project_id`, `user_group_id`) values (now(), 'PROJECT_USER', 50, 8);
+INSERT INTO user_group_project(`created_date`, `project_role`, `metadata_role`, `project_id`, `user_group_id`) values (now(), 'PROJECT_USER', 'LEVEL_1', 50, 8);
 
 -- relationship between projects and users
 INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `email_subscription`, `metadataRole`) VALUES (now(), 1, 2, 'PROJECT_OWNER', 0, 'LEVEL_4');
