@@ -87,23 +87,9 @@
                     </a>
                   </li>
                   <li role="menuitem">
-                    <a
-                      href="#"
-                      class="js-sample-tool-btn t-copy-btn"
-                      data-enabled-at="1"
-                      data-toggle="tooltip"
-                      data:enabled-msg="#{project.samples.tooltip.share.requires-more-than-one}"
-                      data:associated-msg="#{project.samples.only-for-project-tooltip}"
-                      data-params='{"move": false}'
-                      data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
-                      data:script="@{/dist/js/project-samples-copy.bundle.js}"
-                    >
-                      <i
-                        class="fa fa-share-alt fa-fw spaced-right__sm"
-                        aria-hidden="true"
-                      ></i>
-                      <th:block th:text="#{project.samples.nav.share}" />
-                    </a>
+                    <div class="js-share-samples">
+                      <!-- React component src/main/webapp/resources/js/pages/projects/samples/ShareSamplesLink.jsx -->
+                    </div>
                   </li>
                   <li role="menuitem">
                     <a

@@ -9,6 +9,7 @@ import {
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
+  CopyOutlined,
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
@@ -195,6 +196,8 @@ export const IconUsergroupDelete = (props) => (
 export const IconCalendarTwoTone = ({ ...props }) => (
   <CalendarTwoTone {...props} />
 );
+
+export const IconShare = ({ ...props }) => <CopyOutlined {...props} />;
 
 /*
 File Type Icons

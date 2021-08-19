@@ -51,7 +51,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-merge-btn")
 	private WebElement mergeBtn;
 
-	@FindBy(className = "t-copy-btn")
+	@FindBy(className = "t-share-btn")
 	private WebElement copyBtn;
 	
 	@FindBy(id = "giveOwner")
