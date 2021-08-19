@@ -182,6 +182,12 @@ public class UISampleService {
 		obj.setQcEntries(availableEntries);
 	}
 
+	/**
+	 * Get a list of all {@link Sample} identifiers whithin a specific project
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 * @return {@link List} of {@link Sample} identifiers
+	 */
 	public List<Long> getSampleIdsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
