@@ -19,17 +19,16 @@ export const setProject = createAction(`share/setProject`, (projectId) => ({
 const initialState = (() => {
   const stringData = window.sessionStorage.getItem("share");
   const { samples, projectId: currentProject } = JSON.parse(stringData);
-  return { samples, currentProject };
+  return { originalSamples: samples, samples, currentProject };
 })();
 
 const shareSlice = createSlice({
   name: "share",
   initialState,
   extraReducers: (builder) => {
-    builder.addCase(
-      setProject,
-      (state, action) => (state.projectId = action.payload.projectId)
-    );
+    builder.addCase(setProject, (state, action) => {
+      state.projectId = action.payload.projectId;
+    });
   },
 });
 

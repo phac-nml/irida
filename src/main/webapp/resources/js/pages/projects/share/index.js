@@ -15,8 +15,8 @@ import store from "./store";
  */
 function ShareSamples() {
   const dispatch = useDispatch();
-  const [samples, setSamples] = React.useState([]);
-  const { samples: originalSamples, currentProject, projectId } = useSelector(
+  const [samples, setSamples] = React.useState();
+  const { originalSamples, currentProject, projectId } = useSelector(
     (state) => state.shareReducer
   );
 
@@ -63,7 +63,7 @@ function ShareSamples() {
           />
         </Form.Item>
         <Table
-          loading={!samples}
+          loading={!originalSamples}
           dataSource={samples}
           rowKey={(sample) => `sample-${sample.id}`}
           columns={[
