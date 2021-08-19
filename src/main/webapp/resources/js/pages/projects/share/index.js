@@ -1,7 +1,7 @@
 import { Select, Table } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { useGetProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import store from "./store";
@@ -13,15 +13,20 @@ import store from "./store";
  * @constructor
  */
 function ShareSamples() {
-  const [samples, setSamples] = React.useState();
+  const [samples, setSamples] = React.useState([]);
+  const [existingSamples, setExistingSamples] = React.useState([]);
   const [projectId, setProjectId] = React.useState();
-  const [currentId, setCurrentId] = React.useState();
+  const { samples: originalSamples, currentProject } = useSelector(
+    (state) => state.shareReducer
+  );
+
   const {
     data: projects,
     isLoading: projectLoading,
-  } = useGetProjectsToShareToQuery(currentId, {
-    skip: !currentId,
+  } = useGetProjectsToShareToQuery(currentProject, {
+    skip: !currentProject,
   });
+
   const { data: sampleIds, isLoading } = useGetSampleIdsForProjectQuery(
     projectId,
     {
@@ -30,12 +35,16 @@ function ShareSamples() {
   );
 
   React.useEffect(() => {
-    const stringData = window.sessionStorage.getItem("share");
-    const data = JSON.parse(stringData);
+    setSamples(originalSamples);
+  }, [originalSamples]);
 
-    setSamples(data.samples);
-    setCurrentId(data.projectId);
-  }, []);
+  React.useEffect(() => {
+    if (sampleIds) {
+      setSamples(
+        originalSamples.filter((sample) => !sampleIds.includes(sample.id))
+      );
+    }
+  }, [originalSamples, sampleIds]);
 
   const updateCurrentSampleIds = (projectId) => {
     setProjectId(projectId);
