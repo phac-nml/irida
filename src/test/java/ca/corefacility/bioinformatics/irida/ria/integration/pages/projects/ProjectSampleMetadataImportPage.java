@@ -19,46 +19,56 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 2016-10-07.
  */
 public class ProjectSampleMetadataImportPage extends AbstractPage {
-	@FindBy(id = "file-upload-button") WebElement dropzone;
-	@FindBy(id = "sampleId-previous") WebElement sampleIdPrev;
-	@FindBy(css = "input[type=radio]") List<WebElement> headerRadios;
-	@FindBy(id = "preview-btn") WebElement previewBtn;
-	@FindBy(id = "found-pill") WebElement foundPill;
-	@FindBy(id = "missing-pill") WebElement missingPill;
-	@FindBy(css = "thead th") List<WebElement> headers;
-	@FindBy(css = "tbody tr") List<WebElement> rows;
+	@FindBy(css = ".t-metadata-uploader-dropzone input")
+	WebElement dropzone;
+	@FindBy(className = "t-metadata-uploader-file-button")
+	WebElement fileBtn;
+	@FindBy(css = "input[type=radio]")
+	List<WebElement> headerRadios;
+	@FindBy(className = "t-metadata-uploader-preview-button")
+	WebElement previewBtn;
+	@FindBy(className = "t-metadata-uploader-review-table")
+	WebElement reviewTable;
+	@FindBy(css = "table > tbody > tr > td.t-metadata-uploader-new-column:empty")
+	List<WebElement> foundRows;
+	@FindBy(css = "table > tbody > tr > td.t-metadata-uploader-new-column > span")
+	List<WebElement> missingRows;
+	@FindBy(css = "thead th")
+	List<WebElement> headers;
+	@FindBy(css = "tbody tr.ant-table-row")
+	List<WebElement> rows;
 
 	public ProjectSampleMetadataImportPage(WebDriver driver) {
 		super(driver);
 	}
 
 	public static ProjectSampleMetadataImportPage goToPage(WebDriver driver) {
-		get(driver, "projects/1/sample-metadata/upload");
+		get(driver, "projects/1/sample-metadata/upload2/file");
 		return PageFactory.initElements(driver, ProjectSampleMetadataImportPage.class);
 	}
 
 	public void uploadMetadataFile(String filePath) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		Path path = Paths.get(filePath);
-		dropzone.sendKeys(path.toAbsolutePath().toString());
-		wait.until(ExpectedConditions.visibilityOf(sampleIdPrev));
+		dropzone.sendKeys(path.toAbsolutePath()
+				.toString());
+		wait.until(ExpectedConditions.visibilityOf(fileBtn));
 	}
 
 	public void selectSampleNameColumn() {
-		headerRadios.get(3).click();
+		headerRadios.get(3)
+				.click();
 		previewBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(foundPill));
+		wait.until(ExpectedConditions.visibilityOf(reviewTable));
 	}
 
 	public int getFoundCount() {
-		return Integer.parseInt(foundPill.findElement(By.className("badge"))
-				.getText());
+		return foundRows.size();
 	}
 
 	public int getMissingCount() {
-		return Integer.parseInt(missingPill.findElement(By.className("badge"))
-				.getText());
+		return missingRows.size();
 	}
 
 	public List<String> getValuesForColumnByName(String column) {

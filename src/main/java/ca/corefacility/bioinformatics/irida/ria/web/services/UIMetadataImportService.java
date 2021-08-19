@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -112,26 +113,21 @@ public class UIMetadataImportService {
 		if (stored != null) {
 			stored.setSampleNameColumn(sampleNameColumn);
 			Project project = projectService.read(projectId);
-			List<Map<String, String>> rows = stored.getRows();
-
-			// Remove 'rows' since they are now going to be sorted into found and not found.
-			stored.removeRows();
-			List<Map<String, String>> found = new ArrayList<>();
-			List<Map<String, String>> missing = new ArrayList<>();
+			List<SampleMetadataStorageRow> rows = stored.getRows();
+			List<SampleMetadataStorageRow> updatedRows = new ArrayList<>();
 
 			// Get the metadata out of the table.
-			for (Map<String, String> row : rows) {
+			for (SampleMetadataStorageRow row : rows) {
 				try {
 					// If this throws an error than the sample does not exist.
-					sampleService.getSampleBySampleName(project, row.get(sampleNameColumn));
-					found.add(row);
+					Sample sample = sampleService.getSampleBySampleName(project, row.getEntryValue(sampleNameColumn));
+					row.setFoundSampleId(sample.getId());
 				} catch (EntityNotFoundException e) {
-					missing.add(row);
+					row.setFoundSampleId(null);
 				}
+				updatedRows.add(row);
 			}
-
-			stored.saveFound(found);
-			stored.saveMissing(missing);
+			stored.setRows(updatedRows);
 		}
 
 		return "complete";
@@ -156,26 +152,22 @@ public class UIMetadataImportService {
 			response.setMessageKey("stored-error");
 		}
 
-		List<Sample> samplesToUpdate = new ArrayList<>();
-		List<Map<String, String>> found = stored.getFound();
+		List<SampleMetadataStorageRow> found = stored.getFoundRows();
 
 		if (found != null) {
 			// Lets try to get a sample
 			String sampleNameColumn = stored.getSampleNameColumn();
 			List<String> errorList = new ArrayList<>();
 			try {
-				for (Map<String, String> row : found) {
+				for (SampleMetadataStorageRow row : found) {
 
-					String name = row.get(sampleNameColumn);
+					String name = row.getEntryValue(sampleNameColumn);
 					Sample sample = sampleService.getSampleBySampleName(project, name);
-					row.remove(sampleNameColumn);
-
-					Map<MetadataTemplateField, MetadataEntry> newData = new HashMap<>();
-
 					Set<MetadataEntry> metadataEntrySet = new HashSet<>();
 
 					// Need to overwrite duplicate keys
-					for (Map.Entry<String, String> entry : row.entrySet()) {
+					for (Map.Entry<String, String> entry : row.getEntry()
+							.entrySet()) {
 						// Make sure we are not saving non-metadata items.
 						if (!DEFAULT_HEADERS.contains(entry.getKey())) {
 							MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(

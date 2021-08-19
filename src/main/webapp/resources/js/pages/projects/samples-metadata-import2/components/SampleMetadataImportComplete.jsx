@@ -15,7 +15,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  * @constructor
  */
 export function SampleMetadataImportComplete({ projectId }) {
-const [saveMetadata, {isLoading}] = useSaveProjectSampleMetadataMutation(projectId);
+  const [saveMetadata, {isLoading}] = useSaveProjectSampleMetadataMutation(projectId);
 
   React.useEffect(() => {
     saveMetadata({ projectId: projectId });
@@ -25,10 +25,11 @@ const [saveMetadata, {isLoading}] = useSaveProjectSampleMetadataMutation(project
     <SampleMetadataImportWizard currentStep={3}>
       <Result
         status="success"
-        title="Congratulations! The sample metadata imported successfully."
+        title={i18n("SampleMetadataImportComplete.result.title")}
+        subTitle={i18n("SampleMetadataImportComplete.result.subTitle")}
         extra={
           <Button type="primary" href={setBaseUrl(`projects/${projectId}/sample-metadata/upload2/file`)}>
-            Upload another file
+            {i18n("SampleMetadataImportComplete.button.upload")}
           </Button>
         }
       />

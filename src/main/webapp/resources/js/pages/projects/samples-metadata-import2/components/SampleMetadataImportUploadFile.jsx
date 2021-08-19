@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { setHeaders } from "../services/rootReducer"
 import { navigate } from "@reach/router"
@@ -9,7 +9,7 @@ import {
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useCreateProjectSampleMetadataQuery, useClearProjectSampleMetadataQuery } from "../../../../apis/metadata/metadata-import";
+import { useClearProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 
 const { Text } = Typography
 
@@ -21,9 +21,12 @@ const { Text } = Typography
  */
 export function SampleMetadataImportUploadFile({ projectId }) {
   const dispatch = useDispatch();
-  const [status, setStatus] = useState("process");
+  const [status, setStatus] = React.useState("process");
+  const [clearStorage] = useClearProjectSampleMetadataMutation();
 
-  useClearProjectSampleMetadataQuery(projectId);
+  React.useEffect(() => {
+    clearStorage(projectId);
+  }, []);
 
   const options = {
     multiple: false,
@@ -50,7 +53,7 @@ export function SampleMetadataImportUploadFile({ projectId }) {
   return (
     <SampleMetadataImportWizard currentStep={0} currentStatus={status}>
       <DragUpload
-        className="t-sample-metadata-file-uploader"
+        className="t-metadata-uploader-dropzone"
         uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
         uploadHint={<Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>}
         options={options}
