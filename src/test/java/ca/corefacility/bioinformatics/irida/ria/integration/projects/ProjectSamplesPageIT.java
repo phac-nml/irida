@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -64,7 +65,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Test set up with no sample selected
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-		assertFalse("Share option should not be enabled", page.isShareBtnEnabled());
 		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
 		page.closeToolsDropdown();
@@ -187,6 +187,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	@Ignore
 	public void testShareSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -208,6 +209,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	
 	@Test(expected=ProjectSamplesPage.GiveOwnerNotDisplayedException.class)
+	@Ignore
 	public void testShareRemoteSampleManagerFailGiveOwner() {
 		LoginPage.loginAsManager(driver());
 

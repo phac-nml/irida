@@ -38,10 +38,19 @@ function ShareSamplesLink() {
   }
 
   return (
-    <Button type="link" icon={<IconShare />} onClick={handleClick}>
+    <Button
+      className="t-share-btn"
+      type="link"
+      icon={<IconShare />}
+      onClick={handleClick}
+    >
       {i18n("project.samples.nav.share")}
     </Button>
   );
 }
 
-render(<ShareSamplesLink />, document.querySelector(".js-share-samples"));
+const querySelector = document.querySelector(".js-share-samples");
+console.log(querySelector);
+if (querySelector) {
+  render(<ShareSamplesLink />, querySelector);
+}
