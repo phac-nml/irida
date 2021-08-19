@@ -7,12 +7,12 @@ import axios from "axios";
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 
-const DOWNLOAD_BASE_URL = setBaseUrl("/ajax/analysis/download");
+const ANALYSES_OUTPUTS_BASE_URL = setBaseUrl("/ajax/analyses-outputs");
 
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/projects/analyses-outputs`),
+    baseUrl: ANALYSES_OUTPUTS_BASE_URL,
   }),
   tagTypes: ["ProjectSampleAnalysisOutputInfo"],
   endpoints: (build) => ({
@@ -28,34 +28,47 @@ export const singleSampleAnalysisOutputsApi = createApi({
       }),
       invalidateTags: ["ProjectSampleAnalysisOutputInfo"],
     }),
+    getUserSingleSampleAnalysisOutputs: build.query({
+      // Gets the single sample analysis outputs for the currently logged in user
+      query: () => ({
+        url: `/user`,
+        method: `GET`,
+      }),
+      invalidateTags: ["ProjectSampleAnalysisOutputInfo"],
+    }),
   }),
 });
 
 export const {
   useGetSharedSingleSampleAnalysisOutputsQuery,
   useGetAutomatedSingleSampleAnalysisOutputsQuery,
+  useGetUserSingleSampleAnalysisOutputsQuery,
 } = singleSampleAnalysisOutputsApi;
 
 /**
- * Download the selected individual file
+ * Download the selected  individual single sample analysis output file
  * @param {submissionId} the submission identifier
  * @param {fileId} the analysis output file id
  * @param {fileName} the name to give the downloaded file
  */
-export function downloadIndividualOutputFile(submissionId, fileId, fileName) {
+export function downloadIndividualOutputFile(
+  submissionId,
+  fileId,
+  fileName = ""
+) {
   window.open(
-    `${DOWNLOAD_BASE_URL}/${submissionId}/file/${fileId}?filename=${fileName}`,
+    `${ANALYSES_OUTPUTS_BASE_URL}/download/file?analysisSubmissionId=${submissionId}&fileId=${fileId}&filename=${fileName}`,
     "_blank"
   );
 }
 
 /**
- * Download selected files which were prepared in the call to `prepareAnalysisOutputsDownload`
+ * Download selected single sample analysis output files which were prepared in the call to `prepareAnalysisOutputsDownload`
  * @param {zipFolderName} the name to give the downloaded zip folder containing the selected files
  */
 export function downloadSelectedOutputFiles(zipFolderName) {
   window.open(
-    `${DOWNLOAD_BASE_URL}/selection?filename=${zipFolderName}`,
+    `${ANALYSES_OUTPUTS_BASE_URL}/download/selection?filename=${zipFolderName}`,
     "_blank"
   );
 }
@@ -69,7 +82,7 @@ export async function prepareAnalysisOutputsDownload(outputs) {
   try {
     const { data } = await axios({
       method: "post",
-      url: `${DOWNLOAD_BASE_URL}/prepare`,
+      url: `${ANALYSES_OUTPUTS_BASE_URL}/download/prepare`,
       data: outputs,
     });
     return { data };

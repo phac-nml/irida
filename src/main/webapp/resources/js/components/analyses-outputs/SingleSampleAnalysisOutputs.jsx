@@ -1,15 +1,16 @@
 import React from "react";
 import { Button, Input, notification, Row, Space, Table } from "antd";
 
-import { IconDownloadFile } from "../../../../components/icons/Icons";
+import { IconDownloadFile } from "../icons/Icons";
 
-import { dateColumnFormat } from "../../../../components/ant.design/table-renderers";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { dateColumnFormat } from "../ant.design/table-renderers";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import {
   downloadIndividualOutputFile,
   downloadSelectedOutputFiles,
   prepareAnalysisOutputsDownload,
-} from "../../../../apis/projects/analyses";
+} from "../../apis/analyses/analyses";
+import debounce from "lodash/debounce";
 
 const { Search } = Input;
 
@@ -178,7 +179,7 @@ export default function SingleSampleAnalysisOutputs({
           projectId ? `projectId-${projectId}` : `user`
         }-batch-download-analysis-output-files`;
         notification.success({
-          message: "Starting download of selected files",
+          message: i18n("SingleSampleAnalysisOutputs.startingDownload"),
         });
         //Download the selected output files into a zip folder
         downloadSelectedOutputFiles(zipFolderName);
@@ -188,13 +189,10 @@ export default function SingleSampleAnalysisOutputs({
     setSelectedRowKeys([]);
   };
 
-  // Function to filter out outputs by the search term
-  const filterOutputsByTerm = (searchStr) => {
-    if (
-      searchStr.trim() === "" ||
-      searchStr === "undefined" ||
-      searchStr === null
-    ) {
+  // Function to filter out outputs by the search term using debounce
+  const filterOutputsByTerm = debounce((event) => {
+    let searchStr = event.target.value;
+    if (searchStr === "undefined" || searchStr === null) {
       setFilteredOutputs(null);
     } else {
       searchStr = String(searchStr).toLowerCase();
@@ -209,7 +207,7 @@ export default function SingleSampleAnalysisOutputs({
       );
       setFilteredOutputs(outputsContainingSearchValue);
     }
-  };
+  }, 300);
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
@@ -223,7 +221,7 @@ export default function SingleSampleAnalysisOutputs({
         </Button>
         <Search
           style={{ width: 300 }}
-          onSearch={filterOutputsByTerm}
+          onChange={filterOutputsByTerm}
           placeholder={i18n("SingleSampleAnalysisOutputs.searchPlaceholder")}
           allowClear
         />

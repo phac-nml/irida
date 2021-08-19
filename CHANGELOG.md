@@ -18,6 +18,7 @@ Changes
 * [Developer]: Updated `xlsx` to version 0.17.0
 * [Test]: Updated chromedriver to version 92.0.0.
 * [UI]: Updated Project Single Sample Analyses Outputs pages to use Ant Design.
+* [UI]: Updated Your Single Sample Analysis Outputs page to use Ant Design.
 
 21.01 to 21.05
 --------------

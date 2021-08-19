@@ -41,8 +41,6 @@ module.exports = {
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-analyses": "./resources/js/pages/projects/project-analyses/",
-  "analysis-outputs-table":
-    "./resources/js/pages/analyses/analysis-outputs-table.js",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
@@ -59,4 +57,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
+  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
 };
