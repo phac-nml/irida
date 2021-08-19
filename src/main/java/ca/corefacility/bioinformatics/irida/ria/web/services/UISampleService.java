@@ -183,7 +183,7 @@ public class UISampleService {
 	}
 
 	/**
-	 * Get a list of all {@link Sample} identifiers whithin a specific project
+	 * Get a list of all {@link Sample} identifiers within a specific project
 	 *
 	 * @param projectId Identifier for a {@link Project}
 	 * @return {@link List} of {@link Sample} identifiers

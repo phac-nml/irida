@@ -180,6 +180,12 @@ public class SamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
+	/**
+	 * Get a list of all {@link Sample} identifiers within a specific project
+	 *
+	 * @param projectId Identifier for a Project
+	 * @return {@link List} of {@link Sample} identifiers
+	 */
 	@GetMapping("/identifiers")
 	public List<Long> getSampleIdsForProject(@RequestParam Long projectId) {
 		return uiSampleService.getSampleIdsForProject(projectId);
