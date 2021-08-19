@@ -1,9 +1,10 @@
 import { Form, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { useGetProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
+import { setProject } from "./shareSlice";
 import store from "./store";
 
 /**
@@ -13,9 +14,9 @@ import store from "./store";
  * @constructor
  */
 function ShareSamples() {
+  const dispatch = useDispatch();
   const [samples, setSamples] = React.useState([]);
-  const [projectId, setProjectId] = React.useState();
-  const { samples: originalSamples, currentProject } = useSelector(
+  const { samples: originalSamples, currentProject, projectId } = useSelector(
     (state) => state.shareReducer
   );
 
@@ -48,14 +49,12 @@ function ShareSamples() {
     }
   }, [originalSamples, sampleIds]);
 
-  const updateCurrentSampleIds = (projectId) => {
-    setProjectId(projectId);
-  };
+  const updateCurrentSampleIds = (projectId) => dispatch(setProject(projectId));
 
   return (
     <Form layout="vertical">
       <Space direction="vertical" style={{ display: "block" }} size="large">
-        <Form.Item label={"Select a project to share the samples with"}>
+        <Form.Item label={i18n("ShareSamples.projects")}>
           <Select
             style={{ width: `100%` }}
             loading={projectLoading}
@@ -79,7 +78,11 @@ function ShareSamples() {
               title: "",
               dataIndex: "exists",
               render: (text, sample) =>
-                sample.exists && <Tag color="red">EXISTS</Tag>,
+                sample.exists && (
+                  <Tag color="red">
+                    {i18n("ShareSamples.exists").toUpperCase()}
+                  </Tag>
+                ),
             },
           ]}
         />
