@@ -25,6 +25,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -62,6 +63,11 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	private ProjectRole projectRole;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "metadata_role")
+	private ProjectMetadataRole metadataRole;
+
+	@NotNull
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date", updatable = false)
@@ -88,12 +94,13 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	 *                  {@link Project}.
 	 * @param role      The Role the users in the group should have
 	 */
-	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role) {
+	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role, final ProjectMetadataRole metadataRole) {
 		this.id = null;
 		this.createdDate = new Date();
 		this.project = project;
 		this.userGroup = userGroup;
 		this.projectRole = role;
+		this.metadataRole = metadataRole;
 	}
 
 	@Override
@@ -146,6 +153,14 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	@Override
 	public Date getTimestamp() {
 		return this.createdDate;
+	}
+
+	public ProjectMetadataRole getMetadataRole() {
+		return metadataRole;
+	}
+
+	public void setMetadataRole(ProjectMetadataRole metadataRole) {
+		this.metadataRole = metadataRole;
 	}
 
 }

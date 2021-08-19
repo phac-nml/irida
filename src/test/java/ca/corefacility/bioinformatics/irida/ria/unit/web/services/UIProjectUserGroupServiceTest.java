@@ -42,9 +42,9 @@ public class UIProjectUserGroupServiceTest {
 	private final UserGroup USER_GROUP_2 = new UserGroup("G2");
 	private final UserGroup USER_GROUP_3 = new UserGroup("G3");
 	private final List<UserGroupProjectJoin> PROJECT_USER_GROUP_JOINS = ImmutableList.of(
-			new UserGroupProjectJoin(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER),
-			new UserGroupProjectJoin(PROJECT, USER_GROUP_2, ProjectRole.PROJECT_USER),
-			new UserGroupProjectJoin(PROJECT, USER_GROUP_3, ProjectRole.PROJECT_OWNER));
+			new UserGroupProjectJoin(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1),
+			new UserGroupProjectJoin(PROJECT, USER_GROUP_2, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1),
+			new UserGroupProjectJoin(PROJECT, USER_GROUP_3, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 	private final List<UserGroup> USER_GROUPS = ImmutableList.of(USER_GROUP_1, USER_GROUP_2, USER_GROUP_3);
 	private final Locale LOCALE = Locale.CANADA;
 	private UIProjectUserGroupsService service;
@@ -100,15 +100,16 @@ public class UIProjectUserGroupServiceTest {
 		service.addUserGroupToProject(1L, newMemberRequest, LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
-		verify(projectService, times(1)).addUserGroupToProject(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_OWNER);
+		verify(projectService, times(1)).addUserGroupToProject(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_OWNER,
+				ProjectMetadataRole.LEVEL_4);
 	}
 
 	@Test
 	public void testUpdateUserGroupProjectRole() throws ProjectWithoutOwnerException {
-		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(), LOCALE);
+		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(), ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
-		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER);
+		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 	}
 
 	private Page<UserGroupProjectJoin> getPagedUserGroupsForProject() {

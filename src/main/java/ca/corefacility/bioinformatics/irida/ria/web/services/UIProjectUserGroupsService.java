@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -100,7 +101,8 @@ public class UIProjectUserGroupsService {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(request.getId());
 		ProjectRole role = ProjectRole.fromString(request.getRole());
-		projectService.addUserGroupToProject(project, group, role);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
+		projectService.addUserGroupToProject(project, group, role, metadataRole);
 		return messageSource.getMessage("server.usergroups.add", new Object[] { group.getLabel() }, locale);
 	}
 
@@ -114,15 +116,17 @@ public class UIProjectUserGroupsService {
 	 * @return message to user about the result of the update
 	 * @throws ProjectWithoutOwnerException thrown when updating the role will result in the project to have no owner
 	 */
-	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role, Locale locale)
+	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role, String metadataRole, Locale locale)
 			throws ProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(groupId);
 		ProjectRole projectRole = ProjectRole.fromString(role);
+		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
+
 		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
 
 		try {
-			projectService.updateUserGroupProjectRole(project, group, projectRole);
+			projectService.updateUserGroupProjectRole(project, group, projectRole, projectMetadataRole);
 			return messageSource.getMessage("server.usergroups.update.success",
 					new Object[] { group.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {

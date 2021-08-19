@@ -304,7 +304,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
-			ProjectRole projectRole) throws ProjectWithoutOwnerException {
+			ProjectRole projectRole, ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (j == null) {
 			throw new EntityNotFoundException(
@@ -314,6 +314,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 		}
 		j.setProjectRole(projectRole);
+		j.setMetadataRole(metadataRole);
 		return ugpjRepository.save(j);
 	}
 
@@ -675,8 +676,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
-		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
+	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role, ProjectMetadataRole metadataRole) {
+		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role, metadataRole));
 	}
 
 	/**

@@ -460,7 +460,8 @@ public class ProjectServiceImplTest {
 		final UserGroup ug = new UserGroup("group");
 
 		final ProjectUserJoin puj = new ProjectUserJoin(p1, u, ProjectRole.PROJECT_OWNER);
-		final UserGroupProjectJoin ugpj = new UserGroupProjectJoin(p2, ug, ProjectRole.PROJECT_OWNER);
+		final UserGroupProjectJoin ugpj = new UserGroupProjectJoin(p2, ug, ProjectRole.PROJECT_OWNER,
+				ProjectMetadataRole.LEVEL_4);
 
 		when(pujRepository.getProjectsForUser(u)).thenReturn(ImmutableList.of(puj));
 		when(ugpjRepository.findProjectsByUser(u)).thenReturn(ImmutableList.of(ugpj));

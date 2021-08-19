@@ -94,9 +94,9 @@ public class ProjectUserGroupsAjaxController {
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateUserGroupRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-			@RequestParam String role, Locale locale) {
+			@RequestParam String role, @RequestParam String metadataRole, Locale locale) {
 		try {
-			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, role, locale));
+			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, role, metadataRole, locale));
 		} catch (ProjectWithoutOwnerException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(e.getMessage());

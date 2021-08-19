@@ -59,7 +59,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role);
+	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role, ProjectMetadataRole metadataRole);
 
 	/**
 	 * Remove the specified {@link User} from the {@link Project}.
@@ -117,7 +117,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *             owner
 	 */
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
-			ProjectRole projectRole) throws ProjectWithoutOwnerException;
+			ProjectRole projectRole, ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException;
 
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
