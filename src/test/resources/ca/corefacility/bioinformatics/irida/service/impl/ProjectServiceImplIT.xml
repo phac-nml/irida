@@ -100,7 +100,7 @@
                   email_subscription="false" metadataRole="LEVEL_4"/>
     <project_user id="10" project_id="10" user_id="3"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  email_subscription="false" metadataRole="LEVEL_4"/>
     <project_user id="11" project_id="11" user_id="3"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
                   email_subscription="false" metadataRole="LEVEL_4"/>

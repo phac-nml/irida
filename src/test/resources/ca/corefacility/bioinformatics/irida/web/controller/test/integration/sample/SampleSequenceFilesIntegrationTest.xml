@@ -24,7 +24,7 @@
 		createdDate="2013-07-18 14:20:19.0" owner="true" />
 	<project_user id="1" project_id="5" user_id="3"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		email_subscription="false" metadataRole="LEVEL_4"/>
 
 	<analysis_submission id="1" name="sistr"
 		workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"

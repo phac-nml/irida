@@ -41,7 +41,9 @@
         </createTable>
 
         <addColumn tableName="project_user">
-            <column name="metadataRole" type="varchar(255)" value="LEVEL_4"/>
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4">
+                <constraints nullable="false"/>
+            </column>
         </addColumn>
 
         <addColumn tableName="project_user_AUD">
