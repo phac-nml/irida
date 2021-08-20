@@ -245,7 +245,7 @@ public class UIProjectsService {
 	 * @param currentId Current project identifier
 	 * @return {@link List} of {@link Project}s
 	 */
-	public List<Project> getProjectsToShareTo(long currentId) {
+	public List<Project> getPotentialProjectsToShareTo(long currentId) {
 		Project project = projectService.read(currentId);
 		Page<Project> projects = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
 				Sort.Direction.ASC, "name");
