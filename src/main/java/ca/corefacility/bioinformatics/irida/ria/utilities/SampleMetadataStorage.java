@@ -33,6 +33,13 @@ public class SampleMetadataStorage {
 		return rows;
 	}
 
+	public SampleMetadataStorageRow getRow(String sampleName, String sampleNameColumn) {
+		return rows.stream()
+				.filter(row -> sampleName.equals(row.getEntryValue(sampleNameColumn)))
+				.findFirst()
+				.orElse(null);
+	}
+
 	public List<SampleMetadataStorageRow> getFoundRows() {
 		return rows == null ?
 				Collections.emptyList() :

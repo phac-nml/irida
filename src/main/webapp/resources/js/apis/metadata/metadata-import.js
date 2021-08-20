@@ -42,11 +42,12 @@ export const metadataImportApi = createApi({
       invalidatesTags: ["MetadataImport"],
     }),
     saveProjectSampleMetadata: build.mutation({
-      query: ({ projectId, sampleNameColumn }) => ({
+      query: ({ projectId, sampleNames }) => ({
         url: `/upload/save`,
         method: 'POST',
         params: {
           projectId,
+          sampleNames
         }
       }),
       invalidatesTags: ["MetadataImport"],

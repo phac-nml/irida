@@ -1,11 +1,9 @@
 import React from "react";
-import { navigate } from "@reach/router"
 import {
   Button,
   Result,
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useSaveProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 /**
@@ -15,18 +13,19 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  * @constructor
  */
 export function SampleMetadataImportComplete({ projectId }) {
-  const [saveMetadata, {isLoading}] = useSaveProjectSampleMetadataMutation(projectId);
-
-  React.useEffect(() => {
-    saveMetadata({ projectId: projectId });
-  }, []);
+  const new_sample_count = 1;
+  const updated_sample_count = 2;
 
   return (
     <SampleMetadataImportWizard currentStep={3}>
       <Result
         status="success"
         title={i18n("SampleMetadataImportComplete.result.title")}
-        subTitle={i18n("SampleMetadataImportComplete.result.subTitle")}
+        subTitle={
+          ((updated_sample_count > 0) ? i18n("SampleMetadataImportComplete.result.subTitle.multiple-updated", updated_sample_count) : i18n("SampleMetadataImportComplete.result.subTitle.single-updated", updated_sample_count))
+          +
+          ((new_sample_count > 0) ? i18n("SampleMetadataImportComplete.result.subTitle.multiple-created", new_sample_count) : i18n("SampleMetadataImportComplete.result.subTitle.single-created", new_sample_count))
+        }
         extra={
           <Button type="primary" href={setBaseUrl(`projects/${projectId}/sample-metadata/upload2/file`)}>
             {i18n("SampleMetadataImportComplete.button.upload")}

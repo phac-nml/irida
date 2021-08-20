@@ -12,10 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -67,7 +69,7 @@ public class UIMetadataImportService {
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
-	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, long projectId, MultipartFile file) {
+	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, Long projectId, MultipartFile file) {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try (InputStream inputStream = file.getInputStream()) {
@@ -106,7 +108,7 @@ public class UIMetadataImportService {
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
 	 * @return {@link String} containing a complete message.
 	 */
-	public String setProjectSampleMetadataSampleId(HttpSession session, long projectId, String sampleNameColumn) {
+	public String setProjectSampleMetadataSampleId(HttpSession session, Long projectId, String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
@@ -136,12 +138,14 @@ public class UIMetadataImportService {
 	/**
 	 * Save uploaded metadata
 	 *
-	 * @param locale    {@link Locale} of the current user.
-	 * @param session   {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current project
+	 * @param locale      {@link Locale} of the current user.
+	 * @param session     {@link HttpSession}
+	 * @param projectId   {@link Long} identifier for the current project
+	 * @param sampleNames {@link List} of {@link String} sample names
 	 * @return {@link ProjectSampleMetadataResponse} that returns a message and potential errors.
 	 */
-	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, long projectId) {
+	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
+			List<String> sampleNames) {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
 		Project project = projectService.read(projectId);
@@ -152,18 +156,23 @@ public class UIMetadataImportService {
 			response.setMessageKey("stored-error");
 		}
 
-		List<SampleMetadataStorageRow> found = stored.getFoundRows();
-
-		if (found != null) {
-			// Lets try to get a sample
+		if (sampleNames != null) {
 			String sampleNameColumn = stored.getSampleNameColumn();
 			List<String> errorList = new ArrayList<>();
-			try {
-				for (SampleMetadataStorageRow row : found) {
 
-					String name = row.getEntryValue(sampleNameColumn);
-					Sample sample = sampleService.getSampleBySampleName(project, name);
+			try {
+				for (String sampleName : sampleNames) {
 					Set<MetadataEntry> metadataEntrySet = new HashSet<>();
+					SampleMetadataStorageRow row = stored.getRow(sampleName, sampleNameColumn);
+					String name = row.getEntryValue(sampleNameColumn);
+					Sample sample = null;
+
+					if (row.getFoundSampleId() != null) {
+						sample = sampleService.getSampleBySampleName(project, name);
+					} else {
+						sample = new Sample(name);
+						projectService.addSampleToProject(project, sample, true);
+					}
 
 					// Need to overwrite duplicate keys
 					for (Map.Entry<String, String> entry : row.getEntry()
@@ -206,7 +215,7 @@ public class UIMetadataImportService {
 		if (response.getMessageKey() == null) {
 			response.setMessageKey("success");
 			response.setMessage(messageSource.getMessage("server.metadataimport.results.save.success",
-					new Object[] { found.size() }, locale));
+					new Object[] { sampleNames.size() }, locale));
 		}
 
 		return response;
@@ -218,7 +227,7 @@ public class UIMetadataImportService {
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	public void clearProjectSampleMetadata(HttpSession session, long projectId) {
+	public void clearProjectSampleMetadata(HttpSession session, Long projectId) {
 		session.removeAttribute("pm-" + projectId);
 	}
 
@@ -229,7 +238,7 @@ public class UIMetadataImportService {
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
-	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, long projectId) {
+	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, Long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 	}
 }

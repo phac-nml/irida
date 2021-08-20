@@ -2,7 +2,7 @@ import React from 'react'
 import { navigate } from '@reach/router'
 import { Button, Table, Tag, Typography } from 'antd'
 import { SampleMetadataImportWizard } from './SampleMetadataImportWizard'
-import { useGetProjectSampleMetadataQuery } from '../../../../apis/metadata/metadata-import'
+import { useGetProjectSampleMetadataQuery, useSaveProjectSampleMetadataMutation } from '../../../../apis/metadata/metadata-import'
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -20,6 +20,7 @@ export function SampleMetadataImportReview({ projectId }) {
   const [columns, setColumns] = React.useState([])
   const [selected, setSelected] = React.useState([])
   const { data = {}, isLoading } = useGetProjectSampleMetadataQuery(projectId)
+  const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
     title: '',
     dataIndex: 'tags',
@@ -91,6 +92,11 @@ export function SampleMetadataImportReview({ projectId }) {
     }
   }, [data, isLoading])
 
+  const save = () => {
+    navigate('complete');
+    saveMetadata({ projectId, sampleNames: selected });
+  };
+
   return (
     <SampleMetadataImportWizard currentStep={2}>
       <Text>{i18n('SampleMetadataImportReview.description')}</Text>
@@ -116,7 +122,7 @@ export function SampleMetadataImportReview({ projectId }) {
         <Button
           className="t-metadata-uploader-upload-button"
           style={{ marginLeft: 'auto' }}
-          onClick={() => navigate('complete')}
+          onClick={save}
         >
           {i18n('SampleMetadataImportReview.button.next')}
           <IconArrowRight />

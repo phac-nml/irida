@@ -49,7 +49,7 @@ public class ProjectSampleMetadataAjaxController {
 	@PostMapping("/upload/file")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> createProjectSampleMetadata(HttpSession session,
-			@RequestParam long projectId, @RequestParam("file") MultipartFile file) {
+			@RequestParam Long projectId, @RequestParam("file") MultipartFile file) {
 		return ResponseEntity.ok(metadataImportService.createProjectSampleMetadata(session, projectId, file));
 	}
 
@@ -64,7 +64,7 @@ public class ProjectSampleMetadataAjaxController {
 	@PostMapping("/upload/setSampleColumn")
 	@ResponseBody
 	public ResponseEntity<AjaxResponse> setProjectSampleMetadataSampleId(HttpSession session,
-			@RequestParam long projectId, @RequestParam String sampleNameColumn) {
+			@RequestParam Long projectId, @RequestParam String sampleNameColumn) {
 		return ResponseEntity.ok(new AjaxSuccessResponse(
 				metadataImportService.setProjectSampleMetadataSampleId(session, projectId, sampleNameColumn)));
 	}
@@ -72,18 +72,19 @@ public class ProjectSampleMetadataAjaxController {
 	/**
 	 * Save uploaded metadata to the
 	 *
-	 * @param locale    {@link Locale} of the current user.
-	 * @param session   {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current project
+	 * @param locale      {@link Locale} of the current user.
+	 * @param session     {@link HttpSession}
+	 * @param projectId   {@link Long} identifier for the current project
+	 * @param sampleNames {@link List} of {@link String} sample names
 	 * @return {@link Map} of potential errors.
 	 */
 	@PostMapping("/upload/save")
 	@ResponseBody
 	public ResponseEntity<ProjectSampleMetadataResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
-			@RequestParam long projectId) {
+			@RequestParam Long projectId, @RequestParam List<String> sampleNames) {
 
 		ProjectSampleMetadataResponse response = metadataImportService.saveProjectSampleMetadata(locale, session,
-				projectId);
+				projectId, sampleNames);
 
 		if (response.getMessageKey()
 				.equals("success")) {
@@ -101,7 +102,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
 	@GetMapping("/upload/clear")
-	public void clearProjectSampleMetadata(HttpSession session, @RequestParam long projectId) {
+	public void clearProjectSampleMetadata(HttpSession session, @RequestParam Long projectId) {
 		metadataImportService.clearProjectSampleMetadata(session, projectId);
 	}
 
@@ -115,7 +116,7 @@ public class ProjectSampleMetadataAjaxController {
 	@GetMapping("/upload/getMetadata")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> getProjectSampleMetadata(HttpSession session,
-			@RequestParam long projectId) {
+			@RequestParam Long projectId) {
 		return ResponseEntity.ok(metadataImportService.getProjectSampleMetadata(session, projectId));
 	}
 }
