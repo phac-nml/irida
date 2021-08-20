@@ -1,9 +1,10 @@
-import { Form, Select, Space, Table, Tag } from "antd";
+import { Form, Select, Space } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { useGetProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
+import { ShareSamples } from "./ShareSamples";
 import { setProject } from "./shareSlice";
 import store from "./store";
 
@@ -13,9 +14,8 @@ import store from "./store";
  * @returns {JSX.Element}
  * @constructor
  */
-function ShareSamples() {
+function ShareLayout() {
   const dispatch = useDispatch();
-  const [samples, setSamples] = React.useState();
   const { originalSamples, currentProject, projectId } = useSelector(
     (state) => state.shareReducer
   );
@@ -31,21 +31,6 @@ function ShareSamples() {
     skip: !projectId,
   });
 
-  React.useEffect(() => {
-    setSamples(originalSamples);
-  }, [originalSamples]);
-
-  React.useEffect(() => {
-    if (sampleIds) {
-      setSamples(
-        originalSamples.map((sample) => ({
-          ...sample,
-          exists: sampleIds.includes(sample.id),
-        }))
-      );
-    }
-  }, [originalSamples, sampleIds]);
-
   const updateCurrentSampleIds = (projectId) => dispatch(setProject(projectId));
 
   return (
@@ -53,6 +38,7 @@ function ShareSamples() {
       <Space direction="vertical" style={{ display: "block" }} size="large">
         <Form.Item label={i18n("ShareSamples.projects")}>
           <Select
+            size="large"
             style={{ width: `100%` }}
             loading={projectLoading}
             options={projects?.map((project) => ({
@@ -62,27 +48,7 @@ function ShareSamples() {
             onChange={updateCurrentSampleIds}
           />
         </Form.Item>
-        <Table
-          loading={!originalSamples}
-          dataSource={samples}
-          rowKey={(sample) => `sample-${sample.id}`}
-          columns={[
-            {
-              title: "Name",
-              dataIndex: "name",
-            },
-            {
-              title: "",
-              dataIndex: "exists",
-              render: (text, sample) =>
-                sample.exists && (
-                  <Tag color="red">
-                    {i18n("ShareSamples.exists").toUpperCase()}
-                  </Tag>
-                ),
-            },
-          ]}
-        />
+        {sampleIds && <ShareSamples sampleIds={sampleIds} />}
       </Space>
     </Form>
   );
@@ -90,7 +56,7 @@ function ShareSamples() {
 
 render(
   <Provider store={store}>
-    <ShareSamples />
+    <ShareLayout />
   </Provider>,
   document.querySelector("#root")
 );

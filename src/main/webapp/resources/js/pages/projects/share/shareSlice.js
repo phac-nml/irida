@@ -4,6 +4,10 @@ export const setProject = createAction(`share/setProject`, (projectId) => ({
   payload: { projectId },
 }));
 
+export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
+  payload: { sampleId },
+}));
+
 /**
  * Set up the initial state.  This is pulled from session storage which should
  * be accessed by the key "share".  The stringified object should be of the format:
