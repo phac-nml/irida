@@ -16,6 +16,7 @@ import store from "./store";
 function ShareSamples() {
   const dispatch = useDispatch();
   const [samples, setSamples] = React.useState();
+  const [options, setOptions] = React.useState();
   const { originalSamples, currentProject, projectId } = useSelector(
     (state) => state.shareReducer
   );
@@ -34,6 +35,17 @@ function ShareSamples() {
   React.useEffect(() => {
     setSamples(originalSamples);
   }, [originalSamples]);
+
+  React.useEffect(() => {
+    if (!projectLoading) {
+      setOptions(
+        projects.map((project) => ({
+          label: project.name,
+          value: project.identifier,
+        }))
+      );
+    }
+  }, [projects, projectLoading]);
 
   React.useEffect(() => {
     if (sampleIds) {
@@ -55,10 +67,7 @@ function ShareSamples() {
           <Select
             style={{ width: `100%` }}
             loading={projectLoading}
-            options={projects?.map((project) => ({
-              label: project.name,
-              value: project.identifier,
-            }))}
+            options={options}
             onChange={updateCurrentSampleIds}
           />
         </Form.Item>
