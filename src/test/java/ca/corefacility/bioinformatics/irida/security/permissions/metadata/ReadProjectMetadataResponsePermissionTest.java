@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadat
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
@@ -41,6 +42,8 @@ public class ReadProjectMetadataResponsePermissionTest {
 	@Mock
 	ProjectUserJoinRepository projectUserJoinRepository;
 	@Mock
+	UserGroupProjectJoinRepository userGroupProjectJoinRepository;
+	@Mock
 	MetadataRestrictionRepository metadataRestrictionRepository;
 
 	User user;
@@ -52,7 +55,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		permission = new ReadProjectMetadataResponsePermission(userRepository, projectUserJoinRepository,
-				metadataRestrictionRepository);
+				userGroupProjectJoinRepository, metadataRestrictionRepository);
 
 		admin = new User();
 		admin.setUsername("admin");

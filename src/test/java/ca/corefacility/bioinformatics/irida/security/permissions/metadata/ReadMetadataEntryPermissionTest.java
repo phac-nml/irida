@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -45,6 +46,8 @@ public class ReadMetadataEntryPermissionTest {
 	ProjectSampleJoinRepository projectSampleJoinRepository;
 	@Mock
 	MetadataEntryRepository metadataEntryRepository;
+	@Mock
+	UserGroupProjectJoinRepository userGroupProjectJoinRepository;
 
 	Project project;
 	User user;
@@ -60,7 +63,7 @@ public class ReadMetadataEntryPermissionTest {
 		MockitoAnnotations.initMocks(this);
 
 		permission = new ReadMetadataEntryPermission(metadataEntryRepository, projectSampleJoinRepository,
-				metadataRestrictionRepository, projectUserJoinRepository, userRepository);
+				metadataRestrictionRepository, projectUserJoinRepository, userRepository, userGroupProjectJoinRepository);
 
 		user = new User();
 		user.setUsername("user");

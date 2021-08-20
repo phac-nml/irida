@@ -19,7 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestri
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
@@ -34,14 +36,16 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository projectUserJoinRepository;
+	private UserGroupProjectJoinRepository userGroupProjectJoinRepository;
 	private MetadataRestrictionRepository metadataRestrictionRepository;
 
 	@Autowired
 	public ReadProjectMetadataResponsePermission(UserRepository userRepository,
-			ProjectUserJoinRepository projectUserJoinRepository,
+			ProjectUserJoinRepository projectUserJoinRepository, UserGroupProjectJoinRepository userGroupProjectJoinRepository,
 			MetadataRestrictionRepository metadataRestrictionRepository) {
 		this.userRepository = userRepository;
 		this.projectUserJoinRepository = projectUserJoinRepository;
+		this.userGroupProjectJoinRepository = userGroupProjectJoinRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 	}
 
@@ -62,18 +66,23 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		//get the user & project
 		User user = userRepository.loadUserByUsername(authentication.getName());
 		Project project = metadataResponse.getProject();
-		ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
 
 		//get the user's role on the project
-		ProjectMetadataRole userProjectRole;
-		if (projectJoinForUser != null) {
-			userProjectRole = projectJoinForUser.getMetadataRole();
-		} else if (user.getSystemRole()
+		ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
+		List<UserGroupProjectJoin> groupsForProjectAndUser = userGroupProjectJoinRepository.findGroupsForProjectAndUser(
+				project, user);
+
+		ProjectMetadataRole userProjectRole = ProjectMetadataRole.getMaxRoleForProjectAndGroups(projectJoinForUser,
+				groupsForProjectAndUser);
+
+		//if the user isn't on the project but is an admin, treat them as a project owner
+		if (userProjectRole == null && user.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
-			//if the user isn't on the project but is an admin, treat them as a project owner
 			userProjectRole = ProjectMetadataRole.LEVEL_4;
-		} else {
-			//if the user is not otherwise on the project, they shouldn't be able to read anything
+		}
+
+		//if the role is _still_ null, then they're not allowed to read
+		if (userProjectRole == null) {
 			return false;
 		}
 
@@ -96,6 +105,8 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		 * for each field check if the set of fields contain any they shouldn't be able to read.
 		 * this will return true if the user is allowed to read all the fields in the set.
 		 */
+
+		final ProjectMetadataRole finalUserProjectRole = userProjectRole; //need a final copy of this role because its being used in the lambda below
 		boolean allFieldsValid = fields.stream()
 				.filter(field -> {
 					//if we have a restriction on a field, compare it against the user's role on the project
@@ -106,7 +117,7 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 						/*
 						 * Compare the restriction level to the user's role.  If user's role is less, return the unauthorized field.
 						 */
-						return userProjectRole.getLevel() < restrictionRole.getLevel();
+						return finalUserProjectRole.getLevel() < restrictionRole.getLevel();
 					} else {
 						//if there's no restriction set for the field, all users can view
 						return false;

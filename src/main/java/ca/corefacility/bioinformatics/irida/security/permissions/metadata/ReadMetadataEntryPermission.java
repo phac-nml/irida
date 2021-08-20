@@ -15,8 +15,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -33,6 +35,7 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 	ProjectSampleJoinRepository projectSampleJoinRepository;
 	MetadataRestrictionRepository restrictionRepository;
 	ProjectUserJoinRepository projectUserJoinRepository;
+	UserGroupProjectJoinRepository userGroupProjectJoinRepository;
 
 	UserRepository userRepository;
 
@@ -40,12 +43,13 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 	public ReadMetadataEntryPermission(MetadataEntryRepository repository,
 			ProjectSampleJoinRepository projectSampleJoinRepository,
 			MetadataRestrictionRepository restrictionRepository, ProjectUserJoinRepository projectUserJoinRepository,
-			UserRepository userRepository) {
+			UserRepository userRepository, UserGroupProjectJoinRepository userGroupProjectJoinRepository) {
 		super(MetadataEntry.class, Long.class, repository);
 		this.projectSampleJoinRepository = projectSampleJoinRepository;
 		this.restrictionRepository = restrictionRepository;
 		this.projectUserJoinRepository = projectUserJoinRepository;
 		this.userRepository = userRepository;
+		this.userGroupProjectJoinRepository = userGroupProjectJoinRepository;
 	}
 
 	@Override
@@ -70,13 +74,17 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 					project, field);
 
 			ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
-			if (projectJoinForUser != null) {
+			List<UserGroupProjectJoin> groupsForProjectAndUser = userGroupProjectJoinRepository.findGroupsForProjectAndUser(
+					project, user);
 
-				ProjectMetadataRole metadataRole = projectJoinForUser.getMetadataRole();
+			ProjectMetadataRole metadataRole = ProjectMetadataRole.getMaxRoleForProjectAndGroups(projectJoinForUser,
+					groupsForProjectAndUser);
 
+			if (metadataRole != null) {
 				//if there's no restriction, add it at the base level
 				if (restrictionForFieldAndProject == null) {
-					restrictionForFieldAndProject = new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_1);
+					restrictionForFieldAndProject = new MetadataRestriction(project, field,
+							ProjectMetadataRole.LEVEL_1);
 				}
 
 				if (metadataRole.getLevel() >= restrictionForFieldAndProject.getLevel()
@@ -87,5 +95,23 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 		}
 
 		return false;
+	}
+
+	private ProjectMetadataRole getMaxMetadataRoleForUserAndGroups(ProjectUserJoin userJoin,
+			List<UserGroupProjectJoin> groupsForProjectAndUser) {
+		ProjectMetadataRole metadataRole = null;
+
+		if (userJoin != null) {
+			metadataRole = userJoin.getMetadataRole();
+		}
+
+		for (UserGroupProjectJoin group : groupsForProjectAndUser) {
+			if (metadataRole.getLevel() < group.getMetadataRole()
+					.getLevel()) {
+				metadataRole = group.getMetadataRole();
+			}
+		}
+
+		return metadataRole;
 	}
 }

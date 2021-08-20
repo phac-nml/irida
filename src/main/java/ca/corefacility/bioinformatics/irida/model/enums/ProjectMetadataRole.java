@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
+import java.util.Collection;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+
 /**
  * Role for a user's level of metadata access for a project.
  */
@@ -45,5 +50,23 @@ public enum ProjectMetadataRole {
 
 	public int getLevel() {
 		return level;
+	}
+
+	public static ProjectMetadataRole getMaxRoleForProjectAndGroups(ProjectUserJoin userJoin,
+			Collection<UserGroupProjectJoin> groupJoins) {
+		ProjectMetadataRole metadataRole = null;
+
+		if (userJoin != null) {
+			metadataRole = userJoin.getMetadataRole();
+		}
+
+		for (UserGroupProjectJoin group : groupJoins) {
+			if (metadataRole.getLevel() < group.getMetadataRole()
+					.getLevel()) {
+				metadataRole = group.getMetadataRole();
+			}
+		}
+
+		return metadataRole;
 	}
 }
