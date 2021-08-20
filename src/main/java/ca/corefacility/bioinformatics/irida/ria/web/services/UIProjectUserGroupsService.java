@@ -109,10 +109,11 @@ public class UIProjectUserGroupsService {
 	/**
 	 * Update the {@link ProjectRole} of a {@link UserGroup} on the current {@link Project}
 	 *
-	 * @param projectId Identifier for a {@link Project}
-	 * @param groupId   Identifier for an {@link UserGroup}
-	 * @param role      Role to update the user group to
-	 * @param locale    Current users {@link Locale}
+	 * @param projectId    Identifier for a {@link Project}
+	 * @param groupId      Identifier for an {@link UserGroup}
+	 * @param role         Role to update the user group to
+	 * @param metadataRole metadata role to update for the group
+	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
 	 * @throws ProjectWithoutOwnerException thrown when updating the role will result in the project to have no owner
 	 */

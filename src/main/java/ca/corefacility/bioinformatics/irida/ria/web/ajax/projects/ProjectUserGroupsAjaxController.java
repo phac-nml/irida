@@ -86,10 +86,11 @@ public class ProjectUserGroupsAjaxController {
 	/**
 	 * Update the project role of a user group on the current project
 	 *
-	 * @param projectId Identifier for a project
-	 * @param id        Identifier for an user group
-	 * @param role      Role to update the user group to
-	 * @param locale    Current users locale
+	 * @param projectId    Identifier for a project
+	 * @param id           Identifier for an user group
+	 * @param role         Role to update the user group to
+	 * @param metadataRole metadata role to update for the user group
+	 * @param locale       Current users locale
 	 * @return message to user about the result of the update
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)

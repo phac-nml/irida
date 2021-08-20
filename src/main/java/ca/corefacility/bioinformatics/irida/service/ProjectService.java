@@ -44,19 +44,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role,
 			ProjectMetadataRole metadataRole);
-	
+
 	/**
 	 * Add the specified {@link UserGroup} to the {@link Project} with a {@link Role} . If the {@link UserGroup} is a manager for
 	 * the {@link Project}, then the {@link UserGroup} should be added to the {@link Project} with the 'ROLE_MANAGER' {@link
 	 * Role}.
 	 *
-	 * @param project
-	 * 		the {@link Project} to add the user to.
-	 * @param userGroup
-	 * 		the user group to add to the {@link Project}.
-	 * @param role
-	 * 		the role that the user plays on the {@link Project}.
-	 *
+	 * @param project      the {@link Project} to add the user to.
+	 * @param userGroup    the user group to add to the {@link Project}.
+	 * @param role         the role that the user plays on the {@link Project}.
+	 * @param metadataRole the {@link ProjectMetadataRole} to set for the group
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role, ProjectMetadataRole metadataRole);
@@ -103,18 +100,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Update a {@link UserGroup}'s {@link ProjectRole} on a {@link Project}
 	 *
-	 * @param project
-	 *            The project to update
-	 * @param userGroup
-	 *            The user group to update
-	 * @param projectRole
-	 *            The role to set
-	 *
+	 * @param project      The project to update
+	 * @param userGroup    The user group to update
+	 * @param projectRole  The role to set
+	 * @param metadataRole the {@link ProjectMetadataRole} to set for the group
 	 * @return The newly updated role object
-	 *
-	 * @throws ProjectWithoutOwnerException
-	 *             If updating the user group leaves the project without an
-	 *             owner
+	 * @throws ProjectWithoutOwnerException If updating the user group leaves the project without an
+	 *                                      owner
 	 */
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole, ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException;
