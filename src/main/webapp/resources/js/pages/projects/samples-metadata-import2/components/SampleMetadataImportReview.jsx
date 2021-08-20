@@ -84,8 +84,8 @@ export function SampleMetadataImportReview({ projectId }) {
 
       setColumns(updatedColumns)
       setSelected(
-        data.rows.map((item) => {
-          return item.key
+        data.rows.map((row) => {
+          return row.entry[data.sampleNameColumn];
         }),
       )
     }
