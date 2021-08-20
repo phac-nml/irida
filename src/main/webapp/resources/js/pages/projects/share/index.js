@@ -2,7 +2,7 @@ import { Form, Select, Space } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { useGetProjectsToShareToQuery } from "../../../apis/projects/projects";
+import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import { ShareSamples } from "./ShareSamples";
 import { setProject } from "./shareSlice";
@@ -16,6 +16,8 @@ import store from "./store";
  */
 function ShareLayout() {
   const dispatch = useDispatch();
+  const [samples, setSamples] = React.useState();
+  const [options, setOptions] = React.useState();
   const { originalSamples, currentProject, projectId } = useSelector(
     (state) => state.shareReducer
   );
@@ -23,13 +25,28 @@ function ShareLayout() {
   const {
     data: projects,
     isLoading: projectLoading,
-  } = useGetProjectsToShareToQuery(currentProject, {
+  } = useGetPotentialProjectsToShareToQuery(currentProject, {
     skip: !currentProject,
   });
 
   const { data: sampleIds } = useGetSampleIdsForProjectQuery(projectId, {
     skip: !projectId,
   });
+
+  React.useEffect(() => {
+    setSamples(originalSamples);
+  }, [originalSamples]);
+
+  React.useEffect(() => {
+    if (!projectLoading) {
+      setOptions(
+        projects.map((project) => ({
+          label: project.name,
+          value: project.identifier,
+        }))
+      );
+    }
+  }, [projects, projectLoading]);
 
   const updateCurrentSampleIds = (projectId) => dispatch(setProject(projectId));
 
@@ -41,10 +58,7 @@ function ShareLayout() {
             size="large"
             style={{ width: `100%` }}
             loading={projectLoading}
-            options={projects?.map((project) => ({
-              label: project.name,
-              value: project.identifier,
-            }))}
+            options={options}
             onChange={updateCurrentSampleIds}
           />
         </Form.Item>

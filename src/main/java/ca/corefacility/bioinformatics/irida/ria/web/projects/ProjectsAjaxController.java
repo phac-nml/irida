@@ -80,7 +80,7 @@ public class ProjectsAjaxController {
 	 * @return {@link List} of {@link Project}s
 	 */
 	@RequestMapping("/samples-share/projects")
-	public List<Project> getProjectsToShareTo(@RequestParam long currentId) {
-		return projectsService.getProjectsToShareTo(currentId);
+	public List<Project> getPotentialProjectsToShareTo(@RequestParam long currentId) {
+		return projectsService.getPotentialProjectsToShareTo(currentId);
 	}
 }
