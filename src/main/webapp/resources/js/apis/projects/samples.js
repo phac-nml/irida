@@ -1,6 +1,23 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`/ajax/projects/${window.project.id}/samples`);
+
+export const samplesApi = createApi({
+  reducerPath: `samplesApi`,
+  baseQuery: fetchBaseQuery({
+    baseUrl: setBaseUrl(`/ajax/samples`),
+  }),
+  endpoints: (build) => ({
+    getSampleIdsForProject: build.query({
+      query: (projectId) => ({
+        url: `identifiers?projectId=${projectId}`,
+      }),
+    }),
+  }),
+});
+
+export const { useGetSampleIdsForProjectQuery } = samplesApi;
 
 /**
  * Server side validation of a new sample name.

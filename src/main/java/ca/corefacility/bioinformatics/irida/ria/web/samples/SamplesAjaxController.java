@@ -181,6 +181,17 @@ public class SamplesAjaxController {
 	}
 
 	/**
+	 * Get a list of all {@link Sample} identifiers within a specific project
+	 *
+	 * @param projectId Identifier for a Project
+	 * @return {@link List} of {@link Sample} identifiers
+	 */
+	@GetMapping("/identifiers")
+	public List<Long> getSampleIdsForProject(@RequestParam Long projectId) {
+		return uiSampleService.getSampleIdsForProject(projectId);
+	}
+
+	/**
 	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
 	 * to a {@link Sample}
 	 *

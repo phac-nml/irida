@@ -12,17 +12,15 @@ export const projectsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: URL }),
   tagTypes: ["Projects"],
   endpoints: (build) => ({
-    getProjectsForUser: build.query({
-      query: (query) => ({
-        url: "/user",
-        params: { query },
+    getPotentialProjectsToShareTo: build.query({
+      query: (currentId) => ({
+        url: `/samples-share/projects?currentId=${currentId}`,
       }),
-      providesTags: ["Projects"],
     }),
   }),
 });
 
-export const { useGetProjectsForUserQuery } = projectsApi;
+export const { useGetPotentialProjectsToShareToQuery } = projectsApi;
 
 /**
  * Returns the projects on the current page of the projects table.

@@ -1,6 +1,11 @@
-import { Table } from "antd";
+import { Form, Select, Space, Table, Tag } from "antd";
 import React from "react";
 import { render } from "react-dom";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
+import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
+import { setProject } from "./shareSlice";
+import store from "./store";
 
 /**
  * Base component for sharing samples between projects.
@@ -9,28 +14,92 @@ import { render } from "react-dom";
  * @constructor
  */
 function ShareSamples() {
+  const dispatch = useDispatch();
   const [samples, setSamples] = React.useState();
+  const [options, setOptions] = React.useState();
+  const { originalSamples, currentProject, projectId } = useSelector(
+    (state) => state.shareReducer
+  );
 
-  /*
-  CURRENTLY THIS IS JUST TO HAVE SOMETHING ON THE PAGE AND SHOW THAT THE SAMPLES
-  GET HERE.  DON'T WORRY TOO MUCH ABOUT LOOKING THROUGH THIS YET.
-   */
+  const {
+    data: projects,
+    isLoading: projectLoading,
+  } = useGetPotentialProjectsToShareToQuery(currentProject, {
+    skip: !currentProject,
+  });
+
+  const { data: sampleIds } = useGetSampleIdsForProjectQuery(projectId, {
+    skip: !projectId,
+  });
 
   React.useEffect(() => {
-    const stringData = window.sessionStorage.getItem("share");
-    const data = JSON.parse(stringData);
+    setSamples(originalSamples);
+  }, [originalSamples]);
 
-    setSamples(data.samples);
-  }, []);
+  React.useEffect(() => {
+    if (!projectLoading) {
+      setOptions(
+        projects.map((project) => ({
+          label: project.name,
+          value: project.identifier,
+        }))
+      );
+    }
+  }, [projects, projectLoading]);
+
+  React.useEffect(() => {
+    if (sampleIds) {
+      setSamples(
+        originalSamples.map((sample) => ({
+          ...sample,
+          exists: sampleIds.includes(sample.id),
+        }))
+      );
+    }
+  }, [originalSamples, sampleIds]);
+
+  const updateCurrentSampleIds = (projectId) => dispatch(setProject(projectId));
 
   return (
-    <Table
-      loading={!samples}
-      dataSource={samples}
-      rowKey={(sample) => `sample-${sample.id}`}
-      columns={[{ title: "Name", dataIndex: "name" }]}
-    />
+    <Form layout="vertical">
+      <Space direction="vertical" style={{ display: "block" }} size="large">
+        <Form.Item label={i18n("ShareSamples.projects")}>
+          <Select
+            style={{ width: `100%` }}
+            loading={projectLoading}
+            options={options}
+            onChange={updateCurrentSampleIds}
+          />
+        </Form.Item>
+        <Table
+          loading={!originalSamples}
+          dataSource={samples}
+          rowKey={(sample) => `sample-${sample.id}`}
+          columns={[
+            {
+              title: "Name",
+              dataIndex: "name",
+            },
+            {
+              title: "",
+              dataIndex: "exists",
+              render: (text, sample) =>
+                sample.exists && (
+                  <Tag color="red">
+                    {i18n("ShareSamples.exists").toUpperCase()}
+                  </Tag>
+                ),
+            },
+          ]}
+        />
+      </Space>
+    </Form>
   );
 }
 
-render(<ShareSamples />, document.querySelector("#root"));
+render(
+  <Provider store={store}>
+    <ShareSamples />
+  </Provider>,
+  document.querySelector("#root")
+);
