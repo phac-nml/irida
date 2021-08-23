@@ -52,6 +52,13 @@ public enum ProjectMetadataRole {
 		return level;
 	}
 
+	/**
+	 * Static method to compare a {@link ProjectUserJoin} and a collection of {@link UserGroupProjectJoin} and return the max {@link ProjectMetadataRole} from them
+	 *
+	 * @param userJoin   a user's {@link ProjectUserJoin}
+	 * @param groupJoins a collection of {@link UserGroupProjectJoin}
+	 * @return the max {@link ProjectMetadataRole}
+	 */
 	public static ProjectMetadataRole getMaxRoleForProjectAndGroups(ProjectUserJoin userJoin,
 			Collection<UserGroupProjectJoin> groupJoins) {
 		ProjectMetadataRole metadataRole = null;

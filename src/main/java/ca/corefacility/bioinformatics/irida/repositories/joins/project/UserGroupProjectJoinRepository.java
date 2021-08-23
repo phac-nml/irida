@@ -67,6 +67,13 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 */
 	public UserGroupProjectJoin findByProjectAndUserGroup(final Project p, final UserGroup userGroup);
 
+	/**
+	 * Get the {@link UserGroupProjectJoin} (potentially more than 1) between a given {@link User} and {@link Project}
+	 *
+	 * @param project the {@link Project} to get joins for
+	 * @param user    the {@link User} to get joins for
+	 * @return a list of {@link UserGroupProjectJoin}
+	 */
 	@Query("FROM UserGroupProjectJoin ugpj WHERE ugpj.project = ?1 AND ugpj.userGroup in (select group from UserGroupJoin where user = ?2)")
 	public List<UserGroupProjectJoin> findGroupsForProjectAndUser(Project project, User user);
 }
