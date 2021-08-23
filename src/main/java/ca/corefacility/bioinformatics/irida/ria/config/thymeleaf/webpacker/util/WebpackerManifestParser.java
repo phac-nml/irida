@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 
@@ -31,9 +29,11 @@ import com.google.common.collect.ImmutableList;
  */
 public class WebpackerManifestParser {
 	private static final Logger logger = LoggerFactory.getLogger(WebpackerManifestParser.class);
-	private static Entries entries;
+	private static WebpackEntries entries;
 	private static String manifestChecksum = "";
 	private static Boolean autoUpdatable = true;
+
+	private static final String ASSET_MANIFEST_FILE_PATH = "/dist/assets-manifest.json";
 
 	/**
 	 * Allows the UI configuration to determine during runtime if we are in a production or development
@@ -55,7 +55,7 @@ public class WebpackerManifestParser {
 	 */
 	public static List<String> getChunksForEntryType(
 			ServletContext context, String entry, WebpackerTagType type) {
-		Entries entries = getEntries(context);
+		WebpackEntries entries = getEntries(context);
 
 		/*
 		 * Ensure the entry actually exists in webpack.
@@ -94,10 +94,10 @@ public class WebpackerManifestParser {
 	 *
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
-	private static Entries getEntries(ServletContext context) {
+	private static WebpackEntries getEntries(ServletContext context) {
 		try {
 			if (WebpackerManifestParser.entries == null || autoUpdatable) {
-				String path = context.getResource("/dist/assets-manifest.json")
+				String path = context.getResource(ASSET_MANIFEST_FILE_PATH)
 						.getPath();
 				File manifestFile = ResourceUtils.getFile(path);
 				try (InputStream is = Files.newInputStream(manifestFile.toPath())) {
@@ -123,8 +123,8 @@ public class WebpackerManifestParser {
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
 	@SuppressWarnings("unchecked")
-	private static Entries parseWebpackManifestFile(File file) {
-		Entries entries = null;
+	public static WebpackEntries parseWebpackManifestFile(File file) {
+		WebpackEntries entries = null;
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			Map<String, Object> manifest = objectMapper.readValue(file, new TypeReference<Map<String, Object>>() {
@@ -132,45 +132,10 @@ public class WebpackerManifestParser {
 
 			Map<String, Map<String, Map<String, List<String>>>> entrypoints = (Map<String, Map<String, Map<String, List<String>>>>) manifest.get(
 					"entrypoints");
-			entries = new Entries(entrypoints);
+			entries = new WebpackEntries(entrypoints);
 		} catch (IOException e) {
 			logger.error("Error reading webpack manifest file.");
 		}
 		return entries;
-	}
-
-	static class EntryPoint {
-		private final List<String> javascript;
-		private final List<String> css;
-		private final List<String> html;
-
-		public EntryPoint(List<String> javascript, List<String> css, List<String> html) {
-			this.javascript = javascript;
-			this.css = css;
-			this.html = html;
-		}
-
-		public List<String> getJavascript() {
-			return javascript;
-		}
-
-		public List<String> getCss() {
-			return css;
-		}
-
-		public List<String> getHtml() {
-			return html;
-		}
-	}
-
-	static class Entries extends HashMap<String, EntryPoint> {
-		public Entries(Map<String, Map<String, Map<String, List<String>>>> entrypoints) {
-			Set<String> entries = entrypoints.keySet();
-			entries.forEach(entry -> {
-				Map<String, List<String>> assets = entrypoints.get(entry)
-						.get("assets");
-				this.put(entry, new EntryPoint(assets.get("js"), assets.get("css"), assets.get("html")));
-			});
-		}
 	}
 }
