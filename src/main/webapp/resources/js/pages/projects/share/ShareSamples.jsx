@@ -1,47 +1,33 @@
-import { List } from "antd";
+import { Row } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { grey3 } from "../../../styles/colors";
+import { SharedSamplesList } from "./SharedSamplesList";
 
 export function ShareSamples({ sampleIds = [] }) {
   const { originalSamples } = useSelector((state) => state.shareReducer);
-  const [existing, setExisting] = React.useState(0);
-  const [samples, setSamples] = React.useState();
+  const [existing, setExisting] = React.useState([]);
+  const [samples, setSamples] = React.useState([]);
 
   React.useEffect(() => {
     if (sampleIds) {
-      const updated = [];
-      let count = 0;
+      const newExists = [];
+      const newSamples = [];
       originalSamples.forEach((sample) => {
-        const exists = sampleIds.includes(sample.id);
-        if (exists) count++;
-        updated.push({
-          ...sample,
-          exists,
-        });
+        if (sampleIds.includes(sample.id)) {
+          newExists.push(sample);
+        } else {
+          newSamples.push(sample);
+        }
       });
-      setSamples(updated);
-      setExisting(count);
+      setSamples(newSamples);
+      setExisting(newExists);
     }
   }, [originalSamples, sampleIds]);
 
   return (
-    <List
-      header={
-        <div>
-          <h3>Samples To Copy</h3>
-          {existing} Exist in the target project and will not be recopied
-        </div>
-      }
-      bordered
-      dataSource={samples}
-      renderItem={(sample) => (
-        <List.Item
-          style={{ backgroundColor: sample.exists ? grey3 : "transparent" }}
-        >
-          <List.Item.Meta title={sample.name} />
-        </List.Item>
-      )}
-    />
+    <Row gutter={[16, 16]}>
+      <SharedSamplesList list={samples} />
+      <SharedSamplesList list={existing} />
+    </Row>
   );
 }
