@@ -13,9 +13,8 @@
     <div id="root" layout:fragment="main">
       <!--  Root react component: src/main/webapp/resources/js/pages/projects/share/index.js -->
     </div>
-    <script
-      th:src="@{/dist/js/project-share.bundle.js}"
-      layout:fragment="scripts"
-    ></script>
+    <th:block layout:fragment="scripts">
+      <script th:src="@{/dist/js/project-share.bundle.js}"></script>
+    </th:block>
   </body>
 </html>
