@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Data type to help a map of all the names of webpack entries with their corresponding assets.
+ */
 public class WebpackEntries extends HashMap<String, WebpackEntry>  {
 	public WebpackEntries(Map<String, Map<String, Map<String, List<String>>>> entrypoints) {
 		Set<String> entries = entrypoints.keySet();

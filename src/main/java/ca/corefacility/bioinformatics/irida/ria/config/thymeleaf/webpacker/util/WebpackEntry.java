@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util
 
 import java.util.List;
 
+/**
+ * Each webpack entry with have at least one JavaScript file, and possibly css files and html (translatons)
+ */
 public class WebpackEntry {
 		private final List<String> javascript;
 		private final List<String> css;
