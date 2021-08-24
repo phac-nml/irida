@@ -184,7 +184,19 @@ public class GalaxyLibrariesService {
 					logger.error(message);
 					throw new UploadException(message);
 				} else {
-					return library.getId();
+					// Get a list of the contents of the library
+					List<LibraryContent> contentsOfLibrary = librariesClient.getLibraryContents(library.getId());
+					/*
+					 Get the LibraryContent object (which matches the file name in the path)
+					 that extends the GalaxyObject and from there return the identifier
+					 */
+					return contentsOfLibrary.stream()
+							.filter(f -> f.getName()
+									.equals("/" + path.getFileName()
+											.toString()))
+							.findFirst()
+							.get()
+							.getId();
 				}
 			}
 		} catch (RuntimeException e) {
