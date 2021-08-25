@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
@@ -452,16 +453,12 @@ public class UIPipelineService {
 				.map(project -> {
 					List<UIReferenceFile> list = new ArrayList<>();
 					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
-							project)) {
-						try {
-							ReferenceFile file = projectReferenceFileJoin.getObject();
-							Path path = file.getFile();
-							String filesize = FileUtilities.humanReadableByteCount(Files.size(path), true);
-							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
-							list.add(uiReferenceFile);
-						} catch (IOException e) {
-							logger.error(e.getMessage());
-						}
+						project)) {
+						ReferenceFile file = projectReferenceFileJoin.getObject();
+						Path path = file.getFile();
+						String filesize = FileUtilities.humanReadableByteCount(IridaFiles.getFileSizeBytes(path), true);
+						UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
+						list.add(uiReferenceFile);
 					}
 					return list;
 				})
