@@ -34,8 +34,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
 import org.springframework.security.ldap.authentication.PasswordComparisonAuthenticator;
@@ -77,14 +79,20 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Value("${irida.administrative.authenitcation.ldap.url}")
 	private String ldapUrl;
 
+	@Value("${irida.administrative.authentication.ldap.base}")
+	private String ldapBase;
+
 	@Value("${irida.administrative.authenitcation.ldap.userdn}")
 	private String ldapUserDn;
+
+	@Value("${irida.administrative.authenitcation.ldap.password}")
+	private String ldapPassword;
 
 	@Value("${irida.administrative.authenitcation.ldap.password_attribute_name}")
 	private String ldapPasswordAttributeName;
 
-	@Value("${irida.administrative.authenitcation.ldap.password}")
-	private String ldapPassword;
+	@Value("${irida.administrative.authentication.ldap.userdn_search_patterns}")
+	private String ldapUserDnSearchPatterns;
 
 	@Value("${irida.administrative.authenitcation.ldap.set_referral}")
 	private String ldapSetReferral;
@@ -182,6 +190,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 			case "ldap":
 				provider = LdapAuthenticationProvider();
 				break;
+			case "ldapbind":
+				provider = LdapBindAuthenticationProvider();
+				break;
 			case "adldap":
 				provider = ActiveDirectoryLdapAuthenticationProvider();
 				break;
@@ -192,8 +203,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return provider;
 	}
 
-	@Bean
-	public AuthenticationProvider DaoAuthenticationProvider() {
+	private AuthenticationProvider DaoAuthenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userRepository);
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -222,13 +232,26 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public AuthenticationProvider LdapAuthenticationProvider() {
+	private AuthenticationProvider LdapAuthenticationProvider() {
 		PasswordComparisonAuthenticator ldapAuthenticator = new PasswordComparisonAuthenticator(ldapContextSource());
 		ldapAuthenticator.setPasswordEncoder(ldapPasswordEncoder());
-		String[] userDnPatterns = {ldapUserDn};
+		String[] userDnPatterns = {ldapUserDnSearchPatterns};
 		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
 		ldapAuthenticator.setPasswordAttributeName(ldapPasswordAttributeName);
+		ldapAuthenticator.afterPropertiesSet();
+
+		LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
+		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+
+		return authenticationProvider;
+	}
+
+	private AuthenticationProvider LdapBindAuthenticationProvider() {
+		BindAuthenticator ldapAuthenticator = new BindAuthenticator(ldapContextSource());
+//		ldapAuthenticator.setPasswordEncoder(ldapPasswordEncoder());
+		String[] userDnPatterns = {ldapUserDnSearchPatterns};
+		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
+//		ldapAuthenticator.setPasswordAttributeName(ldapPasswordAttributeName);
 		ldapAuthenticator.afterPropertiesSet();
 
 		LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
@@ -246,9 +269,10 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	public LdapContextSource ldapContextSource() {
 		LdapContextSource ldapContextSource = new LdapContextSource();
 		ldapContextSource.setUrl(ldapUrl);
+		ldapContextSource.setBase(ldapBase);
 		ldapContextSource.setUserDn(ldapUserDn);
 		ldapContextSource.setPassword(ldapPassword);
-//		ldapContextSource.setReferral(ldapSetReferral);
+		ldapContextSource.setReferral(ldapSetReferral);
 		ldapContextSource.afterPropertiesSet();
 		return ldapContextSource;
 
@@ -260,13 +284,21 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		encoders.put("bcrypt", new BCryptPasswordEncoder());
 		encoders.put("noop", NoOpPasswordEncoder.getInstance());
 		encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
+		MessageDigestPasswordEncoder md5 =  new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("MD5");
+		md5.setEncodeHashAsBase64(true);
+		encoders.put("MD5", md5);
+		MessageDigestPasswordEncoder SHA256 =  new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("SHA-256");
+		SHA256.setEncodeHashAsBase64(true);
+		encoders.put("SHA256", SHA256);
 		encoders.put("scrypt", new SCryptPasswordEncoder());
-		encoders.put("sha256", new StandardPasswordEncoder());
+//		encoders.put("SHA256", new StandardPasswordEncoder());
+		encoders.put("ldapsha", new LdapShaPasswordEncoder());
+		encoders.put("SSHA", new LdapShaPasswordEncoder());
 		return new DelegatingPasswordEncoder(ldapPasswordEncoder, encoders);
+//		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 
-	@Bean
-	public AuthenticationProvider ActiveDirectoryLdapAuthenticationProvider() {
+	private AuthenticationProvider ActiveDirectoryLdapAuthenticationProvider() {
 		ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
 				new ActiveDirectoryLdapAuthenticationProvider(adLdapDomain, adLdapUrl, adLdapRootDn);
 		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
