@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
@@ -452,8 +451,12 @@ public class UIPipelineService {
 						project)) {
 						ReferenceFile file = projectReferenceFileJoin.getObject();
 						String filesize = file.getFileSize();
-						UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
-						list.add(uiReferenceFile);
+						if(!filesize.equals("N/A")) {
+							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
+							list.add(uiReferenceFile);
+						} else {
+							logger.error("Unable to locate reference file " + file.getLabel());
+						}
 					}
 					return list;
 				})
