@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 
@@ -455,8 +451,7 @@ public class UIPipelineService {
 					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
 						project)) {
 						ReferenceFile file = projectReferenceFileJoin.getObject();
-						Path path = file.getFile();
-						String filesize = FileUtilities.humanReadableByteCount(IridaFiles.getFileSizeBytes(path), true);
+						String filesize = file.getFileSize();
 						UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
 						list.add(uiReferenceFile);
 					}
