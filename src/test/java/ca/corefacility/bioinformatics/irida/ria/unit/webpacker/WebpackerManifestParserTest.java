@@ -21,7 +21,8 @@ public class WebpackerManifestParserTest {
 	@Test
 	public void TestParseWebpackManifestFile() {
 		Path path = Paths.get(FILE_PATH);
-		WebpackEntries entries = WebpackerManifestParser.parseWebpackManifestFile(path.toFile());
+		WebpackerManifestParser parser = new WebpackerManifestParser(true);
+		WebpackEntries entries = parser.parseWebpackManifestFile(path.toFile());
 		Assert.assertEquals("Should be 53 entries", NUM_ENTRIES, entries.keySet()
 				.size());
 		entries.forEach((name, files) -> {

@@ -90,15 +90,15 @@ public class WebpackerManifestParser {
 	 */
 	private WebpackEntries getEntries(ServletContext context) {
 		try {
-			if (WebpackerManifestParser.entries == null || autoUpdatable) {
+			if (entries == null || updatable) {
 				String path = context.getResource(ASSET_MANIFEST_FILE_PATH)
 						.getPath();
 				File manifestFile = ResourceUtils.getFile(path);
 				try (InputStream is = Files.newInputStream(manifestFile.toPath())) {
 					String checksum = org.apache.commons.codec.digest.DigestUtils.sha256Hex(is);
-					if (!checksum.equals(WebpackerManifestParser.manifestChecksum)) {
-						WebpackerManifestParser.entries = parseWebpackManifestFile(manifestFile);
-						WebpackerManifestParser.manifestChecksum = checksum;
+					if (!checksum.equals(manifestChecksum)) {
+						entries = parseWebpackManifestFile(manifestFile);
+						manifestChecksum = checksum;
 					}
 				} catch (IOException e) {
 					throw new FileProcessorException("could not calculate checksum", e);
@@ -107,7 +107,7 @@ public class WebpackerManifestParser {
 		} catch (FileNotFoundException | MalformedURLException e) {
 			logger.error("Cannot find webpack manifest file.");
 		}
-		return WebpackerManifestParser.entries;
+		return entries;
 	}
 
 	/**
