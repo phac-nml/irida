@@ -38,7 +38,6 @@ import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerManifestParser;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 
@@ -174,7 +173,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))) {
 			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
-			WebpackerManifestParser.setAutoUpdatable(false);
 		} else {
 			resolver.setCacheable(false);
 		}
@@ -200,7 +198,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))) {
 			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
-			WebpackerManifestParser.setAutoUpdatable(false);
 		} else {
 			resolver.setCacheable(false);
 		}
@@ -254,7 +251,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
-		dialects.add(new WebpackerDialect());
+		dialects.add(new WebpackerDialect(env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))));
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());

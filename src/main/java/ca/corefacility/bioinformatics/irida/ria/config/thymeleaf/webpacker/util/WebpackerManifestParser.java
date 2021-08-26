@@ -28,21 +28,15 @@ import com.google.common.collect.ImmutableList;
  * manifest file will never change.
  */
 public class WebpackerManifestParser {
-	private static final Logger logger = LoggerFactory.getLogger(WebpackerManifestParser.class);
-	private static WebpackEntries entries;
-	private static String manifestChecksum = "";
-	private static Boolean autoUpdatable = true;
+	private final Logger logger = LoggerFactory.getLogger(WebpackerManifestParser.class);
+	private WebpackEntries entries;
+	private String manifestChecksum = "";
 
-	private static final String ASSET_MANIFEST_FILE_PATH = "/dist/assets-manifest.json";
+	private final String ASSET_MANIFEST_FILE_PATH = "/dist/assets-manifest.json";
+	private final boolean updatable;
 
-	/**
-	 * Allows the UI configuration to determine during runtime if we are in a production or development
-	 * environment.
-	 *
-	 * @param updatable - should the manifest file be checked to see if it has been updated.
-	 */
-	public static void setAutoUpdatable(Boolean updatable) {
-		WebpackerManifestParser.autoUpdatable = updatable;
+	public WebpackerManifestParser(boolean autoUpdatable) {
+		this.updatable = autoUpdatable;
 	}
 
 	/**
@@ -53,7 +47,7 @@ public class WebpackerManifestParser {
 	 * @param type  - the type of resource files to get.
 	 * @return List of chunks
 	 */
-	public static List<String> getChunksForEntryType(
+	public List<String> getChunksForEntryType(
 			ServletContext context, String entry, WebpackerTagType type) {
 		WebpackEntries entries = getEntries(context);
 
@@ -94,7 +88,7 @@ public class WebpackerManifestParser {
 	 *
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
-	private static WebpackEntries getEntries(ServletContext context) {
+	private WebpackEntries getEntries(ServletContext context) {
 		try {
 			if (WebpackerManifestParser.entries == null || autoUpdatable) {
 				String path = context.getResource(ASSET_MANIFEST_FILE_PATH)
@@ -123,7 +117,7 @@ public class WebpackerManifestParser {
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
 	@SuppressWarnings("unchecked")
-	public static WebpackEntries parseWebpackManifestFile(File file) {
+	public WebpackEntries parseWebpackManifestFile(File file) {
 		WebpackEntries entries = null;
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();

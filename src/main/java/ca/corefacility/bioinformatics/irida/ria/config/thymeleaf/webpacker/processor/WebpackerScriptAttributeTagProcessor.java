@@ -24,16 +24,18 @@ import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.
 public class WebpackerScriptAttributeTagProcessor extends AbstractAttributeTagProcessor {
 	private static final String ATTR_NAME = "script";
 	private static final int PRECEDENCE = 10000;
+	private final WebpackerManifestParser parser;
 
-	public WebpackerScriptAttributeTagProcessor(String dialectPrefix) {
+	public WebpackerScriptAttributeTagProcessor(String dialectPrefix, WebpackerManifestParser parser) {
 		super(TemplateMode.HTML, dialectPrefix, null, false, ATTR_NAME, true, PRECEDENCE, true);
+		this.parser = parser;
 	}
 
 	@Override
 	protected void doProcess(ITemplateContext context, IProcessableElementTag tag, AttributeName attributeName,
 			String attributeValue, IElementTagStructureHandler structureHandler) {
 		ServletContext servletContext = ((WebEngineContext) context).getServletContext();
-		List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(servletContext, attributeValue,
+		List<String> jsResources = parser.getChunksForEntryType(servletContext, attributeValue,
 				WebpackerTagType.JS);
 
 		if (jsResources != null) {

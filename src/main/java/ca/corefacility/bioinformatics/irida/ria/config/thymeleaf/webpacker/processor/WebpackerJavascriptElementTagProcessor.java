@@ -37,8 +37,11 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 	private static final String INTERNATIONALIZATION_TAG = "th:block";
 	private static final String JAVASCRIPT_ATTR = "th:src";
 
-	public WebpackerJavascriptElementTagProcessor(String dialectPrefix) {
+	private final WebpackerManifestParser parser;
+
+	public WebpackerJavascriptElementTagProcessor(String dialectPrefix, WebpackerManifestParser parser) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_TYPE.toString(), true, null, false, PRECEDENCE);
+		this.parser = parser;
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 			 * script.
 			 */
 			ServletContext servletContext = ((WebEngineContext) context).getServletContext();
-			List<String> htmlResources = WebpackerManifestParser.getChunksForEntryType(servletContext, entry,
+			List<String> htmlResources = parser.getChunksForEntryType(servletContext, entry,
 					WebpackerTagType.HTML);
 			if (htmlResources != null) {
 				htmlResources.forEach(file -> {
@@ -83,7 +86,7 @@ public class WebpackerJavascriptElementTagProcessor extends AbstractElementTagPr
 			/*
 			 * Add all javascript chunks for this entry to the page.
 			 */
-			List<String> jsResources = WebpackerManifestParser.getChunksForEntryType(servletContext, entry,
+			List<String> jsResources = parser.getChunksForEntryType(servletContext, entry,
 					WebpackerTagType.JS);
 			if (jsResources != null) {
 				jsResources.forEach(chunk -> {

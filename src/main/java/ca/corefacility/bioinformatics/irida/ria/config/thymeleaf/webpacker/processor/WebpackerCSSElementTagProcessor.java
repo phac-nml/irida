@@ -31,9 +31,11 @@ public class WebpackerCSSElementTagProcessor extends AbstractElementTagProcessor
 	private static final WebpackerTagType TAG_TYPE = WebpackerTagType.CSS;
 	private static final String ELEMENT_NAME = "link";
 	private static final int PRECEDENCE = 1000;
+	private final WebpackerManifestParser parser;
 
-	public WebpackerCSSElementTagProcessor(String dialectPrefix) {
+	public WebpackerCSSElementTagProcessor(String dialectPrefix, WebpackerManifestParser parser) {
 		super(TemplateMode.HTML, dialectPrefix, TAG_TYPE.toString(), true, null, false, PRECEDENCE);
+		this.parser = parser;
 	}
 
 	@Override
@@ -45,7 +47,7 @@ public class WebpackerCSSElementTagProcessor extends AbstractElementTagProcessor
 		 * Look into the manifests and pull out all the chunks for the given entry and type.
 		 */
 		ServletContext servletContext = ((WebEngineContext) context).getServletContext();
-		List<String> chunks = WebpackerManifestParser.getChunksForEntryType(servletContext, entry, TAG_TYPE);
+		List<String> chunks = parser.getChunksForEntryType(servletContext, entry, TAG_TYPE);
 
 		if (chunks != null) {
 			IModelFactory modelFactory = context.getModelFactory();

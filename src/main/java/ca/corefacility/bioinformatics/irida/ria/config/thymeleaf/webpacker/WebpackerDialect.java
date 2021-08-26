@@ -9,6 +9,7 @@ import org.thymeleaf.standard.StandardDialect;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor.WebpackerCSSElementTagProcessor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor.WebpackerJavascriptElementTagProcessor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.processor.WebpackerScriptAttributeTagProcessor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackerManifestParser;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -23,14 +24,21 @@ public class WebpackerDialect extends AbstractProcessorDialect {
 	private static final String DIALECT_PREFIX = "webpacker";
 	public static final String ENTRY_ATTR = "entry";
 
-	public WebpackerDialect() {
+	/*
+	If running in development this flag will allow for updating the templates
+	without needing to restart the server.
+	 */
+	private final WebpackerManifestParser parser;
+
+	public WebpackerDialect(boolean updatable) {
 		super(DIALECT_NAME, DIALECT_PREFIX, StandardDialect.PROCESSOR_PRECEDENCE);
+		this.parser = new WebpackerManifestParser(updatable);
 	}
 
 	@Override
 	public Set<IProcessor> getProcessors(String dialectPrefix) {
-		return ImmutableSet.of(new WebpackerScriptAttributeTagProcessor(dialectPrefix),
-				new WebpackerCSSElementTagProcessor(dialectPrefix),
-				new WebpackerJavascriptElementTagProcessor(dialectPrefix));
+		return ImmutableSet.of(new WebpackerScriptAttributeTagProcessor(dialectPrefix, parser),
+				new WebpackerCSSElementTagProcessor(dialectPrefix, parser),
+				new WebpackerJavascriptElementTagProcessor(dialectPrefix, parser));
 	}
 }
