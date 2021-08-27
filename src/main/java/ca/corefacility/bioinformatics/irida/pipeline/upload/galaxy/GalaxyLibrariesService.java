@@ -184,7 +184,9 @@ public class GalaxyLibrariesService {
 					logger.error(message);
 					throw new UploadException(message);
 				} else {
-					return library.getId();
+					List<Map<String, String>> entity = clientResponse.getEntity(List.class);
+					return entity.get(0)
+							.get("id");
 				}
 			}
 		} catch (RuntimeException e) {

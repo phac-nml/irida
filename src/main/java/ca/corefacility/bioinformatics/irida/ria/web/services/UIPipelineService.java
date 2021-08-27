@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
@@ -452,15 +448,14 @@ public class UIPipelineService {
 				.map(project -> {
 					List<UIReferenceFile> list = new ArrayList<>();
 					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
-							project)) {
-						try {
-							ReferenceFile file = projectReferenceFileJoin.getObject();
-							Path path = file.getFile();
-							String filesize = FileUtilities.humanReadableByteCount(Files.size(path), true);
+						project)) {
+						ReferenceFile file = projectReferenceFileJoin.getObject();
+						String filesize = file.getFileSize();
+						if(!filesize.equals("N/A")) {
 							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
 							list.add(uiReferenceFile);
-						} catch (IOException e) {
-							logger.error(e.getMessage());
+						} else {
+							logger.error("Unable to locate reference file " + file.getLabel());
 						}
 					}
 					return list;
