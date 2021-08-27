@@ -40,7 +40,6 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
-import org.springframework.security.ldap.authentication.PasswordComparisonAuthenticator;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
@@ -88,17 +87,11 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Value("${irida.administrative.authenitcation.ldap.password}")
 	private String ldapPassword;
 
-	@Value("${irida.administrative.authenitcation.ldap.password_attribute_name}")
-	private String ldapPasswordAttributeName;
-
 	@Value("${irida.administrative.authentication.ldap.userdn_search_patterns}")
 	private String ldapUserDnSearchPatterns;
 
 	@Value("${irida.administrative.authenitcation.ldap.set_referral}")
 	private String ldapSetReferral;
-
-	@Value("${irida.administrative.authenitcation.ldap.password_encoder}")
-	private String ldapPasswordEncoder;
 
 	@Value("${irida.administrative.authenitcation.adldap.url}")
 	private String adLdapUrl;
@@ -190,9 +183,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 			case "ldap":
 				provider = LdapAuthenticationProvider();
 				break;
-			case "ldapbind":
-				provider = LdapBindAuthenticationProvider();
-				break;
 			case "adldap":
 				provider = ActiveDirectoryLdapAuthenticationProvider();
 				break;
@@ -233,25 +223,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	private AuthenticationProvider LdapAuthenticationProvider() {
-		PasswordComparisonAuthenticator ldapAuthenticator = new PasswordComparisonAuthenticator(ldapContextSource());
-		ldapAuthenticator.setPasswordEncoder(ldapPasswordEncoder());
-		String[] userDnPatterns = {ldapUserDnSearchPatterns};
-		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
-		ldapAuthenticator.setPasswordAttributeName(ldapPasswordAttributeName);
-		ldapAuthenticator.afterPropertiesSet();
-
-		LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
-		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
-
-		return authenticationProvider;
-	}
-
-	private AuthenticationProvider LdapBindAuthenticationProvider() {
 		BindAuthenticator ldapAuthenticator = new BindAuthenticator(ldapContextSource());
-//		ldapAuthenticator.setPasswordEncoder(ldapPasswordEncoder());
 		String[] userDnPatterns = {ldapUserDnSearchPatterns};
 		ldapAuthenticator.setUserDnPatterns(userDnPatterns);
-//		ldapAuthenticator.setPasswordAttributeName(ldapPasswordAttributeName);
 		ldapAuthenticator.afterPropertiesSet();
 
 		LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
@@ -275,27 +249,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		ldapContextSource.setReferral(ldapSetReferral);
 		ldapContextSource.afterPropertiesSet();
 		return ldapContextSource;
-
-	}
-
-	@Bean
-	public PasswordEncoder ldapPasswordEncoder(){
-		Map<String,PasswordEncoder> encoders = new HashMap<>();
-		encoders.put("bcrypt", new BCryptPasswordEncoder());
-		encoders.put("noop", NoOpPasswordEncoder.getInstance());
-		encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
-		MessageDigestPasswordEncoder md5 =  new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("MD5");
-		md5.setEncodeHashAsBase64(true);
-		encoders.put("MD5", md5);
-		MessageDigestPasswordEncoder SHA256 =  new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("SHA-256");
-		SHA256.setEncodeHashAsBase64(true);
-		encoders.put("SHA256", SHA256);
-		encoders.put("scrypt", new SCryptPasswordEncoder());
-//		encoders.put("SHA256", new StandardPasswordEncoder());
-		encoders.put("ldapsha", new LdapShaPasswordEncoder());
-		encoders.put("SSHA", new LdapShaPasswordEncoder());
-		return new DelegatingPasswordEncoder(ldapPasswordEncoder, encoders);
-//		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 
 	private AuthenticationProvider ActiveDirectoryLdapAuthenticationProvider() {

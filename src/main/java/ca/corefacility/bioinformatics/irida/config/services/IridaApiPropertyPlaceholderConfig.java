@@ -24,6 +24,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 		"classpath:/ca/corefacility/bioinformatics/irida/config/workflows.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/galaxy.properties",
 		"classpath:/ca/corefacility/bioinformatics/irida/config/openapi.properties",
+		"classpath:/ca/corefacility/bioinformatics/irida/config/authentication.properties",
 		"classpath:configuration.properties", "file:/etc/irida/irida.conf",
 		"file:/etc/irida/web.conf" }, ignoreResourceNotFound = true)
 public class IridaApiPropertyPlaceholderConfig {
