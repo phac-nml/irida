@@ -1,16 +1,35 @@
 import { Avatar, Button, List, Space, Typography } from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { FixedSizeList as VList } from "react-window";
-import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
+import {
+  IconLocked,
+  IconRemove,
+  IconUnlocked,
+} from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { green6, grey1, grey2, yellow6 } from "../../../styles/colors";
+import { removeSample } from "./shareSlice";
 
 export function SharedSamplesList({ list = [], title = "" }) {
+  const dispatch = useDispatch();
+
   const Row = ({ index, style }) => {
     const sample = list[index];
 
     return (
-      <List.Item style={{ ...style, backgroundColor: grey1 }}>
+      <List.Item
+        style={{ ...style, backgroundColor: grey1 }}
+        actions={[
+          <Button
+            size="small"
+            key="remove"
+            shape="circle"
+            icon={<IconRemove />}
+            onClick={() => dispatch(removeSample(sample.id))}
+          />,
+        ]}
+      >
         <List.Item.Meta
           avatar={
             sample.owner ? (
@@ -36,6 +55,7 @@ export function SharedSamplesList({ list = [], title = "" }) {
       </List.Item>
     );
   };
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Typography.Text>{title}</Typography.Text>

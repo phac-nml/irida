@@ -1,4 +1,4 @@
-import { Form, Select, Space } from "antd";
+import { Form, Select, Space, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useDispatch, useSelector } from "react-redux";
@@ -53,6 +53,9 @@ function ShareLayout() {
   return (
     <Form layout="vertical">
       <Space direction="vertical" style={{ display: "block" }} size="large">
+        <Typography.Title level={4}>
+          {i18n("ShareSamples.title")}
+        </Typography.Title>
         <Form.Item label={i18n("ShareSamples.projects")}>
           <Select
             size="large"

@@ -33,6 +33,12 @@ const shareSlice = createSlice({
     builder.addCase(setProject, (state, action) => {
       state.projectId = action.payload.projectId;
     });
+
+    builder.addCase(removeSample, (state, action) => {
+      state.originalSamples = state.originalSamples.filter(
+        (sample) => sample.id !== action.payload.sampleId
+      );
+    });
   },
 });
 
