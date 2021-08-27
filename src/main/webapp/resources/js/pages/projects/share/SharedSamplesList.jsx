@@ -1,4 +1,4 @@
-import { Avatar, Button, List, Space } from "antd";
+import { Avatar, Button, List, Space, Typography } from "antd";
 import React from "react";
 import { FixedSizeList as VList } from "react-window";
 import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
@@ -38,6 +38,7 @@ export function SharedSamplesList({ list = [], title = "" }) {
   };
   return (
     <Space direction="vertical" style={{ display: "block" }}>
+      <Typography.Text>{title}</Typography.Text>
       <List
         title={title}
         bordered
