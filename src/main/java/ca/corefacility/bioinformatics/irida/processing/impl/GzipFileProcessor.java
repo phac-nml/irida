@@ -128,7 +128,6 @@ public class GzipFileProcessor implements FileProcessor {
 					logger.debug("Writing uncompressed file to [" + target + "]");
 
 					Files.copy(zippedInputStream, target);
-
 					sequenceFile.setFile(target);
 					sequenceFile = sequenceFileRepository.save(sequenceFile);
 

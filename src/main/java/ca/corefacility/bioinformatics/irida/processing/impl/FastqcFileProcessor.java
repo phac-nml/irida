@@ -13,9 +13,9 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +160,7 @@ public class FastqcFileProcessor implements FileProcessor {
 			try {
 				logger.trace("Removing directory: " + outputDirectory.toString());
 				// Delete the analysis-output* temp directory
-				FileUtils.deleteDirectory(outputDirectory.toFile());
+				org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory.toFile());
 			} catch (IOException e) {
 				throw new StorageException("Unable to delete analysis outputs temp directory [" + e + "]");
 			}

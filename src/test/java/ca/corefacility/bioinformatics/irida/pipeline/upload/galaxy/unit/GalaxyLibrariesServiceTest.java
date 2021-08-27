@@ -16,6 +16,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 /**
  * Tests for {@link GalaxyLibrariesService}.
@@ -29,13 +31,16 @@ public class GalaxyLibrariesServiceTest {
 	private final static String LIBRARY_ID = "1";
 	
 	private Library testLibrary;
-	
+
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	/**
 	 * Setup for tests.
 	 */
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		setupLibrariesTest();
 	}
 	

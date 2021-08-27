@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.Principal;
@@ -44,8 +43,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.Analysi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
@@ -95,6 +96,7 @@ public class AnalysisAjaxController {
 	private AnalysisAudit analysisAudit;
 	private AnalysisTypesService analysisTypesService;
 	private EmailController emailController;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
@@ -103,7 +105,8 @@ public class AnalysisAjaxController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
 			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource,
-			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService, EmailController emailController) {
+			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService, EmailController emailController,
+			IridaFileStorageUtility iridaFileStorageUtility) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -120,6 +123,7 @@ public class AnalysisAjaxController {
 		this.analysisAudit = analysisAudit;
 		this.analysisTypesService = analysisTypesService;
 		this.emailController = emailController;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 
@@ -391,9 +395,8 @@ public class AnalysisAjaxController {
 			AnalysisOutputFileInfo info = new AnalysisOutputFileInfo(aof.getId(), submission.getId(), analysis.getId(),
 					aof.getFile()
 							.getFileName()
-							.toString(), fileExt, aof.getFile()
-					.toFile()
-					.length(), tool.getToolName(), tool.getToolVersion(), outputName);
+							.toString(), fileExt, aof.getFileSizeBytes(),
+					tool.getToolName(), tool.getToolVersion(), outputName);
 
 			if (FILE_EXT_READ_FIRST_LINE.contains(fileExt)) {
 				addFirstLine(info, aof);
@@ -410,24 +413,19 @@ public class AnalysisAjaxController {
 	 * @param aof  {@link AnalysisOutputFile} to read from
 	 */
 	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
-		RandomAccessFile reader = null;
 		final Path aofFile = aof.getFile();
-		try {
-			reader = new RandomAccessFile(aofFile.toFile(), "r");
-			info.setFirstLine(reader.readLine());
-			info.setFilePointer(reader.getFilePointer());
-		} catch (FileNotFoundException e) {
-			logger.error("Could not find file '" + aofFile + "' " + e);
-		} catch (IOException e) {
-			logger.error("Could not read file '" + aofFile + "' " + e);
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-			} catch (IOException e) {
-				logger.error("Could not close file handle for '" + aofFile + "' " + e);
+
+		try(BufferedReader reader = new BufferedReader(new InputStreamReader(aof.getFileInputStream(), "UTF-8"))) {
+			String firstLineText = reader.readLine();
+			info.setFirstLine(firstLineText);
+			if(firstLineText != null ){
+				// Set the pointer to the beginning of the next line.
+				info.setFilePointer(Long.valueOf(firstLineText.getBytes().length) + 1);
+			} else {
+				info.setFilePointer(0L);
 			}
+		} catch (IOException e) {
+			logger.error("Could not get file input stream '" + aofFile + "' " + e);
 		}
 	}
 
@@ -469,48 +467,32 @@ public class AnalysisAjaxController {
 					.toString());
 			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName()
 					.toString()));
-			contents.setFileSizeBytes(aof.getFile()
-					.toFile()
-					.length());
+			contents.setFileSizeBytes(aof.getFileSizeBytes());
 			contents.setToolName(tool.getToolName());
 			contents.setToolVersion(tool.getToolVersion());
-			try {
-				final File file = aofFile.toFile();
-				final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-				randomAccessFile.seek(seek);
-				if (seek == 0) {
-					if (chunk != null && chunk > 0) {
-						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
-						contents.setChunk(chunk);
-						contents.setStartSeek(seek);
-					} else {
-						final BufferedReader reader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
-						final List<String> lines = FileUtilities.readLinesLimit(reader, limit, start, end);
-						contents.setLines(lines);
-						contents.setLimit((long) lines.size());
-						contents.setStart(start);
-						contents.setEnd(start + lines.size());
-					}
-				} else {
-					if (chunk != null && chunk > 0) {
-						contents.setText(FileUtilities.readChunk(randomAccessFile, seek, chunk));
-						contents.setChunk(chunk);
-						contents.setStartSeek(seek);
-					} else {
-						final List<String> lines = FileUtilities.readLinesFromFilePointer(randomAccessFile, limit);
-						contents.setLines(lines);
-						contents.setStartSeek(seek);
-						contents.setStart(start);
-						contents.setLimit((long) lines.size());
-					}
-				}
-				contents.setFilePointer(randomAccessFile.getFilePointer());
-			} catch (IOException e) {
-				logger.error("Could not read output file '" + aof.getId() + "' " + e);
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				contents.setError("Could not read output file");
 
+			if (chunk != null && chunk > 0) {
+				// Read the requested chunk from the iridafilestorageutility and set the required fields of the contents object
+				FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(aof.getFile(), seek, chunk);
+				contents.setText(fileChunkResponse.getText());
+				contents.setChunk(chunk);
+				contents.setStartSeek(seek);
+				contents.setFilePointer(fileChunkResponse.getFilePointer());
+			} else {
+				// Read the inputstream and get the lines requested of the output file and set the required fields of the contents object
+				try(BufferedReader reader = new BufferedReader(new InputStreamReader(aof.getFileInputStream(), "UTF-8"))) {
+					List<String> lines = new ArrayList<>();
+					lines.addAll(FileUtilities.readLinesLimit(reader, limit, start, end));
+					contents.setLines(lines);
+					contents.setLimit((long) lines.size() - 1);
+					contents.setStart(start);
+					contents.setEnd(start + lines.size());
+					contents.setFilePointer(start + lines.size());
+				} catch (IOException e) {
+					logger.error("Could not read output file stream'" + aof.getId() + "' " + e);
+				}
 			}
+
 			return contents;
 		} else {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -710,14 +692,13 @@ public class AnalysisAjaxController {
 		if (analysisTypesService.getViewerForAnalysisType(analysisType).get().equals("sistr")) {
 			Analysis analysis = submission.getAnalysis();
 
-			Path path = null;
+			Path path;
 			if(analysis.getAnalysisOutputFile(sistrFileKey) != null) {
 				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
 
-				try {
-					String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
+				try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(path)) {
+					String json = new Scanner(inputStream).useDelimiter("\\Z")
 							.next();
-
 					// verify file is proper json file and map to a SistrResult list
 					ObjectMapper mapper = new ObjectMapper();
 					List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
@@ -734,12 +715,10 @@ public class AnalysisAjaxController {
 					} else {
 						logger.error("SISTR results for file [" + path + "] are not correctly formatted");
 					}
-				} catch (FileNotFoundException e) {
-					logger.error("File [" + path + "] not found", e);
 				} catch (JsonParseException | JsonMappingException e) {
 					logger.error("Error attempting to parse file [" + path + "] as JSON", e);
 				} catch (IOException e) {
-					logger.error("Error reading file [" + path + "]", e);
+					logger.error("Error reading file input stream [" + path + "]", e);
 				}
 			} else {
 				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
@@ -802,8 +781,12 @@ public class AnalysisAjaxController {
 		if (treeFileForSubmission.isPresent()) {
 
 			AnalysisOutputFile file = treeFileForSubmission.get();
-			List<String> lines = Files.readAllLines(file.getFile());
-			return ImmutableMap.of("newick", lines.get(0));
+			try(InputStream inputStream = file.getFileInputStream()) {
+				List<String> lines = IOUtils.readLines(inputStream);
+				return ImmutableMap.of("newick", lines.get(0));
+			} catch (IOException e) {
+				throw new IOException("Unable to read file input stream. ", e);
+			}
 		} else {
 			throw new IOException("Newick file could not be found for this submission");
 		}
@@ -824,14 +807,16 @@ public class AnalysisAjaxController {
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 
-		for (AnalysisOutputFile file : files) {
-			if (file.getFile()
-					.toFile()
-					.getName()
-					.contains(filename)) {
-				outputFile = file;
-				break;
+		try {
+			for (AnalysisOutputFile file : files) {
+				if (iridaFileStorageUtility.getFileName(file.getFile())
+						.contains(filename)) {
+					outputFile = file;
+					break;
+				}
 			}
+		} catch (Exception e) {
+			logger.error("Unable to read image file", e);
 		}
 		return ResponseEntity.ok(Base64.getEncoder()
 				.encodeToString(outputFile.getBytesForFile()));
@@ -1024,9 +1009,7 @@ public class AnalysisAjaxController {
 		AnalysisOutputFile outputFile = null;
 
 		for (AnalysisOutputFile file : files) {
-			if (file.getFile()
-					.toFile()
-					.getName()
+			if (iridaFileStorageUtility.getFileName(file.getFile())
 					.contains(filename)) {
 				outputFile = file;
 				break;

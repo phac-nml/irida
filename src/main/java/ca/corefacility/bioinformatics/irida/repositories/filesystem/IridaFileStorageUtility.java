@@ -7,6 +7,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 import com.google.common.collect.Lists;
 
@@ -18,7 +19,7 @@ public interface IridaFileStorageUtility {
 	//Valid file extensions for sample file concatenation
 	public static final List<String> VALID_CONCATENATION_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
 	/**
-	 * Get a temporarry file from storage
+	 * Get a file from storage
 	 *
 	 * @param file The {@link Path} to the file
 	 * @return {@link IridaTemporaryFile} which includes the file and optional temporary directory
@@ -26,19 +27,21 @@ public interface IridaFileStorageUtility {
 	public IridaTemporaryFile getTemporaryFile(Path file);
 
 	/**
+	 * Overloaded method to get a file from storage and
+	 * add prefix to directory
+	 *
+	 * @param file The {@link Path} to the file
+	 * @param prefix The {@link String} prefix to add to the directory name
+	 * @return {@link IridaTemporaryFile} which includes the file and optional temporary directory
+	 */
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix);
+
+	/**
 	 * Delete temporary downloaded file and/or directory.
 	 *
 	 * @param iridaTemporaryFile The {@link IridaTemporaryFile} object which includes the file path and/or directory path
 	 */
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile);
-
-	/**
-	 * Get file size
-	 *
-	 * @param file The {@link Path} to the file
-	 * @return {@link Long} size of file retrieved from path
-	 */
-	public String getFileSize(Path file);
 
 	/**
 	 * Write file to storage (azure, aws, or local)
@@ -49,13 +52,6 @@ public interface IridaFileStorageUtility {
 	 * @param sequenceFileDirWithRevision The {@link Path} to sequence file revision directory
 	 */
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
-
-	/**
-	 * Returns if the storage type is local or not
-	 *
-	 * @return {@link Boolean#TRUE} if local, {@link Boolean#FALSE} if not.
-	 */
-	public boolean storageTypeIsLocal();
 
 	/**
 	 * Gets the file name from the storage type that the file
@@ -125,10 +121,36 @@ public interface IridaFileStorageUtility {
 	public byte[] readAllBytes(Path file);
 
 	/**
+
+	 * Get file size in bytes
+	 *
+	 * @param file The {@link Path} to the file
+	 * @return {@link Long} size of file in bytes retrieved from path
+	 */
+	public Long getFileSizeBytes(Path file);
+
+	/**
+	 * Get file in chunks
+	 *
+	 * @param file The {@link Path} to the file
+	 * @param seek File pointer to where to start reading from
+	 * @param chunk Size in bytes to read from seek point
+	 * @return {@link FileChunkResponse} Response dto containing the text and file pointer
+	 */
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk);
+
+	/**
 	 * Check if the given directory is writable
 	 *
 	 * @param baseDirectory The directory to check write access for
 	 * @return if the directory is writable or not
 	 */
 	public boolean checkWriteAccess(Path baseDirectory);
+
+	/**
+	 * Check if the storage type is local
+	 *
+	 * @return if the storage type is local or not
+	 */
+	public boolean isStorageTypeLocal();
 }

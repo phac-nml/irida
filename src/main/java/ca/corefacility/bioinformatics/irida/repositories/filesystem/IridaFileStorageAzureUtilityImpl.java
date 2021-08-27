@@ -4,10 +4,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
@@ -20,13 +23,10 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.*;
+import com.azure.storage.blob.models.*;
 import com.azure.storage.blob.specialized.BlobInputStream;
 
 /**
@@ -55,12 +55,38 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try {
 			// We set the blobClient "path" to which file we want to get
 			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			try (InputStream initialStream = blobClient.openInputStream()) {
+
+			try {
 				logger.trace("Getting file from azure [" + file.toString() + "]");
 				Path tempDirectory = Files.createTempDirectory("azure-tmp-");
 				Path tempFile = tempDirectory.resolve(file.getFileName()
 						.toString());
-				org.apache.commons.io.FileUtils.copyInputStreamToFile(initialStream, tempFile.toFile());
+				blobClient.downloadToFile(tempFile.toString());
+				return new IridaTemporaryFile(tempFile, tempDirectory);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				throw new StorageException(e.getMessage());
+			}
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't find file on azure [" + e + "]");
+			throw new StorageException("Unable to locate file on azure", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
+		try {
+			// We set the blobClient "path" to which file we want to get
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			try {
+				logger.trace("Getting file from azure [" + file.toString() + "]");
+				Path tempDirectory = Files.createTempDirectory(prefix + "-azure-tmp-");
+				Path tempFile = tempDirectory.resolve(file.getFileName()
+						.toString());
+				blobClient.downloadToFile(tempFile.toString());
 				return new IridaTemporaryFile(tempFile, tempDirectory);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
@@ -107,30 +133,18 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try {
-			// We set the blobClient "path" to which we want to get a file size for
-			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-			fileSize = FileUtils.humanReadableByteCount(blobClient.getProperties()
-					.getBlobSize(), true);
-		} catch (BlobStorageException e) {
-			logger.error("Couldn't calculate size as the file was not found on azure [" + e + "]");
-		}
-
-		return fileSize;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision) {
 		// We set the blobClient "path" to which we want to upload our file to
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(target));
 		try {
 			logger.trace("Uploading file to azure: [" + target.getFileName() + "]");
-			blobClient.uploadFromFile(source.toString(), false);
+
+			// Upload the file in blocks rather than all at once to prevent a timeout if the file is large.
+			int blockSize = 2 * 1024 * 1024; //2MB
+			ParallelTransferOptions parallelTransferOptions = new ParallelTransferOptions(blockSize, 8, null);
+			blobClient.uploadFromFile(source.toString(), parallelTransferOptions, new BlobHttpHeaders(), null, AccessTier.HOT,
+					new BlobRequestConditions(), Duration.ofMinutes(10));
+
 			logger.trace("File uploaded to: [" + blobClient.getBlobUrl() + "]");
 		} catch (BlobStorageException e) {
 			logger.error("Unable to upload file to azure [" + e + "]");
@@ -144,14 +158,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to clean up source file", e);
 			throw new StorageException("Unable to clean up source file", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean storageTypeIsLocal() {
-		return false;
 	}
 
 	/**
@@ -311,6 +317,46 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Long getFileSizeBytes(Path file) {
+		Long fileSize = 0L;
+		BlobClient blobClient;
+		try {
+			if(file != null) {
+				blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+				fileSize = blobClient.getProperties().getBlobSize();
+			}
+		} catch (BlobStorageException e) {
+			logger.trace("Couldn't calculate size as the file was not found on azure [" + e + "]");
+		}
+		return fileSize;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		/*
+		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
+		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
+		 */
+		BlobRange blobRange = new BlobRange(seek, chunk);
+		try (BlobInputStream blobInputStream = blobClient.openInputStream(blobRange, null)) {
+			// Read the bytes of the retrieved blobInputStream chunk
+			byte[] bytes = blobInputStream.readAllBytes();
+			return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
+		} catch (BlobStorageException e) {
+			logger.error("Couldn't find file on azure", e);
+		} catch (IOException e) {
+			logger.error("Unable to read chunk from azure", e);
+		} return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
 		String containerName = containerClient.getBlobContainerName();
 		try {
@@ -336,5 +382,13 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		} catch (IOException e) {
 			throw new StorageException("Unable to clean up temporary file", e);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStorageTypeLocal() {
+		return false;
 	}
 }

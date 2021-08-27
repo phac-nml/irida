@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileC
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -57,6 +58,8 @@ public class UIProjectReferenceFileServiceTest {
 		referenceFileService = mock(ReferenceFileService.class);
 		messageSource = mock(MessageSource.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		// Set up the reference file
 		Path path = Paths.get(FILE_PATH);
 		ReferenceFile file = new ReferenceFile(path);

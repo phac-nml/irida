@@ -29,6 +29,7 @@ public class GalaxyExecutionTestConfig {
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
+
 	/**
 	 * Timeout in seconds to stop polling a Galaxy library.
 	 */

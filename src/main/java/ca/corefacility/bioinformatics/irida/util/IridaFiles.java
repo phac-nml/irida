@@ -26,12 +26,19 @@ public final class IridaFiles {
 
 	/**
 	 * Gets the file size of the file from the iridaFileStorageUtility
+	 * and returns it as a human readable string
 	 *
 	 * @param file The path to the file
 	 * @return file size as a human readable string
 	 */
 	public static String getFileSize(Path file) {
-		return iridaFileStorageUtility.getFileSize(file);
+		String fileSize = "N/A";
+		Long fileSizeBytes = iridaFileStorageUtility.getFileSizeBytes(file);
+
+		if (fileSizeBytes > 0) {
+			fileSize = FileUtils.humanReadableByteCount(fileSizeBytes, true);
+		}
+		return fileSize;
 	}
 
 	/**
@@ -73,14 +80,23 @@ public final class IridaFiles {
 	 * @return the bytes for the file
 	 * @throws IOException if the file couldn't be read
 	 */
-	public static byte[] getBytesForFile(Path file) throws IOException  {
+	public static byte[] getBytesForFile(Path file) throws IOException {
 		byte[] bytes = iridaFileStorageUtility.readAllBytes(file);
 		return bytes;
 	}
 
 	/**
-	 * Check if file exists
-	 * Checks if the file exists
+	 * Gets the file size in bytes of the file from the iridaFileStorageUtility
+	 *
+	 * @param file The path to the file
+	 * @return file size in bytes
+	 */
+	public static Long getFileSizeBytes(Path file) {
+		return iridaFileStorageUtility.getFileSizeBytes(file);
+	}
+
+	/**
+	 * Checks if the file exists in iridaFileStorageUtility
 	 *
 	 * @param file The path to the file
 	 * @return if file exists or not

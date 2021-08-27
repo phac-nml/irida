@@ -33,11 +33,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.util.FileUtils;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
-import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
-import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
+import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -58,6 +54,7 @@ public class GalaxyLibrariesService {
 	private final int libraryPollingTime;
 	private final int libraryUploadTimeout;
 
+
 	/**
 	 * State a library dataset should be in on proper upload.
 	 */
@@ -71,33 +68,31 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
-	 * 
-	 * @param librariesClient
-	 *            The LibrariesClient used to interact with Galaxy libraries.
-	 * @param libraryPollingTime
-	 *            The time (in seconds) for polling a Galaxy library.
-	 * @param libraryUploadTimeout
-	 *            The timeout (in seconds) for waiting for files to be uploaded
-	 *            to a library.
-	 * @param threadPoolSize
-	 *            The thread pool size for parallel polling of Galaxy to check if uploads are finished.
+	 *
+	 * @param librariesClient         The LibrariesClient used to interact with Galaxy libraries.
+	 * @param libraryPollingTime      The time (in seconds) for polling a Galaxy library.
+	 * @param libraryUploadTimeout    The timeout (in seconds) for waiting for files to be uploaded
+	 *                                to a library.
+	 * @param threadPoolSize          The thread pool size for parallel polling of Galaxy to check if uploads are finished.
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
 			final int libraryUploadTimeout, final int threadPoolSize) {
 		checkNotNull(librariesClient, "librariesClient is null");
 		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
-		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
-				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		checkArgument(libraryUploadTimeout > libraryPollingTime,
+				"libraryUploadTimeout=" + libraryUploadTimeout + " must be greater then libraryPollingTime="
+						+ libraryPollingTime);
 		checkArgument(threadPoolSize > 0, "threadPoolSize=" + threadPoolSize + " must be positive");
-		
-		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout 
-				+ ", threadPoolSize=" + threadPoolSize);
+
+		logger.debug(
+				"Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout
+						+ ", threadPoolSize=" + threadPoolSize);
 
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
 		this.libraryUploadTimeout = libraryUploadTimeout;
-		
+
 		executor = Executors.newFixedThreadPool(threadPoolSize);
 	}
 	
@@ -156,20 +151,44 @@ public class GalaxyLibrariesService {
 		File file = path.toFile();
 
 		try {
-			LibraryContent rootContent = librariesClient.getRootFolder(library
-					.getId());
-			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
-			upload.setFolderId(rootContent.getId());
+			LibraryContent rootContent = librariesClient.getRootFolder(library.getId());
+			if(dataStorage.equals(DataStorage.LOCAL)) {
+				FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
+				upload.setFolderId(rootContent.getId());
 
-			upload.setContent(file.getAbsolutePath());
-			upload.setName(file.getName());
-			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
-			upload.setFileType(fileType.toString());
+				upload.setContent(file.getAbsolutePath());
+				upload.setName(file.getName());
+				upload.setLinkData(true);
+				upload.setFileType(fileType.toString());
 
-			GalaxyObject uploadObject = librariesClient.uploadFilesystemPaths(
-					library.getId(), upload);
+				GalaxyObject uploadObject = librariesClient.uploadFilesystemPaths(library.getId(), upload);
+				return uploadObject.getId();
+			} else {
+				// If the dataStorage isn't local we upload the file to the library instead of linking
+				FileLibraryUpload fileLibraryUpload = new FileLibraryUpload();
+				fileLibraryUpload.setContent(file.getAbsolutePath());
+				fileLibraryUpload.setName(file.getName());
+				fileLibraryUpload.setFolderId(rootContent.getId());
+				fileLibraryUpload.setFile(path.toFile());
+				fileLibraryUpload.setFileType(fileType.toString());
 
-			return uploadObject.getId();
+				ClientResponse clientResponse = librariesClient.uploadFile(library.getId(), fileLibraryUpload);
+
+				if (clientResponse == null) {
+					throw new UploadException(
+							"Could not upload " + file + " to library " + library.getId() + " ClientResponse is null");
+				} else if (ClientResponse.Status.OK.getStatusCode() != clientResponse.getStatusInfo()
+						.getStatusCode()) {
+					String message = "Could not upload " + file + " to library " + library.getId() + " ClientResponse: "
+							+ clientResponse.getStatusInfo() + " " + clientResponse.getEntity(String.class);
+					logger.error(message);
+					throw new UploadException(message);
+				} else {
+					List<Map<String, String>> entity = clientResponse.getEntity(List.class);
+					return entity.get(0)
+							.get("id");
+				}
+			}
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
 		}
@@ -265,7 +284,7 @@ public class GalaxyLibrariesService {
 	private InputFileType getFileType(Path path) throws IOException {
 		checkArgument(path.toFile().exists(), "path=[" + path + "] does not exist");
 		
-		return (FileUtils.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER); 
+		return (FileUtils.isGzipped(path) ? InputFileType.FASTQ_SANGER_GZ : InputFileType.FASTQ_SANGER);
 	}
 
 	/**

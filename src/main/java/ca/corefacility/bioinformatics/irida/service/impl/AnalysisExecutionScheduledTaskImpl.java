@@ -22,11 +22,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -46,34 +47,32 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
-	private final AnalysisSubmissionRepository analysisSubmissionRepository;
-	private final AnalysisExecutionService analysisExecutionService;
-	private final CleanupAnalysisSubmissionCondition cleanupCondition;
-	private final GalaxyJobErrorsService galaxyJobErrorsService;
-	private final JobErrorRepository jobErrorRepository;
-	private final EmailController emailController;
-	private final AnalysisWorkspaceService analysisWorkspaceService;
-
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisExecutionService analysisExecutionService;
+	private CleanupAnalysisSubmissionCondition cleanupCondition;
+	private GalaxyJobErrorsService galaxyJobErrorsService;
+	private JobErrorRepository jobErrorRepository;
+	private EmailController emailController;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
 	 * classes.
 	 *
-	 * @param analysisSubmissionRepository   A repository for {@link AnalysisSubmission}s.
-	 * @param analysisExecutionServiceGalaxy A service for executing {@link AnalysisSubmission}s.
-	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission}
-	 *                                       should be cleaned up.
-	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
-	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
-	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
-	 * @param analysisWorkspaceService 	     {@link AnalysisWorkspaceService}
+	 * @param analysisSubmissionRepository         A repository for {@link AnalysisSubmission}s.
+	 * @param analysisExecutionServiceGalaxy       A service for executing {@link AnalysisSubmission}s.
+	 * @param cleanupCondition                     The condition defining when an {@link AnalysisSubmission}
+	 *                                             should be cleaned up.
+	 * @param galaxyJobErrorsService               {@link GalaxyJobErrorsService} for getting {@link JobError} objects
+	 * @param jobErrorRepository                   {@link JobErrorRepository} for {@link JobError} objects
+	 * @param emailController                      {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
+	 * @param analysisWorkspaceService             {@link AnalysisWorkspaceService}
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
-			JobErrorRepository jobErrorRepository, EmailController emailController,
-		    AnalysisWorkspaceService analysisWorkspaceService) {
+			JobErrorRepository jobErrorRepository, EmailController emailController, AnalysisWorkspaceService analysisWorkspaceService) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
@@ -181,6 +180,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+
 					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
 					}

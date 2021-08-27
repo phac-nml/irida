@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -20,7 +21,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.util.FileUtils;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 /**
  * Component implementation of file utitlities for local storage
@@ -29,8 +31,10 @@ import ca.corefacility.bioinformatics.irida.util.FileUtils;
 public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 
+
 	@Autowired
 	public IridaFileStorageLocalUtilityImpl() {
+
 	}
 
 	/**
@@ -39,6 +43,18 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public IridaTemporaryFile getTemporaryFile(Path file) {
 		return new IridaTemporaryFile(file, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IridaTemporaryFile getTemporaryFile(Path file, String prefix) {
+		/*
+		For the local storage we don't need a temp directory with
+		a prefix so we just call the method above
+		 */
+		return getTemporaryFile(file);
 	}
 
 	/**
@@ -55,25 +71,6 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					+ iridaTemporaryFile.getDirectoryPath()
 					.toString() + "]");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getFileSize(Path file) {
-		String fileSize = "N/A";
-		try {
-			if (file != null) {
-				fileSize = FileUtils.humanReadableByteCount(Files.size(file), true);
-			}
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file);
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
-
-		return fileSize;
 	}
 
 	/**
@@ -103,13 +100,6 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 			logger.error("Unable to move file into new directory", e);
 			throw new StorageException("Failed to move file into new directory.", e);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean storageTypeIsLocal() {
-		return true;
 	}
 
 	/**
@@ -227,6 +217,39 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Long getFileSizeBytes(Path file) {
+		Long fileSize = 0L;
+		try {
+			if(file != null) {
+				fileSize = Files.size(file);
+			}
+		} catch (NoSuchFileException e) {
+			logger.error("Could not find file " + file);
+		} catch (IOException e) {
+			logger.error("Could not calculate file size: ", e);
+		}
+		return fileSize;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
+		try {
+			final RandomAccessFile randomAccessFile = new RandomAccessFile(file.toFile(), "r");
+			randomAccessFile.seek(seek);
+			return new FileChunkResponse(FileUtilities.readChunk(randomAccessFile, seek, chunk), randomAccessFile.getFilePointer());
+		} catch (IOException e ) {
+			logger.error("Could not read output file ", e);
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
 		if (!Files.exists(baseDirectory)) {
 			throw new StorageException("Cannot continue startup; base directory " + baseDirectory + " does not exist!");
@@ -260,4 +283,11 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isStorageTypeLocal() {
+		return true;
+	}
 }
