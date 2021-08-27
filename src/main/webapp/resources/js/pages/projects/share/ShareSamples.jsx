@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Alert, Col, Row } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { SharedSamplesList } from "./SharedSamplesList";
@@ -24,10 +24,32 @@ export function ShareSamples({ sampleIds = [] }) {
     }
   }, [originalSamples, sampleIds]);
 
+  const showExisting = !!samples.length && !!existing.length;
+  const space = showExisting ? { md: 12, xs: 24 } : { xs: 24 };
+
   return (
     <Row gutter={[16, 16]}>
-      <SharedSamplesList list={samples} />
-      <SharedSamplesList list={existing} />
+      <Col {...space}>
+        {samples.length ? (
+          <SharedSamplesList list={samples} title={"Samples ready to copy"} />
+        ) : (
+          <Alert
+            showIcon
+            message={"All samples exist in target project"}
+            description={
+              "Copying these samples again will do absolutely nothing, please do something more worthwhile"
+            }
+          />
+        )}
+      </Col>
+      {showExisting && (
+        <Col {...space}>
+          <SharedSamplesList
+            list={existing}
+            title={"Samples that exist in the target project"}
+          />
+        </Col>
+      )}
     </Row>
   );
 }

@@ -47,6 +47,7 @@ import {
   SyncOutlined,
   TableOutlined,
   TeamOutlined,
+  UnlockOutlined,
   UnorderedListOutlined,
   UploadOutlined,
   UserAddOutlined,
@@ -116,6 +117,8 @@ export const IconExclamationCircle = ({ ...props }) => (
 );
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
+
+export const IconUnlocked = ({ ...props }) => <UnlockOutlined {...props} />;
 
 export const IconFlag = ({ ...props }) => <FlagFilled {...props} />;
 
