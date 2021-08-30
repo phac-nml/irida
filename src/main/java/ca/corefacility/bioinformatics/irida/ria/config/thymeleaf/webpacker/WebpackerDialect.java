@@ -23,11 +23,6 @@ public class WebpackerDialect extends AbstractProcessorDialect {
 	private static final String DIALECT_NAME = "Webpacker Dialect";
 	private static final String DIALECT_PREFIX = "webpacker";
 	public static final String ENTRY_ATTR = "entry";
-
-	/*
-	If running in development this flag will allow for updating the templates
-	without needing to restart the server.
-	 */
 	private final WebpackerManifestParser parser;
 
 	public WebpackerDialect(boolean updatable) {
