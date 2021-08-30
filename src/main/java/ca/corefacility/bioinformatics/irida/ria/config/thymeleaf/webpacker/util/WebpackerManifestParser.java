@@ -6,19 +6,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
+import ca.corefacility.bioinformatics.irida.exceptions.WebpackParserException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -29,7 +31,7 @@ import com.google.common.collect.ImmutableList;
  */
 public class WebpackerManifestParser {
 	private final Logger logger = LoggerFactory.getLogger(WebpackerManifestParser.class);
-	private WebpackEntries entries;
+	private Map<String, WebpackEntry> entries;
 	private String manifestChecksum = "";
 
 	private final String ASSET_MANIFEST_FILE_PATH = "/dist/assets-manifest.json";
@@ -49,7 +51,7 @@ public class WebpackerManifestParser {
 	 */
 	public List<String> getChunksForEntryType(
 			ServletContext context, String entry, WebpackerTagType type) {
-		WebpackEntries entries = getEntries(context);
+		Map<String, WebpackEntry> entries = getEntries(context);
 
 		/*
 		 * Ensure the entry actually exists in webpack.
@@ -88,7 +90,7 @@ public class WebpackerManifestParser {
 	 *
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
-	private WebpackEntries getEntries(ServletContext context) {
+	private Map<String, WebpackEntry> getEntries(ServletContext context) {
 		try {
 			if (entries == null || updatable) {
 				String path = context.getResource(ASSET_MANIFEST_FILE_PATH)
@@ -117,16 +119,37 @@ public class WebpackerManifestParser {
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
 	@SuppressWarnings("unchecked")
-	public WebpackEntries parseWebpackManifestFile(File file) {
-		WebpackEntries entries = null;
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			Map<String, Object> manifest = objectMapper.readValue(file, new TypeReference<Map<String, Object>>() {
-			});
+	public Map<String, WebpackEntry> parseWebpackManifestFile(File file) {
+		Map<String, WebpackEntry> entries = new HashMap<>();
 
-			Map<String, Map<String, Map<String, List<String>>>> entrypoints = (Map<String, Map<String, Map<String, List<String>>>>) manifest.get(
-					"entrypoints");
-			entries = new WebpackEntries(entrypoints);
+		try {
+			ObjectMapper objectMapper= new ObjectMapper();
+			JsonNode rootNode = objectMapper.readTree(file);
+			JsonNode entrypoints = rootNode.get("entrypoints");
+
+			if (entrypoints == null) {
+				throw new WebpackParserException(file, "Cannot find entrypoints");
+			}
+
+			entrypoints.fieldNames().forEachRemaining(name -> {
+				final JsonNode assets = entrypoints.get(name)
+						.get("assets");
+
+				if (assets == null) {
+					throw new WebpackParserException(file, "Cannot file assets for entry [" + name + "]");
+				}
+
+				WebpackEntry entry = new WebpackEntry(assets);
+
+				/*
+				By default each entry should have at least one JavaScript Asset.
+				 */
+				if (entry.getJavascript()
+						.size() == 0) {
+					throw new WebpackParserException(file, "Entry [" + name + "] does not have any JavaScript assets lisets");
+				}
+				entries.put(name, entry);
+			});
 		} catch (IOException e) {
 			logger.error("Error reading webpack manifest file.");
 		}

@@ -12,19 +12,7 @@
     },
     "login": {
       "assets": {
-        "js": [
-          "js/runtime-9f345a1ce64aff56aa2b.js",
-          "js/720-dca7913ec498dd4bd733.js",
-          "js/1821-0afd2fdca15d4dc6f331.js",
-          "js/2504-5842cec3c1e68ae64981.js",
-          "js/8692-215cc448ab663ee45e9f.js",
-          "js/5855-9bee8b875e3bb6b8c41e.js",
-          "js/3338-42ae46884bb4ac5b3a53.js",
-          "js/1168-f16487bfa75e76efe5aa.js",
-          "js/1885-a01dac5012dc379b6935.js",
-          "js/4106-2676831485a59c61a76a.js",
-          "js/login-93045cd54724bed8c9a4.js"
-        ],
+        "js": [],
         "css": [
           "css/1821.bundle.css",
           "css/8692.bundle.css",
