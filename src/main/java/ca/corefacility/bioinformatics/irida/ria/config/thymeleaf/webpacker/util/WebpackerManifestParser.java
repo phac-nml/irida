@@ -118,7 +118,6 @@ public class WebpackerManifestParser {
 	 * @param file - the webpack manifest file.
 	 * @return {@link Map} of all entries and their corresponding chunks.
 	 */
-	@SuppressWarnings("unchecked")
 	public Map<String, WebpackEntry> parseWebpackManifestFile(File file) {
 		Map<String, WebpackEntry> entries = new HashMap<>();
 
