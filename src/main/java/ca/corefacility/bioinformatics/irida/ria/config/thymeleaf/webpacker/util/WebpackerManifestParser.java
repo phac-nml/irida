@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
-import ca.corefacility.bioinformatics.irida.exceptions.WebpackParserException;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -122,36 +122,17 @@ public class WebpackerManifestParser {
 		Map<String, WebpackEntry> entries = new HashMap<>();
 
 		try {
-			ObjectMapper objectMapper= new ObjectMapper();
-			JsonNode rootNode = objectMapper.readTree(file);
-			JsonNode entrypoints = rootNode.get("entrypoints");
+			String contents = new String(Files.readAllBytes(Paths.get(file.toURI())));
+			ObjectMapper objectMapper = new ObjectMapper();
+			SimpleModule module = new SimpleModule();
+			module.addDeserializer(WebpackAssetsManifest.class, new WebpackAssetsManifestDeserializer());
+			objectMapper.registerModule(module);
 
-			if (entrypoints == null) {
-				throw new WebpackParserException(file, "Cannot find entrypoints");
-			}
-
-			entrypoints.fieldNames().forEachRemaining(name -> {
-				final JsonNode assets = entrypoints.get(name)
-						.get("assets");
-
-				if (assets == null) {
-					throw new WebpackParserException(file, "Cannot file assets for entry [" + name + "]");
-				}
-
-				WebpackEntry entry = new WebpackEntry(assets);
-
-				/*
-				By default each entry should have at least one JavaScript Asset.
-				 */
-				if (entry.getJavascript()
-						.size() == 0) {
-					throw new WebpackParserException(file, "Entry [" + name + "] does not have any JavaScript assets lisets");
-				}
-				entries.put(name, entry);
-			});
+			WebpackAssetsManifest assetsManifest = objectMapper.readValue(contents, WebpackAssetsManifest.class);
+			return assetsManifest.getEntries();
 		} catch (IOException e) {
 			logger.error("Error reading webpack manifest file.");
 		}
-		return entries;
+		return null;
 	}
 }

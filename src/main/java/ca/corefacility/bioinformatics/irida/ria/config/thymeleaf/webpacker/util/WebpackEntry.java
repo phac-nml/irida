@@ -1,43 +1,52 @@
 package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util;
 
-import java.util.ArrayList;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JacksonAnnotation;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Each webpack entry with have at least one JavaScript file, and possibly css files and html (translatons)
  */
 public class WebpackEntry {
-	private List<String> javascript;
-	private List<String> css;
-	private List<String> html;
+	@JsonProperty("js")
+	List<String> javascript;
 
-	public WebpackEntry(JsonNode jsonNode) {
-		this.javascript = mapNodeToList(jsonNode.get("js"));
-		this.css = mapNodeToList(jsonNode.get("css"));
-		this.html = mapNodeToList(jsonNode.get("html"));
-	}
+	@JsonProperty("css")
+	List<String> css;
 
-	private List<String> mapNodeToList(JsonNode jsonNode) {
-		List<String> entries = new ArrayList<>();
-		if (jsonNode != null && jsonNode.isArray()) {
-			for (JsonNode node : jsonNode) {
-				entries.add(node.textValue());
-			}
-		}
-		return entries;
+	@JsonProperty("html")
+	List<String> html;
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@JacksonAnnotation
+	public @interface SkipAssetsWrapper {
+		String value();
 	}
 
 	public List<String> getJavascript() {
 		return javascript;
 	}
 
+	public void setJavascript(List<String> javascript) {
+		this.javascript = javascript;
+	}
+
 	public List<String> getCss() {
 		return css;
 	}
 
+	public void setCss(List<String> css) {
+		this.css = css;
+	}
+
 	public List<String> getHtml() {
-			return html;
-		}
+		return html;
+	}
+
+	public void setHtml(List<String> html) {
+		this.html = html;
+	}
 }
