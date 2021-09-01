@@ -57,8 +57,8 @@ public class WebpackEntryDeserializer extends StdDeserializer<WebpackEntry> {
 		List<String> paths = new ArrayList<>();
 		final Iterator<JsonNode> iterator = node.iterator();
 		while (iterator.hasNext()) {
-			paths.add(String.valueOf(iterator
-					.next()));
+			paths.add(iterator
+					.next().textValue());
 		}
 		return paths;
 	}
