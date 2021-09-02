@@ -35,7 +35,7 @@ export function ShareSamples({ sampleIds = [] }) {
         ) : (
           <Alert
             showIcon
-            message={"All samples exist in target project"}
+            message={i18n("ShareSamples.ready")}
             description={
               "Copying these samples again will do absolutely nothing, please do something more worthwhile"
             }
@@ -46,7 +46,7 @@ export function ShareSamples({ sampleIds = [] }) {
         <Col {...space}>
           <SharedSamplesList
             list={existing}
-            title={"Samples that exist in the target project"}
+            title={i18n("ShareSamples.exists")}
           />
         </Col>
       )}
