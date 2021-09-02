@@ -11,7 +11,6 @@ export function SequenceFileHeader({ file }) {
         width: `100%`,
       }}
     >
-      <Typography.Text>{file.label}</Typography.Text>
       <CalendarDate date={file.createdDate} />
     </div>
   );

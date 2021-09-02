@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleGenomeAssemblyFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -26,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 
 /**
  * UI Service for samples
@@ -80,10 +83,10 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-		List<SequencingObject> filePairs = getPairedSequenceFilesForSample(sample, project);
-		List<SequencingObject> singles = getSingleEndSequenceFilesForSample(sample, project);
-		List<SequencingObject> fast5 = getFast5FilesForSample(sample);
-		List<GenomeAssembly> genomeAssemblies = getGenomeAssembliesForSample(sample);
+		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project);
+		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project);
+		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample);
+		List<SampleGenomeAssemblyFileModel> genomeAssemblies = getGenomeAssembliesForSample(sample);
 
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
@@ -95,15 +98,19 @@ public class UISampleService {
 	 * @param project the {@link Project} the sample belongs to
 	 * @return list of paired end sequence files
 	 */
-	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
+	public List<SampleSequencingObjectFileModel> getPairedSequenceFilesForSample(Sample sample, Project project) {
 		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
-		List<SequencingObject> filePairs = new ArrayList<>();
+		List<SampleSequencingObjectFileModel> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
-			filePairs.add(obj);
+			SequenceFilePair sfp = (SequenceFilePair) obj;
+			String firstFileSize = sfp.getForwardSequenceFile().getFileSize();
+			String secondFileSize = sfp.getReverseSequenceFile().getFileSize();
+
+			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize));
 		}
 
 		return filePairs;
@@ -116,15 +123,17 @@ public class UISampleService {
 	 * @param project the {@link Project} the sample belongs to
 	 * @return list of single end sequence files
 	 */
-	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
+	public List<SampleSequencingObjectFileModel> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
 		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, SingleEndSequenceFile.class);
 
-		List<SequencingObject> singles = new ArrayList<>();
+		List<SampleSequencingObjectFileModel> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
-			singles.add(obj);
+			SingleEndSequenceFile sf = (SingleEndSequenceFile) obj;
+			String fileSize = sf.getSequenceFile().getFileSize();
+			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
 		}
 
 		return singles;
@@ -136,12 +145,18 @@ public class UISampleService {
 	 * @param sample the {@link Sample} to get the files for.
 	 * @return list of fast5 sequence files
 	 */
-	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
+	public List<SampleSequencingObjectFileModel> getFast5FilesForSample(Sample sample) {
 		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, Fast5Object.class);
-		return fast5FileJoins.stream()
-				.map(SampleSequencingObjectJoin::getObject)
-				.collect(Collectors.toList());
+
+		List<SampleSequencingObjectFileModel> fast5Files = new ArrayList<>();
+		for(SampleSequencingObjectJoin join : fast5FileJoins) {
+			SequencingObject obj = join.getObject();
+			Fast5Object f5 = (Fast5Object) obj;
+			String fileSize = f5.getFile().getFileSize();
+			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
+		}
+		return fast5Files;
 	}
 
 	/**
@@ -150,12 +165,16 @@ public class UISampleService {
 	 * @param sample the {@link Sample} to get the assemblies for
 	 * @return a list of genome assembly files
 	 */
-	public List<GenomeAssembly> getGenomeAssembliesForSample(Sample sample) {
+	public List<SampleGenomeAssemblyFileModel> getGenomeAssembliesForSample(Sample sample) {
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
+		List<SampleGenomeAssemblyFileModel> assemblyFiles = new ArrayList<>();
+		for(SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
+			GenomeAssembly obj = join.getObject();
+			String fileSize = obj.getFileSize();
+			assemblyFiles.add(new SampleGenomeAssemblyFileModel(obj, fileSize));
+		}
 
-		return genomeAssemblyJoins.stream()
-				.map(SampleGenomeAssemblyJoin::getObject)
-				.collect(Collectors.toList());
+		return assemblyFiles;
 	}
 
 	/**

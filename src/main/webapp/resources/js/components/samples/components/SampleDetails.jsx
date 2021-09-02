@@ -1,8 +1,9 @@
 import React from "react";
 import { SampleMetadata } from "./SampleMetadata";
-import { Divider, Tabs, Typography } from "antd";
+import { Tabs, Typography } from "antd";
 import { SampleFiles } from "./SampleFiles";
-import { CalendarDate } from "../../CalendarDate";
+import { SampleInfo } from "./SampleInfo";
+import { SampleAnalyses } from "./SampleAnalyses";
 
 const { Paragraph } = Typography;
 
@@ -17,12 +18,13 @@ const { Paragraph } = Typography;
 export function SampleDetails({ details }) {
   return (
     <>
-      <CalendarDate date={details.sample.createdDate} />
-      <Divider />
       <Paragraph ellipsis={{ rows: 3, expandable: true }}>
         {details.sample.description}
       </Paragraph>
-      <Tabs defaultActiveKey="metadata">
+      <Tabs defaultActiveKey="details">
+        <Tabs.TabPane tab={i18n("SampleDetails.details")} key="details">
+          <SampleInfo sample={details.sample} />
+        </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.metadata")} key="metadata">
           <SampleMetadata metadata={details.metadata} />
         </Tabs.TabPane>
@@ -31,6 +33,9 @@ export function SampleDetails({ details }) {
             id={details.sample.identifier}
             projectId={details.projectId}
           />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab={i18n("SampleDetails.analyses")} key="analyses">
+          <SampleAnalyses />
         </Tabs.TabPane>
       </Tabs>
     </>
