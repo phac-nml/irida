@@ -21,7 +21,7 @@ export function PairedFileRenderer({ pair, sampleId }) {
       label: pair.fileInfo.reverseSequenceFile.label,
       id: pair.fileInfo.reverseSequenceFile.identifier,
       icon: <ArrowLeftOutlined />,
-      filesize: pair.secondFile2Size,
+      filesize: pair.secondFileSize,
       fastqcLink: setBaseUrl(
         `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.reverseSequenceFile.identifier}`
       ),

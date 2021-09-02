@@ -2,15 +2,18 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
+/**
+ * Used to send sequencing object information with file sizes to the UI
+ */
 public class SampleSequencingObjectFileModel {
 	private SequencingObject fileInfo;
 	private String firstFileSize;
-	private String secondFile2Size;
+	private String secondFileSize;
 
-	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFile2Size) {
+	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize) {
 		this.fileInfo = fileInfo;
 		this.firstFileSize = firstFileSize;
-		this.secondFile2Size = secondFile2Size;
+		this.secondFileSize = secondFileSize;
 	}
 
 	public SequencingObject getFileInfo() {
@@ -29,11 +32,11 @@ public class SampleSequencingObjectFileModel {
 		this.firstFileSize = firstFileSize;
 	}
 
-	public String getSecondFile2Size() {
-		return secondFile2Size;
+	public String getSecondFileSize() {
+		return secondFileSize;
 	}
 
-	public void setSecondFile2Size(String secondFile2Size) {
-		this.secondFile2Size = secondFile2Size;
+	public void setSecondFileSize(String secondFileSize) {
+		this.secondFileSize = secondFileSize;
 	}
 }

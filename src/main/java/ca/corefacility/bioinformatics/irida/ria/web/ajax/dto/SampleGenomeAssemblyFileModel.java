@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 
+/**
+ * Used to send genome assembly object information with file size to the UI
+ */
 public class SampleGenomeAssemblyFileModel {
 	private GenomeAssembly fileInfo;
 	private String firstFileSize;

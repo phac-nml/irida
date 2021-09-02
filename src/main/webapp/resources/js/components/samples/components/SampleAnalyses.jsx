@@ -4,7 +4,7 @@ import { SPACE_MD } from "../../../styles/spacing";
 
 const { Search } = Input;
 /**
- * React component to display basic sample information
+ * React component to display sample analyses
  *
  * @returns {JSX.Element}
  * @constructor
