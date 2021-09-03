@@ -18,16 +18,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 public class WebpackAssetsManifestDeserializer extends StdDeserializer<WebpackAssetsManifest> {
 
 	public WebpackAssetsManifestDeserializer() {
-		this(WebpackAssetsManifest.class);
-	}
-
-	public WebpackAssetsManifestDeserializer(Class<?> vc) {
-		super(vc);
+		super(WebpackAssetsManifest.class);
 	}
 
 	@Override
 	public WebpackAssetsManifest deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-			throws IOException, JsonProcessingException {
+			throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(WebpackEntry.class, new WebpackEntryDeserializer());
