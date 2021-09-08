@@ -38,7 +38,10 @@ export function ShareSamples({ sampleIds = [] }) {
     <Row gutter={[16, 16]}>
       <Col {...space}>
         {samples.length ? (
-          <SharedSamplesList list={samples} title={"Samples ready to copy"} />
+          <SharedSamplesList
+            list={samples}
+            title={i18n("ShareSamples.ready")}
+          />
         ) : (
           <Alert
             showIcon
