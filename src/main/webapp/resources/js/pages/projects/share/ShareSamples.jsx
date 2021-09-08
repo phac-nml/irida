@@ -3,6 +3,13 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { SharedSamplesList } from "./SharedSamplesList";
 
+/**
+ * React component to review the samples to be shared with another project.
+ *
+ * @param {array} sampleIds - list of sample identifiers for samples being shared.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareSamples({ sampleIds = [] }) {
   const { originalSamples } = useSelector((state) => state.shareReducer);
   const [existing, setExisting] = React.useState([]);
