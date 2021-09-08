@@ -1,8 +1,10 @@
 import React from 'react'
+import { useDispatch } from "react-redux";
 import { navigate } from '@reach/router'
+import { setSamples } from "../services/rootReducer"
 import { Button, Table, Tag, Typography } from 'antd'
 import { SampleMetadataImportWizard } from './SampleMetadataImportWizard'
-import { useGetProjectSampleMetadataQuery, useSaveProjectSampleMetadataMutation } from '../../../../apis/metadata/metadata-import'
+import { useGetProjectSampleMetadataQuery } from '../../../../apis/metadata/metadata-import'
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -17,10 +19,10 @@ const { Text } = Typography
  * @constructor
  */
 export function SampleMetadataImportReview({ projectId }) {
+  const dispatch = useDispatch();
   const [columns, setColumns] = React.useState([])
   const [selected, setSelected] = React.useState([])
   const { data = {}, isLoading } = useGetProjectSampleMetadataQuery(projectId)
-  const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
     title: '',
     dataIndex: 'tags',
@@ -93,8 +95,8 @@ export function SampleMetadataImportReview({ projectId }) {
   }, [data, isLoading])
 
   const save = () => {
+    dispatch(setSamples(selected));
     navigate('complete');
-    saveMetadata({ projectId, sampleNames: selected });
   };
 
   return (

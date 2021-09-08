@@ -12,12 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.MetadataImportFileTypeNotSupportedError;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -151,6 +149,8 @@ public class UIMetadataImportService {
 		Project project = projectService.read(projectId);
 		ProjectSampleMetadataResponse response = new ProjectSampleMetadataResponse();
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+		int samplesUpdatedCount = 0;
+		int samplesCreatedCount = 0;
 
 		if (stored == null) {
 			response.setMessageKey("stored-error");
@@ -169,9 +169,11 @@ public class UIMetadataImportService {
 
 					if (row.getFoundSampleId() != null) {
 						sample = sampleService.getSampleBySampleName(project, name);
+						samplesUpdatedCount++;
 					} else {
 						sample = new Sample(name);
 						projectService.addSampleToProject(project, sample, true);
+						samplesCreatedCount++;
 					}
 
 					// Need to overwrite duplicate keys
@@ -197,25 +199,29 @@ public class UIMetadataImportService {
 
 			} catch (EntityNotFoundException e) {
 				// This really should not happen, but hey, you never know!
-				errorList.add(messageSource.getMessage("server.metadataimport.results.save.sample-not-found",
-						new Object[] { e.getMessage() }, locale));
 			}
 
 			if (errorList.size() > 0) {
 				response.setMessageKey("save-error");
 				response.setErrorList(errorList);
 			}
-		} else {
-			response.setMessageKey("found-error");
-			response.setMessage(
-					messageSource.getMessage("server.metadataimport.results.save.found-error", new Object[] {},
-							locale));
 		}
 
 		if (response.getMessageKey() == null) {
+			String message;
+			message = ((samplesUpdatedCount == 1) ?
+					messageSource.getMessage("server.metadataimport.results.save.success.single-updated",
+							new Object[] { samplesUpdatedCount }, locale) :
+					messageSource.getMessage("server.metadataimport.results.save.success.multiple-updated",
+							new Object[] { samplesUpdatedCount }, locale));
+			message += (samplesCreatedCount == 1) ?
+					messageSource.getMessage("server.metadataimport.results.save.success.single-created",
+							new Object[] { samplesCreatedCount }, locale) :
+					messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
+							new Object[] { samplesCreatedCount }, locale);
+
 			response.setMessageKey("success");
-			response.setMessage(messageSource.getMessage("server.metadataimport.results.save.success",
-					new Object[] { sampleNames.size() }, locale));
+			response.setMessage(message);
 		}
 
 		return response;

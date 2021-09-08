@@ -13,6 +13,12 @@ export const setHeaders = createAction(
   })
 );
 
+export const setSamples = createAction(
+  `rootReducers/setSamples`,
+  (sampleNames) => ({
+    payload: { sampleNames }
+  })
+);
 
 /*
 Redux reducer for project metadata.
@@ -21,9 +27,13 @@ For more information on redux reducers see: https://redux-toolkit.js.org/api/cre
 export const rootReducer = createReducer(
   initialState,
   (builder) => {
-    builder.addCase(setHeaders, (state, action) => {
-      state.headers = action.payload.headers;
-      state.sampleNameColumn = action.payload.sampleNameColumn;
-    });
+    builder
+      .addCase(setHeaders, (state, action) => {
+        state.headers = action.payload.headers;
+        state.sampleNameColumn = action.payload.sampleNameColumn;
+      })
+      .addCase(setSamples, (state, action) => {
+        state.sampleNames = action.payload.sampleNames;
+      });
   }
 );
