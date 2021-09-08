@@ -43,13 +43,7 @@ export function ShareSamples({ sampleIds = [] }) {
             title={i18n("ShareSamples.ready")}
           />
         ) : (
-          <Alert
-            showIcon
-            message={i18n("ShareSamples.ready")}
-            description={
-              "Copying these samples again will do absolutely nothing, please do something more worthwhile"
-            }
-          />
+          <Alert showIcon message={i18n("ShareSamples.no-samples")} />
         )}
       </Col>
       {showExisting && (
