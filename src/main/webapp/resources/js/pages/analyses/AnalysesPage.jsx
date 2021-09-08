@@ -9,7 +9,7 @@ render(
   <PageWrapper title={i18n("analyses.header")}>
     <PagedTableProvider url={window.PAGE.url}>
       <AnalysesTableProvider>
-        <AnalysesTable />
+        <AnalysesTable canManage={window.PAGE.canManage} />
       </AnalysesTableProvider>
     </PagedTableProvider>
   </PageWrapper>,

@@ -12,7 +12,17 @@ public class ProjectAnalysesPage extends AnalysesUserPage {
 	}
 
 	public static ProjectAnalysesPage initializeProjectAnalysesPage(WebDriver driver, int projectId) {
-		get(driver, "projects/" + projectId + "/analyses");
+		get(driver, "projects/" + projectId + "/analyses/project-analyses");
+		return PageFactory.initElements(driver, ProjectAnalysesPage.class);
+	}
+
+	public static ProjectAnalysesPage initializeProjectAnalysesSharedSingleSampleAnalysisOutputsPage(WebDriver driver, int projectId) {
+		get(driver, "projects/" + projectId + "/analyses/shared-outputs");
+		return PageFactory.initElements(driver, ProjectAnalysesPage.class);
+	}
+
+	public static ProjectAnalysesPage initializeProjectAnalysesAutomatedSingleSampleAnalysisOutputsPage(WebDriver driver, int projectId) {
+		get(driver, "projects/" + projectId + "/analyses/automated-outputs");
 		return PageFactory.initElements(driver, ProjectAnalysesPage.class);
 	}
 }
