@@ -57,7 +57,7 @@ function ShareSamplesLink() {
 }
 
 const querySelector = document.querySelector(".js-share-samples");
-console.log(querySelector);
+
 if (querySelector) {
   render(<ShareSamplesLink />, querySelector);
 }
