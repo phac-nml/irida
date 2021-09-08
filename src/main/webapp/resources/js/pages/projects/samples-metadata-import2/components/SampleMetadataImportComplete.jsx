@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import {
   Button,
   Result,
@@ -14,7 +15,8 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportComplete({ projectId }) {
+export function SampleMetadataImportComplete() {
+  const { projectId } = useParams();
   const { sampleNames } = useSelector((state) => state.reducer);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const [status, setStatus] = React.useState();

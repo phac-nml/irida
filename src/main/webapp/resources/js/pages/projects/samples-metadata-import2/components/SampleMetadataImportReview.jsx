@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from "react-redux";
-import { navigate } from '@reach/router'
+import { useHistory, useParams } from "react-router-dom";
 import { setSamples } from "../services/rootReducer"
 import { Button, Table, Tag, Typography } from 'antd'
 import { SampleMetadataImportWizard } from './SampleMetadataImportWizard'
@@ -18,7 +18,9 @@ const { Text } = Typography
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportReview({ projectId }) {
+export function SampleMetadataImportReview() {
+  const { projectId } = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
   const [columns, setColumns] = React.useState([])
   const [selected, setSelected] = React.useState([])
@@ -96,7 +98,7 @@ export function SampleMetadataImportReview({ projectId }) {
 
   const save = () => {
     dispatch(setSamples(selected));
-    navigate('complete');
+    history.push('complete');
   };
 
   return (
@@ -117,7 +119,7 @@ export function SampleMetadataImportReview({ projectId }) {
         <Button
           className="t-metadata-uploader-column-button"
           icon={<IconArrowLeft />}
-          onClick={() => navigate(-1)}
+          onClick={() => history.goBack()}
         >
           {i18n('SampleMetadataImportReview.button.back')}
         </Button>

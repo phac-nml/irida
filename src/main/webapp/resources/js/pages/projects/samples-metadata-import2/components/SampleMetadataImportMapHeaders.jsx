@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { navigate } from "@reach/router"
+import { useHistory, useParams } from "react-router-dom";
 import {
   Button,
   Radio,
@@ -19,7 +19,9 @@ const { Text } = Typography
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportMapHeaders({ projectId }) {
+export function SampleMetadataImportMapHeaders() {
+  const { projectId } = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
   const [column, setColumn] = React.useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
@@ -31,7 +33,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
 
   const onSubmit = () => {
     updateColumn({ projectId, sampleNameColumn: column });
-    navigate('review');
+    history.push('review');
   };
 
   return (
@@ -49,7 +51,7 @@ export function SampleMetadataImportMapHeaders({ projectId }) {
         ))}
       </Radio.Group>
       <div style={{ display: 'flex' }}>
-        <Button className="t-metadata-uploader-file-button" icon={<IconArrowLeft />} onClick={() => navigate(-1)}> {i18n("SampleMetadataImportMapHeaders.button.back")}</Button>
+        <Button className="t-metadata-uploader-file-button" icon={<IconArrowLeft />} onClick={() => history.goBack()}> {i18n("SampleMetadataImportMapHeaders.button.back")}</Button>
         <Button className="t-metadata-uploader-preview-button" onClick={onSubmit} style={{ marginLeft: 'auto' }}>
           {i18n("SampleMetadataImportMapHeaders.button.next")}
           <IconArrowRight />

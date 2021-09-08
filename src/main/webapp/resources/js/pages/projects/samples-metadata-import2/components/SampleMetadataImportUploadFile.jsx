@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useHistory, useParams } from "react-router-dom";
 import { setHeaders } from "../services/rootReducer"
-import { navigate } from "@reach/router"
 import {
   notification,
   Typography,
@@ -19,7 +19,9 @@ const { Text } = Typography
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportUploadFile({ projectId }) {
+export function SampleMetadataImportUploadFile() {
+  const { projectId } = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
   const [status, setStatus] = React.useState("process");
   const [clearStorage] = useClearProjectSampleMetadataMutation();
@@ -40,7 +42,7 @@ export function SampleMetadataImportUploadFile({ projectId }) {
           message: i18n("SampleMetadataImportUploadFile.success", info.file.name),
         });
         dispatch(setHeaders(info.file.response.headers, info.file.response.sampleNameColumn));
-        navigate('headers');
+        history.push('headers');
       } else if (status === 'error') {
         setStatus("error");
         notification.error({
