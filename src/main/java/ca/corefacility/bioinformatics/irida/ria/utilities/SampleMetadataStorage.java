@@ -33,6 +33,13 @@ public class SampleMetadataStorage {
 		return rows;
 	}
 
+	/**
+	 * Returns the row from storage given the sample name and column name
+	 *
+	 * @param sampleName       the name of the sample
+	 * @param sampleNameColumn the header name of the sample column
+	 * @return the value associated with the key
+	 */
 	public SampleMetadataStorageRow getRow(String sampleName, String sampleNameColumn) {
 		return rows.stream()
 				.filter(row -> sampleName.equals(row.getEntryValue(sampleNameColumn)))
