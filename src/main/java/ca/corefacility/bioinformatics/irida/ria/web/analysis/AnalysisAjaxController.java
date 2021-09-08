@@ -61,7 +61,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jsonldjava.shaded.com.google.common.base.Strings;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -120,57 +120,6 @@ public class AnalysisAjaxController {
 		this.emailController = emailController;
 	}
 
-	/**
-	 * Get all {@link User} generated {@link AnalysisOutputFile} info for principal User
-	 *
-	 * @param principal Principal {@link User}
-	 * @return {@link User} generated {@link AnalysisOutputFile} info
-	 */
-	@RequestMapping(value = "/user/analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Principal principal) {
-		final User user = userService.getUserByUsername(principal.getName());
-		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
-	}
-
-	/**
-	 * Get all {@link User} generated {@link AnalysisOutputFile} info
-	 *
-	 * @param userId {@link User} id
-	 * @return {@link User} generated {@link AnalysisOutputFile} info
-	 */
-	@RequestMapping(value = "/user/{userId}/analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(@PathVariable Long userId) {
-		final User user = userService.read(userId);
-		return analysisSubmissionService.getAllUserAnalysisOutputInfo(user);
-	}
-
-	/**
-	 * Get analysis output file information for all analyses shared with a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	@RequestMapping(value = "/project/{projectId}/shared-analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(
-			@PathVariable Long projectId) {
-		return analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(projectId);
-	}
-
-	/**
-	 * Get analysis output file information for all automated analyses for a {@link Project}.
-	 *
-	 * @param projectId {@link Project} id
-	 * @return list of {@link ProjectSampleAnalysisOutputInfo}
-	 */
-	@RequestMapping(value = "/project/{projectId}/automated-analysis-outputs")
-	@ResponseBody
-	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(
-			@PathVariable Long projectId) {
-		return analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(projectId);
-	}
 
 	/**
 	 * Update an analysis email pipeline completion result
@@ -832,68 +781,6 @@ public class AnalysisAjaxController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
-	}
-
-	/**
-	 * Prepare the download of multiple {@link AnalysisOutputFile} by adding them to a selection.
-	 *
-	 * @param outputs  Info for {@link AnalysisOutputFile} to download
-	 * @param response {@link HttpServletResponse}
-	 * @return Map with the size of the selection for download.
-	 */
-	@RequestMapping(value = "/download/prepare", method = RequestMethod.POST)
-	@ResponseBody
-	public Map prepareDownload(@RequestBody List<ProjectSampleAnalysisOutputInfo> outputs,
-			HttpServletResponse response) {
-		final Long selectionSize = analysisOutputFileDownloadManager.setSelection(outputs);
-		response.setStatus(HttpServletResponse.SC_CREATED);
-		return ImmutableMap.of("selectionSize", selectionSize);
-	}
-
-	/**
-	 * Download the selected {@link AnalysisOutputFile}.
-	 *
-	 * @param filename Optional filename for file download.
-	 * @param response {@link HttpServletResponse}
-	 */
-	@RequestMapping(value = "/download/selection", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void downloadSelection(
-			@RequestParam(required = false, defaultValue = "analysis-output-files-batch-download") String filename,
-			HttpServletResponse response) {
-		Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files = analysisOutputFileDownloadManager.getSelection();
-		FileUtilities.createBatchAnalysisOutputFileZippedResponse(response, filename, files);
-	}
-
-	/**
-	 * Download single output files from an {@link AnalysisSubmission}
-	 *
-	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
-	 * @param fileId               the id of the file to download
-	 * @param filename             Optional filename for file download.
-	 * @param response             {@link HttpServletResponse}
-	 */
-	@RequestMapping(value = "/download/{analysisSubmissionId}/file/{fileId}")
-	public void getAjaxDownloadAnalysisSubmissionIndividualFile(@PathVariable Long analysisSubmissionId,
-			@PathVariable Long fileId, @RequestParam(defaultValue = "", required = false) String filename,
-			HttpServletResponse response) {
-		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
-
-		Analysis analysis = analysisSubmission.getAnalysis();
-		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
-
-		Optional<AnalysisOutputFile> optFile = files.stream()
-				.filter(f -> f.getId()
-						.equals(fileId))
-				.findAny();
-		if (!optFile.isPresent()) {
-			throw new EntityNotFoundException("Could not find file with id " + fileId);
-		}
-
-		if (!Strings.isNullOrEmpty(filename)) {
-			FileUtilities.createSingleFileResponse(response, optFile.get(), filename);
-		} else {
-			FileUtilities.createSingleFileResponse(response, optFile.get());
-		}
 	}
 
 	/**
