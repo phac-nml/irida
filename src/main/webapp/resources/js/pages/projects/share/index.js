@@ -1,7 +1,14 @@
-import { Form, Select, Space, Typography } from "antd";
+import { Form, Menu, Select, Space, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useDispatch, useSelector } from "react-redux";
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Switch,
+  useHistory,
+} from "react-router-dom";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import { ShareSamples } from "./ShareSamples";
@@ -16,6 +23,7 @@ import store from "./store";
  */
 function ShareLayout() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [samples, setSamples] = React.useState();
   const [options, setOptions] = React.useState();
   const { originalSamples, currentProject, projectId } = useSelector(
@@ -48,6 +56,12 @@ function ShareLayout() {
     }
   }, [projects, projectLoading]);
 
+  React.useEffect(() => {
+    if (projectId) {
+      history.push("/samples");
+    }
+  }, [history, projectId]);
+
   const updateCurrentSampleIds = (projectId) => dispatch(setProject(projectId));
 
   return (
@@ -65,15 +79,30 @@ function ShareLayout() {
             onChange={updateCurrentSampleIds}
           />
         </Form.Item>
-        {sampleIds && <ShareSamples sampleIds={sampleIds} />}
+        {sampleIds && (
+          <Space direction="vertical" style={{ display: "block" }}>
+            <Menu mode="horizontal">
+              <Menu.Item key="samples">
+                <Link to="/samples">Samples</Link>
+              </Menu.Item>
+            </Menu>
+            <Switch>
+              <Route path="/samples">
+                <ShareSamples sampleIds={sampleIds} />
+              </Route>
+            </Switch>
+          </Space>
+        )}
       </Space>
     </Form>
   );
 }
 
 render(
-  <Provider store={store}>
-    <ShareLayout />
-  </Provider>,
+  <Router basename={window.location.pathname}>
+    <Provider store={store}>
+      <ShareLayout />
+    </Provider>
+  </Router>,
   document.querySelector("#root")
 );
