@@ -170,7 +170,7 @@ public class ProjectsController {
 	 * @param principal Currently logged in user
 	 * @return Path to the template for shareing samples
 	 */
-	@RequestMapping("/projects/{projectId}/share*")
+	@RequestMapping(value = { "/projects/{projectId}/share", "/projects/{projectId}/share/*" })
 	public String getProjectsSharePage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);

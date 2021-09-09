@@ -8,6 +8,7 @@ import {
   Route,
   Switch,
   useHistory,
+  useLocation,
 } from "react-router-dom";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
@@ -24,9 +25,9 @@ import store from "./store";
 function ShareLayout() {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [samples, setSamples] = React.useState();
+  const location = useLocation();
   const [options, setOptions] = React.useState();
-  const { originalSamples, currentProject, projectId } = useSelector(
+  const { currentProject, projectId } = useSelector(
     (state) => state.shareReducer
   );
 
@@ -42,10 +43,6 @@ function ShareLayout() {
   });
 
   React.useEffect(() => {
-    setSamples(originalSamples);
-  }, [originalSamples]);
-
-  React.useEffect(() => {
     if (!projectLoading) {
       setOptions(
         projects.map((project) => ({
@@ -58,7 +55,8 @@ function ShareLayout() {
 
   React.useEffect(() => {
     if (projectId) {
-      history.push("/samples");
+      // Go back to samples whenever there is a new project selected
+      history.push("/");
     }
   }, [history, projectId]);
 
@@ -81,13 +79,13 @@ function ShareLayout() {
         </Form.Item>
         {sampleIds && (
           <Space direction="vertical" style={{ display: "block" }}>
-            <Menu mode="horizontal">
-              <Menu.Item key="samples">
-                <Link to="/samples">Samples</Link>
+            <Menu mode="horizontal" selectedKeys={[location.pathname]}>
+              <Menu.Item key="/">
+                <Link to="/">Samples</Link>
               </Menu.Item>
             </Menu>
             <Switch>
-              <Route path="/samples">
+              <Route path="/">
                 <ShareSamples sampleIds={sampleIds} />
               </Route>
             </Switch>
