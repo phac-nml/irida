@@ -1,11 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata`);
+const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata/upload`);
 
 /**
  * Redux API for Sample Metadata
- * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {createProjectSampleMetadata: *, clearProjectSampleMetadata: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {createProjectSampleMetadata: *, clearProjectSampleMetadata: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 export const metadataImportApi = createApi({
   reducerPath: `metadataImportApi`,
@@ -14,7 +13,7 @@ export const metadataImportApi = createApi({
   endpoints: (build) => ({
     getProjectSampleMetadata: build.query({
       query: (projectId) => ({
-        url: `/upload/getMetadata`,
+        url: `/getMetadata`,
         params: {
           projectId,
         }
@@ -23,7 +22,7 @@ export const metadataImportApi = createApi({
     }),
     clearProjectSampleMetadata: build.mutation({
       query: (projectId) => ({
-        url: `/upload/clear`,
+        url: `/clear`,
         params: {
           projectId,
         }
@@ -32,7 +31,7 @@ export const metadataImportApi = createApi({
     }),
     setColumnProjectSampleMetadata: build.mutation({
       query: ({ projectId, sampleNameColumn }) => ({
-        url: `/upload/setSampleColumn`,
+        url: `/setSampleColumn`,
         method: 'POST',
         params: {
           projectId,
@@ -43,7 +42,7 @@ export const metadataImportApi = createApi({
     }),
     saveProjectSampleMetadata: build.mutation({
       query: ({ projectId, sampleNames }) => ({
-        url: `/upload/save`,
+        url: `/save`,
         method: 'POST',
         params: {
           projectId,
