@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { setHeaders } from "../services/rootReducer"
+import { setHeaders } from "../services/importReducer"
 import {
   notification,
   Typography,

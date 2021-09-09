@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { setSamples } from "../services/rootReducer"
+import { setSamples } from "../services/importReducer"
 import { Button, Table, Tag, Typography } from 'antd'
 import { SampleMetadataImportWizard } from './SampleMetadataImportWizard'
 import { useGetProjectSampleMetadataQuery } from '../../../../apis/metadata/metadata-import'

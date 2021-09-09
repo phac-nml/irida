@@ -24,7 +24,7 @@ export const setSamples = createAction(
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
-export const rootReducer = createReducer(
+export const importReducer = createReducer(
   initialState,
   (builder) => {
     builder
