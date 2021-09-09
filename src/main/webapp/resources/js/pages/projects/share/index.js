@@ -17,6 +17,11 @@ import { setProject } from "./shareSlice";
 import store from "./store";
 
 /**
+IGNORE THIS WILL BE MOVED / ENSURING ROUTER WORKING
+ */
+const ShareMetadata = () => <div>METAsDATA</div>;
+
+/**
  * Base component for sharing samples between projects.
  *
  * @returns {JSX.Element}
@@ -83,10 +88,16 @@ function ShareLayout() {
               <Menu.Item key="/">
                 <Link to="/">Samples</Link>
               </Menu.Item>
+              <Menu.Item key="/metadata">
+                <Link to="/metadata">Metadata</Link>
+              </Menu.Item>
             </Menu>
             <Switch>
-              <Route path="/">
+              <Route exact path="/">
                 <ShareSamples sampleIds={sampleIds} />
+              </Route>
+              <Route path="/metadata">
+                <ShareMetadata />
               </Route>
             </Switch>
           </Space>
