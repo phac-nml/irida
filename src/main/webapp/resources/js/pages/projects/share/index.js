@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareSamples } from "./ShareSamples";
 import { setProject } from "./shareSlice";
 import store from "./store";
@@ -108,7 +109,7 @@ function ShareLayout() {
 }
 
 render(
-  <Router basename={window.location.pathname}>
+  <Router basename={setBaseUrl("/projects/share")}>
     <Provider store={store}>
       <ShareLayout />
     </Provider>

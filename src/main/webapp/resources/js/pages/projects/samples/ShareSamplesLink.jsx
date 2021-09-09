@@ -35,7 +35,7 @@ function ShareSamplesLink() {
     );
 
     // Redirect user to share page
-    window.location.href = setBaseUrl(`/projects/${projectId}/share`);
+    window.location.href = setBaseUrl(`/projects/share?projectId=${projectId}`);
   }
 
   return (
