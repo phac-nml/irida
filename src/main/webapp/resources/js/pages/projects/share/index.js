@@ -1,15 +1,7 @@
-import { Form, Menu, Space } from "antd";
+import { Alert, Form, PageHeader, Space, Tabs } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Provider } from "react-redux";
-import {
-  BrowserRouter as Router,
-  Link,
-  Route,
-  Switch,
-  useLocation,
-} from "react-router-dom";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { Provider, useSelector } from "react-redux";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 import store from "./store";
@@ -26,38 +18,43 @@ const ShareMetadata = () => <div>METAsDATA</div>;
  * @constructor
  */
 function ShareLayout() {
-  const location = useLocation();
+  const { originalSamples } = useSelector((state) => state.shareReducer);
 
   return (
-    <Form layout="vertical">
-      <Space direction="vertical" style={{ display: "block" }} size="large">
-        <ShareProject />
-        <Menu mode="horizontal" selectedKeys={[location.pathname]}>
-          <Menu.Item key="/">
-            <Link to="/">Samples</Link>
-          </Menu.Item>
-          <Menu.Item key="/metadata">
-            <Link to="/metadata">Metadata</Link>
-          </Menu.Item>
-        </Menu>
-        <Switch>
-          <Route exact path="/">
-            <ShareSamples />
-          </Route>
-          <Route path="/metadata">
-            <ShareMetadata />
-          </Route>
-        </Switch>
-      </Space>
-    </Form>
+    <PageHeader
+      ghost={false}
+      title={i18n("ShareSamples.title")}
+      subTitle={`Samples selected on project samples page`}
+    >
+      {originalSamples.length > 0 ? (
+        <Form layout="vertical">
+          <Space direction="vertical" style={{ display: "block" }} size="large">
+            <ShareProject />
+
+            <Tabs defaultActiveKey="samples">
+              <Tabs.TabPane tab={"Samples"} key="samples">
+                <ShareSamples />
+              </Tabs.TabPane>
+              <Tabs.TabPane tab={"Metadata Security"} key="metadata">
+                <ShareMetadata />
+              </Tabs.TabPane>
+            </Tabs>
+          </Space>
+        </Form>
+      ) : (
+        <Alert
+          showIcon
+          type="info"
+          message={`You have no samples selected to share, please go back to the project samples page and select some samples`}
+        />
+      )}
+    </PageHeader>
   );
 }
 
 render(
-  <Router basename={setBaseUrl("/projects/share")}>
-    <Provider store={store}>
-      <ShareLayout />
-    </Provider>
-  </Router>,
+  <Provider store={store}>
+    <ShareLayout />
+  </Provider>,
   document.querySelector("#root")
 );

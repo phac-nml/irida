@@ -28,26 +28,21 @@ export function ShareProject() {
   }, [projects, projectLoading]);
 
   return (
-    <>
-      <Typography.Title level={4}>
-        {i18n("ShareSamples.title")}
-      </Typography.Title>
-      <Form.Item
-        label={
-          <Typography.Text strong>
-            {i18n("ShareSamples.projects")}
-          </Typography.Text>
-        }
-      >
-        <Select
-          autoFocus
-          size="large"
-          style={{ width: `100%` }}
-          loading={projectLoading}
-          options={options}
-          onChange={(projectId) => dispatch(setProject(projectId))}
-        />
-      </Form.Item>
-    </>
+    <Form.Item
+      label={
+        <Typography.Text strong>
+          {i18n("ShareSamples.projects")}
+        </Typography.Text>
+      }
+    >
+      <Select
+        autoFocus
+        size="large"
+        style={{ width: `100%` }}
+        loading={projectLoading}
+        options={options}
+        onChange={(projectId) => dispatch(setProject(projectId))}
+      />
+    </Form.Item>
   );
 }
