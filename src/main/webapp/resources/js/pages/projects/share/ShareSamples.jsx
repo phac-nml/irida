@@ -15,14 +15,9 @@ export function ShareSamples() {
 
   const { projectId } = useSelector((state) => state.shareReducer);
 
-  const { data: existingIds = [], isFetching } = useGetSampleIdsForProjectQuery(
-    projectId,
-    {
-      skip: !projectId,
-    }
-  );
-  // const showExisting = !!samples.length && !!existing.length;
-  // const space = showExisting ? { md: 12, xs: 24 } : { xs: 24 };
+  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
+    skip: !projectId,
+  });
 
   const samples = originalSamples.filter(
     (sample) => !existingIds.includes(sample.id)
