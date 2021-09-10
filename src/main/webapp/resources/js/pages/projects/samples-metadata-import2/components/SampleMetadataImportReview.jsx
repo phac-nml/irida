@@ -1,10 +1,8 @@
 import React from 'react'
-import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { setSamples } from "../services/importReducer"
 import { Button, Table, Tag, Typography } from 'antd'
 import { SampleMetadataImportWizard } from './SampleMetadataImportWizard'
-import { useGetProjectSampleMetadataQuery } from '../../../../apis/metadata/metadata-import'
+import { useGetProjectSampleMetadataQuery, useSaveProjectSampleMetadataMutation } from '../../../../apis/metadata/metadata-import'
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -21,10 +19,10 @@ const { Text } = Typography
 export function SampleMetadataImportReview() {
   const { projectId } = useParams();
   const history = useHistory();
-  const dispatch = useDispatch();
   const [columns, setColumns] = React.useState([])
   const [selected, setSelected] = React.useState([])
   const { data = {}, isLoading } = useGetProjectSampleMetadataQuery(projectId)
+  const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
     title: '',
     dataIndex: 'tags',
@@ -58,7 +56,7 @@ export function SampleMetadataImportReview() {
     selectedRowKeys: selected,
     onChange: (selectedRowKeys, selectedRows) => {
       setSelected(selectedRowKeys)
-    },
+    }
   }
 
   React.useEffect(() => {
@@ -97,8 +95,11 @@ export function SampleMetadataImportReview() {
   }, [data, isLoading])
 
   const save = () => {
-    dispatch(setSamples(selected));
-    history.push('complete');
+    saveMetadata({ projectId, sampleNames: selected })
+      .unwrap()
+      .then((payload) => {
+        history.push({pathname: 'complete', state: {statusMessage: payload.message}});
+    });
   };
 
   return (

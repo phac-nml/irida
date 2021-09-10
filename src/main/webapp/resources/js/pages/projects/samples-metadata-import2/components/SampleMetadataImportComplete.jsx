@@ -1,12 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   Button,
   Result,
 } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useSaveProjectSampleMetadataMutation } from '../../../../apis/metadata/metadata-import'
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 /**
@@ -17,28 +15,14 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  */
 export function SampleMetadataImportComplete() {
   const { projectId } = useParams();
-  const { sampleNames } = useSelector((state) => state.reducer);
-  const [saveMetadata] = useSaveProjectSampleMetadataMutation();
-  const [status, setStatus] = React.useState();
-  const [statusMessage, setStatusMessage] = React.useState();
-  const [errorList, setErrorList] = React.useState();
-
-  React.useEffect(() => {
-    saveMetadata({ projectId, sampleNames })
-      .unwrap()
-      .then((payload) => {
-        setStatus(payload.messageKey);
-        setStatusMessage(payload.message);
-        setErrorList(payload.errorList);
-      });
-  }, []);
+  const history = useHistory();
 
   return (
     <SampleMetadataImportWizard currentStep={3}>
       <Result
-        status={status == "success" ? "success" : "warning"}
+        status="success"
         title={i18n("SampleMetadataImportComplete.result.title")}
-        subTitle={statusMessage}
+        subTitle={history.location.state.statusMessage}
         extra={
           <Button type="primary" href={setBaseUrl(`projects/${projectId}/sample-metadata/upload2/file`)}>
             {i18n("SampleMetadataImportComplete.button.upload")}

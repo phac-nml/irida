@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import {
   Button,
@@ -22,7 +22,6 @@ const { Text } = Typography
 export function SampleMetadataImportMapHeaders() {
   const { projectId } = useParams();
   const history = useHistory();
-  const dispatch = useDispatch();
   const [column, setColumn] = React.useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
   const [updateColumn] = useSetColumnProjectSampleMetadataMutation();
