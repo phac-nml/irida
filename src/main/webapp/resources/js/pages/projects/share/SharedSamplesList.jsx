@@ -60,7 +60,7 @@ export function SharedSamplesList({ list = [] }) {
   const MAX_LIST_HEIGHT = 600;
   const height =
     list.length * ROW_HEIGHT < MAX_LIST_HEIGHT
-      ? list.length * ROW_HEIGHT
+      ? list.length * ROW_HEIGHT + 2 // 2 is to offset for borders
       : MAX_LIST_HEIGHT;
   return (
     <List
