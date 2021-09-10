@@ -52,7 +52,7 @@ export function CreateProjectDetails({ form }) {
           },
           {
             type: "string",
-            min: 4,
+            min: 5,
             message: i18n("CreateProjectDetails.length"),
           },
         ]}
