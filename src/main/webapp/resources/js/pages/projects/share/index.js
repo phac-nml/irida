@@ -2,6 +2,7 @@ import { Alert, Form, PageHeader, Space, Tabs } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 import store from "./store";
@@ -18,13 +19,20 @@ const ShareMetadata = () => <div>METAsDATA</div>;
  * @constructor
  */
 function ShareLayout() {
-  const { originalSamples } = useSelector((state) => state.shareReducer);
+  const { originalSamples, currentProject } = useSelector(
+    (state) => state.shareReducer
+  );
 
   return (
     <PageHeader
       ghost={false}
       title={i18n("ShareSamples.title")}
       subTitle={`Samples selected on project samples page`}
+      onBack={() =>
+        (window.location.href = setBaseUrl(
+          `/projects/${currentProject}/samples`
+        ))
+      }
     >
       {originalSamples.length > 0 ? (
         <Form layout="vertical">
