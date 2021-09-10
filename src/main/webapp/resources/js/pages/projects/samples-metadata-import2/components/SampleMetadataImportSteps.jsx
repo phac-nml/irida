@@ -1,12 +1,13 @@
 import React from "react";
-import {
-  Steps,
-} from "antd";
+import { Steps } from "antd";
+import PropTypes from "prop-types";
 
 const { Step } = Steps;
 
 /**
  * React component that displays the steps for the Sample Metadata Uploader.
+ * @prop {number} currentStep - the current step, starting with zero
+ * @prop {string} currentStatus - the status of the current step
  * @returns {*}
  * @constructor
  */
@@ -20,3 +21,8 @@ export function SampleMetadataImportSteps({ currentStep, currentStatus }) {
     </Steps>
   );
 }
+
+SampleMetadataImportSteps.propTypes = {
+  currentStep: PropTypes.number,
+  currentStatus: PropTypes.string,
+};

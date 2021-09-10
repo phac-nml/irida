@@ -1,9 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import {
-  Button,
-  Result,
-} from "antd";
+import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
@@ -24,7 +21,12 @@ export function SampleMetadataImportComplete() {
         title={i18n("SampleMetadataImportComplete.result.title")}
         subTitle={history.location.state.statusMessage}
         extra={
-          <Button type="primary" href={setBaseUrl(`projects/${projectId}/sample-metadata/upload2/file`)}>
+          <Button
+            type="primary"
+            href={setBaseUrl(
+              `projects/${projectId}/sample-metadata/upload2/file`
+            )}
+          >
             {i18n("SampleMetadataImportComplete.button.upload")}
           </Button>
         }
