@@ -1,59 +1,57 @@
-import { Alert, Col, Row } from "antd";
+import { Alert, Space, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
+import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import { SharedSamplesList } from "./SharedSamplesList";
 
 /**
  * React component to review the samples to be shared with another project.
  *
- * @param {array} sampleIds - list of sample identifiers for samples being shared.
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({ sampleIds = [] }) {
+export function ShareSamples() {
   const { originalSamples } = useSelector((state) => state.shareReducer);
-  const [existing, setExisting] = React.useState([]);
-  const [samples, setSamples] = React.useState([]);
 
-  React.useEffect(() => {
-    if (sampleIds) {
-      const newExists = [];
-      const newSamples = [];
-      originalSamples.forEach((sample) => {
-        if (sampleIds.includes(sample.id)) {
-          newExists.push(sample);
-        } else {
-          newSamples.push(sample);
-        }
-      });
-      setSamples(newSamples);
-      setExisting(newExists);
+  const { projectId } = useSelector((state) => state.shareReducer);
+
+  const { data: existingIds = [], isFetching } = useGetSampleIdsForProjectQuery(
+    projectId,
+    {
+      skip: !projectId,
     }
-  }, [originalSamples, sampleIds]);
+  );
+  // const showExisting = !!samples.length && !!existing.length;
+  // const space = showExisting ? { md: 12, xs: 24 } : { xs: 24 };
 
-  const showExisting = !!samples.length && !!existing.length;
-  const space = showExisting ? { md: 12, xs: 24 } : { xs: 24 };
+  const samples = originalSamples.filter(
+    (sample) => !existingIds.includes(sample.id)
+  );
+
+  const SHOW_SAMPLES = samples.length > 0;
+  const SHOW_NO_SAMPLES_WARNING = samples.length === 0;
+  const SHOW_SOME_SAMPLES_WARNING =
+    SHOW_SAMPLES && samples.length < originalSamples.length;
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col {...space}>
-        {samples.length ? (
-          <SharedSamplesList
-            list={samples}
-            title={i18n("ShareSamples.ready")}
-          />
-        ) : (
-          <Alert showIcon message={i18n("ShareSamples.no-samples")} />
-        )}
-      </Col>
-      {showExisting && (
-        <Col {...space}>
-          <SharedSamplesList
-            list={existing}
-            title={i18n("ShareSamples.exists")}
-          />
-        </Col>
+    <Space direction="vertical" style={{ display: "block" }}>
+      <Typography.Text>{"Samples available to copy"}</Typography.Text>
+      {SHOW_SAMPLES && <SharedSamplesList list={samples} />}
+      {SHOW_NO_SAMPLES_WARNING && (
+        <Alert
+          type="warning"
+          showIcon
+          message={`All samples exist in the target project`}
+          description={`Since these samples exists, there is no reason to re-copy them.`}
+        />
       )}
-    </Row>
+      {SHOW_SOME_SAMPLES_WARNING && (
+        <Alert
+          type="info"
+          showIcon
+          message={`6 samples exist in the target project and will not be re-shared`}
+        />
+      )}
+    </Space>
   );
 }

@@ -1,4 +1,4 @@
-import { Avatar, Button, List, Space, Typography } from "antd";
+import { Avatar, Button, List } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { FixedSizeList as VList } from "react-window";
@@ -11,7 +11,7 @@ import { SampleDetailViewer } from "../../../components/samples/SampleDetailView
 import { green6, grey1, grey2, yellow6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
 
-export function SharedSamplesList({ list = [], title = "" }) {
+export function SharedSamplesList({ list = [] }) {
   const dispatch = useDispatch();
 
   const Row = ({ index, style }) => {
@@ -56,19 +56,26 @@ export function SharedSamplesList({ list = [], title = "" }) {
     );
   };
 
+  const ROW_HEIGHT = 55;
+  const MAX_LIST_HEIGHT = 600;
+  const height =
+    list.length * ROW_HEIGHT < MAX_LIST_HEIGHT
+      ? list.length * ROW_HEIGHT
+      : MAX_LIST_HEIGHT;
   return (
-    <Space direction="vertical" style={{ display: "block" }}>
-      <Typography.Text>{title}</Typography.Text>
-      <List
-        title={title}
-        bordered
-        rowKey={(sample) => sample.name}
-        style={{ backgroundColor: grey2 }}
+    <List
+      bordered
+      rowKey={(sample) => sample.name}
+      style={{ backgroundColor: grey2 }}
+    >
+      <VList
+        height={height}
+        itemCount={list.length}
+        itemSize={ROW_HEIGHT}
+        width="100%"
       >
-        <VList height={600} itemCount={list.length} itemSize={55} width="100%">
-          {Row}
-        </VList>
-      </List>
-    </Space>
+        {Row}
+      </VList>
+    </List>
   );
 }
