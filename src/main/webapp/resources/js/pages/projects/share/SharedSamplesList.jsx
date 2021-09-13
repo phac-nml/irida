@@ -27,10 +27,13 @@ export function SharedSamplesList({ list = [] }) {
       <List.Item
         style={{ ...style, backgroundColor: grey1 }}
         actions={[
-          <Tooltip placement="left" title={i18n("ShareSamples.remove")}>
+          <Tooltip
+            key="remove"
+            placement="left"
+            title={i18n("ShareSamples.remove")}
+          >
             <Button
               size="small"
-              key="remove"
               shape="circle"
               icon={<IconRemove />}
               onClick={() => dispatch(removeSample(sample.id))}
