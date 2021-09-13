@@ -4,11 +4,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { setProject } from "./shareSlice";
 
+/**
+ * React component for selecting the project to share a sample with.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareProject() {
   const dispatch = useDispatch();
   const { currentProject } = useSelector((state) => state.shareReducer);
   const [options, setOptions] = React.useState();
 
+  /*
+  This fetches a list of the projects that the user has access to.
+   */
   const {
     data: projects,
     isLoading: projectLoading,
