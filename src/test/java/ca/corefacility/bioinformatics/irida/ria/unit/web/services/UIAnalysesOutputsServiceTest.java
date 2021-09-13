@@ -6,7 +6,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesOutputsService;
@@ -61,6 +65,10 @@ public class UIAnalysesOutputsServiceTest {
 
 	@Test
 	public void getUserSingleAnalysisOutputs() {
+		User user = userService.getUserByUsername(principal.getName());
+		Authentication auth = new UsernamePasswordAuthenticationToken(user, null);
+		SecurityContextHolder.getContext().setAuthentication(auth);
+
 		List<ProjectSampleAnalysisOutputInfo> userProjectSampleAnalysisOutputInfos = uiProjectAnalysesService.getUserSingleSampleOutputs();
 
 		verify(userService, times(1)).getUserByUsername(principal.getName());
