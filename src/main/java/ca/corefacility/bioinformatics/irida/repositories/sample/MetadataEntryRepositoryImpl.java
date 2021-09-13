@@ -40,9 +40,14 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		parameters.addValue("project", project.getId());
 
 		//get the metadata fields available in the project
-		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
+		String fieldIdQueryString = "SELECT DISTINCT e.field_id FROM metadata_entry e INNER JOIN project_sample p ON e.sample_id=p.sample_id WHERE p.project_id=:project";
+		parameters.addValue("project", project.getId());
+		List<Long> fieldIds = tmpl.queryForList(fieldIdQueryString, parameters, Long.class);
+
+		String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
 		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
-		nativeQuery.setParameter("project", project.getId());
+		nativeQuery.setParameter("fields", fieldIds);
+
 		List<MetadataTemplateField> fields = nativeQuery.getResultList();
 
 		//Collect the fields into a map from ID to field for use later
