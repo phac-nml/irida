@@ -55,12 +55,11 @@ public class FastaView extends AbstractView {
 		response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
 		response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(IridaFiles.getFileSizeBytes(fileContent)));
 
-		try(InputStream is = IridaFiles.getFileInputStream(fileContent)) {
-			OutputStream os = response.getOutputStream();
+		try (InputStream is = IridaFiles.getFileInputStream(fileContent);
+				OutputStream os = response.getOutputStream();) {
 			IOUtils.copy(is, os);
 			os.flush();
-			os.close();
-		}catch (IOException e) {
+		} catch (IOException e) {
 			throw new IOException("Unable to read inputstream ", e);
 		}
 	}

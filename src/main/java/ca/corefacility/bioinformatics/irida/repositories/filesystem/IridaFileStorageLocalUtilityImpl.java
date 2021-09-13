@@ -31,11 +31,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkR
 @Component
 public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
-	private StorageType storageType;
+	private final StorageType storageType = StorageType.LOCAL;
 
 	@Autowired
 	public IridaFileStorageLocalUtilityImpl() {
-		this.storageType = StorageType.LOCAL;
 	}
 
 	/**

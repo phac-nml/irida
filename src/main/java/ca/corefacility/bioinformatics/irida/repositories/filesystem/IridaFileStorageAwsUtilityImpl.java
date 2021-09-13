@@ -41,7 +41,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
-	private StorageType storageType;
+	private final StorageType storageType = StorageType.AWS;
 
 	@Autowired
 	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
@@ -51,7 +51,6 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
 				.build();
 		this.bucketName = bucketName;
-		this.storageType = StorageType.AWS;
 	}
 
 	/**

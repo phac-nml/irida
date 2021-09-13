@@ -39,7 +39,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 
 	private BlobServiceClient blobServiceClient;
 	private BlobContainerClient containerClient;
-	private StorageType storageType;
+	private final StorageType storageType = StorageType.AZURE;
 
 	@Autowired
 	public IridaFileStorageAzureUtilityImpl(String containerUrl, String sasToken, String containerName) {
@@ -47,7 +47,6 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 				.sasToken(sasToken)
 				.buildClient();
 		this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
-		this.storageType = StorageType.AZURE;
 	}
 
 	/**

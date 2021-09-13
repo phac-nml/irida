@@ -51,12 +51,10 @@ public class FastqView extends AbstractView {
 		response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
 		response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(sfr.getFileSizeBytes()));
 
-		try(InputStream is = sfr.getFileInputStream()) {
-			OutputStream os = response.getOutputStream();
+		try (InputStream is = sfr.getFileInputStream(); OutputStream os = response.getOutputStream();) {
 			IOUtils.copy(is, os);
 			os.flush();
-			os.close();
-		}catch (IOException e) {
+		} catch (IOException e) {
 			throw new IOException("Unable to read inputstream ", e);
 		}
 	}

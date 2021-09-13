@@ -319,28 +319,6 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	}
 
 	/**
-	 * Get the actual file contents for an analysis output file.
-	 *
-	 * @param submissionId The {@link AnalysisSubmission} id
-	 * @param fileId       The {@link AnalysisOutputFile} id
-	 * @return a {@link ByteArrayResource} containing the contents of the {@link AnalysisOutputFile}.
-	 * @throws IOException if the file input stream cannot be read
-	 */
-	@Operation(operationId = "getAnalysisOutputFileContents", summary = "Get the analysis output file contents", description = "Get the analysis output file contents for the given analysis submission.", tags = "analysisSubmissions")
-	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public ResponseResource<ByteArrayResource> getAnalysisOutputFileContents(@PathVariable Long submissionId,
-			@PathVariable Long fileId) throws IOException {
-		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
-		try (InputStream inputStream = analysisOutputFile.getFileInputStream()) {
-			ByteArrayResource fileContents = new ByteArrayResource(inputStream.readAllBytes());
-			return new ResponseResource<>(fileContents);
-		} catch (IOException e) {
-			throw new IOException("Unable to read input stream ", e);
-		}
-	}
-
-	/**
 	 * Get the {@link AnalysisOutputFile} for an {@link AnalysisSubmission} and given file ID
 	 *
 	 * @param submissionId the ID of the {@link AnalysisSubmission}
