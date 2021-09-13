@@ -9,7 +9,7 @@ const { Text, Title } = Typography;
  * React component that displays the Sample Metadata Uploader Wizard wrapper.
  * @prop {number} currentStep - the current step, starting with zero
  * @prop {string} currentStatus - the status of the current step
- * @prop {element} children - the status of the current step
+ * @prop {any} children - the status of the current step
  * @returns {*}
  * @constructor
  */
@@ -34,5 +34,5 @@ export function SampleMetadataImportWizard({
 SampleMetadataImportWizard.propTypes = {
   currentStep: PropTypes.number,
   currentStatus: PropTypes.string,
-  children: PropTypes.element,
+  children: PropTypes.any,
 };
