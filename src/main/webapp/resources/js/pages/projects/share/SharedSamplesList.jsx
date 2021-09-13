@@ -1,4 +1,4 @@
-import { Avatar, Button, List } from "antd";
+import { Avatar, Button, List, Tooltip } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { FixedSizeList as VList } from "react-window";
@@ -11,6 +11,12 @@ import { SampleDetailViewer } from "../../../components/samples/SampleDetailView
 import { green6, grey1, grey2, yellow6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
 
+/**
+ * Component to render a virtual list of sample to be copied to another project.
+ * @param list
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SharedSamplesList({ list = [] }) {
   const dispatch = useDispatch();
 
@@ -21,34 +27,44 @@ export function SharedSamplesList({ list = [] }) {
       <List.Item
         style={{ ...style, backgroundColor: grey1 }}
         actions={[
-          <Button
-            size="small"
-            key="remove"
-            shape="circle"
-            icon={<IconRemove />}
-            onClick={() => dispatch(removeSample(sample.id))}
-          />,
+          <Tooltip placement="left" title={i18n("ShareSamples.remove")}>
+            <Button
+              size="small"
+              key="remove"
+              shape="circle"
+              icon={<IconRemove />}
+              onClick={() => dispatch(removeSample(sample.id))}
+            />
+          </Tooltip>,
         ]}
       >
         <List.Item.Meta
           avatar={
             sample.owner ? (
-              <Avatar
-                style={{ backgroundColor: green6 }}
-                size="small"
-                icon={<IconUnlocked />}
-              />
+              <Tooltip
+                title={i18n("ShareSamples.avatar.unlocked")}
+                placement="right"
+                color={green6}
+              >
+                <Avatar
+                  style={{ backgroundColor: green6 }}
+                  size="small"
+                  icon={<IconUnlocked />}
+                />
+              </Tooltip>
             ) : (
-              <Avatar
-                style={{ backgroundColor: yellow6 }}
-                size="small"
-                icon={<IconLocked />}
-              />
+              <Tooltip title={i18n("ShareSamples.avatar.locked")}>
+                <Avatar
+                  style={{ backgroundColor: yellow6 }}
+                  size="small"
+                  icon={<IconLocked />}
+                />
+              </Tooltip>
             )
           }
           title={
             <SampleDetailViewer sampleId={sample.id}>
-              <Button size="small">{sample.name}</Button>
+              <Button>{sample.name}</Button>
             </SampleDetailViewer>
           }
         />
