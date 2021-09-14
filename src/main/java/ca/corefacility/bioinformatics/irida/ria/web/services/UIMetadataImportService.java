@@ -141,6 +141,7 @@ public class UIMetadataImportService {
 	 * @param projectId   {@link Long} identifier for the current project
 	 * @param sampleNames {@link List} of {@link String} sample names
 	 * @return {@link ProjectSampleMetadataResponse} that returns a message and potential errors.
+	 * @throws Exception if there is an error saving the metadata
 	 */
 	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
 			List<String> sampleNames) throws Exception {
