@@ -1,4 +1,4 @@
-import { Alert } from "antd";
+import { Alert, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
@@ -29,7 +29,7 @@ export function ShareSamples() {
     SHOW_SAMPLES && samples.length < originalSamples.length;
 
   return (
-    <>
+    <Space direction="vertical" style={{ display: "block" }}>
       {SHOW_SAMPLES && <SharedSamplesList list={samples} />}
       {SHOW_NO_SAMPLES_WARNING && (
         <Alert
@@ -49,6 +49,6 @@ export function ShareSamples() {
           )}
         />
       )}
-    </>
+    </Space>
   );
 }
