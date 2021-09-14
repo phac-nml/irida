@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;;
 
 /**
@@ -80,18 +81,15 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@PostMapping("/upload/save")
 	@ResponseBody
-	public ResponseEntity<ProjectSampleMetadataResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
+	public ResponseEntity<AjaxResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam Long projectId, @RequestParam List<String> sampleNames) {
-
-		ProjectSampleMetadataResponse response = metadataImportService.saveProjectSampleMetadata(locale, session,
-				projectId, sampleNames);
-
-		if (response.getMessageKey()
-				.equals("success")) {
-			return ResponseEntity.ok(response);
-		} else {
-			return ResponseEntity.badRequest()
-					.body(response);
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames)
+							.getMessage()));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

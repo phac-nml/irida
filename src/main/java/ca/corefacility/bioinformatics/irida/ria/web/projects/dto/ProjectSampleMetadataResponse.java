@@ -7,21 +7,12 @@ import java.util.List;
  */
 public class ProjectSampleMetadataResponse {
 
-	private String messageKey;
 	private String message;
 	private List<String> errorList;
 
 	public ProjectSampleMetadataResponse() {
 	}
-
-	public String getMessageKey() {
-		return messageKey;
-	}
-
-	public void setMessageKey(String messageKey) {
-		this.messageKey = messageKey;
-	}
-
+	
 	public String getMessage() {
 		return message;
 	}

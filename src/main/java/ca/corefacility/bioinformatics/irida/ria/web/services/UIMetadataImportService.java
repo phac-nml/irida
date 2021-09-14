@@ -143,17 +143,18 @@ public class UIMetadataImportService {
 	 * @return {@link ProjectSampleMetadataResponse} that returns a message and potential errors.
 	 */
 	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
-			List<String> sampleNames) {
+			List<String> sampleNames) throws Exception {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
 		Project project = projectService.read(projectId);
 		ProjectSampleMetadataResponse response = new ProjectSampleMetadataResponse();
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
+		String message;
 		int samplesUpdatedCount = 0;
 		int samplesCreatedCount = 0;
 
 		if (stored == null) {
-			response.setMessageKey("stored-error");
+			throw new Exception("Sample metadata storage session cannot be found.");
 		}
 
 		if (sampleNames != null) {
@@ -202,27 +203,22 @@ public class UIMetadataImportService {
 			}
 
 			if (errorList.size() > 0) {
-				response.setMessageKey("save-error");
 				response.setErrorList(errorList);
 			}
 		}
 
-		if (response.getMessageKey() == null) {
-			String message;
-			message = ((samplesUpdatedCount == 1) ?
-					messageSource.getMessage("server.metadataimport.results.save.success.single-updated",
-							new Object[] { samplesUpdatedCount }, locale) :
-					messageSource.getMessage("server.metadataimport.results.save.success.multiple-updated",
-							new Object[] { samplesUpdatedCount }, locale));
-			message += (samplesCreatedCount == 1) ?
-					messageSource.getMessage("server.metadataimport.results.save.success.single-created",
-							new Object[] { samplesCreatedCount }, locale) :
-					messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
-							new Object[] { samplesCreatedCount }, locale);
+		message = ((samplesUpdatedCount == 1) ?
+				messageSource.getMessage("server.metadataimport.results.save.success.single-updated",
+						new Object[] { samplesUpdatedCount }, locale) :
+				messageSource.getMessage("server.metadataimport.results.save.success.multiple-updated",
+						new Object[] { samplesUpdatedCount }, locale));
+		message += (samplesCreatedCount == 1) ?
+				messageSource.getMessage("server.metadataimport.results.save.success.single-created",
+						new Object[] { samplesCreatedCount }, locale) :
+				messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
+						new Object[] { samplesCreatedCount }, locale);
 
-			response.setMessageKey("success");
-			response.setMessage(message);
-		}
+		response.setMessage(message);
 
 		return response;
 	}
