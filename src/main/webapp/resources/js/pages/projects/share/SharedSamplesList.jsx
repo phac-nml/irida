@@ -1,4 +1,4 @@
-import { Avatar, Button, List, Tooltip } from "antd";
+import { Avatar, Button, List, Space, Tooltip, Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { FixedSizeList as VList } from "react-window";
@@ -82,19 +82,22 @@ export function SharedSamplesList({ list = [] }) {
       ? list.length * ROW_HEIGHT + 2 // 2 is to offset for borders
       : MAX_LIST_HEIGHT;
   return (
-    <List
-      bordered
-      rowKey={(sample) => sample.name}
-      style={{ backgroundColor: grey2 }}
-    >
-      <VList
-        height={height}
-        itemCount={list.length}
-        itemSize={ROW_HEIGHT}
-        width="100%"
+    <Space direction="vertical" style={{ display: "block" }}>
+      <Typography.Text strong>{i18n("ShareSamplesList.title")}</Typography.Text>
+      <List
+        bordered
+        rowKey={(sample) => sample.name}
+        style={{ backgroundColor: grey2 }}
       >
-        {Row}
-      </VList>
-    </List>
+        <VList
+          height={height}
+          itemCount={list.length}
+          itemSize={ROW_HEIGHT}
+          width="100%"
+        >
+          {Row}
+        </VList>
+      </List>
+    </Space>
   );
 }
