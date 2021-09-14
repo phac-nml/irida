@@ -24,7 +24,7 @@ export function SampleMetadataImportReview() {
   const history = useHistory();
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
-  const { data = {}, isLoading } = useGetProjectSampleMetadataQuery(projectId);
+  const { data = {}, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
     title: "",
@@ -63,7 +63,8 @@ export function SampleMetadataImportReview() {
   };
 
   React.useEffect(() => {
-    if (!isLoading) {
+    if (isSuccess) {
+      console.log(data);
       const index = data.headers.findIndex(
         (item) => item === data.sampleNameColumn
       );
@@ -95,7 +96,7 @@ export function SampleMetadataImportReview() {
         })
       );
     }
-  }, [data, isLoading, tagColumn]);
+  }, [data, isSuccess]);
 
   const save = () => {
     saveMetadata({ projectId, sampleNames: selected })
@@ -114,7 +115,7 @@ export function SampleMetadataImportReview() {
       <Table
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.entry[data.sampleNameColumn]}
-        loading={isLoading}
+        loading={isFetching}
         rowSelection={rowSelection}
         columns={columns}
         dataSource={data.rows}

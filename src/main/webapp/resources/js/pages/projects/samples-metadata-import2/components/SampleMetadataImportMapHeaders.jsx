@@ -30,8 +30,11 @@ export function SampleMetadataImportMapHeaders() {
   }, []);
 
   const onSubmit = () => {
-    updateColumn({ projectId, sampleNameColumn: column });
-    history.push("review");
+    updateColumn({ projectId, sampleNameColumn: column })
+      .unwrap()
+      .then((payload) => {
+        history.push("review");
+      });
   };
 
   return (
