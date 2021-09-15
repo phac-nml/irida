@@ -182,7 +182,7 @@ public class UIMetadataImportService {
 					for (Map.Entry<String, String> entry : row.getEntry()
 							.entrySet()) {
 						// Make sure we are not saving non-metadata items.
-						if (!DEFAULT_HEADERS.contains(entry.getKey())) {
+						if (!DEFAULT_HEADERS.contains(entry.getKey()) && !sampleNameColumn.contains(entry.getKey())) {
 							MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(
 									entry.getKey());
 
