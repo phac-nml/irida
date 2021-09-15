@@ -44,8 +44,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -411,6 +410,8 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
+		Date originalModifiedDate = s1.getModifiedDate();
+
 		when(sampleRepository.findById(s1.getId())).thenReturn(Optional.of(s1));
 
 		MetadataTemplateField field1 = new MetadataTemplateField("field1", "text");
@@ -430,7 +431,15 @@ public class SampleServiceImplTest {
 		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
-		verify(sampleRepository).save(s1);
+
+		//ensure modified date got bumped up
+		ArgumentCaptor<Sample> sampleCaptor = ArgumentCaptor.forClass(Sample.class);
+		verify(sampleRepository).save(sampleCaptor.capture());
+
+		Date savedModifiedDate = sampleCaptor.getValue()
+				.getModifiedDate();
+
+		assertNotEquals(originalModifiedDate, savedModifiedDate);
 
 		Set<MetadataEntry> savedValues = saveCaptor.getValue();
 
@@ -507,6 +516,8 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
+		Date originalModifiedDate = s1.getModifiedDate();
+
 		when(sampleRepository.findById(s1.getId())).thenReturn(Optional.of(s1));
 
 		MetadataTemplateField field1 = new MetadataTemplateField("field1", "text");
@@ -528,7 +539,15 @@ public class SampleServiceImplTest {
 		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
-		verify(sampleRepository).save(s1);
+
+		//ensure modified date got bumped up
+		ArgumentCaptor<Sample> sampleCaptor = ArgumentCaptor.forClass(Sample.class);
+		verify(sampleRepository).save(sampleCaptor.capture());
+
+		Date savedModifiedDate = sampleCaptor.getValue()
+				.getModifiedDate();
+
+		assertNotEquals(originalModifiedDate, savedModifiedDate);
 
 		Set<MetadataEntry> savedValues = saveCaptor.getValue();
 
