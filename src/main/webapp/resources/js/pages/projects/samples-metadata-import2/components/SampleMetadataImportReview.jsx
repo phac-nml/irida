@@ -24,7 +24,7 @@ export function SampleMetadataImportReview() {
   const history = useHistory();
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
-  const { data = {}, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
+  const { data = {}, isError, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
     title: "",
@@ -64,7 +64,6 @@ export function SampleMetadataImportReview() {
 
   React.useEffect(() => {
     if (isSuccess) {
-      console.log(data);
       const index = data.headers.findIndex(
         (item) => item === data.sampleNameColumn
       );
@@ -78,13 +77,13 @@ export function SampleMetadataImportReview() {
         dataIndex: sample,
         fixed: "left",
         width: 100,
-        render: (text, item) => <>{item.entry[sample]}</>,
+        render: (text, item) => item.entry[sample],
       };
 
       const otherColumns = headers.map((header) => ({
         title: header,
         dataIndex: header,
-        render: (text, item) => <>{item.entry[header]}</>,
+        render: (text, item) => item.entry[header],
       }));
 
       const updatedColumns = [sampleColumn, tagColumn, ...otherColumns];
@@ -92,14 +91,15 @@ export function SampleMetadataImportReview() {
       setColumns(updatedColumns);
       setSelected(
         data.rows.map((row) => {
-          return row.entry[data.sampleNameColumn];
+          return row.rowKey;
         })
       );
     }
   }, [data, isSuccess]);
 
   const save = () => {
-    saveMetadata({ projectId, sampleNames: selected })
+    const sampleNames = data.rows.filter(row => selected.includes(row.rowKey)).map(row => row.entry[data.sampleNameColumn]);
+    saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
         history.push({
@@ -114,7 +114,7 @@ export function SampleMetadataImportReview() {
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
       <Table
         className="t-metadata-uploader-review-table"
-        rowKey={(row) => row.entry[data.sampleNameColumn]}
+        rowKey={(row) => row.rowKey}
         loading={isFetching}
         rowSelection={rowSelection}
         columns={columns}

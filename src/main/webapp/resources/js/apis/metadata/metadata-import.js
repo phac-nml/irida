@@ -18,6 +18,10 @@ export const metadataImportApi = createApi({
           projectId,
         }
       }),
+      transformResponse(response) {
+        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}` }))}
+        return transformed;
+      },
       providesTags: ["MetadataImport"],
     }),
     clearProjectSampleMetadata: build.mutation({
