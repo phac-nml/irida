@@ -33,6 +33,16 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		ProjectsPage.goToProjectsPage(driver(), false);
 		CreateProjectComponent createComponent = CreateProjectComponent.initializeComponent(driver());
 		createComponent.displayForm();
+
+		// Test invalid entries
+		createComponent.enterProjectName("SMA");
+		Assert.assertEquals("Should have a name length error", "The project name must be at least 5 characters long", createComponent.getNameWarning());
+		createComponent.enterProjectName("");
+		Assert.assertEquals("Should display a required error", "A name is required for every project", createComponent.getNameWarning());
+		createComponent.enterProjectName("TE\0*");
+		Assert.assertEquals("Should display a invalid character warning", "A project name can only have letters, numbers, spaces, _ and -.", createComponent.getNameWarning());
+
+		// Test correct
 		createComponent.enterProjectName(name);
 		createComponent.enterProjectDescription(description);
 		createComponent.goToNextStep();
