@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Button, Table, Tag, Typography } from "antd";
+import { Alert, Button, Table, Tag, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   useGetProjectSampleMetadataQuery,
@@ -10,8 +10,9 @@ import {
   IconArrowLeft,
   IconArrowRight,
 } from "../../../../components/icons/Icons";
+import { red1 } from "../../../../styles/colors";
 
-const { Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 /**
  * React component that displays Step #3 of the Sample Metadata Uploader.
@@ -82,7 +83,7 @@ export function SampleMetadataImportReview() {
         width: 100,
         render(text, item){
           return({
-            props: {style: {background: regex.test(item.entry[sample]) ? null : "red"}},
+            props: {style: {background: regex.test(item.entry[sample]) ? null : red1}},
             children: item.entry[sample]
           })
         },
@@ -120,6 +121,20 @@ export function SampleMetadataImportReview() {
   return (
     <SampleMetadataImportWizard currentStep={2}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
+      {!valid && <Alert
+        message="Validation Error"
+        description={
+          <Paragraph>Please correct the following errors within the file and re-upload. The sample name must meet the following criteria:
+            <ul>
+              <li>cannot be empty</li>
+              <li>minimum 3 characters long</li>
+              <li>contain only alphanumeric characters and '-', '_'</li>
+            </ul>
+           </Paragraph>
+         }
+        type="error"
+        showIcon
+      />}
       <Table
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
