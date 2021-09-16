@@ -21,6 +21,8 @@ Changes
 * [UI]: Updated Your Single Sample Analysis Outputs page to use Ant Design.
 * [Developer]: Fix dependabot warning for `path-parse`, set resolution of `path-parse` to 1.0.7.
 * [UI]: Fixed bug where the length of the project name was not checked on project creation.
+* [UI] Fixed bug which prevented the first created metadata template from being displayed after creation.
+* [UI]: Sample modified date is now updated when sample metadata is modified.
 
 21.01 to 21.05
 --------------

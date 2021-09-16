@@ -231,6 +231,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		metadataEntryRepository.saveAll(metadataToSet);
 
 		s = read(s.getId());
+		s.setModifiedDate(new Date());
+		//re-saving sample to update modified date
+		s = sampleRepository.save(s);
 
 		return s;
 	}
@@ -274,7 +277,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		metadataEntryRepository.saveAll(currentMetadata);
 
-		return read(s.getId());
+		s = read(s.getId());
+		s.setModifiedDate(new Date());
+		//re-saving sample to update modified date
+		s = sampleRepository.save(s);
+
+		return s;
 	}
 
 	/**
