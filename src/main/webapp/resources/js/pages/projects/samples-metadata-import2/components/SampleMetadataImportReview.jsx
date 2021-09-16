@@ -24,6 +24,7 @@ export function SampleMetadataImportReview() {
   const history = useHistory();
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const [valid, setValid] = React.useState(false);
   const { data = {}, isError, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
@@ -62,6 +63,8 @@ export function SampleMetadataImportReview() {
     },
   };
 
+  const regex = new RegExp("^[A-Za-z0-9\-\_]{3,}$");
+
   React.useEffect(() => {
     if (isSuccess) {
       const index = data.headers.findIndex(
@@ -77,7 +80,12 @@ export function SampleMetadataImportReview() {
         dataIndex: sample,
         fixed: "left",
         width: 100,
-        render: (text, item) => item.entry[sample],
+        render(text, item){
+          return({
+            props: {style: {background: regex.test(item.entry[sample]) ? null : "red"}},
+            children: item.entry[sample]
+          })
+        },
       };
 
       const otherColumns = headers.map((header) => ({
@@ -135,6 +143,7 @@ export function SampleMetadataImportReview() {
           className="t-metadata-uploader-upload-button"
           style={{ marginLeft: "auto" }}
           onClick={save}
+          disabled={!valid}
         >
           {i18n("SampleMetadataImportReview.button.next")}
           <IconArrowRight />
