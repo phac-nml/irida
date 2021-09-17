@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportSer
  * within a {@link Project}.
  */
 @Controller
-@RequestMapping("/ajax/projects/sample-metadata")
+@RequestMapping("/ajax/projects/sample-metadata/upload")
 public class ProjectSampleMetadataAjaxController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSampleMetadataAjaxController.class);
 	private final UIMetadataImportService metadataImportService;
@@ -47,7 +47,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
-	@PostMapping("/upload/file")
+	@PostMapping("/file")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> createProjectSampleMetadata(HttpSession session,
 			@RequestParam Long projectId, @RequestParam("file") MultipartFile file) {
@@ -62,7 +62,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
 	 * @return {@link Map} containing a complete message.
 	 */
-	@PostMapping("/upload/setSampleColumn")
+	@PostMapping("/setSampleColumn")
 	@ResponseBody
 	public ResponseEntity<AjaxResponse> setProjectSampleMetadataSampleId(HttpSession session,
 			@RequestParam Long projectId, @RequestParam String sampleNameColumn) {
@@ -79,7 +79,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param sampleNames {@link List} of {@link String} sample names
 	 * @return {@link Map} of potential errors.
 	 */
-	@PostMapping("/upload/save")
+	@PostMapping("/save")
 	@ResponseBody
 	public ResponseEntity<AjaxResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam Long projectId, @RequestParam List<String> sampleNames) {
@@ -99,7 +99,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	@GetMapping("/upload/clear")
+	@GetMapping("/clear")
 	public void clearProjectSampleMetadata(HttpSession session, @RequestParam Long projectId) {
 		metadataImportService.clearProjectSampleMetadata(session, projectId);
 	}
@@ -111,7 +111,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
-	@GetMapping("/upload/getMetadata")
+	@GetMapping("/getMetadata")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> getProjectSampleMetadata(HttpSession session,
 			@RequestParam Long projectId) {
