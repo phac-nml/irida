@@ -8,8 +8,6 @@ import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermission
 import com.google.common.base.Joiner;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -58,8 +56,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 			"ROLE_ADMIN > ROLE_TECHNICIAN", "ROLE_MANAGER > ROLE_USER", "ROLE_TECHNICIAN > ROLE_USER" };
 
 	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
-
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
 
 	@Value("${security.password.expiry}")
 	private int passwordExpiryInDays = -1;
