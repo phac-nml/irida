@@ -799,6 +799,7 @@ public class ProjectSamplesController {
 	 * @param params      DataTable parameters.
 	 * @param sampleNames List of {@link Sample} names the {@link Project} is filtered on
 	 * @param associated  List of acitve associated {@link Project} identifiers.
+	 * @param sampleIds   List of {@link Sample} identifiers that are selected in the project
 	 * @param filter      {@link Sample} attribute filters applied.
 	 * @param request     {@link HttpServletRequest}
 	 * @param response    {@link HttpServletResponse}
