@@ -27,6 +27,7 @@ export const metadataImportApi = createApi({
     clearProjectSampleMetadata: build.mutation({
       query: (projectId) => ({
         url: `/clear`,
+        method: 'DELETE',
         params: {
           projectId,
         }
@@ -36,7 +37,7 @@ export const metadataImportApi = createApi({
     setColumnProjectSampleMetadata: build.mutation({
       query: ({ projectId, sampleNameColumn }) => ({
         url: `/setSampleColumn`,
-        method: 'POST',
+        method: 'PUT',
         params: {
           projectId,
           sampleNameColumn,

@@ -62,7 +62,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
 	 * @return {@link Map} containing a complete message.
 	 */
-	@PostMapping("/setSampleColumn")
+	@PutMapping("/setSampleColumn")
 	@ResponseBody
 	public ResponseEntity<AjaxResponse> setProjectSampleMetadataSampleId(HttpSession session,
 			@RequestParam Long projectId, @RequestParam String sampleNameColumn) {
@@ -99,7 +99,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	@GetMapping("/clear")
+	@DeleteMapping("/clear")
 	public void clearProjectSampleMetadata(HttpSession session, @RequestParam Long projectId) {
 		metadataImportService.clearProjectSampleMetadata(session, projectId);
 	}
