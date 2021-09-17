@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
@@ -30,25 +29,18 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.*;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.authentication.LdapAuthenticator;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
-import javax.naming.NamingException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Configuration for IRIDA's spring security modules
@@ -132,26 +124,24 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder()); // this line is probably not actually needed???
 		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
 	}
 
+	/**
+	 * Simple mapper for LDAP username to {@link UserRepository} user
+	 * @return {@link UserDetailsContextMapper}
+	 */
 	@Bean
 	public UserDetailsContextMapper userDetailsContextMapper() {
 		return new UserDetailsContextMapper() {
 			@Override
 			public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-//				// Here we can use dirContextOperations to fetch an attribute that is not (in) the dn
-//				try {
-//					dirContextOperations.lookup(username);?
-//				} catch (NamingException e) {
-//					e.printStackTrace();
-//				}
+				// Here we could use dirContextOperations to fetch other user attributes from ldap, not needed for our use case
 				return userRepository.loadUserByUsername(username);
 			}
 			@Override
 			public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
-
+				throw new UnsupportedOperationException();
 			}
 		};
 	}
@@ -170,9 +160,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 
 	/**
-	 * Builds and returns an AuthenticationProvider based on the authenicationMode variable
+	 * Builds and returns an {@link AuthenticationProvider} based on the irida.administrative.authentication.mode config option
 	 *
-	 * @return AuthenticationProvider
+	 * @return {@link AuthenticationProvider}
 	 */
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
@@ -193,6 +183,10 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return provider;
 	}
 
+	/**
+	 * Default "in memory" authentication.
+	 * @return {@link DaoAuthenticationProvider}
+	 */
 	private AuthenticationProvider DaoAuthenticationProvider() {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userRepository);
@@ -222,6 +216,10 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 
+	/**
+	 * Configures and connects to a LDAP server based on configuration options set in authentication.properties
+	 * @return {@link LdapAuthenticationProvider}
+	 */
 	private AuthenticationProvider LdapAuthenticationProvider() {
 		BindAuthenticator ldapAuthenticator = new BindAuthenticator(ldapContextSource());
 		String[] userDnPatterns = {ldapUserDnSearchPatterns};
@@ -237,7 +235,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	/**
 	 * This generates a ContextSource with credentials to access the LDAP server
 	 *
-	 * @return LdapContextSource
+	 * @return {@link LdapContextSource}
 	 */
 	@Bean
 	public LdapContextSource ldapContextSource() {
@@ -251,19 +249,24 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return ldapContextSource;
 	}
 
+	/**
+	 * Configures and connects to an Active Directory LDAP server based on configuration options in authentication.properties
+	 * @return {@link ActiveDirectoryLdapAuthenticationProvider}
+	 */
 	private AuthenticationProvider ActiveDirectoryLdapAuthenticationProvider() {
 		ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
 				new ActiveDirectoryLdapAuthenticationProvider(adLdapDomain, adLdapUrl, adLdapRootDn);
 		authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
 		authenticationProvider.setConvertSubErrorCodesToExceptions(true);
-		// This does something important probably??
 		authenticationProvider.setUseAuthenticationRequestCredentials(true);
-		authenticationProvider.setSearchFilter(adLdapSearchFilter);
+		// Default search filter can be overridden as an optional config argument
+		if (!(adLdapSearchFilter == null || adLdapSearchFilter.isEmpty())){
+			authenticationProvider.setSearchFilter(adLdapSearchFilter);
+		}
 
 		return authenticationProvider;
 	}
 
-	//this is what runs the configure() and builds it
 	@Bean(name = "userAuthenticationManager")
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
@@ -288,43 +291,3 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new DefaultWebSecurityExpressionHandler();
 	}
 }
-
-/**
- * LDAP todo list
- *
- * password touching
- *  create user
- * 	update user (User edit)
- * 		password boxes removed entirely?
- * 		do a message for password managed by org
- * 	password reset
- * 		user details page
- * 	    Login screen
- *
- * User creation
- * 	inside irida and then link?
- * 	if user doesn't have account, creates an account (Like this one)
- * 		deal with creating a user flow
- *
- * Disable timer for password reset
- *
- * deal with password requirements on user objects
- *  Code has password as a NOT NULL Field in the Database
- *
- *
- *
- * on login page, forgot password link
- * 	only enabled if email is enabled, use as example for system level property
- * 	same with "activate user" on the user creation page, if email is enabled/disabled (for UI stuff)
- *
- *
- *
- *
- * LDAP Meeting notes
- *
- * using active directory
- *   will probably need another auth provider for active directory
- *
- *
- *
- */
