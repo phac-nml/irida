@@ -24,6 +24,7 @@ Changes
 * [UI]: Fixed bug which prevented the first created metadata template from being displayed after creation.
 * [UI]: Sample modified date is now updated when sample metadata is modified.
 * [Developer]: Fix dependabot warning for `set-value`, force using a set-value above 4.0.1
+* [Developer]: Updated chromedriver to v93.0.1.
 * [UI]: Fixed bug when exporting samples from project > samples page while using filter by file, all sample were exported.
 
 21.01 to 21.05
