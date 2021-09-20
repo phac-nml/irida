@@ -822,7 +822,7 @@ public class ProjectSamplesController {
 		final Page<ProjectSampleJoin> page;
 		page = sampleService.getFilteredSamplesForProjects(projects, exportModel.getSampleNames(),
 				exportModel.getName(), exportModel.getSearch(), exportModel.getOrganism(), exportModel.getStartDate(),
-				exportModel.getEndDate(), 0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Direction.ASC, "sampleName")));
+				exportModel.getEndDate(), 0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Direction.ASC, "sample.sampleName")));
 
 		// Create DataTables representation of the page.
 		List<DTProjectSamples> models = page.getContent()

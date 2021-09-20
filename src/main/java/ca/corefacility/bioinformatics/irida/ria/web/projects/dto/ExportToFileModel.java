@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 public class ExportToFileModel {
 	private List<String> sampleNames;
 	private List<Long> associated;
@@ -77,7 +79,7 @@ public class ExportToFileModel {
 	}
 
 	public String getName() {
-		return name;
+		return Strings.isNullOrEmpty(name) ? "" : name;
 	}
 
 	public void setName(String name) {
