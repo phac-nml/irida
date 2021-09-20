@@ -25,7 +25,7 @@ export function SampleMetadataImportReview() {
   const history = useHistory();
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
-  const [valid, setValid] = React.useState(false);
+  const [valid, setValid] = React.useState(true);
   const { data = {}, isError, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
@@ -62,9 +62,10 @@ export function SampleMetadataImportReview() {
     onChange: (selectedRowKeys) => {
       setSelected(selectedRowKeys);
     },
+    getCheckboxProps: (record) => ({
+      disabled: !record.isSampleNameValid
+    })
   };
-
-  const regex = new RegExp("^[A-Za-z0-9\-\_]{3,}$");
 
   React.useEffect(() => {
     if (isSuccess) {
@@ -83,7 +84,7 @@ export function SampleMetadataImportReview() {
         width: 100,
         render(text, item){
           return({
-            props: {style: {background: regex.test(item.entry[sample]) ? null : red1}},
+            props: {style: {background: item.isSampleNameValid ? null : red1}},
             children: item.entry[sample]
           })
         },
@@ -100,7 +101,8 @@ export function SampleMetadataImportReview() {
       setColumns(updatedColumns);
       setSelected(
         data.rows.map((row) => {
-          return row.rowKey;
+          if(row.isSampleNameValid)
+            return row.rowKey;
         })
       );
     }
@@ -158,7 +160,6 @@ export function SampleMetadataImportReview() {
           className="t-metadata-uploader-upload-button"
           style={{ marginLeft: "auto" }}
           onClick={save}
-          disabled={!valid}
         >
           {i18n("SampleMetadataImportReview.button.next")}
           <IconArrowRight />

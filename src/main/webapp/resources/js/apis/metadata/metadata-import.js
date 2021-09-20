@@ -19,7 +19,8 @@ export const metadataImportApi = createApi({
         }
       }),
       transformResponse(response) {
-        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}` }))}
+        const regex = new RegExp("^[A-Za-z0-9-_]{3,}$");
+        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}`, isSampleNameValid: regex.test(row.entry[response.sampleNameColumn])}))}
         return transformed;
       },
       providesTags: ["MetadataImport"],
