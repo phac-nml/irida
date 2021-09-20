@@ -20,6 +20,7 @@ Changes
 * [UI]: Updated Project Single Sample Analyses Outputs pages to use Ant Design.
 * [UI]: Updated Your Single Sample Analysis Outputs page to use Ant Design.
 * [Developer]: Fix dependabot warning for `path-parse`, set resolution of `path-parse` to 1.0.7.
+* [Database]: Updated query to improve performance for metadata in REST API and line list.
 
 21.01 to 21.05
 --------------
