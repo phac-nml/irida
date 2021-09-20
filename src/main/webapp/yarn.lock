@@ -3514,6 +3514,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.21.2":
+  version: 0.21.4
+  resolution: "axios@npm:0.21.4"
+  dependencies:
+    follow-redirects: ^1.14.0
+  checksum: e6d42b269b599d36eb13be0671c237781f32e6ae72be824297c55a3e1ce63b22ba4f46bad5ab28da7d3bae50a72637d55c792cf803be1cf9de6a8bcd6d0dcc1a
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.2.0":
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
@@ -4152,12 +4161,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromedriver@npm:92.0.1":
-  version: 92.0.1
-  resolution: "chromedriver@npm:92.0.1"
+"chromedriver@npm:^93.0.1":
+  version: 93.0.1
+  resolution: "chromedriver@npm:93.0.1"
   dependencies:
     "@testim/chrome-version": ^1.0.7
-    axios: ^0.21.1
+    axios: ^0.21.2
     del: ^6.0.0
     extract-zip: ^2.0.1
     https-proxy-agent: ^5.0.0
@@ -4165,7 +4174,7 @@ __metadata:
     tcp-port-used: ^1.0.1
   bin:
     chromedriver: bin/chromedriver
-  checksum: d87021f5bad14de00a279ab688ca3a693faa59e594619ea68585fdcc39900c689a611d88a879cb3a3c354140035d460c073e3170ed9df569c855815183379e0e
+  checksum: eacaf3e0c728d0743202746d20f9e86d263b37759f293fcd3c9157440732c2f31a1044f6207f694e591d1c1a9f682e44b0026ea3d533c63891d1cd80e27bb30c
   languageName: node
   linkType: hard
 
@@ -6286,6 +6295,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.14.0":
+  version: 1.14.4
+  resolution: "follow-redirects@npm:1.14.4"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 93def3c22eba16caa4ff6f6956ccfda5a50e889545b1ba0046194dd8e368ff79ba6ef681b06e6dc7032b50bc93ca59e9441aa8143cb26f43f40a20bbd6374639
+  languageName: node
+  linkType: hard
+
 "for-in@npm:^1.0.2":
   version: 1.0.2
   resolution: "for-in@npm:1.0.2"
@@ -7145,7 +7164,7 @@ fsevents@^2.1.2:
     bootstrap-daterangepicker: ^3.0.3
     browserslist: ^4.16.6
     chroma-js: ^1.3.4
-    chromedriver: 92.0.1
+    chromedriver: ^93.0.1
     clipboard: ^1.7.1
     css-loader: ^5.0.1
     css-minimizer-webpack-plugin: ^1.2.0
@@ -7535,7 +7554,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"is-plain-object@npm:^2.0.3, is-plain-object@npm:^2.0.4":
+"is-plain-object@npm:^2.0.4":
   version: 2.0.4
   resolution: "is-plain-object@npm:2.0.4"
   dependencies:
@@ -7548,6 +7567,13 @@ fsevents@^2.1.2:
   version: 1.0.0
   resolution: "is-potential-custom-element-name@npm:1.0.0"
   checksum: 55b1ae44cf9241ea5b08414318d12a4d2eb157cb5722908fc7ef268c6d175894cb59d298092a87f9ed54af5b60fc572fa7f6b34b8633120dbe6edaa6c5169d0b
+  languageName: node
+  linkType: hard
+
+"is-primitive@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "is-primitive@npm:3.0.1"
+  checksum: 401b9a0e2fb758e6a481efa0bec944c3a7f9a3e722be7f6859d8e0303f9680415e7410bd498e71216fd2e453a8e0f30d592c2cc7518aa4158d4682fb79f93ac0
   languageName: node
   linkType: hard
 
@@ -12369,15 +12395,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"set-value@npm:^2.0.0, set-value@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "set-value@npm:2.0.1"
+"set-value@npm:^4.0.1":
+  version: 4.1.0
+  resolution: "set-value@npm:4.1.0"
   dependencies:
-    extend-shallow: ^2.0.1
-    is-extendable: ^0.1.1
-    is-plain-object: ^2.0.3
-    split-string: ^3.0.1
-  checksum: a97a99a00cc5ed3034ccd690ff4dde167e4182ec4ef2fd5277637a6e388839292559301408b91405534b44e76450bdd443ac95427fde40e9a1a62102c1262bd1
+    is-plain-object: ^2.0.4
+    is-primitive: ^3.0.1
+  checksum: bdbc3a2e3dd30a02a11f30a29895d10595fa8ff8e0429255801d5e4e768acd2c7006b95ddbbf0310c4731b5ceadbe360dc0fd48a999ad7c055089ededa8b1651
   languageName: node
   linkType: hard
 
@@ -12641,7 +12665,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"split-string@npm:^3.0.1, split-string@npm:^3.0.2":
+"split-string@npm:^3.0.2":
   version: 3.1.0
   resolution: "split-string@npm:3.1.0"
   dependencies:

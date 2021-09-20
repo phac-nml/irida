@@ -20,6 +20,11 @@ Changes
 * [UI]: Updated Project Single Sample Analyses Outputs pages to use Ant Design.
 * [UI]: Updated Your Single Sample Analysis Outputs page to use Ant Design.
 * [Developer]: Fix dependabot warning for `path-parse`, set resolution of `path-parse` to 1.0.7.
+* [UI]: Fixed bug where the length of the project name was not checked on project creation.
+* [UI] Fixed bug which prevented the first created metadata template from being displayed after creation.
+* [UI]: Sample modified date is now updated when sample metadata is modified.
+* [Developer]: Fix dependabot warning for `set-value`, force using a set-value above 4.0.1
+* [Developer]: Updated chromedriver to v93.0.1.
 * [Database]: Updated query to improve performance for metadata in REST API and line list.
 
 21.01 to 21.05
