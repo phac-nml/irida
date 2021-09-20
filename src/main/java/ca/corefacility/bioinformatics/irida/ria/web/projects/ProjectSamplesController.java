@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ExportToFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -806,47 +807,34 @@ public class ProjectSamplesController {
 	 * @param locale      of the current user.
 	 * @throws IOException if the exported file cannot be written
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/export")
-	public void exportProjectSamplesTable(@PathVariable Long projectId, @RequestParam DataTablesExportTypes type,
-			@DataTablesRequest DataTablesParams params,
-			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
-			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			@RequestParam(required = false, name = "ids[]") List<Long> sampleIds, UISampleFilter filter,
-			HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
+	@RequestMapping(method = RequestMethod.POST, value = "/projects/{projectId}/samples/export")
+	public void exportProjectSamplesTable(@PathVariable Long projectId, ExportToFileModel exportModel,
+			HttpServletResponse response, Locale locale) throws IOException {
 
 		Project project = projectService.read(projectId);
 		List<Project> projects = new ArrayList<>();
 
-		if (!associated.isEmpty()) {
-			projects = (List<Project>) projectService.readMultiple(associated);
+		if (exportModel.getAssociated() != null) {
+			projects = (List<Project>) projectService.readMultiple(exportModel.getAssociated());
 		}
 		projects.add(project);
 
 		final Page<ProjectSampleJoin> page;
-		page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, filter.getName(),
-				params.getSearchValue(), filter.getOrganism(), filter.getStartDate(), filter.getEndDate(), 0,
-				Integer.MAX_VALUE, params.getSort());
+		page = sampleService.getFilteredSamplesForProjects(projects, exportModel.getSampleNames(),
+				exportModel.getName(), exportModel.getSearch(), exportModel.getOrganism(), exportModel.getStartDate(),
+				exportModel.getEndDate(), 0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Direction.ASC, "sampleName")));
 
 		// Create DataTables representation of the page.
 		List<DTProjectSamples> models = page.getContent()
 				.stream()
-				.filter(join -> {
-					if (sampleIds != null) {
-						// If a list of specific samples to export check to see if the sample is in the list
-						return sampleIds.contains(join.getObject()
-								.getId());
-					} else {
-						// If no specific samples asked for, export them all
-						return true;
-					}
-				})
 				.map(join -> buildProjectSampleDataTablesModel(join, locale))
 				.collect(Collectors.toUnmodifiableList());
 
 		List<String> headers = models.get(0)
 				.getExportableTableHeaders(messageSource, locale);
-		DataTablesExportToFile.writeFile(type, response, project.getLabel()
-				.replace(" ", "_"), models, headers);
+		DataTablesExportToFile.writeFile(DataTablesExportTypes.valueOf(exportModel.getType()), response,
+				project.getLabel()
+						.replace(" ", "_"), models, headers);
 	}
 
 	/**

@@ -11,6 +11,29 @@ export function download(url) {
   document.body.appendChild(iframe);
 }
 
+export function downloadPost(url, contents) {
+  const form =
+    document.querySelector("#submit-download") ||
+    document.createElement("form");
+
+  form.setAttribute("id", "submit-download");
+  form.setAttribute("method", "POST");
+  form.setAttribute("action", url);
+  form.setAttribute("target", "_self");
+  form.setAttribute("style", "display: none");
+
+  for (const [name, value] of Object.entries(contents)) {
+    const field = document.createElement("input");
+    field.setAttribute("name", name);
+    field.setAttribute("value", value);
+    form.appendChild(field);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 /**
  * Convert file size from bytes to larger unit.
  * @param {number} bytes size of file.

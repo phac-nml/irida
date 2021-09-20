@@ -8,7 +8,7 @@ import {
   tableConfig,
 } from "../../../utilities/datatables-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { download } from "../../../utilities/file-utilities";
+import { download, downloadPost } from "../../../utilities/file-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
@@ -96,9 +96,39 @@ const EXPORT_HANDLERS = {
   file() {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
-    const params = $dt.ajax.params();
-    params.type = this.data("file");
-    download(`${url}?${$.param({ ...params, ids: getSelectedIds() })}`);
+    const {
+      sampleNames,
+      associated,
+      search,
+      name,
+      organism,
+      startDate,
+      endDate,
+    } = $dt.ajax.params();
+
+    console.log($dt.ajax.params());
+
+    const data = {
+      sampleNames: sampleNames || [],
+      search: search.value,
+      name: name || "",
+      type: this.data("file"),
+    };
+
+    if (associated) {
+      data.associated = associated;
+    }
+
+    if (organism) {
+      data.organism = organism;
+    }
+
+    if (startDate && endDate) {
+      data.startDate = startDate;
+      data.endDate = endDate;
+    }
+
+    downloadPost(`${url}`, data);
   },
   ncbi() {
     const ids = getSelectedIds();
