@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -796,13 +795,7 @@ public class ProjectSamplesController {
 	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
 	 *
 	 * @param projectId   identifier for the current {@link Project}
-	 * @param type        of file to export (.csv or .xlsx)
-	 * @param params      DataTable parameters.
-	 * @param sampleNames List of {@link Sample} names the {@link Project} is filtered on
-	 * @param associated  List of acitve associated {@link Project} identifiers.
-	 * @param sampleIds   List of {@link Sample} identifiers that are selected in the project
-	 * @param filter      {@link Sample} attribute filters applied.
-	 * @param request     {@link HttpServletRequest}
+	 * @param exportModel {@link ExportToFileModel} details of which samples to export
 	 * @param response    {@link HttpServletResponse}
 	 * @param locale      of the current user.
 	 * @throws IOException if the exported file cannot be written
