@@ -120,9 +120,9 @@
     "less-loader": "^8.0.0",
     "mini-css-extract-plugin": "^1.3.5",
     "path": "^0.12.7",
-    "postcss": "^8.2.6",
+    "postcss": "^8.3.6",
     "postcss-import": "^14.0.2",
-    "postcss-loader": "^5.0.0",
+    "postcss-loader": "^6.1.1",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.2.1",
     "properties-reader": "^2.1.1",
@@ -137,6 +137,7 @@
     "ini": "1.3.7",
     "resolve": "1.9.0",
     "path-parse": "1.0.7",
-    "set-value": "^4.0.1"
+    "set-value": "^4.0.1",
+    "css-select": "4.1.3"
   }
 }
