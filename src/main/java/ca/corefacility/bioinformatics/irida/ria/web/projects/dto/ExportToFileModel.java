@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 
+/**
+ * Used the get the form details submitted via a post to export samples to a CSV.
+ */
 public class ExportToFileModel {
 	private List<String> sampleNames;
 	private List<Long> associated;
