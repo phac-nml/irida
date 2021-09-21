@@ -26,6 +26,7 @@ Changes
 * [Developer]: Fix dependabot warning for `set-value`, force using a set-value above 4.0.1
 * [Developer]: Updated chromedriver to v93.0.1.
 * [Database]: Updated query to improve performance for metadata in REST API and line list.
+* [Developer]: Force resolution of `css-select` to v4.1.3 to fix dependabot warning for outdated `nth-check`
 
 21.01 to 21.05
 --------------
