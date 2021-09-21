@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -140,15 +139,14 @@ public class UIMetadataImportService {
 	 * @param session     {@link HttpSession}
 	 * @param projectId   {@link Long} identifier for the current project
 	 * @param sampleNames {@link List} of {@link String} sample names
-	 * @return {@link ProjectSampleMetadataResponse} that returns a message and potential errors.
+	 * @return {@link String} that returns a message and potential errors.
 	 * @throws Exception if there is an error saving the metadata
 	 */
-	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
+	public String saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
 			List<String> sampleNames) throws Exception {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
 		Project project = projectService.read(projectId);
-		ProjectSampleMetadataResponse response = new ProjectSampleMetadataResponse();
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 		String message;
 		int samplesUpdatedCount = 0;
@@ -160,7 +158,6 @@ public class UIMetadataImportService {
 
 		if (sampleNames != null) {
 			String sampleNameColumn = stored.getSampleNameColumn();
-			List<String> errorList = new ArrayList<>();
 
 			try {
 				for (String sampleName : sampleNames) {
@@ -202,10 +199,6 @@ public class UIMetadataImportService {
 			} catch (EntityNotFoundException e) {
 				// This really should not happen, but hey, you never know!
 			}
-
-			if (errorList.size() > 0) {
-				response.setErrorList(errorList);
-			}
 		}
 
 		message = ((samplesUpdatedCount == 1) ?
@@ -219,9 +212,7 @@ public class UIMetadataImportService {
 				messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
 						new Object[] { samplesCreatedCount }, locale);
 
-		response.setMessage(message);
-
-		return response;
+		return message;
 	}
 
 	/**

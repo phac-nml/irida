@@ -85,8 +85,7 @@ public class ProjectSampleMetadataAjaxController {
 			@RequestParam Long projectId, @RequestParam List<String> sampleNames) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(
-					metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames)
-							.getMessage()));
+					metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames)));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(new AjaxErrorResponse(e.getMessage()));
