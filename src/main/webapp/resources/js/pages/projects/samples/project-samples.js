@@ -96,6 +96,10 @@ const EXPORT_HANDLERS = {
   file() {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
+
+    /*
+    Get the default datatable params
+     */
     const {
       sampleNames,
       associated,
@@ -106,8 +110,9 @@ const EXPORT_HANDLERS = {
       endDate,
     } = $dt.ajax.params();
 
-    console.log($dt.ajax.params());
-
+    /*
+    These are default params must be included.
+     */
     const data = {
       sampleNames: sampleNames || [],
       search: search.value,
@@ -115,6 +120,9 @@ const EXPORT_HANDLERS = {
       type: this.data("file"),
     };
 
+    /*
+    Only add the following if they are needed,
+     */
     if (associated) {
       data.associated = associated;
     }

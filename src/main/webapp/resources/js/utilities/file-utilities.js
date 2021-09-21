@@ -11,6 +11,12 @@ export function download(url) {
   document.body.appendChild(iframe);
 }
 
+/**
+ * Download a file using a post request.
+ * This is good for when large amounts of data are required ot create the download
+ * @param {string} url - Url to send the info to.
+ * @param {object} contents - Any details that need to be including in the request.
+ */
 export function downloadPost(url, contents) {
   const form =
     document.querySelector("#submit-download") ||
