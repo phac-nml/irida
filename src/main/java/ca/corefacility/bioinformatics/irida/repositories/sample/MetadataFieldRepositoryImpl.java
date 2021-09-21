@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -47,11 +48,17 @@ public class MetadataFieldRepositoryImpl implements MetadataFieldRepositoryCusto
 		parameters.addValue("project", p.getId());
 		List<Long> fieldIds = tmpl.queryForList(fieldIdQueryString, parameters, Long.class);
 
-		//next load all the full fields with those ids
-		String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
-		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
-		nativeQuery.setParameter("fields", fieldIds);
+		List<MetadataTemplateField> resultList;
+		if (!fieldIds.isEmpty()) {
+			//next load all the full fields with those ids
+			String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
+			Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
+			nativeQuery.setParameter("fields", fieldIds);
+			resultList = nativeQuery.getResultList();
+		} else {
+			resultList = new ArrayList<>();
+		}
 
-		return nativeQuery.getResultList();
+		return resultList;
 	}
 }

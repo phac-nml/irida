@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -50,11 +47,17 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		parameters.addValue("project", project.getId());
 		List<Long> fieldIds = tmpl.queryForList(fieldIdQueryString, parameters, Long.class);
 
-		//next load the full fields
-		String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
-		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
-		nativeQuery.setParameter("fields", fieldIds);
-		List<MetadataTemplateField> fields = nativeQuery.getResultList();
+		List<MetadataTemplateField> fields;
+		if (!fieldIds.isEmpty()) {
+			//next load the full fields
+			String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
+			Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
+			nativeQuery.setParameter("fields", fieldIds);
+			fields = nativeQuery.getResultList();
+		} else {
+			//if there's no metadata, at least return the empty list
+			fields = new ArrayList<>();
+		}
 
 		//Collect the fields into a map from ID to field for use later
 		Map<Long, MetadataTemplateField> fieldMap = fields.stream()
