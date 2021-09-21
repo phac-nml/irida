@@ -69,6 +69,8 @@ export function SampleMetadataImportReview() {
 
   React.useEffect(() => {
     if (isSuccess) {
+      setValid(!data.rows.some(row => row.isSampleNameValid===false));
+
       const index = data.headers.findIndex(
         (item) => item === data.sampleNameColumn
       );
