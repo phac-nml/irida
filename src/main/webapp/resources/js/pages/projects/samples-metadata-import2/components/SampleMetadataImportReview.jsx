@@ -26,7 +26,12 @@ export function SampleMetadataImportReview() {
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const [valid, setValid] = React.useState(true);
-  const { data = {}, isError, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(projectId);
+  const {
+    data = {},
+    isError,
+    isFetching,
+    isSuccess,
+  } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
   const tagColumn = {
     title: "",
@@ -63,13 +68,13 @@ export function SampleMetadataImportReview() {
       setSelected(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
-      disabled: !record.isSampleNameValid
-    })
+      disabled: !record.isSampleNameValid,
+    }),
   };
 
   React.useEffect(() => {
     if (isSuccess) {
-      setValid(!data.rows.some(row => row.isSampleNameValid===false));
+      setValid(!data.rows.some((row) => row.isSampleNameValid === false));
 
       const index = data.headers.findIndex(
         (item) => item === data.sampleNameColumn
@@ -84,11 +89,13 @@ export function SampleMetadataImportReview() {
         dataIndex: sample,
         fixed: "left",
         width: 100,
-        render(text, item){
-          return({
-            props: {style: {background: item.isSampleNameValid ? null : red1}},
-            children: item.entry[sample]
-          })
+        render(text, item) {
+          return {
+            props: {
+              style: { background: item.isSampleNameValid ? null : red1 },
+            },
+            children: item.entry[sample],
+          };
         },
       };
 
@@ -103,15 +110,16 @@ export function SampleMetadataImportReview() {
       setColumns(updatedColumns);
       setSelected(
         data.rows.map((row) => {
-          if(row.isSampleNameValid)
-            return row.rowKey;
+          if (row.isSampleNameValid) return row.rowKey;
         })
       );
     }
   }, [data, isSuccess]);
 
   const save = () => {
-    const sampleNames = data.rows.filter(row => selected.includes(row.rowKey)).map(row => row.entry[data.sampleNameColumn]);
+    const sampleNames = data.rows
+      .filter((row) => selected.includes(row.rowKey))
+      .map((row) => row.entry[data.sampleNameColumn]);
     saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
@@ -125,20 +133,23 @@ export function SampleMetadataImportReview() {
   return (
     <SampleMetadataImportWizard currentStep={2}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
-      {!valid && <Alert
-        message="Validation Error"
-        description={
-          <Paragraph>Please correct the following errors within the file and re-upload. The sample name must meet the following criteria:
-            <ul>
-              <li>cannot be empty</li>
-              <li>minimum 3 characters long</li>
-              <li>contain only alphanumeric characters and '-', '_'</li>
-            </ul>
-           </Paragraph>
-         }
-        type="error"
-        showIcon
-      />}
+      {!valid && (
+        <Alert
+          message="Validation Error"
+          description={
+            <Paragraph>
+              {i18n("SampleMetadataImportReview.alert")}
+              <ul>
+                <li>{i18n("SampleMetadataImportReview.alert.rule1")}</li>
+                <li>{i18n("SampleMetadataImportReview.alert.rule2")}</li>
+                <li>{i18n("SampleMetadataImportReview.alert.rule3")}</li>
+              </ul>
+            </Paragraph>
+          }
+          type="error"
+          showIcon
+        />
+      )}
       <Table
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
