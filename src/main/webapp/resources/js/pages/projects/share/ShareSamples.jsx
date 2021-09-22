@@ -1,8 +1,9 @@
 import { Alert, Space, Switch, Typography } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import { SharedSamplesList } from "./SharedSamplesList";
+import { updateOwnership } from "./shareSlice";
 
 /**
  * React component to review the samples to be shared with another project.
@@ -11,7 +12,9 @@ import { SharedSamplesList } from "./SharedSamplesList";
  * @constructor
  */
 export function ShareSamples() {
-  const { originalSamples } = useSelector((state) => state.shareReducer);
+  const dispatch = useDispatch();
+  const { originalSamples, owner } = useSelector((state) => state.shareReducer);
+  console.log({ owner });
 
   const { projectId } = useSelector((state) => state.shareReducer);
 
@@ -33,12 +36,21 @@ export function ShareSamples() {
       {SHOW_SAMPLES && (
         <>
           <SharedSamplesList list={samples} />
-          <div>
-            <Switch />
-            <Typography.Text strong>
-              Prevent samples from being modified in the target project.
-            </Typography.Text>
-          </div>
+          <Space>
+            <Switch
+              checked={owner}
+              onChange={(e) => dispatch(updateOwnership(e))}
+            />
+            {owner ? (
+              <Typography.Text strong>
+                {i18n("ShareSamples.owner")}
+              </Typography.Text>
+            ) : (
+              <Typography.Text strong>
+                {i18n("SahreSamples.locked")}
+              </Typography.Text>
+            )}
+          </Space>
         </>
       )}
       {SHOW_NO_SAMPLES_WARNING && (

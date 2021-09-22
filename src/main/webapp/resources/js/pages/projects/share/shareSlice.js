@@ -8,6 +8,13 @@ export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
   payload: { sampleId },
 }));
 
+export const updateOwnership = createAction(
+  `share/updateOwnership`,
+  (owner) => ({
+    payload: { owner },
+  })
+);
+
 /**
  * Set up the initial state.  This is pulled from session storage which should
  * be accessed by the key "share".  The stringified object should be of the format:
@@ -23,7 +30,7 @@ export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
 const initialState = (() => {
   const stringData = window.sessionStorage.getItem("share");
   const { samples, projectId: currentProject } = JSON.parse(stringData);
-  return { originalSamples: samples, samples, currentProject, owner: false };
+  return { originalSamples: samples, samples, currentProject, owner: true };
 })();
 
 const shareSlice = createSlice({
@@ -38,6 +45,10 @@ const shareSlice = createSlice({
       state.originalSamples = state.originalSamples.filter(
         (sample) => sample.id !== action.payload.sampleId
       );
+    });
+
+    builder.addCase(updateOwnership, (state, action) => {
+      state.owner = action.payload.owner;
     });
   },
 });
