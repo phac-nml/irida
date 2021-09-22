@@ -1,4 +1,4 @@
-import { Alert, Space } from "antd";
+import { Alert, Space, Switch, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
@@ -30,7 +30,17 @@ export function ShareSamples() {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      {SHOW_SAMPLES && <SharedSamplesList list={samples} />}
+      {SHOW_SAMPLES && (
+        <>
+          <SharedSamplesList list={samples} />
+          <div>
+            <Switch />
+            <Typography.Text strong>
+              Prevent samples from being modified in the target project.
+            </Typography.Text>
+          </div>
+        </>
+      )}
       {SHOW_NO_SAMPLES_WARNING && (
         <Alert
           type="warning"

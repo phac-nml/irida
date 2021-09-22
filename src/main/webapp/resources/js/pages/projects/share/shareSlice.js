@@ -23,7 +23,7 @@ export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
 const initialState = (() => {
   const stringData = window.sessionStorage.getItem("share");
   const { samples, projectId: currentProject } = JSON.parse(stringData);
-  return { originalSamples: samples, samples, currentProject };
+  return { originalSamples: samples, samples, currentProject, owner: false };
 })();
 
 const shareSlice = createSlice({
