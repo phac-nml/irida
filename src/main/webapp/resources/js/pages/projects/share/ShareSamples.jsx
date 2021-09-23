@@ -47,7 +47,7 @@ export function ShareSamples() {
               </Typography.Text>
             ) : (
               <Typography.Text strong>
-                {i18n("SahreSamples.locked")}
+                {i18n("ShareSamples.locked")}
               </Typography.Text>
             )}
           </Space>
