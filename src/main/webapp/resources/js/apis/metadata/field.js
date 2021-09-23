@@ -2,6 +2,7 @@
  * Class responsible for ajax call for project sample metadata fields.
  */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import axios from "axios";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -24,18 +25,39 @@ export const fieldsApi = createApi({
         url: "",
         params: { projectId },
       }),
-      provideTags: (result) =>
-        result
-          ? result.map(({ identifier }) => ({
-              type: "MetadataField",
-              id: identifier,
-            }))
-          : ["MetadataField"],
+      provides: (result) => [
+        ...result.map(({ id }) => ({ type: "MetadataFields", id })),
+        { type: "MetadataFields", id: "LIST" },
+      ],
       transformResponse(response) {
         return addKeysToList(response, "field", "id");
       },
     }),
+    updateProjectMetadataFieldRestriction: build.mutation({
+      query: ({ projectId, fieldId, projectRole }) => ({
+        url: `/restrictions`,
+        method: `PATCH`,
+        params: { projectId, fieldId, projectRole },
+      }),
+      invalidatesTags: [{ type: "MetadataFields", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useGetMetadataFieldsForProjectQuery } = fieldsApi;
+export const {
+  useGetMetadataFieldsForProjectQuery,
+  useUpdateProjectMetadataFieldRestrictionMutation,
+} = fieldsApi;
+
+/**
+ * Get a list of field restrictions
+ * @returns {Promise<any>}
+ */
+export async function getMetadataRestrictions() {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/restrictions`);
+    return data;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}

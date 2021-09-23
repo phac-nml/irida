@@ -21,7 +21,7 @@
         urls: {
           projects: {
             available:
-              /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ ""
+              /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ "",
           },
           samples: {
             project:
@@ -35,20 +35,28 @@
               /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ "projects/1/samples/export",
             idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
             sampleIds:
-              /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/sampleIds"
+              /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/sampleIds",
           },
           fileMissingSamples:
-            /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing"
-        }
+            /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing",
+        },
       };
 
       // Translations for the date range filter modal
-      window.translations = [{
-        "project.sample.filter.date.format": /*[[#{project.sample.filter.date.format}]]*/ "",
-        "project.sample.filter.date.month": /*[[#{project.sample.filter.date.month}]]*/ "",
-        "project.sample.filter.date.months3": /*[[#{project.sample.filter.date.months3}]]*/ "",
-        "project.sample.filter.date.months6": /*[[#{project.sample.filter.date.months6}]]*/ "",
-        "project.sample.filter.date.year": /*[[#{project.sample.filter.date.year}]]*/ ""}];
+      window.translations = [
+        {
+          "project.sample.filter.date.format":
+            /*[[#{project.sample.filter.date.format}]]*/ "",
+          "project.sample.filter.date.month":
+            /*[[#{project.sample.filter.date.month}]]*/ "",
+          "project.sample.filter.date.months3":
+            /*[[#{project.sample.filter.date.months3}]]*/ "",
+          "project.sample.filter.date.months6":
+            /*[[#{project.sample.filter.date.months6}]]*/ "",
+          "project.sample.filter.date.year":
+            /*[[#{project.sample.filter.date.year}]]*/ "",
+        },
+      ];
     </script>
   </head>
   <body>
@@ -87,23 +95,11 @@
                     </a>
                   </li>
                   <li role="menuitem">
-                    <a
-                      href="#"
-                      class="js-sample-tool-btn t-copy-btn"
-                      data-enabled-at="1"
-                      data-toggle="tooltip"
-                      data:enabled-msg="#{project.samples.tooltip.share.requires-more-than-one}"
-                      data:associated-msg="#{project.samples.only-for-project-tooltip}"
-                      data-params='{"move": false}'
-                      data:url="@{/projects/{projectId}/templates/copy-move-modal(projectId=${project.getId()})}"
-                      data:script="@{/dist/js/project-samples-copy.bundle.js}"
-                    >
-                      <i
-                        class="fa fa-share-alt fa-fw spaced-right__sm"
-                        aria-hidden="true"
-                      ></i>
-                      <th:block th:text="#{project.samples.nav.share}" />
-                    </a>
+                    <div class="js-share-samples">
+                      ￼
+                      <!-- React component src/main/webapp/resources/js/pages/projects/samples/ShareSamplesLink.jsx -->
+                      ￼
+                    </div>
                   </li>
                   <li role="menuitem">
                     <a
@@ -427,7 +423,7 @@
         </span>
 
         <!-- Button for filtering samples by file -->
-        <div id="filter-toolbar" class="btn-toolbar" style="margin-left: 1px;">
+        <div id="filter-toolbar" class="btn-toolbar" style="margin-left: 1px">
           <div class="btn-group btn-group-sm" role="group">
             <button
               class="btn btn-default t-filters-btn"
@@ -449,7 +445,7 @@
               th:title="#{project.sample.filterByFile.modal.title}"
             >
               <i class="far fa-file-alt"></i>
-              <input type="file" id="filter-by-file" style="display: none;" />
+              <input type="file" id="filter-by-file" style="display: none" />
             </label>
           </div>
           <div class="btn-group btn-group-sm">
@@ -473,14 +469,19 @@
             <div class="modal-content">
               <div
                 class="modal-header"
-                style="background-color: hsl(52, 96%, 53%); border-top-left-radius: 4px; border-top-right-radius: 4px;"
+                style="
+                  background-color: hsl(52, 96%, 53%);
+                  border-top-left-radius: 4px;
+                  border-top-right-radius: 4px;
+                "
               >
                 <h4
                   class="modal-title"
                   id="myModalLabel"
                   th:text="#{galaxy.modal.title}"
-                  >DEPRICATED</h4
                 >
+                  DEPRICATED
+                </h4>
               </div>
               <div class="modal-body">
                 <div class="alert alert-warning" role="alert">
@@ -496,7 +497,8 @@
                   class="btn btn-primary"
                   id="js-goToCart"
                   th:text="#{galaxy.modal.btn}"
-                  >Go to cart
+                >
+                  Go to cart
                 </button>
               </div>
             </div>
@@ -504,10 +506,13 @@
         </div>
         <script>
           var btn = document.querySelector("#js-goToCart");
-          btn.addEventListener("click", function () { var cartBtn =
-          document.querySelector("#cart-add-btn"); if (cartBtn !== null) {
-          cartBtn.click(); window.location = window.TL.BASE_URL + "cart/galaxy";
-          } });
+          btn.addEventListener("click", function () {
+            var cartBtn = document.querySelector("#cart-add-btn");
+            if (cartBtn !== null) {
+              cartBtn.click();
+              window.location = window.TL.BASE_URL + "cart/galaxy";
+            }
+          });
         </script>
       </div>
       <script th:src="@{/dist/js/project-samples.bundle.js}"></script>

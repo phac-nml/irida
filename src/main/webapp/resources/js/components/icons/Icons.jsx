@@ -37,6 +37,7 @@ import {
   RocketOutlined,
   SearchOutlined,
   SettingOutlined,
+  ShareAltOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -46,6 +47,7 @@ import {
   SyncOutlined,
   TableOutlined,
   TeamOutlined,
+  UnlockOutlined,
   UnorderedListOutlined,
   UploadOutlined,
   UserAddOutlined,
@@ -115,6 +117,8 @@ export const IconExclamationCircle = ({ ...props }) => (
 );
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
+
+export const IconUnlocked = ({ ...props }) => <UnlockOutlined {...props} />;
 
 export const IconFlag = ({ ...props }) => <FlagFilled {...props} />;
 
@@ -195,6 +199,8 @@ export const IconUsergroupDelete = (props) => (
 export const IconCalendarTwoTone = ({ ...props }) => (
   <CalendarTwoTone {...props} />
 );
+
+export const IconShare = ({ ...props }) => <ShareAltOutlined {...props} />;
 
 /*
 File Type Icons

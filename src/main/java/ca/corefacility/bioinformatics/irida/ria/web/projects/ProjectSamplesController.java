@@ -448,7 +448,7 @@ public class ProjectSamplesController {
 		Map<String, List<String>> result = new HashMap<>();
 		for (ProjectSampleJoin join : page) {
 			cartSamples.add(new ProjectCartSample(join.getObject(), join.getSubject()
-					.getId()));
+					.getId(), join.isOwner()));
 		}
 
 		return cartSamples;
