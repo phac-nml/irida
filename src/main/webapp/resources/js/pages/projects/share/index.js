@@ -1,4 +1,4 @@
-import { Alert, Form, PageHeader, Space, Tabs } from "antd";
+import { Alert, Form, PageHeader, Space } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
@@ -38,15 +38,7 @@ function ShareLayout() {
         <Form layout="vertical">
           <Space direction="vertical" style={{ display: "block" }} size="large">
             <ShareProject />
-
-            <Tabs defaultActiveKey="samples">
-              <Tabs.TabPane tab={"Samples"} key="samples">
-                <ShareSamples />
-              </Tabs.TabPane>
-              <Tabs.TabPane tab={"Metadata Security"} key="metadata">
-                <ShareMetadata />
-              </Tabs.TabPane>
-            </Tabs>
+            <ShareSamples />
           </Space>
         </Form>
       ) : (
