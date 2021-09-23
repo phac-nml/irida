@@ -14,7 +14,6 @@ import { updateOwnership } from "./shareSlice";
 export function ShareSamples() {
   const dispatch = useDispatch();
   const { originalSamples, owner } = useSelector((state) => state.shareReducer);
-  console.log({ owner });
 
   const { projectId } = useSelector((state) => state.shareReducer);
 
