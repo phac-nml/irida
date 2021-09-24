@@ -1,4 +1,4 @@
-import { Alert, Form, PageHeader, Space } from "antd";
+import { Alert, PageHeader, Space } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
@@ -6,11 +6,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 import store from "./store";
-
-/**
- IGNORE THIS WILL BE MOVED / ENSURING ROUTER WORKING
- */
-const ShareMetadata = () => <div>METAsDATA</div>;
 
 /**
  * Base component for sharing samples between projects.
@@ -35,18 +30,12 @@ function ShareLayout() {
       }
     >
       {originalSamples.length > 0 ? (
-        <Form layout="vertical">
-          <Space direction="vertical" style={{ display: "block" }} size="large">
-            <ShareProject />
-            <ShareSamples />
-          </Space>
-        </Form>
+        <Space direction="vertical" style={{ display: "block" }} size="large">
+          <ShareProject />
+          <ShareSamples />
+        </Space>
       ) : (
-        <Alert
-          showIcon
-          type="info"
-          message={`You have no samples selected to share, please go back to the project samples page and select some samples`}
-        />
+        <Alert showIcon type="info" message={i18n("ShareSamples.no-samples")} />
       )}
     </PageHeader>
   );

@@ -2,6 +2,7 @@ import { Alert, Space, Switch, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
+import { ShareButton } from "./ShareButton";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updateOwnership } from "./shareSlice";
 
@@ -70,6 +71,7 @@ export function ShareSamples() {
           )}
         />
       )}
+      {SHOW_SAMPLES && <ShareButton />}
     </Space>
   );
 }

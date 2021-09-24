@@ -1,4 +1,4 @@
-import { Form, Select, Typography } from "antd";
+import { Select, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
@@ -36,13 +36,8 @@ export function ShareProject() {
   }, [projects, projectLoading]);
 
   return (
-    <Form.Item
-      label={
-        <Typography.Text strong>
-          {i18n("ShareSamples.projects")}
-        </Typography.Text>
-      }
-    >
+    <Space direction="vertical" style={{ display: "block" }}>
+      <Typography.Text strong>{i18n("ShareSamples.projects")}</Typography.Text>
       <Select
         autoFocus
         size="large"
@@ -51,6 +46,6 @@ export function ShareProject() {
         options={options}
         onChange={(projectId) => dispatch(setProject(projectId))}
       />
-    </Form.Item>
+    </Space>
   );
 }
