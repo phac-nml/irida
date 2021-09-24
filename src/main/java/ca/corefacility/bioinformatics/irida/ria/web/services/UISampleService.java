@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -194,5 +196,21 @@ public class UISampleService {
 		return samples.stream()
 				.map(Sample::getId)
 				.collect(Collectors.toUnmodifiableList());
+	}
+
+	public void shareSamplesWithProject(ShareSamplesRequest request) {
+		Project currentProject = projectService.read(request.getCurrentId());
+		Project targetProject = projectService.read(request.getTargetId());
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
+		try {
+			if (request.getType()
+					.equals("share")) {
+				projectService.shareSamples(currentProject, targetProject, samples, request.getOwner());
+			} else {
+				projectService.moveSamples(currentProject, targetProject, samples);
+			}
+		} catch (AccessDeniedException e) {
+			e.printStackTrace();
+		}
 	}
 }

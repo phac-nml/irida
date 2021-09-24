@@ -29,7 +29,7 @@ export function ShareButton() {
     <div style={{ display: "flex", flexDirection: "row-reverse" }}>
       <Dropdown.Button
         disabled={disabled}
-        onClick={() => shareSamples("copy")}
+        onClick={() => shareSamples("share")}
         overlay={
           <Menu onClick={(e) => shareSamples(e.key)}>
             <Menu.Item key="move">Move Samples</Menu.Item>

@@ -194,7 +194,7 @@ public class SamplesAjaxController {
 
 	@PostMapping("/share")
 	public ResponseEntity<String> shareSamplesWithProject(@RequestBody ShareSamplesRequest request) {
-		String foo = "DSF";
+		uiSampleService.shareSamplesWithProject(request);
 		return ResponseEntity.ok("FOOBAR");
 	}
 
