@@ -1,6 +1,5 @@
 import React from "react";
 import { Steps } from "antd";
-import PropTypes from "prop-types";
 
 const { Step } = Steps;
 
@@ -21,8 +20,3 @@ export function SampleMetadataImportSteps({ currentStep, currentStatus }) {
     </Steps>
   );
 }
-
-SampleMetadataImportSteps.propTypes = {
-  currentStep: PropTypes.number,
-  currentStatus: PropTypes.string,
-};
