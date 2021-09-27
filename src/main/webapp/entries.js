@@ -18,8 +18,6 @@ module.exports = {
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
-  "samples-metadata-import":
-    "./resources/js/pages/projects/samples-metadata-import/index.js",
   "samples-metadata-import2":
     "./resources/js/pages/projects/samples-metadata-import2",
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",

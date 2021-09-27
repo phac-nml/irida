@@ -160,7 +160,7 @@ public class ProjectsController {
 	public String getSynchronizeProjectPage() {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
-	
+
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
@@ -264,8 +264,8 @@ public class ProjectsController {
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
 		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name",
-				"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
-				"ProjectsTable_th_modified_date")
+						"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
+						"ProjectsTable_th_modified_date")
 				.stream()
 				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
@@ -281,21 +281,6 @@ public class ProjectsController {
 		} else {
 			writeProjectsToCsvFile(headers, dtProjects, locale, response);
 		}
-	}
-
-	/**
-	 * Handle the page request to upload {@link Sample} metadata
-	 *
-	 * @param model     {@link Model}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param principal {@link Principal} currently logged in use
-	 * @return {@link String} the path to the metadata import page
-	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/upload", method = RequestMethod.GET)
-	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId,
-			Principal principal) {
-		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
-		return "projects/project_samples_metadata_upload";
 	}
 
 	/**
