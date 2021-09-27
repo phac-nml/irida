@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -202,15 +201,11 @@ public class UISampleService {
 		Project currentProject = projectService.read(request.getCurrentId());
 		Project targetProject = projectService.read(request.getTargetId());
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
-		try {
-			if (request.getType()
-					.equals("share")) {
-				projectService.shareSamples(currentProject, targetProject, samples, request.getOwner());
-			} else {
-				projectService.moveSamples(currentProject, targetProject, samples);
-			}
-		} catch (AccessDeniedException e) {
-			e.printStackTrace();
+		if (request.getType()
+				.equals("share")) {
+			projectService.shareSamples(currentProject, targetProject, samples, request.getOwner());
+		} else {
+			projectService.moveSamples(currentProject, targetProject, samples);
 		}
 	}
 }

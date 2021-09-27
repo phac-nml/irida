@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -194,8 +195,13 @@ public class SamplesAjaxController {
 
 	@PostMapping("/share")
 	public ResponseEntity<String> shareSamplesWithProject(@RequestBody ShareSamplesRequest request) {
-		uiSampleService.shareSamplesWithProject(request);
-		return ResponseEntity.ok("FOOBAR");
+		try {
+			uiSampleService.shareSamplesWithProject(request);
+			return ResponseEntity.ok("FOOBAR");
+		} catch (AccessDeniedException e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+					.body("No fucking way");
+		}
 	}
 
 	/**
