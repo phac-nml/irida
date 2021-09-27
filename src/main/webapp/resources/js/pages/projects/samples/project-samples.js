@@ -1,29 +1,28 @@
-import $ from "jquery";
-
 import chroma from "chroma-js";
+import $ from "jquery";
+import "../../../../css/pages/project-samples.css";
+import { putSampleInCart } from "../../../apis/cart/cart";
 import {
   createItemLink,
   generateColumnOrderInfo,
   tableConfig,
 } from "../../../utilities/datatables-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { download, downloadPost } from "../../../utilities/file-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
+import "./add-sample/AddSampleButton";
+import { FILTERS, SAMPLE_EVENTS } from "./constants";
+
+import "./linker/Linker";
 import {
   SampleCartButton,
   SampleDropdownButton,
   SampleExportButton,
   SampleProjectDropdownButton,
 } from "./SampleButtons";
-import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file-utilities";
-import "../../../../css/pages/project-samples.css";
-import { putSampleInCart } from "../../../apis/cart/cart";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-
-import "./linker/Linker";
-import "./add-sample/AddSampleButton";
 
 /*
 This is required to use select2 inside a modal.
@@ -97,9 +96,47 @@ const EXPORT_HANDLERS = {
   file() {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
-    const params = $dt.ajax.params();
-    params.type = this.data("file");
-    download(`${url}?${$.param(params)}`);
+
+    /*
+    Get the default datatable params
+     */
+    const {
+      sampleNames,
+      associated,
+      search,
+      name,
+      organism,
+      startDate,
+      endDate,
+    } = $dt.ajax.params();
+
+    /*
+    These are default params must be included.
+     */
+    const data = {
+      sampleNames: sampleNames || [],
+      search: search.value,
+      name: name || "",
+      type: this.data("file"),
+    };
+
+    /*
+    Only add the following if they are needed,
+     */
+    if (associated) {
+      data.associated = associated;
+    }
+
+    if (organism) {
+      data.organism = organism;
+    }
+
+    if (startDate && endDate) {
+      data.startDate = startDate;
+      data.endDate = endDate;
+    }
+
+    downloadPost(`${url}`, data);
   },
   ncbi() {
     const ids = getSelectedIds();
