@@ -10,18 +10,19 @@
         window.PAGE = {
           project: /*[[${project}]]*/ {},
           urls: {
-            import: /*[[@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload"
+            import: /*[[@{/projects/{id}/sample-metadata/upload/file(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload/file"
           }
         };
+
     </script>
 </head>
 <body>
 <main layout:fragment="main">
-<div id="root">
-    <div class="ant-alert-message">
-        <th:block th:text="#{linelist.page-initialization}"/>
+    <div id="root">
+        <div class="ant-alert-message">
+            <th:block th:text="#{linelist.page-initialization}"/>
+        </div>
     </div>
-</div>
 </main>
 
 <th:block layout:fragment="scripts">

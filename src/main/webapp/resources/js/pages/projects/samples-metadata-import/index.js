@@ -10,7 +10,7 @@ import store from "./store";
 
 render(
     <Provider store={store}>
-        <Router basepath={setBaseUrl("/projects/:projectId/sample-metadata/upload2")}>
+        <Router basepath={setBaseUrl("/projects/:projectId/sample-metadata/upload")}>
             <SampleMetadataImportUploadFile path="/file" />
             <SampleMetadataImportMapHeaders path="/headers" />
             <SampleMetadataImportReview path="/review" />

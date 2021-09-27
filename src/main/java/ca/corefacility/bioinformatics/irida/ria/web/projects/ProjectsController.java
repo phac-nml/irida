@@ -291,11 +291,11 @@ public class ProjectsController {
 	 * @param principal {@link Principal} currently logged in use
 	 * @return {@link String} the path to the metadata import page
 	 */
-	@GetMapping("/projects/{projectId}/sample-metadata/upload2/file")
-	public String getProjectSamplesMetadataUploadPage2(final Model model, @PathVariable Long projectId,
+	@GetMapping("/projects/{projectId}/sample-metadata/upload/file")
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable Long projectId,
 			Principal principal) {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
-		return "projects/project_samples_metadata_upload2";
+		return "projects/project_samples_metadata_upload";
 	}
 
 	/**

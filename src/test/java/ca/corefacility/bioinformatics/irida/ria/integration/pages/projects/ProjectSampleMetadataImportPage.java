@@ -43,7 +43,7 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public static ProjectSampleMetadataImportPage goToPage(WebDriver driver) {
-		get(driver, "projects/1/sample-metadata/upload2/file");
+		get(driver, "projects/1/sample-metadata/upload/file");
 		return PageFactory.initElements(driver, ProjectSampleMetadataImportPage.class);
 	}
 
