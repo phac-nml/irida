@@ -9,6 +9,11 @@ import { SampleMetadataImportComplete } from "./components/SampleMetadataImportC
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import store from "./store";
 
+/*
+Router for sample metadata importer.
+For more information on the browser router see: https://reactrouter.com/web/api/BrowserRouter
+ */
+
 render(
   <Provider store={store}>
     <BrowserRouter basename={setBaseUrl("/projects")}>
