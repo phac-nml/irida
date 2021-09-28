@@ -1,4 +1,4 @@
-import { Alert, PageHeader, Space } from "antd";
+import { Alert, Col, PageHeader, Row, Space } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
@@ -19,25 +19,37 @@ function ShareLayout() {
   );
 
   return (
-    <PageHeader
-      ghost={false}
-      title={i18n("ShareSamples.title")}
-      subTitle={`Samples selected on project samples page`}
-      onBack={() =>
-        (window.location.href = setBaseUrl(
-          `/projects/${currentProject}/samples`
-        ))
-      }
-    >
-      {originalSamples.length > 0 ? (
-        <Space direction="vertical" style={{ display: "block" }} size="large">
-          <ShareProject />
-          <ShareSamples />
-        </Space>
-      ) : (
-        <Alert showIcon type="info" message={i18n("ShareSamples.no-samples")} />
-      )}
-    </PageHeader>
+    <Row>
+      <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }} xs={24}>
+        <PageHeader
+          ghost={false}
+          title={i18n("ShareSamples.title")}
+          subTitle={`Samples selected on project samples page`}
+          onBack={() =>
+            (window.location.href = setBaseUrl(
+              `/projects/${currentProject}/samples`
+            ))
+          }
+        >
+          {originalSamples.length > 0 ? (
+            <Space
+              direction="vertical"
+              style={{ display: "block" }}
+              size="large"
+            >
+              <ShareProject />
+              <ShareSamples />
+            </Space>
+          ) : (
+            <Alert
+              showIcon
+              type="info"
+              message={i18n("ShareSamples.no-samples")}
+            />
+          )}
+        </PageHeader>
+      </Col>
+    </Row>
   );
 }
 
