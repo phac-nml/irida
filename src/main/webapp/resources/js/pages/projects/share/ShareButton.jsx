@@ -32,11 +32,11 @@ export function ShareButton() {
         onClick={() => shareSamples("share")}
         overlay={
           <Menu onClick={(e) => shareSamples(e.key)}>
-            <Menu.Item key="move">Move Samples</Menu.Item>
+            <Menu.Item key="move">{i18n("ShareButton.move")}</Menu.Item>
           </Menu>
         }
       >
-        Copy Samples
+        {i18n("ShareButton.copy")}
       </Dropdown.Button>
     </div>
   );
