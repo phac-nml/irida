@@ -142,25 +142,18 @@ public class UIMetadataImportService {
 	 * @return {@link String} that returns a message and potential errors.
 	 * @throws Exception if there is an error saving the metadata
 	 */
-	public String saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
-			List<String> sampleNames) throws Exception {
+	public SampleMetadataStorage saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
+			List<String> sampleNames) {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
 		Project project = projectService.read(projectId);
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
-		String message;
-		int samplesUpdatedCount = 0;
-		int samplesCreatedCount = 0;
-
-		if (stored == null) {
-			throw new Exception("Sample metadata storage session cannot be found.");
-		}
 
 		if (sampleNames != null) {
 			String sampleNameColumn = stored.getSampleNameColumn();
 
-			try {
-				for (String sampleName : sampleNames) {
+			for (String sampleName : sampleNames) {
+				try {
 					Set<MetadataEntry> metadataEntrySet = new HashSet<>();
 					SampleMetadataStorageRow row = stored.getRow(sampleName, sampleNameColumn);
 					String name = row.getEntryValue(sampleNameColumn);
@@ -168,11 +161,10 @@ public class UIMetadataImportService {
 
 					if (row.getFoundSampleId() != null) {
 						sample = sampleService.getSampleBySampleName(project, name);
-						samplesUpdatedCount++;
 					} else {
 						sample = new Sample(name);
 						projectService.addSampleToProject(project, sample, true);
-						samplesCreatedCount++;
+						throw new EntityNotFoundException("Something went wrong.");
 					}
 
 					// Need to overwrite duplicate keys
@@ -194,25 +186,16 @@ public class UIMetadataImportService {
 
 					// Save metadata back to the sample
 					sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+					row.setSaved(true);
+				} catch (Exception e) {
+					SampleMetadataStorageRow row = stored.getRow(sampleName, sampleNameColumn);
+					row.setError(e.getMessage());
+					row.setSaved(false);
 				}
-
-			} catch (EntityNotFoundException e) {
-				// This really should not happen, but hey, you never know!
 			}
 		}
 
-		message = ((samplesUpdatedCount == 1) ?
-				messageSource.getMessage("server.metadataimport.results.save.success.single-updated",
-						new Object[] { samplesUpdatedCount }, locale) :
-				messageSource.getMessage("server.metadataimport.results.save.success.multiple-updated",
-						new Object[] { samplesUpdatedCount }, locale));
-		message += (samplesCreatedCount == 1) ?
-				messageSource.getMessage("server.metadataimport.results.save.success.single-created",
-						new Object[] { samplesCreatedCount }, locale) :
-				messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
-						new Object[] { samplesCreatedCount }, locale);
-
-		return message;
+		return stored;
 	}
 
 	/**

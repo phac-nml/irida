@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Button, Table, Tag, Typography } from "antd";
+import { Alert, Button, Table, Tag, Tooltip, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   useGetProjectSampleMetadataQuery,
@@ -9,8 +9,9 @@ import {
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconCloseCircle
 } from "../../../../components/icons/Icons";
-import { red1 } from "../../../../styles/colors";
+import { red1, red5 } from "../../../../styles/colors";
 
 const { Paragraph, Text } = Typography;
 
@@ -33,6 +34,7 @@ export function SampleMetadataImportReview() {
     isSuccess,
   } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
+
   const tagColumn = {
     title: "",
     dataIndex: "tags",
@@ -61,6 +63,20 @@ export function SampleMetadataImportReview() {
       value === "new" ? !record.foundSampleId : record.foundSampleId,
   };
 
+  const savedColumn = {
+    dataIndex: "saved",
+    fixed: "right",
+    width: 50,
+    render: (text, item) => {
+      if(item.saved === false)
+        return (
+          <Tooltip title={item.error} color={red5}>
+            <IconCloseCircle style={{ color: red5 }} />
+          </Tooltip>
+        );
+    },
+  };
+
   const rowSelection = {
     fixed: true,
     selectedRowKeys: selected,
@@ -68,7 +84,7 @@ export function SampleMetadataImportReview() {
       setSelected(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
-      disabled: !record.isSampleNameValid,
+      disabled: record.saved === true,
     }),
   };
 
@@ -105,7 +121,7 @@ export function SampleMetadataImportReview() {
         render: (text, item) => item.entry[header],
       }));
 
-      const updatedColumns = [sampleColumn, tagColumn, ...otherColumns];
+      const updatedColumns = [sampleColumn, tagColumn, ...otherColumns, savedColumn];
 
       setColumns(updatedColumns);
       setSelected(
@@ -123,10 +139,13 @@ export function SampleMetadataImportReview() {
     saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
-        history.push({
-          pathname: "complete",
-          state: { statusMessage: payload.message },
-        });
+        console.log(payload);
+        if(payload.rows.every(row => row.saved === true)){
+          history.push({
+            pathname: "complete",
+            state: { statusMessage: payload.message },
+          });
+        }
       });
   };
 

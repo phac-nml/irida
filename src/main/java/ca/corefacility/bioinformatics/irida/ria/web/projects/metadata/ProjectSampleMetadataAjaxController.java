@@ -81,15 +81,10 @@ public class ProjectSampleMetadataAjaxController {
 	 */
 	@PostMapping("/save")
 	@ResponseBody
-	public ResponseEntity<AjaxResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
+	public ResponseEntity<SampleMetadataStorage> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam Long projectId, @RequestParam List<String> sampleNames) {
-		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(
-					metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames)));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body(new AjaxErrorResponse(e.getMessage()));
-		}
+		return ResponseEntity.ok(
+				metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames));
 	}
 
 	/**
