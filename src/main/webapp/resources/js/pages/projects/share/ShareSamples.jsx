@@ -1,10 +1,10 @@
-import { Alert, Space, Switch, Typography } from "antd";
+import { Alert, Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import { ShareButton } from "./ShareButton";
 import { SharedSamplesList } from "./SharedSamplesList";
-import { updateOwnership } from "./shareSlice";
+import { updatedLocked, updateMoveSamples } from "./shareSlice";
 
 /**
  * React component to review the samples to be shared with another project.
@@ -14,7 +14,9 @@ import { updateOwnership } from "./shareSlice";
  */
 export function ShareSamples() {
   const dispatch = useDispatch();
-  const { originalSamples, owner } = useSelector((state) => state.shareReducer);
+  const { originalSamples, locked, move } = useSelector(
+    (state) => state.shareReducer
+  );
 
   const { projectId } = useSelector((state) => state.shareReducer);
 
@@ -36,21 +38,24 @@ export function ShareSamples() {
       {SHOW_SAMPLES && (
         <>
           <SharedSamplesList list={samples} />
-          <Space>
-            <Switch
-              checked={owner}
-              onChange={(e) => dispatch(updateOwnership(e))}
-            />
-            {owner ? (
-              <Typography.Text strong>
-                {i18n("ShareSamples.owner")}
-              </Typography.Text>
-            ) : (
-              <Typography.Text strong>
-                {i18n("ShareSamples.locked")}
-              </Typography.Text>
-            )}
-          </Space>
+          <Checkbox
+            checked={move}
+            onChange={(e) => dispatch(updateMoveSamples(e.target.checked))}
+          >
+            <Typography.Text strong>
+              Remove samples from current project
+            </Typography.Text>
+          </Checkbox>
+          <Checkbox
+            checked={locked}
+            onChange={(e) => dispatch(updatedLocked(e.target.checked))}
+            disabled={move}
+          >
+            <Typography.Text strong>
+              Prevent samples from modification in target project (only when
+              copying samples)
+            </Typography.Text>
+          </Checkbox>
         </>
       )}
       {SHOW_NO_SAMPLES_WARNING && (

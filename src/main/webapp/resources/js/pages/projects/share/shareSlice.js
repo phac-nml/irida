@@ -8,10 +8,17 @@ export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
   payload: { sampleId },
 }));
 
-export const updateOwnership = createAction(
+export const updatedLocked = createAction(
   `share/updateOwnership`,
-  (owner) => ({
-    payload: { owner },
+  (locked) => ({
+    payload: { locked },
+  })
+);
+
+export const updateMoveSamples = createAction(
+  `share/updateMoveSamples`,
+  (move) => ({
+    payload: { move },
   })
 );
 
@@ -30,7 +37,13 @@ export const updateOwnership = createAction(
 const initialState = (() => {
   const stringData = window.sessionStorage.getItem("share");
   const { samples, projectId: currentProject } = JSON.parse(stringData);
-  return { originalSamples: samples, samples, currentProject, owner: true };
+  return {
+    originalSamples: samples,
+    samples,
+    currentProject,
+    locked: false,
+    move: false,
+  };
 })();
 
 const shareSlice = createSlice({
@@ -47,8 +60,15 @@ const shareSlice = createSlice({
       );
     });
 
-    builder.addCase(updateOwnership, (state, action) => {
-      state.owner = action.payload.owner;
+    builder.addCase(updatedLocked, (state, action) => {
+      state.locked = action.payload.locked;
+    });
+
+    builder.addCase(updateMoveSamples, (state, action) => {
+      state.move = action.payload.move;
+      if (action.payload.move) {
+        state.locked = false;
+      }
     });
   },
 });
