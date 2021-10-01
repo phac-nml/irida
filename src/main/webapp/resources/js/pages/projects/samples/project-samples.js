@@ -1,33 +1,32 @@
-import $ from "jquery";
 import axios from "axios";
+import "bootstrap-daterangepicker";
+import "bootstrap-daterangepicker/daterangepicker.css";
 import chroma from "chroma-js";
+import $ from "jquery";
+import moment from "moment";
+import "../../../../css/pages/project-samples.css";
+import { putSampleInCart } from "../../../apis/cart/cart";
 import {
   createItemLink,
   generateColumnOrderInfo,
   tableConfig,
 } from "../../../utilities/datatables-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { download, downloadPost } from "../../../utilities/file-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
+import "./add-sample/AddSampleButton";
+import { FILTERS, SAMPLE_EVENTS } from "./constants";
+
+import "./linker/Linker";
 import {
   SampleCartButton,
   SampleDropdownButton,
   SampleExportButton,
   SampleProjectDropdownButton,
 } from "./SampleButtons";
-import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download, downloadPost } from "../../../utilities/file-utilities";
-import "../../../../css/pages/project-samples.css";
-import { putSampleInCart } from "../../../apis/cart/cart";
-import { samplesAddedToCart } from "../../../utilities/events-utilities";
-import moment from "moment";
-import "bootstrap-daterangepicker";
-import "bootstrap-daterangepicker/daterangepicker.css";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-
-import "./linker/Linker";
-import "./add-sample/AddSampleButton";
 
 /*
 This is required to use select2 inside a modal.
@@ -759,8 +758,6 @@ function displayFilters(filters) {
     createChip(i18n("project.sample.filter-date.label"), range, () => {
       filters.delete(FILTERS.FILTER_BY_EARLY_DATE);
       filters.delete(FILTERS.FILTER_BY_LATEST_DATE);
-      // This will clear the actual filter in the modal window.
-      $("#js-daterange").val("");
       $dt.ajax.reload();
     });
   }
