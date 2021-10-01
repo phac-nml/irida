@@ -2,13 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WebpackParserException;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -19,17 +17,14 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 public class WebpackEntryDeserializer extends StdDeserializer<WebpackEntry> {
 
 	public WebpackEntryDeserializer() {
-		this(WebpackEntry.class);
-	}
-
-	public WebpackEntryDeserializer(Class<?> vc) {
-		super(vc);
+		super(WebpackEntry.class);
 	}
 
 	@Override
 	public WebpackEntry deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-			throws IOException, JsonProcessingException {
-		JsonNode entryNode = jsonParser.getCodec().readTree(jsonParser);
+			throws IOException {
+		JsonNode entryNode = jsonParser.getCodec()
+				.readTree(jsonParser);
 		JsonNode assetsNode = entryNode.get("assets");
 
 		if (assetsNode == null || assetsNode.isEmpty()) {
@@ -55,10 +50,8 @@ public class WebpackEntryDeserializer extends StdDeserializer<WebpackEntry> {
 
 	private List<String> getPathsFromNode(JsonNode node) {
 		List<String> paths = new ArrayList<>();
-		final Iterator<JsonNode> iterator = node.iterator();
-		while (iterator.hasNext()) {
-			paths.add(iterator
-					.next().textValue());
+		for (JsonNode jsonNode : node) {
+			paths.add(jsonNode.textValue());
 		}
 		return paths;
 	}
