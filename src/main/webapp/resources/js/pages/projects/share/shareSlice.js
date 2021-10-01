@@ -17,8 +17,8 @@ export const updatedLocked = createAction(
 
 export const updateMoveSamples = createAction(
   `share/updateMoveSamples`,
-  (move) => ({
-    payload: { move },
+  (remove) => ({
+    payload: { remove },
   })
 );
 
@@ -42,7 +42,7 @@ const initialState = (() => {
     samples,
     currentProject,
     locked: false,
-    move: false,
+    remove: false,
   };
 })();
 
@@ -65,8 +65,8 @@ const shareSlice = createSlice({
     });
 
     builder.addCase(updateMoveSamples, (state, action) => {
-      state.move = action.payload.move;
-      if (action.payload.move) {
+      state.remove = action.payload.remove;
+      if (action.payload.remove) {
         state.locked = false;
       }
     });

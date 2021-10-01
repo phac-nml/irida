@@ -14,7 +14,7 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  */
 export function ShareSamples() {
   const dispatch = useDispatch();
-  const { originalSamples, locked, move } = useSelector(
+  const { originalSamples, locked, remove } = useSelector(
     (state) => state.shareReducer
   );
 
@@ -39,7 +39,7 @@ export function ShareSamples() {
         <>
           <SharedSamplesList list={samples} />
           <Checkbox
-            checked={move}
+            checked={remove}
             onChange={(e) => dispatch(updateMoveSamples(e.target.checked))}
           >
             <Typography.Text strong>
@@ -49,7 +49,7 @@ export function ShareSamples() {
           <Checkbox
             checked={locked}
             onChange={(e) => dispatch(updatedLocked(e.target.checked))}
-            disabled={move}
+            disabled={remove}
           >
             <Typography.Text strong>
               Prevent samples from modification in target project (only when

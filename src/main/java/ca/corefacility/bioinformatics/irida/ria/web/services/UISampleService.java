@@ -41,8 +41,9 @@ public class UISampleService {
 	private final UICartService cartService;
 
 	@Autowired
-	public UISampleService(SampleService sampleService, ProjectService projectService, UpdateSamplePermission updateSamplePermission,
-			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
+	public UISampleService(SampleService sampleService, ProjectService projectService,
+			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
+			GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.updateSamplePermission = updateSamplePermission;
@@ -201,11 +202,11 @@ public class UISampleService {
 		Project currentProject = projectService.read(request.getCurrentId());
 		Project targetProject = projectService.read(request.getTargetId());
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
-		if (request.getType()
-				.equals("share")) {
-			projectService.shareSamples(currentProject, targetProject, samples, request.getOwner());
-		} else {
+		if (request.getRemove()) {
 			projectService.moveSamples(currentProject, targetProject, samples);
+		} else {
+			projectService.shareSamples(currentProject, targetProject, samples, request.getOwner());
+
 		}
 	}
 }

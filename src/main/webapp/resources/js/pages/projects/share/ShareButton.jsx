@@ -1,25 +1,24 @@
-import { Dropdown, Menu } from "antd";
+import { Button, Menu } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useShareSamplesWithProjectMutation } from "../../../apis/projects/samples";
 
 export function ShareButton() {
-  const { samples, owner, projectId, currentProject } = useSelector(
+  const { samples, owner, remove, projectId, currentProject } = useSelector(
     (state) => state.shareReducer
   );
   const [
     shareSamplesWithProject,
     { isLoading, isUpdating },
   ] = useShareSamplesWithProjectMutation();
-  console.log({ isLoading, isUpdating });
 
-  const shareSamples = (type) => {
+  const shareSamples = () => {
     shareSamplesWithProject({
       sampleIds: samples.map((s) => s.id),
       owner,
       currentId: currentProject,
       targetId: projectId,
-      type,
+      remove,
     });
   };
 
@@ -27,7 +26,7 @@ export function ShareButton() {
 
   return (
     <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-      <Dropdown.Button
+      <Button
         disabled={disabled}
         onClick={() => shareSamples("share")}
         overlay={
@@ -37,7 +36,7 @@ export function ShareButton() {
         }
       >
         {i18n("ShareButton.copy")}
-      </Dropdown.Button>
+      </Button>
     </div>
   );
 }

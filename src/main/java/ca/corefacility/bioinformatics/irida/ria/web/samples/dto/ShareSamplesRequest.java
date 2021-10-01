@@ -10,7 +10,7 @@ public class ShareSamplesRequest {
 	private Long targetId;
 	private List<Long> sampleIds;
 	private Boolean owner;
-	private String type;
+	private Boolean remove;
 
 	public Long getCurrentId() {
 		return currentId;
@@ -44,11 +44,11 @@ public class ShareSamplesRequest {
 		this.owner = owner;
 	}
 
-	public String getType() {
-		return type;
+	public Boolean getRemove() {
+		return remove;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setRemove(Boolean remove) {
+		this.remove = remove;
 	}
 }
