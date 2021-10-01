@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -49,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.ProjectSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.UISampleFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ExportToFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -784,49 +784,39 @@ public class ProjectSamplesController {
 	 * Export {@link Sample} from a {@link Project} as either Excel or CSV formatted.
 	 *
 	 * @param projectId   identifier for the current {@link Project}
-	 * @param type        of file to export (.csv or .xlsx)
-	 * @param params      DataTable parameters.
-	 * @param sampleNames List of {@link Sample} names the {@link Project} is filtered on
-	 * @param associated  List of acitve associated {@link Project} identifiers.
-	 * @param filter      {@link Sample} attribute filters applied.
-	 * @param request     {@link HttpServletRequest}
+	 * @param exportModel {@link ExportToFileModel} details of which samples to export
 	 * @param response    {@link HttpServletResponse}
 	 * @param locale      of the current user.
 	 * @throws IOException if the exported file cannot be written
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/export")
-	public void exportProjectSamplesTable(
-			@PathVariable Long projectId,
-			@RequestParam DataTablesExportTypes type,
-			@DataTablesRequest DataTablesParams params,
-			@RequestParam(required = false, defaultValue = "") List<String> sampleNames,
-			@RequestParam(required = false, defaultValue = "") List<Long> associated,
-			UISampleFilter filter,
-			HttpServletRequest request,
-			HttpServletResponse response,
-			Locale locale) throws IOException {
+	@RequestMapping(method = RequestMethod.POST, value = "/projects/{projectId}/samples/export")
+	public void exportProjectSamplesTable(@PathVariable Long projectId, ExportToFileModel exportModel,
+			HttpServletResponse response, Locale locale) throws IOException {
 
 		Project project = projectService.read(projectId);
 		List<Project> projects = new ArrayList<>();
 
-		if (!associated.isEmpty()) {
-			projects = (List<Project>) projectService.readMultiple(associated);
+		if (exportModel.getAssociated() != null) {
+			projects = (List<Project>) projectService.readMultiple(exportModel.getAssociated());
 		}
 		projects.add(project);
 
-		final Page<ProjectSampleJoin> page = sampleService
-				.getFilteredSamplesForProjects(projects, sampleNames, filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
-						filter.getEndDate(), 0, Integer.MAX_VALUE, params.getSort());
+		final Page<ProjectSampleJoin> page;
+		page = sampleService.getFilteredSamplesForProjects(projects, exportModel.getSampleNames(),
+				exportModel.getName(), exportModel.getSearch(), exportModel.getOrganism(), exportModel.getStartDate(),
+				exportModel.getEndDate(), 0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Direction.ASC, "sample.sampleName")));
 
 		// Create DataTables representation of the page.
-		List<DTProjectSamples> models = new ArrayList<>();
-		for (ProjectSampleJoin psj : page.getContent()) {
-			models.add(buildProjectSampleDataTablesModel(psj, locale));
-		}
+		List<DTProjectSamples> models = page.getContent()
+				.stream()
+				.map(join -> buildProjectSampleDataTablesModel(join, locale))
+				.collect(Collectors.toUnmodifiableList());
+
 		List<String> headers = models.get(0)
 				.getExportableTableHeaders(messageSource, locale);
-		DataTablesExportToFile.writeFile(type, response, project.getLabel()
-				.replace(" ", "_"), models, headers);
+		DataTablesExportToFile.writeFile(DataTablesExportTypes.valueOf(exportModel.getType()), response,
+				project.getLabel()
+						.replace(" ", "_"), models, headers);
 	}
 
 	/**
