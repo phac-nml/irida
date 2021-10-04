@@ -1,5 +1,8 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 
+/**
+ * Action to set the target project for the samples
+ */
 export const setProject = createAction(`share/setProject`, (projectId) => ({
   payload: { projectId },
 }));
