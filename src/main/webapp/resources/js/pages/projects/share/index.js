@@ -18,18 +18,19 @@ function ShareLayout() {
     (state) => state.shareReducer
   );
 
+  /**
+   * Return to previous page (project samples page)
+   */
+  const goToPrevious = () =>
+    (window.location.href = setBaseUrl(`/projects/${currentProject}/samples`));
+
   return (
     <Row>
       <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }} xs={24}>
         <PageHeader
           ghost={false}
           title={i18n("ShareSamples.title")}
-          subTitle={`Samples selected on project samples page`}
-          onBack={() =>
-            (window.location.href = setBaseUrl(
-              `/projects/${currentProject}/samples`
-            ))
-          }
+          onBack={goToPrevious}
         >
           {originalSamples.length > 0 ? (
             <Space
