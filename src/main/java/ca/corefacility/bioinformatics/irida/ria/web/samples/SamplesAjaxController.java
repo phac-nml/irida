@@ -10,7 +10,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -21,7 +20,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -194,13 +195,13 @@ public class SamplesAjaxController {
 	}
 
 	@PostMapping("/share")
-	public ResponseEntity<String> shareSamplesWithProject(@RequestBody ShareSamplesRequest request) {
+	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request) {
 		try {
 			uiSampleService.shareSamplesWithProject(request);
-			return ResponseEntity.ok("FOOBAR");
-		} catch (AccessDeniedException e) {
+			return ResponseEntity.ok(new AjaxSuccessResponse("FOO"));
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body("No fucking way");
+					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
 	}
 

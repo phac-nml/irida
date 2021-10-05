@@ -9,7 +9,7 @@ public class ShareSamplesRequest {
 	private Long currentId;
 	private Long targetId;
 	private List<Long> sampleIds;
-	private Boolean owner;
+	private Boolean locked;
 	private Boolean remove;
 
 	public Long getCurrentId() {
@@ -36,12 +36,12 @@ public class ShareSamplesRequest {
 		this.sampleIds = sampleIds;
 	}
 
-	public Boolean getOwner() {
-		return owner;
+	public Boolean getLocked() {
+		return locked;
 	}
 
-	public void setOwner(Boolean owner) {
-		this.owner = owner;
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 
 	public Boolean getRemove() {

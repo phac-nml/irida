@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -198,15 +199,34 @@ public class UISampleService {
 				.collect(Collectors.toUnmodifiableList());
 	}
 
-	public void shareSamplesWithProject(ShareSamplesRequest request) {
-		Project currentProject = projectService.read(request.getCurrentId());
-		Project targetProject = projectService.read(request.getTargetId());
+	public void shareSamplesWithProject(ShareSamplesRequest request) throws Exception {
+		Project currentProject = null;
+		try {
+			currentProject = projectService.read(request.getCurrentId());
+		} catch (EntityNotFoundException e) {
+			throw new Exception("Current project cannot be found");
+		}
+
+		Project targetProject = null;
+		try {
+			targetProject = projectService.read(request.getTargetId());
+		} catch (EntityNotFoundException e) {
+			throw new Exception("Target project cannot be found");
+		}
+
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
 		if (request.getRemove()) {
-			projectService.moveSamples(currentProject, targetProject, samples);
+			try {
+				projectService.moveSamples(currentProject, targetProject, samples);
+			} catch (Exception e) {
+				throw new Exception("Error moving samples");
+			}
 		} else {
-			projectService.shareSamples(currentProject, targetProject, samples, request.getOwner());
-
+			try {
+				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
+			} catch (Exception e) {
+				throw new Exception("Error sharing samples");
+			}
 		}
 	}
 }

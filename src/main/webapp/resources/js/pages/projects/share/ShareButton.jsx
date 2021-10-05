@@ -1,21 +1,24 @@
-import { Button, Menu } from "antd";
+import { Button } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useShareSamplesWithProjectMutation } from "../../../apis/projects/samples";
 
 export function ShareButton() {
-  const { samples, owner, remove, projectId, currentProject } = useSelector(
+  const { samples, locked, remove, projectId, currentProject } = useSelector(
     (state) => state.shareReducer
   );
+
   const [
     shareSamplesWithProject,
-    { isLoading, isUpdating },
+    { isLoading, isUpdating, isError, error },
   ] = useShareSamplesWithProjectMutation();
 
-  const shareSamples = () => {
-    shareSamplesWithProject({
+  console.log({ isLoading, isUpdating, isError, error });
+
+  const shareSamples = async () => {
+    await shareSamplesWithProject({
       sampleIds: samples.map((s) => s.id),
-      owner,
+      locked,
       currentId: currentProject,
       targetId: projectId,
       remove,
@@ -26,15 +29,7 @@ export function ShareButton() {
 
   return (
     <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-      <Button
-        disabled={disabled}
-        onClick={() => shareSamples("share")}
-        overlay={
-          <Menu onClick={(e) => shareSamples(e.key)}>
-            <Menu.Item key="move">{i18n("ShareButton.move")}</Menu.Item>
-          </Menu>
-        }
-      >
+      <Button disabled={disabled} onClick={() => shareSamples()}>
         {i18n("ShareButton.copy")}
       </Button>
     </div>
