@@ -1,7 +1,8 @@
-import { Result, Space } from "antd";
+import { Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { ShareButton } from "./ShareButton";
+import { ShareNoSamples } from "./ShareNoSamples";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 
@@ -10,14 +11,17 @@ export function ShareLayout() {
     (state) => state.shareReducer
   );
 
+  console.log(originalSamples);
+
   /*
   1. No Samples - this would be if the user came to this page from anything
   other than the share samples link.
    */
-  const NO_SAMPLES = originalSamples.length === 0;
+  const NO_SAMPLES =
+    typeof originalSamples === "undefined" || originalSamples.length === 0;
 
   if (NO_SAMPLES) {
-    return <Result status="warning" title={i18n("ShareSamples.no-samples")} />;
+    return <ShareNoSamples />;
   }
 
   return (

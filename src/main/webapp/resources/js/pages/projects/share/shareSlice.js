@@ -39,6 +39,11 @@ export const updateMoveSamples = createAction(
  */
 const initialState = (() => {
   const stringData = window.sessionStorage.getItem("share");
+
+  if (stringData === null) {
+    return {};
+  }
+
   const { samples, projectId: currentProject } = JSON.parse(stringData);
   return {
     originalSamples: samples,
