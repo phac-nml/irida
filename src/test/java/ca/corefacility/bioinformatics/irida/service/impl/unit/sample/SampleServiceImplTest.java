@@ -44,8 +44,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -411,6 +410,8 @@ public class SampleServiceImplTest {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
+		Date originalModifiedDate = s1.getModifiedDate();
+
 		when(sampleRepository.findById(s1.getId())).thenReturn(Optional.of(s1));
 
 		MetadataTemplateField field1 = new MetadataTemplateField("field1", "text");
@@ -430,6 +431,15 @@ public class SampleServiceImplTest {
 		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
+
+		//ensure modified date got bumped up
+		ArgumentCaptor<Sample> sampleCaptor = ArgumentCaptor.forClass(Sample.class);
+		verify(sampleRepository).save(sampleCaptor.capture());
+
+		Date savedModifiedDate = sampleCaptor.getValue()
+				.getModifiedDate();
+
+		assertNotEquals(originalModifiedDate, savedModifiedDate);
 
 		Set<MetadataEntry> savedValues = saveCaptor.getValue();
 
@@ -499,6 +509,55 @@ public class SampleServiceImplTest {
 				.findAny();
 
 		assertTrue("should be no pipeline entries left", pipelineOpt.isEmpty());
+	}
+
+	@Test
+	public void testUpdateSampleMetadata() {
+		Sample s1 = new Sample();
+		s1.setId(1L);
+
+		Date originalModifiedDate = s1.getModifiedDate();
+
+		when(sampleRepository.findById(s1.getId())).thenReturn(Optional.of(s1));
+
+		MetadataTemplateField field1 = new MetadataTemplateField("field1", "text");
+		MetadataEntry entry1 = new MetadataEntry("entry1", "text", field1);
+		MetadataTemplateField field2 = new MetadataTemplateField("field2", "text");
+		MetadataEntry entry2 = new MetadataEntry("entry2", "text", field2);
+		Set<MetadataEntry> metadataEntries = Sets.newHashSet(entry1, entry2);
+
+		when(metadataEntryRepository.getMetadataForSample(s1)).thenReturn(metadataEntries);
+
+		MetadataEntry entry = new MetadataEntry("entry2", "text", field1);
+
+		Set<MetadataEntry> inputMetadata = Sets.newHashSet(entry);
+
+		sampleService.updateSampleMetadata(s1, inputMetadata);
+
+		verify(metadataEntryRepository).deleteAll(metadataEntries);
+
+		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+
+		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
+
+		//ensure modified date got bumped up
+		ArgumentCaptor<Sample> sampleCaptor = ArgumentCaptor.forClass(Sample.class);
+		verify(sampleRepository).save(sampleCaptor.capture());
+
+		Date savedModifiedDate = sampleCaptor.getValue()
+				.getModifiedDate();
+
+		assertNotEquals(originalModifiedDate, savedModifiedDate);
+
+		Set<MetadataEntry> savedValues = saveCaptor.getValue();
+
+		assertEquals(1, savedValues.size());
+
+		MetadataEntry savedEntry = savedValues.iterator()
+				.next();
+
+		assertEquals(entry.getValue(), savedEntry.getValue());
+		assertEquals(entry.getField(), savedEntry.getField());
 	}
 
 	private Sample s(Long id) {
