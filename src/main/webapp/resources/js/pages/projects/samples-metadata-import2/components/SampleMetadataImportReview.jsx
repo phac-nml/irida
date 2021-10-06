@@ -32,6 +32,7 @@ export function SampleMetadataImportReview() {
     isError,
     isFetching,
     isSuccess,
+    refetch
   } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
 
@@ -84,7 +85,7 @@ export function SampleMetadataImportReview() {
       setSelected(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
-      disabled: record.saved === true,
+      disabled: record.saved === false,
     }),
   };
 
@@ -126,7 +127,7 @@ export function SampleMetadataImportReview() {
       setColumns(updatedColumns);
       setSelected(
         data.rows.map((row) => {
-          if (row.isSampleNameValid) return row.rowKey;
+          if (row.isSampleNameValid && (row.saved === null || row.saved === true)) return row.rowKey;
         })
       );
     }
@@ -139,8 +140,8 @@ export function SampleMetadataImportReview() {
     saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
-        console.log(payload);
-        if(payload.rows.every(row => row.saved === true)){
+        refetch();
+        if(data.rows.filter(row => selected.includes(row.rowKey)).every(row => row.saved === true)){
           history.push({
             pathname: "complete",
             state: { statusMessage: payload.message },

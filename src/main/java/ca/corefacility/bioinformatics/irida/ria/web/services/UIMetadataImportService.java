@@ -140,7 +140,6 @@ public class UIMetadataImportService {
 	 * @param projectId   {@link Long} identifier for the current project
 	 * @param sampleNames {@link List} of {@link String} sample names
 	 * @return {@link String} that returns a message and potential errors.
-	 * @throws Exception if there is an error saving the metadata
 	 */
 	public SampleMetadataStorage saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
 			List<String> sampleNames) {
@@ -162,9 +161,9 @@ public class UIMetadataImportService {
 					if (row.getFoundSampleId() != null) {
 						sample = sampleService.getSampleBySampleName(project, name);
 					} else {
-						sample = new Sample(name);
-						projectService.addSampleToProject(project, sample, true);
 						throw new EntityNotFoundException("Something went wrong.");
+						//						sample = new Sample(name);
+						//						projectService.addSampleToProject(project, sample, true);
 					}
 
 					// Need to overwrite duplicate keys
