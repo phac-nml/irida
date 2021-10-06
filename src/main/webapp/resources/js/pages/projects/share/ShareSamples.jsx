@@ -1,8 +1,10 @@
 import { Alert, Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
-import { ShareButton } from "./ShareButton";
+import {
+  useGetSampleIdsForProjectQuery,
+  useShareSamplesWithProjectMutation,
+} from "../../../apis/projects/samples";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
 
@@ -23,6 +25,11 @@ export function ShareSamples() {
   const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
     skip: !projectId,
   });
+
+  const [
+    shareSamplesWithProject,
+    { isLoading, isUpdating, isError, error },
+  ] = useShareSamplesWithProjectMutation();
 
   const samples = originalSamples.filter(
     (sample) => !existingIds.includes(sample.id)
@@ -76,7 +83,6 @@ export function ShareSamples() {
           )}
         />
       )}
-      {SHOW_SAMPLES && <ShareButton />}
     </Space>
   );
 }

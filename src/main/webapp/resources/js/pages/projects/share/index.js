@@ -1,10 +1,9 @@
-import { Alert, Col, PageHeader, Row, Space } from "antd";
+import { Col, PageHeader, Row } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { ShareProject } from "./ShareProject";
-import { ShareSamples } from "./ShareSamples";
+import { ShareLayout } from "./ShareLayout";
 import store from "./store";
 
 /**
@@ -13,7 +12,7 @@ import store from "./store";
  * @returns {JSX.Element}
  * @constructor
  */
-function ShareLayout() {
+function ShareApp() {
   const { originalSamples, currentProject } = useSelector(
     (state) => state.shareReducer
   );
@@ -32,22 +31,7 @@ function ShareLayout() {
           title={i18n("ShareSamples.title")}
           onBack={goToPrevious}
         >
-          {originalSamples.length > 0 ? (
-            <Space
-              direction="vertical"
-              style={{ display: "block" }}
-              size="large"
-            >
-              <ShareProject />
-              <ShareSamples />
-            </Space>
-          ) : (
-            <Alert
-              showIcon
-              type="info"
-              message={i18n("ShareSamples.no-samples")}
-            />
-          )}
+          <ShareLayout />
         </PageHeader>
       </Col>
     </Row>
@@ -56,7 +40,7 @@ function ShareLayout() {
 
 render(
   <Provider store={store}>
-    <ShareLayout />
+    <ShareApp />
   </Provider>,
   document.querySelector("#root")
 );
