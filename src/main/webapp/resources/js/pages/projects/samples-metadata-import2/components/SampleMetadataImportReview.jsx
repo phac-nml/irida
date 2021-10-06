@@ -85,7 +85,7 @@ export function SampleMetadataImportReview() {
       setSelected(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
-      disabled: record.saved === false,
+      disabled: !(record.isSampleNameValid && (record.saved === null || record.saved === true)),
     }),
   };
 
