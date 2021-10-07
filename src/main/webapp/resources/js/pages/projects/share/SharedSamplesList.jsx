@@ -79,7 +79,7 @@ export function SharedSamplesList({ list = [] }) {
     list.length * ROW_HEIGHT < MAX_LIST_HEIGHT
       ? list.length * ROW_HEIGHT + 2 // 2 is to offset for borders
       : MAX_LIST_HEIGHT;
-  
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Typography.Text strong>{i18n("ShareSamplesList.title")}</Typography.Text>
