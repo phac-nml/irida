@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Button, Table, Tag, Tooltip, Typography } from "antd";
+import { Alert, Button, Space, Table, Tag, Tooltip, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   useGetProjectSampleMetadataQuery,
@@ -9,11 +9,33 @@ import {
 import {
   IconArrowLeft,
   IconArrowRight,
-  IconCloseCircle
+  IconExclamationCircle
 } from "../../../../components/icons/Icons";
-import { red1, red5 } from "../../../../styles/colors";
+import { red1, red2, red5 } from "../../../../styles/colors";
+import styled from "styled-components";
 
 const { Paragraph, Text } = Typography;
+
+const ErrorTable = styled(Table)`
+  tr.red > td {
+    background-color: ${red1};
+  }
+  tr.red:hover > td {
+    background-color: ${red2};
+  }
+  tr.red > td.ant-table-cell-fix-left {
+    background-color: ${red1};
+  }
+  tr.red:hover > td.ant-table-cell-fix-left {
+    background-color: ${red2};
+  }
+  tr.red > td.ant-table-cell-fix-right {
+    background-color: ${red1};
+  }
+  tr.red:hover > td.ant-table-cell-fix-right {
+    background-color: ${red2};
+  }
+`;
 
 /**
  * React component that displays Step #3 of the Sample Metadata Uploader.
@@ -64,20 +86,6 @@ export function SampleMetadataImportReview() {
       value === "new" ? !record.foundSampleId : record.foundSampleId,
   };
 
-  const savedColumn = {
-    dataIndex: "saved",
-    fixed: "right",
-    width: 50,
-    render: (text, item) => {
-      if(item.saved === false)
-        return (
-          <Tooltip title={item.error} color={red5}>
-            <IconCloseCircle style={{ color: red5 }} />
-          </Tooltip>
-        );
-    },
-  };
-
   const rowSelection = {
     fixed: true,
     selectedRowKeys: selected,
@@ -111,10 +119,25 @@ export function SampleMetadataImportReview() {
             props: {
               style: { background: item.isSampleNameValid ? null : red1 },
             },
-            children: item.entry[sample],
+            children:
+              item.entry[sample]
           };
         },
       };
+
+      const savedColumn = {
+          dataIndex: "saved",
+          fixed: "left",
+          width: 10,
+          render: (text, item) => {
+            if(item.saved === false)
+              return (
+                <Tooltip title={item.error} color={red5}>
+                  <IconExclamationCircle style={{ color: red5 }} />
+                </Tooltip>
+              );
+          },
+        };
 
       const otherColumns = headers.map((header) => ({
         title: header,
@@ -122,7 +145,7 @@ export function SampleMetadataImportReview() {
         render: (text, item) => item.entry[header],
       }));
 
-      const updatedColumns = [sampleColumn, tagColumn, ...otherColumns, savedColumn];
+      const updatedColumns = [savedColumn, sampleColumn, tagColumn, ...otherColumns];
 
       setColumns(updatedColumns);
       setSelected(
@@ -170,10 +193,11 @@ export function SampleMetadataImportReview() {
           showIcon
         />
       )}
-      <Table
+      <ErrorTable
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
         loading={isFetching}
+        rowClassName={(record, index) => (record.saved === false ? "red" : null)}
         rowSelection={rowSelection}
         columns={columns}
         dataSource={data.rows}
