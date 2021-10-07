@@ -48,7 +48,7 @@ public class ProjectSampleMetadataAjaxController {
 	@PostMapping("/file")
 	@ResponseBody
 	public ResponseEntity<SampleMetadataStorage> createProjectSampleMetadata(HttpSession session,
-			@RequestParam Long projectId, @RequestParam("file") MultipartFile file) {
+			@RequestParam Long projectId, @RequestParam("file") MultipartFile file) throws Exception {
 		return ResponseEntity.ok(metadataImportService.createProjectSampleMetadata(session, projectId, file));
 	}
 

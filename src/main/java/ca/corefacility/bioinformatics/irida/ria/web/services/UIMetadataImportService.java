@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 
 /**
- * UI service to handle importing metadata files so they can be saved to the session.
+ * UI service to handle importing metadata files, so they can be saved to the session.
  */
 @Component
 public class UIMetadataImportService {
@@ -66,7 +66,8 @@ public class UIMetadataImportService {
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
 	 */
-	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, Long projectId, MultipartFile file) {
+	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, Long projectId, MultipartFile file)
+			throws Exception {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try (InputStream inputStream = file.getInputStream()) {
@@ -89,8 +90,10 @@ public class UIMetadataImportService {
 
 		} catch (FileNotFoundException e) {
 			logger.debug("No file found for uploading an excel file of metadata.");
+			throw e;
 		} catch (IOException e) {
 			logger.error("Error opening file" + file.getOriginalFilename());
+			throw e;
 		}
 
 		session.setAttribute("pm-" + projectId, storage);
