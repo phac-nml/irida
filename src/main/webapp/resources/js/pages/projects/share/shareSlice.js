@@ -59,7 +59,7 @@ const shareSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder.addCase(setProject, (state, action) => {
-      state.projectId = Number(action.payload.projectId);
+      state.projectId = action.payload.projectId;
     });
 
     builder.addCase(removeSample, (state, action) => {

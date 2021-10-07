@@ -1,6 +1,6 @@
-import { Result, Space } from "antd";
+import { Button, Card, Result, Space } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -8,8 +8,10 @@ import {
 import { ShareButton } from "./ShareButton";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
+import { setProject } from "./shareSlice";
 
 export function ShareLayout() {
+  const dispatch = useDispatch();
   const {
     originalSamples,
     currentProject,
@@ -17,6 +19,8 @@ export function ShareLayout() {
     projectId,
     remove,
   } = useSelector((state) => state.shareReducer);
+
+  console.log(typeof projectId);
 
   const [
     shareSamplesWithProject,
@@ -27,7 +31,7 @@ export function ShareLayout() {
     skip: !projectId,
   });
 
-  const samples = originalSamples.filter(
+  let samples = originalSamples.filter(
     (sample) => !existingIds.includes(sample.id)
   );
 
@@ -44,20 +48,40 @@ export function ShareLayout() {
     });
   };
 
-  const disabled = samples.length === 0 || typeof projectId === "undefined";
+  const reset = () => {
+    dispatch(setProject(undefined));
+  };
+
+  const SHOW_BUTTON = samples.length > 0;
+  const DISABLED = samples.length === 0 || typeof projectId === "undefined";
 
   return (
     <Space direction="vertical" style={{ display: "block" }} size="large">
-      <ShareProject />
-      <ShareSamples samples={samples} />
-      {samples.length > 0 && (
-        <ShareButton
-          shareSamples={shareSamples}
-          isLoading={isLoading}
-          disabled={disabled}
-        />
+      {typeof projectId !== "undefined" && isError ? (
+        <Card>
+          <Result
+            status="error"
+            title={error.data.error}
+            extra={[
+              <Button key="back" onClick={reset} type="primary">
+                Try Again?
+              </Button>,
+            ]}
+          />
+        </Card>
+      ) : (
+        <>
+          <ShareProject />
+          <ShareSamples samples={samples} />
+          {SHOW_BUTTON && (
+            <ShareButton
+              shareSamples={shareSamples}
+              isLoading={isLoading}
+              disabled={DISABLED}
+            />
+          )}
+        </>
       )}
-      {isError && <Result status="error" title={error.data.error} />}
     </Space>
   );
 }
