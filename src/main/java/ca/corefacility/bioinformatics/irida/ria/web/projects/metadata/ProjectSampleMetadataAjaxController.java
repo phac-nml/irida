@@ -44,6 +44,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
+	 * @throws Exception if there is an error reading the file
 	 */
 	@PostMapping("/file")
 	@ResponseBody

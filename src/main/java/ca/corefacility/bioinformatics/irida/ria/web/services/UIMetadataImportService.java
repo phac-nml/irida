@@ -65,6 +65,7 @@ public class UIMetadataImportService {
 	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
+	 * @throws Exception if there is an error reading the file
 	 */
 	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, Long projectId, MultipartFile file)
 			throws Exception {
