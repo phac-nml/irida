@@ -4,6 +4,7 @@ import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareLayout } from "./ShareLayout";
+import { ShareNoSamples } from "./ShareNoSamples";
 import store from "./store";
 
 /**
@@ -16,6 +17,17 @@ function ShareApp() {
   const { originalSamples, currentProject } = useSelector(
     (state) => state.shareReducer
   );
+
+  /*
+  1. No Samples - this would be if the user came to this page from anything
+  other than the share samples link.
+   */
+  const NO_SAMPLES =
+    typeof originalSamples === "undefined" || originalSamples.length === 0;
+
+  if (NO_SAMPLES) {
+    return <ShareNoSamples />;
+  }
 
   /**
    * Return to previous page (project samples page)

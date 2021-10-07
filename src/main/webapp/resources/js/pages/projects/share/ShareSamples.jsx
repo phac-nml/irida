@@ -1,10 +1,6 @@
 import { Alert, Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetSampleIdsForProjectQuery,
-  useShareSamplesWithProjectMutation,
-} from "../../../apis/projects/samples";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
 
@@ -14,25 +10,10 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples() {
+export function ShareSamples({ samples = [] }) {
   const dispatch = useDispatch();
   const { originalSamples, locked, remove } = useSelector(
     (state) => state.shareReducer
-  );
-
-  const { projectId } = useSelector((state) => state.shareReducer);
-
-  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
-    skip: !projectId,
-  });
-
-  const [
-    shareSamplesWithProject,
-    { isLoading, isUpdating, isError, error },
-  ] = useShareSamplesWithProjectMutation();
-
-  const samples = originalSamples.filter(
-    (sample) => !existingIds.includes(sample.id)
   );
 
   const SHOW_SAMPLES = samples.length > 0;
