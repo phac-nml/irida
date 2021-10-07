@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { validateSampleName } from "./sample-utils"
 
 const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata/upload`);
 
@@ -20,7 +21,7 @@ export const metadataImportApi = createApi({
       }),
       transformResponse(response) {
         const regex = new RegExp("^[A-Za-z0-9-_]{3,}$");
-        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}`, isSampleNameValid: regex.test(row.entry[response.sampleNameColumn])}))}
+        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}`, isSampleNameValid: validateSampleName(row.entry[response.sampleNameColumn])}))}
         return transformed;
       },
       providesTags: ["MetadataImport"],
