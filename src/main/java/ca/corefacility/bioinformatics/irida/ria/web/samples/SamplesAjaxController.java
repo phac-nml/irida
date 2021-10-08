@@ -195,9 +195,10 @@ public class SamplesAjaxController {
 	}
 
 	@PostMapping("/share")
-	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request) {
+	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request,
+			Locale locale) {
 		try {
-			uiSampleService.shareSamplesWithProject(request);
+			uiSampleService.shareSamplesWithProject(request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse("FOO"));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
