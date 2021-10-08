@@ -2,7 +2,6 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { PageHeader, Space } from "antd";
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
-import PropTypes from "prop-types";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 /**
@@ -36,9 +35,3 @@ export function SampleMetadataImportWizard({
     </Space>
   );
 }
-
-SampleMetadataImportWizard.propTypes = {
-  currentStep: PropTypes.number,
-  currentStatus: PropTypes.string,
-  children: PropTypes.any,
-};
