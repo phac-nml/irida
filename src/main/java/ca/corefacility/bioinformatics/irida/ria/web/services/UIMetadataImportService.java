@@ -165,9 +165,8 @@ public class UIMetadataImportService {
 					if (row.getFoundSampleId() != null) {
 						sample = sampleService.getSampleBySampleName(project, name);
 					} else {
-						throw new EntityNotFoundException("Something went wrong.");
-						//						sample = new Sample(name);
-						//						projectService.addSampleToProject(project, sample, true);
+						sample = new Sample(name);
+						projectService.addSampleToProject(project, sample, true);
 					}
 
 					// Need to overwrite duplicate keys
