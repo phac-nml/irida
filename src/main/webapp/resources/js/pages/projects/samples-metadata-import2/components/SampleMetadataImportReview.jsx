@@ -178,10 +178,10 @@ export function SampleMetadataImportReview() {
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
       {!valid && (
         <Alert
-          message="Validation Error"
+          message={i18n("SampleMetadataImportReview.alert.title")}
           description={
             <Paragraph>
-              {i18n("SampleMetadataImportReview.alert")}
+              {i18n("SampleMetadataImportReview.alert.description")}
               <ul>
                 <li>{i18n("SampleMetadataImportReview.alert.rule1")}</li>
                 <li>{i18n("SampleMetadataImportReview.alert.rule2")}</li>
