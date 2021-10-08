@@ -1,14 +1,7 @@
 import { Button, Card, Result } from "antd";
 import React from "react";
 
-export function ShareNoSamples() {
-  /*
-  Create redirect href to project samples page.
-  */
-  const [redirect] = React.useState(
-    () => window.location.href.match(/(.*)\/share/)[1]
-  );
-
+export function ShareNoSamples({ redirect }) {
   return (
     <Card>
       <Result

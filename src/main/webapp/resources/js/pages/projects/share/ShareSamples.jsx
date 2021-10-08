@@ -10,7 +10,7 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({ samples = [] }) {
+export function ShareSamples({ samples = [], redirect }) {
   const dispatch = useDispatch();
   const { originalSamples, locked, remove } = useSelector(
     (state) => state.shareReducer

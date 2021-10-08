@@ -14,6 +14,13 @@ import store from "./store";
  * @constructor
  */
 function ShareApp() {
+  /*
+  Create redirect href to project samples page.
+  */
+  const [redirect] = React.useState(
+    () => window.location.href.match(/(.*)\/share/)[1]
+  );
+
   const { originalSamples, currentProject } = useSelector(
     (state) => state.shareReducer
   );
@@ -26,7 +33,7 @@ function ShareApp() {
     typeof originalSamples === "undefined" || originalSamples.length === 0;
 
   if (NO_SAMPLES) {
-    return <ShareNoSamples />;
+    return <ShareNoSamples redirect={redirect} />;
   }
 
   /**
