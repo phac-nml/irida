@@ -165,9 +165,11 @@ export function SampleMetadataImportReview() {
       .then((payload) => {
         refetch();
         if(data.rows.filter(row => selected.includes(row.rowKey)).every(row => row.saved === true)){
+          const newSampleCount = data.rows.filter(row => row.saved === true && row.foundSampleID === null).length;
+          const updatedSampleCount = data.rows.filter(row => row.saved === true && row.foundSampleID !== null).length;
           history.push({
             pathname: "complete",
-            state: { statusMessage: payload.message },
+            state: { newSampleCount, updatedSampleCount },
           });
         }
       });
