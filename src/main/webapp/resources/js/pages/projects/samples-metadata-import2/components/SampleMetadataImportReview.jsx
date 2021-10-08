@@ -16,7 +16,7 @@ import styled from "styled-components";
 
 const { Paragraph, Text } = Typography;
 
-const ErrorTable = styled(Table)`
+const MetadataTable = styled(Table)`
   tr.red > td {
     background-color: ${red1};
   }
@@ -195,7 +195,7 @@ export function SampleMetadataImportReview() {
           showIcon
         />
       )}
-      <ErrorTable
+      <MetadataTable
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
         loading={isFetching}
