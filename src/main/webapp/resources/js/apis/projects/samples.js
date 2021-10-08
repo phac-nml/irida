@@ -22,7 +22,7 @@ export const samplesApi = createApi({
       query: (body) => ({
         url: `share`,
         method: `POST`,
-        body: { ...body, targetId: 55 },
+        body,
       }),
     }),
   }),

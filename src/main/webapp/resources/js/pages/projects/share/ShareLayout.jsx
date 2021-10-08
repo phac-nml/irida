@@ -20,8 +20,6 @@ export function ShareLayout() {
     remove,
   } = useSelector((state) => state.shareReducer);
 
-  console.log(typeof projectId);
-
   const [
     shareSamplesWithProject,
     { isLoading, isError, error },
