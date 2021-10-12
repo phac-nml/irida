@@ -314,8 +314,6 @@ public class ProjectSamplesIT {
 		asUser().and()
 				.body(updatedFields)
 				.expect()
-				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles"))
-				.expect()
 				.response()
 				.statusCode(HttpStatus.BAD_REQUEST.value())
 				.when()
@@ -325,8 +323,6 @@ public class ProjectSamplesIT {
 		updatedFields.put("collectionDate", goodDate);
 		asUser().and()
 				.body(updatedFields)
-				.expect()
-				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles"))
 				.expect()
 				.response()
 				.statusCode(HttpStatus.OK.value())
