@@ -84,4 +84,3 @@ public class ProjectsAjaxController {
 		return projectsService.getPotentialProjectsToShareTo(currentId);
 	}
 }
-}
