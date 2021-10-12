@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -19,7 +16,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
  * Deserializer for the webpack assets-manifest file
  */
 public class WebpackAssetsManifestDeserializer extends StdDeserializer<WebpackAssetsManifest> {
-	private static final Logger logger = LoggerFactory.getLogger(WebpackAssetsManifestDeserializer.class);
 
 	public WebpackAssetsManifestDeserializer() {
 		super(WebpackAssetsManifest.class);
