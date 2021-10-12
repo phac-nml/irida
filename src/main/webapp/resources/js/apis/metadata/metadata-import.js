@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { validateSampleName } from "./sample-utils"
 
-const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata`);
+const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata/upload`);
 
 /**
  * Redux API for Sample Metadata
- * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {createProjectSampleMetadata: *, clearProjectSampleMetadata: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {createProjectSampleMetadata: *, clearProjectSampleMetadata: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 export const metadataImportApi = createApi({
   reducerPath: `metadataImportApi`,
@@ -14,16 +14,22 @@ export const metadataImportApi = createApi({
   endpoints: (build) => ({
     getProjectSampleMetadata: build.query({
       query: (projectId) => ({
-        url: `/upload/getMetadata`,
+        url: `/getMetadata`,
         params: {
           projectId,
         }
       }),
+      transformResponse(response) {
+        const regex = new RegExp("^[A-Za-z0-9-_]{3,}$");
+        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}`, isSampleNameValid: validateSampleName(row.entry[response.sampleNameColumn])}))}
+        return transformed;
+      },
       providesTags: ["MetadataImport"],
     }),
     clearProjectSampleMetadata: build.mutation({
       query: (projectId) => ({
-        url: `/upload/clear`,
+        url: `/clear`,
+        method: 'DELETE',
         params: {
           projectId,
         }
@@ -32,8 +38,8 @@ export const metadataImportApi = createApi({
     }),
     setColumnProjectSampleMetadata: build.mutation({
       query: ({ projectId, sampleNameColumn }) => ({
-        url: `/upload/setSampleColumn`,
-        method: 'POST',
+        url: `/setSampleColumn`,
+        method: 'PUT',
         params: {
           projectId,
           sampleNameColumn,
@@ -42,11 +48,12 @@ export const metadataImportApi = createApi({
       invalidatesTags: ["MetadataImport"],
     }),
     saveProjectSampleMetadata: build.mutation({
-      query: ({ projectId, sampleNameColumn }) => ({
-        url: `/upload/save`,
+      query: ({ projectId, sampleNames }) => ({
+        url: `/save`,
         method: 'POST',
         params: {
           projectId,
+          sampleNames
         }
       }),
       invalidatesTags: ["MetadataImport"],

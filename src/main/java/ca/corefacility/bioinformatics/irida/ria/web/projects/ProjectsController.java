@@ -160,7 +160,7 @@ public class ProjectsController {
 	public String getSynchronizeProjectPage() {
 		return SYNC_NEW_PROJECT_PAGE;
 	}
-	
+
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
@@ -264,8 +264,8 @@ public class ProjectsController {
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
 		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name",
-				"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
-				"ProjectsTable_th_modified_date")
+						"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
+						"ProjectsTable_th_modified_date")
 				.stream()
 				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
@@ -306,7 +306,7 @@ public class ProjectsController {
 	 * @param principal {@link Principal} currently logged in use
 	 * @return {@link String} the path to the metadata import page
 	 */
-	@GetMapping("/projects/{projectId}/sample-metadata/upload2/file")
+	@GetMapping("/projects/{projectId}/sample-metadata/upload2/*")
 	public String getProjectSamplesMetadataUploadPage2(final Model model, @PathVariable Long projectId,
 			Principal principal) {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));

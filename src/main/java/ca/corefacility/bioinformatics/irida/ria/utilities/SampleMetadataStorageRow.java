@@ -10,6 +10,8 @@ public class SampleMetadataStorageRow {
 
 	private Map<String, String> entry;
 	private Long foundSampleId;
+	private String error;
+	private Boolean isSaved;
 
 	public SampleMetadataStorageRow(Map<String, String> entry) {
 		this.entry = entry;
@@ -39,6 +41,22 @@ public class SampleMetadataStorageRow {
 
 	public void setFoundSampleId(Long foundSampleId) {
 		this.foundSampleId = foundSampleId;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public Boolean isSaved() {
+		return isSaved;
+	}
+
+	public void setSaved(Boolean saved) {
+		isSaved = saved;
 	}
 
 	@Override

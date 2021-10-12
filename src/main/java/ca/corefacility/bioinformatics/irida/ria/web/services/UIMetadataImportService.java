@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -32,7 +31,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 
 /**
- * UI service to handle importing metadata files so they can be saved to the session.
+ * UI service to handle importing metadata files, so they can be saved to the session.
  */
 @Component
 public class UIMetadataImportService {
@@ -66,8 +65,10 @@ public class UIMetadataImportService {
 	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
 	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
 	 * {@link Sample} identifier.
+	 * @throws Exception if there is an error reading the file
 	 */
-	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, long projectId, MultipartFile file) {
+	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, Long projectId, MultipartFile file)
+			throws Exception {
 		// We want to return a list of the table headers back to the UI.
 		SampleMetadataStorage storage = new SampleMetadataStorage();
 		try (InputStream inputStream = file.getInputStream()) {
@@ -90,8 +91,10 @@ public class UIMetadataImportService {
 
 		} catch (FileNotFoundException e) {
 			logger.debug("No file found for uploading an excel file of metadata.");
+			throw e;
 		} catch (IOException e) {
 			logger.error("Error opening file" + file.getOriginalFilename());
+			throw e;
 		}
 
 		session.setAttribute("pm-" + projectId, storage);
@@ -106,7 +109,7 @@ public class UIMetadataImportService {
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
 	 * @return {@link String} containing a complete message.
 	 */
-	public String setProjectSampleMetadataSampleId(HttpSession session, long projectId, String sampleNameColumn) {
+	public String setProjectSampleMetadataSampleId(HttpSession session, Long projectId, String sampleNameColumn) {
 		// Attempt to get the metadata from the sessions
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
@@ -136,40 +139,41 @@ public class UIMetadataImportService {
 	/**
 	 * Save uploaded metadata
 	 *
-	 * @param locale    {@link Locale} of the current user.
-	 * @param session   {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current project
-	 * @return {@link ProjectSampleMetadataResponse} that returns a message and potential errors.
+	 * @param locale      {@link Locale} of the current user.
+	 * @param session     {@link HttpSession}
+	 * @param projectId   {@link Long} identifier for the current project
+	 * @param sampleNames {@link List} of {@link String} sample names
+	 * @return {@link String} that returns a message and potential errors.
 	 */
-	public ProjectSampleMetadataResponse saveProjectSampleMetadata(Locale locale, HttpSession session, long projectId) {
+	public SampleMetadataStorage saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
+			List<String> sampleNames) {
 		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
 				"Created Date", "Created On", "Coverage", "Project ID");
 		Project project = projectService.read(projectId);
-		ProjectSampleMetadataResponse response = new ProjectSampleMetadataResponse();
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 
-		if (stored == null) {
-			response.setMessageKey("stored-error");
-		}
-
-		List<SampleMetadataStorageRow> found = stored.getFoundRows();
-
-		if (found != null) {
-			// Lets try to get a sample
+		if (sampleNames != null) {
 			String sampleNameColumn = stored.getSampleNameColumn();
-			List<String> errorList = new ArrayList<>();
-			try {
-				for (SampleMetadataStorageRow row : found) {
 
-					String name = row.getEntryValue(sampleNameColumn);
-					Sample sample = sampleService.getSampleBySampleName(project, name);
+			for (String sampleName : sampleNames) {
+				try {
 					Set<MetadataEntry> metadataEntrySet = new HashSet<>();
+					SampleMetadataStorageRow row = stored.getRow(sampleName, sampleNameColumn);
+					String name = row.getEntryValue(sampleNameColumn);
+					Sample sample = null;
+
+					if (row.getFoundSampleId() != null) {
+						sample = sampleService.getSampleBySampleName(project, name);
+					} else {
+						sample = new Sample(name);
+						projectService.addSampleToProject(project, sample, true);
+					}
 
 					// Need to overwrite duplicate keys
 					for (Map.Entry<String, String> entry : row.getEntry()
 							.entrySet()) {
 						// Make sure we are not saving non-metadata items.
-						if (!DEFAULT_HEADERS.contains(entry.getKey())) {
+						if (!DEFAULT_HEADERS.contains(entry.getKey()) && !sampleNameColumn.contains(entry.getKey())) {
 							MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(
 									entry.getKey());
 
@@ -184,32 +188,16 @@ public class UIMetadataImportService {
 
 					// Save metadata back to the sample
 					sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+					row.setSaved(true);
+				} catch (Exception e) {
+					SampleMetadataStorageRow row = stored.getRow(sampleName, sampleNameColumn);
+					row.setError(e.getMessage());
+					row.setSaved(false);
 				}
-
-			} catch (EntityNotFoundException e) {
-				// This really should not happen, but hey, you never know!
-				errorList.add(messageSource.getMessage("server.metadataimport.results.save.sample-not-found",
-						new Object[] { e.getMessage() }, locale));
 			}
-
-			if (errorList.size() > 0) {
-				response.setMessageKey("save-error");
-				response.setErrorList(errorList);
-			}
-		} else {
-			response.setMessageKey("found-error");
-			response.setMessage(
-					messageSource.getMessage("server.metadataimport.results.save.found-error", new Object[] {},
-							locale));
 		}
 
-		if (response.getMessageKey() == null) {
-			response.setMessageKey("success");
-			response.setMessage(messageSource.getMessage("server.metadataimport.results.save.success",
-					new Object[] { found.size() }, locale));
-		}
-
-		return response;
+		return stored;
 	}
 
 	/**
@@ -218,7 +206,7 @@ public class UIMetadataImportService {
 	 * @param session   {@link HttpSession}
 	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
 	 */
-	public void clearProjectSampleMetadata(HttpSession session, long projectId) {
+	public void clearProjectSampleMetadata(HttpSession session, Long projectId) {
 		session.removeAttribute("pm-" + projectId);
 	}
 
@@ -229,7 +217,7 @@ public class UIMetadataImportService {
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
-	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, long projectId) {
+	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, Long projectId) {
 		return (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 	}
 }
