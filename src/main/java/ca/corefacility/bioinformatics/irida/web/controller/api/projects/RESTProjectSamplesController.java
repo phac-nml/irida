@@ -404,12 +404,8 @@ public class RESTProjectSamplesController {
 		}
 		// issue an update request
 		sampleService.updateFields(sampleId, updatedFields);
-		Sample s = sampleService.read(sampleId);
 
-		addLinksForSample(Optional.empty(), s);
-
-		ResponseResource<Sample> responseObject = new ResponseResource<>(s);
-		return responseObject;
+		return getSample(sampleId);
 	}
 
 }
