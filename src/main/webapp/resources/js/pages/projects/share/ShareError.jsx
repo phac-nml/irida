@@ -21,10 +21,10 @@ export function ShareError({ error, redirect }) {
         title={error?.data.error}
         extra={[
           <Button key="back" onClick={reset} type="primary">
-            Try Again?
+            {i18n("ShareError.reset")}
           </Button>,
           <Button key="samples" href={redirect}>
-            Return To Samples
+            {i18n("ShareError.return")}
           </Button>,
         ]}
       />
