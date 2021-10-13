@@ -1,11 +1,11 @@
-import { Space } from "antd";
+import { Button, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
-import { ShareButton } from "./ShareButton";
+import { IconShare } from "../../../components/icons/Icons";
 import { ShareError } from "./ShareError";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
@@ -69,11 +69,17 @@ export function ShareLayout({redirect}) {
           <ShareProject />
           <ShareSamples samples={samples} redirect={redirect} />
           {SHOW_BUTTON && (
-            <ShareButton
-              shareSamples={shareSamples}
-              isLoading={isLoading}
-              disabled={DISABLED}
-            />
+            <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+              <Button
+                type="primary"
+                disabled={DISABLED}
+                onClick={() => shareSamples()}
+                loading={isLoading}
+                icon={<IconShare/>}
+              >
+                {i18n("ShareButton.button")}
+              </Button>
+            </div>
           )}
         </>
       )}
