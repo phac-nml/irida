@@ -3,6 +3,13 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { setProject } from "./shareSlice";
 
+/**
+ * React component to display any errors that occur during sharing moving samples
+ * @param {string} error - the error message returned by the server
+ * @param {string} redirect - url to redirect the user to
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareError({ error, redirect }) {
   const dispatch = useDispatch();
 
