@@ -31,7 +31,7 @@ export function ShareSamples({ samples = [], redirect }) {
             onChange={(e) => dispatch(updateMoveSamples(e.target.checked))}
           >
             <Typography.Text strong>
-              Remove samples from current project
+              {i18n("ShareSamples.checkbox.remove")}
             </Typography.Text>
           </Checkbox>
           <Checkbox
@@ -40,8 +40,7 @@ export function ShareSamples({ samples = [], redirect }) {
             disabled={remove}
           >
             <Typography.Text strong>
-              Prevent samples from modification in target project (only when
-              copying samples)
+              (i18n("ShareSamples.checkbox.lock"))
             </Typography.Text>
           </Checkbox>
         </>
