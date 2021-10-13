@@ -7,10 +7,16 @@ export const setProject = createAction(`share/setProject`, (projectId) => ({
   payload: { projectId },
 }));
 
+/**
+ * Action to remove a sample from being shared / moved
+ */
 export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
   payload: { sampleId },
 }));
 
+/**
+ * Action to set the status of locking samples to be copied
+ */
 export const updatedLocked = createAction(
   `share/updateOwnership`,
   (locked) => ({
@@ -18,6 +24,9 @@ export const updatedLocked = createAction(
   })
 );
 
+/**
+ * Action to update whether the samples are to be movied or just copied
+ */
 export const updateMoveSamples = createAction(
   `share/updateMoveSamples`,
   (remove) => ({
