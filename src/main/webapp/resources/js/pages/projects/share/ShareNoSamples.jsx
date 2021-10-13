@@ -1,6 +1,14 @@
 import { Button, Card, Result } from "antd";
 import React from "react";
 
+/**
+ * React component to display to a user if no samples can be shared / moved
+ * to the selected project.
+ *
+ * @param {string} redirect - url to redirect the user to
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareNoSamples({ redirect }) {
   return (
     <Card>
