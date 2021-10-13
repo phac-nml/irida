@@ -205,6 +205,7 @@ public class UISampleService {
 	 * Share / Move samples with another project
 	 *
 	 * @param request Request containing the details of the move
+	 * @param locale  current users {@link Locale}
 	 * @throws Exception if project or samples cannot be found
 	 */
 	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws Exception {

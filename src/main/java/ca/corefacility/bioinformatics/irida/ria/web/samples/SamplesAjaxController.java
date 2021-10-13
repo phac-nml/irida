@@ -194,6 +194,13 @@ public class SamplesAjaxController {
 		return uiSampleService.getSampleIdsForProject(projectId);
 	}
 
+	/**
+	 * Share / Move samples between projects
+	 *
+	 * @param request {@link ShareSamplesRequest} details about the samples to share
+	 * @param locale  current users {@link Locale}
+	 * @return Outcome of the share/move
+	 */
 	@PostMapping("/share")
 	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request,
 			Locale locale) {
