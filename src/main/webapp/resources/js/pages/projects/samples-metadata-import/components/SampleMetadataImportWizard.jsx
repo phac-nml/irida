@@ -17,7 +17,6 @@ export function SampleMetadataImportWizard({
   currentStatus,
   children,
 }) {
-
   const { projectId } = useParams();
 
   return (
@@ -25,7 +24,9 @@ export function SampleMetadataImportWizard({
       <PageHeader
         title={i18n("SampleMetadataImportWizard.title")}
         subTitle={i18n("SampleMetadataImportWizard.intro")}
-        onBack={() => (window.location.href = setBaseUrl(`projects/${projectId}/linelist`))}
+        onBack={() =>
+          (window.location.href = setBaseUrl(`projects/${projectId}/linelist`))
+        }
       />
       <SampleMetadataImportSteps
         currentStep={currentStep}

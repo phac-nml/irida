@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Button, Space, Table, Tag, Tooltip, Typography } from "antd";
+import { Alert, Button, Table, Tag, Tooltip, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   useGetProjectSampleMetadataQuery,
@@ -9,7 +9,7 @@ import {
 import {
   IconArrowLeft,
   IconArrowRight,
-  IconExclamationCircle
+  IconExclamationCircle,
 } from "../../../../components/icons/Icons";
 import { red1, red2, red5 } from "../../../../styles/colors";
 import styled from "styled-components";
@@ -51,10 +51,8 @@ export function SampleMetadataImportReview() {
   const [valid, setValid] = React.useState(true);
   const {
     data = {},
-    isError,
     isFetching,
     isSuccess,
-    refetch
   } = useGetProjectSampleMetadataQuery(projectId);
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
 
@@ -93,7 +91,10 @@ export function SampleMetadataImportReview() {
       setSelected(selectedRowKeys);
     },
     getCheckboxProps: (record) => ({
-      disabled: !(record.isSampleNameValid && (record.saved === null || record.saved === true)),
+      disabled: !(
+        record.isSampleNameValid &&
+        (record.saved === null || record.saved === true)
+      ),
     }),
   };
 
@@ -119,25 +120,24 @@ export function SampleMetadataImportReview() {
             props: {
               style: { background: item.isSampleNameValid ? null : red1 },
             },
-            children:
-              item.entry[sample]
+            children: item.entry[sample],
           };
         },
       };
 
       const savedColumn = {
-          dataIndex: "saved",
-          fixed: "left",
-          width: 10,
-          render: (text, item) => {
-            if(item.saved === false)
-              return (
-                <Tooltip title={item.error} color={red5}>
-                  <IconExclamationCircle style={{ color: red5 }} />
-                </Tooltip>
-              );
-          },
-        };
+        dataIndex: "saved",
+        fixed: "left",
+        width: 10,
+        render: (text, item) => {
+          if (item.saved === false)
+            return (
+              <Tooltip title={item.error} color={red5}>
+                <IconExclamationCircle style={{ color: red5 }} />
+              </Tooltip>
+            );
+        },
+      };
 
       const otherColumns = headers.map((header) => ({
         title: header,
@@ -145,12 +145,21 @@ export function SampleMetadataImportReview() {
         render: (text, item) => item.entry[header],
       }));
 
-      const updatedColumns = [savedColumn, sampleColumn, tagColumn, ...otherColumns];
+      const updatedColumns = [
+        savedColumn,
+        sampleColumn,
+        tagColumn,
+        ...otherColumns,
+      ];
 
       setColumns(updatedColumns);
       setSelected(
         data.rows.map((row) => {
-          if (row.isSampleNameValid && (row.saved === null || row.saved === true)) return row.rowKey;
+          if (
+            row.isSampleNameValid &&
+            (row.saved === null || row.saved === true)
+          )
+            return row.rowKey;
         })
       );
     }
@@ -163,15 +172,10 @@ export function SampleMetadataImportReview() {
     saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
-        refetch();
-        if(data.rows.filter(row => selected.includes(row.rowKey)).every(row => row.saved === true)){
-          const newSampleCount = data.rows.filter(row => row.saved === true && row.foundSampleID === null).length;
-          const updatedSampleCount = data.rows.filter(row => row.saved === true && row.foundSampleID !== null).length;
-          history.push({
-            pathname: "complete",
-            state: { newSampleCount, updatedSampleCount },
-          });
-        }
+        history.push({
+          pathname: "complete",
+          state: { statusMessage: payload.message },
+        });
       });
   };
 
@@ -199,7 +203,9 @@ export function SampleMetadataImportReview() {
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
         loading={isFetching}
-        rowClassName={(record, index) => (record.saved === false ? "red" : null)}
+        rowClassName={(record, index) =>
+          record.saved === false ? "red" : null
+        }
         rowSelection={rowSelection}
         columns={columns}
         dataSource={data.rows}

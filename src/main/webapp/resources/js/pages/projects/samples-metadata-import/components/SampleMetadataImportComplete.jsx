@@ -19,11 +19,7 @@ export function SampleMetadataImportComplete() {
       <Result
         status="success"
         title={i18n("SampleMetadataImportComplete.result.title")}
-        subTitle={
-          ((history.location.state.updatedSampleCount === 1) ? i18n("SampleMetadataImportComplete.result.subTitle.single-updated", history.location.state.updatedSampleCount) : i18n("SampleMetadataImportComplete.result.subTitle.multiple-updated", history.location.state.updatedSampleCount))
-          +
-          ((history.location.state.newSampleCount === 1) ? i18n("SampleMetadataImportComplete.result.subTitle.single-created", history.location.state.newSampleCount) : i18n("SampleMetadataImportComplete.result.subTitle.multiple-created", history.location.state.newSampleCount))
-        }
+        subTitle={history.location.state.statusMessage}
         extra={
           <Button
             type="primary"
