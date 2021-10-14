@@ -3,6 +3,7 @@ Changes
 
 21.09 to 22.01
 --------------
+* [Developer/UI]: Refreshed the metadata uploader.
 
 21.05 to 21.09
 --------------
