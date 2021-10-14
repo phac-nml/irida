@@ -8,7 +8,9 @@ import {
 } from "../../apis/projects/members";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import {
+  formatInternationalizedDateTime
+} from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
@@ -48,8 +50,8 @@ export function ProjectMembersTable({ projectId }) {
       },
     },
     {
-      title: i18n("ProjectMembersTable.role"),
-      dataIndex: "role",
+      title: i18n("ProjectMembersTable.projectRole"),
+      dataIndex: "projectRole",
       render(text, item) {
         return (
           <ProjectRole
@@ -59,6 +61,9 @@ export function ProjectMembersTable({ projectId }) {
           />
         );
       },
+    },
+    {
+      title: i18n("ProjectMembersTable.metadataRole"),
     },
     {
       title: i18n("ProjectMembersTable.since"),

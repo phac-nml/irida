@@ -16,11 +16,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -55,6 +55,7 @@ public class UIProjectMembersService {
 				.map(join -> {
 					ProjectUserJoin projectUserJoin = (ProjectUserJoin) join;
 					return new ProjectMemberTableModel(join.getObject(), projectUserJoin.getProjectRole()
+							.toString(), ((ProjectUserJoin) join).getMetadataRole()
 							.toString(), projectUserJoin.getCreatedDate());
 				})
 				.collect(Collectors.toList());
