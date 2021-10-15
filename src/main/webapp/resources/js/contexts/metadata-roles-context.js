@@ -41,6 +41,7 @@ function useMetadataRoles() {
       "useMetadataRoles must be used within a MetadataRolesProvider"
     );
   }
+  return context;
 }
 
 export { MetadataRolesProvider, useMetadataRoles };

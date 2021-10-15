@@ -1,7 +1,5 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
-import { useGetProjectDetailsQuery } from "../../apis/projects/project";
-import { useProjectRoles } from "../../contexts/project-roles-context";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -9,15 +7,17 @@ import { useProjectRoles } from "../../contexts/project-roles-context";
  * any member.  If the user cannot manage, just the label for the project role
  * will be rendered
  *
- * @param {object} item - the current item to be rendered
+ * @param {object} user - the current item to be rendered
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ projectId, item, updateRoleFn }) {
-  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const [role, setRole] = React.useState(item.projectRole);
+export function RoleSelect({
+                             updateRoleFn,
+                             roles,
+                             currentRole
+                           }) {
+  const [role, setRole] = React.useState(currentRole);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useProjectRoles();
 
   /**
    * When the project role for the user is updated, update the new value on
@@ -40,7 +40,7 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
       .finally(() => setLoading(false));
   };
 
-  return project.canManageRemote ? (
+  return (
     <Select
       className="t-project-role-select"
       value={role}
@@ -59,7 +59,5 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
         </Select.Option>
       ))}
     </Select>
-  ) : (
-    getRoleFromKey(item.role)
   );
 }

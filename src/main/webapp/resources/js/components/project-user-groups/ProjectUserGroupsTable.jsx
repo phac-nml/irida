@@ -5,11 +5,13 @@ import {
   removeUserGroupFromProject,
   updateUserGroupRoleOnProject,
 } from "../../apis/projects/user-groups";
-import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import {
+  formatInternationalizedDateTime
+} from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { RemoveTableItemButton } from "../Buttons";
-import { ProjectRole } from "../roles/ProjectRole";
+import { RoleSelect } from "../roles/RoleSelect";
 import { AddGroupButton } from "./AddGroupButton";
 
 /**
@@ -39,7 +41,7 @@ export function ProjectUserGroupsTable({ projectId }) {
       title: i18n("ProjectUserGroupsTable.role"),
       render(text, group) {
         return (
-          <ProjectRole
+          <RoleSelect
             projectId={projectId}
             item={group}
             updateRoleFn={updateUserGroupRoleOnProject}

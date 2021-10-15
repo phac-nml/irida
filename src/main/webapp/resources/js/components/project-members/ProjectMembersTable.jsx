@@ -7,6 +7,8 @@ import {
   updateUserRoleOnProject,
 } from "../../apis/projects/members";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
+import { useMetadataRoles } from "../../contexts/metadata-roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
 import {
   formatInternationalizedDateTime
@@ -14,7 +16,7 @@ import {
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
-import { ProjectRole } from "../roles/ProjectRole";
+import { RoleSelect } from "../roles/RoleSelect";
 
 /**
  * React component to display a table of project users.
@@ -26,6 +28,8 @@ export function ProjectMembersTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { identifier: userId } = useSelector((state) => state.user);
+  const { roles: projectRoles, getRoleFromKey } = useProjectRoles();
+  const { roles: metadataRoles } = useMetadataRoles();
 
   React.useEffect(() => {
     dispatch(getCurrentUserDetails());
@@ -44,6 +48,9 @@ export function ProjectMembersTable({ projectId }) {
   const updateProjectRole = ({ id, medataRole }) => (projectRole) =>
     updateUserRoleOnProject({ projectId, id, medataRole, projectRole });
 
+  const updateMetadataRole = ({ id, projectRole }) => (metadataRole) =>
+    updateUserRoleOnProject({ projectId, id, metadataRole, projectRole });
+
   const columns = [
     {
       title: i18n("ProjectMembersTable.name"),
@@ -56,17 +63,30 @@ export function ProjectMembersTable({ projectId }) {
       title: i18n("ProjectMembersTable.projectRole"),
       dataIndex: "projectRole",
       render(text, item) {
-        return (
-          <ProjectRole
-            projectId={projectId}
-            item={item}
-            updateRoleFn={updateProjectRole(item)}
+        return project.canManageRemote ? (
+          <RoleSelect
+            roles={projectRoles}
+            updateRoleFn={updateMetadataRole(item)}
+            currentRole={item.projectRole}
           />
+        ) : (
+          getRoleFromKey(item.projectRole)
         );
       },
     },
     {
       title: i18n("ProjectMembersTable.metadataRole"),
+      render(text, item) {
+        return project.canManageRemote ? (
+          <RoleSelect
+            roles={metadataRoles}
+            updateRoleFn={updateProjectRole(item)}
+            currentRole={item.metadataRole}
+          />
+        ) : (
+          getRoleFromKey(item.metadataRole)
+        );
+      },
     },
     {
       title: i18n("ProjectMembersTable.since"),
