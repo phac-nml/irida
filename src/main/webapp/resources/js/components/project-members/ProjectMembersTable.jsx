@@ -49,7 +49,7 @@ export function ProjectMembersTable({ projectId }) {
     updateUserRoleOnProject({ projectId, id, medataRole, projectRole });
 
   const updateMetadataRole = ({ id, projectRole }) => (metadataRole) =>
-    updateUserRoleOnProject({ projectId, id, metadataRole, projectRole });
+    updateUserRoleOnProject({ projectId, id, projectRole, metadataRole });
 
   const columns = [
     {
@@ -66,7 +66,7 @@ export function ProjectMembersTable({ projectId }) {
         return project.canManageRemote ? (
           <RoleSelect
             roles={projectRoles}
-            updateRoleFn={updateMetadataRole(item)}
+            updateRoleFn={updateProjectRole(item)}
             currentRole={item.projectRole}
           />
         ) : (
@@ -80,7 +80,7 @@ export function ProjectMembersTable({ projectId }) {
         return project.canManageRemote ? (
           <RoleSelect
             roles={metadataRoles}
-            updateRoleFn={updateProjectRole(item)}
+            updateRoleFn={updateMetadataRole(item)}
             currentRole={item.metadataRole}
           />
         ) : (
@@ -120,8 +120,8 @@ export function ProjectMembersTable({ projectId }) {
    * @param {string} role - project role for the user
    * @returns {Promise<AxiosResponse<*>>}
    */
-  async function addMember({ id, role }) {
-    return addMemberToProject({ projectId, id, role });
+  async function addMember({ id, projectRole, metadataRole }) {
+    return addMemberToProject({ projectId, id, projectRole, metadataRole });
   }
 
   /**
@@ -145,7 +145,6 @@ export function ProjectMembersTable({ projectId }) {
             addMemberFn={addMember}
             addMemberSuccessFn={updateTable}
             getAvailableMembersFn={getAvailableUsers}
-            defaultRole="PROJECT_USER"
           />
         ) : null,
       ]}

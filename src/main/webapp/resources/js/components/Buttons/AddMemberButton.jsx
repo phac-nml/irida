@@ -8,6 +8,7 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
+import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
@@ -29,7 +30,8 @@ export function AddMemberButton({
    */
   const userRef = useRef();
 
-  const { roles } = useProjectRoles();
+  const { roles: projectRoles } = useProjectRoles();
+  const { roles: metadataRoles } = useMetadataRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -44,7 +46,8 @@ export function AddMemberButton({
   /*
   The value of the currently selected role from the role input
    */
-  const [role, setRole] = useState(defaultRole);
+  const [projectRole, setProjectRole] = useState("PROJECT_USER");
+  const [metadataRole, setMetadataRole] = useState("LEVEL_1");
 
   /*
   Value to send to the server to query for a list of potential users.
@@ -95,7 +98,7 @@ export function AddMemberButton({
   }, [visible]);
 
   const addMember = () => {
-    addMemberFn({ id: userId, role })
+    addMemberFn({ id: userId, projectRole, metadataRole })
       .then((message) => {
         addMemberSuccessFn();
         notification.success({ message });
@@ -134,7 +137,11 @@ export function AddMemberButton({
         onOk={addMember}
         okText={i18n("AddMemberButton.modal.okText")}
       >
-        <Form layout="vertical" form={form} initialValues={{ role }}>
+        <Form
+          layout="vertical"
+          form={form}
+          initialValues={{ role: projectRole }}
+        >
           <Form.Item
             label={i18n("AddMemberButton.modal.user-label")}
             help={i18n("AddMemberButton.modal.user-help")}
@@ -153,12 +160,30 @@ export function AddMemberButton({
               {options}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("AddMemberButton.modal.role")} name="role">
+          <Form.Item
+            label={i18n("AddMemberButton.modal.projectRole")}
+            name="projectRole"
+          >
             <Radio.Group
               style={{ display: "flex" }}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setProjectRole(e.target.value)}
             >
-              {roles.map((role) => (
+              {projectRoles.map((role) => (
+                <Radio.Button key={role.value} value={role.value}>
+                  {role.label}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label={i18n("AddMemberButton.modal.metadataRole")}
+            name="metadataRole"
+          >
+            <Radio.Group
+              style={{ display: "flex" }}
+              onChange={(e) => setMetadataRole(e.target.value)}
+            >
+              {metadataRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
                   {role.label}
                 </Radio.Button>

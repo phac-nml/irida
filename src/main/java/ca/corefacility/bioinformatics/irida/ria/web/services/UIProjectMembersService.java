@@ -135,7 +135,7 @@ public class UIProjectMembersService {
 	public String addMemberToProject(Long projectId, NewMemberRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(request.getId());
-		ProjectRole role = ProjectRole.fromString(request.getRole());
+		ProjectRole role = ProjectRole.fromString(request.getProjectRole());
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
 		projectService.addUserToProject(project, user, role, metadataRole);
 		return messageSource.getMessage("project.members.add.success", new Object[] { user.getLabel(), project.getLabel() }, locale);

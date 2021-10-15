@@ -78,14 +78,21 @@ export async function getAvailableUsersForProject({ projectId, query }) {
  *
  * @param {number} projectId - identifier for a project
  * @param {number} id - identifier for the user
- * @param {string} role - project role for the user
+ * @param {string} projectRole - project role for the user
+ * @param {string} metadataRole - metadata role for the user
  * @returns {Promise<AxiosResponse<any>>}
  */
-export async function addMemberToProject({ projectId, id, role }) {
+export async function addMemberToProject({
+                                           projectId,
+                                           id,
+                                           projectRole,
+                                           metadataRole
+                                         }) {
   return await axios
     .post(`${BASE_URL}/add?projectId=${projectId}`, {
       id,
-      role,
+      projectRole,
+      metadataRole,
     })
     .then(({ data }) => data);
 }
