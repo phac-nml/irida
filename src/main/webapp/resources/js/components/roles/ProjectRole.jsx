@@ -42,7 +42,7 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
 
   return project.canManageRemote ? (
     <Select
-      className="t-role-select"
+      className="t-project-role-select"
       value={role}
       style={{ width: "100%" }}
       onChange={onChange}
