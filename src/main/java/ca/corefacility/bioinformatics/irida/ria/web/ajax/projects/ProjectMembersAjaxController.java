@@ -73,10 +73,10 @@ public class ProjectMembersAjaxController {
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateUserRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-			String role, String metadataRole, Locale locale) {
+			String projectRole, String metadataRole, Locale locale) {
 		try {
 			return ResponseEntity.ok(
-					projectMembersService.updateUserRoleOnProject(projectId, id, role, metadataRole, locale));
+					projectMembersService.updateUserRoleOnProject(projectId, id, projectRole, metadataRole, locale));
 		} catch (UIProjectWithoutOwnerException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(e.getMessage());

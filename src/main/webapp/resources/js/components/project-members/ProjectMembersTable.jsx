@@ -41,6 +41,9 @@ export function ProjectMembersTable({ projectId }) {
     updateTable();
   }
 
+  const updateProjectRole = ({ id, medataRole }) => (projectRole) =>
+    updateUserRoleOnProject({ projectId, id, medataRole, projectRole });
+
   const columns = [
     {
       title: i18n("ProjectMembersTable.name"),
@@ -57,7 +60,7 @@ export function ProjectMembersTable({ projectId }) {
           <ProjectRole
             projectId={projectId}
             item={item}
-            updateRoleFn={updateUserRoleOnProject}
+            updateRoleFn={updateProjectRole(item)}
           />
         );
       },

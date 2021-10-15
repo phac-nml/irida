@@ -1,7 +1,7 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
-import { useRoles } from "../../contexts/roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -15,9 +15,9 @@ import { useRoles } from "../../contexts/roles-context";
  */
 export function ProjectRole({ projectId, item, updateRoleFn }) {
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const [role, setRole] = React.useState(item.role);
+  const [role, setRole] = React.useState(item.projectRole);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useRoles();
+  const { roles, getRoleFromKey } = useProjectRoles();
 
   /**
    * When the project role for the user is updated, update the new value on
@@ -27,7 +27,7 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
    */
   const onChange = (value) => {
     setLoading(true);
-    updateRoleFn({ projectId, id: item.id, role: value })
+    updateRoleFn(value)
       .then((message) => {
         notification.success({ message });
         setRole(value);

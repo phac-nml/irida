@@ -34,11 +34,22 @@ export async function removeUserFromProject({ projectId, id }) {
  *
  * @param {number} projectId - identifier for a project
  * @param {number} id - identifier for a user
- * @param {string} role - new project role for the user
+ * @param {string} projectRole - project role for the user
+ * @param {string} metadataRole - metadata role for the user
  * @returns {Promise<AxiosResponse<any>>}
  */
-export async function updateUserRoleOnProject({ projectId, id, role }) {
-  const params = new URLSearchParams({ role, id, projectId });
+export async function updateUserRoleOnProject({
+                                                projectId,
+                                                id,
+                                                projectRole,
+                                                metadataRole
+                                              }) {
+  const params = new URLSearchParams({
+    projectRole,
+    id,
+    projectId,
+    metadataRole
+  });
   try {
     return await axios
       .put(`${BASE_URL}/role?${params.toString()}`)

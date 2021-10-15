@@ -8,7 +8,7 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { useRoles } from "../../contexts/roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -29,7 +29,7 @@ export function AddMemberButton({
    */
   const userRef = useRef();
 
-  const { roles } = useRoles();
+  const { roles } = useProjectRoles();
 
   /*
   Whether the modal to add a user is visible

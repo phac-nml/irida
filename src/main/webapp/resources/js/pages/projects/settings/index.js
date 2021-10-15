@@ -4,8 +4,8 @@ import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
-import { getProjectRoles } from "../../../apis/projects/projects";
-import { RolesProvider } from "../../../contexts/roles-context";
+import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
+import { ProjectRolesProvider } from "../../../contexts/project-roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -102,35 +102,37 @@ const ProjectSettings = (props) => {
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
           <Row>
             <Col lg={24} xxl={12}>
-              <RolesProvider getRolesFn={getProjectRoles}>
-                <Suspense fallback={<Skeleton />}>
-                  <Router>
-                    <ProjectDetails path="/details" />
-                    <ProjectProcessing path="/processing" />
-                    <ProjectMembers path="/members" />
-                    <ProjectGroups path="/groups" />
-                    <MetadataLayout path="/metadata">
-                      <MetadataTemplates path="/templates" />
-                      {project.canManage ? (
-                        <>
-                          <MetadataFieldsListManager path="/fields" />
-                          <MetadataTemplateManager path="/templates/:id" />
-                        </>
-                      ) : (
-                        <>
-                          <MetadataFieldsListMember path="/fields" />
-                          <MetadataTemplateMember path="/templates/:id" />
-                        </>
-                      )}
-                    </MetadataLayout>
-                    <AssociatedProjects path="/associated" />
-                    <ReferenceFiles path="/references" />
-                    <ProjectSynchronizationSettings path="/remote" />
-                    {project.canManage && <DeleteProject path="/delete" />}
-                    <Redirect from="/" to="/details" />
-                  </Router>
-                </Suspense>
-              </RolesProvider>
+              <ProjectRolesProvider>
+                <MetadataRolesProvider>
+                  <Suspense fallback={<Skeleton />}>
+                    <Router>
+                      <ProjectDetails path="/details" />
+                      <ProjectProcessing path="/processing" />
+                      <ProjectMembers path="/members" />
+                      <ProjectGroups path="/groups" />
+                      <MetadataLayout path="/metadata">
+                        <MetadataTemplates path="/templates" />
+                        {project.canManage ? (
+                          <>
+                            <MetadataFieldsListManager path="/fields" />
+                            <MetadataTemplateManager path="/templates/:id" />
+                          </>
+                        ) : (
+                          <>
+                            <MetadataFieldsListMember path="/fields" />
+                            <MetadataTemplateMember path="/templates/:id" />
+                          </>
+                        )}
+                      </MetadataLayout>
+                      <AssociatedProjects path="/associated" />
+                      <ReferenceFiles path="/references" />
+                      <ProjectSynchronizationSettings path="/remote" />
+                      {project.canManage && <DeleteProject path="/delete" />}
+                      <Redirect from="/" to="/details" />
+                    </Router>
+                  </Suspense>
+                </MetadataRolesProvider>
+              </ProjectRolesProvider>
             </Col>
           </Row>
         </Content>

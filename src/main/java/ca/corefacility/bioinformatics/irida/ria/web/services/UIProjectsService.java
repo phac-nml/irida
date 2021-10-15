@@ -54,6 +54,7 @@ public class UIProjectsService {
 	All roles that are available on a project.
 	 */
 	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
+	private final List<String> METADATA_ROLES = ImmutableList.of("LEVEL_1", "LEVEL_2", "LEVEL_3", "LEVEL_4");
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
@@ -99,6 +100,12 @@ public class UIProjectsService {
 	public List<Role> getProjectRoles(Locale locale) {
 		return PROJECT_ROLES.stream()
 				.map(role -> new Role(role, messageSource.getMessage("projectRole." + role, new Object[] {}, locale)))
+				.collect(Collectors.toList());
+	}
+
+	public List<Role> getProjectMetadataRoles(Locale locale) {
+		return METADATA_ROLES.stream()
+				.map(role -> new Role(role, messageSource.getMessage("metadataRole." + role, new Object[] {}, locale)))
 				.collect(Collectors.toList());
 	}
 
