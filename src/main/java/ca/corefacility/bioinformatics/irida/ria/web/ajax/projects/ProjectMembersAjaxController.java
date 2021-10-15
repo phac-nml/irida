@@ -64,11 +64,11 @@ public class ProjectMembersAjaxController {
 	/**
 	 * Update a users role on a project
 	 *
-	 * @param projectId    - identifier for the current project
-	 * @param id           - identifier for the user to remove from the project
-	 * @param role         - to update the user to
-	 * @param metadataRole - metadata role to update the user to
-	 * @param locale       - of the currently logged in user
+	 * @param projectId    Identifier for the current project
+	 * @param id           Identifier for the user to remove from the project
+	 * @param projectRole  Project role to update the user to
+	 * @param metadataRole Metadata role to update the user to
+	 * @param locale       Locale of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)

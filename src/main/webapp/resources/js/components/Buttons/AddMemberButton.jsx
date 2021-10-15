@@ -19,7 +19,6 @@ const { Text } = Typography;
 export function AddMemberButton({
   label,
   modalTitle,
-  defaultRole,
   addMemberFn = () => {},
   getAvailableMembersFn = () => {},
   addMemberSuccessFn = () => {},
