@@ -35,36 +35,32 @@ Links to the upload page can be found:
 
 ![Excel Spreadsheet Example](images/spreadsheet.png)
 
-Any excel spreadsheet containing metadata for samples in a project can be uploaded through the IRIDA web interface.  One of the column in the table __must__ correspond to the sample name within the project.  In this example spreadsheet, the `NLEP #` column is the sample name.
+Any CSV or Excel spreadsheet containing metadata for samples in a project can be uploaded through the IRIDA web interface.  One of the column in the table __must__ correspond to the sample name within the project.  In this example spreadsheet, the `NLEP #` column is the sample name.
 
-THe first step is to select the Excel file containing the data.  Either click on the square label `Click or drop Excel file containing metadata for samples in this project.` or drag and drop the file from your file browser.
+The first step is to select the CSV or Excel file containing the data.  Either click on the square label `Click or drop Excel/CSV file containing metadata for samples in this project.` or drag and drop the file from your file browser.
 
 ![Select spreadsheet](images/upload-selection.png)
 
-After uploading a spreadsheet, the column corresponding to the sample name must be selected.  After selecting the column heading, press the `Preivew metadata to be uploaded` button.
+After uploading a spreadsheet, the column corresponding to the sample name must be selected.  After selecting the column header, press the `Preview the data` button.
 
 ![Select name column.](images/upload-column.png)
 
-Before the metadata upload is completed, metadata that matches sample names and ones that don't are presented.
+Rows that do not match an existing sample name are identified with the `New` tag.  If selected, these samples will automatically be created.  Rows that do match an existing sample name will be updated.  Only select the rows that are to be uploaded and press the `Upload the data` button.
 
 ![Preview Upload](images/upload-preview.png)
 
-Metadata that has a matching sample name are listed in the table `Rows matcthings samples` with the number of matching samples.  Clicking on the `Save valid metadata` button will add the metadata to it's sample and redirect to the linelist page.
-
-![Upload Preview Success](images/upload-preview-success.png)
-
-Metadata that do not have matching sample names are listed in the table `Rows not matching samples` with the number of non-matching samples.  Currently nothing can be done about these.  Try to check the sample names and re-importing the spreadsheet.
+Rows that have an invalid sample name will be highlighted in red.  These errors should be fixed within the spreadsheet and re-imported.
 
 ![Upload Preview Errors](images/upload-preview-errors.png)
 
-### Example Upload
+The complete page will be displayed on a successful upload. Clicking on the `Upload another file` button will redirect to the beginning of the uploader.
 
-![Demonstration of uploading Excel Spreadsheet](images/upload_bulk_metadata.gif)
+![Upload Preview Success](images/upload-preview-success.png)
 
 Project Metadata Line List
 --------------------------
 
-A Metadata Line List is a table that summarizes all metadata associated with samples in a project.  
+A Metadata Line List is a table that summarizes all metadata associated with samples in a project.
 
 ![Basic Line List](images/linelist_base.png)
 
