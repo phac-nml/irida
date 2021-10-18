@@ -35,7 +35,7 @@ public class ProjectMembersPage extends AbstractPage {
 	private WebElement removeErrorNotification;
 
 	@FindBy(className = "t-project-role-select")
-	private List<WebElement> projectRoleSelect;
+	private List<WebElement> roleSelects;
 
 	public ProjectMembersPage(WebDriver driver) {
 		super(driver);
@@ -102,7 +102,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public void updateUserRole(int row, String role) {
-		WebElement roleSelect = projectRoleSelect.get(row);
+		WebElement roleSelect = roleSelects.get(row);
 		roleSelect.click();
 		driver.findElement(By.className("t-" + role)).click();
 	}
