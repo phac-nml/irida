@@ -53,7 +53,7 @@ Rows that have an invalid sample name will be highlighted in red.  These errors 
 
 ![Upload Preview Errors](images/upload-preview-errors.png)
 
-The complete page will be displayed on a successful upload. Clicking on the `Upload another file` button will redirect to the beginning of the uploader.
+The complete page will be displayed on a successful upload.  Clicking on the `Upload another file` button will redirect to the beginning of a new upload.
 
 ![Upload Preview Success](images/upload-preview-success.png)
 
