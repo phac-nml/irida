@@ -28,9 +28,5 @@ export async function getPagedProjectsForUser(params) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function getProjectRoles() {
-  return await axios.get(`${URL}/projectRoles`).then(({ data }) => data);
-}
-
-export async function getMetadataRoles() {
-  return await axios.get(`${URL}/metadataRoles`).then(({ data }) => data);
+  return await axios.get(`${URL}/roles`).then(({ data }) => data);
 }

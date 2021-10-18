@@ -67,13 +67,8 @@ public class ProjectsAjaxController {
 	 * @param locale - {@link Locale} of the current user
 	 * @return list of roles and their internationalized strings
 	 */
-	@RequestMapping("/projectRoles")
+	@RequestMapping("/roles")
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
 		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
-	}
-
-	@RequestMapping("/metadataRoles")
-	public ResponseEntity<List<Role>> getProjectMetadataRoles(Locale locale) {
-		return ResponseEntity.ok(projectsService.getProjectMetadataRoles(locale));
 	}
 }
