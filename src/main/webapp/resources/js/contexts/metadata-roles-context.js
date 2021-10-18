@@ -1,5 +1,5 @@
 import React from "react";
-import { getMetadataRoles } from "../apis/projects/projects";
+import { getMetadataRoles } from "../apis/metadata/metadata";
 
 const MetadataRolesContext = React.createContext();
 
