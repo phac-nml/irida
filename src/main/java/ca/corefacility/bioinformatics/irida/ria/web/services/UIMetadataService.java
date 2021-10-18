@@ -212,7 +212,7 @@ public class UIMetadataService {
 	 * Get a list of all metadata roles
 	 *
 	 * @param locale current users {@link Locale}
-	 * @returnList of metadata roles that are available to the suer
+	 * @return List of metadata roles that are available to the suer
 	 */
 	public List<Role> getProjectMetadataRoles(Locale locale) {
 		return METADATA_ROLES.stream()
