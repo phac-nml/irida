@@ -6,10 +6,30 @@ import java.util.List;
  * Handles data transfer for sharing samples between projects
  */
 public class ShareSamplesRequest {
+	/**
+	 * Project identifier to share / move samples from
+	 */
 	private Long currentId;
+
+	/**
+	 * Project identifier to share / move samples to
+	 */
 	private Long targetId;
+
+	/**
+	 * Sample identifiers for all samples to share / move
+	 */
 	private List<Long> sampleIds;
+
+	/**
+	 * Flag if the samples are to be locked (unmodifiable) in the destination project.
+	 */
 	private Boolean locked;
+
+	/**
+	 * Flag, if true sampls will be removed from the current project
+	 * This is the "move" function
+	 */
 	private Boolean remove;
 
 	public Long getCurrentId() {
