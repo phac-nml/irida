@@ -40,7 +40,7 @@ export function ShareSamples({ samples = [], redirect }) {
             disabled={remove}
           >
             <Typography.Text strong>
-              (i18n("ShareSamples.checkbox.lock"))
+              {i18n("ShareSamples.checkbox.lock")}
             </Typography.Text>
           </Checkbox>
         </>
