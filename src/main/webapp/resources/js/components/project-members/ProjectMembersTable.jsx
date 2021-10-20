@@ -80,7 +80,7 @@ export function ProjectMembersTable({ projectId }) {
       render(text, item) {
         return project.canManageRemote ? (
           <RoleSelect
-            className="t-project-metadata-select"
+            className="t-metadata-role-select"
             roles={metadataRoles}
             updateRoleFn={updateMetadataRole(item)}
             currentRole={item.metadataRole}

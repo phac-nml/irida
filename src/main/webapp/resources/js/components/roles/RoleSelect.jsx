@@ -11,11 +11,7 @@ import React, { useState } from "react";
  * @returns {*}
  * @constructor
  */
-export function RoleSelect({
-                             updateRoleFn,
-                             roles,
-                             currentRole
-                           }) {
+export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
   const [role, setRole] = React.useState(currentRole);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +38,7 @@ export function RoleSelect({
 
   return (
     <Select
-      className="t-project-role-select"
+      className={className}
       value={role}
       style={{ width: "100%" }}
       onChange={onChange}
