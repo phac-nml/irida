@@ -73,7 +73,7 @@ public class ProjectSampleMetadataAjaxController {
 	}
 
 	/**
-	 * Save uploaded metadata to the
+	 * Save uploaded metadata from the session into IRIDA.
 	 *
 	 * @param locale      {@link Locale} of the current user.
 	 * @param session     {@link HttpSession}
