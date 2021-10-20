@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
+package ca.corefacility.bioinformatics.irida.web.controller.test.unit.projects;
 
 import java.io.IOException;
 import java.util.*;

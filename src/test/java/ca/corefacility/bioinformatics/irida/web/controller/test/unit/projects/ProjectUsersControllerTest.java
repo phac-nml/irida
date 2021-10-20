@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
+package ca.corefacility.bioinformatics.irida.web.controller.test.unit.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
