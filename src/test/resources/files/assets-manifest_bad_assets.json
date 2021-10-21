@@ -1,0 +1,110 @@
+{
+  "entrypoints": {
+    "vendor": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/9711-b652acb1a658ad2d9f13.js",
+        "js/vendor-1bd44c88903d8b1973f4.js"
+      ],
+      "css": ["css/9711.bundle.css"]
+    },
+    "login": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/720-dca7913ec498dd4bd733.js",
+        "js/1821-0afd2fdca15d4dc6f331.js",
+        "js/2504-5842cec3c1e68ae64981.js",
+        "js/8692-215cc448ab663ee45e9f.js",
+        "js/5855-9bee8b875e3bb6b8c41e.js",
+        "js/3338-42ae46884bb4ac5b3a53.js",
+        "js/1168-f16487bfa75e76efe5aa.js",
+        "js/1885-a01dac5012dc379b6935.js",
+        "js/4106-2676831485a59c61a76a.js",
+        "js/login-93045cd54724bed8c9a4.js"
+      ],
+      "css": [
+        "css/1821.bundle.css",
+        "css/8692.bundle.css",
+        "css/3338.bundle.css",
+        "css/291.bundle.css",
+        "css/1885.bundle.css",
+        "css/login.bundle.css"
+      ],
+      "html": ["i18n/login.html"]
+    },
+    "access_confirmation": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/access_confirmation-468558ffcf9e9cf4a615.js"
+      ],
+      "css": ["css/5812.bundle.css"]
+    },
+    "cart": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/720-dca7913ec498dd4bd733.js",
+        "js/1821-0afd2fdca15d4dc6f331.js",
+        "js/7843-ea3029deb5a0b1db3822.js",
+        "js/3941-e5db49cfeb08808d3ee2.js",
+        "js/1907-40097ddc42e3b546d5e4.js",
+        "js/9517-69cf9e2c9f5ac14c93d8.js",
+        "js/cart-eb11c5974be00ef2c003.js"
+      ],
+      "css": ["css/1821.bundle.css", "css/cart.bundle.css"],
+      "html": ["i18n/cart.html"]
+    },
+    "client-base": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/client-base-7d4a697ea87531f61e76.js"
+      ]
+    },
+    "activities": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/6912-8ba0c6faedaf9c22014f.js",
+        "js/activities-334cd3673e2fa4982386.js"
+      ],
+      "css": ["css/activities.bundle.css"]
+    },
+    "announcements": {
+      "js": [
+        "js/runtime-9f345a1ce64aff56aa2b.js",
+        "js/720-dca7913ec498dd4bd733.js",
+        "js/1821-0afd2fdca15d4dc6f331.js",
+        "js/2504-5842cec3c1e68ae64981.js",
+        "js/7843-ea3029deb5a0b1db3822.js",
+        "js/8692-215cc448ab663ee45e9f.js",
+        "js/3835-b09b3cb96d1c6f911c56.js",
+        "js/3941-e5db49cfeb08808d3ee2.js",
+        "js/5855-9bee8b875e3bb6b8c41e.js",
+        "js/3338-42ae46884bb4ac5b3a53.js",
+        "js/9991-8ea9679b22ff061742ed.js",
+        "js/5758-ea2b33b6b4c836104867.js",
+        "js/1168-f16487bfa75e76efe5aa.js",
+        "js/3100-0fa53fd4644cdf173c17.js",
+        "js/549-7f0f2dadf4d2555f74e6.js",
+        "js/925-485a1013adf4020602ef.js",
+        "js/5814-480a4ed6c8152174f94d.js",
+        "js/1885-a01dac5012dc379b6935.js",
+        "js/5368-24626a59c2e9a3a4e464.js",
+        "js/7632-24195a820c6f12cfc0bf.js",
+        "js/695-3efed494c59e8b9e87e2.js",
+        "js/9866-6f5c979074b5fcdff7d5.js",
+        "js/announcements-8d1cb15cf4c29c9e0c3b.js"
+      ],
+      "css": [
+        "css/1821.bundle.css",
+        "css/8692.bundle.css",
+        "css/3338.bundle.css",
+        "css/8469.bundle.css",
+        "css/5758.bundle.css",
+        "css/291.bundle.css",
+        "css/549.bundle.css",
+        "css/1885.bundle.css",
+        "css/695.bundle.css"
+      ],
+      "html": ["i18n/announcements.html"]
+    }
+  }
+}
