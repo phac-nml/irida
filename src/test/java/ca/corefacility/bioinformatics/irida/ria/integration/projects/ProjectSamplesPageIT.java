@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -12,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import static org.junit.Assert.*;
 
@@ -184,41 +182,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
 		assertEquals("Should have the new sample name", newSampleName, name);
-	}
-
-	@Test
-	@Ignore
-	public void testShareSamples() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.selectSample(0);
-		page.selectSample(1);
-
-		List<String> names = page.getSampleNamesOnPage().subList(0, 2);
-		String newProjectName = "project4";
-
-		page.shareSamples(newProjectName, false);
-
-		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
-		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 2);
-
-		assertEquals("Should have the same samples since they were moved", Sets.newHashSet(names), Sets.newHashSet(newNames));
-
-		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
-	}
-
-
-	@Test(expected=ProjectSamplesPage.GiveOwnerNotDisplayedException.class)
-	@Ignore
-	public void testShareRemoteSampleManagerFailGiveOwner() {
-		LoginPage.loginAsManager(driver());
-
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
-		page.selectSample(0);
-
-		String newProjectName = "project4";
-
-		page.shareSamples(newProjectName, true);
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-import { Col, PageHeader, Row } from "antd";
+import { Card, Col, PageHeader, Row } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
@@ -45,13 +45,15 @@ function ShareApp() {
   return (
     <Row>
       <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }} xs={24}>
-        <PageHeader
-          ghost={false}
-          title={i18n("ShareSamples.title")}
-          onBack={goToPrevious}
-        >
-          <ShareLayout />
-        </PageHeader>
+        <Card>
+          <PageHeader
+            ghost={false}
+            title={i18n("ShareSamples.title")}
+            onBack={goToPrevious}
+          >
+            <ShareLayout />
+          </PageHeader>
+        </Card>
       </Col>
     </Row>
   );
