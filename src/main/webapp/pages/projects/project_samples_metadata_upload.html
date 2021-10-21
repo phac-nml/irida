@@ -4,14 +4,14 @@
 
 <head>
     <title th:text="#{metadata.page-title}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/samples-metadata-import.bundle.css}"/>
+    <webpacker:css entry="samples-metadata-import"/>
 </head>
 
 <body>
 <div id="samples-metadata-import-root" layout:fragment="main">
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/samples-metadata-import.bundle.js}"></script>
+    <webpacker:js entry="samples-metadata-import"/>
 </th:block>
 </body>
 

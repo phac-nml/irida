@@ -6,12 +6,12 @@
 >
   <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-activity.bundle.css}" />
+      <webpacker:css entry="project-activity"/>
   </head>
   <body>
     <div layout:fragment="main" id="root"></div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/project-activity.bundle.js}"></script>
+      <webpacker:js entry="project-activity"/>
     </th:block>
   </body>
 </html>

@@ -194,6 +194,7 @@ public class RESTProjectSamplesControllerTest {
 		Map<String, Object> updatedFields = ImmutableMap.of("sampleName", (Object) "some new name");
 
 		when(sampleService.updateFields(s.getId(), updatedFields)).thenReturn(s);
+		when(sampleService.read(s.getId())).thenReturn(s);
 
 		ResponseResource<Sample> responseObject = controller.updateSample(s.getId(), updatedFields);
 
