@@ -233,10 +233,16 @@ public class UISampleService {
 				.size() == 1) {
 			Sample sample = sampleService.read(request.getSampleIds()
 					.get(0));
-			return messageSource.getMessage("server.ShareSamples.share.success.singular",
-					new Object[] { sample.getSampleName(), targetProject.getLabel() }, locale);
+			final String code = request.getRemove() ?
+					"server.ShareSamples.move.success.singular" :
+					"server.ShareSamples.share.success.singular";
+			return messageSource.getMessage(code, new Object[] { sample.getSampleName(), targetProject.getLabel() },
+					locale);
 		}
-		return messageSource.getMessage("server.ShareSamples.share.success.plural",
-				new Object[] { request.getSampleIds().size(), targetProject.getLabel() }, locale);
+		final String code = request.getRemove() ?
+				"server.ShareSamples.move.success.plural" :
+				"server.ShareSamples.share.success.singular";
+		return messageSource.getMessage(code, new Object[] { request.getSampleIds().size(), targetProject.getLabel() },
+				locale);
 	}
 }
