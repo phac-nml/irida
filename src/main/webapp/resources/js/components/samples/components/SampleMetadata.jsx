@@ -34,7 +34,7 @@ export function SampleMetadata({ metadata }) {
         onOk={() => setVisible(false)}
       >
         <Title level={4}>{i18n("SampleMetadata.modal.title")}</Title>
-        <Form>
+        <Form layout="vertical">
           <Form.Item
             name="metadata_field_name"
             label={i18n("SampleMetadata.modal.fieldName")}
