@@ -27,7 +27,8 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
 /**
- * Permission for checking that a user should have access to the given {@link MetadataTemplateField}s in a {@link ProjectMetadataResponse}
+ * Permission for checking that a user should have access to the given {@link MetadataTemplateField}s in a
+ * {@link ProjectMetadataResponse}.  This will check the user's role on the project and whether they're in a group.
  */
 @Component
 public class ReadProjectMetadataResponsePermission implements BasePermission<ProjectMetadataResponse> {
@@ -41,7 +42,8 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 
 	@Autowired
 	public ReadProjectMetadataResponsePermission(UserRepository userRepository,
-			ProjectUserJoinRepository projectUserJoinRepository, UserGroupProjectJoinRepository userGroupProjectJoinRepository,
+			ProjectUserJoinRepository projectUserJoinRepository,
+			UserGroupProjectJoinRepository userGroupProjectJoinRepository,
 			MetadataRestrictionRepository metadataRestrictionRepository) {
 		this.userRepository = userRepository;
 		this.projectUserJoinRepository = projectUserJoinRepository;
@@ -67,11 +69,12 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		User user = userRepository.loadUserByUsername(authentication.getName());
 		Project project = metadataResponse.getProject();
 
-		//get the user's role on the project
+		//get the user's role on the project and check if they're in a group
 		ProjectUserJoin projectJoinForUser = projectUserJoinRepository.getProjectJoinForUser(project, user);
 		List<UserGroupProjectJoin> groupsForProjectAndUser = userGroupProjectJoinRepository.findGroupsForProjectAndUser(
 				project, user);
 
+		//find the maxiumum metadata role for the user on the project between the user and group permissions
 		ProjectMetadataRole userProjectRole = ProjectMetadataRole.getMaxRoleForProjectAndGroups(projectJoinForUser,
 				groupsForProjectAndUser);
 
