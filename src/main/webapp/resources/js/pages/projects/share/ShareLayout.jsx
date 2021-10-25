@@ -9,6 +9,7 @@ import { IconShare } from "../../../components/icons/Icons";
 import { ShareError } from "./ShareError";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
+import { ShareSuccess } from "./ShareSuccess";
 
 /**
  * React component to layout the components for sharing/moving samples between
@@ -17,8 +18,8 @@ import { ShareSamples } from "./ShareSamples";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareLayout({redirect}) {
-  const [results, setResults] = React.useState();
+export function ShareLayout({ redirect }) {
+  const [result, setResult] = React.useState();
 
   const {
     originalSamples,
@@ -56,7 +57,7 @@ export function ShareLayout({redirect}) {
       targetId: projectId,
       remove,
     }).then(({ data }) => {
-      setResults({ type: "success", message: data.message });
+      setResult(data.message);
     });
   };
 
@@ -65,8 +66,8 @@ export function ShareLayout({redirect}) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }} size="large">
-      {typeof results === "object" ? (
-        <p>DONE</p>
+      {typeof result === "string" ? (
+        <ShareSuccess message={result} removed={remove} />
       ) : typeof projectId !== "undefined" && isError ? (
         <ShareError error={error} redirect={redirect} />
       ) : (
