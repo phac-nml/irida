@@ -1,6 +1,6 @@
-import { Button, Space } from "antd";
+import { Button, notification, Space } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -18,6 +18,7 @@ import { ShareSamples } from "./ShareSamples";
  * @constructor
  */
 export function ShareLayout({redirect}) {
+  const dispatch = useDispatch();
 
   const {
     originalSamples,
@@ -54,6 +55,8 @@ export function ShareLayout({redirect}) {
       currentId: currentProject,
       targetId: projectId,
       remove,
+    }).then(({ data }) => {
+      notification.success({ type: "success", message: data.message });
     });
   };
 
