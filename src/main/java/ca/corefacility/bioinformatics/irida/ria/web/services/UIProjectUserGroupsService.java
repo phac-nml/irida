@@ -100,7 +100,7 @@ public class UIProjectUserGroupsService {
 	public String addUserGroupToProject(Long projectId, NewMemberRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(request.getId());
-		ProjectRole role = ProjectRole.fromString(request.getRole());
+		ProjectRole role = ProjectRole.fromString(request.getProjectRole());
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
 		projectService.addUserGroupToProject(project, group, role, metadataRole);
 		return messageSource.getMessage("server.usergroups.add", new Object[] { group.getLabel() }, locale);
