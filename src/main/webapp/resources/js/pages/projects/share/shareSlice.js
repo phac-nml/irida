@@ -34,10 +34,6 @@ export const updateMoveSamples = createAction(
   })
 );
 
-export const setFinalStatus = createAction(`share/setFinalStatus`, (response) => {
-  console.log(response);
-});
-
 /**
  * Set up the initial state.  This is pulled from session storage which should
  * be accessed by the key "share".  The stringified object should be of the format:

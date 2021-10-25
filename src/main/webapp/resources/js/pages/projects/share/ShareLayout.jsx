@@ -1,6 +1,6 @@
-import { Button, notification, Space } from "antd";
+import { Button, Space } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -18,7 +18,7 @@ import { ShareSamples } from "./ShareSamples";
  * @constructor
  */
 export function ShareLayout({redirect}) {
-  const dispatch = useDispatch();
+  const [results, setResults] = React.useState();
 
   const {
     originalSamples,
@@ -56,7 +56,7 @@ export function ShareLayout({redirect}) {
       targetId: projectId,
       remove,
     }).then(({ data }) => {
-      notification.success({ type: "success", message: data.message });
+      setResults({ type: "success", message: data.message });
     });
   };
 
@@ -65,7 +65,9 @@ export function ShareLayout({redirect}) {
 
   return (
     <Space direction="vertical" style={{ display: "block" }} size="large">
-      {typeof projectId !== "undefined" && isError ? (
+      {typeof results === "object" ? (
+        <p>DONE</p>
+      ) : typeof projectId !== "undefined" && isError ? (
         <ShareError error={error} redirect={redirect} />
       ) : (
         <>
@@ -78,7 +80,7 @@ export function ShareLayout({redirect}) {
                 disabled={DISABLED}
                 onClick={() => shareSamples()}
                 loading={isLoading}
-                icon={<IconShare/>}
+                icon={<IconShare />}
               >
                 {i18n("ShareButton.button")}
               </Button>
