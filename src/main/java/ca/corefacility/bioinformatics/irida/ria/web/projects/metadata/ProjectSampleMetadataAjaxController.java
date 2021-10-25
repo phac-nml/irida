@@ -45,8 +45,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session   {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
-	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
-	 * {@link Sample} identifier.
+	 * @return {@link SampleMetadataStorage} which includes a {@link List} of headers and rows from the csv or excel file.
 	 * @throws Exception if there is an error reading the file
 	 */
 	@PostMapping("/file")
@@ -62,7 +61,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session          {@link HttpSession}.
 	 * @param projectId        {@link Long} identifier for the current {@link Project}.
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
-	 * @return {@link Map} containing a complete message.
+	 * @return a complete message.
 	 */
 	@PutMapping("/setSampleColumn")
 	@ResponseBody
@@ -79,7 +78,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session     {@link HttpSession}
 	 * @param projectId   {@link Long} identifier for the current project
 	 * @param sampleNames {@link List} of {@link String} sample names
-	 * @return {@link Map} of potential errors.
+	 * @return {@link String} message of how many samples were created and/or updated.
 	 */
 	@PostMapping("/save")
 	@ResponseBody
