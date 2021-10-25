@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
 
 /**
