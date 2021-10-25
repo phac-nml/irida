@@ -1,6 +1,6 @@
 import { notification, Select } from "antd";
 import React from "react";
-import { useRoles } from "../../contexts/roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 
 /**
  * React component for selecting a user group role for a member of a group
@@ -15,7 +15,7 @@ export function GroupRole({ item, canManage, updateRoleFn }) {
   const [role, setRole] = React.useState(item.role);
   const [loading, setLoading] = React.useState(false);
 
-  const { roles, getRoleFromKey } = useRoles();
+  const { roles, getRoleFromKey } = useProjectRoles();
 
   const onChange = (value) => {
     setLoading(true);

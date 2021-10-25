@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getProjectRoles } from "../apis/projects/projects";
 
-const RolesContext = createContext();
+const ProjectRolesContext = createContext();
 
 /**
  * React context to allow multiple components to get a list of project roles
@@ -11,15 +12,15 @@ const RolesContext = createContext();
  * @returns {*}
  * @constructor
  */
-function RolesProvider({ children, getRolesFn }) {
+function ProjectRolesProvider({ children }) {
   const [roles, setRoles] = useState([]);
 
   /*
   When the component is mounted, get the list up current roles from the server.
    */
   useEffect(() => {
-    getRolesFn().then((data) => setRoles(data));
-  }, [getRolesFn]);
+    getProjectRoles().then((data) => setRoles(data));
+  }, []);
 
   /**
    * Find the translation for any project role.  If the role is not found,
@@ -34,18 +35,20 @@ function RolesProvider({ children, getRolesFn }) {
   };
 
   return (
-    <RolesContext.Provider value={{ roles, getRoleFromKey }}>
+    <ProjectRolesContext.Provider value={{ roles, getRoleFromKey }}>
       {children}
-    </RolesContext.Provider>
+    </ProjectRolesContext.Provider>
   );
 }
 
-function useRoles() {
-  const context = useContext(RolesContext);
+function useProjectRoles() {
+  const context = useContext(ProjectRolesContext);
   if (context === undefined) {
-    throw new Error("useRoles must be used within a RolesProvider");
+    throw new Error(
+      "useProjectRoles must be used within a ProjectRolesProvider"
+    );
   }
   return context;
 }
 
-export { RolesProvider, useRoles };
+export { ProjectRolesProvider, useProjectRoles };

@@ -3514,6 +3514,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.21.2":
+  version: 0.21.4
+  resolution: "axios@npm:0.21.4"
+  dependencies:
+    follow-redirects: ^1.14.0
+  checksum: e6d42b269b599d36eb13be0671c237781f32e6ae72be824297c55a3e1ce63b22ba4f46bad5ab28da7d3bae50a72637d55c792cf803be1cf9de6a8bcd6d0dcc1a
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.2.0":
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
@@ -4152,12 +4161,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromedriver@npm:92.0.0":
-  version: 92.0.0
-  resolution: "chromedriver@npm:92.0.0"
+"chromedriver@npm:94.0.0":
+  version: 94.0.0
+  resolution: "chromedriver@npm:94.0.0"
   dependencies:
     "@testim/chrome-version": ^1.0.7
-    axios: ^0.21.1
+    axios: ^0.21.2
     del: ^6.0.0
     extract-zip: ^2.0.1
     https-proxy-agent: ^5.0.0
@@ -4165,7 +4174,7 @@ __metadata:
     tcp-port-used: ^1.0.1
   bin:
     chromedriver: bin/chromedriver
-  checksum: 56eacfb86717e8ccb4ddfc9a63ad55c701bd15eea65ad2eb432a10a08d3db14c2ba3dff0654c6e207af9e0939507343d5c40f1c6ba83642a2a9540ecaa837c20
+  checksum: a88ae44c109616055e78e42fafd854fa5b8fd4c1d29ab0f62f72eb1a3a4174db943de517a1cfe5ce8e11a6abc728abcfd24ee3b58c97f244696170f1091ecd3e
   languageName: node
   linkType: hard
 
@@ -6286,6 +6295,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.14.0":
+  version: 1.14.4
+  resolution: "follow-redirects@npm:1.14.4"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 93def3c22eba16caa4ff6f6956ccfda5a50e889545b1ba0046194dd8e368ff79ba6ef681b06e6dc7032b50bc93ca59e9441aa8143cb26f43f40a20bbd6374639
+  languageName: node
+  linkType: hard
+
 "for-in@npm:^1.0.2":
   version: 1.0.2
   resolution: "for-in@npm:1.0.2"
@@ -7145,7 +7164,7 @@ fsevents@^2.1.2:
     bootstrap-daterangepicker: ^3.0.3
     browserslist: ^4.16.6
     chroma-js: ^1.3.4
-    chromedriver: 92.0.0
+    chromedriver: 94.0.0
     clipboard: ^1.7.1
     css-loader: ^5.0.1
     css-minimizer-webpack-plugin: ^1.2.0

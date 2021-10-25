@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -60,6 +61,10 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Tye updating the users role
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
+		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+
+		// Try updating the users metadata role
+		page.updateMetadataRole(0, ProjectMetadataRole.LEVEL_2.toString());
 		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
 	}
 

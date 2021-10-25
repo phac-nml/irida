@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestri
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
@@ -201,6 +202,19 @@ public class UIMetadataService {
 			List<MetadataTemplateField> fields) {
 		return fields.stream()
 				.map(field -> createProjectMetadataField(project, field))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get a list of all metadata roles
+	 *
+	 * @param locale current users {@link Locale}
+	 * @return List of metadata roles that are available to the suer
+	 */
+	public List<Role> getProjectMetadataRoles(Locale locale) {
+		return Arrays.stream(ProjectMetadataRole.values())
+				.map(role -> new Role(role.toString(),
+						messageSource.getMessage("metadataRole." + role, new Object[] {}, locale)))
 				.collect(Collectors.toList());
 	}
 

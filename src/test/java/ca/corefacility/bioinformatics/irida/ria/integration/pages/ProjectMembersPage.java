@@ -34,8 +34,14 @@ public class ProjectMembersPage extends AbstractPage {
 	@FindBy(className = "t-remove-error")
 	private WebElement removeErrorNotification;
 
-	@FindBy(className = "t-role-select")
-	private List<WebElement> roleSelects;
+	@FindBy(className = "t-project-role-select")
+	private List<WebElement> projectRoleSelect;
+
+	@FindBy(className = "t-metadata-role-select")
+	private List<WebElement> metadataRoleSelect;
+
+	@FindBy(className = "ant-notification-notice-success")
+	private WebElement antSuccessNotification;
 
 	public ProjectMembersPage(WebDriver driver) {
 		super(driver);
@@ -90,7 +96,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public boolean isUpdateMemberSuccessNotificationDisplayed() {
-		return removeSuccessNotification.isDisplayed();
+		return antSuccessNotification.isDisplayed();
 	}
 
 	public void addUserToProject(String name) {
@@ -98,12 +104,21 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public boolean isAddMemberBtnVisible() {
-		return driver.findElements(By.className("t-add-member-btn")).size() > 0;
+		return driver.findElements(By.className("t-add-member-btn"))
+				.size() > 0;
 	}
 
 	public void updateUserRole(int row, String role) {
-		WebElement roleSelect = roleSelects.get(row);
+		WebElement roleSelect = projectRoleSelect.get(row);
 		roleSelect.click();
-		driver.findElement(By.className("t-" + role)).click();
+		driver.findElement(By.className("t-" + role))
+				.click();
+	}
+
+	public void updateMetadataRole(int row, String role) {
+		WebElement roleSelect = metadataRoleSelect.get(row);
+		roleSelect.click();
+		driver.findElement(By.className("t-" + role))
+				.click();
 	}
 }
