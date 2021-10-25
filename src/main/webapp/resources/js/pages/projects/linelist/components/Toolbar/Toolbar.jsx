@@ -78,8 +78,8 @@ export class ToolbarComponent extends Component {
                   className="t-import-metadata-btn"
                   href={urls.import}
                   tour="tour-import"
+                  icon={<IconCloudUpload />}
                 >
-                  <IconCloudUpload />
                   {i18n("linelist.importBtn.text")}
                 </Button>
               </Form.Item>
