@@ -6,8 +6,7 @@
 >
   <head>
     <title th:text="#{analysis.title(${analysisName})}">ANALYSIS RESULTS</title>
-    <link rel="stylesheet" th:href="@{/dist/css/analysis.bundle.css}" />
-
+    <webpacker:css entry="analysis" />
     <script th:inline="javascript">
       window.translations = [{
         "AnalysisShare.saveResultsMessage": /*[[#{workflow.label.share-analysis-samples.__${analysisType}__}]]*/ "",
@@ -26,7 +25,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/analysis.bundle.js}"></script>
+      <webpacker:js  entry="analysis" />
     </th:block>
   </body>
 </html>

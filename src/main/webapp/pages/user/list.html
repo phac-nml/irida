@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  data-layout-decorate="~{template/page}"
->
-  <head>
-    <title th:text="#{UsersPage.title}">_USER LIST TITLE_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/users-list.bundle.css}" />
-  </head>
-  <body>
-    <div id="react-root" layout:fragment="page" style="height: 100%"></div>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
+<head>
+    <title th:text="#{users.title}">_USER LIST TITLE_</title>
+    <webpacker:css entry="users-list"/>
+</head>
+<body>
+<div id="react-root" layout:fragment="page" style="height: 100%"></div>
 
-    <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/users-list.bundle.js}"></script>
-    </th:block>
-  </body>
+<th:block layout:fragment="scripts">
+    <webpacker:js entry="users-list"/>
+</th:block>
+</body>
 </html>

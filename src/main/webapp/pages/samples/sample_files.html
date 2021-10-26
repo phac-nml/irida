@@ -4,7 +4,7 @@
 	  data-layout-decorate="~{samples/_base}">
 <head>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" th:href="@{/dist/css/sample-files.bundle.css}">
+	<webpacker:css entry="sample-files"/>
 	<script th:inline="javascript">
 		window.PAGE = {
 			id: /*[[${sample.getId()}]]*/ '1',
@@ -255,9 +255,9 @@
 					<td th:switch="${assembly instanceof T(ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis)}">
 						<a class="btn btn-default btn-sm file-name" href="#"
 							th:case="true"
-						    th:href="@{/analysis/{sId}(sId=${assembly.analysisSubmission.id})}"
-						    th:text="${assembly.label}"></a>
-						<div class="file-name td_info--value" 
+							th:href="@{/analysis/{sId}(sId=${assembly.analysisSubmission.id})}"
+							th:text="${assembly.label}"></a>
+						<div class="file-name td_info--value"
 							th:case="false"
 							 style="display: flex; align-items: center; height: 35px;">
 							<div th:text="${assembly.label}"></div>
@@ -397,8 +397,8 @@
 		</form>
 	</script>
 
-	<script th:src="@{/dist/js/sample.bundle.js}"></script>
-	<script th:src="@{/dist/js/sample-files.bundle.js}"></script>
+	<webpacker:js entry="sample" />
+	<webpacker:js entry="sample-files"/>
 </th:block>
 </body>
 </html>

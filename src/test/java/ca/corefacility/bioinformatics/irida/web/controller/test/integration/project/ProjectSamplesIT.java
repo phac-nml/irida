@@ -304,6 +304,39 @@ public class ProjectSamplesIT {
 	}
 
 	@Test
+	public void testUpdateProjectSampleCollectionDate() {
+		String projectSampleUri = ITestSystemProperties.BASE_URL + "/api/samples/1";
+		Map<String, String> updatedFields = new HashMap<>();
+		String badDate = "x-y-z";
+		updatedFields.put("collectionDate", badDate);
+
+		//ensure updating date fails with bad date format
+		asUser().and()
+				.body(updatedFields)
+				.expect()
+				.response()
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.when()
+				.patch(projectSampleUri);
+
+		String goodDate = "2021-10-12";
+		updatedFields.put("collectionDate", goodDate);
+		asUser().and()
+				.body(updatedFields)
+				.expect()
+				.response()
+				.statusCode(HttpStatus.OK.value())
+				.when()
+				.patch(projectSampleUri);
+
+		// now confirm that the collectionDate was updated
+		asUser().expect()
+				.body("resource.collectionDate", is(goodDate))
+				.when()
+				.get(projectSampleUri);
+	}
+
+	@Test
 	public void testReadSampleAsAdmin() {
 		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";

@@ -3,9 +3,21 @@ const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const WebpackAssetsManifest = require("webpack-assets-manifest");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 const entries = require("./entries");
 const formatAntStyles = require("./styles");
+
+/**
+ * @file Webpack Build configuration file.
+ * Directs webpack how to compile CSS and JavaScript assets.
+ * Run in development: `yarn start`
+ *  - Better source maps
+ *  - No minification
+ * Run for production: `yarn build`
+ *  - Assets will be chunked into proper sizes
+ *  - Hashes will be appended to break cache with older files.
+ */
 
 const antColours = formatAntStyles();
 
@@ -31,9 +43,12 @@ module.exports = (env, argv) => {
       symlinks: false,
     },
     output: {
-      filename: "js/[name].bundle.js",
       path: path.resolve(__dirname, "dist"),
       pathinfo: false,
+      publicPath: `/dist/`,
+      filename: path.join("js", "[name]-[contenthash].js"),
+      chunkFilename: path.join("js", "[name]-[contenthash].chunk.js"),
+      clean: true,
     },
     /*
     Prevent bundling of jQuery, it will be added (and exposed) through the vendor bundle.
@@ -97,6 +112,17 @@ module.exports = (env, argv) => {
               new CssMinimizerPlugin({ parallel: true }),
               new TerserPlugin({ parallel: true, include: /\/resources/ }),
             ],
+            runtimeChunk: "single",
+            splitChunks: {
+              name: false,
+              chunks(chunk) {
+                // exclude modals in projects-samples-*
+                return (
+                  typeof chunk.name === "string" &&
+                  !chunk.name.includes("project-samples-")
+                );
+              },
+            },
           }
         : { minimize: false }),
     },
@@ -113,11 +139,23 @@ module.exports = (env, argv) => {
        */
       new i18nThymeleafWebpackPlugin({
         functionName: "i18n",
+        templatePath: path.join("..", "pages", "templates"),
       }),
       new webpack.ProvidePlugin({
         // Provide the custom internationalization function.
-        i18n: path.resolve(path.join(__dirname, "resources/js/i18n")),
+        i18n: path.resolve(
+          path.join(__dirname, path.join("resources", "js", "i18n"))
+        ),
         process: "process/browser",
+      }),
+      /*
+      Webpack Manifest is used by the Webpacker Thymeleaf plugin to find assets required
+      for each entry point.
+       */
+      new WebpackAssetsManifest({
+        integrity: false,
+        entrypoints: true,
+        writeToDisk: true,
       }),
     ],
   };
