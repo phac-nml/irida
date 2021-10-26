@@ -196,6 +196,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
 	}
 
+	@JsonIgnore
 	public Map<String, AnalysisOutputFile> getAnalysisOutputFilesMap() {
 		return ImmutableMap.copyOf(this.analysisOutputFilesMap);
 	}

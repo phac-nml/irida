@@ -9,11 +9,11 @@ import javax.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+
+import com.google.common.base.Strings;
 
 /**
  * Specification for searching and filtering {@link ProjectSampleJoin} properties
@@ -71,11 +71,7 @@ public class ProjectSampleSpecification {
 				predicates.add(criteriaBuilder
 						.lessThanOrEqualTo(root.get("sample").get("modifiedDate"), maxDate));
 			}
-			if (predicates.size() > 0) {
-				return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-			} else {
-				return null;
-			}
+			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		};
 	}
 }

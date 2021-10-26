@@ -21,11 +21,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
@@ -190,6 +189,7 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 	 *
 	 * @return the bytes for the file
 	 */
+	@JsonIgnore
 	public byte[] getBytesForFile() {
 		byte[] bytes = new byte[0];
 		try{

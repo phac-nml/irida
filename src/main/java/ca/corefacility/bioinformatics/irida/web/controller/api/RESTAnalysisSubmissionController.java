@@ -25,9 +25,12 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.collect.ImmutableMap;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -312,6 +315,23 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 		ResponseResource<AnalysisOutputFile> responseObject = new ResponseResource<>(analysisOutputFile);
 
 		return responseObject;
+	}
+
+	/**
+	 * Get the actual file contents for an analysis output file.
+	 *
+	 * @param submissionId The {@link AnalysisSubmission} id
+	 * @param fileId       The {@link AnalysisOutputFile} id
+	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
+	 */
+	@Hidden
+	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
+			@PathVariable Long fileId) {
+		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
+		return new FileSystemResource(analysisOutputFile.getFile()
+				.toFile());
 	}
 
 	/**
