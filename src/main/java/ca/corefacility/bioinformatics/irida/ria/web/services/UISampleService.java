@@ -206,10 +206,9 @@ public class UISampleService {
 	 *
 	 * @param request Request containing the details of the move
 	 * @param locale  current users {@link Locale}
-	 * @return The success message to show to the user
 	 * @throws Exception if project or samples cannot be found
 	 */
-	public String shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws Exception {
+	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws Exception {
 		Project currentProject = projectService.read(request.getCurrentId());
 		Project targetProject = projectService.read(request.getTargetId());
 
@@ -229,20 +228,5 @@ public class UISampleService {
 						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
-		if (request.getSampleIds()
-				.size() == 1) {
-			Sample sample = sampleService.read(request.getSampleIds()
-					.get(0));
-			final String code = request.getRemove() ?
-					"server.ShareSamples.move.success.singular" :
-					"server.ShareSamples.share.success.singular";
-			return messageSource.getMessage(code, new Object[] { sample.getSampleName(), targetProject.getLabel() },
-					locale);
-		}
-		final String code = request.getRemove() ?
-				"server.ShareSamples.move.success.plural" :
-				"server.ShareSamples.share.success.singular";
-		return messageSource.getMessage(code, new Object[] { request.getSampleIds().size(), targetProject.getLabel() },
-				locale);
 	}
 }

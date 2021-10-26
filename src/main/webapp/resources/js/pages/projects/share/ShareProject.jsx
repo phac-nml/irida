@@ -1,7 +1,6 @@
 import { Select, Space, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
+import { useDispatch } from "react-redux";
 import { setProject } from "./shareSlice";
 
 /**
@@ -9,31 +8,18 @@ import { setProject } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareProject() {
+export function ShareProject({ projects = [] }) {
   const dispatch = useDispatch();
-  const { currentProject } = useSelector((state) => state.shareReducer);
   const [options, setOptions] = React.useState();
 
-  /*
-  This fetches a list of the projects that the user has access to.
-   */
-  const {
-    data: projects,
-    isLoading: projectLoading,
-  } = useGetPotentialProjectsToShareToQuery(currentProject, {
-    skip: !currentProject,
-  });
-
   React.useEffect(() => {
-    if (!projectLoading) {
-      setOptions(
-        projects.map((project) => ({
-          label: project.name,
-          value: project.identifier,
-        }))
-      );
-    }
-  }, [projects, projectLoading]);
+    setOptions(
+      projects.map((project) => ({
+        label: project.name,
+        value: project.identifier,
+      }))
+    );
+  }, [projects]);
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
@@ -42,7 +28,6 @@ export function ShareProject() {
         autoFocus
         size="large"
         style={{ width: `100%` }}
-        loading={projectLoading}
         options={options}
         onChange={(projectId) => dispatch(setProject(projectId))}
       />

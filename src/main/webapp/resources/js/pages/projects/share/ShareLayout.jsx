@@ -2,6 +2,9 @@ import { Button, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
+  useGetPotentialProjectsToShareToQuery
+} from "../../../apis/projects/projects";
+import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
@@ -33,6 +36,16 @@ export function ShareLayout({ redirect }) {
     shareSamplesWithProject,
     { isLoading, isError, error },
   ] = useShareSamplesWithProjectMutation();
+
+  /*
+  This fetches a list of the projects that the user has access to.
+   */
+  const { data: projects } = useGetPotentialProjectsToShareToQuery(
+    currentProject,
+    {
+      skip: !currentProject,
+    }
+  );
 
   const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
     skip: !projectId,
@@ -67,12 +80,16 @@ export function ShareLayout({ redirect }) {
   return (
     <Space direction="vertical" style={{ display: "block" }} size="large">
       {typeof result === "string" ? (
-        <ShareSuccess message={result} removed={remove} />
+        <ShareSuccess
+          removed={remove}
+          samples={samples}
+          project={projects.find((project) => project.identifier === projectId)}
+        />
       ) : typeof projectId !== "undefined" && isError ? (
         <ShareError error={error} redirect={redirect} />
       ) : (
         <>
-          <ShareProject />
+          <ShareProject projects={projects} />
           <ShareSamples samples={samples} redirect={redirect} />
           {SHOW_BUTTON && (
             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
