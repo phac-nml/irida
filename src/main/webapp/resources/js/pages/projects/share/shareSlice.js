@@ -25,7 +25,7 @@ export const updatedLocked = createAction(
 );
 
 /**
- * Action to update whether the samples are to be movied or just copied
+ * Action to update whether the samples are to be moved or just copied
  */
 export const updateMoveSamples = createAction(
   `share/updateMoveSamples`,
