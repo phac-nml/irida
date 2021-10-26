@@ -52,7 +52,7 @@ export function ShareLayout({ redirect }) {
   });
 
   /*
-  originalSampls contains all samples, here we are filtering it
+  originalSamples contains all samples, here we are filtering it
   to only show samples that are not in the target project.
    */
   let samples = originalSamples.filter(
