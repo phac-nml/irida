@@ -1,6 +1,9 @@
 import { Select, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
+import {
+  useGetPotentialProjectsToShareToQuery
+} from "../../../apis/projects/projects";
 import { setProject } from "./shareSlice";
 
 /**
@@ -8,9 +11,22 @@ import { setProject } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareProject({ projects = [] }) {
+export function ShareProject({ currentProject }) {
   const dispatch = useDispatch();
   const [options, setOptions] = React.useState();
+
+  /*
+  This fetches a list of the projects that the user has access to.
+   */
+  const {
+    data: projects = [],
+    isLoading
+  } = useGetPotentialProjectsToShareToQuery(
+    currentProject,
+    {
+      skip: !currentProject,
+    }
+  );
 
   React.useEffect(() => {
     setOptions(
@@ -26,6 +42,7 @@ export function ShareProject({ projects = [] }) {
       <Typography.Text strong>{i18n("ShareSamples.projects")}</Typography.Text>
       <Select
         autoFocus
+        loading={isLoading}
         size="large"
         style={{ width: `100%` }}
         options={options}

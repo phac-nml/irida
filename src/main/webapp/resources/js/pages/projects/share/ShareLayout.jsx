@@ -89,7 +89,7 @@ export function ShareLayout({ redirect }) {
         <ShareError error={error} redirect={redirect} />
       ) : (
         <>
-          <ShareProject projects={projects} />
+          <ShareProject currentProject={currentProject} />
           <ShareSamples samples={samples} redirect={redirect} />
           {SHOW_BUTTON && (
             <div style={{ display: "flex", flexDirection: "row-reverse" }}>

@@ -9,11 +9,11 @@ function SingleMoved({ project, sample }) {
       title={
         <ReactMarkdown>{i18n("ShareSuccess.move.title.single")}</ReactMarkdown>
       }
-      subTitle={i18n(
-        "ShareSuccess.move.subTitle.single",
-        sample.name,
-        project.name
-      )}
+      subTitle={
+        <ReactMarkdown>
+          {i18n("ShareSuccess.move.subTitle.single", sample.name, project.name)}
+        </ReactMarkdown>
+      }
     />
   );
 }
@@ -25,11 +25,11 @@ function SingleShared({ project, sample }) {
       title={
         <ReactMarkdown>{i18n("ShareSuccess.move.title.single")}</ReactMarkdown>
       }
-      subTitle={i18n(
-        "ShareSuccess.move.subTitle.single",
-        sample.name,
-        project.name
-      )}
+      subTitle={
+        <ReactMarkdown>
+          {i18n("ShareSuccess.move.subTitle.single", sample.name, project.name)}
+        </ReactMarkdown>
+      }
     />
   );
 }
