@@ -11,7 +11,11 @@ function SingleMoved({ project, sample }) {
       }
       subTitle={
         <ReactMarkdown>
-          {i18n("ShareSuccess.move.subTitle.single", sample.name, project.name)}
+          {i18n(
+            "ShareSuccess.move.subTitle.single",
+            sample.name,
+            project.label
+          )}
         </ReactMarkdown>
       }
     />
@@ -27,7 +31,11 @@ function SingleShared({ project, sample }) {
       }
       subTitle={
         <ReactMarkdown>
-          {i18n("ShareSuccess.move.subTitle.single", sample.name, project.name)}
+          {i18n(
+            "ShareSuccess.move.subTitle.single",
+            sample.name,
+            project.label
+          )}
         </ReactMarkdown>
       }
     />
@@ -43,14 +51,14 @@ function MultipleMoved({ project, count }) {
       }
       subTitle={
         <ReactMarkdown>
-          {i18n("ShareSuccess.move.subTitle.plural", count, project.name)}
+          {i18n("ShareSuccess.move.subTitle.plural", count, project.label)}
         </ReactMarkdown>
       }
     />
   );
 }
 
-function MultipleShared(project, count) {
+function MultipleShared({ project, count }) {
   return (
     <Result
       status="success"
@@ -59,7 +67,7 @@ function MultipleShared(project, count) {
       }
       subTitle={
         <ReactMarkdown>
-          {i18n("ShareSuccess.share.subTitle.plural", count, project.name)}
+          {i18n("ShareSuccess.share.subTitle.plural", count, project.label)}
         </ReactMarkdown>
       }
     />
