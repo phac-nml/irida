@@ -7,8 +7,10 @@ import {
   IconRemove,
   IconUnlocked,
 } from "../../../components/icons/Icons";
-import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
-import { green6, grey1, grey2, yellow6 } from "../../../styles/colors";
+import {
+  SampleDetailViewer
+} from "../../../components/samples/SampleDetailViewer";
+import { green6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
 
 /**
@@ -25,7 +27,7 @@ export function SharedSamplesList({ list = [] }) {
 
     return (
       <List.Item
-        style={{ ...style, backgroundColor: grey1 }}
+        style={{ ...style }}
         actions={[
           <Tooltip
             key="remove"
@@ -57,11 +59,7 @@ export function SharedSamplesList({ list = [] }) {
               </Tooltip>
             ) : (
               <Tooltip title={i18n("ShareSamples.avatar.locked")}>
-                <Avatar
-                  style={{ backgroundColor: yellow6 }}
-                  size="small"
-                  icon={<IconLocked />}
-                />
+                <Avatar size="small" icon={<IconLocked />} />
               </Tooltip>
             )
           }
@@ -81,14 +79,11 @@ export function SharedSamplesList({ list = [] }) {
     list.length * ROW_HEIGHT < MAX_LIST_HEIGHT
       ? list.length * ROW_HEIGHT + 2 // 2 is to offset for borders
       : MAX_LIST_HEIGHT;
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Typography.Text strong>{i18n("ShareSamplesList.title")}</Typography.Text>
-      <List
-        bordered
-        rowKey={(sample) => sample.name}
-        style={{ backgroundColor: grey2 }}
-      >
+      <List bordered rowKey={(sample) => sample.name}>
         <VList
           height={height}
           itemCount={list.length}

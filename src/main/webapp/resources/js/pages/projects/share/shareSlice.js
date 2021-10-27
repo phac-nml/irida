@@ -1,17 +1,36 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 
+/**
+ * Action to set the target project for the samples
+ */
 export const setProject = createAction(`share/setProject`, (projectId) => ({
   payload: { projectId },
 }));
 
+/**
+ * Action to remove a sample from being shared / moved
+ */
 export const removeSample = createAction(`share/removeSample`, (sampleId) => ({
   payload: { sampleId },
 }));
 
-export const updateOwnership = createAction(
+/**
+ * Action to set the status of locking samples to be copied
+ */
+export const updatedLocked = createAction(
   `share/updateOwnership`,
-  (owner) => ({
-    payload: { owner },
+  (locked) => ({
+    payload: { locked },
+  })
+);
+
+/**
+ * Action to update whether the samples are to be moved or just copied
+ */
+export const updateMoveSamples = createAction(
+  `share/updateMoveSamples`,
+  (remove) => ({
+    payload: { remove },
   })
 );
 
@@ -29,8 +48,19 @@ export const updateOwnership = createAction(
  */
 const initialState = (() => {
   const stringData = window.sessionStorage.getItem("share");
+
+  if (stringData === null) {
+    return {};
+  }
+
   const { samples, projectId: currentProject } = JSON.parse(stringData);
-  return { originalSamples: samples, samples, currentProject, owner: true };
+  return {
+    originalSamples: samples,
+    samples,
+    currentProject,
+    locked: false,
+    remove: false,
+  };
 })();
 
 const shareSlice = createSlice({
@@ -47,8 +77,15 @@ const shareSlice = createSlice({
       );
     });
 
-    builder.addCase(updateOwnership, (state, action) => {
-      state.owner = action.payload.owner;
+    builder.addCase(updatedLocked, (state, action) => {
+      state.locked = action.payload.locked;
+    });
+
+    builder.addCase(updateMoveSamples, (state, action) => {
+      state.remove = action.payload.remove;
+      if (action.payload.remove) {
+        state.locked = false;
+      }
     });
   },
 });

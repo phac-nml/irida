@@ -18,10 +18,20 @@ export const samplesApi = createApi({
         url: `identifiers?projectId=${projectId}`,
       }),
     }),
+    shareSamplesWithProject: build.mutation({
+      query: (body) => ({
+        url: `share`,
+        method: `POST`,
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetSampleIdsForProjectQuery } = samplesApi;
+export const {
+  useGetSampleIdsForProjectQuery,
+  useShareSamplesWithProjectMutation,
+} = samplesApi;
 
 /**
  * Server side validation of a new sample name.

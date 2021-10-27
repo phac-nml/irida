@@ -17,6 +17,7 @@
  * expected.
  */
 
+
 /**
  * On load, get all the internationalization strings and combine them into one object
  */

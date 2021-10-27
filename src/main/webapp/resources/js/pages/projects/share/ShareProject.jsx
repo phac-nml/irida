@@ -1,7 +1,9 @@
-import { Form, Select, Typography } from "antd";
+import { Select, Space, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
+import { useDispatch } from "react-redux";
+import {
+  useGetPotentialProjectsToShareToQuery
+} from "../../../apis/projects/projects";
 import { setProject } from "./shareSlice";
 
 /**
@@ -9,48 +11,43 @@ import { setProject } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareProject() {
+export function ShareProject({ currentProject }) {
   const dispatch = useDispatch();
-  const { currentProject } = useSelector((state) => state.shareReducer);
   const [options, setOptions] = React.useState();
 
   /*
   This fetches a list of the projects that the user has access to.
    */
   const {
-    data: projects,
-    isLoading: projectLoading,
-  } = useGetPotentialProjectsToShareToQuery(currentProject, {
-    skip: !currentProject,
-  });
+    data: projects = [],
+    isLoading
+  } = useGetPotentialProjectsToShareToQuery(
+    currentProject,
+    {
+      skip: !currentProject,
+    }
+  );
 
   React.useEffect(() => {
-    if (!projectLoading) {
-      setOptions(
-        projects.map((project) => ({
-          label: project.name,
-          value: project.identifier,
-        }))
-      );
-    }
-  }, [projects, projectLoading]);
+    setOptions(
+      projects.map((project) => ({
+        label: project.name,
+        value: project.identifier,
+      }))
+    );
+  }, [projects]);
 
   return (
-    <Form.Item
-      label={
-        <Typography.Text strong>
-          {i18n("ShareSamples.projects")}
-        </Typography.Text>
-      }
-    >
+    <Space direction="vertical" style={{ display: "block" }}>
+      <Typography.Text strong>{i18n("ShareSamples.projects")}</Typography.Text>
       <Select
         autoFocus
+        loading={isLoading}
         size="large"
         style={{ width: `100%` }}
-        loading={projectLoading}
         options={options}
         onChange={(projectId) => dispatch(setProject(projectId))}
       />
-    </Form.Item>
+    </Space>
   );
 }

@@ -1,9 +1,8 @@
-import { Alert, Space, Switch, Typography } from "antd";
+import { Alert, Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
 import { SharedSamplesList } from "./SharedSamplesList";
-import { updateOwnership } from "./shareSlice";
+import { updatedLocked, updateMoveSamples } from "./shareSlice";
 
 /**
  * React component to review the samples to be shared with another project.
@@ -11,19 +10,10 @@ import { updateOwnership } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples() {
+export function ShareSamples({ samples = [], redirect }) {
   const dispatch = useDispatch();
-  const { originalSamples, owner } = useSelector((state) => state.shareReducer);
-  console.log({ owner });
-
-  const { projectId } = useSelector((state) => state.shareReducer);
-
-  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
-    skip: !projectId,
-  });
-
-  const samples = originalSamples.filter(
-    (sample) => !existingIds.includes(sample.id)
+  const { originalSamples, locked, remove } = useSelector(
+    (state) => state.shareReducer
   );
 
   const SHOW_SAMPLES = samples.length > 0;
@@ -36,21 +26,23 @@ export function ShareSamples() {
       {SHOW_SAMPLES && (
         <>
           <SharedSamplesList list={samples} />
-          <Space>
-            <Switch
-              checked={owner}
-              onChange={(e) => dispatch(updateOwnership(e))}
-            />
-            {owner ? (
-              <Typography.Text strong>
-                {i18n("ShareSamples.owner")}
-              </Typography.Text>
-            ) : (
-              <Typography.Text strong>
-                {i18n("ShareSamples.locked")}
-              </Typography.Text>
-            )}
-          </Space>
+          <Checkbox
+            checked={remove}
+            onChange={(e) => dispatch(updateMoveSamples(e.target.checked))}
+          >
+            <Typography.Text strong>
+              {i18n("ShareSamples.checkbox.remove")}
+            </Typography.Text>
+          </Checkbox>
+          <Checkbox
+            checked={locked}
+            onChange={(e) => dispatch(updatedLocked(e.target.checked))}
+            disabled={remove}
+          >
+            <Typography.Text strong>
+              {i18n("ShareSamples.checkbox.lock")}
+            </Typography.Text>
+          </Checkbox>
         </>
       )}
       {SHOW_NO_SAMPLES_WARNING && (
