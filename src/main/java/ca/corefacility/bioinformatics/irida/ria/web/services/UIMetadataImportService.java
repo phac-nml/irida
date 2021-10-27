@@ -149,8 +149,15 @@ public class UIMetadataImportService {
 	 */
 	public String saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
 			List<String> sampleNames) throws SavedMetadataException {
-		List<String> DEFAULT_HEADERS = ImmutableList.of("Sample Id", "ID", "Modified Date", "Modified On",
-				"Created Date", "Created On", "Coverage", "Project ID");
+		List<String> DEFAULT_HEADERS = ImmutableList.of(
+				messageSource.getMessage("project.samples.table.sample-id", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.id", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.modified-date", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.created-date", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.created", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.coverage", new Object[] {}, locale),
+				messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale));
 		Project project = projectService.read(projectId);
 		SampleMetadataStorage stored = (SampleMetadataStorage) session.getAttribute("pm-" + projectId);
 		boolean hasErrors = false;
