@@ -5,6 +5,15 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile, IconFile, IconRemove } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
 
+/**
+ * React component to display single end file details
+ *
+ * @param {array} files
+ * @param sampleId
+ * @param fastqcResults
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SingleEndFileRenderer({
   files,
   sampleId,
