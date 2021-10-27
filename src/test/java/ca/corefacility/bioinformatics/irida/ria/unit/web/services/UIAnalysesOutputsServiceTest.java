@@ -88,7 +88,7 @@ public class UIAnalysesOutputsServiceTest {
 
 		List<ProjectSampleAnalysisOutputInfo> userProjectSampleAnalysisOutputInfos = uiProjectAnalysesService.getUserSingleSampleOutputs();
 
-		verify(userService, times(1)).getUserByUsername(principal.getName());
+		verify(userService, times(2)).getUserByUsername(principal.getName());
 
 		verify(analysisSubmissionService, times(1)).getAllUserAnalysisOutputInfo(
 				userService.getUserByUsername(principal.getName()));
