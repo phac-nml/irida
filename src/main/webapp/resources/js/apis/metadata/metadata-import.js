@@ -19,6 +19,9 @@ export const metadataImportApi = createApi({
           projectId,
         },
       }),
+      /**
+      Transforming the response to include if the row has a valid sample name and a unique row key for rendering the ant design table.
+      */
       transformResponse(response) {
         const transformed = {
           ...response,
