@@ -5,6 +5,14 @@ import { SequenceFileDetailsRenderer } from "./SequenceFileDetailsRenderer";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+/**
+ * React component to display paired end file details
+ *
+ * @param {array} pair
+ * @param sampleId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function PairedFileRenderer({ pair, sampleId }) {
   console.log(pair);
   const files = [

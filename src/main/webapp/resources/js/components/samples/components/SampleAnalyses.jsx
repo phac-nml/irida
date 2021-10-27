@@ -1,6 +1,5 @@
 import React from "react";
-import { Input, Table } from "antd";
-import { SPACE_MD } from "../../../styles/spacing";
+import { Input, Space, Table } from "antd";
 
 const { Search } = Input;
 /**
@@ -31,15 +30,14 @@ export function SampleAnalyses() {
   ];
 
   return (
-    <>
+    <Space style={{ display: "block" }} direction="vertical">
       <Search
         placeholder={i18n("SampleAnalyses.inputSearchText")}
         onChange={(e) => console.log(e.target.value)}
-        style={{ width: "100%", marginBottom: SPACE_MD }}
         allowClear={true}
         className="t-sample-search-input"
       />
       <Table bordered columns={columns} className="t-sample-analyses" />
-    </>
+    </Space>
   );
 }
