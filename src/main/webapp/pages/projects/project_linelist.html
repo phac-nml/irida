@@ -5,13 +5,10 @@
         data-layout-decorate="~{projects/_base}">
 <head>
     <title th:text="#{linelist.page-title}">Title</title>
-    <webpacker:css entry="project-linelist" />
+    <webpacker:css entry="project-linelist"/>
     <script th:inline="javascript">
         window.PAGE = {
-          project: /*[[${project}]]*/ {},
-          urls: {
-            import: /*[[@{/projects/{id}/sample-metadata/upload/file(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload/file"
-          }
+          project: /*[[${project}]]*/ {}
         };
 
     </script>
@@ -26,7 +23,7 @@
 </main>
 
 <th:block layout:fragment="scripts">
-    <webpacker:js entry="project-linelist" />
+    <webpacker:js entry="project-linelist"/>
 </th:block>
 </body>
 </html>
