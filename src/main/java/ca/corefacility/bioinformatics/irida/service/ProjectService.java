@@ -38,7 +38,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @param project      the {@link Project} to add the user to.
 	 * @param user         the user to add to the {@link Project}.
-	 * @param role         the role that the user plays on the {@link Project}.
+	 * @param role         the role that the user has on the {@link Project}.
 	 * @param metadataRole the access level the user has on the metadata in the project
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
@@ -52,11 +52,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @param project      the {@link Project} to add the user to.
 	 * @param userGroup    the user group to add to the {@link Project}.
-	 * @param role         the role that the user plays on the {@link Project}.
+	 * @param role         the role that the group has on the {@link Project}.
 	 * @param metadataRole the {@link ProjectMetadataRole} to set for the group
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role, ProjectMetadataRole metadataRole);
+	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role,
+			ProjectMetadataRole metadataRole);
 
 	/**
 	 * Remove the specified {@link User} from the {@link Project}.
