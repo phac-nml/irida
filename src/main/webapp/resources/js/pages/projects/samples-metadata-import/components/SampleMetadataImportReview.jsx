@@ -17,22 +17,22 @@ import styled from "styled-components";
 const { Paragraph, Text } = Typography;
 
 const MetadataTable = styled(Table)`
-  tr.red > td {
+  tr.row-error > td {
     background-color: ${red1};
   }
-  tr.red:hover > td {
+  tr.row-error:hover > td {
     background-color: ${red2};
   }
-  tr.red > td.ant-table-cell-fix-left {
+  tr.row-error > td.ant-table-cell-fix-left {
     background-color: ${red1};
   }
-  tr.red:hover > td.ant-table-cell-fix-left {
+  tr.row-error:hover > td.ant-table-cell-fix-left {
     background-color: ${red2};
   }
-  tr.red > td.ant-table-cell-fix-right {
+  tr.row-error > td.ant-table-cell-fix-right {
     background-color: ${red1};
   }
-  tr.red:hover > td.ant-table-cell-fix-right {
+  tr.row-error:hover > td.ant-table-cell-fix-right {
     background-color: ${red2};
   }
 `;
@@ -204,7 +204,7 @@ export function SampleMetadataImportReview() {
         rowKey={(row) => row.rowKey}
         loading={isFetching}
         rowClassName={(record, index) =>
-          record.saved === false ? "red" : null
+          record.saved === false ? "row-error" : null
         }
         rowSelection={rowSelection}
         columns={columns}
