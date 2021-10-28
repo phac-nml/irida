@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -134,13 +135,30 @@ public class ProjectSampleMetadataAjaxControllerTest {
 	@Test
 	public void saveProjectSampleMetadataTest() {
 		Sample sample = createSample();
-		SampleMetadataStorage stored = createSampleMetadataStorage();
-		when(session.getAttribute("pm-" + PROJECT_ID)).thenReturn(stored);
-
 		List<String> sampleNames = List.of(sample.getSampleName());
 		Locale locale = new Locale("en");
-		ResponseEntity<AjaxResponse> response = controller.saveProjectSampleMetadata(locale, session, PROJECT_ID,
-				sampleNames);
+		SampleMetadataStorage stored = createSampleMetadataStorage();
+		when(session.getAttribute("pm-" + PROJECT_ID)).thenReturn(stored);
+		when(messageSource.getMessage("project.samples.table.sample-id", new Object[] {}, locale)).thenReturn(
+				"Sample Id");
+		when(messageSource.getMessage("project.samples.table.id", new Object[] {}, locale)).thenReturn("ID");
+		when(messageSource.getMessage("project.samples.table.modified-date", new Object[] {}, locale)).thenReturn(
+				"Modified Date");
+		when(messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale)).thenReturn(
+				"Modified On");
+		when(messageSource.getMessage("project.samples.table.created-date", new Object[] {}, locale)).thenReturn(
+				"Created Date");
+		when(messageSource.getMessage("project.samples.table.created", new Object[] {}, locale)).thenReturn(
+				"Created On");
+		when(messageSource.getMessage("project.samples.table.coverage", new Object[] {}, locale)).thenReturn(
+				"Coverage");
+		when(messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale)).thenReturn(
+				"Project ID");
+
+		Mockito.
+
+				ResponseEntity<AjaxResponse> response = controller.saveProjectSampleMetadata(locale, session,
+				PROJECT_ID, sampleNames);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
 		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
