@@ -57,14 +57,14 @@ export function SampleFilesListItem({
             <Radio.Group style={{ width: `100%` }} value={sample.selected}>
               {sample.files.map((file) => (
                 <BlockRadioInput
-                  key={`pf-${file.identifier}`}
-                  onClick={(e) => updateSelected(e, file.identifier)}
+                  key={`pf-${file.fileInfo.identifier}`}
+                  onClick={(e) => updateSelected(e, file.fileInfo.identifier)}
                 >
                   <Radio
-                    key={`file-${file.identifier}`}
-                    value={file.identifier}
+                    key={`file-${file.fileInfo.identifier}`}
+                    value={file.fileInfo.identifier}
                   >
-                    {file.label}
+                    {file.fileInfo.label}
                   </Radio>
                 </BlockRadioInput>
               ))}

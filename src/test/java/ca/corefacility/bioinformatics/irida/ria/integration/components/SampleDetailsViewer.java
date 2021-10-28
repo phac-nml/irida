@@ -23,6 +23,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-metadata-item")
 	private List<WebElement> metadataFields;
 
+	@FindBy(id="rc-tabs-0-tab-metadata")
+	private WebElement metadataTabLink;
+
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
 	}
@@ -58,5 +61,10 @@ public class SampleDetailsViewer extends AbstractPage {
 			}
 		}
 		return null;
+	}
+
+	public void clickMetadataTabLink() {
+		metadataTabLink.click();
+		waitForTime(300);
 	}
 }

@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
 
 /**
  * Represents a sample within the cart on the pipeline launch page.
@@ -16,7 +16,7 @@ public class LaunchSample {
 	/*
 	This is for the type of files that are allowed in the pipeline.
 	 */
-	private List<SequencingObject> files;
+	private List<SampleSequencingObjectFileModel> files;
 
 	public LaunchSample(Sample sample, ca.corefacility.bioinformatics.irida.model.project.Project project) {
 		this.id = sample.getId();
@@ -36,11 +36,11 @@ public class LaunchSample {
 		return project;
 	}
 
-	public List<SequencingObject> getFiles() {
+	public List<SampleSequencingObjectFileModel> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<SequencingObject> files) {
+	public void setFiles(List<SampleSequencingObjectFileModel> files) {
 		this.files = files;
 	}
 

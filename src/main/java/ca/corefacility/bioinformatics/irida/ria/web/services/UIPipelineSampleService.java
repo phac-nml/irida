@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchSample;
 
 /**
@@ -40,7 +40,7 @@ public class UIPipelineSampleService {
 		cart.forEach((project, projectSamples) -> {
 			for (Sample sample : projectSamples) {
 				LaunchSample launchSample = new LaunchSample(sample, project);
-				List<SequencingObject> files = new ArrayList<>();
+				List<SampleSequencingObjectFileModel> files = new ArrayList<>();
 				if (paired) {
 					files.addAll(sampleService.getPairedSequenceFilesForSample(sample, project));
 				}
