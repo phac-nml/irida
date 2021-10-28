@@ -6,7 +6,6 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -155,10 +154,8 @@ public class ProjectSampleMetadataAjaxControllerTest {
 		when(messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale)).thenReturn(
 				"Project ID");
 
-		Mockito.
-
-				ResponseEntity<AjaxResponse> response = controller.saveProjectSampleMetadata(locale, session,
-				PROJECT_ID, sampleNames);
+		ResponseEntity<AjaxResponse> response = controller.saveProjectSampleMetadata(locale, session, PROJECT_ID,
+				sampleNames);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
 		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
