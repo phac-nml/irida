@@ -96,22 +96,5 @@ public class ReadMetadataEntryPermission extends RepositoryBackedPermission<Meta
 
 		return false;
 	}
-
-	private ProjectMetadataRole getMaxMetadataRoleForUserAndGroups(ProjectUserJoin userJoin,
-			List<UserGroupProjectJoin> groupsForProjectAndUser) {
-		ProjectMetadataRole metadataRole = null;
-
-		if (userJoin != null) {
-			metadataRole = userJoin.getMetadataRole();
-		}
-
-		for (UserGroupProjectJoin group : groupsForProjectAndUser) {
-			if (metadataRole.getLevel() < group.getMetadataRole()
-					.getLevel()) {
-				metadataRole = group.getMetadataRole();
-			}
-		}
-
-		return metadataRole;
-	}
+	
 }
