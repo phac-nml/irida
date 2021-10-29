@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -22,7 +23,14 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSample(2);
 		samplesPage.selectSample(3);
 		samplesPage.shareSamples();
+
+		Assert.assertFalse("Share button should be disabled without a project selected",
+				shareSamplesPage.isShareButtonDisabled());
 		shareSamplesPage.searchForProject("project2");
+		Assert.assertTrue("Share button should be enabled after selecting a project",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.submitShareRequest();
+
 		String foobar = "baz";
 	}
 }

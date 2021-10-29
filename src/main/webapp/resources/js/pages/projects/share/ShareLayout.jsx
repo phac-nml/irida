@@ -72,6 +72,7 @@ export function ShareLayout({redirect}) {
             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
               <Button
                 type="primary"
+                className="t-share-button"
                 disabled={DISABLED}
                 onClick={() => shareSamples()}
                 loading={isLoading}
