@@ -1,132 +1,18 @@
 <!DOCTYPE html>
 <html
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{projects/_base}">
-<head>
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
     <title th:text="#{metadata.page-title}"></title>
-    <webpacker:css entry="samples-metadata-import"/>
-</head>
-<body ng-app="irida.metadata.importer">
-<div layout:fragment="main">
-    <h3 th:text="#{metadata.upload.component.title}"></h3>
-    <section ui-view=""></section>
-</div>
+    <webpacker:css entry="samples-metadata-import" />
+  </head>
 
-<th:block layout:fragment="scripts">
-    <script type="text/ng-template" id="upload.component.tmpl.html">
-        <p class="lead spaced-bottom" th:text="#{metadata.upload.component.intro}"></p>
-        <div ng-show="$ctrl.errors" class="alert alert-danger">
-            <b><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;<th:block
-                    th:text="#{metadata.upload.errors.title}"/>
-            </b><br/>
-            <th:block th:text="#{metadata.upload.errors.repeating-headers}"/>
-            : {{$ctrl.errors}}
-        </div>
-        <div ng-show="$ctrl.badFile" class="alert alert-danger">
-            <b><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
-                <th:block th:text="#{metadata.upload.component.error.bad-file.title}"/>
-            </b>
-            <p th:text="#{metadata.upload.component.error.bad-file.body}"></p>
-        </div>
-        <div class="alert alert-info">
-            <p th:utext="#{metadata.upload.component.text}"></p>
-            <br/>
-            <b th:text="#{metadata.upload.component.warning}"></b>
-        </div>
-        <div class="">
-            <input type="file" id="file-upload-button" name="files" class="inputfile blocked"
-                   ngf-change="$ctrl.uploadFiles($files)"
-                   ngf-pattern="'.xlsx,.xls'"
-                   accept=".xlsx, .xls"
-                   ngf-select="" />
-            <label for="file-upload-button"
-                   ngf-drop="$ctrl.uploadFiles($files)">
-                <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;
-                <th:block th:text="#{metadata.dropzone.message}"></th:block>
-            </label>
-        </div>
-    </script>
-    <script type="text/ng-template" id="sampleId.tmpl.html">
-        <div class="row">
-            <div class="col-md-12 clearfix">
-                <button id="sampleId-previous" class="btn btn-default spaced-bottom" ng-click="$ctrl.selectNewFile()">
-                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;
-                    <th:block th:text="#{metadata.header.component.prev-nav}"/>
-                </button>
-                <button id="preview-btn" class="btn btn-default pull-right spaced-bottom"
-                        ng-click="$ctrl.displayMetadata()">
-                    <th:block th:text="#{metadata.header.component.next-nav}"/>&nbsp;
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <h4 th:text="#{metadata.header.description}">_Select which column maps to the sample ID in IRIDA_</h4>
-            </div>
-        </div>
-        <ul class="list-group">
-            <li class="list-group-item" ng-repeat="header in $ctrl.headers track by $index">
-                <header-item header="header"></header-item>
-            </li>
-        </ul>
-    </script>
-    <script type="text/ng-template" id="results.component.tmpl.html">
-        <div class="row spaced-bottom">
-            <div class="col-md-12 clearfix">
-                <a ui-sref="sampleId" class="btn btn-default">
-                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;
-                    <th:block th:text="#{metadata.results.component.prev-nav}" /></a>
-            </div>
-        </div>
-        <ul class="nav nav-pills nav-justified spaced-bottom">
-            <li role="presentation" ui-sref-active="active">
-                <a id="found-pill" ui-sref="results.found"><th:block th:text="#{metadata.results.component.found-nav}" />&nbsp;<span class="badge" ng-bind="$ctrl.found"></span></a>
-            </li>
-            <li role="presentation" id="danger" ui-sref-active="active">
-                <a id="missing-pill" ui-sref="results.missing"><th:block th:text="#{metadata.results.component.missing-nav}"/>&nbsp;<span class="badge" ng-bind="$ctrl.missing"></span></a>
-            </li>
-        </ul>
-        <ui-view></ui-view>
-    </script>
-    <script type="text/ng-template" id="results.found.component.tmpl.html">
-        <div class="alert alert-success" ng-show="$ctrl.rows.length &gt; 0">
-            <strong>
-                <i class="far fa-thumbs-up spaced-right__sm"></i>
-                <th:block th:text="#{metadata.results.found.component.title}"/>
-            </strong>
-            <save-metadata
-                    data:url="@{/projects/{id}/linelist(id=${projectId})}"
-                    data:label="#{metadata.results.found.component.save}">
-            </save-metadata>
-        </div>
-        <div class="alert alert-danger" ng-show="$ctrl.rows.length === 0">
-            <strong>
-                <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>nbsp;
-                <th:block th:text="#{metadata.results.found.component.empty-title}"/>
-            </strong>
-            <p class="lead" th:text="#{metadata.results.found.component.empty-text}"></p>
-        </div>
-        <table id="found-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
-    </script>
-    <script type="text/ng-template" id="results.missing.component.tmpl.html">
-        <div class="alert alert-danger" ng-show="$ctrl.rows.length &gt; 0">
-            <strong>
-                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;
-                <th:block th:text="#{metadata.results.missing.component.title}"/></strong>
-            <p class="lead" th:text="#{metadata.results.missing.component.message}"></p>
-        </div>
-        <div class="alert alert-success" ng-show="$ctrl.rows.length === 0">
-            <strong>
-                <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
-                <th:block th:text="#{metadata.results.missing.none-title=}"/>
-            </strong>
-            <p class="lead" th:text="#{metadata.results.missing.none-text}"></p>
-        </div>
-        <table id="missing-table" class="table table-striped nowrap" cellspacing="0" width="100%"></table>
-    </script>
-    <webpacker:js entry="samples-metadata-import"/>
-</th:block>
-</body>
+  <body>
+    <div id="samples-metadata-import-root" layout:fragment="main"></div>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="samples-metadata-import" />
+    </th:block>
+  </body>
 </html>

@@ -19,9 +19,7 @@ module.exports = {
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
-    "./resources/js/pages/projects/samples-metadata-import/index.js",
-  "samples-metadata-import2":
-    "./resources/js/pages/projects/samples-metadata-import2",
+    "./resources/js/pages/projects/samples-metadata-import",
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
   "project-samples-merge":
     "./resources/js/pages/projects/samples/modals/samples-merge.js",

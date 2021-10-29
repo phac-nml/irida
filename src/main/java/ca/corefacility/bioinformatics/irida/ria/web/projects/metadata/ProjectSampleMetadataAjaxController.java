@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.errors.SavedMetadataException;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.SavedMetadataErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;;
 
 /**
@@ -42,8 +45,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session   {@link HttpSession}
 	 * @param projectId {@link Long} identifier for the current {@link Project}
 	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
-	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
-	 * {@link Sample} identifier.
+	 * @return {@link SampleMetadataStorage} which includes a {@link List} of headers and rows from the csv or excel file.
 	 * @throws Exception if there is an error reading the file
 	 */
 	@PostMapping("/file")
@@ -59,7 +61,7 @@ public class ProjectSampleMetadataAjaxController {
 	 * @param session          {@link HttpSession}.
 	 * @param projectId        {@link Long} identifier for the current {@link Project}.
 	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
-	 * @return {@link Map} containing a complete message.
+	 * @return a complete message.
 	 */
 	@PutMapping("/setSampleColumn")
 	@ResponseBody
@@ -70,20 +72,25 @@ public class ProjectSampleMetadataAjaxController {
 	}
 
 	/**
-	 * Save uploaded metadata to the
+	 * Save uploaded metadata from the session into IRIDA.
 	 *
 	 * @param locale      {@link Locale} of the current user.
 	 * @param session     {@link HttpSession}
 	 * @param projectId   {@link Long} identifier for the current project
 	 * @param sampleNames {@link List} of {@link String} sample names
-	 * @return {@link Map} of potential errors.
+	 * @return {@link String} message of how many samples were created and/or updated.
 	 */
 	@PostMapping("/save")
 	@ResponseBody
-	public ResponseEntity<SampleMetadataStorage> saveProjectSampleMetadata(Locale locale, HttpSession session,
+	public ResponseEntity<AjaxResponse> saveProjectSampleMetadata(Locale locale, HttpSession session,
 			@RequestParam Long projectId, @RequestParam List<String> sampleNames) {
-		return ResponseEntity.ok(
-				metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames));
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					metadataImportService.saveProjectSampleMetadata(locale, session, projectId, sampleNames)));
+		} catch (SavedMetadataException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(new SavedMetadataErrorResponse(e.getStorage()));
+		}
 	}
 
 	/**

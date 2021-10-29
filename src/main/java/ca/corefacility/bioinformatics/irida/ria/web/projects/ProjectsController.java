@@ -291,26 +291,11 @@ public class ProjectsController {
 	 * @param principal {@link Principal} currently logged in use
 	 * @return {@link String} the path to the metadata import page
 	 */
-	@RequestMapping(value = "/projects/{projectId}/sample-metadata/upload", method = RequestMethod.GET)
-	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable long projectId,
+	@GetMapping("/projects/{projectId}/sample-metadata/upload/*")
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable Long projectId,
 			Principal principal) {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
 		return "projects/project_samples_metadata_upload";
-	}
-
-	/**
-	 * Handle the page request to upload {@link Sample} metadata
-	 *
-	 * @param model     {@link Model}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param principal {@link Principal} currently logged in use
-	 * @return {@link String} the path to the metadata import page
-	 */
-	@GetMapping("/projects/{projectId}/sample-metadata/upload2/*")
-	public String getProjectSamplesMetadataUploadPage2(final Model model, @PathVariable Long projectId,
-			Principal principal) {
-		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
-		return "projects/project_samples_metadata_upload2";
 	}
 
 	/**

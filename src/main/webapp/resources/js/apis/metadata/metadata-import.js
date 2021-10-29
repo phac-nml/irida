@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { validateSampleName } from "./sample-utils"
+import { validateSampleName } from "./sample-utils";
 
 const BASE_URL = setBaseUrl(`ajax/projects/sample-metadata/upload`);
 
@@ -17,11 +17,22 @@ export const metadataImportApi = createApi({
         url: `/getMetadata`,
         params: {
           projectId,
-        }
+        },
       }),
+      /**
+      Transforming the response to include if the row has a valid sample name and a unique row key for rendering the ant design table.
+      */
       transformResponse(response) {
-        const regex = new RegExp("^[A-Za-z0-9-_]{3,}$");
-        const transformed = {...response, rows: response.rows.map((row, index) => ({...row, rowKey: `row-${index}`, isSampleNameValid: validateSampleName(row.entry[response.sampleNameColumn])}))}
+        const transformed = {
+          ...response,
+          rows: response.rows.map((row, index) => ({
+            ...row,
+            rowKey: `row-${index}`,
+            isSampleNameValid: validateSampleName(
+              row.entry[response.sampleNameColumn]
+            ),
+          })),
+        };
         return transformed;
       },
       providesTags: ["MetadataImport"],
@@ -29,36 +40,36 @@ export const metadataImportApi = createApi({
     clearProjectSampleMetadata: build.mutation({
       query: (projectId) => ({
         url: `/clear`,
-        method: 'DELETE',
+        method: "DELETE",
         params: {
           projectId,
-        }
+        },
       }),
       invalidatesTags: ["MetadataImport"],
     }),
     setColumnProjectSampleMetadata: build.mutation({
       query: ({ projectId, sampleNameColumn }) => ({
         url: `/setSampleColumn`,
-        method: 'PUT',
+        method: "PUT",
         params: {
           projectId,
           sampleNameColumn,
-        }
+        },
       }),
       invalidatesTags: ["MetadataImport"],
     }),
     saveProjectSampleMetadata: build.mutation({
       query: ({ projectId, sampleNames }) => ({
         url: `/save`,
-        method: 'POST',
+        method: "POST",
         params: {
           projectId,
-          sampleNames
-        }
+          sampleNames,
+        },
       }),
       invalidatesTags: ["MetadataImport"],
     }),
-  })
+  }),
 });
 
 export const {

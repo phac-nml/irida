@@ -27,23 +27,29 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	List<WebElement> headerRadios;
 	@FindBy(className = "t-metadata-uploader-preview-button")
 	WebElement previewBtn;
+	@FindBy(className = "t-metadata-uploader-upload-button")
+	WebElement uploadBtn;
 	@FindBy(className = "t-metadata-uploader-review-table")
 	WebElement reviewTable;
 	@FindBy(css = "table > tbody > tr > td.t-metadata-uploader-new-column:empty")
-	List<WebElement> foundRows;
+	List<WebElement> updateRows;
 	@FindBy(css = "table > tbody > tr > td.t-metadata-uploader-new-column > span")
-	List<WebElement> missingRows;
+	List<WebElement> newRows;
 	@FindBy(css = "thead th")
 	List<WebElement> headers;
 	@FindBy(css = "tbody tr.ant-table-row")
 	List<WebElement> rows;
+	@FindBy(css = "div.ant-alert-error")
+	WebElement validationAlert;
+	@FindBy(css = "div.ant-result-success")
+	WebElement successMessage;
 
 	public ProjectSampleMetadataImportPage(WebDriver driver) {
 		super(driver);
 	}
 
 	public static ProjectSampleMetadataImportPage goToPage(WebDriver driver) {
-		get(driver, "projects/1/sample-metadata/upload2/file");
+		get(driver, "projects/1/sample-metadata/upload/file");
 		return PageFactory.initElements(driver, ProjectSampleMetadataImportPage.class);
 	}
 
@@ -55,20 +61,40 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOf(fileBtn));
 	}
 
-	public void selectSampleNameColumn() {
-		headerRadios.get(3)
-				.click();
+	public void goToReviewPage() {
 		previewBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(reviewTable));
 	}
 
-	public int getFoundCount() {
-		return foundRows.size();
+	public void goToCompletePage() {
+		uploadBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(successMessage));
 	}
 
-	public int getMissingCount() {
-		return missingRows.size();
+	public void selectSampleNameColumn() {
+		headerRadios.get(3)
+				.click();
+		goToReviewPage();
+	}
+
+	public String getValueForSelectedSampleNameColumn() {
+		for (WebElement headerRadio : headerRadios) {
+			boolean isSelected = headerRadio.isSelected();
+			if (isSelected) {
+				return headerRadio.getAttribute("value");
+			}
+		}
+		return null;
+	}
+
+	public int getUpdateCount() {
+		return updateRows.size();
+	}
+
+	public int getNewCount() {
+		return newRows.size();
 	}
 
 	public List<String> getValuesForColumnByName(String column) {
@@ -83,5 +109,13 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 						.get(index)
 						.getText())
 				.collect(Collectors.toList());
+	}
+
+	public boolean isAlertDisplayed() {
+		return validationAlert.isDisplayed();
+	}
+
+	public boolean isSuccessDisplayed() {
+		return successMessage.isDisplayed();
 	}
 }
