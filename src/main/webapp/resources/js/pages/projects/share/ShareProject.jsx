@@ -39,6 +39,14 @@ export function ShareProject() {
       setOptions(formatOptions(projects));
     }
   }, [projects, projectLoading]);
+  React.useEffect(() => {
+    setOptions(
+      projects.map((project) => ({
+        label: project.name,
+        value: project.identifier,
+      }))
+    );
+  }, [projects]);
 
   const handleSearch = (value) => {
     const lowerValue = value.toLowerCase();

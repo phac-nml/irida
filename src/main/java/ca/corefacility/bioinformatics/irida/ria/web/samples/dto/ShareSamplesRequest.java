@@ -27,7 +27,7 @@ public class ShareSamplesRequest {
 	private Boolean locked;
 
 	/**
-	 * Flag, if true sampls will be removed from the current project
+	 * Flag, if true samples will be removed from the current project
 	 * This is the "move" function
 	 */
 	private Boolean remove;

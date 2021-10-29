@@ -206,7 +206,7 @@ public class SamplesAjaxController {
 			Locale locale) {
 		try {
 			uiSampleService.shareSamplesWithProject(request, locale);
-			return ResponseEntity.ok(new AjaxSuccessResponse("FOO"));
+			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
 					.body(new AjaxErrorResponse(e.getLocalizedMessage()));

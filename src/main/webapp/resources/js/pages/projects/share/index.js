@@ -45,15 +45,15 @@ function ShareApp() {
   return (
     <Row>
       <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }} xs={24}>
-        <Card>
-          <PageHeader
-            ghost={false}
-            title={i18n("ShareSamples.title")}
-            onBack={goToPrevious}
-          >
+        <PageHeader
+          ghost={false}
+          title={i18n("ShareSamples.title")}
+          onBack={goToPrevious}
+        >
+          <Card>
             <ShareLayout />
-          </PageHeader>
-        </Card>
+          </Card>
+        </PageHeader>
       </Col>
     </Row>
   );

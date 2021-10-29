@@ -7194,7 +7194,7 @@ fsevents@^2.1.2:
     less: ^4.1.1
     less-loader: ^8.0.0
     lodash: ^4.17.21
-    marked: ^0.7.0
+    marked: ^3.0.8
     mini-css-extract-plugin: ^1.3.5
     moment: ^2.24.0
     ng-file-upload: ^12.2.12
@@ -8862,12 +8862,12 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"marked@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "marked@npm:0.7.0"
+"marked@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "marked@npm:3.0.8"
   bin:
-    marked: ./bin/marked
-  checksum: 9132605ed9942fddc68c78305743bf4cce9b4d36df0fb6e7dbffca145ac445c75e968b7401943fa2d6cea8da7f6adba1a28b6496476a601547bc1c61780acef1
+    marked: bin/marked
+  checksum: a56e571e9a407a39a45045cdc21a1d13e2382c253a4e0014d785bc613f8f8b48cda3aa0a5e47f304e49ae0d5d9bae5bc9e3480594584658a0ea9df854120f000
   languageName: node
   linkType: hard
 
