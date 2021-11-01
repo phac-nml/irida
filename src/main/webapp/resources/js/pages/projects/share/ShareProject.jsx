@@ -20,7 +20,7 @@ export function ShareProject() {
   This fetches a list of the projects that the user has access to.
    */
   const {
-    data: projects,
+    data: projects = [],
     isLoading: projectLoading,
   } = useGetPotentialProjectsToShareToQuery(currentProject, {
     skip: !currentProject,

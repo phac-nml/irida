@@ -29,7 +29,13 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		shareSamplesPage.searchForProject("project2");
 		Assert.assertTrue("Share button should be enabled after selecting a project",
 				shareSamplesPage.isShareButtonDisabled());
+
+		Assert.assertEquals("Should be 4 samples displayed", 4, shareSamplesPage.getNumberOfSamplesDisplayed());
+		Assert.assertEquals("Should be 3 unlocked samples", 3, shareSamplesPage.getNumberOfUnlockedSamples());
+		Assert.assertEquals("Should be 1 locked sample", 1, shareSamplesPage.getNumberOfLockedSamples());
+
 		shareSamplesPage.submitShareRequest();
+		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
 
 		String foobar = "baz";
 	}

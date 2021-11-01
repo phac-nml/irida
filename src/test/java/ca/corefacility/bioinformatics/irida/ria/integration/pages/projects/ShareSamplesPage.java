@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,8 +14,20 @@ public class ShareSamplesPage {
 	@FindBy(className = "ant-select-dropdown")
 	private WebElement projectDropdown;
 
+	@FindBy(className = "t-share-sample")
+	private List<WebElement> shareSampleListItem;
+
+	@FindBy(className = "t-unlocked-sample")
+	private List<WebElement> unlockedSamples;
+
+	@FindBy(className = "t-locked-sample")
+	private List<WebElement> lockedSamples;
+
 	@FindBy(className = "t-share-button")
 	private WebElement shareButton;
+
+	@FindBy(className = "ant-result-success")
+	private WebElement successResult;
 
 	public static ShareSamplesPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ShareSamplesPage.class);
@@ -24,6 +38,18 @@ public class ShareSamplesPage {
 		projectDropdown.click();
 	}
 
+	public int getNumberOfSamplesDisplayed() {
+		return shareSampleListItem.size();
+	}
+
+	public int getNumberOfUnlockedSamples() {
+		return unlockedSamples.size();
+	}
+
+	public int getNumberOfLockedSamples() {
+		return lockedSamples.size();
+	}
+
 	public boolean isShareButtonDisabled() {
 		return shareButton.isEnabled();
 	}
@@ -31,4 +57,8 @@ public class ShareSamplesPage {
 	public void submitShareRequest() {
 		shareButton.click();
 	}
+
+	public boolean isSuccessResultDisplayed() {
+        return successResult.isDisplayed();
+    }
 }
