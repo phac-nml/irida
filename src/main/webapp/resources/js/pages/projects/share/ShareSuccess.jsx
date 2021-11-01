@@ -1,10 +1,12 @@
-import { Result } from "antd";
+import { Button, Result } from "antd";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
-function SingleMoved({ project, sample }) {
+function SingleMoved({ project, sample, extra }) {
   return (
     <Result
+      extra={extra}
       className="t-move-single"
       status="success"
       title={
@@ -23,9 +25,10 @@ function SingleMoved({ project, sample }) {
   );
 }
 
-function SingleShared({ project, sample }) {
+function SingleShared({ project, sample, extra }) {
   return (
     <Result
+      extra={extra}
       className="t-share-single"
       status="success"
       title={
@@ -44,9 +47,10 @@ function SingleShared({ project, sample }) {
   );
 }
 
-function MultipleMoved({ project, count }) {
+function MultipleMoved({ project, count, extra }) {
   return (
     <Result
+      extra={extra}
       className="t-move-multiple"
       status="success"
       title={
@@ -61,9 +65,10 @@ function MultipleMoved({ project, count }) {
   );
 }
 
-function MultipleShared({ project, count }) {
+function MultipleShared({ project, count, extra }) {
   return (
     <Result
+      extra={extra}
       className="t-share-multiple"
       status="success"
       title={
@@ -85,19 +90,36 @@ function MultipleShared({ project, count }) {
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSuccess({ removed, project, samples }) {
+export function ShareSuccess({ removed, project, samples, currentProject }) {
   const single = samples.length === 1;
+
+  const extra = [
+    <Button key="return" href={setBaseUrl(`/projects/${currentProject}`)}>
+      {i18n("ShareSuccess.link.samples")}
+    </Button>,
+    <Button
+      type="primary"
+      key="goto"
+      href={setBaseUrl(`projects/${project.identifier}`)}
+    >
+      {i18n("ShareSuccess.link.goto", project.label)}
+    </Button>,
+  ];
 
   // Single samples
   if (single && removed) {
-    return <SingleMoved project={project} sample={samples[0]} />;
+    return <SingleMoved project={project} sample={samples[0]} extra={extra} />;
   } else if (single) {
-    return <SingleShared project={project} sample={samples[0]} />;
+    return <SingleShared project={project} sample={samples[0]} extra={extra} />;
   }
 
   // Multiple Samples,
   if (removed) {
-    return <MultipleMoved project={project} count={samples.length} />;
+    return (
+      <MultipleMoved project={project} count={samples.length} extra={extra} />
+    );
   }
-  return <MultipleShared project={project} count={samples.length} />;
+  return (
+    <MultipleShared project={project} count={samples.length} extra={extra} />
+  );
 }
