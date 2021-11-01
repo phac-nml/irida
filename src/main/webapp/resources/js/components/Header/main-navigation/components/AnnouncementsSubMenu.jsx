@@ -37,7 +37,7 @@ export function AnnouncementsSubMenu() {
     <Menu className="t-announcements-submenu">
       {announcements.length == 0 ? (
         <Menu.Item
-          key={"announcement_none"}
+          key="announcement_none"
           style={{ width: 400, borderBottom: BORDERED_LIGHT }}
           disabled={true}
         >
@@ -83,15 +83,17 @@ export function AnnouncementsSubMenu() {
   );
 
   return (
-    <Dropdown overlay={aMenu}>
-      <span className="announcements-dropdown">
-        <Badge
-          className="t-announcements-badge"
-          count={announcements && announcements.filter((a) => !a.read).length}
-        >
-          <IconBell />
-        </Badge>
-      </span>
-    </Dropdown>
+    <Menu.Item key="announcements">
+      <Dropdown overlay={aMenu}>
+        <span className="announcements-dropdown">
+          <Badge
+            className="t-announcements-badge"
+            count={announcements && announcements.filter((a) => !a.read).length}
+          >
+            <IconBell />
+          </Badge>
+        </span>
+      </Dropdown>
+    </Menu.Item>
   );
 }
