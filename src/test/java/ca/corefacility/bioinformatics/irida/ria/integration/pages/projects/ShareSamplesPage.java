@@ -29,6 +29,30 @@ public class ShareSamplesPage {
 	@FindBy(className = "ant-result-success")
 	private WebElement successResult;
 
+	@FindBy(className = "t-no-sample-warning")
+	private WebElement noSamplesWarning;
+
+	@FindBy(className = "t-move-checkbox")
+	private WebElement moveCheckbox;
+
+	@FindBy(className = "t-lock-chekcbox")
+	private WebElement lockCheckbox;
+
+	@FindBy(className = "t-move-multiple")
+	private WebElement moveMultipleSuccess;
+
+	@FindBy(className = "t-share-multiple")
+	private WebElement shareMultipleSuccess;
+
+	@FindBy(className = "t-move-single")
+	private WebElement moveSingleSuccess;
+
+	@FindBy(className = "t-share-single")
+	private WebElement shareSingleSuccess;
+
+	@FindBy(className = "t-same-samples-warning")
+	private WebElement someSamplesWarning;
+
 	public static ShareSamplesPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ShareSamplesPage.class);
 	}
@@ -59,6 +83,38 @@ public class ShareSamplesPage {
 	}
 
 	public boolean isSuccessResultDisplayed() {
-        return successResult.isDisplayed();
+		return successResult.isDisplayed();
+	}
+
+	public boolean isNoSamplesWarningDisplayed() {
+		return noSamplesWarning.isDisplayed();
+	}
+
+	public void selectMoveCheckbox() {
+		moveCheckbox.click();
+	}
+
+	public void selectLockCheckbox() {
+		lockCheckbox.click();
+	}
+
+	public boolean isMoveMultipleSuccessDisplayed() {
+		return moveMultipleSuccess.isDisplayed();
+	}
+
+	public boolean isShareMultipleSuccessDisplayed() {
+		return shareMultipleSuccess.isDisplayed();
+	}
+
+	public boolean isMoveSingleSuccessDisplayed() {
+		return moveSingleSuccess.isDisplayed();
+	}
+
+	public boolean isShareSingleSuccessDisplayed() {
+		return shareSingleSuccess.isDisplayed();
+	}
+
+	public boolean isSomeSamplesWarningDisplayed() {
+        return someSamplesWarning.isDisplayed();
     }
 }

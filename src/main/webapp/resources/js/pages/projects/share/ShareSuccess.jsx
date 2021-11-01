@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 function SingleMoved({ project, sample }) {
   return (
     <Result
+      className="t-move-single"
       status="success"
       title={
         <ReactMarkdown>{i18n("ShareSuccess.move.title.single")}</ReactMarkdown>
@@ -25,6 +26,7 @@ function SingleMoved({ project, sample }) {
 function SingleShared({ project, sample }) {
   return (
     <Result
+      className="t-share-single"
       status="success"
       title={
         <ReactMarkdown>{i18n("ShareSuccess.move.title.single")}</ReactMarkdown>
@@ -45,6 +47,7 @@ function SingleShared({ project, sample }) {
 function MultipleMoved({ project, count }) {
   return (
     <Result
+      className="t-move-multiple"
       status="success"
       title={
         <ReactMarkdown>{i18n("ShareSuccess.move.title.plural")}</ReactMarkdown>
@@ -61,6 +64,7 @@ function MultipleMoved({ project, count }) {
 function MultipleShared({ project, count }) {
   return (
     <Result
+      className="t-share-multiple"
       status="success"
       title={
         <ReactMarkdown>{i18n("ShareSuccess.share.title.plural")}</ReactMarkdown>

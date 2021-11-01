@@ -17,12 +17,9 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testShareSamples() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-		samplesPage.selectSample(0);
-		samplesPage.selectSample(1);
-		samplesPage.selectSample(2);
-		samplesPage.selectSample(3);
-		samplesPage.shareSamples();
+		addSamplesToSharePage();
+
+		// SHARING MULTIPLE SAMPLES
 
 		Assert.assertFalse("Share button should be disabled without a project selected",
 				shareSamplesPage.isShareButtonDisabled());
@@ -37,6 +34,26 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		shareSamplesPage.submitShareRequest();
 		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
 
-		String foobar = "baz";
+		// MOVING MULTIPLE SAMPLES
+
+		addSamplesToSharePage();
+		Assert.assertFalse("Share button should be disabled without a project selected",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.searchForProject("project2");
+		Assert.assertTrue("Warning stating samples exist in target project should be displayed", shareSamplesPage.isNoSamplesWarningDisplayed());
+		shareSamplesPage.searchForProject("project3");
+		Assert.assertTrue("Should display a warning that some samples cannot be copied", shareSamplesPage.isSomeSamplesWarningDisplayed());
+		shareSamplesPage.selectMoveCheckbox();
+		shareSamplesPage.submitShareRequest();
+		Assert.assertTrue("Successful move multiple message should be displayed", shareSamplesPage.isMoveMultipleSuccessDisplayed());
+	}
+
+	private void addSamplesToSharePage() {
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSample(0);
+		samplesPage.selectSample(1);
+		samplesPage.selectSample(2);
+		samplesPage.selectSample(3);
+		samplesPage.shareSamples();
 	}
 }
