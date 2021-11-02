@@ -3,6 +3,8 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+const BASE_URL = setBaseUrl(`/project`);
+
 function SingleMoved({ project, sample, extra }) {
   return (
     <Result
@@ -94,13 +96,13 @@ export function ShareSuccess({ removed, project, samples, currentProject }) {
   const single = samples.length === 1;
 
   const extra = [
-    <Button key="return" href={setBaseUrl(`/projects/${currentProject}`)}>
+    <Button key="return" href={`${BASE_URL}/${currentProject}`}>
       {i18n("ShareSuccess.link.samples")}
     </Button>,
     <Button
       type="primary"
       key="goto"
-      href={setBaseUrl(`projects/${project.identifier}`)}
+      href={`${BASE_URL}/${project.identifier}`}
     >
       {i18n("ShareSuccess.link.goto", project.label)}
     </Button>,
