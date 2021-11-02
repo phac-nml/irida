@@ -53,9 +53,7 @@ export function ShareProject() {
     const available = projects.filter((project) =>
       project.name.toLowerCase().includes(lowerValue)
     );
-    console.log(available);
     const formatted = formatOptions(available);
-    console.log(formatted);
     setOptions(formatted);
   };
 
