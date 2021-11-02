@@ -3,6 +3,8 @@ Changes
 
 21.09 to 22.01
 --------------
+* [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 
 21.05 to 21.09
 --------------
