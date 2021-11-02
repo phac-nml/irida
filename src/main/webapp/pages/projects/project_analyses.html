@@ -6,14 +6,15 @@
 >
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.analysis}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-analyses.bundle.css}" />
+    <webpacker:css entry="project-analyses"/>
 </head>
 <body>
 <div layout:fragment="main" id="root">
+    <h1>HELLO</h1>
     <!-- /src/main/webapp/resources/js/pages/projects/project-analyses/index.js -->
 </div>
 <th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-analyses.bundle.js}"></script>
+    <webpacker:js entry="project-analyses"/>
 </th:block>
 </body>
 </html>

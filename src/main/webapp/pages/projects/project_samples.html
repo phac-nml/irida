@@ -4,43 +4,36 @@
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   data-layout-decorate="~{projects/_base}"
 >
-  <head>
-    <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-samples.bundle.css}" />
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/project-samples-copy.bundle.css}"
-    />
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/project-samples-filter.bundle.css}"
-    />
-    <script th:inline="javascript">
-      window.PAGE = {
-        isRemoteProject: /*[[${project.isRemote()}]]*/ false,
-        urls: {
-          projects: {
-            available:
-              /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ "",
-          },
-          samples: {
-            project:
-              /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ "",
-            local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ "",
-            remove:
-              /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ "",
-            copy:
-              /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ "",
-            export:
-              /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ "projects/1/samples/export",
-            idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
-            sampleIds:
-              /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/sampleIds",
-          },
-          fileMissingSamples:
-            /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing",
+<head>
+  <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+  <webpacker:css entry="project-samples"/>
+  <webpacker:css entry="project-samples-copy"/>
+  <script th:inline="javascript">
+    window.PAGE = {
+      isRemoteProject: /*[[${project.isRemote()}]]*/ false,
+      urls: {
+        projects: {
+          available:
+          /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ "",
         },
-      };
+        samples: {
+          project:
+          /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ "",
+          local: /*[[@{'/projects/{id}/ajax/samples'}]]*/ "",
+          remove:
+          /*[[@{/projects/{id}/ajax/samples/delete(id=${project.getId()})}]]*/ "",
+          copy:
+          /*[[@{/projects/{id}/ajax/samples/copy(id=${project.getId()})}]]*/ "",
+          export:
+          /*[[@{/projects/{id}/samples/export(id=${project.getId()})}]]*/ "projects/1/samples/export",
+          idList: /*[[@{/samples/idList}]]*/ "/samples/idList",
+          sampleIds:
+          /*[[@{/projects/{id}/ajax/sampleIds(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/sampleIds",
+        },
+        fileMissingSamples:
+        /*[[@{/projects/{id}/ajax/samples/missing(id=${project.getId()})}]]*/ "/projects/{projectId}/ajax/samples/missing",
+      },
+    };
 
       // Translations for the date range filter modal
       window.translations = [
@@ -110,7 +103,7 @@
                       data:enabled-msg="#{project.samples.tooltip.remove.requires-more-than-one}"
                       data:associated-msg="#{project.samples.only-for-project-tooltip}"
                       data:url="@{/projects/{projectId}/templates/remove-modal(projectId=${project.getId()})}"
-                      data:script="@{/dist/js/project-samples-remove.bundle.js}"
+                      webpacker:script="project-samples-remove"
                     >
                       <i
                         class="fa fa-trash fa-fw spaced-right__sm"
@@ -375,10 +368,37 @@
         id="js-filter-modal-wrapper"
         class="modal fade"
         tabindex="-1"
-        role="dialog"
-        data:template="@{/projects/{id}/template/samples-filter-modal(id=${project.getId()})}"
-        data:script="@{/dist/js/project-samples-filter.bundle.js}"
-      ></div>
+        role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="#{project.sample.filter-title}">Filter Samples</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="js-name" th:text="#{project.sample.filter-name}">Sample NAME</label>
+                        <input type="text" class="form-control t-name-filter" id="js-name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="js-organism" th:text="#{project.sample.filter-organism}">Sample Organism</label>
+                        <select name="organism" id="js-organism" class="form-control">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="daterange" th:text="#{project.sample.filter-date.label}">Date One</label>
+                        <input type="text" class="form-control t-daterange-filter" id="js-daterange"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="js-cancel-filter" class="btn btn-default" data-dismiss="modal">Close
+                    </button>
+                    <button type="button" id="js-do-filter" class="btn btn-primary t-apply-filter-btn"
+                            data-dismiss="modal" th:text="#{project.sample.filter.apply}">Save changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
       <div class="hidden">
         <span
@@ -495,7 +515,7 @@
           });
         </script>
       </div>
-      <script th:src="@{/dist/js/project-samples.bundle.js}"></script>
+      <webpacker:js entry="project-samples"/>
     </th:block>
   </body>
 </html>

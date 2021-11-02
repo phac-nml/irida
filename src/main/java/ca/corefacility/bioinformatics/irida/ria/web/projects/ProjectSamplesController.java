@@ -211,24 +211,16 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the modal window for filtering project samples
+	 * Get a list of all organisms listed on the current project and displayed associated projects.
 	 *
-	 * @param projectId  {@link Long} identifier for the current {@link Project}
-	 * @param associated Which associated projects are enabled
-	 * @param filter     {@link UISampleFilter} Current filter parameters.
-	 * @param model      UI Model
-	 * @return {@link String} path to the modal template
+	 * @param projectId  - Identifier for the current project
+	 * @param associated - List of ids of all currently displayed associated projects.
+	 * @return List of names {@link String} of organisms.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/template/samples-filter-modal", produces = MediaType.TEXT_HTML_VALUE)
-	public String getProjectSamplesFilterModal(@PathVariable Long projectId,
-			@RequestParam(required = false, name = "associated[]", defaultValue = "") List<Long> associated,
-			UISampleFilter filter, Model model) {
-		model.addAttribute("filter", filter);
-
-		/*
-		Add the current project to the list of project ids to ensure that we get the organisms
-		that are associated with the current project.
-		 */
+	@RequestMapping("/projects/{projectId}/filter/organisms")
+	public List<String> getOrganismsForAllAssociatedProjects(@PathVariable long projectId,
+			@RequestParam(required = false, name = "associated", defaultValue = "") List<Long> associated) {
+		// Add the current project to the associated so that we get all the projects organisms
 		associated.add(projectId);
 
 		/*
@@ -250,17 +242,14 @@ public class ProjectSamplesController {
 			}
 			return o1.compareToIgnoreCase(o2);
 		});
-		model.addAttribute("organisms", organisms);
-		return PROJECT_TEMPLATE_DIR + "filter-modal.tmpl";
+		return organisms.stream().filter(s -> !Strings.isNullOrEmpty(s)).collect(Collectors.toList());
 	}
 
 	/**
 	 * Generate a {@link Map} of {@link Sample} to move or share.
 	 *
-	 * @param project  The {@link Project}.
-	 * @param ids
-	 * 		{@link Long} of ids for {@link Sample}
-	 *
+	 * @param project The {@link Project}.
+	 * @param ids     {@link Long} of ids for {@link Sample}
 	 * @return {@link Map} of samples to be moved or shared.
 	 */
 	private Map<String, List<Sample>> generateShareMoveSamplesContent(Project project, List<Long> ids) {
