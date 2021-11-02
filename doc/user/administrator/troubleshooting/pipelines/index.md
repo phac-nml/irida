@@ -933,7 +933,7 @@ Prioritizing jobs on a cluster and adjusting Galaxy job queues are beyond the sc
 [section-3]: #3-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline
 [section-4.2]: #42-galaxy-job-working-directories
 [section-6.3.2]: #632-clusterslurm-job-info
-[irida-sample-data]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
+[irida-sample-data]: https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip
 [snvphyl-pipeline-default.png]: ../images/snvphyl-pipeline-default.png
 [snvphyl-pipeline-default-error.png]: ../images/snvphyl-pipeline-default-error.png
 [snvphyl-pipeline-default-history.png]: ../images/snvphyl-pipeline-default-history.png
