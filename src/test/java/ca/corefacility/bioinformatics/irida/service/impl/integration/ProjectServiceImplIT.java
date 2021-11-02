@@ -101,7 +101,7 @@ public class ProjectServiceImplIT {
 	public void testUpdateUserGroupRoleOnProject() throws ProjectWithoutOwnerException {
 		final UserGroup userGroup = userGroupService.read(1L);
 		final Project project = projectService.read(9L);
-		projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER);
+		projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 	}
 
 	@Test(expected = ProjectWithoutOwnerException.class)

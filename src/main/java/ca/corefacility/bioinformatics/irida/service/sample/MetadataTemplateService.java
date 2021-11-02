@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -149,17 +148,6 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	 * @return a list of {@link MetadataTemplateField}
 	 */
 	public List<MetadataTemplateField> getPermittedFieldsForTemplate(MetadataTemplate template);
-
-	/**
-	 * Get all {@link MetadataTemplateField} that are permitted to be read by a given {@link ProjectRole}
-	 *
-	 * @param project the {@link Project} to get fields for
-	 * @param role    the {@link ProjectMetadataRole} to request
-	 * @param includeTemplateFields whether to include fields from the project's associated {@link MetadataTemplate}s
-	 * @return the {@link MetadataTemplateField} the given role can read
-	 */
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectMetadataRole role,
-			boolean includeTemplateFields);
 
 	/**
 	 * Get all {@link MetadataTemplateField} that the currently logged in user is allowed to read

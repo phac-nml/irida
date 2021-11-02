@@ -23,7 +23,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataFieldRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataTemplateRepository;
@@ -43,17 +45,20 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	private MetadataRestrictionRepository metadataRestrictionRepository;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
+	private UserGroupProjectJoinRepository userGroupProjectJoinRepository;
 
 	@Autowired
 	public MetadataTemplateServiceImpl(MetadataTemplateRepository repository, MetadataFieldRepository fieldRepository,
 			Validator validator, MetadataRestrictionRepository metadataRestrictionRepository,
-			UserRepository userRepository, ProjectUserJoinRepository pujRepository) {
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			UserGroupProjectJoinRepository userGroupProjectJoinRepository) {
 		super(repository, validator, MetadataTemplate.class);
 		this.metadataTemplateRepository = repository;
 		this.fieldRepository = fieldRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
+		this.userGroupProjectJoinRepository = userGroupProjectJoinRepository;
 	}
 
 	/**
@@ -246,9 +251,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
-	@Override
-	public List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectMetadataRole role,
+	private List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectMetadataRole role,
 			boolean includeTemplateFields) {
 		//get all fields for the project
 		List<MetadataTemplateField> metadataFieldsForProject = fieldRepository.getMetadataFieldsForProject(project);
@@ -315,14 +318,16 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		User loggedInUser = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, loggedInUser);
 
-		ProjectMetadataRole metadataRole;
+		List<UserGroupProjectJoin> groupsForProjectAndUser = userGroupProjectJoinRepository.findGroupsForProjectAndUser(
+				project, loggedInUser);
+
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.getMaxRoleForProjectAndGroups(projectJoinForUser,
+				groupsForProjectAndUser);
 
 		//if the user isn't on the project and the user is an admin, give them project owner powers
-		if (projectJoinForUser == null && loggedInUser.getSystemRole()
+		if (metadataRole == null && loggedInUser.getSystemRole()
 				.equals(Role.ROLE_ADMIN)) {
 			metadataRole = ProjectMetadataRole.LEVEL_4;
-		} else {
-			metadataRole = projectJoinForUser.getMetadataRole();
 		}
 
 		List<MetadataTemplateField> permittedFieldsForRole = getPermittedFieldsForRole(project, metadataRole,
