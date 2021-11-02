@@ -68,4 +68,4 @@ Sample data for testing IRIDA can be found at:
 
 The sample data package consists of *simulated* Illumina MiSeq read data for three publicly available Listeria Monocytogenes genomes. You can find more information about the simulated data at:
 
-<https://irida.corefacility.ca/downloads/data/README.txt>
+<https://sairidapublic.blob.core.windows.net/downloads/data/README.txt>
