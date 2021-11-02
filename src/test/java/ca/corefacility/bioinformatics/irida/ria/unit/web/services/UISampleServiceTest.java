@@ -41,7 +41,7 @@ public class UISampleServiceTest {
 	@Before
 	public void setUp() {
 		SampleService sampleService = mock(SampleService.class);
-		 projectService = mock(ProjectService.class);
+		projectService = mock(ProjectService.class);
 		UpdateSamplePermission updateSamplePermission = mock(UpdateSamplePermission.class);
 		SequencingObjectService sequencingObjectService = mock(SequencingObjectService.class);
 		GenomeAssemblyService genomeAssemblyService = mock(GenomeAssemblyService.class);
