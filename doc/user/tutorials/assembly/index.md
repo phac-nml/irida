@@ -28,7 +28,7 @@ The assembly and annotation pipeline built into IRIDA proceeds through the follo
 Initial Data
 ============
 
-The data for this tutorial comes from the miseq-run-salmonella/ directory within <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run-assembly-small/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
+The data for this tutorial comes from the miseq-run-salmonella/ directory within <https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip>.  It is assumed the sequence files in `miseq-run-assembly-small/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][].  Before starting this tutorial you should have a project with samples that appear as:
 
 ![assembly-samples][]
 

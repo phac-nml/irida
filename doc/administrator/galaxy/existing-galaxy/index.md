@@ -113,6 +113,6 @@ Once you have configured IRIDA to connect to Galaxy you can attempt to execute a
 [Purging Histories and Datasets]: https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/
 [PostgreSQL]: https://www.postgresql.org/
 [MySQL/MariaDB]: https://mariadb.org/
-[irida-sample-data.zip]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
+[irida-sample-data.zip]: https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip
 [faq-conda]: ../../faq/#installing-conda-dependencies-in-galaxy-versions--v1601
 [web]: ../../web
