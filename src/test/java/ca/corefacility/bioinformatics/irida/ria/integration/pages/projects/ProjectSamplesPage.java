@@ -260,9 +260,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return isAnchorElementEnabled(shareBtn);
 	}
 
-	public boolean isMoveBtnEnabled() {
-		return isAnchorElementEnabled(moveBtn);
-	}
 
 	public boolean isRemoveBtnEnabled() {
 		return isAnchorElementEnabled(removeBtn);

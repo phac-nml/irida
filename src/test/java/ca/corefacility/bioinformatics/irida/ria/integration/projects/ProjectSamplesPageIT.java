@@ -63,7 +63,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Test set up with no sample selected
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
 		page.closeToolsDropdown();
 		page.openExportDropdown();
@@ -74,8 +73,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-		assertTrue("Share option should be enabled", page.isShareBtnEnabled());
-		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 		page.closeToolsDropdown();
 		page.openExportDropdown();
@@ -194,7 +191,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.waitUntilShareButtonVisible();
 		assertTrue("Share button should be enabled", page.isShareBtnEnabled());
-		assertFalse("Move button should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Merge button should not be enabled", page.isMergeBtnEnabled());
 	}
 
