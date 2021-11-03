@@ -20,7 +20,7 @@ Before analyzing samples, we must prepare a MentaLiST kmer database for the orga
 
 Initial Data
 ============
-The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>. It is assumed the sequence files in `miseq-run-salmonella/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial]. Before starting this tutorial you should have a project with samples that appear as:
+The data for this tutorial comes from <https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip>. It is assumed the sequence files in `miseq-run-salmonella/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial]. Before starting this tutorial you should have a project with samples that appear as:
 
 ![mentalist-samples]
 
