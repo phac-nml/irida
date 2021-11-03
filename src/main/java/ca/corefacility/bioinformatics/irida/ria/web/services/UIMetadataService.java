@@ -12,7 +12,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
