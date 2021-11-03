@@ -84,7 +84,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.openToolsDropDown();
 		assertTrue("Merge option should be enabled", page.isMergeBtnEnabled());
 		assertTrue("Share option should be enabled", page.isShareBtnEnabled());
-		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 		page.openExportDropdown();
 		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
