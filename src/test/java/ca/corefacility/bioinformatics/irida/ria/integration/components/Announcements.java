@@ -35,7 +35,7 @@ public class Announcements {
 	@FindBy(css = ".t-announcements-modal button.t-close-announcement-button")
 	private WebElement closeButton;
 
-	@FindBy(css= ".t-announcements-badge")
+	@FindBy(css = ".t-announcements-badge")
 	private WebElement badge;
 
 	@FindBy(className = "t-announcements-submenu")
@@ -66,7 +66,7 @@ public class Announcements {
 		int numerator = 0;
 		Pattern pattern = Pattern.compile(RATIO_REGULAR_EXPRESSION);
 		Matcher matcher = pattern.matcher(readOverUnreadRatio.getText());
-		if(matcher.find()) {
+		if (matcher.find()) {
 			numerator = Integer.parseInt(matcher.group(1));
 		}
 		return numerator;
@@ -76,7 +76,7 @@ public class Announcements {
 		int denominator = 0;
 		Pattern pattern = Pattern.compile(RATIO_REGULAR_EXPRESSION);
 		Matcher matcher = pattern.matcher(readOverUnreadRatio.getText());
-		if(matcher.find()) {
+		if (matcher.find()) {
 			denominator = Integer.parseInt(matcher.group(2));
 		}
 		return denominator;
@@ -86,28 +86,38 @@ public class Announcements {
 		nextButton.click();
 	}
 
-	public void clickCloseButton() { closeButton.click(); }
+	public void clickCloseButton() {
+		closeButton.click();
+	}
 
-	public WebElement waitForModal() { return wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-announcements-modal")));}
+	public WebElement waitForModal() {
+		return wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-announcements-modal")));
+	}
 
 	public WebElement waitForPreviousButton() {
 		return wait.until(ExpectedConditions.visibilityOf(previousButton));
 	}
 
-	public WebElement waitForSubmenu() { return wait.until(ExpectedConditions.visibilityOf(submenu)); }
+	public WebElement waitForSubmenu() {
+		return wait.until(ExpectedConditions.visibilityOf(submenu));
+	}
 
 	public void hoverOverBadge() {
-		actions.moveToElement(badge).perform();
+		actions.moveToElement(badge)
+				.perform();
 		wait.until(ExpectedConditions.visibilityOf(viewAllLink));
 	}
 
 	public int getBadgeCount() {
 		closeModal();
-		return Integer.parseInt(badge.findElement(By.tagName("p")).getText());
+		return Integer.parseInt(badge.findElement(By.className("ant-scroll-number-only-unit"))
+				.getText());
 	}
 
 	public String getSubmenuAnnouncementTitle(int position) {
-		return submenu.findElements(By.cssSelector("ul li button")).get(position).getAttribute("title");
+		return submenu.findElements(By.cssSelector("ul li button"))
+				.get(position)
+				.getAttribute("title");
 	}
 
 	public void getSubmenuAnnouncement() {
