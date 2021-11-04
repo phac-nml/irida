@@ -53,6 +53,7 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
+	private static final String SPRING_PROFILE_DEVELOPMENT = "dev";
 	private final static String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
 	private static final String INTERNAL_TEMPLATE_PREFIX = "/pages/";
 	private static final String HTML_TEMPLATE_SUFFIX = ".html";
@@ -251,7 +252,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
-		dialects.add(new WebpackerDialect(env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))));
+		dialects.add(new WebpackerDialect(env.acceptsProfiles(Profiles.of(SPRING_PROFILE_DEVELOPMENT))));
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());
