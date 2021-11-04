@@ -3,7 +3,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
-const BASE_URL = setBaseUrl(`/project`);
+const BASE_URL = setBaseUrl(`/projects`);
 
 function SingleMoved({ project, sample, extra }) {
   return (
