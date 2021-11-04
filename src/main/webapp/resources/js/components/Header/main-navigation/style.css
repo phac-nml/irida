@@ -43,8 +43,8 @@
 }
 
 .announcements-dropdown {
-  padding: 20px;
   cursor: pointer;
+  padding: 15px;
 }
 
 .announcements-dropdown:hover .anticon-bell {

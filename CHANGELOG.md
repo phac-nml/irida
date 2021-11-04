@@ -5,6 +5,7 @@ Changes
 --------------
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
+* [Developer]: Updated `antd` to version 4.16.13
 * [Developer/UI]: Refreshed the metadata uploader.
 
 21.05 to 21.09
