@@ -12,7 +12,9 @@ function SingleMoved({ project, sample, extra }) {
       className="t-move-single"
       status="success"
       title={
-        <ReactMarkdown>{i18n("ShareSuccess.move.title.single")}</ReactMarkdown>
+        <ReactMarkdown className="t-success-title">
+          {i18n("ShareSuccess.move.title.single")}
+        </ReactMarkdown>
       }
       subTitle={
         <ReactMarkdown>
@@ -34,12 +36,14 @@ function SingleShared({ project, sample, extra }) {
       className="t-share-single"
       status="success"
       title={
-        <ReactMarkdown>{i18n("ShareSuccess.move.title.single")}</ReactMarkdown>
+        <ReactMarkdown className="t-success-title">
+          {i18n("ShareSuccess.share.title.single")}
+        </ReactMarkdown>
       }
       subTitle={
         <ReactMarkdown>
           {i18n(
-            "ShareSuccess.move.subTitle.single",
+            "ShareSuccess.share.subTitle.single",
             sample.name,
             project.label
           )}
@@ -56,7 +60,9 @@ function MultipleMoved({ project, count, extra }) {
       className="t-move-multiple"
       status="success"
       title={
-        <ReactMarkdown>{i18n("ShareSuccess.move.title.plural")}</ReactMarkdown>
+        <ReactMarkdown className="t-success-title">
+          {i18n("ShareSuccess.move.title.plural")}
+        </ReactMarkdown>
       }
       subTitle={
         <ReactMarkdown>
@@ -74,7 +80,9 @@ function MultipleShared({ project, count, extra }) {
       className="t-share-multiple"
       status="success"
       title={
-        <ReactMarkdown>{i18n("ShareSuccess.share.title.plural")}</ReactMarkdown>
+        <ReactMarkdown className="t-success-title">
+          {i18n("ShareSuccess.share.title.plural")}
+        </ReactMarkdown>
       }
       subTitle={
         <ReactMarkdown>

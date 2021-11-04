@@ -17,10 +17,49 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testShareSamples() {
 		LoginPage.loginAsManager(driver());
-		addSamplesToSharePage();
+
+		// SHARING SINGLE SAMPLE
+
+		addOneSample();
+		Assert.assertFalse("Share button should be disabled without a project selected",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.searchForProject("project2");
+		Assert.assertTrue("Share button should be enabled after selecting a project",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.submitShareRequest();
+		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
+		Assert.assertEquals("Successfully Shared 1 Sample", shareSamplesPage.getSuccessTitle());
+
+		// MOVING MULTIPLE SAMPLES
+
+		addMultipleSamples();
+		Assert.assertFalse("Share button should be disabled without a project selected",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.searchForProject("project2");
+		Assert.assertTrue("Should display a warning that some samples cannot be copied",
+				shareSamplesPage.isSomeSamplesWarningDisplayed());
+		shareSamplesPage.selectMoveCheckbox();
+		shareSamplesPage.submitShareRequest();
+		Assert.assertTrue("Successful move multiple message should be displayed",
+				shareSamplesPage.isMoveMultipleSuccessDisplayed());
+		Assert.assertEquals("Successfully Moved Samples", shareSamplesPage.getSuccessTitle());
+
+		// MOVE SINGLE SAMPLE
+
+		addOneSample();
+		Assert.assertFalse("Share button should be disabled without a project selected",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.searchForProject("project4");
+		Assert.assertTrue("Share button should be enabled after selecting a project",
+				shareSamplesPage.isShareButtonDisabled());
+		shareSamplesPage.selectMoveCheckbox();
+		shareSamplesPage.submitShareRequest();
+		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
+		Assert.assertEquals("Successfully Moved 1 Sample", shareSamplesPage.getSuccessTitle());
 
 		// SHARING MULTIPLE SAMPLES
 
+		addMultipleSamples();
 		Assert.assertFalse("Share button should be disabled without a project selected",
 				shareSamplesPage.isShareButtonDisabled());
 		shareSamplesPage.searchForProject("project2");
@@ -28,27 +67,20 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 				shareSamplesPage.isShareButtonDisabled());
 
 		Assert.assertEquals("Should be 4 samples displayed", 4, shareSamplesPage.getNumberOfSamplesDisplayed());
-		Assert.assertEquals("Should be 3 unlocked samples", 3, shareSamplesPage.getNumberOfUnlockedSamples());
-		Assert.assertEquals("Should be 1 locked sample", 1, shareSamplesPage.getNumberOfLockedSamples());
 
 		shareSamplesPage.submitShareRequest();
 		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
+		Assert.assertEquals("Successfully Shared Samples", shareSamplesPage.getSuccessTitle());
 
-		// MOVING MULTIPLE SAMPLES
-
-		addSamplesToSharePage();
-		Assert.assertFalse("Share button should be disabled without a project selected",
-				shareSamplesPage.isShareButtonDisabled());
-		shareSamplesPage.searchForProject("project2");
-		Assert.assertTrue("Warning stating samples exist in target project should be displayed", shareSamplesPage.isNoSamplesWarningDisplayed());
-		shareSamplesPage.searchForProject("project3");
-		Assert.assertTrue("Should display a warning that some samples cannot be copied", shareSamplesPage.isSomeSamplesWarningDisplayed());
-		shareSamplesPage.selectMoveCheckbox();
-		shareSamplesPage.submitShareRequest();
-		Assert.assertTrue("Successful move multiple message should be displayed", shareSamplesPage.isMoveMultipleSuccessDisplayed());
 	}
 
-	private void addSamplesToSharePage() {
+	private void addOneSample() {
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSample(0);
+		samplesPage.shareSamples();
+	}
+
+	private void addMultipleSamples() {
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
 		samplesPage.selectSample(0);
 		samplesPage.selectSample(1);

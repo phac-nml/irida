@@ -53,6 +53,9 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-same-samples-warning")
 	private WebElement someSamplesWarning;
 
+	@FindBy(className = "t-success-title")
+	private WebElement successTitle;
+
 	public static ShareSamplesPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ShareSamplesPage.class);
 	}
@@ -117,4 +120,8 @@ public class ShareSamplesPage {
 	public boolean isSomeSamplesWarningDisplayed() {
         return someSamplesWarning.isDisplayed();
     }
+
+	public String getSuccessTitle() {
+		return successTitle.getText();
+	}
 }
