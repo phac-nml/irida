@@ -27,6 +27,7 @@ export function ShareSamples({ samples = [], redirect }) {
         <>
           <SharedSamplesList list={samples} />
           <Checkbox
+            className="t-move-checkbox"
             checked={remove}
             onChange={(e) => dispatch(updateMoveSamples(e.target.checked))}
           >
@@ -35,6 +36,7 @@ export function ShareSamples({ samples = [], redirect }) {
             </Typography.Text>
           </Checkbox>
           <Checkbox
+            className="t-lock-checkbox"
             checked={locked}
             onChange={(e) => dispatch(updatedLocked(e.target.checked))}
             disabled={remove}
@@ -48,6 +50,7 @@ export function ShareSamples({ samples = [], redirect }) {
       {SHOW_NO_SAMPLES_WARNING && (
         <Alert
           type="warning"
+          className="t-no-sample-warning"
           showIcon
           message={i18n("ShareSamples.no-samples.message")}
           description={i18n("ShareSamples.no-samples.description")}
@@ -55,6 +58,7 @@ export function ShareSamples({ samples = [], redirect }) {
       )}
       {SHOW_SOME_SAMPLES_WARNING && (
         <Alert
+          className="t-same-samples-warning"
           type="info"
           showIcon
           message={i18n(

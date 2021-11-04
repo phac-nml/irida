@@ -83,6 +83,7 @@ export function ShareLayout({ redirect }) {
         <ShareSuccess
           removed={remove}
           samples={samples}
+          currentProject={currentProject}
           project={projects.find((project) => project.identifier === projectId)}
         />
       ) : typeof projectId !== "undefined" && isError ? (
@@ -95,6 +96,7 @@ export function ShareLayout({ redirect }) {
             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
               <Button
                 type="primary"
+                className="t-share-button"
                 disabled={DISABLED}
                 onClick={() => shareSamples()}
                 loading={isLoading}

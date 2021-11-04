@@ -28,6 +28,7 @@ export function SharedSamplesList({ list = [] }) {
     return (
       <List.Item
         style={{ ...style }}
+        className="t-share-sample"
         actions={[
           <Tooltip
             key="remove"
@@ -53,13 +54,14 @@ export function SharedSamplesList({ list = [] }) {
               >
                 <Avatar
                   style={{ backgroundColor: green6 }}
+                  className="t-unlocked-sample"
                   size="small"
                   icon={<IconUnlocked />}
                 />
               </Tooltip>
             ) : (
               <Tooltip title={i18n("ShareSamples.avatar.locked")}>
-                <Avatar size="small" icon={<IconLocked />} />
+                <Avatar className="t-locked-sample" size="small" icon={<IconLocked />} />
               </Tooltip>
             )
           }

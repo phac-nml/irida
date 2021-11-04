@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -12,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import static org.junit.Assert.*;
 
@@ -65,7 +63,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Test set up with no sample selected
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
 		page.closeToolsDropdown();
 		page.openExportDropdown();
@@ -76,8 +73,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
-		assertTrue("Share option should be enabled", page.isShareBtnEnabled());
-		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 		page.closeToolsDropdown();
 		page.openExportDropdown();
@@ -89,7 +84,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.openToolsDropDown();
 		assertTrue("Merge option should be enabled", page.isMergeBtnEnabled());
 		assertTrue("Share option should be enabled", page.isShareBtnEnabled());
-		assertTrue("Move option should be enabled", page.isMoveBtnEnabled());
 		assertTrue("Remove option should be enabled", page.isRemoveBtnEnabled());
 		page.openExportDropdown();
 		assertTrue("Download option should be enabled", page.isDownloadBtnEnabled());
@@ -187,41 +181,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
-	public void testShareSamples() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.selectSample(0);
-		page.selectSample(1);
-
-		List<String> names = page.getSampleNamesOnPage().subList(0, 2);
-		String newProjectName = "project4";
-
-		page.shareSamples(newProjectName, false);
-
-		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
-		List<String> newNames = newPage.getSampleNamesOnPage().subList(0, 2);
-
-		assertEquals("Should have the same samples since they were moved", Sets.newHashSet(names), Sets.newHashSet(newNames));
-
-		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
-	}
-
-
-	@Test(expected=ProjectSamplesPage.GiveOwnerNotDisplayedException.class)
-	@Ignore
-	public void testShareRemoteSampleManagerFailGiveOwner() {
-		LoginPage.loginAsManager(driver());
-
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
-		page.selectSample(0);
-
-		String newProjectName = "project4";
-
-		page.shareSamples(newProjectName, true);
-	}
-
-	@Test
 	public void testRemoteSampleManagerButtonDisabled() {
 		LoginPage.loginAsManager(driver());
 
@@ -231,7 +190,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.waitUntilShareButtonVisible();
 		assertTrue("Share button should be enabled", page.isShareBtnEnabled());
-		assertFalse("Move button should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Merge button should not be enabled", page.isMergeBtnEnabled());
 	}
 
