@@ -22,9 +22,9 @@ export function ShareSamples({ samples = [], redirect }) {
     SHOW_SAMPLES && samples.length < originalSamples.length;
 
   return (
-    <Space direction="vertical" style={{ display: "block" }}>
+    <>
       {SHOW_SAMPLES && (
-        <>
+        <Space direction="vertical" style={{ width: `100%` }}>
           <SharedSamplesList list={samples} />
           <Checkbox
             className="t-move-checkbox"
@@ -45,7 +45,7 @@ export function ShareSamples({ samples = [], redirect }) {
               {i18n("ShareSamples.checkbox.lock")}
             </Typography.Text>
           </Checkbox>
-        </>
+        </Space>
       )}
       {SHOW_NO_SAMPLES_WARNING && (
         <Alert
@@ -67,6 +67,6 @@ export function ShareSamples({ samples = [], redirect }) {
           )}
         />
       )}
-    </Space>
+    </>
   );
 }
