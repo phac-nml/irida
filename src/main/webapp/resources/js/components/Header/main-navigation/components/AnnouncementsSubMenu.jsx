@@ -83,7 +83,7 @@ export function AnnouncementsSubMenu() {
   );
 
   return (
-    <Menu.Item key="announcements">
+    <Menu.Item key="announcements" style={{ padding: 0 }}>
       <Dropdown overlay={aMenu}>
         <span className="announcements-dropdown">
           <Badge
