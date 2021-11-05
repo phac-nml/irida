@@ -4161,9 +4161,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromedriver@npm:^93.0.1":
-  version: 93.0.1
-  resolution: "chromedriver@npm:93.0.1"
+"chromedriver@npm:^95.0.0":
+  version: 95.0.0
+  resolution: "chromedriver@npm:95.0.0"
   dependencies:
     "@testim/chrome-version": ^1.0.7
     axios: ^0.21.2
@@ -4174,7 +4174,7 @@ __metadata:
     tcp-port-used: ^1.0.1
   bin:
     chromedriver: bin/chromedriver
-  checksum: eacaf3e0c728d0743202746d20f9e86d263b37759f293fcd3c9157440732c2f31a1044f6207f694e591d1c1a9f682e44b0026ea3d533c63891d1cd80e27bb30c
+  checksum: 1946180f5d9c7e408a41648701045cb84b2999254d16d5daf4666c1b0481dbb9c06ba524c6ce13f4379302b26919452e569f9ce3f8e715b879c458e699cb742c
   languageName: node
   linkType: hard
 
@@ -7164,7 +7164,7 @@ fsevents@^2.1.2:
     bootstrap-daterangepicker: ^3.0.3
     browserslist: ^4.16.6
     chroma-js: ^1.3.4
-    chromedriver: ^93.0.1
+    chromedriver: ^95.0.0
     clipboard: ^1.7.1
     css-loader: ^5.0.1
     css-minimizer-webpack-plugin: ^1.2.0

@@ -192,7 +192,7 @@ public class SamplesAjaxController {
 			for(ConstraintViolation a : e.getConstraintViolations()) {
 				constraintViolations += a.getMessage() + "\n";
 			}
-			return ResponseEntity.badRequest().body(new AjaxErrorResponse(constraintViolations));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(constraintViolations));
 		}
 	}
 

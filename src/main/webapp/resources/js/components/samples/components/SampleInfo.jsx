@@ -31,9 +31,15 @@ export function SampleInfo({ sample }) {
       value: value || "",
     })
       .then((response) => {
-        notification.success({ message: response.data.message });
+        if (response.error) {
+          notification.error({ message: response.error.data.error });
+        } else {
+          notification.success({ message: response.data.message });
+        }
       })
-      .catch((message) => notification.error({ message }));
+      .catch((error) => {
+        notification.error({ message: error });
+      });
   };
 
   const data = [
