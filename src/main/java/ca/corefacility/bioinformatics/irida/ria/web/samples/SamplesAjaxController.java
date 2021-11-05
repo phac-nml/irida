@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -20,12 +22,16 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.UpdateSampleAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 
 /**
  * Controller for asynchronous requests for a {@link Sample}
@@ -166,6 +172,23 @@ public class SamplesAjaxController {
 	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
 		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	}
+
+	/**
+	 * Update a field within the sample details.
+	 *
+	 * @param id {@link Long} identifier for the sample
+	 * @param request   {@link UpdateSampleAttributeRequest} details about which field to update
+	 * @param locale    {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/details")
+	public ResponseEntity<AjaxResponse> updateSampleDetails(@PathVariable Long id, @RequestBody UpdateSampleAttributeRequest request, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateSampleDetails(id, request, locale)));
+		} catch (ConstraintViolationException e) {
+			return ResponseEntity.badRequest().body(new AjaxErrorResponse("Sample names must be at least 4 characters."));
+		}
 	}
 
 	/**

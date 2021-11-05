@@ -1,6 +1,7 @@
 import React from "react";
-import { List, Space, Typography } from "antd";
+import { DatePicker, List, notification, Space, Typography } from "antd";
 import { CalendarDate } from "../../CalendarDate";
+import { useUpdateSampleDetailsMutation } from "../../../apis/samples/samples";
 
 const { Paragraph } = Typography;
 
@@ -11,14 +12,36 @@ const { Paragraph } = Typography;
  * @constructor
  */
 export function SampleInfo({ sample }) {
+  const [updateSampleDetails] = useUpdateSampleDetailsMutation();
+
+  /*
+  Updates the field with the provided value. If nothing has
+  changed then no updates are done.
+   */
+  const updateField = (field, value) => {
+    /*
+    Make sure the value actually changed, if it hasn't then don't update it.
+     */
+    if (sample[field] === value) return;
+    if (sample[field] === null && value === "") return;
+
+    updateSampleDetails({
+      sampleId: sample.identifier,
+      field,
+      value: value || "",
+    })
+      .then((response) => {
+        notification.success({ message: response.data.message });
+      })
+      .catch((message) => notification.error({ message }));
+  };
+
   const data = [
     {
       title: i18n("SampleInfo.sampleName"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("sampleName", value) }}
         >
           {sample.sampleName}
         </Paragraph>
@@ -28,9 +51,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.description"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("description", value) }}
         >
           {sample.description}
         </Paragraph>
@@ -55,9 +76,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.organism"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("organism", value) }}
         >
           {sample.organism}
         </Paragraph>
@@ -67,9 +86,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.isolate"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("isolate", value) }}
         >
           {sample.isolate}
         </Paragraph>
@@ -79,9 +96,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.strain"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("strain", value) }}
         >
           {sample.strain}
         </Paragraph>
@@ -94,9 +109,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.collectedBy"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("collectedBy", value) }}
         >
           {sample.collectedBy}
         </Paragraph>
@@ -105,13 +118,10 @@ export function SampleInfo({ sample }) {
     {
       title: i18n("SampleInfo.dateCollected"),
       value: (
-        <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
-        >
-          {sample.collectionDate}
-        </Paragraph>
+        <DatePicker
+          onChange={(value) => updateField("collectionDate", value)}
+          placeholder={sample.collectionDate}
+        />
       ),
     },
     {
@@ -119,7 +129,7 @@ export function SampleInfo({ sample }) {
       value: (
         <Paragraph
           editable={{
-            onChange: (value) => console.log(value),
+            onChange: (value) => updateField("isolationSource", value),
           }}
         >
           {sample.isolationSource}
@@ -131,7 +141,7 @@ export function SampleInfo({ sample }) {
       value: (
         <Paragraph
           editable={{
-            onChange: (value) => console.log(value),
+            onChange: (value) => updateField("geographicLocationName", value),
           }}
         >
           {sample.geographicLocationName}
@@ -142,9 +152,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.latitude"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("latitude", value) }}
         >
           {sample.latitude}
         </Paragraph>
@@ -154,9 +162,7 @@ export function SampleInfo({ sample }) {
       title: i18n("SampleInfo.longitude"),
       value: (
         <Paragraph
-          editable={{
-            onChange: (value) => console.log(value),
-          }}
+          editable={{ onChange: (value) => updateField("longitude", value) }}
         >
           {sample.longitude}
         </Paragraph>
