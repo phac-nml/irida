@@ -12,7 +12,7 @@ export const sampleApi = createApi({
   tagTypes: ["SampleDetails"],
   endpoints: (build) => ({
     /*
-    Get the default information about a project
+    Get the default information about a sample
      */
     getSampleDetails: build.query({
       query: (sampleId) => ({
@@ -20,6 +20,9 @@ export const sampleApi = createApi({
       }),
       providesTags: ["SampleDetails"],
     }),
+    /*
+    Update sample details
+     */
     updateSampleDetails: build.mutation({
       query: ({ sampleId, field, value }) => ({
         url: `/${sampleId}/details`,
