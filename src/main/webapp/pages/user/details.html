@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      data-layout-decorate="~{template/page}">
+  <head>
+    <title th:text="${user.label}">_USER PAGE_</title>
+    <webpacker:css entry="user" />
+<!--    <script th:inline="javascript">-->
+<!--		window.PAGE = {-->
+<!--			userId: /*[[${user.getId()}]]*/ 1-->
+<!--		};-->
+<!--	</script>-->
+  </head>
+  <body>
+    <div id="user-details-root" layout:fragment="page"></div>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="user" />
+    </th:block>
+  </body>
+</html>

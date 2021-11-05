@@ -52,7 +52,7 @@ import com.google.common.collect.Lists;
 @RequestMapping(value = "/users")
 public class UsersController {
 	private static final String USERS_PAGE = "user/list";
-	private static final String SPECIFIC_USER_PAGE = "user/user_details";
+	private static final String SPECIFIC_USER_PAGE = "user/details";
 	private static final String EDIT_USER_PAGE = "user/edit";
 	private static final String CREATE_USER_PAGE = "user/create";
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
