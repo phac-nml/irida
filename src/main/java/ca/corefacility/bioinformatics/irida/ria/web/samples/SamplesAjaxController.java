@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +188,11 @@ public class SamplesAjaxController {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateSampleDetails(id, request, locale)));
 		} catch (ConstraintViolationException e) {
-			return ResponseEntity.badRequest().body(new AjaxErrorResponse("Sample names must be at least 4 characters."));
+			String constraintViolations = "";
+			for(ConstraintViolation a : e.getConstraintViolations()) {
+				constraintViolations += a.getMessage() + "\n";
+			}
+			return ResponseEntity.badRequest().body(new AjaxErrorResponse(constraintViolations));
 		}
 	}
 
