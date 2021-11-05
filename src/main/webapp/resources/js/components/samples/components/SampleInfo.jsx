@@ -1,9 +1,23 @@
 import React from "react";
 import { DatePicker, List, notification, Space, Typography } from "antd";
-import { CalendarDate } from "../../CalendarDate";
 import { useUpdateSampleDetailsMutation } from "../../../apis/samples/samples";
-
+import styled from "styled-components";
+import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
+import moment from "moment";
+
+const StyledList = styled(List)`
+  .ant-list-item {
+    padding: 15px;
+    div.ant-typography,
+    .ant-typography p {
+      margin-bottom: 0;
+    }
+    .ant-typography.ant-typography-edit-content {
+      margin: 0;
+    }
+  }
+`;
 
 /**
  * React component to display basic sample information
@@ -13,6 +27,7 @@ const { Paragraph } = Typography;
  */
 export function SampleInfo({ sample }) {
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();
+  const dateFormat = "YYYY-MM-DD";
 
   /*
   Updates the field with the provided value. If nothing has
@@ -69,11 +84,11 @@ export function SampleInfo({ sample }) {
     },
     {
       title: i18n("SampleInfo.createdDate"),
-      value: <CalendarDate date={sample.createdDate} />,
+      value: formatDate({ date: sample.createdDate }),
     },
     {
       title: i18n("SampleInfo.modifiedDate"),
-      value: <CalendarDate date={sample.modifiedDate} />,
+      value: formatDate({ date: sample.modifiedDate }),
     },
   ];
 
@@ -126,7 +141,9 @@ export function SampleInfo({ sample }) {
       value: (
         <DatePicker
           onChange={(value) => updateField("collectionDate", value)}
-          placeholder={sample.collectionDate}
+          defaultValue={moment(sample.collectionDate, dateFormat)}
+          format={dateFormat}
+          allowClear={false}
         />
       ),
     },
@@ -178,22 +195,17 @@ export function SampleInfo({ sample }) {
 
   return (
     <Space size={`large`} direction={`vertical`} style={{ width: `100%` }}>
-      <List
+      <StyledList
         itemLayout="horizontal"
         dataSource={data}
         renderItem={(item) => (
           <List.Item>
-            <List.Item.Meta
-              title={item.title}
-              description={
-                <span style={{ marginLeft: "10px" }}>{item.value}</span>
-              }
-            />
+            <List.Item.Meta title={item.title} description={item.value} />
           </List.Item>
         )}
       />
 
-      <List
+      <StyledList
         itemLayout="horizontal"
         dataSource={organismData}
         renderItem={(item) => (
@@ -203,7 +215,7 @@ export function SampleInfo({ sample }) {
         )}
       />
 
-      <List
+      <StyledList
         itemLayout="horizontal"
         dataSource={collectionData}
         renderItem={(item) => (

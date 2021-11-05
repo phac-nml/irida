@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,6 +87,8 @@ public class UISampleService {
 	 */
 	public String updateSampleDetails(Long id, UpdateSampleAttributeRequest request, Locale locale) {
 		try {
+			String dateValue = null;
+
 			Sample sample = sampleService.read(id);
 			switch (request.getField()) {
 			case "sampleName":
@@ -108,8 +111,9 @@ public class UISampleService {
 				break;
 			case "collectionDate":
 				Instant instant = Instant.parse(request.getValue());
-				Date myDate = Date.from(instant);
-				sample.setCollectionDate(myDate);
+				Date collectionDate = Date.from(instant);
+				dateValue = new SimpleDateFormat("yyyy-MM-dd").format(collectionDate);
+				sample.setCollectionDate(collectionDate);
 				break;
 			case "isolationSource":
 				sample.setIsolationSource(request.getValue());
@@ -133,8 +137,9 @@ public class UISampleService {
 				message = messageSource.getMessage("server.sample.details.removed.success",
 						new Object[] { request.getField() }, locale);
 			} else {
+				String value = dateValue != null ? dateValue : request.getValue();
 				message = messageSource.getMessage("server.sample.details.updated.success",
-						new Object[] { request.getField(), request.getValue() }, locale);
+						new Object[] { request.getField(), value }, locale);
 			}
 			return message;
 		} catch (ConstraintViolationException e) {

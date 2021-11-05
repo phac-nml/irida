@@ -100,11 +100,9 @@ function DisplaySampleDetails({ sampleId, removeSample, children }) {
 export function SampleDetailViewer({ sampleId, removeSample, children }) {
   return (
     <Provider store={store}>
-      <DisplaySampleDetails
-        sampleId={sampleId}
-        removeSample={removeSample}
-        children={children}
-      />
+      <DisplaySampleDetails sampleId={sampleId} removeSample={removeSample}>
+        {children}
+      </DisplaySampleDetails>
     </Provider>
   );
 }
