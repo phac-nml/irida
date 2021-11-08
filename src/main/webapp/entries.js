@@ -27,8 +27,6 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-copy.js",
   "project-samples-remove":
     "./resources/js/pages/projects/samples/modals/samples-remove.js",
-  "project-samples-filter":
-    "./resources/js/pages/projects/samples/modals/samples-filter.js",
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
@@ -42,14 +40,13 @@ module.exports = {
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-analyses":
-    "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
-  "analysis-outputs-table":
-    "./resources/js/pages/analyses/analysis-outputs-table.js",
+  "project-analyses": "./resources/js/pages/projects/project-analyses/",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
+  "sample-files-concatenate":
+    "./resources/js/pages/samples/sample-files-concatenate.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
   "sequencing-run-details": "./resources/js/pages/sequencing-runs/details",
@@ -60,4 +57,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
+  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
 };

@@ -61,3 +61,6 @@ const config = Object.assign({}, validationConfig, {
 });
 
 $("#mergeForm").validate(config);
+window.IRIDA.modals.merge = () => {
+  $("#mergeForm").validate(config);
+};
