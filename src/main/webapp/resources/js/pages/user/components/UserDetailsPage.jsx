@@ -21,7 +21,9 @@ export function UserDetailsPage({}) {
           <Menu.Item key="account" onClick={() => setContent("account")}>Account</Menu.Item>
           <Menu.Item key="groups" onClick={() => setContent("groups")}>Groups</Menu.Item>
           <Menu.Item key="projects" onClick={() => setContent("projects")}>Projects</Menu.Item>
-          <Menu.Item key="security" onClick={() => setContent("security")}>Security</Menu.Item>
+          <Menu.ItemGroup key="security" title="Security">
+            <Menu.Item key="password" onClick={() => setContent("password")}>Password Reset</Menu.Item>
+          </Menu.ItemGroup>
         </Menu>
       </Col>
       <Col flex="auto">
@@ -29,7 +31,7 @@ export function UserDetailsPage({}) {
           {content === "account" && (<div>Account</div>)}
           {content === "groups" && (<div>Groups</div>)}
           {content === "projects" && (<div>Organization</div>)}
-          {content === "security" && (<div>Security</div>)}
+          {content === "password" && (<div>Password Reset</div>)}
         </div>
       </Col>
     </Row>
