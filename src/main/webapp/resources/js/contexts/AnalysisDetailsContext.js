@@ -104,7 +104,7 @@ function AnalysisDetailsProvider(props) {
       if (res.type === "error") {
         notification.error({ message: res.text });
       } else {
-        notification.success({ messge: res });
+        notification.success({ message: res });
         dispatch({ type: TYPES.UPDATE_SAMPLES, updateSamples: true });
       }
     });

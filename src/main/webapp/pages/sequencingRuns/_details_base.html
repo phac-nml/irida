@@ -5,10 +5,7 @@
   data-layout-decorate="~{template/page}"
 >
   <head>
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/sequencing-run-details.bundle.css}"
-    />
+    <webpacker:css entry="sequencing-run-details" />
   </head>
   <body>
     <div layout:fragment="page" style="margin-top: 20px">
@@ -109,7 +106,7 @@
       </aside>
     </div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/sequencing-run-details.bundle.js}"></script>
+      <webpacker:js entry="sequencing-run-details" />
     </th:block>
   </body>
 </html>

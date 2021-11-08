@@ -19,7 +19,7 @@ IRIDA Virtual Appliance
 
 Documentation for installing IRIDA can be found [here](../administrator/), but is time consuming and must be adjusted to the quirks of your environment. We provide a fully-configured virtual appliance that can be opened with [Oracle VirtualBox](https://www.virtualbox.org/) for demonstration purposes. You can download the complete package at:
 
-<https://irida.corefacility.ca/downloads/virtual/irida-vm-virtualbox-latest.zip>
+<https://sairidapublic.blob.core.windows.net/downloads/irida-vm-virtualbox-latest.zip>
 
 ### Using the Virtual Appliance
 
@@ -64,8 +64,8 @@ Sample Data
 
 Sample data for testing IRIDA can be found at:
 
-<https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>
+<https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip>
 
 The sample data package consists of *simulated* Illumina MiSeq read data for three publicly available Listeria Monocytogenes genomes. You can find more information about the simulated data at:
 
-<https://irida.corefacility.ca/downloads/data/README.txt>
+<https://sairidapublic.blob.core.windows.net/downloads/data/README.txt>

@@ -7,7 +7,7 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" th:href="@{/dist/css/launch.bundle.css}" />
+    <webpacker:css entry="launch" />
   </head>
   <body>
     <div
@@ -20,7 +20,7 @@
        -->
     </div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/launch.bundle.js}"></script>
+      <webpacker:js entry="launch" />
     </th:block>
   </body>
 </html>

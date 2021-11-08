@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  data-layout-decorate="~{template/page}"
->
-  <head>
-    <title th:text="#{visualization.phylogenomics.title(${submission.label})}">
-      Title
-    </title>
-    <link
-      rel="stylesheet"
-      th:href="@{/dist/css/visualizations-phylogenetics.bundle.css}"
-    />
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{template/page}">
+<head>
+    <title th:text="#{visualization.phylogenomics.title(${submission.label})}">Title</title>
+    <webpacker:css entry="visualizations-phylogenetics"/>
     <script th:inline="javascript">
-      var PAGE = {
+      window.PAGE = {
         urls: {
           metadata:
             /*[[@{/ajax/analysis/{id}/metadata(id=${submissionId})}]]*/ ""
@@ -124,9 +118,8 @@
         th:text="#{visualization.button.export.svg}"/> </button>
       </script>
 
-      <script
-        th:src="@{/dist/js/visualizations-phylogenetics.bundle.js}"
-      ></script>
+        <webpacker:js entry="visualizations-phylogenetics"/>
     </th:block>
   </body>
+    <webpacker:js entry="visualizations-phylogenetics"/>
 </html>
