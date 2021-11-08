@@ -6,14 +6,14 @@
 >
   <head>
     <title th:text="#{clients.title}">_Clients_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/clients-list.bundle.css}" />
+      <webpacker:css entry="clients-list"/>
   </head>
   <body>
     <div layout:fragment="page" id="client-root" style="height: 100%;">
       <!-- Base react component found at : /webapp/resources/js/pages/clients/listing/ClientListingPage.jsx -->
     </div>
     <th:block layout:fragment="scripts">
-      <script th:src="@{/dist/js/clients-list.bundle.js}"></script>
+        <webpacker:js entry="clients-list"/>
     </th:block>
   </body>
 </html>

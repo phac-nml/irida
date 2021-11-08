@@ -4,6 +4,9 @@ Changes
 21.09 to 22.01
 --------------
 * [Developer]: Updated redux API within the cart page to use Redux Toolkit.
+* [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
+* [Developer]: Updated `antd` to version 4.16.13
 
 21.05 to 21.09
 --------------
@@ -31,7 +34,6 @@ Changes
 * [Developer]: Updated chromedriver to v93.0.1.
 * [Database]: Updated query to improve performance for metadata in REST API and line list.
 * [UI]: Fixed bug when exporting samples from project > samples page while using filter by file, all sample were exported.
-
 
 21.01 to 21.05
 --------------
