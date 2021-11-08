@@ -3,6 +3,7 @@ Changes
 
 21.09 to 22.01
 --------------
+* [Developer]: Updated redux API within the cart page to use Redux Toolkit.
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 * [Developer]: Updated `antd` to version 4.16.13
