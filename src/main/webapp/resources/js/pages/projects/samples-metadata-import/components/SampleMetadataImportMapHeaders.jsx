@@ -62,7 +62,6 @@ export function SampleMetadataImportMapHeaders() {
           icon={<IconArrowLeft />}
           onClick={() => history.goBack()}
         >
-          {" "}
           {i18n("SampleMetadataImportMapHeaders.button.back")}
         </Button>
         <Button
