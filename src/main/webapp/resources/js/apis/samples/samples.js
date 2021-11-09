@@ -1,22 +1,43 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const URL = setBaseUrl(`ajax/samples`);
 
-/**
- * Get details about a particular sample
- * NOTE: Does not include file information.
- * @param {number} id - identifier for a sample
- * @returns {Promise<any>}
- */
-export const fetchSampleDetails = async (id) => {
-  try {
-    const { data } = await axios.get(`${URL}/${id}/details`);
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.error);
-  }
-};
+export const sampleApi = createApi({
+  reducerPath: `sampleApi`,
+  baseQuery: fetchBaseQuery({
+    baseUrl: setBaseUrl(URL),
+  }),
+  tagTypes: ["SampleDetails"],
+  endpoints: (build) => ({
+    /*
+    Get the default information about a sample
+     */
+    getSampleDetails: build.query({
+      query: (sampleId) => ({
+        url: `/${sampleId}/details`,
+      }),
+      providesTags: ["SampleDetails"],
+    }),
+    /*
+    Update sample details
+     */
+    updateSampleDetails: build.mutation({
+      query: ({ sampleId, field, value }) => ({
+        url: `/${sampleId}/details`,
+        body: { field, value },
+        method: "PUT",
+      }),
+      invalidatesTags: ["SampleDetails"],
+    }),
+  }),
+});
+
+export const {
+  useGetSampleDetailsQuery,
+  useUpdateSampleDetailsMutation,
+} = sampleApi;
 
 /**
  * Get file details for a sample

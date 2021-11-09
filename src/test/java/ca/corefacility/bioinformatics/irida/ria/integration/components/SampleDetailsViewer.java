@@ -17,7 +17,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-name")
 	private WebElement sampleName;
 
-	@FindBy(className = "t-date-text")
+	@FindBy(className = "t-sample-created-date")
 	private WebElement createdDate;
 
 	@FindBy(className = "t-sample-details-metadata-item")
