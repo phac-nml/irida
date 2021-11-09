@@ -26,7 +26,8 @@ If a sample has a locked symbol, it means that the sample is locked from modific
 
 ### Moving Samples
 
-If you want to move samples, which means they will be in the destination project, but removed from the current project, then select the checkbox "Select a project to share samples with"
+If you want to move samples, which means they will be in the destination project, but removed from the current project,
+then select the checkbox "Remove samples from current project (move samples)"
 
 ![Share samples move checkbox.]({{ site.baseurl }}/images/tutorials/common/samples/share-move-checkbox.png)
 
