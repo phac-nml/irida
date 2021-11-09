@@ -1,9 +1,7 @@
 import { Button, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  useGetPotentialProjectsToShareToQuery
-} from "../../../apis/projects/projects";
+import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -78,7 +76,7 @@ export function ShareLayout({ redirect }) {
   const DISABLED = samples.length === 0 || typeof projectId === "undefined";
 
   return (
-    <Space direction="vertical" style={{ display: "block" }} size="large">
+    <>
       {typeof result === "string" ? (
         <ShareSuccess
           removed={remove}
@@ -89,7 +87,7 @@ export function ShareLayout({ redirect }) {
       ) : typeof projectId !== "undefined" && isError ? (
         <ShareError error={error} redirect={redirect} />
       ) : (
-        <>
+        <Space direction="vertical" style={{ width: `100%` }}>
           <ShareProject currentProject={currentProject} />
           <ShareSamples samples={samples} redirect={redirect} />
           {SHOW_BUTTON && (
@@ -106,8 +104,8 @@ export function ShareLayout({ redirect }) {
               </Button>
             </div>
           )}
-        </>
+        </Space>
       )}
-    </Space>
+    </>
   );
 }
