@@ -115,6 +115,7 @@ export function SampleInfo({ sample, isModifiable }) {
           ontology={TAXONOMY}
           onTermSelected={(value) => updateField("organism", value)}
           className="t-sample-organism"
+          autofocus={false}
         />
       ) : (
         <span className="t-sample-organism">{sample.organism}</span>
@@ -164,7 +165,11 @@ export function SampleInfo({ sample, isModifiable }) {
       value: isModifiable ? (
         <DatePicker
           onChange={(value) => updateField("collectionDate", value)}
-          defaultValue={moment(sample.collectionDate, dateFormat)}
+          defaultValue={
+            sample.collectionDate !== null
+              ? moment(sample.collectionDate, dateFormat)
+              : ""
+          }
           format={dateFormat}
           allowClear={false}
           className="t-sample-collected-date"
