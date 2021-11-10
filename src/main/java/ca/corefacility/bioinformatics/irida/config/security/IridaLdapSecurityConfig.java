@@ -28,34 +28,34 @@ public class IridaLdapSecurityConfig {
     @Autowired
     private UserRepository userRepository;
 
-    @Value("${irida.administrative.authenitcation.ldap.url}")
+    @Value("${irida.administrative.authentication.ldap.url}")
     private String ldapUrl;
 
     @Value("${irida.administrative.authentication.ldap.base}")
     private String ldapBase;
 
-    @Value("${irida.administrative.authenitcation.ldap.userdn}")
+    @Value("${irida.administrative.authentication.ldap.userdn}")
     private String ldapUserDn;
 
-    @Value("${irida.administrative.authenitcation.ldap.password}")
+    @Value("${irida.administrative.authentication.ldap.password}")
     private String ldapPassword;
 
     @Value("${irida.administrative.authentication.ldap.userdn_search_patterns}")
     private String ldapUserDnSearchPatterns;
 
-    @Value("${irida.administrative.authenitcation.ldap.set_referral}")
+    @Value("${irida.administrative.authentication.ldap.set_referral}")
     private String ldapSetReferral;
 
-    @Value("${irida.administrative.authenitcation.adldap.url}")
+    @Value("${irida.administrative.authentication.adldap.url}")
     private String adLdapUrl;
 
-    @Value("${irida.administrative.authenitcation.adldap.domain}")
+    @Value("${irida.administrative.authentication.adldap.domain}")
     private String adLdapDomain;
 
-    @Value("${irida.administrative.authenitcation.adldap.rootdn}")
+    @Value("${irida.administrative.authentication.adldap.rootdn}")
     private String adLdapRootDn;
 
-    @Value("${irida.administrative.authenitcation.adldap.searchfilter}")
+    @Value("${irida.administrative.authentication.adldap.searchfilter}")
     private String adLdapSearchFilter;
 
     /**

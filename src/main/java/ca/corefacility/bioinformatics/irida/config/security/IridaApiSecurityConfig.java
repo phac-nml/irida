@@ -54,9 +54,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Autowired
 	private UserRepository userRepository;
 
-	@Autowired
-	private IridaLdapSecurityConfig iridaLdapSecurityConfig;
-
 	public static final int METHOD_SECURITY_ORDER = Ordered.LOWEST_PRECEDENCE;
 
 	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
@@ -69,8 +66,8 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Value("${security.password.expiry}")
 	private int passwordExpiryInDays = -1;
 
-	@Value("${irida.administrative.authenitcation.mode}")
-	private String authenicationMode;
+	@Value("${irida.administrative.authentication.mode}")
+	private String authenticationMode;
 
 	/**
 	 * Loads all of the {@link BasePermission} sub-classes found in the security
@@ -118,9 +115,10 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 */
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
+		IridaLdapSecurityConfig iridaLdapSecurityConfig = new IridaLdapSecurityConfig();
 		AuthenticationProvider provider;
 
-		switch(authenicationMode)
+		switch(authenticationMode)
 		{
 			case "ldap":
 				provider = iridaLdapSecurityConfig.LdapAuthenticationProvider();
@@ -137,7 +135,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 				throw new IllegalStateException(errorMessage);
 		}
 
-		logger.info("IRIDA configured to authenticate with " + authenicationMode);
+		logger.info("IRIDA configured to authenticate with " + authenticationMode);
 		return provider;
 	}
 
