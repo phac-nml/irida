@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -65,6 +64,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Test set up with no sample selected
 		page.openToolsDropDown();
 		assertFalse("Merge option should not be enabled", page.isMergeBtnEnabled());
+		assertFalse("Share option should not be enabled", page.isShareBtnEnabled());
 		assertFalse("Move option should not be enabled", page.isMoveBtnEnabled());
 		assertFalse("Remove option should not be enabled", page.isRemoveBtnEnabled());
 		page.closeToolsDropdown();
@@ -187,7 +187,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Ignore
 	public void testShareSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -196,7 +195,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<String> names = page.getSampleNamesOnPage().subList(0, 2);
 		String newProjectName = "project4";
-		
+
 		page.shareSamples(newProjectName, false);
 
 		ProjectSamplesPage newPage = ProjectSamplesPage.gotToPage(driver(), 4);
@@ -207,9 +206,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("should be 2 locked samples", 2, page.getLockedSampleNames().size());
 	}
 
-	
+
 	@Test(expected=ProjectSamplesPage.GiveOwnerNotDisplayedException.class)
-	@Ignore
 	public void testShareRemoteSampleManagerFailGiveOwner() {
 		LoginPage.loginAsManager(driver());
 
@@ -217,10 +215,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSample(0);
 
 		String newProjectName = "project4";
-		
+
 		page.shareSamples(newProjectName, true);
 	}
-	
+
 	@Test
 	public void testRemoteSampleManagerButtonDisabled() {
 		LoginPage.loginAsManager(driver());
