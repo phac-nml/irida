@@ -45,7 +45,7 @@ export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
       loading={loading}
       disabled={loading}
     >
-      {roles.map((role) => (
+      {roles?.map((role) => (
         <Select.Option
           className={`t-${role.value}`}
           value={role.value}

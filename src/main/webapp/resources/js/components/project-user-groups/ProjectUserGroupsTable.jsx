@@ -5,6 +5,7 @@ import {
   removeUserGroupFromProject,
   updateUserGroupRoleOnProject,
 } from "../../apis/projects/user-groups";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 import {
   formatInternationalizedDateTime
 } from "../../utilities/date-utilities";
@@ -23,6 +24,7 @@ import { AddGroupButton } from "./AddGroupButton";
 export function ProjectUserGroupsTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
+  const { roles: projectRoles } = useProjectRoles(projectId);
 
   const columns = [
     {
@@ -38,13 +40,13 @@ export function ProjectUserGroupsTable({ projectId }) {
     },
     {
       dataIndex: "role",
-      title: i18n("ProjectUserGroupsTable.role"),
+      title: i18n("ProjectUserGroupsTable.projectRole"),
       render(text, group) {
         return (
           <RoleSelect
-            projectId={projectId}
-            item={group}
             updateRoleFn={updateUserGroupRoleOnProject}
+            roles={projectRoles}
+            currentRole={group.role}
           />
         );
       },
