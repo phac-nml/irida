@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
@@ -76,13 +75,11 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
-	private final UICartService cartService;
 	private final UpdateSamplePermission updateSamplePermission;
 
 	/*
 	 * Converters
-	 */
-	Formatter<Date> dateFormatter;
+	 */ Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
 
 	// CONSTANTS
@@ -92,7 +89,7 @@ public class ProjectsController {
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService,
-			UICartService cartService, UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
+			UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -100,7 +97,6 @@ public class ProjectsController {
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
-		this.cartService = cartService;
 		this.fileSizeConverter = new FileSizeConverter();
 		this.updateSamplePermission = updateSamplePermission;
 	}
@@ -264,7 +260,9 @@ public class ProjectsController {
 		List<DTProject> dtProjects = projects.stream()
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
-		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name", "ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date", "ProjectsTable_th_modified_date")
+		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name",
+						"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
+						"ProjectsTable_th_modified_date")
 				.stream()
 				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
 				.collect(Collectors.toList());
@@ -280,6 +278,21 @@ public class ProjectsController {
 		} else {
 			writeProjectsToCsvFile(headers, dtProjects, locale, response);
 		}
+	}
+
+	/**
+	 * Handle the page request to upload {@link Sample} metadata
+	 *
+	 * @param model     {@link Model}
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param principal {@link Principal} currently logged in use
+	 * @return {@link String} the path to the metadata import page
+	 */
+	@GetMapping("/projects/{projectId}/sample-metadata/upload/*")
+	public String getProjectSamplesMetadataUploadPage(final Model model, @PathVariable Long projectId,
+			Principal principal) {
+		projectControllerUtils.getProjectTemplateDetails(model, principal, projectService.read(projectId));
+		return "projects/project_samples_metadata_upload";
 	}
 
 	/**
