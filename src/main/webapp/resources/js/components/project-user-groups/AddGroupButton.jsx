@@ -152,7 +152,8 @@ export function AddGroupButton({
         onOk={addUserGroup}
         okText={i18n("AddGroupButton.group.okText")}
       >
-        <Form form={form} layout="vertical" initialValues={{ role }}>
+        <Form form={form} layout="vertical"
+              initialValues={{ role, metadataRole }}>
           <Form.Item
             label={i18n("AddGroupButton.group.label")}
             help={i18n("AddGroupButton.group.label-help")}
