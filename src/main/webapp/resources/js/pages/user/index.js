@@ -16,10 +16,11 @@ render(
   <Provider store={store}>
     <PageWrapper title="User Account">
       <Row>
-        <Col flex={1}>
+        <Col span={5}>
           <UserAccountNav />
         </Col>
-        <Col flex={9}>
+        <Col span={1} />
+        <Col span={18}>
           <Router>
             <UserDetailsPage default path="details" />
             <UserGroupsPage path="groups"/>
