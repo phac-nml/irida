@@ -1,9 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,12 +28,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.UpdateSampleAttributeRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.base.Strings;
 
 /**
  * UI Service for samples
@@ -41,16 +48,18 @@ public class UISampleService {
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
 	private final UICartService cartService;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService, UpdateSamplePermission updateSamplePermission,
-			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
+			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService, UICartService cartService, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.cartService = cartService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -66,6 +75,76 @@ public class UISampleService {
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		return new SampleDetails(sample, isModifiable, metadataForSample, cartService.isSampleInCart(id));
+	}
+
+	/**
+	 * Update a field within the sample details.
+	 *
+	 * @param id {@link Long} identifier for the sample
+	 * @param request   {@link UpdateSampleAttributeRequest} details about which field to update
+	 * @param locale    {@link Locale} for the currently logged in user
+	 * @return message indicating update status
+	 */
+	public String updateSampleDetails(Long id, UpdateSampleAttributeRequest request, Locale locale) {
+		try {
+			String dateValue = null;
+
+			Sample sample = sampleService.read(id);
+			switch (request.getField()) {
+			case "sampleName":
+				sample.setSampleName(request.getValue());
+				break;
+			case "description":
+				sample.setDescription(request.getValue());
+				break;
+			case "organism":
+				sample.setOrganism(request.getValue());
+				break;
+			case "isolate":
+				sample.setIsolate(request.getValue());
+				break;
+			case "strain":
+				sample.setStrain(request.getValue());
+				break;
+			case "collectedBy":
+				sample.setCollectedBy(request.getValue());
+				break;
+			case "collectionDate":
+				Instant instant = Instant.parse(request.getValue());
+				Date collectionDate = Date.from(instant);
+				dateValue = new SimpleDateFormat("yyyy-MM-dd").format(collectionDate);
+				sample.setCollectionDate(collectionDate);
+				break;
+			case "isolationSource":
+				sample.setIsolationSource(request.getValue());
+				break;
+			case "geographicLocationName":
+				sample.setGeographicLocationName(request.getValue());
+				break;
+			case "latitude":
+				sample.setLatitude(request.getValue());
+				break;
+			case "longitude":
+				sample.setLongitude(request.getValue());
+				break;
+			default:
+				return messageSource.getMessage("server.sample.details.update.error",
+						new Object[] { request.getField() }, locale);
+			}
+			sampleService.update(sample);
+			String message;
+			if (Strings.isNullOrEmpty(request.getValue())) {
+				message = messageSource.getMessage("server.sample.details.removed.success",
+						new Object[] { request.getField() }, locale);
+			} else {
+				String value = dateValue != null ? dateValue : request.getValue();
+				message = messageSource.getMessage("server.sample.details.updated.success",
+						new Object[] { request.getField(), value }, locale);
+			}
+			return message;
+		} catch (ConstraintViolationException e) {
+			throw new ConstraintViolationException(e.getConstraintViolations());
+		}
 	}
 
 	/**

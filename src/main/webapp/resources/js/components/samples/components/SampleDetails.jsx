@@ -23,7 +23,10 @@ export function SampleDetails({ details }) {
       </Paragraph>
       <Tabs defaultActiveKey="details">
         <Tabs.TabPane tab={i18n("SampleDetails.details")} key="details">
-          <SampleInfo sample={details.sample} />
+          <SampleInfo
+            sample={details.sample}
+            isModifiable={details.modifiable}
+          />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.metadata")} key="metadata">
           <SampleMetadata metadata={details.metadata} />

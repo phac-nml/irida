@@ -51,9 +51,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-merge-btn")
 	private WebElement mergeBtn;
 
-	@FindBy(className = "t-share-btn")
+	@FindBy(className = "t-copy-btn")
 	private WebElement copyBtn;
-	
+
 	@FindBy(id = "giveOwner")
 	private WebElement giveOwnerBtn;
 
@@ -349,7 +349,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
-	
+
 	public void waitUntilShareButtonVisible() {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
@@ -358,7 +358,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void shareSamples(String project, boolean owner) {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(copyBtn));
-		
+
 		copyBtn.click();
 		shareMoveSamples(project, owner);
 	}
@@ -443,7 +443,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
-		
+
 		if(owner) {
 			try {
 				giveOwnerBtn.click();
@@ -451,7 +451,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 				throw new GiveOwnerNotDisplayedException();
 			}
 		}
-		
+
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-copy-samples-modal")));
@@ -479,7 +479,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 	}
-	
+
 	public List<String> getLockedSampleNames(){
 		List<WebElement> trs = driver.findElements(By.cssSelector("tbody tr"));
 		List<String> locked = new ArrayList<>();
