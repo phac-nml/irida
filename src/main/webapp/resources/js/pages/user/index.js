@@ -6,22 +6,22 @@ import { Col, Menu, Row } from 'antd';
 import { PageWrapper } from "../../components/page/PageWrapper";
 
 import store from "./store";
-import UserDetailsNav from "./components/UserDetailsNav";
-import UserAccountPage from "./components/UserAccountPage";
+import UserAccountNav from "./components/UserAccountNav";
+import UserDetailsPage from "./components/UserDetailsPage";
 import UserGroupsPage from "./components/UserGroupsPage";
 import UserProjectsPage from "./components/UserProjectsPage";
 import UserPasswordPage from "./components/UserPasswordPage";
 
 render(
   <Provider store={store}>
-    <PageWrapper title="User Details">
+    <PageWrapper title="User Account">
       <Row>
-        <Col flex="300px">
-          <UserDetailsNav />
+        <Col flex={1}>
+          <UserAccountNav />
         </Col>
-        <Col flex="auto">
+        <Col flex={9}>
           <Router>
-            <UserAccountPage path="account" />
+            <UserDetailsPage default path="details" />
             <UserGroupsPage path="groups"/>
             <UserProjectsPage path="projects" />
             <UserPasswordPage path="password" />
@@ -30,5 +30,5 @@ render(
       </Row>
     </PageWrapper>
   </Provider>,
-  document.querySelector("#user-details-root")
+  document.querySelector("#user-account-root")
 );

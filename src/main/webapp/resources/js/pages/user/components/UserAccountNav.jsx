@@ -3,16 +3,14 @@ import { Link } from "@reach/router";
 import { Menu } from 'antd';
 
 /**
- * React component to display the user details navigation.
+ * React component to display the user account navigation.
  * @returns {*}
  * @constructor
  */
-export default function UserDetailsNav({}) {
+export default function UserAccountNav({}) {
   return (
-    <Menu
-      mode="inline"
-    >
-      <Menu.Item key="account"><Link to="account">Account</Link></Menu.Item>
+    <Menu mode="inline" defaultSelectedKeys={['details']}>
+      <Menu.Item key="details"><Link to="details">Details</Link></Menu.Item>
       <Menu.Item key="groups"><Link to="groups">Groups</Link></Menu.Item>
       <Menu.Item key="projects"><Link to="projects">Projects</Link></Menu.Item>
       <Menu.ItemGroup key="security" title="Security">
