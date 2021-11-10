@@ -12,6 +12,7 @@ import {
   addUserGroupToProject,
   getAvailableGroupsForProject,
 } from "../../apis/projects/user-groups";
+import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
@@ -33,6 +34,8 @@ export function AddGroupButton({
   onGroupAdded = () => Function.prototype,
   projectId,
 }) {
+  const { roles: metadataRoles } = useMetadataRoles();
+  const [metadataRole, setMetadataRole] = useState("LEVEL_1");
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
@@ -115,7 +118,12 @@ export function AddGroupButton({
   Add the user group
    */
   const addUserGroup = () => {
-    addUserGroupToProject({ projectId, groupId, role }).then((message) => {
+    addUserGroupToProject({
+      projectId,
+      groupId,
+      role,
+      metadataRole,
+    }).then((message) => {
       onGroupAdded();
       notification.success({ message });
       form.resetFields();
@@ -169,6 +177,21 @@ export function AddGroupButton({
               onChange={(e) => setRole(e.target.value)}
             >
               {roles.map((role) => (
+                <Radio.Button key={role.value} value={role.value}>
+                  {role.label}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label={i18n("AddMemberButton.modal.metadataRole")}
+            name="metadataRole"
+          >
+            <Radio.Group
+              style={{ display: "flex" }}
+              onChange={(e) => setMetadataRole(e.target.value)}
+            >
+              {metadataRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
                   {role.label}
                 </Radio.Button>

@@ -46,13 +46,19 @@ export async function getAvailableGroupsForProject({ projectId, query }) {
  * @param {number} projectId Identifier for the current project
  * @param {number} groupId Identifier for the user group to add
  * @param {string} role for the user group on the project
+ * @param {string} metadataRole for the user group on the project
  * @returns {Promise<AxiosResponse<any>>}
  */
-export async function addUserGroupToProject({ projectId, groupId, role }) {
+export async function addUserGroupToProject({
+                                              projectId,
+                                              groupId,
+                                              role,
+                                              metadataRole
+                                            }) {
   try {
     const { data } = await axios.post(
       `${BASE_URL}/add?projectId=${projectId}`,
-      { role, id: groupId }
+      { projectRole: role, id: groupId, metadataRole }
     );
     return Promise.resolve(data);
   } catch (e) {
