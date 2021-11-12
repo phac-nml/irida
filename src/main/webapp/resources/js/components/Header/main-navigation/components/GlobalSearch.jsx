@@ -10,6 +10,7 @@ const SearchForm = styled.form`
   background-color: transparent;
   color: ${theme === "dark" ? "#fff" : "#000"};
   width: 300px;
+  margin-right: 15px;
 
   .ant-input-prefix svg {
     color: ${grey6};

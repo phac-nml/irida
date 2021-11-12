@@ -2,15 +2,15 @@
  * @file AnnouncementsSubMenu is the announcements drop down in the main navigation bar.
  */
 
-import React from "react";
 import { Badge, Dropdown, Menu, Space, Typography } from "antd";
-import { IconBell } from "../../../icons/Icons";
+import React from "react";
+import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
+import { BORDERED_LIGHT } from "../../../../styles/borders";
+import { fromNow } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { LinkButton } from "../../../Buttons/LinkButton";
+import { IconBell } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
-import { fromNow } from "../../../../utilities/date-utilities";
-import { BORDERED_LIGHT } from "../../../../styles/borders";
-import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
 
 const { Text } = Typography;
 
@@ -83,7 +83,6 @@ export function AnnouncementsSubMenu() {
   );
 
   return (
-    <Menu.Item key="announcements" style={{ padding: 0 }}>
       <Dropdown overlay={aMenu}>
         <span className="announcements-dropdown">
           <Badge
@@ -94,6 +93,5 @@ export function AnnouncementsSubMenu() {
           </Badge>
         </span>
       </Dropdown>
-    </Menu.Item>
   );
 }
