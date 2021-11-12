@@ -6,7 +6,7 @@ Changes
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 * [Developer]: Updated `antd` to version 4.16.13
-* [UI]: Recreated the share / move samples between projects. Now uses an independent page.
+* [UI]: Refactored share/move samples between projects to use a separate page.
 
 21.05 to 21.09
 --------------
