@@ -1,4 +1,6 @@
 import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
   BellOutlined,
   BoldOutlined,
   CalendarTwoTone,
@@ -67,6 +69,10 @@ import { blue6 } from "../../styles/colors";
  * Passing `props` in and spreading them allows any attribute to be passed
  * along to the icon (e.g. classes, styles, etc...).
  */
+
+export const IconArrowLeft = ({ ...props }) => <ArrowLeftOutlined {...props} />;
+
+export const IconArrowRight = ({ ...props }) => <ArrowRightOutlined {...props} />;
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
 

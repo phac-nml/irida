@@ -1,5 +1,6 @@
 import React, { Component, Suspense } from "react";
 import { connect } from "react-redux";
+import { useParams } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { actions as entryActions } from "../../reducers/entries";
@@ -10,12 +11,13 @@ import {
   IconCloudUpload,
   IconQuestion,
 } from "../../../../../components/icons/Icons";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
-const { urls } = window.PAGE;
+const { project } = window.PAGE;
 
 export class ToolbarComponent extends Component {
   state = { tourOpen: false, showTourPopover: false };
@@ -76,10 +78,12 @@ export class ToolbarComponent extends Component {
               <Form.Item>
                 <Button
                   className="t-import-metadata-btn"
-                  href={urls.import}
+                  href={setBaseUrl(
+                    `projects/${project.identifier}/sample-metadata/upload/file`
+                  )}
                   tour="tour-import"
+                  icon={<IconCloudUpload />}
                 >
-                  <IconCloudUpload />
                   {i18n("linelist.importBtn.text")}
                 </Button>
               </Form.Item>
