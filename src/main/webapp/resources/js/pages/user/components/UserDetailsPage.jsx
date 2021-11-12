@@ -26,8 +26,7 @@ export default function UserDetailsPage({}) {
         <Descriptions.Item label="Last Login">29 Oct 2021</Descriptions.Item>
       </Descriptions>
       <Form
-        labelCol={{ span:6 }}
-        wrapperCol={{ span:16 }}
+        layout="vertical"
         initialValues={{
           id:5,
           username:"this is a test",
@@ -73,7 +72,7 @@ export default function UserDetailsPage({}) {
         <Form.Item label="Last Login" name="lastlogin">
           <DatePicker format={dateFormat} disabled={formDisabled} />
         </Form.Item>
-        <Form.Item wrapperCol={{span:16, offset:6}}>
+        <Form.Item>
            <Button type="primary" htmlType="submit" disabled={formDisabled}> Submit</Button>
         </Form.Item>
       </Form>
