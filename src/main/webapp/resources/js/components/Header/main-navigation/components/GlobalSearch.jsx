@@ -1,9 +1,26 @@
-import React from "react";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { Input } from "antd";
-import { IconSearch } from "../../../icons/Icons";
+import React from "react";
+import styled from "styled-components";
 import { grey6 } from "../../../../styles/colors";
-import { primaryColour } from "../../../../utilities/theme-utilities";
+import { primaryColour, theme } from "../../../../utilities/theme-utilities";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { IconSearch } from "../../../icons/Icons";
+
+const SearchForm = styled.form`
+  background-color: transparent;
+  color: ${theme === "dark" ? "#fff" : "#000"};
+  width: 300px;
+
+  .ant-input-prefix svg {
+    color: ${grey6};
+    font-size: 14px;
+  }
+
+  input {
+    border-bottom: 2px solid ${primaryColour};
+    border-radius: 10px;
+  }
+`;
 
 /**
  * React component to render a global search input to the main navigation.
@@ -12,21 +29,13 @@ import { primaryColour } from "../../../../utilities/theme-utilities";
  */
 export function GlobalSearch() {
   return (
-    <form
-      className="global-search"
-      style={{ display: "inline-block", width: 300 }}
-      method="get"
-      action={setBaseUrl("/search")}
-    >
+    <SearchForm method="get" action={setBaseUrl("/search")}>
       <Input
         name="query"
         className="t-global-search"
-        prefix={<IconSearch style={{ color: grey6 }} />}
+        prefix={<IconSearch />}
         placeholder={i18n("nav.main.search")}
-        style={{
-          borderBottom: `1px solid ${primaryColour}`,
-        }}
       />
-    </form>
+    </SearchForm>
   );
 }
