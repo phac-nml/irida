@@ -1,6 +1,5 @@
 import React, { Component, Suspense } from "react";
 import { connect } from "react-redux";
-import { useParams } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { actions as entryActions } from "../../reducers/entries";

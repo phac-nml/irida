@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { setHeaders } from "../services/importReducer";
 import { notification, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
@@ -18,7 +18,7 @@ const { Text } = Typography;
  */
 export function SampleMetadataImportUploadFile() {
   const { projectId } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [status, setStatus] = React.useState("process");
   const [clearStorage] = useClearProjectSampleMetadataMutation();
@@ -49,7 +49,7 @@ export function SampleMetadataImportUploadFile() {
             info.file.response.sampleNameColumn
           )
         );
-        history.push("headers");
+        navigate(`/${projectId}/sample-metadata/upload/headers`);
       } else if (status === "error") {
         setStatus("error");
         notification.error({

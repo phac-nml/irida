@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Table, Tag, Tooltip, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
@@ -45,15 +45,13 @@ const MetadataTable = styled(Table)`
  */
 export function SampleMetadataImportReview() {
   const { projectId } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const [valid, setValid] = React.useState(true);
-  const {
-    data = {},
-    isFetching,
-    isSuccess,
-  } = useGetProjectSampleMetadataQuery(projectId);
+  const { data = {}, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(
+    projectId
+  );
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
 
   const tagColumn = {
@@ -172,8 +170,7 @@ export function SampleMetadataImportReview() {
     saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
-        history.push({
-          pathname: "complete",
+        navigate(`/${projectId}/sample-metadata/upload/complete`, {
           state: { statusMessage: payload.message },
         });
       });
@@ -217,7 +214,7 @@ export function SampleMetadataImportReview() {
         <Button
           className="t-metadata-uploader-column-button"
           icon={<IconArrowLeft />}
-          onClick={() => history.goBack()}
+          onClick={() => navigate(-1)}
         >
           {i18n("SampleMetadataImportReview.button.back")}
         </Button>
