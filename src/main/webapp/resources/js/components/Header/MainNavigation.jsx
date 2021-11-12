@@ -1,4 +1,4 @@
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Button, Dropdown, Grid, Menu, Space } from "antd";
 import React from "react";
 import styled from "styled-components";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -7,6 +7,8 @@ import { IconQuestionCircle, IconUser } from "../icons/Icons";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
+
+const { useBreakpoint } = Grid;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
@@ -77,7 +79,7 @@ const AnalysesMenu = (
       </Menu.Item>
     )}
     <Menu.Divider />
-    <Menu.Item>
+    <Menu.Item key="analyses:output">
       <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
         {i18n("Analysis.outputFiles")}
       </a>
@@ -139,6 +141,9 @@ const AccountMenu = (
 );
 
 export function MainNavigation() {
+  const screens = useBreakpoint();
+  console.log(screens);
+
   return (
     <NavStyle>
       <Space align="center">
@@ -165,19 +170,19 @@ export function MainNavigation() {
             {i18n("nav.main.remoteapis")}
           </Button>
         )}
-      </Space>
-      <Space align="center">
-        <GlobalSearch />
-        <CartLink />
         {isAdmin && (
           <Button
-            type="link"
+            type="primary"
             className="t-admin-panel-btn"
             href={setBaseUrl("/admin")}
           >
             {i18n("MainNavigation.admin").toUpperCase()}
           </Button>
         )}
+      </Space>
+      <Space align="center">
+        <GlobalSearch />
+        <CartLink />
         <Dropdown overlay={HelpMenu}>
           <Button type="link">
             <IconQuestionCircle />
