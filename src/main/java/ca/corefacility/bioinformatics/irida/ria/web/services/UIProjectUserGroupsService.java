@@ -51,6 +51,7 @@ public class UIProjectUserGroupsService {
 		List<ProjectUserGroupsTableModel> groups = userGroupJoins.getContent()
 				.stream()
 				.map(j -> new ProjectUserGroupsTableModel(j.getObject(), j.getProjectRole()
+						.toString(), j.getMetadataRole()
 						.toString(), j.getCreatedDate()))
 				.collect(Collectors.toList());
 		return new TableResponse<>(groups, userGroupJoins.getTotalElements());

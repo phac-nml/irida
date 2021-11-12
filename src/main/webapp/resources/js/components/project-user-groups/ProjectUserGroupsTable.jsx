@@ -5,6 +5,7 @@ import {
   removeUserGroupFromProject,
   updateUserGroupRoleOnProject,
 } from "../../apis/projects/user-groups";
+import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import {
   formatInternationalizedDateTime
@@ -25,6 +26,7 @@ export function ProjectUserGroupsTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { roles: projectRoles } = useProjectRoles(projectId);
+  const { roles: metadataRoles } = useMetadataRoles();
 
   const columns = [
     {
@@ -47,6 +49,21 @@ export function ProjectUserGroupsTable({ projectId }) {
             updateRoleFn={updateUserGroupRoleOnProject}
             roles={projectRoles}
             currentRole={group.role}
+          />
+        );
+      },
+    },
+    {
+      dataIndex: "metadataRole",
+      title: i18n("ProjectUserGroupsTable.metadataData"),
+      render(text, group) {
+        console.log(group);
+
+        return (
+          <RoleSelect
+            updateRoleFn={updateUserGroupRoleOnProject}
+            roles={metadataRoles}
+            currentRole={group.metadataRole}
           />
         );
       },
