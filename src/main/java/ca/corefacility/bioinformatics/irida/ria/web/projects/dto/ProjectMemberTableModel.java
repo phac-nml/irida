@@ -9,14 +9,20 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
  * Represents a Project member in the UI.
  */
 public class ProjectMemberTableModel extends TableModel {
-	private final String role;
+	private final String projectRole;
+	private final String metadataRole;
 
-	public ProjectMemberTableModel(User user, String role, Date joinedDate) {
+	public ProjectMemberTableModel(User user, String projectRole, String metadataRole, Date joinedDate) {
 		super(user.getId(), user.getLabel(), joinedDate, null);
-		this.role = role;
+		this.projectRole = projectRole;
+		this.metadataRole = metadataRole;
 	}
 
-	public String getRole() {
-		return role;
+	public String getProjectRole() {
+		return projectRole;
+	}
+
+	public String getMetadataRole() {
+		return metadataRole;
 	}
 }

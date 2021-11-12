@@ -39,5 +39,25 @@
             <column name="field_id" type="bigint(20)"/>
             <column name="level" type="varchar(255)"/>
         </createTable>
+
+        <addColumn tableName="project_user">
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="project_user_AUD">
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4"/>
+        </addColumn>
+
+        <addColumn tableName="user_group_project">
+            <column name="metadata_role" type="varchar(255)" value="LEVEL_4">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="user_group_project_AUD">
+            <column name="metadata_role" type="varchar(255)" value="LEVEL_4"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

@@ -164,7 +164,7 @@ public class UIUserGroupsService {
 	public String addMemberToUserGroup(Long groupId, NewMemberRequest request, Locale locale) {
 		UserGroup group = userGroupService.read(groupId);
 		User user = userService.read(request.getId());
-		UserGroupJoin.UserGroupRole role = UserGroupJoin.UserGroupRole.fromString(request.getRole());
+		UserGroupJoin.UserGroupRole role = UserGroupJoin.UserGroupRole.fromString(request.getProjectRole());
 		userGroupService.addUserToGroup(user, group, role);
 		return messageSource.getMessage("server.usergroups.add-member", new Object[] { user.getLabel() }, locale);
 	}

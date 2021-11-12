@@ -12,7 +12,7 @@ import {
   addUserGroupToProject,
   getAvailableGroupsForProject,
 } from "../../apis/projects/user-groups";
-import { useRoles } from "../../contexts/roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -42,7 +42,7 @@ export function AddGroupButton({
   /*
   Get a list of project roles
    */
-  const { roles } = useRoles();
+  const { roles } = useProjectRoles();
 
   /*
   Whether the modal to add a user is visible

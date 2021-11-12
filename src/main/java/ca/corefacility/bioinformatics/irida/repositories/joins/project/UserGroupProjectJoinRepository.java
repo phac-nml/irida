@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,7 +19,7 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 
 	/**
 	 * Find all groups with access to the project.
-	 * 
+	 *
 	 * @param p
 	 *            the project to check
 	 * @return the groups assigned to the project.
@@ -32,10 +33,10 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 * @return the projects linked to the user group.
 	 */
 	public Collection<UserGroupProjectJoin> findProjectsByUserGroup(final UserGroup ug);
-	
+
 	/**
 	 * Find all groups with access to the project with a specific role.
-	 * 
+	 *
 	 * @param p
 	 *            the project
 	 * @param projectRole
@@ -47,7 +48,7 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 
 	/**
 	 * Find the projects where the specified user is in a group on the project.
-	 * 
+	 *
 	 * @param u
 	 *            the user.
 	 * @return the projects that the user is in via a group.
@@ -57,7 +58,7 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 
 	/**
 	 * Find the join for a user group and project.
-	 * 
+	 *
 	 * @param p
 	 *            the project
 	 * @param userGroup
@@ -65,4 +66,14 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 * @return the relationship between the group and project.
 	 */
 	public UserGroupProjectJoin findByProjectAndUserGroup(final Project p, final UserGroup userGroup);
+
+	/**
+	 * Get the {@link UserGroupProjectJoin} (potentially more than 1) between a given {@link User} and {@link Project}
+	 *
+	 * @param project the {@link Project} to get joins for
+	 * @param user    the {@link User} to get joins for
+	 * @return a list of {@link UserGroupProjectJoin}
+	 */
+	@Query("FROM UserGroupProjectJoin ugpj WHERE ugpj.project = ?1 AND ugpj.userGroup in (select group from UserGroupJoin where user = ?2)")
+	public List<UserGroupProjectJoin> findGroupsForProjectAndUser(Project project, User user);
 }
