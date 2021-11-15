@@ -28,8 +28,15 @@ export function ProjectUserGroupsTable({ projectId }) {
   const { roles: projectRoles } = useProjectRoles(projectId);
   const { roles: metadataRoles } = useMetadataRoles();
 
-  const updateProjectRole = (updatedRole, details) => (role) =>
-    updateUserGroupProjectRole({ ...details, [updatedRole]: role });
+  const updateProjectRole = (updatedRole, details) => (role) => {
+    return updateUserGroupProjectRole({
+      ...details,
+      [updatedRole]: role,
+    }).then((message) => {
+      updateTable();
+      return message;
+    });
+  };
 
   const columns = [
     {

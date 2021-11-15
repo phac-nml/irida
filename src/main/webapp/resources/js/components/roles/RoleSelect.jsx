@@ -23,7 +23,7 @@ export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
    */
   const onChange = (value) => {
     setLoading(true);
-    updateRoleFn(value)
+    return updateRoleFn(value)
       .then((message) => {
         notification.success({ message });
         setRole(value);

@@ -125,12 +125,16 @@ public class UIProjectUserGroupsService {
 		ProjectRole projectRole = ProjectRole.fromString(role);
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
 
+		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+
 		try {
 			projectService.updateUserGroupProjectRole(project, group, projectRole, projectMetadataRole);
-			return messageSource.getMessage("server.usergroups.update.success", new Object[] {}, locale);
+			return messageSource.getMessage("server.usergroups.update.success",
+					new Object[] { group.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {
-			throw new ProjectWithoutOwnerException(messageSource.getMessage("server.usergroups.update-role.error", new Object[] { group.getLabel() },
-					locale));
+			throw new ProjectWithoutOwnerException(
+					messageSource.getMessage("server.usergroups.update-role.error", new Object[] { group.getLabel() },
+							locale));
 		}
 	}
 }
