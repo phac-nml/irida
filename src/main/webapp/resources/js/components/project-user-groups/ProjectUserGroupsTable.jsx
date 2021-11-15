@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import {
   removeUserGroupFromProject,
-  updateUserGroupRoleOnProject,
+  updateUserGroupProjectRole,
 } from "../../apis/projects/user-groups";
 import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
@@ -28,6 +28,9 @@ export function ProjectUserGroupsTable({ projectId }) {
   const { roles: projectRoles } = useProjectRoles(projectId);
   const { roles: metadataRoles } = useMetadataRoles();
 
+  const updateProjectRole = (updatedRole, details) => (role) =>
+    updateUserGroupProjectRole({ ...details, [updatedRole]: role });
+
   const columns = [
     {
       dataIndex: "name",
@@ -46,7 +49,11 @@ export function ProjectUserGroupsTable({ projectId }) {
       render(text, group) {
         return (
           <RoleSelect
-            updateRoleFn={updateUserGroupRoleOnProject}
+            updateRoleFn={updateProjectRole("projectRole", {
+              id: group.id,
+              metadataRole: group.metadataRole,
+              projectId,
+            })}
             roles={projectRoles}
             currentRole={group.role}
           />
@@ -57,11 +64,13 @@ export function ProjectUserGroupsTable({ projectId }) {
       dataIndex: "metadataRole",
       title: i18n("ProjectUserGroupsTable.metadataData"),
       render(text, group) {
-        console.log(group);
-
         return (
           <RoleSelect
-            updateRoleFn={updateUserGroupRoleOnProject}
+            updateRoleFn={updateProjectRole("metadataRole", {
+              id: group.id,
+              projectRole: group.role,
+              projectId,
+            })}
             roles={metadataRoles}
             currentRole={group.metadataRole}
           />

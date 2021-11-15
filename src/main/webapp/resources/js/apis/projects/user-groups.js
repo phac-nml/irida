@@ -71,11 +71,22 @@ export async function addUserGroupToProject({
  *
  * @param {number} projectId Identifier for the current project
  * @param {number} groupId Identifier for the user group to add
- * @param {string} role for the user group on the project
+ * @param {string} projectRole for the user group on the project
+ * @param {string} metadataRole for the user group metadata access on the project
  * @returns {Promise<AxiosResponse<any>>}
  */
-export async function updateUserGroupRoleOnProject({ projectId, id, role }) {
-  const params = new URLSearchParams({ projectId, id, role });
+export async function updateUserGroupProjectRole({
+                                                   projectId,
+                                                   id,
+                                                   projectRole,
+                                                   metadataRole
+                                                 }) {
+  const params = new URLSearchParams({
+    projectId,
+    id,
+    projectRole,
+    metadataRole
+  });
   try {
     const { data } = await axios.put(`${BASE_URL}/role?${params.toString()}`);
     return Promise.resolve(data);
