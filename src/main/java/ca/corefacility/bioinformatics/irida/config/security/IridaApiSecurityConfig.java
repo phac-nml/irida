@@ -1,46 +1,31 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaLdapSecurityConfig;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
-import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import com.google.common.base.Joiner;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
-import org.springframework.ldap.core.DirContextAdapter;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.*;
-import org.springframework.security.ldap.authentication.BindAuthenticator;
-import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
-import java.util.Collection;
 import java.util.List;
+
 
 /**
  * Configuration for IRIDA's spring security modules
@@ -48,11 +33,15 @@ import java.util.List;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, order = IridaApiSecurityConfig.METHOD_SECURITY_ORDER)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
+@Import({ IridaAuthenticationSecurityConfig.class })
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiSecurityConfig.class);
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	@Qualifier("apiAuthenticationProvider")
+	private AuthenticationProvider authenticationProvider;
 
 	public static final int METHOD_SECURITY_ORDER = Ordered.LOWEST_PRECEDENCE;
 
@@ -62,12 +51,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 			"ROLE_ADMIN > ROLE_TECHNICIAN", "ROLE_MANAGER > ROLE_USER", "ROLE_TECHNICIAN > ROLE_USER" };
 
 	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
-
-	@Value("${security.password.expiry}")
-	private int passwordExpiryInDays = -1;
-
-	@Value("${irida.administrative.authentication.mode}")
-	private String authenticationMode;
 
 	/**
 	 * Loads all of the {@link BasePermission} sub-classes found in the security
@@ -92,7 +75,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
+		auth.authenticationProvider(authenticationProvider).authenticationProvider(anonymousAuthenticationProvider());
 	}
 
 	/**
@@ -105,71 +88,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider(
 				ANONYMOUS_AUTHENTICATION_KEY);
 		return anonymousAuthenticationProvider;
-	}
-
-
-	/**
-	 * Builds and returns an {@link AuthenticationProvider} based on the irida.administrative.authentication.mode config option
-	 *
-	 * @return {@link AuthenticationProvider}
-	 */
-	@Bean
-	public AuthenticationProvider authenticationProvider() {
-		IridaLdapSecurityConfig iridaLdapSecurityConfig = new IridaLdapSecurityConfig();
-		AuthenticationProvider provider;
-
-		switch(authenticationMode)
-		{
-			case "ldap":
-				provider = iridaLdapSecurityConfig.LdapAuthenticationProvider();
-				break;
-			case "adldap":
-				provider = iridaLdapSecurityConfig.ActiveDirectoryLdapAuthenticationProvider();
-				break;
-			case "local":
-				provider = DaoAuthenticationProvider();
-				break;
-			default:
-				String errorMessage = "Configured authentication mode not one of the supported modes [local, ldap, adldap]";
-				logger.error(errorMessage);
-				throw new IllegalStateException(errorMessage);
-		}
-
-		logger.info("IRIDA configured to authenticate with " + authenticationMode);
-		return provider;
-	}
-
-	/**
-	 * Default authentication using the local database.
-	 * @return {@link DaoAuthenticationProvider}
-	 */
-	private AuthenticationProvider DaoAuthenticationProvider() {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userRepository);
-		authenticationProvider.setPasswordEncoder(passwordEncoder());
-
-		/*
-		Expire a user's password after the given number of days and force them to change it.
-		 */
-		if (passwordExpiryInDays != -1) {
-			authenticationProvider
-					.setPreAuthenticationChecks(new PasswordExpiryChecker(userRepository, passwordExpiryInDays));
-		}
-
-		/*
-		 * After a user has been authenticated, we want to allow them to change
-		 * their password if the password is expired. The
-		 * {@link IgnoreExpiredCredentialsForPasswordChangeChecker} allows
-		 * authenticated users with expired credentials to invoke one method, the
-		 * {@link UserService#changePassword(Long, String)} method.
-		 */
-		authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
-		return authenticationProvider;
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 	@Bean(name = "userAuthenticationManager")
