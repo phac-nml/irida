@@ -26,7 +26,6 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 
 import java.util.List;
 
-
 /**
  * Configuration for IRIDA's spring security modules
  */
