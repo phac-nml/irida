@@ -8,7 +8,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  * React component that displays Step #4 of the Sample Metadata Uploader.
  * This page is where the user receives confirmation that the metadata was uploaded successfully.
  * @returns {*}
- * @constructore
+ * @constructor
  */
 export function SampleMetadataImportComplete() {
   const location = useLocation();
