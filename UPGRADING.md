@@ -4,8 +4,12 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+21.09 to 22.01
+--------------
+
 21.05 to 21.09
 --------------
+* It is recommended to stop the servlet container before deploying the new `war` file.
 
 21.05.1 to 21.05.2
 ------------------
