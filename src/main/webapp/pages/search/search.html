@@ -4,7 +4,7 @@
 
 <head>
     <title th:text="#{search.title(${searchQuery})}">_Search_</title>
-    <link rel="stylesheet" th:href="@{/dist/css/search.bundle.css}">
+    <webpacker:css entry="search"/>
     <script th:inline="javascript">
         var PAGE = {
             urls: {
@@ -70,8 +70,7 @@
     </div>
 
     <th:block layout:fragment="scripts">
-        <script th:src="@{/dist/js/search.bundle.js}"></script>
-
+        <webpacker:js entry="search"/>
     </th:block>
 </body>
 

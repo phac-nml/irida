@@ -15,7 +15,7 @@ The IRIDA platform currently consists of three, separate components:
 2. Galaxy, and
 3. Command-line clients.
 
-The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR` file at <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>.
+The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR` file at <https://github.com/phac-nml/irida/releases>.
 
 Prerequisites
 =============
@@ -139,7 +139,7 @@ Deploy the `WAR` File
 ---------------------
 Once you have adjusted the configuration files to your environment, you can deploy the `WAR` file to your servlet container.
 
-You can download the `WAR` file from: <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>
+You can download the `WAR` file from: <https://github.com/phac-nml/irida/releases>
 
 Tomcat's deployment directory is typically some variation of `/var/lib/tomcat/webapps/`. Deploying the `WAR` file in Tomcat is as simple as moving the `WAR` file you downloaded into that directory.
 

@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        data-layout-decorate="~{projects/_base}">
-<head>
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
     <title th:text="#{linelist.page-title}">Title</title>
-    <link rel="stylesheet" th:href="@{/dist/css/project-linelist.bundle.css}">
+    <webpacker:css entry="project-linelist" />
     <script th:inline="javascript">
-        window.PAGE = {
-          project: /*[[${project}]]*/ {},
-          urls: {
-            import: /*[[@{/projects/{id}/sample-metadata/upload(id=${project.getId()})}]]*/ "/projects/5/sample-metadata/upload"
-          }
-        };
+      window.PAGE = {
+        project: /*[[${project}]]*/ {},
+      };
     </script>
-</head>
-<body>
-<main layout:fragment="main">
-<div id="root">
-    <div class="ant-alert-message">
-        <th:block th:text="#{linelist.page-initialization}"/>
-    </div>
-</div>
-</main>
+  </head>
+  <body>
+    <main layout:fragment="main">
+      <div id="root">
+        <div class="ant-alert-message">
+          <th:block th:text="#{linelist.page-initialization}" />
+        </div>
+      </div>
+    </main>
 
-<th:block layout:fragment="scripts">
-    <script th:src="@{/dist/js/project-linelist.bundle.js}"></script>
-</th:block>
-</body>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="project-linelist" />
+    </th:block>
+  </body>
 </html>

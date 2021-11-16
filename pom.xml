@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>21.09-SNAPSHOT</version>
+	<version>22.01-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -1156,7 +1156,7 @@
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>3.12.0</apache.jena.version>
-		<commons-csv.version>1.4</commons-csv.version>
+		<commons-csv.version>1.8</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>

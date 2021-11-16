@@ -8,8 +8,8 @@ import pipelineReducer from "../redux/pipelinesSlice";
 import userReducer from "../redux/userSlice";
 
 /*
-Redux Store for project metadata.
-For more information on redux stores see: https://redux.js.org/tutorials/fundamentals/part-4-store
+Redux store for project metadata.
+For more information on redux stores see: https://redux-toolkit.js.org/api/configureStore
  */
 export default configureStore({
   reducer: {
