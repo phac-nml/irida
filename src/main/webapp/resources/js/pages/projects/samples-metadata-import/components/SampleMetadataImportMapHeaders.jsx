@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Radio, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
@@ -20,7 +20,7 @@ const { Text } = Typography;
  */
 export function SampleMetadataImportMapHeaders() {
   const { projectId } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [column, setColumn] = React.useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
   const [updateColumn] = useSetColumnProjectSampleMetadataMutation();
@@ -33,7 +33,7 @@ export function SampleMetadataImportMapHeaders() {
     updateColumn({ projectId, sampleNameColumn: column })
       .unwrap()
       .then((payload) => {
-        history.push("review");
+        navigate(`/${projectId}/sample-metadata/upload/review`);
       });
   };
 
@@ -60,7 +60,7 @@ export function SampleMetadataImportMapHeaders() {
         <Button
           className="t-metadata-uploader-file-button"
           icon={<IconArrowLeft />}
-          onClick={() => history.goBack()}
+          onClick={() => navigate(-1)}
         >
           {i18n("SampleMetadataImportMapHeaders.button.back")}
         </Button>
