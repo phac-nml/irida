@@ -26,15 +26,10 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -97,85 +92,21 @@ public class UsersController {
 	/**
 	 * Request for a specific user details page.
 	 *
-	 * @param userId
-	 *            The id for the user to show details for.
-	 * @param model
-	 *            Spring model to populate the html page
-	 * @param principal
-	 *            the currently logged in user
-	 * @param mailFailure
-	 * 			  if sending a user activation e-mail passed or failed
-	 *
-	 * @return The name of the user/details page
+	 * @return The name of the user account page
 	 */
-
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public String getUserSpecificPage(@PathVariable("userId") Long userId,
-									  @RequestParam(value = "mailFailure", required = false, defaultValue = "false") final Boolean mailFailure,
-			final Model model, Principal principal) {
-		logger.debug("Getting project information for [User " + userId + "]");
-
-		// add the user to the model
-		User user = userService.read(userId);
-		model.addAttribute("user", user);
-		model.addAttribute("mailFailure", mailFailure);
-
-		User principalUser = userService.getUserByUsername(principal.getName());
-
-		Locale locale = LocaleContextHolder.getLocale();
-
-		// add the user's role to the model
-		String roleMessageName = "systemrole." + user.getSystemRole().getName();
-		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-		model.addAttribute("systemRole", systemRole);
-
-		// check if we should show an edit button
-		boolean canEditUser = canEditUser(principalUser, user);
-		model.addAttribute("canEditUser", canEditUser);
-		model.addAttribute("mailConfigured", emailController.isMailConfigured());
-
-		model.addAttribute("canCreatePasswordReset",
-				PasswordResetController.canCreatePasswordReset(principalUser, user));
-
-		// show the user's projects
-		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-
-		// add the projects to the model list
-		List<Map<String, Object>> projects = new ArrayList<>();
-		for (Join<Project, User> join : projectsForUser) {
-			ProjectUserJoin pujoin = (ProjectUserJoin) join;
-			Project project = join.getSubject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("identifier", project.getId());
-			map.put("name", project.getName());
-			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER));
-			map.put("subscribed" , pujoin.isEmailSubscription());
-
-			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
-			map.put("role", messageSource.getMessage(proleMessageName, null, locale));
-			map.put("date", pujoin.getCreatedDate());
-			projects.add(map);
-		}
-		model.addAttribute("projects", projects);
-
+	public String getUserSpecificPage() {
 		return SPECIFIC_USER_PAGE;
 	}
 
 	/**
 	 * Get the currently logged in user's page
 	 *
-	 * @param model
-	 *            The model to pass on
-	 * @param principal
-	 *            The currently logged in user
-	 *
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
 	@RequestMapping("/current")
-	public String getLoggedInUserPage(Model model, Principal principal) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-
-		return getUserSpecificPage(readPrincipal.getId(), false, model, principal);
+	public String getLoggedInUserPage() {
+		return SPECIFIC_USER_PAGE;
 	}
 
 	/**
@@ -509,23 +440,6 @@ public class UsersController {
 		}
 
 		return errors;
-	}
-
-	/**
-	 * Check if the logged in user is allowed to edit the given user.
-	 *
-	 * @param principalUser
-	 *            The currently logged in principal
-	 * @param user
-	 *            The user to edit
-	 *
-	 * @return boolean if the principal can edit the user
-	 */
-	private boolean canEditUser(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
-		boolean usersEqual = user.equals(principalUser);
-
-		return principalAdmin || usersEqual;
 	}
 
 	/**

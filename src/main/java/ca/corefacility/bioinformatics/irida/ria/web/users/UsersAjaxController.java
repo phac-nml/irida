@@ -1,19 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users;
 
+import java.security.Principal;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
 
 /**
@@ -54,5 +53,31 @@ public class UsersAjaxController {
 	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
 			Locale locale) {
 		return UIUsersService.updateUserStatus(id, isEnabled, locale);
+	}
+
+	/**
+	 * Get the details for a specific user
+	 *
+	 * @param userId      - the id for the user to show details for
+	 * @param mailFailure - if sending a user activation e-mail passed or failed
+	 * @param principal   - the currently logged in user
+	 * @return a {@link UserDetailsResponse} containing the details for a specific user
+	 */
+	@RequestMapping("/{userId}")
+	public ResponseEntity<UserDetailsResponse> getUserDetails(@PathVariable("userId") Long userId,
+			@RequestParam(value = "mailFailure", required = false, defaultValue = "false") final Boolean mailFailure,
+			Principal principal) {
+		return ResponseEntity.ok(UIUsersService.getUser(userId, mailFailure, principal));
+	}
+
+	/**
+	 * Get the details for the currently logged in user
+	 *
+	 * @param principal - the currently logged in user
+	 * @return a {@link UserDetailsResponse} containing the details for the currently logged in user
+	 */
+	@RequestMapping("/current")
+	public ResponseEntity<UserDetailsResponse> getCurrentUserDetails(Principal principal) {
+		return ResponseEntity.ok(UIUsersService.getCurrentUser(false, principal));
 	}
 }

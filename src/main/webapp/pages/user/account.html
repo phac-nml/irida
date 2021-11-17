@@ -3,18 +3,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       data-layout-decorate="~{template/page}">
   <head>
-    <title th:text="${user.label}">_USER PAGE_</title>
+    <title th:text="#{user.account}">_USER PAGE_</title>
     <webpacker:css entry="user" />
-<!--    <script th:inline="javascript">-->
-<!--		window.PAGE = {-->
-<!--			userId: /*[[${user.getId()}]]*/ 1-->
-<!--		};-->
-<!--	</script>-->
   </head>
   <body>
-    <div id="user-account-root" layout:fragment="page"></div>
-    <th:block layout:fragment="scripts">
-      <webpacker:js entry="user" />
-    </th:block>
+  <div id="user-account-root" layout:fragment="page">
+    <!-- Contents rendered from UserDetailsPage.jsx -->
+  </div>
+  <th:block layout:fragment="scripts">
+    <webpacker:js entry="user"/>
+  </th:block>
   </body>
 </html>
