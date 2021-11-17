@@ -157,8 +157,8 @@ public class UIUserGroupsService {
 	 * Add a new member to the user group
 	 *
 	 * @param groupId identifier for the {@link UserGroup}
-	 * @param userId  identifier for the {@link User}
-	 * @param role    role to assign to the user
+	 * @param userId identifier for the {@link User}
+	 * @param role   role to assign to the user
 	 * @param locale  current users {@link Locale}
 	 * @return message to the user about the status of this request
 	 */
@@ -189,8 +189,8 @@ public class UIUserGroupsService {
 
 		try {
 			userGroupService.changeUserGroupRole(user, group, userGroupRole);
-			return messageSource.getMessage("server.usergroups.role-success",
-					new Object[] { user.getLabel(), roleTranslated }, locale);
+			return messageSource.getMessage("server.usergroups.role-success", new Object[] { user.getLabel(), roleTranslated },
+					locale);
 		} catch (UserGroupWithoutOwnerException e) {
 			throw new UserGroupWithoutOwnerException(
 					messageSource.getMessage("server.usergroups.role-error", new Object[] { user.getLabel() }, locale));

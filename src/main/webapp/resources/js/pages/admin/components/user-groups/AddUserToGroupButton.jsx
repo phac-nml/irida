@@ -8,7 +8,7 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { useProjectRoles } from "../../../../contexts/project-roles-context";
+import { useUserGroupRoles } from "../../../../contexts/usergroup-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../../../hooks";
 import { SPACE_XS } from "../../../../styles/spacing";
 
@@ -28,7 +28,7 @@ export function AddUserToGroupButton({
    */
   const userRef = useRef();
 
-  const { roles: projectRoles } = useProjectRoles();
+  const { roles: projectRoles } = useUserGroupRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -43,7 +43,7 @@ export function AddUserToGroupButton({
   /*
   The value of the currently selected role from the role input
    */
-  const [projectRole, setProjectRole] = useState("PROJECT_USER");
+  const [projectRole, setProjectRole] = useState("GROUP_MEMBER");
 
   /*
   Value to send to the server to query for a list of potential users.
@@ -157,7 +157,7 @@ export function AddUserToGroupButton({
             </Select>
           </Form.Item>
           <Form.Item
-            label={i18n("AddMemberButton.modal.projectRole")}
+            label={i18n("UserGroupMembersTable.role")}
             name="projectRole"
             initialValue={projectRole}
           >
