@@ -159,6 +159,22 @@ public class ProjectsController {
 	}
 
 	/**
+	 * Get the page to share samples between projects
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param model     Spring model for template variables
+	 * @param principal Currently logged in user
+	 * @return Path to the template for shareing samples
+	 */
+	@RequestMapping("/projects/{projectId}/share")
+	public String getProjectsSharePage(@PathVariable Long projectId, final Model model, final Principal principal) {
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
+		return "projects/project_share";
+	}
+
+	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
 	 * @param projectId the ID of the {@link Project}

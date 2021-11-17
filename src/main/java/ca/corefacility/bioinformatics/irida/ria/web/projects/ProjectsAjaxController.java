@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -70,5 +71,16 @@ public class ProjectsAjaxController {
 	@RequestMapping("/roles")
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
 		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
+	}
+
+	/**
+	 * Get a list of projects that the user can share sample to.
+	 *
+	 * @param currentId Current project identifier
+	 * @return {@link List} of {@link Project}s
+	 */
+	@RequestMapping("/samples-share/projects")
+	public List<Project> getPotentialProjectsToShareTo(@RequestParam long currentId) {
+		return projectsService.getPotentialProjectsToShareTo(currentId);
 	}
 }
