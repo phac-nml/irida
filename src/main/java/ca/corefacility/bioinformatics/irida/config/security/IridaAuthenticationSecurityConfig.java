@@ -183,8 +183,7 @@ public class IridaAuthenticationSecurityConfig {
      *
      * @return {@link LdapContextSource}
      */
-    @Bean
-    public LdapContextSource ldapContextSource() {
+    private LdapContextSource ldapContextSource() {
         LdapContextSource ldapContextSource = new LdapContextSource();
         ldapContextSource.setUrl(ldapUrl);
         ldapContextSource.setBase(ldapBase);
@@ -192,6 +191,12 @@ public class IridaAuthenticationSecurityConfig {
         ldapContextSource.setPassword(ldapPassword);
         ldapContextSource.setReferral(ldapSetReferral);
         ldapContextSource.afterPropertiesSet();
+        try {
+            ldapContextSource.getReadOnlyContext();
+        } catch (Exception e) {
+            logger.error("Failed to connect to LDAP - " + e.getMessage());
+            throw new IllegalStateException("Failed to connect to LDAP - " + e.getMessage(), e);
+        }
         return ldapContextSource;
     }
 
