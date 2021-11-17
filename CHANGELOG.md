@@ -7,6 +7,7 @@ Changes
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 * [Developer]: Updated `antd` to version 4.16.13
 * [Developer/UI]: Refreshed the metadata uploader.
+* [Developer/UI]: Updated to the latest release of `react-router-dom` v6.0.2.
 * [UI]: Refactored share/move samples between projects to use a separate page.
 
 21.05 to 21.09

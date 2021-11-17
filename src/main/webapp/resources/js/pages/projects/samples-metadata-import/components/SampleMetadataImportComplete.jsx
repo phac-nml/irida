@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -11,15 +11,16 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  * @constructor
  */
 export function SampleMetadataImportComplete() {
+  const location = useLocation();
+
   const { projectId } = useParams();
-  const history = useHistory();
 
   return (
     <SampleMetadataImportWizard currentStep={3}>
       <Result
         status="success"
         title={i18n("SampleMetadataImportComplete.result.title")}
-        subTitle={history.location.state.statusMessage}
+        subTitle={location.state.statusMessage}
         extra={
           <Button
             type="primary"
