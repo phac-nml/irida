@@ -30,14 +30,11 @@ const CartTools = styled.div`
   border-bottom: ${BORDERED_LIGHT};
   display: flex;
   align-items: center;
-
   .ant-input {
     background-color: ${grey1};
-
     &:hover {
       background-color: ${grey3};
     }
-
     &:focus {
       border: 1px solid ${blue6};
       background-color: ${grey1};
@@ -61,7 +58,6 @@ const ButtonsPanelBottom = styled.div`
 const EmptyCartButton = styled(Button)`
   background-color: ${red4};
   color: ${grey1};
-
   &:hover {
     background-color: ${red6};
     color: ${grey1};
@@ -76,11 +72,7 @@ const EmptyCartButton = styled(Button)`
  */
 export default function CartSamples({ displaySample }) {
   const [samples, setSamples] = React.useState([]);
-  const {
-    data: allSamples,
-    isFetching,
-    refetch,
-  } = useGetCartQuery();
+  const { data: allSamples, isFetching, refetch } = useGetCartQuery();
   const [emptyCart] = useEmptyMutation();
   const [removeSample] = useRemoveSampleMutation();
   const [removeProject] = useRemoveProjectMutation();
