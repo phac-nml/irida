@@ -2,6 +2,7 @@ import { Button } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { IconShare } from "../../../components/icons/Icons";
+import { grey9 } from "../../../styles/colors";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /**
@@ -41,7 +42,13 @@ function ShareSamplesLink() {
     <Button
       className="t-share-btn"
       type="link"
-      icon={<IconShare />}
+      style={{
+        margin: `0 inherit`,
+        padding: 0,
+        paddingLeft: 20,
+        color: grey9,
+      }}
+      icon={<IconShare style={{ marginRight: 3 }} />}
       onClick={handleClick}
     >
       {i18n("project.samples.nav.share")}
@@ -50,7 +57,7 @@ function ShareSamplesLink() {
 }
 
 const querySelector = document.querySelector(".js-share-samples");
-console.log(querySelector);
+
 if (querySelector) {
   render(<ShareSamplesLink />, querySelector);
 }

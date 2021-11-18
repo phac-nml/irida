@@ -1,7 +1,6 @@
 import { Router } from "@reach/router";
 import React, { lazy } from "react";
-import { getUserGroupRoles } from "../../../apis/users/groups";
-import { ProjectRolesProvider } from "../../../contexts/project-roles-context";
+import { UserGroupRolesProvider } from "../../../contexts/usergroup-roles-context";
 import { UserGroupsProvider } from "../../../contexts/UserGroupsContext";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
@@ -23,12 +22,12 @@ export default function AdminUserGroupsPage() {
 
   return (
     <UserGroupsProvider>
-      <ProjectRolesProvider getRolesFn={getUserGroupRoles}>
+      <UserGroupRolesProvider>
         <Router>
           <UserGroupsPage baseUrl={DEFAULT_URL} path={"/"} />
           <UserGroupsDetailsPage baseUrl={DEFAULT_URL} path={"/:id"} />
         </Router>
-      </ProjectRolesProvider>
+      </UserGroupRolesProvider>
     </UserGroupsProvider>
   );
 }

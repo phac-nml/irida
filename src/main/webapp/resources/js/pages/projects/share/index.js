@@ -1,10 +1,10 @@
-import { Form, Select, Space, Table, Tag } from "antd";
+import { Card, Col, PageHeader, Row } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
-import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
-import { setProject } from "./shareSlice";
+import { Provider, useSelector } from "react-redux";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ShareLayout } from "./ShareLayout";
+import { ShareNoSamples } from "./ShareNoSamples";
 import store from "./store";
 
 /**
@@ -13,93 +13,55 @@ import store from "./store";
  * @returns {JSX.Element}
  * @constructor
  */
-function ShareSamples() {
-  const dispatch = useDispatch();
-  const [samples, setSamples] = React.useState();
-  const [options, setOptions] = React.useState();
-  const { originalSamples, currentProject, projectId } = useSelector(
+function ShareApp() {
+  /*
+  Create redirect href to project samples page.
+  */
+  const [redirect] = React.useState(
+    () => window.location.href.match(/(.*)\/share/)[1]
+  );
+
+  const { originalSamples, currentProject } = useSelector(
     (state) => state.shareReducer
   );
 
-  const {
-    data: projects,
-    isLoading: projectLoading,
-  } = useGetPotentialProjectsToShareToQuery(currentProject, {
-    skip: !currentProject,
-  });
+  /*
+  1. No Samples - this would be if the user came to this page from anything
+  other than the share samples link.
+   */
+  const NO_SAMPLES =
+    typeof originalSamples === "undefined" || originalSamples.length === 0;
 
-  const { data: sampleIds } = useGetSampleIdsForProjectQuery(projectId, {
-    skip: !projectId,
-  });
+  if (NO_SAMPLES) {
+    return <ShareNoSamples redirect={redirect} />;
+  }
 
-  React.useEffect(() => {
-    setSamples(originalSamples);
-  }, [originalSamples]);
-
-  React.useEffect(() => {
-    if (!projectLoading) {
-      setOptions(
-        projects.map((project) => ({
-          label: project.name,
-          value: project.identifier,
-        }))
-      );
-    }
-  }, [projects, projectLoading]);
-
-  React.useEffect(() => {
-    if (sampleIds) {
-      setSamples(
-        originalSamples.map((sample) => ({
-          ...sample,
-          exists: sampleIds.includes(sample.id),
-        }))
-      );
-    }
-  }, [originalSamples, sampleIds]);
-
-  const updateCurrentSampleIds = (projectId) => dispatch(setProject(projectId));
+  /**
+   * Return to previous page (project samples page)
+   */
+  const goToPrevious = () =>
+    (window.location.href = setBaseUrl(`/projects/${currentProject}/samples`));
 
   return (
-    <Form layout="vertical">
-      <Space direction="vertical" style={{ display: "block" }} size="large">
-        <Form.Item label={i18n("ShareSamples.projects")}>
-          <Select
-            style={{ width: `100%` }}
-            loading={projectLoading}
-            options={options}
-            onChange={updateCurrentSampleIds}
-          />
-        </Form.Item>
-        <Table
-          loading={!originalSamples}
-          dataSource={samples}
-          rowKey={(sample) => `sample-${sample.id}`}
-          columns={[
-            {
-              title: "Name",
-              dataIndex: "name",
-            },
-            {
-              title: "",
-              dataIndex: "exists",
-              render: (text, sample) =>
-                sample.exists && (
-                  <Tag color="red">
-                    {i18n("ShareSamples.exists").toUpperCase()}
-                  </Tag>
-                ),
-            },
-          ]}
-        />
-      </Space>
-    </Form>
+    <Row>
+      <Col xl={{ span: 12, offset: 6 }} lg={{ span: 18, offset: 3 }} xs={24}>
+        <PageHeader
+          ghost={false}
+          title={i18n("ShareSamples.title")}
+          onBack={goToPrevious}
+        >
+          <Card>
+            <ShareLayout />
+          </Card>
+        </PageHeader>
+      </Col>
+    </Row>
   );
 }
 
 render(
   <Provider store={store}>
-    <ShareSamples />
+    <ShareApp />
   </Provider>,
   document.querySelector("#root")
 );

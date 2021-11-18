@@ -23,7 +23,7 @@ export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
    */
   const onChange = (value) => {
     setLoading(true);
-    updateRoleFn(value)
+    return updateRoleFn(value)
       .then((message) => {
         notification.success({ message });
         setRole(value);
@@ -45,7 +45,7 @@ export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
       loading={loading}
       disabled={loading}
     >
-      {roles.map((role) => (
+      {roles?.map((role) => (
         <Select.Option
           className={`t-${role.value}`}
           value={role.value}

@@ -27,6 +27,7 @@ import {
   SampleExportButton,
   SampleProjectDropdownButton,
 } from "./SampleButtons";
+import "./ShareSamplesLink";
 
 /*
 This is required to use select2 inside a modal.

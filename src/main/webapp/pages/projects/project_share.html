@@ -6,16 +6,15 @@
 >
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" th:href="@{/dist/css/project-share.bundle.css}" />
+    <webpacker:css entry="project-share" />
     <title>Title</title>
   </head>
   <body>
     <div id="root" layout:fragment="main">
       <!--  Root react component: src/main/webapp/resources/js/pages/projects/share/index.js -->
     </div>
-    <script
-      th:src="@{/dist/js/project-share.bundle.js}"
-      layout:fragment="scripts"
-    ></script>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="project-share" />
+    </th:block>
   </body>
 </html>

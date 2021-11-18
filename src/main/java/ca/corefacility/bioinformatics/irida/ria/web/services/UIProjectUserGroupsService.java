@@ -51,6 +51,7 @@ public class UIProjectUserGroupsService {
 		List<ProjectUserGroupsTableModel> groups = userGroupJoins.getContent()
 				.stream()
 				.map(j -> new ProjectUserGroupsTableModel(j.getObject(), j.getProjectRole()
+						.toString(), j.getMetadataRole()
 						.toString(), j.getCreatedDate()))
 				.collect(Collectors.toList());
 		return new TableResponse<>(groups, userGroupJoins.getTotalElements());
@@ -131,8 +132,9 @@ public class UIProjectUserGroupsService {
 			return messageSource.getMessage("server.usergroups.update.success",
 					new Object[] { group.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {
-			throw new ProjectWithoutOwnerException(messageSource.getMessage("server.usergroups.update-role.error", new Object[] { group.getLabel() },
-					locale));
+			throw new ProjectWithoutOwnerException(
+					messageSource.getMessage("server.usergroups.update-role.error", new Object[] { group.getLabel() },
+							locale));
 		}
 	}
 }

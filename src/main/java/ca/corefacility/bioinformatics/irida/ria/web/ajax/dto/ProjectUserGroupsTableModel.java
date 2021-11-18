@@ -11,11 +11,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 public class ProjectUserGroupsTableModel extends TableModel {
 	private final String role;
 	private final String description;
+	private final String metadataRole;
 
-	public ProjectUserGroupsTableModel(UserGroup group, String role, Date dateAdded) {
+	public ProjectUserGroupsTableModel(UserGroup group, String role, String metadataRole, Date dateAdded) {
 		super(group.getId(), group.getLabel(), dateAdded, null);
 		this.description = group.getDescription();
 		this.role = role;
+		this.metadataRole = metadataRole;
 	}
 
 	public String getRole() {
@@ -24,5 +26,9 @@ public class ProjectUserGroupsTableModel extends TableModel {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public String getMetadataRole() {
+		return metadataRole;
 	}
 }

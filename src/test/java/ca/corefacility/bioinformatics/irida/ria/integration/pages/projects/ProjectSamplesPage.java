@@ -51,8 +51,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-merge-btn")
 	private WebElement mergeBtn;
 
-	@FindBy(className = "t-copy-btn")
-	private WebElement copyBtn;
+	@FindBy(className = "t-share-btn")
+	private WebElement shareBtn;
 
 	@FindBy(id = "giveOwner")
 	private WebElement giveOwnerBtn;
@@ -257,12 +257,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isShareBtnEnabled() {
-		return isAnchorElementEnabled(copyBtn);
+		return isAnchorElementEnabled(shareBtn);
 	}
 
-	public boolean isMoveBtnEnabled() {
-		return isAnchorElementEnabled(moveBtn);
-	}
 
 	public boolean isRemoveBtnEnabled() {
 		return isAnchorElementEnabled(removeBtn);
@@ -352,15 +349,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void waitUntilShareButtonVisible() {
 		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.visibilityOf(copyBtn));
+		wait.until(ExpectedConditions.visibilityOf(shareBtn));
 	}
 
-	public void shareSamples(String project, boolean owner) {
+	public void shareSamples() {
 		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.visibilityOf(copyBtn));
-
-		copyBtn.click();
-		shareMoveSamples(project, owner);
+		wait.until(ExpectedConditions.visibilityOf(shareBtn));
+		shareBtn.click();
 	}
 
 	public void moveSamples(String projectNum) {
