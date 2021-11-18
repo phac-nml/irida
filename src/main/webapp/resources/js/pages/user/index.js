@@ -1,12 +1,11 @@
 import { render } from "react-dom";
 import React from "react";
-import { Router } from "@reach/router";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
-import { Col, Menu, Row } from 'antd';
-import { PageWrapper } from "../../components/page/PageWrapper";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 import store from "./store";
-import UserAccountNav from "./components/UserAccountNav";
+import UserAccountLayout from "./components/UserAccountLayout";
 import UserDetailsPage from "./components/UserDetailsPage";
 import UserGroupsPage from "./components/UserGroupsPage";
 import UserProjectsPage from "./components/UserProjectsPage";
@@ -14,22 +13,32 @@ import UserPasswordPage from "./components/UserPasswordPage";
 
 render(
   <Provider store={store}>
-    <PageWrapper title="User Account">
-      <Row>
-        <Col span={5}>
-          <UserAccountNav />
-        </Col>
-        <Col span={1} />
-        <Col span={18}>
-          <Router>
-            <UserDetailsPage default path="details" />
-            <UserGroupsPage path="groups"/>
-            <UserProjectsPage path="projects" />
-            <UserPasswordPage path="password" />
-          </Router>
-        </Col>
-      </Row>
-    </PageWrapper>
+    <BrowserRouter basename={setBaseUrl("/users")}>
+      <Routes>
+        <Route
+          path="/"
+          element={<UserAccountLayout />}
+        >
+          <Route
+            index
+            path="/:userId"
+            element={<UserDetailsPage />}
+          />
+          <Route
+            path="groups"
+            element={<UserGroupsPage />}
+          />
+          <Route
+            path="projects"
+            element={<UserProjectsPage />}
+          />
+          <Route
+            path="password"
+            element={<UserPasswordPage />}
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </Provider>,
   document.querySelector("#user-account-root")
 );
