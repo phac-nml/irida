@@ -5,7 +5,6 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -69,22 +68,14 @@ public class CartPage extends AbstractPage {
 
 	public void removeSampleFromCart(int index) {
 		WebElement sample = cartSamples.get(index);
-		WebElement deleteButton = sample.findElement(By.className("t-delete-menu-btn"));
-		Actions actions = new Actions(driver);
-		actions.moveToElement(deleteButton)
-				.perform();
-		WebElement deleteMenu = driver.findElement(By.className("t-delete-menu"));
-		deleteMenu.findElement(By.className("t-delete-sample"))
+		sample.findElement(By.className("t-remove-sample"))
 				.click();
 		waitForTime(500);
 	}
 
 	public void removeProjectFromCart() {
 		WebElement sample = cartSamples.get(0);
-		sample.findElement(By.className("t-delete-menu-btn"))
-				.click();
-		WebElement deleteMenu = driver.findElement(By.className("t-delete-menu"));
-		deleteMenu.findElement(By.className("t-delete-project"))
+		sample.findElement(By.className("t-remove-project"))
 				.click();
 		waitForTime(500);
 	}

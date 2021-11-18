@@ -1,16 +1,19 @@
+import { Button, Empty, Input, notification, Space, Spin } from "antd";
 import React from "react";
-
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import styled from "styled-components";
-import { SPACE_SM } from "../../../styles/spacing";
-import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { Button, Input } from "antd";
 import { FixedSizeList as VList } from "react-window";
-import { actions } from "../../../redux/reducers/cart";
-import { SampleRenderer } from "./SampleRenderer";
+import styled from "styled-components";
+import {
+  useEmptyMutation,
+  useGetCartQuery,
+  useRemoveProjectMutation,
+  useRemoveSampleMutation,
+} from "../../../apis/cart/cart";
+import { IconShoppingCart } from "../../../components/icons/Icons";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+import { blue6, grey1, grey3, red4, red6 } from "../../../styles/colors";
+import { SPACE_SM } from "../../../styles/spacing";
+import { SampleRenderer } from "./SampleRenderer";
 
 const { Search } = Input;
 
@@ -27,14 +30,11 @@ const CartTools = styled.div`
   border-bottom: ${BORDERED_LIGHT};
   display: flex;
   align-items: center;
-
   .ant-input {
     background-color: ${grey1};
-
     &:hover {
       background-color: ${grey3};
     }
-
     &:focus {
       border: 1px solid ${blue6};
       background-color: ${grey1};
@@ -58,24 +58,47 @@ const ButtonsPanelBottom = styled.div`
 const EmptyCartButton = styled(Button)`
   background-color: ${red4};
   color: ${grey1};
-
   &:hover {
     background-color: ${red6};
     color: ${grey1};
   }
 `;
 
-function CartSamplesComponent({
-  samples,
-  applyFilter,
-  emptyCart,
-  displaySample,
-  removeSample,
-  removeProject,
-}) {
-  const filterSamples = (e) => applyFilter(e.target.value);
+/**
+ * React component to display a list of samples that are currently in the cart.
+ * @param {function} displaySample - function to open modal to display the sample details
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function CartSamples({ displaySample }) {
+  const [samples, setSamples] = React.useState([]);
+  const { data: allSamples, isFetching, refetch } = useGetCartQuery();
+  const [emptyCart] = useEmptyMutation();
+  const [removeSample] = useRemoveSampleMutation();
+  const [removeProject] = useRemoveProjectMutation();
 
-  const removeOneProject = (id) => removeProject(id);
+  React.useEffect(() => {
+    setSamples(allSamples);
+  }, [allSamples]);
+
+  const filterSamples = (event) => {
+    setSamples(
+      allSamples.filter((sample) =>
+        sample.label.toLowerCase().includes(event.target.value.toLowerCase())
+      )
+    );
+  };
+
+  const removeOneProject = (id) =>
+    removeProject({ id }).then(({ data }) => {
+      notification.success({ message: data.message });
+      refetch();
+    });
+  const removeOneSample = (sampleId) =>
+    removeSample({ sampleId }).then(({ data }) => {
+      notification.success({ message: data.message });
+      refetch();
+    });
 
   const renderSample = ({ index, data, style }) => {
     const sample = samples[index];
@@ -85,65 +108,56 @@ function CartSamplesComponent({
         data={sample}
         style={style}
         displaySample={displaySample}
-        removeSample={() => removeSample(sample.project.id, sample.id)}
+        removeSample={() => removeOneSample(sample.id)}
         removeProject={removeOneProject}
       />
     );
   };
+
+  const empty = () => emptyCart();
 
   return (
     <Wrapper>
       <CartTools>
         <Search onChange={filterSamples} />
       </CartTools>
-      <CartSamplesWrapper className="t-samples-list">
-        <AutoSizer>
-          {({ height = 600, width = 400 }) => (
-            <VList
-              itemCount={samples.length}
-              itemSize={75}
-              height={height}
-              width={width}
+      {isFetching ? (
+        <Space size="middle">
+          <Spin size="large" />
+        </Space>
+      ) : !samples || samples.length === 0 ? (
+        <Empty
+          image={<IconShoppingCart style={{ fontSize: 100, color: blue6 }} />}
+          description={i18n("CartEmpty.heading")}
+        />
+      ) : (
+        <>
+          <CartSamplesWrapper className="t-samples-list">
+            <AutoSizer>
+              {({ height = 600, width = 400 }) => (
+                <VList
+                  itemCount={samples.length}
+                  itemSize={50}
+                  height={height}
+                  width={width}
+                >
+                  {renderSample}
+                </VList>
+              )}
+            </AutoSizer>
+          </CartSamplesWrapper>
+          <ButtonsPanelBottom>
+            <EmptyCartButton
+              className="t-empty-cart-btn"
+              type="danger"
+              block
+              onClick={empty}
             >
-              {renderSample}
-            </VList>
-          )}
-        </AutoSizer>
-      </CartSamplesWrapper>
-      <ButtonsPanelBottom>
-        <EmptyCartButton
-          className="t-empty-cart-btn"
-          type="danger"
-          block
-          onClick={emptyCart}
-        >
-          {i18n("cart.clear")}
-        </EmptyCartButton>
-      </ButtonsPanelBottom>
+              {i18n("cart.clear")}
+            </EmptyCartButton>
+          </ButtonsPanelBottom>
+        </>
+      )}
     </Wrapper>
   );
 }
-
-CartSamplesComponent.propTypes = {
-  removeSample: PropTypes.func.isRequired,
-  removeProject: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  samples: state.cart.filteredSamples,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  applyFilter: (filter) => dispatch(actions.applyFilter(filter)),
-  emptyCart: () => dispatch(actions.emptyCart()),
-  removeSample: (projectId, sampleId) =>
-    dispatch(actions.removeSample(projectId, sampleId)),
-  removeProject: (id) => dispatch(actions.removeProject(id)),
-});
-
-const CartSamples = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CartSamplesComponent);
-
-export default CartSamples;

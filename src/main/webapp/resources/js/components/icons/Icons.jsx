@@ -1,4 +1,6 @@
 import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
   BellOutlined,
   BoldOutlined,
   CalendarTwoTone,
@@ -37,6 +39,7 @@ import {
   RocketOutlined,
   SearchOutlined,
   SettingOutlined,
+  ShareAltOutlined,
   ShoppingCartOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -46,6 +49,7 @@ import {
   SyncOutlined,
   TableOutlined,
   TeamOutlined,
+  UnlockOutlined,
   UnorderedListOutlined,
   UploadOutlined,
   UserAddOutlined,
@@ -65,6 +69,10 @@ import { blue6 } from "../../styles/colors";
  * Passing `props` in and spreading them allows any attribute to be passed
  * along to the icon (e.g. classes, styles, etc...).
  */
+
+export const IconArrowLeft = ({ ...props }) => <ArrowLeftOutlined {...props} />;
+
+export const IconArrowRight = ({ ...props }) => <ArrowRightOutlined {...props} />;
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
 
@@ -115,6 +123,8 @@ export const IconExclamationCircle = ({ ...props }) => (
 );
 
 export const IconLocked = ({ ...props }) => <LockOutlined {...props} />;
+
+export const IconUnlocked = ({ ...props }) => <UnlockOutlined {...props} />;
 
 export const IconFlag = ({ ...props }) => <FlagFilled {...props} />;
 
@@ -195,6 +205,8 @@ export const IconUsergroupDelete = (props) => (
 export const IconCalendarTwoTone = ({ ...props }) => (
   <CalendarTwoTone {...props} />
 );
+
+export const IconShare = ({ ...props }) => <ShareAltOutlined {...props} />;
 
 /*
 File Type Icons
