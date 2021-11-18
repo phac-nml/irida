@@ -1764,6 +1764,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.7.6":
+  version: 7.16.3
+  resolution: "@babel/runtime@npm:7.16.3"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: ee47a2b6edf56ec25437b34407a98439eb0b71149675e7b2781e5d1b2b6d858772120f590349fd9adbb0f2a186d2eb584b2b3a1819ca673b60dd5959bb02839f
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.9.2":
   version: 7.14.0
   resolution: "@babel/runtime@npm:7.14.0"
@@ -2284,9 +2293,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:1.6.0":
-  version: 1.6.0
-  resolution: "@reduxjs/toolkit@npm:1.6.0"
+"@reduxjs/toolkit@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@reduxjs/toolkit@npm:1.6.1"
   dependencies:
     immer: ^9.0.1
     redux: ^4.1.0
@@ -2300,7 +2309,7 @@ __metadata:
       optional: true
     react-redux:
       optional: true
-  checksum: b42d66cae4ea23ab23f394dd80ae9879b34dc995eda04a1f8aebc4fdfc03a7d138418ef103325d84594b43a616b7a70d1d306816ea823fbfd40502f56f124533
+  checksum: fc7f8211a74e4ccb246870e9f3dddbd2f9a79ce50ed3c3bb68a59af2b279712e0cba0690479416ef3fea6cfcc1e8d257da8e6a4a49a306d38d83d80182329cfb
   languageName: node
   linkType: hard
 
@@ -6820,6 +6829,15 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"history@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "history@npm:5.1.0"
+  dependencies:
+    "@babel/runtime": ^7.7.6
+  checksum: be7587c614078b6bc39bb3b8ae4da92f9d5d175bf1480c12119d056135eeb88c73589894451536be3d6a3ae250822cc5bf95a2cf5dca26d10b736ac70da0c56f
+  languageName: node
+  linkType: hard
+
 "hoist-non-react-statics@npm:^3.0.0, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
@@ -7185,7 +7203,7 @@ fsevents@^2.1.2:
     "@fortawesome/free-solid-svg-icons": ^5.13.1
     "@reach/router": ^1.3.3
     "@react-dnd/invariant": ^2.0.0
-    "@reduxjs/toolkit": 1.6.0
+    "@reduxjs/toolkit": 1.6.1
     "@yarnpkg/pnpify": ^2.4.0
     ag-grid-community: ^22.1.1
     ag-grid-react: ^22.1.1
@@ -7233,7 +7251,7 @@ fsevents@^2.1.2:
     less: ^4.1.1
     less-loader: ^8.0.0
     lodash: ^4.17.21
-    marked: ^0.7.0
+    marked: ^3.0.8
     mini-css-extract-plugin: ^1.3.5
     moment: ^2.24.0
     ng-file-upload: ^12.2.12
@@ -7261,6 +7279,7 @@ fsevents@^2.1.2:
     react-markdown: ^4.3.1
     react-mde: ^8.0.2
     react-redux: ^7.1.0
+    react-router-dom: ^6.0.2
     react-virtualized-auto-sizer: ^1.0.2
     react-window: ^1.8.1
     reactour: ^1.9.1
@@ -8925,12 +8944,12 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"marked@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "marked@npm:0.7.0"
+"marked@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "marked@npm:3.0.8"
   bin:
-    marked: ./bin/marked
-  checksum: 9132605ed9942fddc68c78305743bf4cce9b4d36df0fb6e7dbffca145ac445c75e968b7401943fa2d6cea8da7f6adba1a28b6496476a601547bc1c61780acef1
+    marked: bin/marked
+  checksum: a56e571e9a407a39a45045cdc21a1d13e2382c253a4e0014d785bc613f8f8b48cda3aa0a5e47f304e49ae0d5d9bae5bc9e3480594584658a0ea9df854120f000
   languageName: node
   linkType: hard
 
@@ -11790,6 +11809,30 @@ fsevents@^2.1.2:
     react-native:
       optional: true
   checksum: f789c2d9cb19d33bd5764ea381537d94faf3b3872151b0eb5f6f3c07c3d8746b446664d72026fbafcfef3af7afcab907c9c0486b2c4d283d1ffd06f71dd39be7
+  languageName: node
+  linkType: hard
+
+"react-router-dom@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "react-router-dom@npm:6.0.2"
+  dependencies:
+    history: ^5.1.0
+    react-router: 6.0.2
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: eb45fca71161ec5b8cb014fd2c3fb8b6d8347baef841353be75d16d1c9518897d2e9fede26f9c2bbd6b068dab8a941ff7e3df3cf22ab2557846c1e404c551e54
+  languageName: node
+  linkType: hard
+
+"react-router@npm:6.0.2":
+  version: 6.0.2
+  resolution: "react-router@npm:6.0.2"
+  dependencies:
+    history: ^5.1.0
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 4da03e3348038252ca5c68b567b1926a0470ae1429427ff835af23d8dfab801d780058288d974691d984b58d3adef005112297e298b1145f663b26cf74fa8e6f
   languageName: node
   linkType: hard
 

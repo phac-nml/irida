@@ -65,7 +65,7 @@ public class ProjectsAjaxController {
 	/**
 	 * Get a list of all roles available on a project
 	 *
-	 * @param locale {@link Locale} of the current user
+	 * @param locale - {@link Locale} of the current user
 	 * @return list of roles and their internationalized strings
 	 */
 	@RequestMapping("/roles")
@@ -74,13 +74,13 @@ public class ProjectsAjaxController {
 	}
 
 	/**
-	 * Get all projects for a user based on a query (searching the name of the project)
+	 * Get a list of projects that the user can share sample to.
 	 *
-	 * @param query To search the project name by
-	 * @return List of project the user has rights to that match the query
+	 * @param currentId Current project identifier
+	 * @return {@link List} of {@link Project}s
 	 */
-	@RequestMapping("/user")
-	public ResponseEntity<List<Project>> getUsersProjects(String query) {
-		return ResponseEntity.ok(projectsService.getProjectsForUser(query));
+	@RequestMapping("/samples-share/projects")
+	public List<Project> getPotentialProjectsToShareTo(@RequestParam long currentId) {
+		return projectsService.getPotentialProjectsToShareTo(currentId);
 	}
 }

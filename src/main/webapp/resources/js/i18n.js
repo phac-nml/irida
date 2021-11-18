@@ -17,6 +17,7 @@
  * expected.
  */
 
+
 /**
  * Get the translation for the key from the global window.translations
  * @param {string} key
