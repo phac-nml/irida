@@ -3,8 +3,10 @@ import React, { useContext } from "react";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import {
   removeUserGroupFromProject,
-  updateUserGroupRoleOnProject,
+  updateUserGroupProjectRole,
 } from "../../apis/projects/user-groups";
+import { useMetadataRoles } from "../../contexts/metadata-roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 import {
   formatInternationalizedDateTime
 } from "../../utilities/date-utilities";
@@ -23,6 +25,18 @@ import { AddGroupButton } from "./AddGroupButton";
 export function ProjectUserGroupsTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
+  const { roles: projectRoles } = useProjectRoles(projectId);
+  const { roles: metadataRoles } = useMetadataRoles();
+
+  const updateProjectRole = (updatedRole, details) => (role) => {
+    return updateUserGroupProjectRole({
+      ...details,
+      [updatedRole]: role,
+    }).then((message) => {
+      updateTable();
+      return message;
+    });
+  };
 
   const columns = [
     {
@@ -38,13 +52,34 @@ export function ProjectUserGroupsTable({ projectId }) {
     },
     {
       dataIndex: "role",
-      title: i18n("ProjectUserGroupsTable.role"),
+      title: i18n("ProjectUserGroupsTable.projectRole"),
       render(text, group) {
         return (
           <RoleSelect
-            projectId={projectId}
-            item={group}
-            updateRoleFn={updateUserGroupRoleOnProject}
+            updateRoleFn={updateProjectRole("projectRole", {
+              id: group.id,
+              metadataRole: group.metadataRole,
+              projectId,
+            })}
+            roles={projectRoles}
+            currentRole={group.role}
+          />
+        );
+      },
+    },
+    {
+      dataIndex: "metadataRole",
+      title: i18n("ProjectUserGroupsTable.metadataData"),
+      render(text, group) {
+        return (
+          <RoleSelect
+            updateRoleFn={updateProjectRole("metadataRole", {
+              id: group.id,
+              projectRole: group.role,
+              projectId,
+            })}
+            roles={metadataRoles}
+            currentRole={group.metadataRole}
           />
         );
       },

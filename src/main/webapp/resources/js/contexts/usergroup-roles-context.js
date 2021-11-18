@@ -1,8 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { getUserGroupRoles } from "../apis/users/groups";
 
-let UserGroupRolesContext;
-const { Provider } = (UserGroupRolesContext = createContext());
+let UserGroupRolesContext = createContext();
 
 /**
  * Context to provide a list of User Group Roles
@@ -27,7 +26,21 @@ function UserGroupRolesProvider({ children }) {
     return role ? role.label : "UNKNOWN";
   };
 
-  return <Provider value={{ roles, getRoleFromKey }}>{children}</Provider>;
+  return (
+    <UserGroupRolesContext.Provider value={{ roles, getRoleFromKey }}>
+      {children}
+    </UserGroupRolesContext.Provider>
+  );
 }
 
-export { UserGroupRolesContext, UserGroupRolesProvider };
+function useUserGroupRoles() {
+  const context = React.useContext(UserGroupRolesContext);
+  if (context === undefined) {
+    throw new Error(
+      "useUserGroupRoles must be used within a UserGroupRolesContext"
+    );
+  }
+  return context;
+}
+
+export { UserGroupRolesProvider, useUserGroupRoles };
