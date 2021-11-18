@@ -1,3 +1,4 @@
+
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;

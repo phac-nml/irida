@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String GOOD_FILE_PATH = "src/test/resources/files/metadata-upload/good.xlsx";
 	private static final String MIXED_FILE_PATH = "src/test/resources/files/metadata-upload/mixed.xlsx";
+	private static final String INVALID_FILE_PATH = "src/test/resources/files/metadata-upload/invalid.xlsx";
 
 	@Before
 	public void init() {
@@ -33,8 +34,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(GOOD_FILE_PATH);
 		page.selectSampleNameColumn();
-		assertEquals("Has incorrect amount of rows matching sample names", 5, page.getFoundCount());
-		assertEquals("Has incorrect amount of rows missing sample names", 0, page.getMissingCount());
+		assertEquals("Has incorrect amount of update sample rows", 5, page.getUpdateCount());
+		assertEquals("Has incorrect amount of new sample rows", 0, page.getNewCount());
 
 		/*
 		Check formatting.  A special check for number column formatting has been added in July 2020.
@@ -52,7 +53,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 						.doubleValue())
 				.collect(Collectors.toList());
 		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
-		formattedNumbers.forEach(num -> assertTrue("Found " + num + " that was not formatted properly", values.contains(Double.valueOf(num))));
+		formattedNumbers.forEach(num -> assertTrue("Found " + num + " that was not formatted properly",
+				values.contains(Double.valueOf(num))));
 
 	}
 
@@ -61,7 +63,27 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(MIXED_FILE_PATH);
 		page.selectSampleNameColumn();
-		assertEquals("Has incorrect amount of rows matching sample names", 5, page.getFoundCount());
-		assertEquals("Has incorrect amount of rows missing sample names", 2, page.getMissingCount());
+		assertEquals("Has incorrect amount of update sample rows", 5, page.getUpdateCount());
+		assertEquals("Has incorrect amount of new sample rows", 2, page.getNewCount());
+	}
+
+	@Test
+	public void testSuccessfulUpload() {
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(GOOD_FILE_PATH);
+		assertEquals("Has incorrect pre-populated sample name header", "NLEP #",
+				page.getValueForSelectedSampleNameColumn());
+		page.goToReviewPage();
+		page.goToCompletePage();
+		assertTrue("Success message did not display", page.isSuccessDisplayed());
+
+	}
+
+	@Test
+	public void testFailedUpload() {
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(INVALID_FILE_PATH);
+		page.goToReviewPage();
+		assertTrue("Validation message did not display", page.isAlertDisplayed());
 	}
 }

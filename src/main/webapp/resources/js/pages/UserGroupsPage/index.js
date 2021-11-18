@@ -3,7 +3,7 @@ import React, { lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { getUserGroupRoles } from "../../apis/users/groups";
 import { ContentLoading } from "../../components/loader";
-import { RolesProvider } from "../../contexts/roles-context";
+import { ProjectRolesProvider } from "../../contexts/project-roles-context";
 import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -53,7 +53,7 @@ export function UserGroups() {
       }
     >
       <UserGroupsProvider>
-        <RolesProvider getRolesFn={getUserGroupRoles}>
+        <ProjectRolesProvider getRolesFn={getUserGroupRoles}>
           <Router style={{ height: "100%" }}>
             <UserGroupsPage baseUrl={DEFAULT_URL} path={DEFAULT_URL} />
             <UserGroupsDetailsPage
@@ -61,7 +61,7 @@ export function UserGroups() {
               path={`${DEFAULT_URL}/:id`}
             />
           </Router>
-        </RolesProvider>
+        </ProjectRolesProvider>
       </UserGroupsProvider>
     </Suspense>
   );

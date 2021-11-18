@@ -46,7 +46,6 @@ const MenuWrapper = styled.div`
   height: 65px;
   border-bottom: ${BORDERED_LIGHT};
   width: 100%;
-
   .ant-menu {
     line-height: 65px;
     background-color: transparent;

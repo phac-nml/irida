@@ -22,10 +22,12 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 				page.getNumberOfMetadataFields());
 
 		// TEST FIELD RESTRICTIONS
-		Assert.assertTrue("Fields restrictions settings should be visible to managers", page.areFieldRestrictionSettingsVisible());
-		Assert.assertEquals("Should currently be set to collaborator by default", "Collaborator", page.getFieldRestrictionForRow(0));
-		page.updateFieldRestrictionToOwner(0);
-		Assert.assertEquals("Field should now be restricted to managers", "Manager", page.getFieldRestrictionForRow(0));
+		Assert.assertTrue("Fields restrictions settings should be visible to managers",
+				page.areFieldRestrictionSettingsVisible());
+		Assert.assertEquals("Should currently be set to level 1 by default", "Level 1",
+				page.getFieldRestrictionForRow(0));
+		page.updateFieldRestrictionToLevel(0, 3);
+		Assert.assertEquals("Field should now be restricted to level 4", "Level 4", page.getFieldRestrictionForRow(0));
 
 		// TEMPLATES
 		page.gotoMetadataTemplates();

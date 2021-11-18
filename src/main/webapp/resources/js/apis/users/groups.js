@@ -84,8 +84,11 @@ export function getAvailableUsersForUserGroup({ id, query }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export function addMemberToUserGroup({ groupId, userId, role }) {
+  const params = new URLSearchParams();
+  params.append("userId", userId);
+  params.append("role", role);
   return axios
-    .post(`${BASE_URL}/${groupId}/add`, { id: userId, role })
+    .post(`${BASE_URL}/${groupId}/add`, params)
     .then(({ data }) => data);
 }
 

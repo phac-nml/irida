@@ -3,6 +3,10 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`/ajax/projects/${window.project.id}/samples`);
 
+/**
+ * Redux API for handling project samples queries.
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, any>}
+ */
 export const samplesApi = createApi({
   reducerPath: `samplesApi`,
   baseQuery: fetchBaseQuery({
@@ -14,10 +18,20 @@ export const samplesApi = createApi({
         url: `identifiers?projectId=${projectId}`,
       }),
     }),
+    shareSamplesWithProject: build.mutation({
+      query: (body) => ({
+        url: `share`,
+        method: `POST`,
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetSampleIdsForProjectQuery } = samplesApi;
+export const {
+  useGetSampleIdsForProjectQuery,
+  useShareSamplesWithProjectMutation,
+} = samplesApi;
 
 /**
  * Server side validation of a new sample name.

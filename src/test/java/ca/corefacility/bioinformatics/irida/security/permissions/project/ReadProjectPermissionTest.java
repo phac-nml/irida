@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -130,7 +131,7 @@ public class ReadProjectPermissionTest {
 		final Project p = new Project();
 		final UserGroup g = new UserGroup("The group");
 		final List<UserGroupProjectJoin> projectGroups = new ArrayList<>();
-		projectGroups.add(new UserGroupProjectJoin(p, g, ProjectRole.PROJECT_USER));
+		projectGroups.add(new UserGroupProjectJoin(p, g, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));

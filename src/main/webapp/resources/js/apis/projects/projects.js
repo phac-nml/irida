@@ -7,6 +7,10 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 const URL = setBaseUrl(`ajax/projects`);
 
+/**
+ * Redux API to handle queries based on projects
+ * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getPotentialProjectsToShareTo: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getPotentialProjectsToShareTo: *}, string, string, any>}
+ */
 export const projectsApi = createApi({
   reducerPath: `projectsApi`,
   baseQuery: fetchBaseQuery({ baseUrl: URL }),
