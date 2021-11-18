@@ -1,18 +1,17 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
-import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import com.google.common.base.Joiner;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -20,12 +19,9 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
 import java.util.List;
@@ -36,7 +32,15 @@ import java.util.List;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, order = IridaApiSecurityConfig.METHOD_SECURITY_ORDER)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
+@Import({ IridaAuthenticationSecurityConfig.class })
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	@Qualifier("apiAuthenticationProvider")
+	private AuthenticationProvider authenticationProvider;
 
 	public static final int METHOD_SECURITY_ORDER = Ordered.LOWEST_PRECEDENCE;
 
@@ -47,9 +51,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
 
-	@Value("${security.password.expiry}")
-	private int passwordExpiryInDays = -1;
-
 	/**
 	 * Loads all of the {@link BasePermission} sub-classes found in the security
 	 * package during component scan. {@link BasePermission} classes are used in
@@ -58,9 +59,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 */
 	@Autowired
 	private List<BasePermission<?,?>> basePermissions;
-
-	@Autowired
-	private UserRepository userRepository;
 
 	@Override
 	protected MethodSecurityExpressionHandler createExpressionHandler() {
@@ -76,8 +74,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
-		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
+		auth.authenticationProvider(authenticationProvider).authenticationProvider(anonymousAuthenticationProvider());
 	}
 
 	/**
@@ -92,39 +89,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return anonymousAuthenticationProvider;
 	}
 
-	@Bean
-	public AuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userRepository);
-		authenticationProvider.setPasswordEncoder(passwordEncoder());
-
-		/*
-		Expire a user's password after the given number of days and force them to change it.
-		 */
-		if (passwordExpiryInDays != -1) {
-			authenticationProvider
-					.setPreAuthenticationChecks(new PasswordExpiryChecker(userRepository, passwordExpiryInDays));
-		}
-
-		/*
-		 * After a user has been authenticated, we want to allow them to change
-		 * their password if the password is expired. The
-		 * {@link IgnoreExpiredCredentialsForPasswordChangeChecker} allows
-		 * authenticated users with expired credentials to invoke one method, the
-		 * {@link UserService#changePassword(Long, String)} method.
-		 */
-		authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
-		return authenticationProvider;
-	}
-
 	@Bean(name = "userAuthenticationManager")
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
