@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "@reach/router";
+import { Link } from "react-router-dom";
 import { Menu } from 'antd';
 
 /**
@@ -7,7 +7,7 @@ import { Menu } from 'antd';
  * @returns {*}
  * @constructor
  */
-export default function UserAccountNav({}) {
+export default function UserAccountNav() {
   return (
     <Menu mode="inline" defaultSelectedKeys={['details']}>
       <Menu.Item key="details"><Link to="details">Details</Link></Menu.Item>

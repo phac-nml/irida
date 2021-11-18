@@ -5,7 +5,7 @@ import React from "react";
  * @returns {*}
  * @constructor
  */
-export default function UserProjectsPage({}) {
+export default function UserProjectsPage() {
   return (
     <div>User Projects Page</div>
   );

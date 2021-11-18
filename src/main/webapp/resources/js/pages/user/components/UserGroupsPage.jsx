@@ -5,7 +5,7 @@ import React from "react";
  * @returns {*}
  * @constructor
  */
-export default function UserGroupsPage({}) {
+export default function UserGroupsPage() {
   return (
     <div>User Groups Page</div>
   );

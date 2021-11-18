@@ -16,12 +16,12 @@ render(
     <BrowserRouter basename={setBaseUrl("/users")}>
       <Routes>
         <Route
-          path="/"
+          path="/:userId"
           element={<UserAccountLayout />}
         >
           <Route
             index
-            path="/:userId"
+            path="details"
             element={<UserDetailsPage />}
           />
           <Route

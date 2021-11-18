@@ -5,7 +5,7 @@ import React from "react";
  * @returns {*}
  * @constructor
  */
-export default function UserPasswordPage({}) {
+export default function UserPasswordPage() {
   return (
     <div>User Password Page</div>
   );

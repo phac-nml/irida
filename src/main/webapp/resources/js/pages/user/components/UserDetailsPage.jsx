@@ -1,6 +1,9 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import { Badge, Button, DatePicker, Form, Input, InputNumber, Select, Switch } from 'antd';
 import moment from 'moment';
+
+import { useGetUserDetailsQuery, useGetCurrentUserDetailsQuery } from "../../../apis/users/users";
 
 const formDisabled = true;
 const dateFormat = 'YYYY/MM/DD';
@@ -10,7 +13,16 @@ const dateFormat = 'YYYY/MM/DD';
  * @returns {*}
  * @constructor
  */
-export default function UserDetailsPage({}) {
+export default function UserDetailsPage() {
+  const { userId } = useParams();
+  console.log("userId = " + userId);
+
+//   const { data1 } = useGetCurrentUserDetailsQuery();
+//   console.log("data1 = " + data1);
+//
+//   const { data2 } = useGetUserDetailsQuery(1);
+//   console.log("data2 = " + data2);
+
   return (
     <Form
       layout="vertical"
@@ -60,7 +72,7 @@ export default function UserDetailsPage({}) {
         <DatePicker format={dateFormat} disabled={formDisabled} />
       </Form.Item>
       <Form.Item>
-         <Button type="primary" htmlType="submit" disabled={formDisabled}>Submit</Button>
+        <Button type="primary" htmlType="submit" disabled={formDisabled}>Submit</Button>
       </Form.Item>
     </Form>
   );
