@@ -76,7 +76,7 @@ public class UsersAjaxController {
 	 * @param principal - the currently logged in user
 	 * @return a {@link UserDetailsResponse} containing the details for the currently logged in user
 	 */
-	@RequestMapping("/current")
+	@RequestMapping("/current/here")
 	public ResponseEntity<UserDetailsResponse> getCurrentUserDetails(Principal principal) {
 		return ResponseEntity.ok(UIUsersService.getCurrentUser(false, principal));
 	}

@@ -19,19 +19,20 @@ export const usersApi = createApi({
      */
     getUserDetails: build.query({
       query: (userId) => ({
-        url: "",
-        params: { userId },
+        url: `/${userId}`,
       }),
       providesTags: ["Users"],
+      transformResponse: (response) => console.log(response)
     }),
     /*
     Get details for the current user.
     */
     getCurrentUserDetails: build.query({
       query: () => ({
-        url: "/current",
+        url: "/current/here",
       }),
       providesTags: ["Users"],
+      transformResponse: (response) => console.log(response)
     }),
   }),
 });

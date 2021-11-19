@@ -94,8 +94,8 @@ public class UsersController {
 	 *
 	 * @return The name of the user account page
 	 */
-	@RequestMapping(value = "/{userId}/details", method = RequestMethod.GET)
-	public String getUserSpecificPage() {
+	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+	public String getUserDetailsPage() {
 		return SPECIFIC_USER_PAGE;
 	}
 

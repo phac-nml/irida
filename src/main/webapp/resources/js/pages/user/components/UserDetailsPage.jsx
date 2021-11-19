@@ -15,13 +15,21 @@ const dateFormat = 'YYYY/MM/DD';
  */
 export default function UserDetailsPage() {
   const { userId } = useParams();
-  console.log("userId = " + userId);
 
-//   const { data1 } = useGetCurrentUserDetailsQuery();
-//   console.log("data1 = " + data1);
-//
-//   const { data2 } = useGetUserDetailsQuery(1);
-//   console.log("data2 = " + data2);
+  if(userId) {
+    console.log("userId = " + userId);
+
+    const { data2, isSuccess2 } = useGetUserDetailsQuery(userId);
+      if(isSuccess2){
+        console.log("data2 = " + data2)
+      }
+  } else {
+    const { data1, isSuccess1 } = useGetCurrentUserDetailsQuery();
+      if(isSuccess1){
+        console.log("data1 = " + data1)
+      }
+  }
+
 
   return (
     <Form
