@@ -5,12 +5,13 @@ import PropTypes from "prop-types";
 import { actions as entryActions } from "../../reducers/entries";
 import { ExportDropDown } from "../Export/ExportDropdown";
 import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
-import { Button, Form, Input, Popover } from "antd";
+import { Button, Form, Input, Popover, Space } from "antd";
 import {
   IconCloudUpload,
   IconQuestion,
 } from "../../../../../components/icons/Icons";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { ShareSampleButton } from "../ShareSampleButton";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
@@ -55,22 +56,17 @@ export class ToolbarComponent extends Component {
   render() {
     return (
       <div className="toolbar">
-        <div className="toolbar-group">
-          <Form layout="inline">
-            <Form.Item>
-              <ExportDropDown
-                csv={this.props.exportCSV}
-                excel={this.props.exportXLSX}
-              />
-            </Form.Item>
-            <Form.Item>
-              <AddSamplesToCartButton
-                selectedCount={this.props.selectedCount}
-                addSamplesToCart={this.props.addSamplesToCart}
-              />
-            </Form.Item>
-          </Form>
-        </div>
+        <Space>
+          <ExportDropDown
+            csv={this.props.exportCSV}
+            excel={this.props.exportXLSX}
+          />
+          <ShareSampleButton />
+          <AddSamplesToCartButton
+            selectedCount={this.props.selectedCount}
+            addSamplesToCart={this.props.addSamplesToCart}
+          />
+        </Space>
         <div className="toolbar-group">
           <Form layout="inline">
             {window.project.canManage ? (
