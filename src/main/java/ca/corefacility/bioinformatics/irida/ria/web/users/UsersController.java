@@ -94,7 +94,7 @@ public class UsersController {
 	 *
 	 * @return The name of the user account page
 	 */
-	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+	@RequestMapping({ "/{userId}", "/{userId}/*" })
 	public String getUserDetailsPage() {
 		return SPECIFIC_USER_PAGE;
 	}
@@ -104,7 +104,7 @@ public class UsersController {
 	 *
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
-	@RequestMapping("/current")
+	@RequestMapping({ "/current/", "/current/*" })
 	public String getLoggedInUserPage() {
 		return SPECIFIC_USER_PAGE;
 	}
