@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,6 +45,7 @@ public class RESTProjectUsersController {
 	 * Key used in map for role when adding user to project
 	 */
 	public static final String USER_ROLE_KEY = "role";
+	public static final String METADATA_ROLE_KEY = "metadataRole";
 
 	/**
 	 * Rel to get to the list of users associated with a project.
@@ -135,8 +137,14 @@ public class RESTProjectUsersController {
 			r = ProjectRole.fromString(representation.get(USER_ROLE_KEY));
 		}
 
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+
+		if (representation.containsKey(METADATA_ROLE_KEY)) {
+			metadataRole = ProjectMetadataRole.fromString(representation.get(METADATA_ROLE_KEY));
+		}
+
 		// then add the user to the project with the specified role.
-		Join<Project, User> joined = projectService.addUserToProject(p, u, r);
+		Join<Project, User> joined = projectService.addUserToProject(p, u, r, metadataRole);
 		LabelledRelationshipResource<Project, User> lrr = new LabelledRelationshipResource<Project, User>(
 				joined.getLabel(), joined);
 		// prepare a link to the user

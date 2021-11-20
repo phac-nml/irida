@@ -204,12 +204,12 @@ public class ProjectMetadataPage extends AbstractPage {
 		return fieldRestrictionSelects.get(row).findElement(By.className("ant-select-selection-item")).getText();
 	}
 
-	public void updateFieldRestrictionToOwner(int row) {
+	public void updateFieldRestrictionToLevel(int row, int optionNumber) {
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		fieldRestrictionSelects.get(row).click();
 		WebElement dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-dropdown")));
 		List<WebElement> options = dropdown.findElements(By.className("ant-select-item-option"));
-		options.get(1).click();
+		options.get(optionNumber).click();
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 
 	}

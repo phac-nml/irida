@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -32,12 +33,12 @@ public class MetadataRestriction {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ProjectRole level;
+	private ProjectMetadataRole level;
 
 	protected MetadataRestriction() {
 	}
 
-	public MetadataRestriction(Project project, MetadataTemplateField field, ProjectRole level) {
+	public MetadataRestriction(Project project, MetadataTemplateField field, ProjectMetadataRole level) {
 		this.project = project;
 		this.field = field;
 		this.level = level;
@@ -51,11 +52,11 @@ public class MetadataRestriction {
 		return field;
 	}
 
-	public ProjectRole getLevel() {
+	public ProjectMetadataRole getLevel() {
 		return level;
 	}
 
-	public void setLevel(ProjectRole level) {
+	public void setLevel(ProjectMetadataRole level) {
 		this.level = level;
 	}
 }

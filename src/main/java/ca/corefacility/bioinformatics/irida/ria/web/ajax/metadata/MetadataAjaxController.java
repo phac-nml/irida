@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessRes
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataField;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto.ProjectMetadataTemplate;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 
 /**
@@ -146,8 +147,19 @@ public class MetadataAjaxController {
 	 */
 	@PatchMapping("/fields/restrictions")
 	public ResponseEntity<AjaxResponse> updateProjectMetadataFieldRestriction(@RequestParam Long projectId,
-			@RequestParam Long fieldId, @RequestParam ProjectRole projectRole, Locale locale) {
+			@RequestParam Long fieldId, @RequestParam ProjectMetadataRole projectRole, Locale locale) {
 		return ResponseEntity.ok(
 				new AjaxSuccessResponse(service.updateMetadataProjectField(projectId, fieldId, projectRole, locale)));
+	}
+
+	/**
+	 * Get a list of all metadata roles
+	 *
+	 * @param locale {@link Locale} of the current user
+	 * @return list of metadata roles and their internationalizes text values
+	 */
+	@RequestMapping("/roles")
+	public ResponseEntity<List<Role>> getProjectMetadataRoles(Locale locale) {
+		return ResponseEntity.ok(service.getProjectMetadataRoles(locale));
 	}
 }

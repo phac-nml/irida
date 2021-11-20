@@ -10,16 +10,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -54,6 +55,7 @@ public class UIProjectMembersService {
 				.map(join -> {
 					ProjectUserJoin projectUserJoin = (ProjectUserJoin) join;
 					return new ProjectMemberTableModel(join.getObject(), projectUserJoin.getProjectRole()
+							.toString(), ((ProjectUserJoin) join).getMetadataRole()
 							.toString(), projectUserJoin.getCreatedDate());
 				})
 				.collect(Collectors.toList());
@@ -90,18 +92,20 @@ public class UIProjectMembersService {
 	 * @param projectId - identifier for the current project
 	 * @param userId    - identifier for the user to remove from the project
 	 * @param role      - to update the user to
+	 * @param metadataRole - {@link ProjectMetadataRole} to update the user to
 	 * @param locale    - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manager
 	 */
-	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale) throws UIProjectWithoutOwnerException {
+	public String updateUserRoleOnProject(Long projectId, Long userId, String role, String metadataRole, Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectRole projectRole = ProjectRole.fromString(role);
+		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
 		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
 
 		try {
-			projectService.updateUserProjectRole(project, user, projectRole);
+			projectService.updateUserProjectRole(project, user, projectRole, projectMetadataRole);
 			return messageSource.getMessage("server.ProjectRoleSelect.success", new Object[] { user.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {
 			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error", new Object[] { user.getLabel(), roleString }, locale));
@@ -131,8 +135,9 @@ public class UIProjectMembersService {
 	public String addMemberToProject(Long projectId, NewMemberRequest request, Locale locale) {
 		Project project = projectService.read(projectId);
 		User user = userService.read(request.getId());
-		ProjectRole role = ProjectRole.fromString(request.getRole());
-		projectService.addUserToProject(project, user, role);
+		ProjectRole role = ProjectRole.fromString(request.getProjectRole());
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
+		projectService.addUserToProject(project, user, role, metadataRole);
 		return messageSource.getMessage("project.members.add.success", new Object[] { user.getLabel(), project.getLabel() }, locale);
 	}
 }

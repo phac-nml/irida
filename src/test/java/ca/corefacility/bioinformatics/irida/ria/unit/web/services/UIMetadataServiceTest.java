@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -86,7 +87,7 @@ public class UIMetadataServiceTest {
 
 	@Test
 	public void testUpdateMetadataProjectField() {
-		service.updateMetadataProjectField(PROJECT_ID, 1L, ProjectRole.PROJECT_OWNER, Locale.ENGLISH);
+		service.updateMetadataProjectField(PROJECT_ID, 1L, ProjectMetadataRole.LEVEL_4, Locale.ENGLISH);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).readMetadataField(anyLong());
 	}

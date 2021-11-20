@@ -1,7 +1,5 @@
 import { notification, Select } from "antd";
 import React, { useState } from "react";
-import { useGetProjectDetailsQuery } from "../../apis/projects/project";
-import { useRoles } from "../../contexts/roles-context";
 
 /**
  * React component to render the project role.  If the user can manage members,
@@ -9,15 +7,13 @@ import { useRoles } from "../../contexts/roles-context";
  * any member.  If the user cannot manage, just the label for the project role
  * will be rendered
  *
- * @param {object} item - the current item to be rendered
+ * @param {object} user - the current item to be rendered
  * @returns {*}
  * @constructor
  */
-export function ProjectRole({ projectId, item, updateRoleFn }) {
-  const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const [role, setRole] = React.useState(item.role);
+export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
+  const [role, setRole] = React.useState(currentRole);
   const [loading, setLoading] = useState(false);
-  const { roles, getRoleFromKey } = useRoles();
 
   /**
    * When the project role for the user is updated, update the new value on
@@ -27,7 +23,7 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
    */
   const onChange = (value) => {
     setLoading(true);
-    updateRoleFn({ projectId, id: item.id, role: value })
+    return updateRoleFn(value)
       .then((message) => {
         notification.success({ message });
         setRole(value);
@@ -40,16 +36,16 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
       .finally(() => setLoading(false));
   };
 
-  return project.canManageRemote ? (
+  return (
     <Select
-      className="t-role-select"
+      className={className}
       value={role}
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
       disabled={loading}
     >
-      {roles.map((role) => (
+      {roles?.map((role) => (
         <Select.Option
           className={`t-${role.value}`}
           value={role.value}
@@ -59,7 +55,5 @@ export function ProjectRole({ projectId, item, updateRoleFn }) {
         </Select.Option>
       ))}
     </Select>
-  ) : (
-    getRoleFromKey(item.role)
   );
 }
