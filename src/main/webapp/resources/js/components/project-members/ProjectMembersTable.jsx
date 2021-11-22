@@ -29,7 +29,7 @@ export function ProjectMembersTable({ projectId }) {
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { identifier: userId } = useSelector((state) => state.user);
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles();
-  const { roles: metadataRoles } = useMetadataRoles();
+  const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } = useMetadataRoles();
 
   React.useEffect(() => {
     dispatch(getCurrentUserDetails());
@@ -86,7 +86,7 @@ export function ProjectMembersTable({ projectId }) {
             currentRole={item.metadataRole}
           />
         ) : (
-          getRoleFromKey(item.metadataRole)
+          getMetadataRoleFromKey(item.metadataRole)
         );
       },
     },
