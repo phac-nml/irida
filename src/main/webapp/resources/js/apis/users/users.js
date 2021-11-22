@@ -22,7 +22,6 @@ export const usersApi = createApi({
         url: `/${userId}`,
       }),
       providesTags: ["Users"],
-      transformResponse: (response) => console.log(response)
     }),
     /*
     Get details for the current user.
@@ -32,7 +31,6 @@ export const usersApi = createApi({
         url: "/current/here",
       }),
       providesTags: ["Users"],
-      transformResponse: (response) => console.log(response)
     }),
   }),
 });

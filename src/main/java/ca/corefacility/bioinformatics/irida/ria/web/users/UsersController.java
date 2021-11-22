@@ -104,9 +104,11 @@ public class UsersController {
 	 *
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
-	@RequestMapping({ "/current/", "/current/*" })
-	public String getLoggedInUserPage() {
-		return SPECIFIC_USER_PAGE;
+	@RequestMapping({ "/current" })
+	public String getLoggedInUserPage(Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		Long id = readPrincipal.getId();
+		return "redirect:/users/" + id;
 	}
 
 	/**

@@ -160,18 +160,6 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Get the details for the currently logged in user
-	 *
-	 * @param mailFailure - if sending a user activation e-mail passed or failed
-	 * @param principal   - the currently logged in user
-	 * @return getUser for the currently logged in user
-	 */
-	public UserDetailsResponse getCurrentUser(Boolean mailFailure, Principal principal) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return getUser(readPrincipal.getId(), false, principal);
-	}
-
-	/**
 	 * Check if the logged in user is allowed to edit the given user.
 	 *
 	 * @param principalUser - the currently logged in principal

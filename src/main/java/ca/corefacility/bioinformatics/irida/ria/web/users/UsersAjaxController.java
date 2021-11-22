@@ -70,14 +70,4 @@ public class UsersAjaxController {
 		return ResponseEntity.ok(UIUsersService.getUser(userId, mailFailure, principal));
 	}
 
-	/**
-	 * Get the details for the currently logged in user
-	 *
-	 * @param principal - the currently logged in user
-	 * @return a {@link UserDetailsResponse} containing the details for the currently logged in user
-	 */
-	@RequestMapping("/current/here")
-	public ResponseEntity<UserDetailsResponse> getCurrentUserDetails(Principal principal) {
-		return ResponseEntity.ok(UIUsersService.getCurrentUser(false, principal));
-	}
 }

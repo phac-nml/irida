@@ -64,7 +64,7 @@ export default function UserDetailsPage() {
         <Form.Item label="Modified" name="modified" initialValue={moment(data.user.modifiedDate)}>
           <DatePicker format={dateFormat} disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Last Login" name="lastlogin">
+        <Form.Item label="Last Login" name="lastlogin" initialValue={moment(data.user.lastLogin)}>
           <DatePicker format={dateFormat} disabled={formDisabled} />
         </Form.Item>
         <Form.Item>
