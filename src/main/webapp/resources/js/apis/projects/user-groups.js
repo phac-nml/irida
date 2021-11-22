@@ -13,7 +13,7 @@ const BASE_URL = setBaseUrl(`/ajax/projects/groups`);
 export async function removeUserGroupFromProject({ projectId, groupId }) {
   const params = new URLSearchParams({ projectId, groupId });
   try {
-    const { data } = axios.delete(`${BASE_URL}?${params.toString()}`);
+    const { data } = await axios.delete(`${BASE_URL}?${params.toString()}`);
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);
@@ -50,11 +50,11 @@ export async function getAvailableGroupsForProject({ projectId, query }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function addUserGroupToProject({
-                                              projectId,
-                                              groupId,
-                                              role,
-                                              metadataRole
-                                            }) {
+  projectId,
+  groupId,
+  role,
+  metadataRole,
+}) {
   try {
     const { data } = await axios.post(
       `${BASE_URL}/add?projectId=${projectId}`,
@@ -76,16 +76,16 @@ export async function addUserGroupToProject({
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateUserGroupProjectRole({
-                                                   projectId,
-                                                   id,
-                                                   projectRole,
-                                                   metadataRole
-                                                 }) {
+  projectId,
+  id,
+  projectRole,
+  metadataRole,
+}) {
   const params = new URLSearchParams({
     projectId,
     id,
     projectRole,
-    metadataRole
+    metadataRole,
   });
   try {
     const { data } = await axios.put(`${BASE_URL}/role?${params.toString()}`);
