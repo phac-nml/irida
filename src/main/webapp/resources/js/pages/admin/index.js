@@ -1,8 +1,9 @@
 import React from "react";
 
 import { render } from "react-dom";
-import Admin from "./components/Admin";
+import { BrowserRouter } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import Admin from "./components/Admin";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -12,4 +13,5 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(<Admin />, document.getElementById("root"));
+render(
+  <BrowserRouter><Admin/></BrowserRouter>, document.getElementById("root"));

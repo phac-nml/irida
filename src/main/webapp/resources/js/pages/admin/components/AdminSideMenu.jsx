@@ -1,15 +1,15 @@
 /*
  * This file renders the AdminSideMenu component
  */
+import { Layout, Menu } from "antd";
 /*
  * The following import statements makes available
  * all the elements required by the component
  */
 import React from "react";
-import {Layout, Menu} from "antd";
-import {setBaseUrl} from "../../../utilities/url-utilities";
-import {Link} from "@reach/router";
-import {ADMIN} from "../routes";
+import { Link } from "react-router-dom";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ADMIN } from "../routes";
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;

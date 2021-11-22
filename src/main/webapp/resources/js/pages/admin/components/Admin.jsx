@@ -10,13 +10,13 @@
  */
 
 import { Layout } from "antd";
-import { Router } from "@reach/router";
-import { ADMIN } from "../routes";
 import React, { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 import { ContentLoading } from "../../../components/loader";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ADMIN } from "../routes";
 import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Content } = Layout;
 
@@ -58,30 +58,48 @@ export default function Admin() {
         <AdminHeader />
         <Content>
           <Suspense fallback={<ContentLoading />}>
-            <Router>
-              <BasicStats path={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} default />
-              <AdvancedStatistics
+            <Routes>
+              <Route
+                path={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}
+                element={<BasicStats />}
+              />
+              <Route
                 path={`${DEFAULT_URL}/${ADMIN.STATISTICS}/:statType`}
+                element={<AdvancedStatistics />}
               />
-              <AdminUsersPage path={`${DEFAULT_URL}/${ADMIN.USERS}`} />
-              <AdminUserGroupsPage
+              <Route
+                path={`${DEFAULT_URL}/${ADMIN.USERS}`}
+                element={<AdminUsersPage />}
+              />
+              <Route
                 path={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/*`}
+                element={<AdminUserGroupsPage />}
               />
-              <ClientListingPage path={`${DEFAULT_URL}/${ADMIN.CLIENTS}`} />
-              <AdminRemoteApiPage path={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} />
-              <AdminRemoteApiDetailsPage
+              <Route
+                path={`${DEFAULT_URL}/${ADMIN.CLIENTS}`}
+                element={<ClientListingPage />}
+              />
+              <Route
+                path={`${DEFAULT_URL}/${ADMIN.REMOTE_API}`}
+                element={<AdminRemoteApiPage />}
+              />
+              <Route
                 path={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}/:remoteId`}
+                element={<AdminRemoteApiDetailsPage />}
               />
-              <AdminSequencingRunsPage
-                path={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`}
+              <Route
+                path={`${DEFAULT_URL}/${ADMIN.SEQUENCING_RUNS}`}
+                element={<AdminSequencingRunsPage />}
               />
-              <AdminNcbiExportsPage
+              <Route
                 path={`${DEFAULT_URL}/${ADMIN.NCBIEXPORTS}`}
+                element={<AdminNcbiExportsPage />}
               />
-              <AnnouncementAdminPage
+              <Route
                 path={`${DEFAULT_URL}/${ADMIN.ANNOUNCEMENTS}`}
+                element={<AnnouncementAdminPage />}
               />
-            </Router>
+            </Routes>
           </Suspense>
         </Content>
       </Layout>
