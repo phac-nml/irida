@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import React from "react";
 import { connect } from "react-redux";
+import { IconShare } from "../../../../../components/icons/Icons";
 import { actions as cartActions } from "../../../../../redux/reducers/cart";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
@@ -26,7 +27,12 @@ function ShareSamplesButtonComponent({ selected }) {
   }
 
   return (
-    <Button onClick={handleShare} disabled={!selected.length}>
+    <Button
+      className="t-share-button"
+      icon={<IconShare />}
+      onClick={handleShare}
+      disabled={!selected.length}
+    >
       {i18n("ShareSampleButton.label")}
     </Button>
   );

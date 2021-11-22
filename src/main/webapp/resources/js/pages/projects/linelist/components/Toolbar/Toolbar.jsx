@@ -1,16 +1,16 @@
-import React, { Component, Suspense } from "react";
-import { connect } from "react-redux";
+import { Button, Form, Input, Popover, Space } from "antd";
 
 import PropTypes from "prop-types";
-import { actions as entryActions } from "../../reducers/entries";
-import { ExportDropDown } from "../Export/ExportDropdown";
-import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
-import { Button, Form, Input, Popover, Space } from "antd";
+import React, { Component, Suspense } from "react";
+import { connect } from "react-redux";
 import {
   IconCloudUpload,
   IconQuestion,
 } from "../../../../../components/icons/Icons";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { actions as entryActions } from "../../reducers/entries";
+import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
+import { ExportDropDown } from "../Export/ExportDropdown";
 import { ShareSampleButton } from "../ShareSampleButton";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
@@ -61,7 +61,7 @@ export class ToolbarComponent extends Component {
             csv={this.props.exportCSV}
             excel={this.props.exportXLSX}
           />
-          <ShareSampleButton />
+          {window.project.canManage && <ShareSampleButton />}
           <AddSamplesToCartButton
             selectedCount={this.props.selectedCount}
             addSamplesToCart={this.props.addSamplesToCart}
