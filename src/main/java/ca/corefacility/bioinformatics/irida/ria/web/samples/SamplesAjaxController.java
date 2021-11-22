@@ -8,6 +8,7 @@ import java.util.*;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -174,6 +175,17 @@ public class SamplesAjaxController {
 	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
 		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	}
+
+	/**
+	 * Get {@link Sample} metadata for a specific sample.
+	 *
+	 * @param id {@link Long} identifier for a sample.
+	 * @return {@link SampleMetadata} for the {@link Sample}
+	 */
+	@GetMapping(value = "/{id}/metadata")
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id) {
+		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id));
 	}
 
 	/**

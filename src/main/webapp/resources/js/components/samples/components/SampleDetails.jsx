@@ -29,7 +29,10 @@ export function SampleDetails({ details }) {
           />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.metadata")} key="metadata">
-          <SampleMetadata metadata={details.metadata} />
+          <SampleMetadata
+            sampleId={details.sample.identifier}
+            isModifiable={details.modifiable}
+          />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.files")} key="files">
           <SampleFiles

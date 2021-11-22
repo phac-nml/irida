@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 /**
  * Represents a sample within the cart on the pipeline launch page.

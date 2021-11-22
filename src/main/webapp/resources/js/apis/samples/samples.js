@@ -31,12 +31,20 @@ export const sampleApi = createApi({
       }),
       invalidatesTags: ["SampleDetails"],
     }),
+    getSampleMetadata: build.query({
+      query: (sampleId) => ({
+        url: `/${sampleId}/metadata`,
+        method: `GET`,
+        providesTags: ["SampleMetadata"],
+      }),
+    }),
   }),
 });
 
 export const {
   useGetSampleDetailsQuery,
   useUpdateSampleDetailsMutation,
+  useGetSampleMetadataQuery,
 } = sampleApi;
 
 /**
