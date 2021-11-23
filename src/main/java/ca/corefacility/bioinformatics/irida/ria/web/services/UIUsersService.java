@@ -29,8 +29,8 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpeci
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -62,14 +62,14 @@ public class UIUsersService {
 	 * @param request - the information about the current page of users to return
 	 * @return {@link TableResponse}
 	 */
-	public TableResponse<UserTableModel> getUsersPagedList(AdminUsersTableRequest request) {
+	public TableResponse<UserDetailsModel> getUsersPagedList(AdminUsersTableRequest request) {
 		Specification<User> specification = UserSpecification.searchUser(request.getSearch());
 		PageRequest pageRequest = PageRequest.of(request.getCurrent(), request.getPageSize(), request.getSort());
 		Page<User> userPage = userService.search(specification, pageRequest);
 
-		List<UserTableModel> users = userPage.getContent()
+		List<UserDetailsModel> users = userPage.getContent()
 				.stream()
-				.map(UserTableModel::new)
+				.map(UserDetailsModel::new)
 				.collect(Collectors.toList());
 
 		return new TableResponse<>(users, userPage.getTotalElements());
@@ -114,7 +114,8 @@ public class UIUsersService {
 	public UserDetailsResponse getUser(Long userId, Boolean mailFailure, Principal principal) {
 		UserDetailsResponse response = new UserDetailsResponse();
 		User user = userService.read(userId);
-		response.setUser(user);
+		UserDetailsModel userDetails = new UserDetailsModel(user);
+		response.setUser(userDetails);
 		response.setMailFailure(mailFailure);
 
 		User principalUser = userService.getUserByUsername(principal.getName());

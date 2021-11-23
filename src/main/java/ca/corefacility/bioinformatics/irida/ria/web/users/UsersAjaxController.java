@@ -12,8 +12,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
 
 /**
  * Handles asynchronous requests for the administration users table.
@@ -37,7 +37,7 @@ public class UsersAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping("/list")
-	public TableResponse<UserTableModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
+	public TableResponse<UserDetailsModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
 		return UIUsersService.getUsersPagedList(request);
 	}
 

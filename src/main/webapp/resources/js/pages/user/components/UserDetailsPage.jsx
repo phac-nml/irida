@@ -6,7 +6,6 @@ import moment from 'moment';
 import { useGetUserDetailsQuery } from "../../../apis/users/users";
 
 const formDisabled = true;
-const dateFormat = 'YYYY/MM/DD';
 
 /**
  * React component to display the user details page.
@@ -24,13 +23,16 @@ export default function UserDetailsPage() {
         layout="vertical"
         initialValues={data.user}
       >
-        <Form.Item label="ID" name="identifier">
+        <Form.Item label="ID" name="id">
           <InputNumber disabled={formDisabled} />
         </Form.Item>
         <Form.Item label="Username" name="username">
           <Input disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Name" name="label">
+        <Form.Item label="First Name" name="firstName">
+          <Input disabled={formDisabled} />
+        </Form.Item>
+        <Form.Item label="Last Name" name="lastName">
           <Input disabled={formDisabled} />
         </Form.Item>
         <Form.Item label="Email" name="email">
@@ -39,7 +41,7 @@ export default function UserDetailsPage() {
         <Form.Item label="Phone Number" name="phoneNumber">
           <Input disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Role" name="systemRole">
+        <Form.Item label="Role" name="role">
           <Select disabled={formDisabled}>
             <Select.Option value="ROLE_USER">{i18n("systemrole.ROLE_USER")}</Select.Option>
             <Select.Option value="ROLE_MANAGER">{i18n("systemrole.ROLE_MANAGER")}</Select.Option>
@@ -52,13 +54,13 @@ export default function UserDetailsPage() {
           <Switch disabled={formDisabled} />
         </Form.Item>
         <Form.Item label="Created" name="createdDatePlaceholder" initialValue={moment(data.user.createdDate)}>
-          <DatePicker format={dateFormat} disabled={formDisabled} />
+          <DatePicker disabled={formDisabled} />
         </Form.Item>
         <Form.Item label="Modified" name="modifiedDatePlaceholder" initialValue={moment(data.user.modifiedDate)}>
-          <DatePicker format={dateFormat} disabled={formDisabled} />
+          <DatePicker disabled={formDisabled} />
         </Form.Item>
         <Form.Item label="Last Login" name="lastLoginPlaceholder" initialValue={moment(data.user.lastLogin)}>
-          <DatePicker format={dateFormat} disabled={formDisabled} />
+          <DatePicker disabled={formDisabled} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" disabled={formDisabled}>Submit</Button>

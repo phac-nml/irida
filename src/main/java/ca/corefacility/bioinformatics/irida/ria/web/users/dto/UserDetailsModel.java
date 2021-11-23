@@ -8,20 +8,22 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 /**
  * Describes a {@link User} in a ant.design table.
  */
-public class UserTableModel extends TableModel {
+public class UserDetailsModel extends TableModel {
 	private String firstName;
 	private String lastName;
 	private String email;
+	private String phoneNumber;
 	private String username;
 	private String role;
 	private Date lastLogin;
 	private boolean enabled;
 
-	public UserTableModel(User user) {
+	public UserDetailsModel(User user) {
 		super(user.getId(), user.getUsername(), user.getCreatedDate(), user.getModifiedDate());
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.email = user.getEmail();
+		this.phoneNumber = user.getPhoneNumber();
 		this.username = user.getUsername();
 		this.role = user.getSystemRole()
 				.getName();
@@ -41,6 +43,10 @@ public class UserTableModel extends TableModel {
 		return email;
 	}
 
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	
 	public String getUsername() {
 		return username;
 	}

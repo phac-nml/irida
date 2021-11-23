@@ -3,14 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 import java.util.List;
 import java.util.Map;
 
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
 /**
  * Returns an AjaxResponse with user details.
  */
 public class UserDetailsResponse extends AjaxResponse {
-	private User user;
+
+	private UserDetailsModel userDetails;
 	private String systemRole;
 	private List<Map<String, Object>> projects;
 	private boolean mailConfigured;
@@ -18,12 +18,12 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean canEditUser;
 	private boolean canCreatePasswordReset;
 
-	public User getUser() {
-		return user;
+	public UserDetailsModel getUser() {
+		return userDetails;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUser(UserDetailsModel userDetails) {
+		this.userDetails = userDetails;
 	}
 
 	public String getSystemRole() {
