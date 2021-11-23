@@ -16,8 +16,7 @@ render(
     <BrowserRouter basename={setBaseUrl("/users")}>
       <Routes>
         <Route
-          path={path}
-          key={index}
+          path="/:userId"
           element={<UserAccountLayout />}
         >
           <Route

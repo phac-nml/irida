@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import moment from 'moment';
 
 const BASE_URL = setBaseUrl(`ajax/users`);
 
@@ -23,21 +24,11 @@ export const usersApi = createApi({
       }),
       providesTags: ["Users"],
     }),
-    /*
-    Get details for the current user.
-    */
-    getCurrentUserDetails: build.query({
-      query: () => ({
-        url: "/current/here",
-      }),
-      providesTags: ["Users"],
-    }),
   }),
 });
 
 export const {
   useGetUserDetailsQuery,
-  useGetCurrentUserDetailsQuery,
 } = usersApi;
 
 /**

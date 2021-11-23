@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Badge, Button, DatePicker, Form, Input, InputNumber, Select, Switch } from 'antd';
 import moment from 'moment';
 
-import { useGetUserDetailsQuery, useGetCurrentUserDetailsQuery } from "../../../apis/users/users";
+import { useGetUserDetailsQuery } from "../../../apis/users/users";
 
 const formDisabled = true;
 const dateFormat = 'YYYY/MM/DD';
@@ -15,56 +15,49 @@ const dateFormat = 'YYYY/MM/DD';
  */
 export default function UserDetailsPage() {
   const { userId } = useParams();
-  const { data, isSuccess } = userId ? useGetUserDetailsQuery(userId) : useGetCurrentUserDetailsQuery();
+  const { data, isSuccess } = useGetUserDetailsQuery(userId);
 
   if (isSuccess) {
     console.log(data);
     return (
       <Form
         layout="vertical"
-//         initialValues={{
-//           id:5,
-//           username:"this is a test",
-//           name:"Test User",
-//           email:"test@nowhere.ca",
-//           phone:"1234",
-//           role:"user",
-//           enabled:true,
-//           created:moment("2021/09/27", dateFormat),
-//           modified:moment("2021/09/27", dateFormat),
-//           lastlogin:moment("2021/09/29", dateFormat)
-//         }}
+        initialValues={data.user}
       >
-        <Form.Item label="ID" name="id" initialValue={data.user.identifier}>
+        <Form.Item label="ID" name="identifier">
           <InputNumber disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Username" name="username" initialValue={data.user.username}>
+        <Form.Item label="Username" name="username">
           <Input disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Name" name="name" initialValue={data.user.label}>
+        <Form.Item label="Name" name="label">
           <Input disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Email" name="email" initialValue={data.user.email}>
+        <Form.Item label="Email" name="email">
           <Input disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Phone Number" name="phone" initialValue={data.user.phoneNumber}>
+        <Form.Item label="Phone Number" name="phoneNumber">
           <Input disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Role" name="role" initialValue={data.systemRole}>
+        <Form.Item label="Role" name="systemRole">
           <Select disabled={formDisabled}>
-            <Select.Option value="user">User</Select.Option>
+            <Select.Option value="ROLE_USER">{i18n("systemrole.ROLE_USER")}</Select.Option>
+            <Select.Option value="ROLE_MANAGER">{i18n("systemrole.ROLE_MANAGER")}</Select.Option>
+            <Select.Option value="ROLE_SEQUENCER">{i18n("systemrole.ROLE_SEQUENCER")}</Select.Option>
+            <Select.Option value="ROLE_ADMIN">{i18n("systemrole.ROLE_ADMIN")}</Select.Option>
+            <Select.Option value="ROLE_TECHNICIAN">{i18n("systemrole.ROLE_TECHNICIAN")}</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item label="Enabled" name="enabled" valuePropName="checked" initialValue={data.user.enabled}>
+        <Form.Item label="Enabled" name="enabled" valuePropName="checked">
           <Switch disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Created" name="created" initialValue={moment(data.user.createdDate)}>
+        <Form.Item label="Created" name="createdDatePlaceholder" initialValue={moment(data.user.createdDate)}>
           <DatePicker format={dateFormat} disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Modified" name="modified" initialValue={moment(data.user.modifiedDate)}>
+        <Form.Item label="Modified" name="modifiedDatePlaceholder" initialValue={moment(data.user.modifiedDate)}>
           <DatePicker format={dateFormat} disabled={formDisabled} />
         </Form.Item>
-        <Form.Item label="Last Login" name="lastlogin" initialValue={moment(data.user.lastLogin)}>
+        <Form.Item label="Last Login" name="lastLoginPlaceholder" initialValue={moment(data.user.lastLogin)}>
           <DatePicker format={dateFormat} disabled={formDisabled} />
         </Form.Item>
         <Form.Item>
