@@ -38,6 +38,27 @@ export const sampleApi = createApi({
         providesTags: ["SampleMetadata"],
       }),
     }),
+    addSampleMetadata: build.mutation({
+      query: ({ sampleId, metadataField, metadataEntry }) => ({
+        url: `/${sampleId}/metadata?metadataField=${metadataField}&metadataEntry=${metadataEntry}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["SampleMetadata"],
+    }),
+    removeSampleMetadata: build.mutation({
+      query: ({ sampleId, metadataField }) => ({
+        url: `/${sampleId}/metadata?metadataField=${metadataField}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["SampleMetadata"],
+    }),
+    updateSampleMetadata: build.mutation({
+      query: ({ sampleId, metadataField, metadataEntry }) => ({
+        url: `/${sampleId}/metadata/update?metadataField=${metadataField}&metadataEntry=${metadataEntry}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["SampleMetadata"],
+    }),
   }),
 });
 
@@ -45,6 +66,9 @@ export const {
   useGetSampleDetailsQuery,
   useUpdateSampleDetailsMutation,
   useGetSampleMetadataQuery,
+  useAddSampleMetadataMutation,
+  useRemoveSampleMetadataMutation,
+  useUpdateSampleMetadataMutation,
 } = sampleApi;
 
 /**

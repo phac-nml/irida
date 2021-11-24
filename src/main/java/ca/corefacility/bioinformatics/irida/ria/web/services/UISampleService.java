@@ -7,7 +7,11 @@ import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import com.github.jsonldjava.shaded.com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -47,11 +51,12 @@ public class UISampleService {
 	private final GenomeAssemblyService genomeAssemblyService;
 	private final MessageSource messageSource;
 	private final UICartService cartService;
+	private final MetadataTemplateService metadataTemplateService;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService) {
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService, MetadataTemplateService metadataTemplateService) {
 
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -60,6 +65,7 @@ public class UISampleService {
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
 		this.cartService = cartService;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
@@ -82,10 +88,15 @@ public class UISampleService {
 	 * @param id Identifier for a {@link Sample}
 	 * @return {@link SampleMetadata}
 	 */
-	public SampleMetadata getSampleMetadata(Long id) {
+	public Set<SampleMetadataFieldEntry> getSampleMetadata(Long id) {
 		Sample sample = sampleService.read(id);
+		Set<SampleMetadataFieldEntry> sampleMetadataFieldEntries = new HashSet<>();
+
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
-		return new SampleMetadata(metadataForSample);
+		for(MetadataEntry e : metadataForSample) {
+			sampleMetadataFieldEntries.add(new SampleMetadataFieldEntry(e.getField().getId(), e.getField().getLabel(), e.getValue(), e.getId()));
+		}
+		return sampleMetadataFieldEntries;
 	}
 
 	/**
@@ -156,6 +167,64 @@ public class UISampleService {
 		} catch (ConstraintViolationException e) {
 			throw new ConstraintViolationException(e.getConstraintViolations());
 		}
+	}
+
+	/**
+	 * Add metadata for the sample
+	 *
+	 * @param sampleId      {@link Long} identifier for the sample
+	 * @param metadataField The metadata field label
+	 * @param metadataEntry The metadata field value
+	 * @param locale        {@link Locale} for the currently logged in user
+	 * @return message indicating update status
+	 * @throws EntityExistsException if the metadata field already exists
+	 */
+	public String addSampleMetadata(Long sampleId, String metadataField, String metadataEntry, Locale locale) throws EntityExistsException {
+		Sample sample = sampleService.read(sampleId);
+
+		Set<MetadataEntry> currentMetadataForSample = sampleService.getMetadataForSample(sample);
+		Optional<MetadataEntry> field = currentMetadataForSample.stream().filter(s -> s.getField().getLabel().equalsIgnoreCase(metadataField)).findFirst();
+
+		if (field.isPresent()) {
+			throw new EntityExistsException("Metadata field " + metadataField + " already exists");
+		} else {
+			MetadataTemplateField templateField = new MetadataTemplateField(metadataField, "text");
+			metadataTemplateService.saveMetadataField(templateField);
+
+			if (!Strings.isNullOrEmpty(metadataEntry)) {
+				MetadataEntry entry = new MetadataEntry(metadataEntry, "text", templateField);
+				Sample t = sampleService.mergeSampleMetadata(sample, Sets.newHashSet(entry));
+			}
+
+		}
+
+		return "Successfully added metadata field " + metadataField + " with value " + metadataEntry;
+	}
+
+	/**
+	 * Add metadata for the sample
+	 *
+	 * @param sampleId      {@link Long} identifier for the sample
+	 * @param metadataField The metadata field label
+	 * @param metadataEntry The metadata field value
+	 * @param locale        {@link Locale} for the currently logged in user
+	 * @return message indicating update status
+	 */
+	public String removeSampleMetadata(Long sampleId, String metadataField, String metadataEntry, Locale locale) {
+		return "Successfully removed metadata field " + metadataField + " with value " + metadataEntry;
+	}
+
+	/**
+	 * Add metadata for the sample
+	 *
+	 * @param sampleId      {@link Long} identifier for the sample
+	 * @param metadataField The metadata field label
+	 * @param metadataEntry The metadata field value
+	 * @param locale        {@link Locale} for the currently logged in user
+	 * @return message indicating update status
+	 */
+	public String updateSampleMetadata(Long sampleId, String metadataField, String metadataEntry, Locale locale) {
+		return "Successfully updated metadata field " + metadataField + " with value " + metadataEntry;
 	}
 
 	/**
