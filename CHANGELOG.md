@@ -9,6 +9,7 @@ Changes
 * [Developer/UI]: Refreshed the metadata uploader.
 * [Developer/UI]: Updated to the latest release of `react-router-dom` v6.0.2.
 * [UI]: Refactored share/move samples between projects to use a separate page.
+* [UI]: Added capability to share/move samples between projects from the line list page.
 
 21.05 to 21.09
 --------------

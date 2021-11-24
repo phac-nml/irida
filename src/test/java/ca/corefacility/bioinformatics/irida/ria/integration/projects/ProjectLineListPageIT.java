@@ -34,6 +34,8 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
 		assertNotEquals("Cell should not have been updated", newValue, page.getCellContents(0, COLUMN_ID));
+
+		assertFalse("Collaborators should not be able to share samples", page.isShareButtonVisible());
 	}
 
 	@Test
@@ -129,5 +131,16 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Should be only one row with the new value", 1, page.getNumberOfRowsInLineList());
 		page.clearTableFilter();
 		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
+
+		// Test sharing
+		assertFalse("Share button should not be enabled with no samples selected", page.isShareButtonEnabled());
+		page.selectRow(0);
+		page.selectRow(1);
+		page.selectRow(2);
+		assertTrue("Share button should now be enabled", page.isShareButtonEnabled());
+		page.shareSelectedSamples();
+		assertTrue("Should be on the share samples page", driver().getCurrentUrl()
+				.contains("share"));
+
 	}
 }
