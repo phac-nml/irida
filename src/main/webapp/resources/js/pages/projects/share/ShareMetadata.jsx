@@ -5,10 +5,16 @@ import {
   getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
 } from "../../../apis/metadata/field";
-import { getColourForRestriction } from "../../../utilities/restriction-utilities";
+import {
+  compareRestrictionLevels,
+  getColourForRestriction,
+} from "../../../utilities/restriction-utilities";
 import { MetadataRestrictionSelect } from "../settings/components/metadata/MetadataRestrictionSelect";
 
 export function ShareMetadata() {
+  /**
+   * Available restrictions for metadata fields
+   */
   const [restrictions, setRestrictions] = React.useState([]);
   const [targetRestrictions, setTargetRestrictions] = React.useState(null);
 
@@ -19,7 +25,21 @@ export function ShareMetadata() {
     projectId,
     remove,
   } = useSelector((state) => state.shareReducer);
-  const { data: fields } = useGetMetadataFieldsForProjectQuery(currentProject);
+
+  /**
+   * Get the fields for the current project.  The restrictions from these fields
+   * will act as a base for the restriction level when the fields are shared.
+   */
+  const {
+    data: fields,
+    isLoading: loadingFields,
+  } = useGetMetadataFieldsForProjectQuery(currentProject);
+
+  /**
+   * Target project metadata fields. Needed to determine which fields will be
+   * on both projects so that the new restriction for a field should start at
+   * the highest level of restriction.
+   */
   const { data: targetFields } = useGetMetadataFieldsForProjectQuery(
     projectId,
     {
@@ -27,22 +47,44 @@ export function ShareMetadata() {
     }
   );
 
-  console.log(targetFields);
-
+  /**
+   * On load, get metadata restrictions that are possible for a project.
+   * These are formatted for Select inputs ({label, value}).
+   */
   React.useEffect(() => {
     getMetadataRestrictions().then(setRestrictions);
   }, []);
 
   React.useEffect(() => {
-    if (targetFields) {
-      // Create a dictionary
-      const restrictions = {};
-      targetFields.forEach((restriction) => {
-        restrictions[restriction.fieldKey] = restriction.restriction;
+    if (targetFields && !loadingFields) {
+      // Create a dictionary using current fields
+      const newRestrictions = {};
+      fields.forEach((field) => {
+        newRestrictions[field.fieldKey] = field.restriction;
       });
-      setTargetRestrictions(restrictions);
+
+      // Add the height restriction between current and target fields
+      targetFields.forEach((restriction) => {
+        if (newRestrictions.hasOwnProperty(restriction.fieldKey)) {
+          const difference = compareRestrictionLevels(
+            newRestrictions[restriction.fieldKey],
+            restriction.restriction
+          );
+          newRestrictions[restriction.fieldKey] =
+            difference < 0
+              ? newRestrictions[restriction.fieldKey]
+              : restriction.restriction;
+        }
+      });
+      setTargetRestrictions(newRestrictions);
     }
-  }, [targetFields]);
+  }, [fields, loadingFields, targetFields]);
+
+  const updateRestrictionForField = (fieldKey, level) =>
+    setTargetRestrictions({
+      ...targetRestrictions,
+      [fieldKey]: level,
+    });
 
   const columns = [
     {
@@ -71,10 +113,10 @@ export function ShareMetadata() {
           return (
             <MetadataRestrictionSelect
               fieldKey={item.fieldKey}
-              restrictions={restrictions}
-              onChange={(value) => console.log(value)}
               currentRestriction={currentRestriction}
-              targetRestrictions={targetRestrictions}
+              restriction={targetRestrictions[item.fieldKey]}
+              onChange={updateRestrictionForField}
+              restrictions={restrictions}
             />
           );
         }

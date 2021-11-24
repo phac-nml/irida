@@ -8,38 +8,40 @@ const FormItem = styled(Form.Item)`
 `;
 
 export function MetadataRestrictionSelect({
-  restrictions,
-  onChange,
-  currentRestriction,
-  targetRestrictions,
   fieldKey,
+  currentRestriction,
+  restriction,
+  restrictions = [],
+  onChange,
 }) {
-  const [value, setValue] = React.useState(() =>
-    compareRestrictionLevels(
-      currentRestriction,
-      targetRestrictions[fieldKey]
-    ) <= 0
-      ? currentRestriction
-      : targetRestrictions[fieldKey]
-  );
-  console.info({ value });
-  const difference = compareRestrictionLevels(
-    currentRestriction,
-    targetRestrictions[currentRestriction]
-  );
+  const [feedback, setFeedback] = React.useState({
+    hasFeedback: false,
+    validateStatus: "",
+  });
 
-  const select = (
-    <Select value={value} onChange={setValue}>
-      {restrictions.map((restriction) => (
-        <Select.Option key={restriction.value} value={restriction.value}>
-          {restriction.label}
-        </Select.Option>
-      ))}
-    </Select>
-  );
+  React.useEffect(() => {
+    const difference = compareRestrictionLevels(
+      currentRestriction,
+      restriction
+    );
+    setFeedback({
+      hasFeedback: true,
+      validateStatus: difference >= 0 ? "success" : "warning",
+    });
+  }, [currentRestriction, restriction]);
+
   return (
-    <FormItem hasFeedback validateStatus={difference > 0 ? "warning" : ""}>
-      {select}
+    <FormItem {...feedback}>
+      <Select
+        value={restriction}
+        onChange={(value) => onChange(fieldKey, value)}
+      >
+        {restrictions.map(({ label, value }) => (
+          <Select.Option key={value} value={value}>
+            {label}
+          </Select.Option>
+        ))}
+      </Select>
     </FormItem>
   );
 }
