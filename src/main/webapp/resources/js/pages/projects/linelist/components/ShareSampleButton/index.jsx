@@ -11,7 +11,7 @@ function ShareSamplesButtonComponent({ selected }) {
     const samples = selected.map((sample) => ({
       id: sample["irida-static-sample-id"],
       name: sample["irida-static-sample-name"],
-      owner: sample.ownder,
+      owner: sample.owner,
     }));
     window.sessionStorage.setItem(
       "share",
