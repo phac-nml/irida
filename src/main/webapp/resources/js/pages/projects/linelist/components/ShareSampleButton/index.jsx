@@ -5,6 +5,15 @@ import { IconShare } from "../../../../../components/icons/Icons";
 import { actions as cartActions } from "../../../../../redux/reducers/cart";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
+/**
+ * React component for the share sample button.  Formats the selected
+ * samples into a list that can be consumed by the share samples page,
+ * and store them to session storage.
+ *
+ * @param {array} selected - selected samples
+ * @returns {JSX.Element}
+ * @constructor
+ */
 function ShareSamplesButtonComponent({ selected }) {
   function handleShare() {
     const projectId = selected[0]["irida-static-project-id"];
