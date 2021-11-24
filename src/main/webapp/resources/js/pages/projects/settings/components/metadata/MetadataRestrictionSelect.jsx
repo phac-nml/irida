@@ -1,4 +1,4 @@
-import { Form, Select } from "antd";
+import { Form, Select, Tooltip } from "antd";
 import React from "react";
 import styled from "styled-components";
 import { compareRestrictionLevels } from "../../../../../utilities/restriction-utilities";
@@ -18,6 +18,7 @@ export function MetadataRestrictionSelect({
     hasFeedback: false,
     validateStatus: "",
   });
+  const [tooltipVisible, setTooltipVisible] = React.useState(false);
 
   React.useEffect(() => {
     const difference = compareRestrictionLevels(
@@ -28,20 +29,27 @@ export function MetadataRestrictionSelect({
       hasFeedback: true,
       validateStatus: difference >= 0 ? "success" : "warning",
     });
+    setTooltipVisible(difference < 0);
   }, [currentRestriction, restriction]);
 
   return (
-    <FormItem {...feedback}>
-      <Select
-        value={restriction}
-        onChange={(value) => onChange(fieldKey, value)}
-      >
-        {restrictions.map(({ label, value }) => (
-          <Select.Option key={value} value={value}>
-            {label}
-          </Select.Option>
-        ))}
-      </Select>
-    </FormItem>
+    <Tooltip
+      title="Lower restriction"
+      placement="right"
+      visible={tooltipVisible}
+    >
+      <FormItem {...feedback}>
+        <Select
+          value={restriction}
+          onChange={(value) => onChange(fieldKey, value)}
+        >
+          {restrictions.map(({ label, value }) => (
+            <Select.Option key={value} value={value}>
+              {label}
+            </Select.Option>
+          ))}
+        </Select>
+      </FormItem>
+    </Tooltip>
   );
 }
