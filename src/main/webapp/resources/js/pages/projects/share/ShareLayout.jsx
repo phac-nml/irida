@@ -1,13 +1,16 @@
-import { Button, Space } from "antd";
+import { Button, Space, Tabs } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
+import {
+  useGetPotentialProjectsToShareToQuery
+} from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
 import { IconShare } from "../../../components/icons/Icons";
 import { ShareError } from "./ShareError";
+import { ShareMetadata } from "./ShareMetadata";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 import { ShareSuccess } from "./ShareSuccess";
@@ -89,7 +92,14 @@ export function ShareLayout({ redirect }) {
       ) : (
         <Space direction="vertical" style={{ width: `100%` }}>
           <ShareProject currentProject={currentProject} />
-          <ShareSamples samples={samples} redirect={redirect} />
+          <Tabs>
+            <Tabs.TabPane tab={"Samples"} key="samples">
+              <ShareSamples samples={samples} redirect={redirect} />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab={"Metadata Fields"} key="metadata">
+              <ShareMetadata />
+            </Tabs.TabPane>
+          </Tabs>
           {SHOW_BUTTON && (
             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
               <Button
