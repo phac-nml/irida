@@ -46,8 +46,8 @@ export const sampleApi = createApi({
       invalidatesTags: ["SampleMetadata"],
     }),
     removeSampleMetadata: build.mutation({
-      query: ({ sampleId, metadataField }) => ({
-        url: `/${sampleId}/metadata?metadataField=${metadataField}`,
+      query: ({ field, entryId }) => ({
+        url: `/metadata?metadataField=${field}&metadataEntryId=${entryId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["SampleMetadata"],

@@ -1,7 +1,6 @@
 import React from "react";
-import { Button, Empty, List, Typography } from "antd";
+import { Button, Empty, List, notification, Typography } from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
-import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import {
   useGetSampleMetadataQuery,
   useUpdateSampleMetadataMutation,
@@ -37,32 +36,42 @@ export function SampleMetadata({ sampleId, isModifiable }) {
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
   const [updateSampleMetadata] = useUpdateSampleMetadataMutation();
 
-  console.log(data);
-
   const updateMetadata = (fieldId, value) => {
     console.log(fieldId);
     console.log(value);
   };
 
-  const removeMetadata = (fieldId) => {
-    console.log(fieldId);
+  const removeMetadata = (field, entryId) => {
+    removeSampleMetadata({
+      field,
+      entryId,
+    })
+      .then(({ data }) => {
+        notification.success({ message: data.message });
+        refetch();
+      })
+      .catch((error) => {
+        notification.error({ message: error });
+      });
   };
 
   return (
     <>
       {isModifiable && (
-        <MetadataRolesProvider>
-          <AddNewMetadata sampleId={sampleId} refetch={refetch}>
-            <Button>Add New Metadata</Button>
-          </AddNewMetadata>
-        </MetadataRolesProvider>
+        <AddNewMetadata sampleId={sampleId} refetch={refetch}>
+          <Button style={{ marginLeft: "15px" }}>Add New Metadata</Button>
+        </AddNewMetadata>
       )}
       <div>
         {!isLoading ? (
-          Object.keys(data).length ? (
+          Object.keys(data.metadata).length ? (
             <StyledListMetadata
               itemLayout="horizontal"
-              dataSource={data}
+              dataSource={data.metadata
+                .slice()
+                .sort((a, b) =>
+                  a.metadataTemplateField.localeCompare(b.metadataTemplateField)
+                )}
               renderItem={(item) => (
                 <List.Item className="t-sample-details-metadata-item">
                   <List.Item.Meta
@@ -87,7 +96,9 @@ export function SampleMetadata({ sampleId, isModifiable }) {
                     <Button
                       shape="circle"
                       icon={<IconRemove />}
-                      onClick={() => removeMetadata(item.fieldId)}
+                      onClick={() =>
+                        removeMetadata(item.metadataTemplateField, item.entryId)
+                      }
                       value={item.fieldId}
                     ></Button>
                   </div>

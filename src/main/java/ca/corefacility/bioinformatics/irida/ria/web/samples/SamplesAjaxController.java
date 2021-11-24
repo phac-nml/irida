@@ -182,7 +182,7 @@ public class SamplesAjaxController {
 	 * @return {@link SampleMetadata} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/metadata")
-	public ResponseEntity<Set<SampleMetadataFieldEntry>> getSampleMetadata(@PathVariable Long id) {
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id) {
 		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id));
 	}
 
@@ -218,31 +218,20 @@ public class SamplesAjaxController {
 	 */
 	@PutMapping(value = "/{id}/metadata")
 	public ResponseEntity<AjaxResponse> addSampleMetadata(@PathVariable Long id, @RequestParam String metadataField, @RequestParam String metadataEntry, Locale locale) {
-		try {
-			String responseMessage = uiSampleService.addSampleMetadata(id, metadataField, metadataEntry, locale);
-			return ResponseEntity.ok(new AjaxSuccessResponse(responseMessage));
-		} catch (EntityExistsException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
-		}
+		return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.addSampleMetadata(id, metadataField, metadataEntry, locale)));
 	}
 
 	/**
 	 * Remove metadata field and entry from {@link Sample}
 	 *
-	 * @param id            {@link Long} identifier for the sample
-	 * @param metadataField The metadata field label
-	 * @param metadataEntry The metadata field value
+	 * @param metadataField The metadata field
+	 * @param metadataEntryId The metadata entry identifier
 	 * @param locale        {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the deletion.
 	 */
-	@DeleteMapping(value = "/{id}/metadata")
-	public ResponseEntity<AjaxResponse> removeSampleMetadata(@PathVariable Long id, @RequestParam String metadataField, @RequestParam String metadataEntry, Locale locale) {
-		try {
-			String responseMessage = uiSampleService.removeSampleMetadata(id, metadataField, metadataEntry, locale);
-			return ResponseEntity.ok(new AjaxSuccessResponse(responseMessage));
-		} catch (EntityExistsException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
-		}
+	@DeleteMapping(value = "/metadata")
+	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam String metadataField, @RequestParam Long metadataEntryId, Locale locale) {
+		return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.removeSampleMetadata(metadataField, metadataEntryId, locale)));
 	}
 
 	/**

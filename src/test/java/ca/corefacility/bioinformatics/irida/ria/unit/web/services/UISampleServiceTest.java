@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,8 +50,9 @@ public class UISampleServiceTest {
 		MessageSource messageSource = mock(MessageSource.class);
 		UICartService cartService = mock(UICartService.class);
 		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
+		MetadataEntryRepository metadataEntryRepository = mock(MetadataEntryRepository.class);
 		service = new UISampleService(sampleService, projectService, updateSamplePermission, sequencingObjectService,
-				genomeAssemblyService, messageSource, cartService, metadataTemplateService);
+				genomeAssemblyService, messageSource, cartService, metadataTemplateService, metadataEntryRepository);
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);

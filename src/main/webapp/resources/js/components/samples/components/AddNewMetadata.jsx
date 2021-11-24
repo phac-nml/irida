@@ -1,6 +1,5 @@
 import { Form, Input, Modal, notification, Select, Typography } from "antd";
 import React from "react";
-import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 import { useAddSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 
@@ -16,7 +15,6 @@ const { Title } = Typography;
  */
 export function AddNewMetadata({ sampleId, refetch, children }) {
   const [visible, setVisible] = React.useState(false);
-  const { roles: metadataRoles } = useMetadataRoles();
   const [addSampleMetadata] = useAddSampleMetadataMutation();
 
   const [form] = Form.useForm();
@@ -73,22 +71,6 @@ export function AddNewMetadata({ sampleId, refetch, children }) {
               label={i18n("SampleMetadata.modal.fieldValue")}
             >
               <Input />
-            </Form.Item>
-            <Form.Item
-              name="metadata_field_permission"
-              label={i18n("SampleMetadata.modal.permission")}
-            >
-              <Select style={{ width: "100%" }}>
-                {metadataRoles?.map((role) => (
-                  <Select.Option
-                    className={`t-${role.value}`}
-                    value={role.value}
-                    key={role.value}
-                  >
-                    {role.label}
-                  </Select.Option>
-                ))}
-              </Select>
             </Form.Item>
           </Form>
         </Modal>
