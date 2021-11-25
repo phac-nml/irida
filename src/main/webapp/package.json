@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 webpack --mode production ",
-    "start": "cross-env NODE_OPTIONS=--max-old-space-size=4096 webpack --mode development --watch ",
+    "build": "node --max_old_space_size=4096 webpack --mode production ",
+    "start": "node --max_old_space_size=4096 webpack --mode development --watch ",
     "clean": "rm -r node* resources/dist/",
     "test": "jest resources/js/**/*.test.js",
     "test:watch": "jest --watch resources/js/**/*.test.js"
