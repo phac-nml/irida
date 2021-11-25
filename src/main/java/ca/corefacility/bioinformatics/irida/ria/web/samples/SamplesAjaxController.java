@@ -264,6 +264,7 @@ public class SamplesAjaxController {
 	/**
 	 * Update a metadata field entry for {@link Sample}
 	 *
+	 * @param id                  The sample identifier
 	 * @param projectId           The project identifier
 	 * @param metadataFieldId     The {@link MetadataTemplateField} identifier
 	 * @param metadataField       The metadata field label

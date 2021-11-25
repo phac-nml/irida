@@ -244,6 +244,7 @@ public class UISampleService {
 	/**
 	 * Add metadata for the sample
 	 *
+	 * @param sampleId            The sample identifier
 	 * @param projectId           The project identifier
 	 * @param metadataFieldId     The {@link MetadataTemplateField} identifier
 	 * @param metadataField       The metadata field label

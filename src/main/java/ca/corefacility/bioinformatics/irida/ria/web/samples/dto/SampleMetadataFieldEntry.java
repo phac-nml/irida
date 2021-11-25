@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
+/**
+ * Used to return metadata field and entry back to the user interface.
+ */
 public class SampleMetadataFieldEntry {
 	private Long fieldId;
 	private String metadataTemplateField;
