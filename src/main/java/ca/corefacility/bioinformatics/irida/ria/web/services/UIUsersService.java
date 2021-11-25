@@ -8,6 +8,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,9 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -35,7 +38,9 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /**
  * Handles service call for the the administration of the IRIDA users.
@@ -47,12 +52,17 @@ public class UIUsersService {
 	private final ProjectService projectService;
 	private final EmailController emailController;
 	private final MessageSource messageSource;
+	private final List<Locale> locales;
+
+	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
+			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
 	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
-			MessageSource messageSource) {
+			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.emailController = emailController;
+		this.locales = locales.getLocales();
 		this.messageSource = messageSource;
 	}
 
@@ -93,8 +103,7 @@ public class UIUsersService {
 						.body(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
 			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.body(messageSource.getMessage("server.AdminUsersService.error",
-								new Object[] { user.getUsername() }, locale));
+						.body(messageSource.getMessage("server.AdminUsersService.error", new Object[] { user.getUsername() }, locale));
 			}
 
 		}
@@ -121,12 +130,6 @@ public class UIUsersService {
 		User principalUser = userService.getUserByUsername(principal.getName());
 
 		Locale locale = LocaleContextHolder.getLocale();
-
-		// add the user's role to the model
-		String roleMessageName = "systemrole." + user.getSystemRole()
-				.getName();
-		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-		response.setSystemRole(systemRole);
 
 		// check if we should show an edit button
 		boolean canEditUser = canEditUser(principalUser, user);
@@ -157,7 +160,38 @@ public class UIUsersService {
 			projects.add(map);
 		}
 		response.setProjects(projects);
+
+		Map<String, String> localeNames = new HashMap<>();
+		for (Locale aLocale : locales) {
+			localeNames.put(aLocale.getLanguage(), aLocale.getDisplayName());
+		}
+		response.setLocales(localeNames);
+
+		Map<String, String> roleNames = new HashMap<>();
+		for (Role aRole : adminAllowedRoles) {
+			String roleMessageName = "systemrole." + aRole.getName();
+			String roleName = messageSource.getMessage(roleMessageName, null, locale);
+			roleNames.put(aRole.getName(), roleName);
+		}
+		response.setAllowedRoles(roleNames);
+
+		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
+				.getName(), null, locale);
+		response.setCurrentRole(currentRoleName);
+
 		return response;
+	}
+
+	/**
+	 * Check if the logged in user is an Admin
+	 *
+	 * @param principal The logged in user to check
+	 * @return if the user is an admin
+	 */
+	private boolean isAdmin(Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
 	}
 
 	/**
@@ -173,5 +207,67 @@ public class UIUsersService {
 		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Submit a user edit
+	 *
+	 * @param userId      The id of the user to edit (required)
+	 * @param firstName   The firstname to update
+	 * @param lastName    the lastname to update
+	 * @param email       the email to update
+	 * @param phoneNumber the phone number to update
+	 * @param systemRole  the role to update
+	 * @param userLocale  The locale the user selected
+	 * @param enabled     whether the user account should be enabled or disabled.
+	 * @param principal   a reference to the logged in user.
+	 * @return The name of the user view
+	 */
+	public ResponseEntity updateUser(Long userId, String firstName, String lastName, String email, String phoneNumber,
+			String systemRole, String userLocale, String enabled, Principal principal) {
+
+		UserDetailsResponse response = new UserDetailsResponse();
+		Map<String, String> errors = new HashMap<>();
+		Map<String, Object> updatedValues = new HashMap<>();
+
+		if (!Strings.isNullOrEmpty(firstName)) {
+			updatedValues.put("firstName", firstName);
+		}
+
+		if (!Strings.isNullOrEmpty(lastName)) {
+			updatedValues.put("lastName", lastName);
+		}
+
+		if (!Strings.isNullOrEmpty(email)) {
+			updatedValues.put("email", email);
+		}
+
+		if (!Strings.isNullOrEmpty(phoneNumber)) {
+			updatedValues.put("phoneNumber", phoneNumber);
+		}
+
+		if (!Strings.isNullOrEmpty(userLocale)) {
+			updatedValues.put("locale", userLocale);
+		}
+
+		if (isAdmin(principal)) {
+			updatedValues.put("enabled", !Strings.isNullOrEmpty(enabled));
+
+			if (!Strings.isNullOrEmpty(systemRole)) {
+				Role newRole = Role.valueOf(systemRole);
+
+				updatedValues.put("systemRole", newRole);
+			}
+		}
+
+		if (errors.isEmpty()) {
+			try {
+				User user = userService.updateFields(userId, updatedValues);
+			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
+				System.out.println("Bad things happened: " + ex);
+			}
+		}
+
+		return ResponseEntity.ok(response);
 	}
 }

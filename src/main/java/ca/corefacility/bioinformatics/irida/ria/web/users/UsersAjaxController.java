@@ -56,6 +56,31 @@ public class UsersAjaxController {
 	}
 
 	/**
+	 * Submit a user edit
+	 *
+	 * @param userId      The id of the user to edit (required)
+	 * @param firstName   The firstname to update
+	 * @param lastName    the lastname to update
+	 * @param email       the email to update
+	 * @param phoneNumber the phone number to update
+	 * @param systemRole  the role to update
+	 * @param userLocale  The locale the user selected
+	 * @param enabled     whether the user account should be enabled or disabled.
+	 * @param principal   a reference to the logged in user.
+	 * @return The name of the user view
+	 */
+	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
+	public ResponseEntity updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
+			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
+			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
+			@RequestParam(required = false, name = "locale") String userLocale,
+			@RequestParam(required = false) String enabled, Principal principal) {
+
+		return UIUsersService.updateUser(userId, firstName, lastName, email, phoneNumber, systemRole, userLocale,
+				enabled, principal);
+	}
+
+	/**
 	 * Get the details for a specific user
 	 *
 	 * @param userId      - the id for the user to show details for

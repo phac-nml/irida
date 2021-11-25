@@ -17,6 +17,7 @@ public class UserDetailsModel extends TableModel {
 	private String role;
 	private Date lastLogin;
 	private boolean enabled;
+	private String locale;
 
 	public UserDetailsModel(User user) {
 		super(user.getId(), user.getUsername(), user.getCreatedDate(), user.getModifiedDate());
@@ -29,6 +30,7 @@ public class UserDetailsModel extends TableModel {
 				.getName();
 		this.lastLogin = user.getLastLogin();
 		this.enabled = user.isEnabled();
+		this.locale = user.getLocale();
 	}
 
 	public String getFirstName() {
@@ -46,7 +48,7 @@ public class UserDetailsModel extends TableModel {
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
-	
+
 	public String getUsername() {
 		return username;
 	}
@@ -61,5 +63,9 @@ public class UserDetailsModel extends TableModel {
 
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	public String getLocale() {
+		return locale;
 	}
 }

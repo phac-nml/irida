@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
-import java.util.List;
 import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -11,12 +10,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 public class UserDetailsResponse extends AjaxResponse {
 
 	private UserDetailsModel userDetails;
-	private String systemRole;
-	private List<Map<String, Object>> projects;
+	private String currentRole;
 	private boolean mailConfigured;
 	private boolean mailFailure;
 	private boolean canEditUser;
 	private boolean canCreatePasswordReset;
+	private Map<String, String> locales;
+	private Map<String, String> allowedRoles;
+	private Map<String, String> errors;
 
 	public UserDetailsModel getUser() {
 		return userDetails;
@@ -26,20 +27,12 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.userDetails = userDetails;
 	}
 
-	public String getSystemRole() {
-		return systemRole;
+	public String getCurrentRole() {
+		return currentRole;
 	}
 
-	public void setSystemRole(String systemRole) {
-		this.systemRole = systemRole;
-	}
-
-	public List<Map<String, Object>> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<Map<String, Object>> projects) {
-		this.projects = projects;
+	public void setCurrentRole(String currentRole) {
+		this.currentRole = currentRole;
 	}
 
 	public boolean isMailConfigured() {
@@ -72,5 +65,21 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	public void setCanCreatePasswordReset(boolean canCreatePasswordReset) {
 		this.canCreatePasswordReset = canCreatePasswordReset;
+	}
+
+	public Map<String, String> getLocales() {
+		return locales;
+	}
+
+	public void setLocales(Map<String, String> locales) {
+		this.locales = locales;
+	}
+
+	public Map<String, String> getAllowedRoles() {
+		return allowedRoles;
+	}
+
+	public void setAllowedRoles(Map<String, String> allowedRoles) {
+		this.allowedRoles = allowedRoles;
 	}
 }
