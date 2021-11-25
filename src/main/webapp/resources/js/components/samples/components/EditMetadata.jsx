@@ -1,40 +1,77 @@
 import { Form, Input, Modal, notification, Select, Typography } from "antd";
 import React from "react";
-import { useAddSampleMetadataMutation } from "../../../apis/samples/samples";
+import {
+  useUpdateSampleMetadataMutation,
+  useGetMetadataFieldRestrictionQuery,
+} from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 const { Title } = Typography;
 
 /**
- * Function to render Add New Metadata Field modal
- * @param sampleId - identifier for a sample
- * @param refetch - Function which refetches sample metadata for sample
+ * Function to render Update Metadata Field modal
  * @param projectId - The project identifier
+ * @param metadataField - The metadata field label
+ * @param metadataFieldId - The metadata field identifier
+ * @param metadataEntryId - The metadata entry identifier
+ * @param metadataEntry - The metadata entry value
+ * @param refetch - Function which refetches sample metadata for sample
+ * @param visible - Whether or not modal should be displayed
+ * @param refetch - Function to refetch sample metadata after changes are made
+ * @param onCancel - Function to run if user clicks the cancel button
+ * @param onOk - Function to run if user clicks the update button
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function AddNewMetadata({ sampleId, refetch, projectId, children }) {
-  const [visible, setVisible] = React.useState(false);
-  const [addSampleMetadata] = useAddSampleMetadataMutation();
+export function EditMetadata({
+  sampleId,
+  projectId,
+  metadataField,
+  metadataFieldId,
+  metadataEntryId,
+  metadataEntry,
+  refetch = { refetch },
+  visible,
+  onCancel,
+  onOk,
+  children,
+}) {
+  const {
+    data: metadataFieldRestriction = {},
+    isLoading,
+    refetch: refetchMetadataRestriction,
+  } = useGetMetadataFieldRestrictionQuery(
+    {
+      projectId,
+      metadataFieldId: metadataFieldId,
+    },
+    { skip: !metadataFieldId }
+  );
+
+  const [updateSampleMetadata] = useUpdateSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
 
+  React.useEffect(() => {}, [visible]);
+
   const [form] = Form.useForm();
+
   useResetFormOnCloseModal({
     form,
     visible,
   });
 
-  const addMetadata = () => {
+  const updateMetadata = () => {
     const values = form.getFieldsValue();
 
-    // Add the new sample metadata and refetch the metadata
-    addSampleMetadata({
+    updateSampleMetadata({
       sampleId,
       projectId,
+      metadataFieldId: metadataFieldId,
       metadataField: values.metadata_field_name,
+      metadataEntryId: metadataEntryId,
       metadataEntry: values.metadata_field_value,
-      metadataFieldPermission: values.metadata_field_permission,
+      metadataRestriction: values.metadata_field_permission,
     })
       .then((response) => {
         if (response.error) {
@@ -42,9 +79,10 @@ export function AddNewMetadata({ sampleId, refetch, projectId, children }) {
         } else {
           notification.success({ message: response.data.message });
           refetch();
+          refetchMetadataRestriction();
         }
         form.resetFields();
-        setVisible(false);
+        onOk();
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -53,33 +91,40 @@ export function AddNewMetadata({ sampleId, refetch, projectId, children }) {
 
   return (
     <>
-      {React.cloneElement(children, {
-        onClick: () => setVisible(true),
-      })}
-      {visible ? (
+      {!isLoading && visible ? (
         <Modal
-          className="t-add-metadata-field"
-          onCancel={() => setVisible(false)}
+          className="t-edit-sample-metadata"
+          onCancel={onCancel}
           visible={visible}
-          onOk={addMetadata}
+          onOk={updateMetadata}
+          okText="Update"
         >
-          <Title level={4}>{i18n("SampleMetadata.modal.title")}</Title>
+          <Title level={4}>{`Edit Sample Metadata`}</Title>
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
               label={i18n("SampleMetadata.modal.fieldName")}
+              initialValue={metadataField}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="metadata_field_value"
               label={i18n("SampleMetadata.modal.fieldValue")}
+              initialValue={metadataEntry}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="metadata_field_permission"
               label={i18n("SampleMetadata.modal.permission")}
+              initialValue={
+                !isLoading &&
+                (metadataFieldRestriction &&
+                Object.keys(metadataFieldRestriction).length === 0
+                  ? "LEVEL_1"
+                  : metadataFieldRestriction.level)
+              }
             >
               <Select style={{ width: "100%" }}>
                 {metadataRoles?.map((role) => (

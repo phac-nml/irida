@@ -1,15 +1,15 @@
 import React from "react";
-import { Button, Empty, List, notification, Typography } from "antd";
+import { Button, Empty, List, notification, Popconfirm, Space } from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
 import {
   useGetSampleMetadataQuery,
-  useUpdateSampleMetadataMutation,
   useRemoveSampleMetadataMutation,
 } from "../../../apis/samples/samples";
 import { ContentLoading } from "../../loader";
-import { IconRemove } from "../../icons/Icons";
-const { Paragraph } = Typography;
+import { IconEdit, IconRemove } from "../../icons/Icons";
 import styled from "styled-components";
+import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
+import { EditMetadata } from "./EditMetadata";
 
 const StyledListMetadata = styled(List)`
   .ant-list-item {
@@ -28,18 +28,19 @@ const StyledListMetadata = styled(List)`
  *
  * @param sampleId The sample identifier
  * @param isModifiable If the current user can modify the sample or not
+ * @param projectId The project identifier
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleMetadata({ sampleId, isModifiable }) {
+export function SampleMetadata({ sampleId, isModifiable, projectId }) {
   const { data = {}, isLoading, refetch } = useGetSampleMetadataQuery(sampleId);
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
-  const [updateSampleMetadata] = useUpdateSampleMetadataMutation();
+  const [v, setV] = React.useState(false);
 
-  const updateMetadata = (fieldId, value) => {
-    console.log(fieldId);
-    console.log(value);
-  };
+  const [field, setField] = React.useState(null);
+  const [fieldId, setFieldId] = React.useState(null);
+  const [entry, setEntry] = React.useState(null);
+  const [entryId, setEntryId] = React.useState(null);
 
   const removeMetadata = (field, entryId) => {
     removeSampleMetadata({
@@ -55,56 +56,99 @@ export function SampleMetadata({ sampleId, isModifiable }) {
       });
   };
 
+  const onCancel = () => {
+    setV(false);
+  };
+
+  const onOk = () => {
+    setV(false);
+  };
+
   return (
     <>
       {isModifiable && (
-        <AddNewMetadata sampleId={sampleId} refetch={refetch}>
-          <Button style={{ marginLeft: "15px" }}>Add New Metadata</Button>
-        </AddNewMetadata>
+        <MetadataRolesProvider>
+          <AddNewMetadata
+            sampleId={sampleId}
+            refetch={refetch}
+            projectId={projectId}
+          >
+            <Button style={{ marginLeft: "15px" }}>Add New Metadata</Button>
+          </AddNewMetadata>
+        </MetadataRolesProvider>
       )}
       <div>
         {!isLoading ? (
           Object.keys(data.metadata).length ? (
-            <StyledListMetadata
-              itemLayout="horizontal"
-              dataSource={data.metadata
-                .slice()
-                .sort((a, b) =>
-                  a.metadataTemplateField.localeCompare(b.metadataTemplateField)
-                )}
-              renderItem={(item) => (
-                <List.Item className="t-sample-details-metadata-item">
-                  <List.Item.Meta
-                    title={
-                      <span className="t-sample-details-metadata__field">
-                        {item.metadataTemplateField}
-                      </span>
-                    }
-                    description={
-                      <Paragraph
-                        editable={{
-                          onChange: (e) =>
-                            updateMetadata(item.fieldId, item.metadataEntry),
-                        }}
-                        className="t-sample-details-metadata__entry"
-                      >
-                        {item.metadataEntry}
-                      </Paragraph>
-                    }
-                  />
-                  <div>
-                    <Button
-                      shape="circle"
-                      icon={<IconRemove />}
-                      onClick={() =>
-                        removeMetadata(item.metadataTemplateField, item.entryId)
+            <>
+              <StyledListMetadata
+                itemLayout="horizontal"
+                dataSource={data.metadata
+                  .slice()
+                  .sort((a, b) =>
+                    a.metadataTemplateField.localeCompare(
+                      b.metadataTemplateField
+                    )
+                  )}
+                renderItem={(item) => (
+                  <List.Item className="t-sample-details-metadata-item">
+                    <List.Item.Meta
+                      title={
+                        <span className="t-sample-details-metadata__field">
+                          {item.metadataTemplateField}
+                        </span>
                       }
-                      value={item.fieldId}
-                    ></Button>
-                  </div>
-                </List.Item>
-              )}
-            />
+                      description={item.metadataEntry}
+                    />
+                    {isModifiable && (
+                      <Space size="small" direction="horizontal">
+                        <Button
+                          shape="circle"
+                          icon={
+                            <IconEdit
+                              onClick={() => {
+                                setV(true);
+                                setField(item.metadataTemplateField);
+                                setFieldId(item.fieldId);
+                                setEntryId(item.entryId);
+                                setEntry(item.metadataEntry);
+                              }}
+                            />
+                          }
+                        />
+                        <Popconfirm
+                          placement={"topRight"}
+                          title={`Are you sure you want to delete the entry for field ${item.metadataTemplateField}?`}
+                          onConfirm={() =>
+                            removeMetadata(
+                              item.metadataTemplateField,
+                              item.entryId
+                            )
+                          }
+                          okText="Confirm"
+                        >
+                          <Button shape="circle" icon={<IconRemove />} />
+                        </Popconfirm>
+                      </Space>
+                    )}
+                  </List.Item>
+                )}
+              />
+              <MetadataRolesProvider>
+                <EditMetadata
+                  sampleId={sampleId}
+                  projectId={projectId}
+                  metadataField={field}
+                  metadataFieldId={fieldId}
+                  metadataEntryId={entryId}
+                  metadataEntry={entry}
+                  refetch={refetch}
+                  visible={v}
+                  onCancel={() => onCancel()}
+                  onOk={() => onOk()}
+                ></EditMetadata>
+              </MetadataRolesProvider>
+            </>
           ) : (
             <Empty description={i18n("SampleDetails.no-metadata")} />
           )

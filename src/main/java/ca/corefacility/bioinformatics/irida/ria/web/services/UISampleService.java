@@ -7,8 +7,11 @@ import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import com.github.jsonldjava.shaded.com.google.common.collect.Sets;
@@ -53,11 +56,13 @@ public class UISampleService {
 	private final UICartService cartService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final MetadataEntryRepository metadataEntryRepository;
+	private final MetadataRestrictionRepository metadataRestrictionRepository;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService, MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository) {
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService, MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository,
+	MetadataRestrictionRepository metadataRestrictionRepository) {
 
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -68,6 +73,7 @@ public class UISampleService {
 		this.cartService = cartService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.metadataEntryRepository = metadataEntryRepository;
+		this.metadataRestrictionRepository = metadataRestrictionRepository;
 	}
 
 	/**
@@ -92,19 +98,33 @@ public class UISampleService {
 	 */
 	public SampleMetadata getSampleMetadata(Long id) {
 		Sample sample = sampleService.read(id);
-		Set<SampleMetadataFieldEntry> sampleMetadataFieldEntries = new HashSet<>();
-
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		return new SampleMetadata(metadataForSample);
 
 	}
 
 	/**
+	 * Get {@link MetadataRestriction} for metadata field
+	 *
+	 * @param projectId               Identifier for {@link Project}
+	 * @param metadataTemplateFieldId Identifier for {@link MetadataTemplateField}
+	 * @return {@link MetadataRestriction}
+	 */
+	public MetadataRestriction getMetadataFieldRestriction(Long projectId, Long metadataTemplateFieldId) {
+		Project project = projectService.read(projectId);
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
+				metadataTemplateFieldId);
+		MetadataRestriction metadataRestriction = metadataRestrictionRepository.getRestrictionForFieldAndProject(
+				project, metadataTemplateField);
+		return metadataRestriction;
+	}
+
+	/**
 	 * Update a field within the sample details.
 	 *
-	 * @param id {@link Long} identifier for the sample
-	 * @param request   {@link UpdateSampleAttributeRequest} details about which field to update
-	 * @param locale    {@link Locale} for the currently logged in user
+	 * @param id      {@link Long} identifier for the sample
+	 * @param request {@link UpdateSampleAttributeRequest} details about which field to update
+	 * @param locale  {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
 	public String updateSampleDetails(Long id, UpdateSampleAttributeRequest request, Locale locale) {
@@ -172,54 +192,110 @@ public class UISampleService {
 	/**
 	 * Add metadata for the sample
 	 *
-	 * @param sampleId      {@link Long} identifier for the sample
-	 * @param metadataField The metadata field label
-	 * @param metadataEntry The metadata field value
-	 * @param locale        {@link Locale} for the currently logged in user
+	 * @param sampleId                 {@link Long} identifier for the sample
+	 * @param projectId                {@link Long} project identifier
+	 * @param metadataField            The {@link MetadataTemplateField} label
+	 * @param metadataEntry            The {@link MetadataEntry} value
+	 * @param metadataFieldRestriction The {@link MetadataRestriction} to set for the field
+	 * @param locale                   {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
-	public String addSampleMetadata(Long sampleId, String metadataField, String metadataEntry, Locale locale) {
+	public String addSampleMetadata(Long sampleId, Long projectId, String metadataField, String metadataEntry,
+			String metadataFieldRestriction, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(metadataFieldRestriction);
+		Project project = projectService.read(projectId);
 		MetadataTemplateField templateField = new MetadataTemplateField(metadataField, "text");
-		metadataTemplateService.saveMetadataField(templateField);
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.saveMetadataField(templateField);
+		MetadataRestriction metadataRestriction = metadataTemplateService.setMetadataRestriction(project,
+				metadataTemplateField, metadataRole);
 
+		String message = "";
 		if (!Strings.isNullOrEmpty(metadataEntry)) {
 			MetadataEntry entry = new MetadataEntry(metadataEntry, "text", templateField);
 			sampleService.mergeSampleMetadata(sample, Sets.newHashSet(entry));
-			return "Successfully added metadata field " + metadataField + " with value " + metadataEntry;
+			message = "Successfully added metadata field " + metadataField + " with value " + metadataEntry
+					+ " and permission " + metadataRestriction.getLevel()
+					.name();
 		} else {
 			new MetadataEntry("", "text", templateField);
-			return "Successfully added metadata field " + metadataField + " with no value";
+			message = "Successfully added metadata field " + metadataField + " with no value and permission "
+					+ metadataRestriction.getLevel()
+					.name();
 		}
 
+		return message;
 	}
 
 	/**
 	 * Add metadata for the sample
 	 *
-	 * @param metadataField The metadata field
+	 * @param metadataField   The metadata field
 	 * @param metadataEntryId The metadata entry id
-	 * @param locale        {@link Locale} for the currently logged in user
+	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
 	public String removeSampleMetadata(String metadataField, Long metadataEntryId, Locale locale) {
 		metadataEntryRepository.deleteById(metadataEntryId);
 
-		return "Successfully removed metadata entry from sample for field" + metadataField;
+		return "Successfully removed metadata entry from sample for field " + metadataField;
 	}
 
 	/**
 	 * Add metadata for the sample
 	 *
-	 * @param sampleId      {@link Long} identifier for the sample
-	 * @param metadataField The metadata field label
-	 * @param metadataEntry The metadata field value
-	 * @param locale        {@link Locale} for the currently logged in user
+	 * @param projectId           The project identifier
+	 * @param metadataFieldId     The {@link MetadataTemplateField} identifier
+	 * @param metadataField       The metadata field label
+	 * @param metadataEntryId     The {@link MetadataEntry} identifier
+	 * @param metadataEntry       The metadata field value
+	 * @param metadataRestriction The restriction for the metadata field
+	 * @param locale              {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
-	public String updateSampleMetadata(Long sampleId, String metadataField, String metadataEntry, Locale locale) {
-		return "Successfully updated metadata field " + metadataField + " with value " + metadataEntry;
+	public String updateSampleMetadata(Long sampleId, Long projectId, Long metadataFieldId, String metadataField,
+			Long metadataEntryId, String metadataEntry, String metadataRestriction, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		Project project = projectService.read(projectId);
+		boolean sampleUpdated = false;
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(metadataFieldId);
+		// Only update metadata field if a change was made
+		if (!metadataTemplateField.getLabel()
+				.equals(metadataField)) {
+			metadataTemplateField.setLabel(metadataField);
+			metadataTemplateService.updateMetadataField(metadataTemplateField);
+			sampleUpdated = true;
+		}
+
+		Optional<MetadataEntry> existingMetadataEntry = metadataEntryRepository.findById(metadataEntryId);
+
+		if (existingMetadataEntry.isPresent()) {
+			// Only update metadata entry if a change was made
+			if (!existingMetadataEntry.get()
+					.getValue()
+					.equals(metadataEntry)) {
+				existingMetadataEntry.get()
+						.setValue(metadataEntry);
+				sampleService.mergeSampleMetadata(sample, Sets.newHashSet(existingMetadataEntry.get()));
+				sampleUpdated = true;
+			}
+		}
+
+		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(project, metadataTemplateField);
+		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRestriction);
+
+		// Only update metadata field restriction if a change was made
+		if(!currentRestriction.getLevel().equals(projectMetadataRole.getLevel())) {
+			metadataTemplateService.setMetadataRestriction(project, metadataTemplateField, projectMetadataRole);
+			sampleUpdated = true;
+		}
+
+		// If sample metadata was updated then update the sample modified date
+		if(sampleUpdated) {
+			sample.setModifiedDate(new Date());
+		}
+
+		return "Successfully updated metadata field " + metadataField;
 	}
 
 	/**

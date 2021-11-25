@@ -9,6 +9,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -187,69 +191,99 @@ public class SamplesAjaxController {
 	}
 
 	/**
+	 * Get {@link MetadataRestriction} for metadata field
+	 *
+	 * @param projectId               Identifier for {@link Project}
+	 * @param metadataTemplateFieldId Identifier for {@link MetadataTemplateField}
+	 * @return {@link MetadataRestriction}
+	 */
+	@GetMapping(value = "/metadata-field-restriction")
+	public ResponseEntity<MetadataRestriction> getMetadataFieldRestriction(@RequestParam Long projectId,
+			@RequestParam Long metadataTemplateFieldId) {
+		return ResponseEntity.ok(uiSampleService.getMetadataFieldRestriction(projectId, metadataTemplateFieldId));
+	}
+
+	/**
 	 * Update a field within the sample details.
 	 *
-	 * @param id {@link Long} identifier for the sample
-	 * @param request   {@link UpdateSampleAttributeRequest} details about which field to update
-	 * @param locale    {@link Locale} for the currently logged in user
+	 * @param id      {@link Long} identifier for the sample
+	 * @param request {@link UpdateSampleAttributeRequest} details about which field to update
+	 * @param locale  {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@PutMapping(value = "/{id}/details")
-	public ResponseEntity<AjaxResponse> updateSampleDetails(@PathVariable Long id, @RequestBody UpdateSampleAttributeRequest request, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateSampleDetails(@PathVariable Long id,
+			@RequestBody UpdateSampleAttributeRequest request, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateSampleDetails(id, request, locale)));
 		} catch (ConstraintViolationException e) {
 			String constraintViolations = "";
-			for(ConstraintViolation a : e.getConstraintViolations()) {
+			for (ConstraintViolation a : e.getConstraintViolations()) {
 				constraintViolations += a.getMessage() + "\n";
 			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(constraintViolations));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(constraintViolations));
 		}
 	}
 
 	/**
 	 * Add a metadata field and entry to {@link Sample}
 	 *
-	 * @param id            {@link Long} identifier for the sample
-	 * @param metadataField The metadata field label
-	 * @param metadataEntry The metadata field value
-	 * @param locale        {@link Locale} for the currently logged in user
+	 * @param id                      {@link Long} identifier for the sample
+	 * @param projectId               {@link Long} project identifier
+	 * @param metadataField           The metadata field label
+	 * @param metadataEntry           The metadata field value
+	 * @param metadataFieldPermission The metadata permission to set for the field
+	 * @param locale                  {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@PutMapping(value = "/{id}/metadata")
-	public ResponseEntity<AjaxResponse> addSampleMetadata(@PathVariable Long id, @RequestParam String metadataField, @RequestParam String metadataEntry, Locale locale) {
-		return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.addSampleMetadata(id, metadataField, metadataEntry, locale)));
+	public ResponseEntity<AjaxResponse> addSampleMetadata(@PathVariable Long id, @RequestParam Long projectId,
+			@RequestParam String metadataField, @RequestParam String metadataEntry,
+			@RequestParam String metadataFieldPermission, Locale locale) {
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				uiSampleService.addSampleMetadata(id, projectId, metadataField, metadataEntry, metadataFieldPermission,
+						locale)));
 	}
 
 	/**
 	 * Remove metadata field and entry from {@link Sample}
 	 *
-	 * @param metadataField The metadata field
+	 * @param metadataField   The metadata field
 	 * @param metadataEntryId The metadata entry identifier
-	 * @param locale        {@link Locale} for the currently logged in user
+	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the deletion.
 	 */
 	@DeleteMapping(value = "/metadata")
-	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam String metadataField, @RequestParam Long metadataEntryId, Locale locale) {
-		return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.removeSampleMetadata(metadataField, metadataEntryId, locale)));
+	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam String metadataField,
+			@RequestParam Long metadataEntryId, Locale locale) {
+		return ResponseEntity.ok(
+				new AjaxSuccessResponse(uiSampleService.removeSampleMetadata(metadataField, metadataEntryId, locale)));
 	}
 
 	/**
 	 * Update a metadata field entry for {@link Sample}
 	 *
-	 * @param id            {@link Long} identifier for the sample
-	 * @param metadataField The metadata field label
-	 * @param metadataEntry The metadata field value
-	 * @param locale        {@link Locale} for the currently logged in user
+	 * @param projectId           The project identifier
+	 * @param metadataFieldId     The {@link MetadataTemplateField} identifier
+	 * @param metadataField       The metadata field label
+	 * @param metadataEntryId     The {@link MetadataEntry} identifier
+	 * @param metadataEntry       The metadata field value
+	 * @param metadataRestriction The restriction for the metadata field
+	 * @param locale              {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@PutMapping(value = "/{id}/metadata/update")
-	public ResponseEntity<AjaxResponse> updateSampleMetadata(@PathVariable Long id, @RequestParam String metadataField, @RequestParam String metadataEntry, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateSampleMetadata(@PathVariable Long id, @RequestParam Long projectId,
+			@RequestParam Long metadataFieldId, @RequestParam String metadataField, @RequestParam Long metadataEntryId,
+			@RequestParam String metadataEntry, @RequestParam String metadataRestriction, Locale locale) {
 		try {
-			String responseMessage = uiSampleService.updateSampleMetadata(id, metadataField, metadataEntry, locale);
+			String responseMessage = uiSampleService.updateSampleMetadata(id, projectId, metadataFieldId, metadataField,
+					metadataEntryId, metadataEntry, metadataRestriction, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(responseMessage));
 		} catch (EntityExistsException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

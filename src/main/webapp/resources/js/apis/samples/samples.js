@@ -38,9 +38,22 @@ export const sampleApi = createApi({
         providesTags: ["SampleMetadata"],
       }),
     }),
+    getMetadataFieldRestriction: build.query({
+      query: ({ projectId, metadataFieldId }) => ({
+        url: `/metadata-field-restriction?projectId=${projectId}&metadataTemplateFieldId=${metadataFieldId}`,
+        method: `GET`,
+        providesTags: ["MetadataRestriction"],
+      }),
+    }),
     addSampleMetadata: build.mutation({
-      query: ({ sampleId, metadataField, metadataEntry }) => ({
-        url: `/${sampleId}/metadata?metadataField=${metadataField}&metadataEntry=${metadataEntry}`,
+      query: ({
+        sampleId,
+        projectId,
+        metadataField,
+        metadataEntry,
+        metadataFieldPermission,
+      }) => ({
+        url: `/${sampleId}/metadata?projectId=${projectId}&metadataField=${metadataField}&metadataEntry=${metadataEntry}&metadataFieldPermission=${metadataFieldPermission}`,
         method: "PUT",
       }),
       invalidatesTags: ["SampleMetadata"],
@@ -53,8 +66,16 @@ export const sampleApi = createApi({
       invalidatesTags: ["SampleMetadata"],
     }),
     updateSampleMetadata: build.mutation({
-      query: ({ sampleId, metadataField, metadataEntry }) => ({
-        url: `/${sampleId}/metadata/update?metadataField=${metadataField}&metadataEntry=${metadataEntry}`,
+      query: ({
+        sampleId,
+        projectId,
+        metadataFieldId,
+        metadataField,
+        metadataEntryId,
+        metadataEntry,
+        metadataRestriction,
+      }) => ({
+        url: `/${sampleId}/metadata/update?projectId=${projectId}&metadataFieldId=${metadataFieldId}&metadataField=${metadataField}&metadataEntryId=${metadataEntryId}&metadataEntry=${metadataEntry}&metadataRestriction=${metadataRestriction}`,
         method: "PUT",
       }),
       invalidatesTags: ["SampleMetadata"],
@@ -69,6 +90,7 @@ export const {
   useAddSampleMetadataMutation,
   useRemoveSampleMetadataMutation,
   useUpdateSampleMetadataMutation,
+  useGetMetadataFieldRestrictionQuery,
 } = sampleApi;
 
 /**
