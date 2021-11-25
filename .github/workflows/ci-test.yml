@@ -39,6 +39,8 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ matrix.suite }}-${{ hashFiles('**/pom.xml') }}
+      - name: Increase javascript heap size
+        run: export NODE_OPTIONS="--max-old-space-size=8192"
       - name: Cache PNP  #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
