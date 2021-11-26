@@ -82,4 +82,16 @@ public class UserDetailsResponse extends AjaxResponse {
 	public void setAllowedRoles(Map<String, String> allowedRoles) {
 		this.allowedRoles = allowedRoles;
 	}
+
+	public Map<String, String> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(Map<String, String> errors) {
+		this.errors = errors;
+	}
+
+	public boolean hasErrors() {
+		return errors != null && !errors.isEmpty();
+	}
 }

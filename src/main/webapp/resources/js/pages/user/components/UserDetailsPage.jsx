@@ -21,8 +21,8 @@ export default function UserDetailsPage() {
     console.log('Success:', values);
     editUser({'userId': userId, ...values})
       .unwrap()
-      .then(notification.success({ message: "User updated successfully." }))
-      .catch(rejected => notification.error({ message: rejected }));
+      .then(success => notification.success({ message: "User updated successfully." }))
+      .catch(error => notification.error({ message: "An Error has occurred." }));
   };
 
   if (isSuccess) {

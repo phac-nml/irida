@@ -3,7 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.users;
 import java.security.Principal;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -74,10 +77,17 @@ public class UsersAjaxController {
 			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
 			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
 			@RequestParam(required = false, name = "locale") String userLocale,
-			@RequestParam(required = false) String enabled, Principal principal) {
+			@RequestParam(required = false) String enabled, Principal principal, HttpServletRequest request) {
 
-		return UIUsersService.updateUser(userId, firstName, lastName, email, phoneNumber, systemRole, userLocale,
-				enabled, principal);
+		UserDetailsResponse response = UIUsersService.updateUser(userId, firstName, lastName, email, phoneNumber,
+				systemRole, userLocale, enabled, principal, request);
+
+		if (response.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(response.getErrors());
+		else
+			return ResponseEntity.ok(response);
+
 	}
 
 	/**

@@ -4,6 +4,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.context.MessageSource;
@@ -22,10 +24,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
@@ -138,29 +136,6 @@ public class UIUsersService {
 
 		response.setCanCreatePasswordReset(PasswordResetController.canCreatePasswordReset(principalUser, user));
 
-		// show the user's projects
-		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-
-		// add the projects to the model list
-		List<Map<String, Object>> projects = new ArrayList<>();
-		for (Join<Project, User> join : projectsForUser) {
-			ProjectUserJoin pujoin = (ProjectUserJoin) join;
-			Project project = join.getSubject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("identifier", project.getId());
-			map.put("name", project.getName());
-			map.put("isManager", pujoin.getProjectRole()
-					.equals(ProjectRole.PROJECT_OWNER));
-			map.put("subscribed", pujoin.isEmailSubscription());
-
-			String proleMessageName = "projectRole." + pujoin.getProjectRole()
-					.toString();
-			map.put("role", messageSource.getMessage(proleMessageName, null, locale));
-			map.put("date", pujoin.getCreatedDate());
-			projects.add(map);
-		}
-		response.setProjects(projects);
-
 		Map<String, String> localeNames = new HashMap<>();
 		for (Locale aLocale : locales) {
 			localeNames.put(aLocale.getLanguage(), aLocale.getDisplayName());
@@ -223,8 +198,9 @@ public class UIUsersService {
 	 * @param principal   a reference to the logged in user.
 	 * @return The name of the user view
 	 */
-	public ResponseEntity updateUser(Long userId, String firstName, String lastName, String email, String phoneNumber,
-			String systemRole, String userLocale, String enabled, Principal principal) {
+	public UserDetailsResponse updateUser(Long userId, String firstName, String lastName, String email,
+			String phoneNumber, String systemRole, String userLocale, String enabled, Principal principal,
+			HttpServletRequest request) {
 
 		UserDetailsResponse response = new UserDetailsResponse();
 		Map<String, String> errors = new HashMap<>();
@@ -262,12 +238,47 @@ public class UIUsersService {
 
 		if (errors.isEmpty()) {
 			try {
-				User user = userService.updateFields(userId, updatedValues);
+				userService.updateFields(userId, updatedValues);
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				System.out.println("Bad things happened: " + ex);
+				errors = handleCreateUpdateException(ex, request.getLocale());
+				response.setErrors(errors);
 			}
 		}
 
-		return ResponseEntity.ok(response);
+		return response;
+	}
+
+	/**
+	 * Handle exceptions for the create and update pages
+	 *
+	 * @param ex     an exception to handle
+	 * @param locale The locale to work with
+	 * @return A Map<String,String> of errors to render
+	 */
+	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
+		if (ex instanceof ConstraintViolationException) {
+			ConstraintViolationException cvx = (ConstraintViolationException) ex;
+			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				String errorKey = violation.getPropertyPath()
+						.toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		} else if (ex instanceof DataIntegrityViolationException) {
+			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
+			if (divx.getMessage()
+					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+			}
+		} else if (ex instanceof EntityExistsException) {
+			EntityExistsException eex = (EntityExistsException) ex;
+			errors.put(eex.getFieldName(), eex.getMessage());
+		} else if (ex instanceof PasswordReusedException) {
+			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+		}
+
+		return errors;
 	}
 }
