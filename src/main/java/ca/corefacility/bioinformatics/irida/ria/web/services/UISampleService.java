@@ -214,14 +214,9 @@ public class UISampleService {
 		if (!Strings.isNullOrEmpty(metadataEntry)) {
 			MetadataEntry entry = new MetadataEntry(metadataEntry, "text", templateField);
 			sampleService.mergeSampleMetadata(sample, Sets.newHashSet(entry));
-			message = "Successfully added metadata field " + metadataField + " with value " + metadataEntry
-					+ " and permission " + metadataRestriction.getLevel()
-					.name();
-		} else {
-			new MetadataEntry("", "text", templateField);
-			message = "Successfully added metadata field " + metadataField + " with no value and permission "
-					+ metadataRestriction.getLevel()
-					.name();
+
+			message = messageSource.getMessage("server.sample.metadata.add.success",
+					new Object[] { metadataField, metadataEntry, metadataRestriction.getLevel() }, locale);
 		}
 
 		return message;
@@ -238,7 +233,8 @@ public class UISampleService {
 	public String removeSampleMetadata(String metadataField, Long metadataEntryId, Locale locale) {
 		metadataEntryRepository.deleteById(metadataEntryId);
 
-		return "Successfully removed metadata entry from sample for field " + metadataField;
+		return messageSource.getMessage("server.sample.metadata.remove.success", new Object[] { metadataField },
+				locale);
 	}
 
 	/**
@@ -296,7 +292,8 @@ public class UISampleService {
 			sample.setModifiedDate(new Date());
 		}
 
-		return "Successfully updated metadata field " + metadataField;
+		return messageSource.getMessage("server.sample.metadata.update.success", new Object[] { metadataField },
+				locale);
 	}
 
 	/**
