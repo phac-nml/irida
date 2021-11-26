@@ -11,7 +11,6 @@ import javax.validation.ConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,21 +228,16 @@ public class SamplesAjaxController {
 	/**
 	 * Add a metadata field and entry to {@link Sample}
 	 *
-	 * @param id                      {@link Long} identifier for the sample
-	 * @param projectId               {@link Long} project identifier
-	 * @param metadataField           The metadata field label
-	 * @param metadataEntry           The metadata field value
-	 * @param metadataFieldPermission The metadata permission to set for the field
-	 * @param locale                  {@link Locale} for the currently logged in user
-	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 * @param id                       {@link Long} identifier for the sample
+	 * @param addSampleMetadataRequest DTO containing sample metadata to add params
+	 * @param locale                   {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the addition.
 	 */
-	@PutMapping(value = "/{id}/metadata")
-	public ResponseEntity<AjaxResponse> addSampleMetadata(@PathVariable Long id, @RequestParam Long projectId,
-			@RequestParam String metadataField, @RequestParam String metadataEntry,
-			@RequestParam String metadataFieldPermission, Locale locale) {
-		return ResponseEntity.ok(new AjaxSuccessResponse(
-				uiSampleService.addSampleMetadata(id, projectId, metadataField, metadataEntry, metadataFieldPermission,
-						locale)));
+	@PostMapping(value = "/{id}/metadata")
+	public ResponseEntity<AjaxResponse> addSampleMetadata(@PathVariable Long id,
+			@RequestBody AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
+		return ResponseEntity.ok(
+				new AjaxSuccessResponse(uiSampleService.addSampleMetadata(id, addSampleMetadataRequest, locale)));
 	}
 
 	/**
@@ -264,24 +258,17 @@ public class SamplesAjaxController {
 	/**
 	 * Update a metadata field entry for {@link Sample}
 	 *
-	 * @param id                  The sample identifier
-	 * @param projectId           The project identifier
-	 * @param metadataFieldId     The {@link MetadataTemplateField} identifier
-	 * @param metadataField       The metadata field label
-	 * @param metadataEntryId     The {@link MetadataEntry} identifier
-	 * @param metadataEntry       The metadata field value
-	 * @param metadataRestriction The restriction for the metadata field
-	 * @param locale              {@link Locale} for the currently logged in user
+	 * @param id                          The sample identifier
+	 * @param updateSampleMetadataRequest DTO containing sample metadata update params
+	 * @param locale                      {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
-	@PutMapping(value = "/{id}/metadata/update")
-	public ResponseEntity<AjaxResponse> updateSampleMetadata(@PathVariable Long id, @RequestParam Long projectId,
-			@RequestParam Long metadataFieldId, @RequestParam String metadataField, @RequestParam Long metadataEntryId,
-			@RequestParam String metadataEntry, @RequestParam String metadataRestriction, Locale locale) {
+	@PutMapping(value = "/{id}/metadata")
+	public ResponseEntity<AjaxResponse> updateSampleMetadata(@PathVariable Long id,
+			@RequestBody UpdateSampleMetadataRequest updateSampleMetadataRequest, Locale locale) {
 		try {
-			String responseMessage = uiSampleService.updateSampleMetadata(id, projectId, metadataFieldId, metadataField,
-					metadataEntryId, metadataEntry, metadataRestriction, locale);
-			return ResponseEntity.ok(new AjaxSuccessResponse(responseMessage));
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateSampleMetadata(id, updateSampleMetadataRequest, locale)));
 		} catch (EntityExistsException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));

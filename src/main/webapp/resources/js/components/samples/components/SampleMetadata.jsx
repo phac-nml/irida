@@ -130,7 +130,10 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
                         />
                         <Popconfirm
                           placement={"topRight"}
-                          title={`Are you sure you want to delete the entry for field ${item.metadataTemplateField}?`}
+                          title={i18n(
+                            "SampleMetadata.remove.confirm",
+                            item.metadataTemplateField
+                          )}
                           onConfirm={() =>
                             removeMetadata(
                               item.metadataTemplateField,

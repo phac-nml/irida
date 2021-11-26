@@ -193,30 +193,29 @@ public class UISampleService {
 	 * Add metadata for the sample
 	 *
 	 * @param sampleId                 {@link Long} identifier for the sample
-	 * @param projectId                {@link Long} project identifier
-	 * @param metadataField            The {@link MetadataTemplateField} label
-	 * @param metadataEntry            The {@link MetadataEntry} value
-	 * @param metadataFieldRestriction The {@link MetadataRestriction} to set for the field
+	 * @param addSampleMetadataRequest DTO containing sample metadata to add params
 	 * @param locale                   {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
-	public String addSampleMetadata(Long sampleId, Long projectId, String metadataField, String metadataEntry,
-			String metadataFieldRestriction, Locale locale) {
+	public String addSampleMetadata(Long sampleId, AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(metadataFieldRestriction);
-		Project project = projectService.read(projectId);
-		MetadataTemplateField templateField = new MetadataTemplateField(metadataField, "text");
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(
+				addSampleMetadataRequest.getMetadataRestriction());
+		Project project = projectService.read(addSampleMetadataRequest.getProjectId());
+		MetadataTemplateField templateField = new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(),
+				"text");
 		MetadataTemplateField metadataTemplateField = metadataTemplateService.saveMetadataField(templateField);
 		MetadataRestriction metadataRestriction = metadataTemplateService.setMetadataRestriction(project,
 				metadataTemplateField, metadataRole);
 
 		String message = "";
-		if (!Strings.isNullOrEmpty(metadataEntry)) {
-			MetadataEntry entry = new MetadataEntry(metadataEntry, "text", templateField);
+		if (!Strings.isNullOrEmpty(addSampleMetadataRequest.getMetadataEntry())) {
+			MetadataEntry entry = new MetadataEntry(addSampleMetadataRequest.getMetadataEntry(), "text", templateField);
 			sampleService.mergeSampleMetadata(sample, Sets.newHashSet(entry));
 
 			message = messageSource.getMessage("server.sample.metadata.add.success",
-					new Object[] { metadataField, metadataEntry, metadataRestriction.getLevel() }, locale);
+					new Object[] { addSampleMetadataRequest.getMetadataField(),
+							addSampleMetadataRequest.getMetadataEntry(), metadataRestriction.getLevel() }, locale);
 		}
 
 		return message;
@@ -240,60 +239,60 @@ public class UISampleService {
 	/**
 	 * Add metadata for the sample
 	 *
-	 * @param sampleId            The sample identifier
-	 * @param projectId           The project identifier
-	 * @param metadataFieldId     The {@link MetadataTemplateField} identifier
-	 * @param metadataField       The metadata field label
-	 * @param metadataEntryId     The {@link MetadataEntry} identifier
-	 * @param metadataEntry       The metadata field value
-	 * @param metadataRestriction The restriction for the metadata field
-	 * @param locale              {@link Locale} for the currently logged in user
+	 * @param sampleId                    The sample identifier
+	 * @param updateSampleMetadataRequest DTO containing sample metadata update params
+	 * @param locale                      {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
-	public String updateSampleMetadata(Long sampleId, Long projectId, Long metadataFieldId, String metadataField,
-			Long metadataEntryId, String metadataEntry, String metadataRestriction, Locale locale) {
+	public String updateSampleMetadata(Long sampleId, UpdateSampleMetadataRequest updateSampleMetadataRequest,
+			Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		Project project = projectService.read(projectId);
+		Project project = projectService.read(updateSampleMetadataRequest.getProjectId());
 		boolean sampleUpdated = false;
-		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(metadataFieldId);
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
+				updateSampleMetadataRequest.getMetadataFieldId());
 		// Only update metadata field if a change was made
 		if (!metadataTemplateField.getLabel()
-				.equals(metadataField)) {
-			metadataTemplateField.setLabel(metadataField);
+				.equals(updateSampleMetadataRequest.getMetadataField())) {
+			metadataTemplateField.setLabel(updateSampleMetadataRequest.getMetadataField());
 			metadataTemplateService.updateMetadataField(metadataTemplateField);
 			sampleUpdated = true;
 		}
 
-		Optional<MetadataEntry> existingMetadataEntry = metadataEntryRepository.findById(metadataEntryId);
+		Optional<MetadataEntry> existingMetadataEntry = metadataEntryRepository.findById(
+				updateSampleMetadataRequest.getMetadataEntryId());
 
 		if (existingMetadataEntry.isPresent()) {
 			// Only update metadata entry if a change was made
 			if (!existingMetadataEntry.get()
 					.getValue()
-					.equals(metadataEntry)) {
+					.equals(updateSampleMetadataRequest.getMetadataEntry())) {
 				existingMetadataEntry.get()
-						.setValue(metadataEntry);
+						.setValue(updateSampleMetadataRequest.getMetadataEntry());
 				sampleService.mergeSampleMetadata(sample, Sets.newHashSet(existingMetadataEntry.get()));
 				sampleUpdated = true;
 			}
 		}
 
-		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(project, metadataTemplateField);
-		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRestriction);
+		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+				project, metadataTemplateField);
+		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(
+				updateSampleMetadataRequest.getMetadataRestriction());
 
 		// Only update metadata field restriction if a change was made
-		if(currentRestriction == null || !currentRestriction.getLevel().equals(projectMetadataRole.getLevel())) {
+		if (currentRestriction == null || !currentRestriction.getLevel()
+				.equals(projectMetadataRole.getLevel())) {
 			metadataTemplateService.setMetadataRestriction(project, metadataTemplateField, projectMetadataRole);
 			sampleUpdated = true;
 		}
 
 		// If sample metadata was updated then update the sample modified date
-		if(sampleUpdated) {
+		if (sampleUpdated) {
 			sample.setModifiedDate(new Date());
 		}
 
-		return messageSource.getMessage("server.sample.metadata.update.success", new Object[] { metadataField },
-				locale);
+		return messageSource.getMessage("server.sample.metadata.update.success",
+				new Object[] { updateSampleMetadataRequest.getMetadataField() }, locale);
 	}
 
 	/**

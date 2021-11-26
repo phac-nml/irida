@@ -38,7 +38,7 @@ export function AddNewMetadata({
         projectId,
         metadataField: values.metadata_field_name,
         metadataEntry: values.metadata_field_value,
-        metadataFieldPermission: values.metadata_field_permission,
+        metadataRestriction: values.metadata_field_permission,
       })
         .then((response) => {
           if (response.error) {
