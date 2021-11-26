@@ -100,7 +100,7 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
                       }
                       description={
                         <span className="t-sample-details-metadata__entry">
-                          item.metadataEntry}
+                          {item.metadataEntry}
                         </span>
                       }
                     />
