@@ -98,7 +98,11 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
                           {item.metadataTemplateField}
                         </span>
                       }
-                      description={item.metadataEntry}
+                      description={
+                        <span className="t-sample-details-metadata__entry">
+                          item.metadataEntry}
+                        </span>
+                      }
                     />
                     {isModifiable && (
                       <Space size="small" direction="horizontal">
