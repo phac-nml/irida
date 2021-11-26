@@ -6,7 +6,7 @@ import {
   useRemoveSampleMetadataMutation,
 } from "../../../apis/samples/samples";
 import { ContentLoading } from "../../loader";
-import { IconEdit, IconRemove } from "../../icons/Icons";
+import { IconEdit, IconPlusCircle, IconRemove } from "../../icons/Icons";
 import styled from "styled-components";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
@@ -33,9 +33,13 @@ const StyledListMetadata = styled(List)`
  * @constructor
  */
 export function SampleMetadata({ sampleId, isModifiable, projectId }) {
-  const { data = {}, isLoading, refetch } = useGetSampleMetadataQuery(sampleId);
+  const {
+    data = {},
+    isLoading,
+    refetch: refetchSampleMetadata,
+  } = useGetSampleMetadataQuery(sampleId);
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
-  const [v, setV] = React.useState(false);
+  const [editModalVisible, setEditModalVisible] = React.useState(false);
 
   const [field, setField] = React.useState(null);
   const [fieldId, setFieldId] = React.useState(null);
@@ -49,19 +53,21 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
     })
       .then(({ data }) => {
         notification.success({ message: data.message });
-        refetch();
+        refetchSampleMetadata();
       })
       .catch((error) => {
         notification.error({ message: error });
       });
   };
 
+  // Set visibility of edit metadata modal to false if user clicks cancel
   const onCancel = () => {
-    setV(false);
+    setEditModalVisible(false);
   };
 
+  // Set visibility of edit metadata modal to false if user clicks ok
   const onOk = () => {
-    setV(false);
+    setEditModalVisible(false);
   };
 
   return (
@@ -70,10 +76,12 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
         <MetadataRolesProvider>
           <AddNewMetadata
             sampleId={sampleId}
-            refetch={refetch}
+            refetch={refetchSampleMetadata}
             projectId={projectId}
           >
-            <Button style={{ marginLeft: "15px" }}>Add New Metadata</Button>
+            <Button style={{ marginLeft: "15px" }} icon={<IconPlusCircle />}>
+              {i18n("SampleMetadata.addNewMetadata")}
+            </Button>
           </AddNewMetadata>
         </MetadataRolesProvider>
       )}
@@ -111,7 +119,7 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
                           icon={
                             <IconEdit
                               onClick={() => {
-                                setV(true);
+                                setEditModalVisible(true);
                                 setField(item.metadataTemplateField);
                                 setFieldId(item.fieldId);
                                 setEntryId(item.entryId);
@@ -146,8 +154,8 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
                   metadataFieldId={fieldId}
                   metadataEntryId={entryId}
                   metadataEntry={entry}
-                  refetch={refetch}
-                  visible={v}
+                  refetch={refetchSampleMetadata}
+                  visible={editModalVisible}
                   onCancel={() => onCancel()}
                   onOk={() => onOk()}
                 ></EditMetadata>

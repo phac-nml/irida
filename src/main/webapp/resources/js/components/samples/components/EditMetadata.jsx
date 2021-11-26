@@ -31,7 +31,7 @@ export function EditMetadata({
   metadataFieldId,
   metadataEntryId,
   metadataEntry,
-  refetch = { refetch },
+  refetch: refetchSampleMetadata,
   visible,
   onCancel,
   onOk,
@@ -62,31 +62,31 @@ export function EditMetadata({
   });
 
   const updateMetadata = () => {
-    const values = form.getFieldsValue();
-
-    updateSampleMetadata({
-      sampleId,
-      projectId,
-      metadataFieldId: metadataFieldId,
-      metadataField: values.metadata_field_name,
-      metadataEntryId: metadataEntryId,
-      metadataEntry: values.metadata_field_value,
-      metadataRestriction: values.metadata_field_permission,
-    })
-      .then((response) => {
-        if (response.error) {
-          notification.error({ message: response.error.data.error });
-        } else {
-          notification.success({ message: response.data.message });
-          refetch();
-          refetchMetadataRestriction();
-        }
-        form.resetFields();
-        onOk();
+    form.validateFields().then((values) => {
+      updateSampleMetadata({
+        sampleId,
+        projectId,
+        metadataFieldId: metadataFieldId,
+        metadataField: values.metadata_field_name,
+        metadataEntryId: metadataEntryId,
+        metadataEntry: values.metadata_field_value,
+        metadataRestriction: values.metadata_field_permission,
       })
-      .catch((error) => {
-        notification.error({ message: error });
-      });
+        .then((response) => {
+          if (response.error) {
+            notification.error({ message: response.error.data.error });
+          } else {
+            notification.success({ message: response.data.message });
+            refetchSampleMetadata();
+            refetchMetadataRestriction();
+          }
+          form.resetFields();
+          onOk();
+        })
+        .catch((error) => {
+          notification.error({ message: error });
+        });
+    });
   };
 
   return (
@@ -97,14 +97,25 @@ export function EditMetadata({
           onCancel={onCancel}
           visible={visible}
           onOk={updateMetadata}
-          okText="Update"
+          okText={i18n("SampleMetadata.modal.btn.update")}
+          cancelText={i18n("SampleMetadata.modal.btn.cancel")}
         >
-          <Title level={4}>{`Edit Sample Metadata`}</Title>
+          <Title level={4}>{i18n("SampleMetadata.edit.modal.title")}</Title>
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
               label={i18n("SampleMetadata.modal.fieldName")}
               initialValue={metadataField}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <div className="t-metadata-field-name-required">
+                      {i18n("SampleMetadata.fieldName.required")}
+                    </div>
+                  ),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -112,12 +123,22 @@ export function EditMetadata({
               name="metadata_field_value"
               label={i18n("SampleMetadata.modal.fieldValue")}
               initialValue={metadataEntry}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <div className="t-metadata-field-value-required">
+                      {i18n("SampleMetadata.fieldValue.required")}
+                    </div>
+                  ),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="metadata_field_permission"
-              label={i18n("SampleMetadata.modal.permission")}
+              label={i18n("SampleMetadata.modal.restriction")}
               initialValue={
                 !isLoading &&
                 (metadataFieldRestriction &&

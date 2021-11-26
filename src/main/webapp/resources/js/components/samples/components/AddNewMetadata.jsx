@@ -14,7 +14,12 @@ const { Title } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function AddNewMetadata({ sampleId, refetch, projectId, children }) {
+export function AddNewMetadata({
+  sampleId,
+  refetch: refetchSampleMetadata,
+  projectId,
+  children,
+}) {
   const [visible, setVisible] = React.useState(false);
   const [addSampleMetadata] = useAddSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
@@ -26,29 +31,29 @@ export function AddNewMetadata({ sampleId, refetch, projectId, children }) {
   });
 
   const addMetadata = () => {
-    const values = form.getFieldsValue();
-
-    // Add the new sample metadata and refetch the metadata
-    addSampleMetadata({
-      sampleId,
-      projectId,
-      metadataField: values.metadata_field_name,
-      metadataEntry: values.metadata_field_value,
-      metadataFieldPermission: values.metadata_field_permission,
-    })
-      .then((response) => {
-        if (response.error) {
-          notification.error({ message: response.error.data.error });
-        } else {
-          notification.success({ message: response.data.message });
-          refetch();
-        }
-        form.resetFields();
-        setVisible(false);
+    form.validateFields().then((values) => {
+      // Add the new sample metadata and refetch the metadata
+      addSampleMetadata({
+        sampleId,
+        projectId,
+        metadataField: values.metadata_field_name,
+        metadataEntry: values.metadata_field_value,
+        metadataFieldPermission: values.metadata_field_permission,
       })
-      .catch((error) => {
-        notification.error({ message: error });
-      });
+        .then((response) => {
+          if (response.error) {
+            notification.error({ message: response.error.data.error });
+          } else {
+            notification.success({ message: response.data.message });
+            refetchSampleMetadata();
+          }
+          form.resetFields();
+          setVisible(false);
+        })
+        .catch((error) => {
+          notification.error({ message: error });
+        });
+    });
   };
 
   return (
@@ -62,24 +67,56 @@ export function AddNewMetadata({ sampleId, refetch, projectId, children }) {
           onCancel={() => setVisible(false)}
           visible={visible}
           onOk={addMetadata}
+          okText={i18n("SampleMetadata.modal.btn.add")}
+          cancelText={i18n("SampleMetadata.modal.btn.cancel")}
         >
-          <Title level={4}>{i18n("SampleMetadata.modal.title")}</Title>
+          <Title level={4}>{i18n("SampleMetadata.add.modal.title")}</Title>
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
               label={i18n("SampleMetadata.modal.fieldName")}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <div className="t-metadata-field-name-required">
+                      {i18n("SampleMetadata.fieldName.required")}
+                    </div>
+                  ),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="metadata_field_value"
               label={i18n("SampleMetadata.modal.fieldValue")}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <div className="t-metadata-field-value-required">
+                      {i18n("SampleMetadata.fieldValue.required")}
+                    </div>
+                  ),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="metadata_field_permission"
-              label={i18n("SampleMetadata.modal.permission")}
+              label={i18n("SampleMetadata.modal.restriction")}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <div className="t-metadata-field-restriction-required">
+                      {i18n("SampleMetadata.fieldRestriction.required")}
+                    </div>
+                  ),
+                },
+              ]}
             >
               <Select style={{ width: "100%" }}>
                 {metadataRoles?.map((role) => (

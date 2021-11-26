@@ -286,7 +286,7 @@ public class UISampleService {
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRestriction);
 
 		// Only update metadata field restriction if a change was made
-		if(!currentRestriction.getLevel().equals(projectMetadataRole.getLevel())) {
+		if(currentRestriction == null || !currentRestriction.getLevel().equals(projectMetadataRole.getLevel())) {
 			metadataTemplateService.setMetadataRestriction(project, metadataTemplateField, projectMetadataRole);
 			sampleUpdated = true;
 		}
