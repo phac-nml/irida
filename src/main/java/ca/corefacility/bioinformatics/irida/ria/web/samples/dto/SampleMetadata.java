@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class SampleMetadata {
 				.map(s -> new SampleMetadataFieldEntry(s.getField()
 						.getId(), s.getField()
 						.getLabel(), s.getValue(), s.getId()))
+				.sorted(Comparator.comparing(SampleMetadataFieldEntry::getMetadataTemplateField))
 				.collect(Collectors.toList());
 
 		return metadata;

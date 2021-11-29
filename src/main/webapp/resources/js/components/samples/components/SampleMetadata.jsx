@@ -7,22 +7,13 @@ import {
 } from "../../../apis/samples/samples";
 import { ContentLoading } from "../../loader";
 import { IconEdit, IconPlusCircle, IconRemove } from "../../icons/Icons";
-import styled from "styled-components";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as VList } from "react-window";
 
-const StyledListMetadata = styled(List)`
-  .ant-list-item {
-    padding: 15px;
-    div.ant-typography,
-    .ant-typography p {
-      margin-bottom: 0;
-    }
-    .ant-typography.ant-typography-edit-content {
-      margin: 0;
-    }
-  }
-`;
+const DEFAULT_HEIGHT = 600;
+
 /**
  * React component to display metadata associated with a sample
  *
@@ -70,6 +61,60 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
     setEditModalVisible(false);
   };
 
+  const renderMetadataFieldListItem = ({ index, style }) => {
+    const item = data.metadata[index];
+    return (
+      <List.Item
+        className="t-sample-details-metadata-item"
+        style={{ ...style, paddingRight: "15px" }}
+      >
+        <List.Item.Meta
+          title={
+            <span className="t-sample-details-metadata__field">
+              {item.metadataTemplateField}
+            </span>
+          }
+          description={
+            <span className="t-sample-details-metadata__entry">
+              {item.metadataEntry}
+            </span>
+          }
+        />
+        {isModifiable && (
+          <Space size="small" direction="horizontal">
+            <Button
+              shape="circle"
+              icon={
+                <IconEdit
+                  onClick={() => {
+                    setEditModalVisible(true);
+                    setField(item.metadataTemplateField);
+                    setFieldId(item.fieldId);
+                    setEntryId(item.entryId);
+                    setEntry(item.metadataEntry);
+                  }}
+                />
+              }
+            />
+            <Popconfirm
+              placement={"topRight"}
+              title={i18n(
+                "SampleMetadata.remove.confirm",
+                item.metadataTemplateField
+              )}
+              onConfirm={() =>
+                removeMetadata(item.metadataTemplateField, item.entryId)
+              }
+              okText="Confirm"
+            >
+              <Button shape="circle" icon={<IconRemove />} />
+            </Popconfirm>
+          </Space>
+        )}
+      </List.Item>
+    );
+  };
+
   return (
     <>
       {isModifiable && (
@@ -79,76 +124,33 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
             refetch={refetchSampleMetadata}
             projectId={projectId}
           >
-            <Button style={{ marginLeft: "15px" }} icon={<IconPlusCircle />}>
+            <Button icon={<IconPlusCircle />}>
               {i18n("SampleMetadata.addNewMetadata")}
             </Button>
           </AddNewMetadata>
         </MetadataRolesProvider>
       )}
-      <div>
+      <div
+        style={{
+          height: DEFAULT_HEIGHT,
+          width: "100%",
+        }}
+      >
         {!isLoading ? (
-          Object.keys(data.metadata).length ? (
+          data.metadata.length ? (
             <>
-              <StyledListMetadata
-                itemLayout="horizontal"
-                dataSource={data.metadata
-                  .slice()
-                  .sort((a, b) =>
-                    a.metadataTemplateField.localeCompare(
-                      b.metadataTemplateField
-                    )
-                  )}
-                renderItem={(item) => (
-                  <List.Item className="t-sample-details-metadata-item">
-                    <List.Item.Meta
-                      title={
-                        <span className="t-sample-details-metadata__field">
-                          {item.metadataTemplateField}
-                        </span>
-                      }
-                      description={
-                        <span className="t-sample-details-metadata__entry">
-                          {item.metadataEntry}
-                        </span>
-                      }
-                    />
-                    {isModifiable && (
-                      <Space size="small" direction="horizontal">
-                        <Button
-                          shape="circle"
-                          icon={
-                            <IconEdit
-                              onClick={() => {
-                                setEditModalVisible(true);
-                                setField(item.metadataTemplateField);
-                                setFieldId(item.fieldId);
-                                setEntryId(item.entryId);
-                                setEntry(item.metadataEntry);
-                              }}
-                            />
-                          }
-                        />
-                        <Popconfirm
-                          placement={"topRight"}
-                          title={i18n(
-                            "SampleMetadata.remove.confirm",
-                            item.metadataTemplateField
-                          )}
-                          onConfirm={() =>
-                            removeMetadata(
-                              item.metadataTemplateField,
-                              item.entryId
-                            )
-                          }
-                          okText="Confirm"
-                        >
-                          <Button shape="circle" icon={<IconRemove />} />
-                        </Popconfirm>
-                      </Space>
-                    )}
-                  </List.Item>
+              <AutoSizer>
+                {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+                  <VList
+                    itemCount={data.metadata.length}
+                    itemSize={75}
+                    height={height}
+                    width={width}
+                  >
+                    {renderMetadataFieldListItem}
+                  </VList>
                 )}
-              />
+              </AutoSizer>
               <MetadataRolesProvider>
                 <EditMetadata
                   sampleId={sampleId}
