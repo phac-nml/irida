@@ -8,7 +8,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -69,9 +71,9 @@ public class RESTProjectSamplesControllerTest {
 		verify(projectService, times(1)).read(p.getId());
 		verify(projectService, times(1)).addSampleToProject(p, s, true);
 
-		Link selfLink = s.getLink(Link.REL_SELF);
-		Link sequenceFilesLink = s.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link projectLink = s.getLink(RESTProjectSamplesController.REL_PROJECT);
+		Link selfLink = s.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
+		Link sequenceFilesLink = s.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link projectLink = s.getLink(RESTProjectSamplesController.REL_PROJECT).map(i -> i).orElse(null);
 		String projectLocation = "http://localhost/api/projects/" + p.getId();
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		assertNotNull("Sample resource's self link should not be null", selfLink);
@@ -104,12 +106,12 @@ public class RESTProjectSamplesControllerTest {
 		// should be two links in the response, one back to the individual
 		// project, the other to the samples collection
 		RootResource resource = responseObject.getResource();
-		List<Link> links = resource.getLinks();
+		List<Link> links = resource.getLinks().toList();
 		Set<String> rels = Sets.newHashSet(RESTProjectsController.REL_PROJECT,
 				RESTProjectSamplesController.REL_PROJECT_SAMPLES);
 		for (Link link : links) {
-			assertTrue(rels.contains(link.getRel()));
-			assertNotNull(rels.remove(link.getRel()));
+			assertTrue(rels.contains(link.getRel().value()));
+			assertNotNull(rels.remove(link.getRel().value()));
 		}
 		assertTrue(rels.isEmpty());
 	}
@@ -135,22 +137,22 @@ public class RESTProjectSamplesControllerTest {
 		assertEquals(2, resourceLinks.size());
 		Link self = resourceLinks.iterator()
 				.next();
-		assertEquals("self", self.getRel());
+		assertEquals("self", self.getRel().value());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
 		Sample resource = samples.iterator()
 				.next();
 		assertEquals(s.getSampleName(), resource.getSampleName());
 		//assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
-		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+		Set<String> rels = Sets.newHashSet(IanaLinkRelations.SELF.value(), RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE,
 				RESTSampleMetadataController.METADATA_REL, RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES,
 				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_FAST5);
 		for (Link link : links) {
-			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
-			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
+			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel().value()));
+			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel().value()));
 		}
 		assertTrue("Rels should be empty after removing expected links", rels.isEmpty());
 	}
@@ -170,9 +172,9 @@ public class RESTProjectSamplesControllerTest {
 		verify(sampleService).getSampleForProject(p, s.getId());
 
 		Sample sr = responseObject.getResource();
-		Link selfLink = sr.getLink(Link.REL_SELF);
-		Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT);
+		Link selfLink = sr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
+		Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT).map(i -> i).orElse(null);
 
 		String projectLocation = "http://localhost/api/projects/" + p.getId();
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
@@ -203,7 +205,7 @@ public class RESTProjectSamplesControllerTest {
 		Sample resource = responseObject.getResource();
 		assertNotNull("There should be a sample in the response!", resource);
 		Map<String, String> links = linksToMap(resource.getLinks());
-		String self = links.get(Link.REL_SELF);
+		String self = links.get(IanaLinkRelations.SELF.value());
 		assertEquals("http://localhost/api/samples/" + s.getId(), self);
 		String sequenceFiles = links.get(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		assertEquals("http://localhost/api/samples/" + s.getId() + "/sequenceFiles", sequenceFiles);
@@ -235,7 +237,7 @@ public class RESTProjectSamplesControllerTest {
 		assertEquals("There should be one link", 1, resourceLinks.size());
 		Link self = resourceLinks.iterator()
 				.next();
-		assertEquals("Self link should be correct", "self", self.getRel());
+		assertEquals("Self link should be correct", "self", self.getRel().value());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
 		LabelledRelationshipResource<Project, Sample> resource = labeledRRs.iterator()
 				.next();
@@ -243,11 +245,11 @@ public class RESTProjectSamplesControllerTest {
 		Sample sample = join.getObject();
 		assertEquals("Sample name should be correct", s.getSampleName(), sample.getSampleName());
 		List<Link> links = resource.getLinks();
-		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+		Set<String> rels = Sets.newHashSet(IanaLinkRelations.SELF.value(), RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE);
 		for (Link link : links) {
-			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel()));
-			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel()));
+			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel().value()));
+			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel().value()));
 		}
 		assertTrue("Rels should be empty after removing expected links", rels.isEmpty());
 	}
@@ -281,7 +283,7 @@ public class RESTProjectSamplesControllerTest {
 		assertEquals("There should be one link", 1, resourceLinks.size());
 		Link self = resourceLinks.iterator()
 				.next();
-		assertEquals("Self link should be correct", "self", self.getRel());
+		assertEquals("Self link should be correct", "self", self.getRel().value());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
 		LabelledRelationshipResource<Project, Sample> resource = labeledRRs.iterator()
 				.next();
@@ -289,11 +291,11 @@ public class RESTProjectSamplesControllerTest {
 		Sample sample = join.getObject();
 		assertEquals("Sample name should be correct", s.getSampleName(), sample.getSampleName());
 		List<Link> links = resource.getLinks();
-		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+		Set<String> rels = Sets.newHashSet(IanaLinkRelations.SELF.value(), RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTProjectSamplesController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLE);
 		for (Link link : links) {
-			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel()));
-			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel()));
+			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel().value()));
+			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel().value()));
 		}
 		assertTrue("Rels should be empty after removing expected links", rels.isEmpty());
 	}
@@ -302,7 +304,7 @@ public class RESTProjectSamplesControllerTest {
 		Map<String, String> linksMap = new HashMap<>();
 
 		for (Link l : links) {
-			linksMap.put(l.getRel(), l.getHref());
+			linksMap.put(l.getRel().value(), l.getHref());
 		}
 
 		return linksMap;

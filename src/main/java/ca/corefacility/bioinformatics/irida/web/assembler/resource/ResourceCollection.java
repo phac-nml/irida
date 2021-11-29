@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 
 /**
  * Wraps a collection of {@link ResourceCollection} objects to be sent to the client.
  *
  * @param <Type> The type of object in this collection
  */
-public class ResourceCollection<Type> extends IridaResourceSupport implements Iterable<Type> {
+public class ResourceCollection<Type> extends IridaRepresentationModel implements Iterable<Type> {
 
     /**
      * A collection of resources to be serialized.

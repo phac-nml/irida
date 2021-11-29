@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -77,7 +78,7 @@ public class UserControllerTest {
 				.size());
 		Link link = resource.getLinks()
 				.get(0);
-		assertEquals(Link.REL_SELF, link.getRel());
+		assertEquals(IanaLinkRelations.SELF, link.getRel());
 		assertTrue(link.getHref()
 				.contains(p.getId()
 						.toString()));

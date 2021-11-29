@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
  * @param <Child> The owned object type in the relationship
  */
 public class LabelledRelationshipResource<Owner extends IridaThing, Child extends IridaThing>
-		extends IridaResourceSupport {
+		extends IridaRepresentationModel {
 	private String label;
 
 	private Join<Owner, Child> resource;

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.run;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -26,7 +26,7 @@ import java.util.*;
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
-public class SequencingRun extends IridaResourceSupport implements MutableIridaThing, Comparable<SequencingRun> {
+public class SequencingRun extends IridaRepresentationModel implements MutableIridaThing, Comparable<SequencingRun> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
