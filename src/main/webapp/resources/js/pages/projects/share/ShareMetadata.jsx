@@ -121,5 +121,12 @@ export function ShareMetadata() {
     },
   ];
 
-  return <Table columns={columns} dataSource={fields} />;
+  return (
+    <Table
+      columns={columns}
+      dataSource={fields}
+      scroll={{ y: 600 }}
+      pagination={false}
+    />
+  );
 }
