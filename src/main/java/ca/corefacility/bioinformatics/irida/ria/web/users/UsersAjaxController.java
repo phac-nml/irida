@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsRespons
  */
 @RestController
 @RequestMapping("/ajax/users")
-@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 public class UsersAjaxController {
 
 	private final UIUsersService UIUsersService;
@@ -40,6 +39,7 @@ public class UsersAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping("/list")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public TableResponse<UserDetailsModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
 		return UIUsersService.getUsersPagedList(request);
 	}
@@ -53,6 +53,7 @@ public class UsersAjaxController {
 	 * @return {@link ResponseEntity} internationalized response to the update
 	 */
 	@RequestMapping("/edit")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
 			Locale locale) {
 		return UIUsersService.updateUserStatus(id, isEnabled, locale);
@@ -70,12 +71,14 @@ public class UsersAjaxController {
 	 * @param userLocale  The locale the user selected
 	 * @param enabled     whether the user account should be enabled or disabled.
 	 * @param principal   a reference to the logged in user.
+	 * @param request     the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
-	public ResponseEntity updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
-			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
+	public ResponseEntity<UserDetailsResponse> updateUser(@PathVariable Long userId,
+			@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
+			@RequestParam(required = false) String email, @RequestParam(required = false) String phoneNumber,
+			@RequestParam(required = false) String systemRole,
 			@RequestParam(required = false, name = "locale") String userLocale,
 			@RequestParam(required = false) String enabled, Principal principal, HttpServletRequest request) {
 
@@ -84,7 +87,7 @@ public class UsersAjaxController {
 
 		if (response.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body(response.getErrors());
+					.body(response);
 		else
 			return ResponseEntity.ok(response);
 

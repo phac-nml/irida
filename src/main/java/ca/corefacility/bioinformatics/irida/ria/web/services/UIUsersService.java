@@ -44,7 +44,6 @@ import com.google.common.collect.Lists;
  * Handles service call for the the administration of the IRIDA users.
  */
 @Component
-@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 public class UIUsersService {
 	private final UserService userService;
 	private final ProjectService projectService;
@@ -70,6 +69,7 @@ public class UIUsersService {
 	 * @param request - the information about the current page of users to return
 	 * @return {@link TableResponse}
 	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public TableResponse<UserDetailsModel> getUsersPagedList(AdminUsersTableRequest request) {
 		Specification<User> specification = UserSpecification.searchUser(request.getSearch());
 		PageRequest pageRequest = PageRequest.of(request.getCurrent(), request.getPageSize(), request.getSort());
@@ -91,6 +91,7 @@ public class UIUsersService {
 	 * @param locale    - users {@link Locale}
 	 * @return {@link ResponseEntity}
 	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public ResponseEntity<String> updateUserStatus(Long id, boolean isEnabled, Locale locale) {
 		User user = userService.read(id);
 		if (user.isEnabled() != isEnabled) {
@@ -196,6 +197,7 @@ public class UIUsersService {
 	 * @param userLocale  The locale the user selected
 	 * @param enabled     whether the user account should be enabled or disabled.
 	 * @param principal   a reference to the logged in user.
+	 * @param request     the request
 	 * @return The name of the user view
 	 */
 	public UserDetailsResponse updateUser(Long userId, String firstName, String lastName, String email,

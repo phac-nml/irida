@@ -91,6 +91,11 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.errors = errors;
 	}
 
+	/**
+	 * Returns whether there are errors
+	 *
+	 * @return if there is an error
+	 */
 	public boolean hasErrors() {
 		return errors != null && !errors.isEmpty();
 	}

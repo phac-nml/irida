@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 public class UsersControllerTest {
 	// HTML page names
 	private static final String USERS_PAGE = "user/list";
-	private static final String USERS_DETAILS_PAGE = "user/user_details";
+	private static final String USERS_DETAILS_PAGE = "user/account";
 	private static final String USER_EDIT_PAGE = "user/edit";
 
 	private static final long NUM_TOTAL_ELEMENTS = 2L;

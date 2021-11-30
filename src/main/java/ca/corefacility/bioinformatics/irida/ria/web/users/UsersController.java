@@ -102,6 +102,7 @@ public class UsersController {
 	/**
 	 * Get the currently logged in user's page
 	 *
+	 * @param principal a reference to the logged in user.
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
 	@RequestMapping({ "/current" })
