@@ -18,13 +18,9 @@ export function ShareMetadata() {
   const [restrictions, setRestrictions] = React.useState([]);
   const [targetRestrictions, setTargetRestrictions] = React.useState(null);
 
-  const {
-    originalSamples,
-    currentProject,
-    locked,
-    projectId,
-    remove,
-  } = useSelector((state) => state.shareReducer);
+  const { currentProject, projectId } = useSelector(
+    (state) => state.shareReducer
+  );
 
   /**
    * Get the fields for the current project.  The restrictions from these fields
