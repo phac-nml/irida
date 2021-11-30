@@ -106,7 +106,7 @@ public class UsersControllerTest {
 				.thenReturn(roleString);
 		when(projectService.getProjectsForUser(user)).thenReturn(joins);
 
-		String userSpecificPage = controller.getUserSpecificPage(userId, true, model, principal);
+		String userSpecificPage = controller.getUserDetailsPage();
 
 		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
 		assertEquals(user, model.get("user"));
@@ -144,7 +144,7 @@ public class UsersControllerTest {
 				.thenReturn(roleString);
 		when(projectService.getProjectsForUser(user)).thenReturn(joins);
 
-		String userSpecificPage = controller.getUserSpecificPage(userId, true, model, principal);
+		String userSpecificPage = controller.getUserDetailsPage();
 
 		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
 		assertEquals(false, model.get("canEditUser"));
