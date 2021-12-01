@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,10 +22,6 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -88,71 +87,14 @@ public class UsersControllerTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testGetUserSpecificPage() {
-		Principal principal = () -> USER_NAME;
-		Long userId = 1L;
-		String roleString = "User";
-
-		ExtendedModelMap model = new ExtendedModelMap();
-		User user = new User(userId, USER_NAME, null, null, null, null, null);
-		user.setSystemRole(Role.ROLE_USER);
-
-		@SuppressWarnings("unchecked")
-		List<Join<Project, User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user,
-				ProjectRole.PROJECT_USER));
-
-		when(userService.read(userId)).thenReturn(user);
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		when(messageSource.getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class)))
-				.thenReturn(roleString);
-		when(projectService.getProjectsForUser(user)).thenReturn(joins);
-
 		String userSpecificPage = controller.getUserDetailsPage();
-
 		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
-		assertEquals(user, model.get("user"));
-		assertEquals(roleString, model.get("systemRole"));
-		assertEquals(true, model.get("canEditUser"));
-		assertEquals(joins.size(), ((List) model.get("projects")).size());
-
-		verify(userService).read(userId);
-		verify(userService).getUserByUsername(USER_NAME);
-		verify(messageSource).getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class));
-		verify(projectService).getProjectsForUser(user);
 	}
 
 	@Test
 	public void testGetOtherUsersSpecificPage() {
-		Principal principal = () -> USER_NAME;
-		Long userId = 1L;
-		String roleString = "User";
-
-		ExtendedModelMap model = new ExtendedModelMap();
-
-		User puser = new User(userId, USER_NAME, null, null, null, null, null);
-		puser.setSystemRole(Role.ROLE_USER);
-
-		User user = new User(userId, "tom", null, null, null, null, null);
-		user.setSystemRole(Role.ROLE_USER);
-
-		@SuppressWarnings("unchecked")
-		List<Join<Project, User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user,
-				ProjectRole.PROJECT_USER));
-
-		when(userService.read(userId)).thenReturn(user);
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(messageSource.getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class)))
-				.thenReturn(roleString);
-		when(projectService.getProjectsForUser(user)).thenReturn(joins);
-
 		String userSpecificPage = controller.getUserDetailsPage();
-
 		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
-		assertEquals(false, model.get("canEditUser"));
-
-		verify(userService).read(userId);
-		verify(userService).getUserByUsername(USER_NAME);
-		verify(messageSource).getMessage(eq("systemrole." + Role.ROLE_USER.getName()), eq(null), any(Locale.class));
-		verify(projectService).getProjectsForUser(user);
 	}
 
 	@Test
