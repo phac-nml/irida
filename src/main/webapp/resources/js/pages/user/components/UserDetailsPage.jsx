@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Form, Input, notification, Select, Space, Switch, Typography } from 'antd';
 import moment from 'moment';
@@ -17,34 +17,37 @@ export default function UserDetailsPage() {
   const { data, isSuccess } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
-    editUser({'userId': userId, ...values})
-      .unwrap()
-      .then(success => notification.success({ message: "User updated successfully." }))
-      .catch(error => notification.error({ message: "An Error has occurred." }));
-  };
+  const [formErrors, setFormErrors] = useState();
+
+  const onFormFinish = async(values) => {
+    try {
+      await editUser({'userId': userId, ...values});
+      notification.success({ message: "User updated successfully." });
+    } catch (editUserErrorResponse) {
+      notification.error({ message: "An Error has occurred." });
+      setFormErrors(editUserErrorResponse.data.errors);
+    }
+  }
 
   if (isSuccess) {
-    console.log(data);
     return (
       <Space direction="vertical">
         <Typography.Title level={4}>{data.user.username}</Typography.Title>
         <Form
           layout="vertical"
           initialValues={data.user}
-          onFinish={onFinish}
+          onFinish={onFormFinish}
         >
-          <Form.Item label="First Name" name="firstName">
+          <Form.Item label="First Name" name="firstName" help={formErrors?.firstName} validateStatus={ formErrors?.firstName ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Last Name" name="lastName">
+          <Form.Item label="Last Name" name="lastName" help={formErrors?.lastName} validateStatus={ formErrors?.lastName ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Email" name="email">
+          <Form.Item label="Email" name="email" help={formErrors?.email} validateStatus={ formErrors?.email ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Phone Number" name="phoneNumber">
+          <Form.Item label="Phone Number" name="phoneNumber" help={formErrors?.phoneNumber} validateStatus={ formErrors?.phoneNumber ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
           <Form.Item label="Language" name="locale">
@@ -54,7 +57,7 @@ export default function UserDetailsPage() {
               )}
             </Select>
           </Form.Item>
-          <Form.Item label="Role" name="role">
+          <Form.Item label="Role" name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined }>
             <Select disabled={formDisabled}>
               { Object.keys(data.allowedRoles).map((key, index) =>
                 <Select.Option key={`user-account-details-role-${index}`} value={key}>{data.allowedRoles[key]}</Select.Option>

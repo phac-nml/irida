@@ -16,7 +16,7 @@ export const usersApi = createApi({
   tagTypes: ["Users"],
   endpoints: (build) => ({
     /*
-    Get details for a user.
+    Get user details.
      */
     getUserDetails: build.query({
       query: (userId) => ({
@@ -25,7 +25,7 @@ export const usersApi = createApi({
       providesTags: ["Users"],
     }),
     /*
-    Edit details for a user.
+    Edit user details.
     */
     editUserDetails: build.mutation({
       query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, enabled }) => ({
