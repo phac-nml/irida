@@ -178,7 +178,8 @@ public class SamplesAjaxController {
 	/**
 	 * Get {@link Sample} metadata for a specific sample.
 	 *
-	 * @param id {@link Long} identifier for a sample.
+	 * @param id        {@link Long} identifier for a sample.
+	 * @param projectId {@link Long} identifier for a project
 	 * @return {@link SampleMetadata} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/metadata")

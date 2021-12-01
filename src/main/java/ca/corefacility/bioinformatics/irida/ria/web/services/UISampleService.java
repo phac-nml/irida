@@ -76,7 +76,7 @@ public class UISampleService {
 	}
 
 	/**
-	 * Get full details, including metadata for a {@link Sample}
+	 * Get full details for a {@link Sample}
 	 *
 	 * @param id Identifier for a {@link Sample}
 	 * @return {@link SampleDetails}
@@ -92,7 +92,8 @@ public class UISampleService {
 	/**
 	 * Get all the metadata for a {@link Sample}
 	 *
-	 * @param id Identifier for a {@link Sample}
+	 * @param id        Identifier for a {@link Sample}
+	 * @param projectId Identifier for a {@link Project}
 	 * @return {@link SampleMetadata}
 	 */
 	public SampleMetadata getSampleMetadata(Long id, Long projectId) {
@@ -102,32 +103,12 @@ public class UISampleService {
 		List<SampleMetadataFieldEntry> metadata = metadataForSample.stream()
 				.map(s -> new SampleMetadataFieldEntry(s.getField()
 						.getId(), s.getField()
-						.getLabel(), s.getValue(), s.getId(), getMetadataFieldRestriction(projectId, s.getField().getId())))
+						.getLabel(), s.getValue(), s.getId(), getMetadataFieldRestriction(projectId, s.getField()
+						.getId())))
 				.sorted(Comparator.comparing(SampleMetadataFieldEntry::getMetadataTemplateField))
 				.collect(Collectors.toList());
 
 		return new SampleMetadata(metadata);
-
-	}
-
-	/**
-	 * Get {@link MetadataRestriction} for metadata field
-	 *
-	 * @param projectId               Identifier for {@link Project}
-	 * @param metadataTemplateFieldId Identifier for {@link MetadataTemplateField}
-	 * @return {@link MetadataRestriction}
-	 */
-	private ProjectMetadataRole getMetadataFieldRestriction(Long projectId, Long metadataTemplateFieldId) {
-		Project project = projectService.read(projectId);
-		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
-				metadataTemplateFieldId);
-		MetadataRestriction metadataRestriction = metadataRestrictionRepository.getRestrictionForFieldAndProject(
-				project, metadataTemplateField);
-		if(metadataRestriction != null) {
-			return metadataRestriction.getLevel();
-		}
-
-		return null;
 	}
 
 	/**
@@ -206,9 +187,10 @@ public class UISampleService {
 	 * @param sampleId                 {@link Long} identifier for the sample
 	 * @param addSampleMetadataRequest DTO containing sample metadata to add params
 	 * @param locale                   {@link Locale} for the currently logged in user
-	 * @return message indicating update status
+	 * @return {@link AddSampleMetadataResponse} with added metadata field, entry, restriction, and response message
 	 */
-	public AddSampleMetadataResponse addSampleMetadata(Long sampleId, AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
+	public AddSampleMetadataResponse addSampleMetadata(Long sampleId, AddSampleMetadataRequest addSampleMetadataRequest,
+			Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(
 				addSampleMetadataRequest.getMetadataRestriction());
@@ -222,19 +204,22 @@ public class UISampleService {
 		String message = "";
 		MetadataEntry entry = null;
 		Long entryId = null;
+		String entryValue = "";
 
 		if (!Strings.isNullOrEmpty(addSampleMetadataRequest.getMetadataEntry())) {
 			entry = new MetadataEntry(addSampleMetadataRequest.getMetadataEntry(), "text", templateField);
 			entry.setSample(sample);
-			entryId = metadataEntryRepository.save(entry).getId();
+			MetadataEntry savedEntry = metadataEntryRepository.save(entry);
+			entryId = savedEntry.getId();
+			entryValue = savedEntry.getValue();
 			message = messageSource.getMessage("server.sample.metadata.add.success",
 					new Object[] { addSampleMetadataRequest.getMetadataField(),
 							addSampleMetadataRequest.getMetadataEntry(), metadataRestriction.getLevel() }, locale);
 		}
 
-		return new AddSampleMetadataResponse(metadataTemplateField.getId(), metadataTemplateField.getLabel(), entry.getValue(), entryId, metadataRestriction.getLevel()
+		return new AddSampleMetadataResponse(metadataTemplateField.getId(), metadataTemplateField.getLabel(),
+				entryValue, entryId, metadataRestriction.getLevel()
 				.name(), message);
-
 
 	}
 
@@ -268,6 +253,7 @@ public class UISampleService {
 		boolean sampleUpdated = false;
 		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
 				updateSampleMetadataRequest.getMetadataFieldId());
+
 		// Only update metadata field if a change was made
 		if (!metadataTemplateField.getLabel()
 				.equals(updateSampleMetadataRequest.getMetadataField())) {
@@ -293,6 +279,7 @@ public class UISampleService {
 
 		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
 				project, metadataTemplateField);
+
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(
 				updateSampleMetadataRequest.getMetadataRestriction());
 
@@ -486,5 +473,25 @@ public class UISampleService {
 						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
+	}
+
+	/**
+	 * Get {@link MetadataRestriction} for metadata field
+	 *
+	 * @param projectId               Identifier for {@link Project}
+	 * @param metadataTemplateFieldId Identifier for {@link MetadataTemplateField}
+	 * @return {@link MetadataRestriction}
+	 */
+	private ProjectMetadataRole getMetadataFieldRestriction(Long projectId, Long metadataTemplateFieldId) {
+		Project project = projectService.read(projectId);
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
+				metadataTemplateFieldId);
+		MetadataRestriction metadataRestriction = metadataRestrictionRepository.getRestrictionForFieldAndProject(
+				project, metadataTemplateField);
+		if (metadataRestriction != null) {
+			return metadataRestriction.getLevel();
+		}
+
+		return null;
 	}
 }

@@ -1,4 +1,5 @@
-import { createAction, createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchMetadataForSample } from "../../apis/samples/samples";
 
 /**
  * Action to set the target sample
@@ -18,13 +19,14 @@ export const setProject = createAction(`sample/setProjectId`, (projectId) => ({
 }));
 
 /**
- * Action to set the sample metadata
+ * Get all metadata for the specified sample.
+ * @type {AsyncThunk<unknown, void, {}>}
  */
-export const setSampleMetadata = createAction(
-  `sample/setSampleMetadata`,
-  (metadata) => ({
-    payload: { metadata },
-  })
+export const fetchSampleMetadata = createAsyncThunk(
+  `sample/fetchSampleMetadata`,
+  async ({ sampleId, projectId }) => {
+    return await fetchMetadataForSample({ sampleId, projectId });
+  }
 );
 
 /**
@@ -48,7 +50,7 @@ export const setEditSampleMetadata = createAction(
 );
 
 /**
- * Action to remove metadata from samples
+ * Action to remove metadata from sample
  */
 export const removeSampleMetadataField = createAction(
   `sample/removeSampleMetadataField`,
@@ -82,9 +84,8 @@ export const addSampleMetadataField = createAction(
 /**
  * Set up the initial state.
  */
-const sampleSlice = createSlice({
-  name: "sample",
-  initialState: {
+const initialState = (() => {
+  return {
     sample: {},
     modifiable: false,
     projectId: null,
@@ -95,8 +96,19 @@ const sampleSlice = createSlice({
     entry: null,
     restriction: "LEVEL_1",
     metadata: [],
-  },
+    loading: true,
+  };
+})();
+
+const sampleSlice = createSlice({
+  name: "sample",
+  initialState,
   extraReducers: (builder) => {
+    builder.addCase(fetchSampleMetadata.fulfilled, (state, action) => {
+      state.metadata = action.payload.metadata;
+      state.loading = false;
+    });
+
     builder.addCase(setSample, (state, action) => {
       state.sample = action.payload.sample;
       state.modifiable = action.payload.modifiable;
@@ -104,10 +116,6 @@ const sampleSlice = createSlice({
 
     builder.addCase(setProject, (state, action) => {
       state.projectId = action.payload.projectId;
-    });
-
-    builder.addCase(setSampleMetadata, (state, action) => {
-      state.metadata = action.payload.metadata;
     });
 
     builder.addCase(setEditSampleMetadata, (state, action) => {
@@ -120,28 +128,28 @@ const sampleSlice = createSlice({
     });
 
     builder.addCase(editSampleMetadata, (state, action) => {
-      state.metadata = state.metadata.map((el) =>
-        el.fieldId === action.payload.fieldId &&
-        el.entryId === action.payload.entryId
+      state.metadata = state.metadata.map((metadataFieldEntry) =>
+        metadataFieldEntry.fieldId === action.payload.fieldId &&
+        metadataFieldEntry.entryId === action.payload.entryId
           ? {
-              ...el,
+              ...metadataFieldEntry,
               metadataTemplateField: action.payload.field,
               metadataEntry: action.payload.entry,
               metadataRestriction: action.payload.restriction,
             }
-          : el
+          : metadataFieldEntry
       );
     });
 
     builder.addCase(addSampleMetadataField, (state, action) => {
-      state.metadata = state.metadata.push({
-        ...state.metadata,
-        metadataTemplateField: action.payload.field,
+      const newMetadataFieldEntry = {
+        metadataTemplateField: action.payload.metadataTemplateField,
         fieldId: action.payload.fieldId,
-        metadataEntry: action.payload.entry,
+        metadataEntry: action.payload.metadataEntry,
         entryId: action.payload.entryId,
-        metadataRestriction: action.payload.restriction,
-      });
+        metadataRestriction: action.payload.metadataRestriction,
+      };
+      state.metadata = [...state.metadata, newMetadataFieldEntry];
     });
 
     builder.addCase(removeSampleMetadataField, (state, action) => {

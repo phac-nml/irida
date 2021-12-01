@@ -1,10 +1,7 @@
 import React from "react";
 import { Button, Empty, List, notification, Popconfirm, Space } from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
-import {
-  useGetSampleMetadataQuery,
-  useRemoveSampleMetadataMutation,
-} from "../../../apis/samples/samples";
+import { useRemoveSampleMetadataMutation } from "../../../apis/samples/samples";
 import { ContentLoading } from "../../loader";
 import { IconEdit, IconPlusCircle, IconRemove } from "../../icons/Icons";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
@@ -13,9 +10,9 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchSampleMetadata,
   removeSampleMetadataField,
   setEditSampleMetadata,
-  setSampleMetadata,
 } from "../sampleSlice";
 
 const DEFAULT_HEIGHT = 600;
@@ -27,26 +24,22 @@ const DEFAULT_HEIGHT = 600;
  * @constructor
  */
 export function SampleMetadata() {
-  const { sample, modifiable: isModifiable, projectId } = useSelector(
-    (state) => state.sampleReducer
-  );
-
   const {
-    data = {},
-    isLoading,
-    refetch: refetchSampleMetadata,
-  } = useGetSampleMetadataQuery({
-    sampleId: sample.identifier,
-    projectId: projectId,
-  });
+    sample,
+    modifiable: isModifiable,
+    projectId,
+    metadata,
+    loading,
+  } = useSelector((state) => state.sampleReducer);
+
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    if (!isLoading) {
-      dispatch(setSampleMetadata(data.metadata));
-    }
-  }, [data]);
+    dispatch(
+      fetchSampleMetadata({ sampleId: sample.identifier, projectId: projectId })
+    );
+  }, []);
 
   const removeMetadata = (field, entryId) => {
     removeSampleMetadata({
@@ -56,7 +49,6 @@ export function SampleMetadata() {
       .then(({ data }) => {
         notification.success({ message: data.message });
         dispatch(removeSampleMetadataField({ field, entryId }));
-        refetchSampleMetadata();
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -64,7 +56,7 @@ export function SampleMetadata() {
   };
 
   const renderMetadataFieldListItem = ({ index, style }) => {
-    const item = data.metadata[index];
+    const item = metadata[index];
     return (
       <List.Item
         className="t-sample-details-metadata-item"
@@ -126,7 +118,7 @@ export function SampleMetadata() {
     <>
       {isModifiable && (
         <MetadataRolesProvider>
-          <AddNewMetadata refetch={refetchSampleMetadata}>
+          <AddNewMetadata>
             <Button icon={<IconPlusCircle />}>
               {i18n("SampleMetadata.addNewMetadata")}
             </Button>
@@ -139,13 +131,13 @@ export function SampleMetadata() {
           width: "100%",
         }}
       >
-        {!isLoading ? (
-          data.metadata.length ? (
+        {!loading ? (
+          metadata.length ? (
             <>
               <AutoSizer>
                 {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
                   <VList
-                    itemCount={data.metadata.length}
+                    itemCount={metadata.length}
                     itemSize={75}
                     height={height}
                     width={width}
@@ -155,11 +147,7 @@ export function SampleMetadata() {
                 )}
               </AutoSizer>
               <MetadataRolesProvider>
-                <EditMetadata
-                  sampleId={sample.identifier}
-                  projectId={projectId}
-                  refetch={refetchSampleMetadata}
-                ></EditMetadata>
+                <EditMetadata />
               </MetadataRolesProvider>
             </>
           ) : (

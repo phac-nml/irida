@@ -9,12 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 /**
  * Function to render Add New Metadata Field modal
- * @param refetch - Function which refetches sample metadata for sample
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function AddNewMetadata({ refetch: refetchSampleMetadata, children }) {
+export function AddNewMetadata({ children }) {
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const [visible, setVisible] = React.useState(false);
   const [addSampleMetadata] = useAddSampleMetadataMutation();
@@ -52,7 +51,6 @@ export function AddNewMetadata({ refetch: refetchSampleMetadata, children }) {
                 metadataRestriction: resData.metadataRestriction,
               })
             );
-            refetchSampleMetadata();
           }
           form.resetFields();
           setVisible(false);

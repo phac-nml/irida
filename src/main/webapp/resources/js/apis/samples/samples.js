@@ -4,6 +4,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const URL = setBaseUrl(`ajax/samples`);
 
+/**
+ * Redux API to handle queries based on samples
+ */
 export const sampleApi = createApi({
   reducerPath: `sampleApi`,
   baseQuery: fetchBaseQuery({
@@ -31,14 +34,6 @@ export const sampleApi = createApi({
       }),
       invalidatesTags: ["SampleDetails"],
     }),
-    getSampleMetadata: build.query({
-      query: ({ sampleId, projectId }) => ({
-        url: `/${sampleId}/metadata?projectId=${projectId}`,
-        method: `GET`,
-        providesTags: ["SampleMetadata"],
-      }),
-    }),
-
     addSampleMetadata: build.mutation({
       query: ({
         sampleId,
@@ -89,11 +84,26 @@ export const sampleApi = createApi({
 export const {
   useGetSampleDetailsQuery,
   useUpdateSampleDetailsMutation,
-  useGetSampleMetadataQuery,
   useAddSampleMetadataMutation,
   useRemoveSampleMetadataMutation,
   useUpdateSampleMetadataMutation,
 } = sampleApi;
+
+/**
+ * Gets the sample metadata.
+ * @param {Object} params
+ * @returns {Promise<{}|T>}
+ */
+export const fetchMetadataForSample = async ({ sampleId, projectId }) => {
+  try {
+    const { data } = await axios.get(
+      setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`)
+    );
+    return data;
+  } catch (e) {
+    return Promise.reject();
+  }
+};
 
 /**
  * Get file details for a sample

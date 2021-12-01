@@ -9,12 +9,10 @@ import { editSampleMetadata, setEditSampleMetadata } from "../sampleSlice";
 
 /**
  * Function to render Update Metadata Field modal
- * @param refetch - Function which refetches sample metadata for sample
- * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function EditMetadata({ refetch: refetchSampleMetadata, children }) {
+export function EditMetadata() {
   const dispatch = useDispatch();
   const [updateSampleMetadata] = useUpdateSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
@@ -52,7 +50,6 @@ export function EditMetadata({ refetch: refetchSampleMetadata, children }) {
             notification.error({ message: response.error.data.error });
           } else {
             notification.success({ message: response.data.message });
-            refetchSampleMetadata();
           }
           dispatch(
             editSampleMetadata({
