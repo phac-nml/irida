@@ -5,10 +5,7 @@ import {
   getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
 } from "../../../apis/metadata/field";
-import {
-  compareRestrictionLevels,
-  getColourForRestriction,
-} from "../../../utilities/restriction-utilities";
+import { getColourForRestriction } from "../../../utilities/restriction-utilities";
 import { MetadataRestrictionSelect } from "../settings/components/metadata/MetadataRestrictionSelect";
 
 export function ShareMetadata() {
@@ -50,31 +47,6 @@ export function ShareMetadata() {
   React.useEffect(() => {
     getMetadataRestrictions().then(setRestrictions);
   }, []);
-
-  React.useEffect(() => {
-    if (targetFields && !loadingFields) {
-      // Create a dictionary using current fields
-      const newRestrictions = {};
-      fields.forEach((field) => {
-        newRestrictions[field.fieldKey] = field.restriction;
-      });
-
-      // Add the height restriction between current and target fields
-      targetFields.forEach((restriction) => {
-        if (newRestrictions.hasOwnProperty(restriction.fieldKey)) {
-          const difference = compareRestrictionLevels(
-            newRestrictions[restriction.fieldKey],
-            restriction.restriction
-          );
-          newRestrictions[restriction.fieldKey] =
-            difference < 0
-              ? newRestrictions[restriction.fieldKey]
-              : restriction.restriction;
-        }
-      });
-      setTargetRestrictions(newRestrictions);
-    }
-  }, [fields, loadingFields, targetFields]);
 
   const updateRestrictionForField = (fieldKey, level) =>
     setTargetRestrictions({
