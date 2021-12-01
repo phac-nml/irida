@@ -224,12 +224,12 @@ public class UISampleService {
 	}
 
 	/**
-	 * Add metadata for the sample
+	 * Remove metadata from the sample
 	 *
 	 * @param metadataField   The metadata field
 	 * @param metadataEntryId The metadata entry id
 	 * @param locale          {@link Locale} for the currently logged in user
-	 * @return message indicating update status
+	 * @return message indicating deletion status
 	 */
 	public String removeSampleMetadata(String metadataField, Long metadataEntryId, Locale locale) {
 		metadataEntryRepository.deleteById(metadataEntryId);
@@ -239,7 +239,7 @@ public class UISampleService {
 	}
 
 	/**
-	 * Add metadata for the sample
+	 * Update metadata for the sample
 	 *
 	 * @param sampleId                    The sample identifier
 	 * @param updateSampleMetadataRequest DTO containing sample metadata update params

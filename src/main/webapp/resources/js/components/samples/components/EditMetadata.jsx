@@ -50,16 +50,16 @@ export function EditMetadata() {
             notification.error({ message: response.error.data.error });
           } else {
             notification.success({ message: response.data.message });
+            dispatch(
+              editSampleMetadata({
+                fieldId,
+                entryId,
+                field: values.metadata_field_name,
+                entry: values.metadata_field_value,
+                restriction: values.metadata_field_permission,
+              })
+            );
           }
-          dispatch(
-            editSampleMetadata({
-              fieldId,
-              entryId,
-              field: values.metadata_field_name,
-              entry: values.metadata_field_value,
-              restriction: values.metadata_field_permission,
-            })
-          );
           form.resetFields();
           dispatch(setEditSampleMetadata({ editModalVisible: false }));
         })
