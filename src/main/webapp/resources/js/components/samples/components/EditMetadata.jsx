@@ -1,74 +1,49 @@
 import { Form, Input, Modal, notification, Select, Typography } from "antd";
 import React from "react";
-import {
-  useUpdateSampleMetadataMutation,
-  useGetMetadataFieldRestrictionQuery,
-} from "../../../apis/samples/samples";
+import { useDispatch, useSelector } from "react-redux";
+import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 const { Title } = Typography;
+import { editSampleMetadata, setEditSampleMetadata } from "../sampleSlice";
 
 /**
  * Function to render Update Metadata Field modal
- * @param projectId - The project identifier
- * @param metadataField - The metadata field label
- * @param metadataFieldId - The metadata field identifier
- * @param metadataEntryId - The metadata entry identifier
- * @param metadataEntry - The metadata entry value
  * @param refetch - Function which refetches sample metadata for sample
- * @param visible - Whether or not modal should be displayed
- * @param refetch - Function to refetch sample metadata after changes are made
- * @param onCancel - Function to run if user clicks the cancel button
- * @param onOk - Function to run if user clicks the update button
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function EditMetadata({
-  sampleId,
-  projectId,
-  metadataField,
-  metadataFieldId,
-  metadataEntryId,
-  metadataEntry,
-  refetch: refetchSampleMetadata,
-  visible,
-  onCancel,
-  onOk,
-  children,
-}) {
-  const {
-    data: metadataFieldRestriction = {},
-    isLoading,
-    refetch: refetchMetadataRestriction,
-  } = useGetMetadataFieldRestrictionQuery(
-    {
-      projectId,
-      metadataFieldId: metadataFieldId,
-    },
-    { skip: !metadataFieldId }
-  );
-
+export function EditMetadata({ refetch: refetchSampleMetadata, children }) {
+  const dispatch = useDispatch();
   const [updateSampleMetadata] = useUpdateSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
-
-  React.useEffect(() => {}, [visible]);
+  const {
+    editModalVisible,
+    field,
+    fieldId,
+    entry,
+    entryId,
+    restriction,
+    sample,
+    projectId,
+  } = useSelector((state) => state.sampleReducer);
 
   const [form] = Form.useForm();
 
   useResetFormOnCloseModal({
     form,
-    visible,
+    visible: editModalVisible,
   });
 
   const updateMetadata = () => {
     form.validateFields().then((values) => {
       updateSampleMetadata({
-        sampleId,
+        sampleId: sample.identifier,
         projectId,
-        metadataFieldId: metadataFieldId,
+        metadataFieldId: fieldId,
         metadataField: values.metadata_field_name,
-        metadataEntryId: metadataEntryId,
+        metadataEntryId: entryId,
         metadataEntry: values.metadata_field_value,
         metadataRestriction: values.metadata_field_permission,
       })
@@ -78,10 +53,18 @@ export function EditMetadata({
           } else {
             notification.success({ message: response.data.message });
             refetchSampleMetadata();
-            refetchMetadataRestriction();
           }
+          dispatch(
+            editSampleMetadata({
+              fieldId,
+              entryId,
+              field: values.metadata_field_name,
+              entry: values.metadata_field_value,
+              restriction: values.metadata_field_permission,
+            })
+          );
           form.resetFields();
-          onOk();
+          dispatch(setEditSampleMetadata({ editModalVisible: false }));
         })
         .catch((error) => {
           notification.error({ message: error });
@@ -91,11 +74,13 @@ export function EditMetadata({
 
   return (
     <>
-      {!isLoading && visible ? (
+      {editModalVisible ? (
         <Modal
           className="t-edit-sample-metadata"
-          onCancel={onCancel}
-          visible={visible}
+          onCancel={() =>
+            dispatch(setEditSampleMetadata({ editModalVisible: false }))
+          }
+          visible={editModalVisible}
           onOk={updateMetadata}
           okText={i18n("SampleMetadata.modal.btn.update")}
           cancelText={i18n("SampleMetadata.modal.btn.cancel")}
@@ -105,7 +90,7 @@ export function EditMetadata({
             <Form.Item
               name="metadata_field_name"
               label={i18n("SampleMetadata.modal.fieldName")}
-              initialValue={metadataField}
+              initialValue={field}
               rules={[
                 {
                   required: true,
@@ -122,7 +107,7 @@ export function EditMetadata({
             <Form.Item
               name="metadata_field_value"
               label={i18n("SampleMetadata.modal.fieldValue")}
-              initialValue={metadataEntry}
+              initialValue={entry}
               rules={[
                 {
                   required: true,
@@ -139,13 +124,7 @@ export function EditMetadata({
             <Form.Item
               name="metadata_field_permission"
               label={i18n("SampleMetadata.modal.restriction")}
-              initialValue={
-                !isLoading &&
-                (metadataFieldRestriction &&
-                Object.keys(metadataFieldRestriction).length === 0
-                  ? "LEVEL_1"
-                  : metadataFieldRestriction.level)
-              }
+              initialValue={restriction ? restriction : "LEVEL_1"}
             >
               <Select style={{ width: "100%" }}>
                 {metadataRoles?.map((role) => (

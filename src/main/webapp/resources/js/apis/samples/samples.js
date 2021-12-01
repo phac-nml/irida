@@ -32,19 +32,13 @@ export const sampleApi = createApi({
       invalidatesTags: ["SampleDetails"],
     }),
     getSampleMetadata: build.query({
-      query: (sampleId) => ({
-        url: `/${sampleId}/metadata`,
+      query: ({ sampleId, projectId }) => ({
+        url: `/${sampleId}/metadata?projectId=${projectId}`,
         method: `GET`,
         providesTags: ["SampleMetadata"],
       }),
     }),
-    getMetadataFieldRestriction: build.query({
-      query: ({ projectId, metadataFieldId }) => ({
-        url: `/metadata-field-restriction?projectId=${projectId}&metadataTemplateFieldId=${metadataFieldId}`,
-        method: `GET`,
-        providesTags: ["MetadataRestriction"],
-      }),
-    }),
+
     addSampleMetadata: build.mutation({
       query: ({
         sampleId,
@@ -99,7 +93,6 @@ export const {
   useAddSampleMetadataMutation,
   useRemoveSampleMetadataMutation,
   useUpdateSampleMetadataMutation,
-  useGetMetadataFieldRestrictionQuery,
 } = sampleApi;
 
 /**

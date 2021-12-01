@@ -11,31 +11,42 @@ import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context"
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeSampleMetadataField,
+  setEditSampleMetadata,
+  setSampleMetadata,
+} from "../sampleSlice";
 
 const DEFAULT_HEIGHT = 600;
 
 /**
  * React component to display metadata associated with a sample
  *
- * @param sampleId The sample identifier
- * @param isModifiable If the current user can modify the sample or not
- * @param projectId The project identifier
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleMetadata({ sampleId, isModifiable, projectId }) {
+export function SampleMetadata() {
+  const { sample, modifiable: isModifiable, projectId } = useSelector(
+    (state) => state.sampleReducer
+  );
+
   const {
     data = {},
     isLoading,
     refetch: refetchSampleMetadata,
-  } = useGetSampleMetadataQuery(sampleId);
+  } = useGetSampleMetadataQuery({
+    sampleId: sample.identifier,
+    projectId: projectId,
+  });
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
-  const [editModalVisible, setEditModalVisible] = React.useState(false);
+  const dispatch = useDispatch();
 
-  const [field, setField] = React.useState(null);
-  const [fieldId, setFieldId] = React.useState(null);
-  const [entry, setEntry] = React.useState(null);
-  const [entryId, setEntryId] = React.useState(null);
+  React.useEffect(() => {
+    if (!isLoading) {
+      dispatch(setSampleMetadata(data.metadata));
+    }
+  }, [data]);
 
   const removeMetadata = (field, entryId) => {
     removeSampleMetadata({
@@ -44,21 +55,12 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
     })
       .then(({ data }) => {
         notification.success({ message: data.message });
+        dispatch(removeSampleMetadataField({ field, entryId }));
         refetchSampleMetadata();
       })
       .catch((error) => {
         notification.error({ message: error });
       });
-  };
-
-  // Set visibility of edit metadata modal to false if user clicks cancel
-  const onCancel = () => {
-    setEditModalVisible(false);
-  };
-
-  // Set visibility of edit metadata modal to false if user clicks ok
-  const onOk = () => {
-    setEditModalVisible(false);
   };
 
   const renderMetadataFieldListItem = ({ index, style }) => {
@@ -87,11 +89,16 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
               icon={
                 <IconEdit
                   onClick={() => {
-                    setEditModalVisible(true);
-                    setField(item.metadataTemplateField);
-                    setFieldId(item.fieldId);
-                    setEntryId(item.entryId);
-                    setEntry(item.metadataEntry);
+                    dispatch(
+                      setEditSampleMetadata({
+                        editModalVisible: true,
+                        field: item.metadataTemplateField,
+                        fieldId: item.fieldId,
+                        entryId: item.entryId,
+                        entry: item.metadataEntry,
+                        restriction: item.metadataRestriction,
+                      })
+                    );
                   }}
                 />
               }
@@ -119,11 +126,7 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
     <>
       {isModifiable && (
         <MetadataRolesProvider>
-          <AddNewMetadata
-            sampleId={sampleId}
-            refetch={refetchSampleMetadata}
-            projectId={projectId}
-          >
+          <AddNewMetadata refetch={refetchSampleMetadata}>
             <Button icon={<IconPlusCircle />}>
               {i18n("SampleMetadata.addNewMetadata")}
             </Button>
@@ -153,16 +156,9 @@ export function SampleMetadata({ sampleId, isModifiable, projectId }) {
               </AutoSizer>
               <MetadataRolesProvider>
                 <EditMetadata
-                  sampleId={sampleId}
+                  sampleId={sample.identifier}
                   projectId={projectId}
-                  metadataField={field}
-                  metadataFieldId={fieldId}
-                  metadataEntryId={entryId}
-                  metadataEntry={entry}
                   refetch={refetchSampleMetadata}
-                  visible={editModalVisible}
-                  onCancel={() => onCancel()}
-                  onOk={() => onOk()}
                 ></EditMetadata>
               </MetadataRolesProvider>
             </>

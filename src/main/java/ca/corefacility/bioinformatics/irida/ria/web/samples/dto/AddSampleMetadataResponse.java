@@ -1,23 +1,24 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-
 /**
- * Used to return metadata field and entry back to the user interface.
+ * Used to handle responses to the UI to add a piece of sample metadata.
  */
-public class SampleMetadataFieldEntry {
+public class AddSampleMetadataResponse {
 	private Long fieldId;
 	private String metadataTemplateField;
 	private String metadataEntry;
 	private Long entryId;
-	private ProjectMetadataRole metadataRestriction;
+	private String metadataRestriction;
+	private String responseMessage;
 
-	public SampleMetadataFieldEntry(Long fieldId, String metadataTemplateField, String metadataEntry, Long entryId, ProjectMetadataRole metadataRestriction) {
+	public AddSampleMetadataResponse(Long fieldId, String metadataTemplateField, String metadataEntry, Long entryId,
+			String metadataRestriction, String responseMessage) {
 		this.fieldId = fieldId;
 		this.metadataTemplateField = metadataTemplateField;
 		this.metadataEntry = metadataEntry;
 		this.entryId = entryId;
 		this.metadataRestriction = metadataRestriction;
+		this.responseMessage = responseMessage;
 	}
 
 	public Long getFieldId() {
@@ -52,11 +53,19 @@ public class SampleMetadataFieldEntry {
 		this.entryId = entryId;
 	}
 
-	public ProjectMetadataRole getMetadataRestriction() {
+	public String getMetadataRestriction() {
 		return metadataRestriction;
 	}
 
-	public void setMetadataRestriction(ProjectMetadataRole metadataRestriction) {
+	public void setMetadataRestriction(String metadataRestriction) {
 		this.metadataRestriction = metadataRestriction;
+	}
+
+	public String getResponseMessage() {
+		return responseMessage;
+	}
+
+	public void setResponseMessage(String responseMessage) {
+		this.responseMessage = responseMessage;
 	}
 }

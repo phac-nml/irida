@@ -9,9 +9,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -185,21 +182,8 @@ public class SamplesAjaxController {
 	 * @return {@link SampleMetadata} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/metadata")
-	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id) {
-		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id));
-	}
-
-	/**
-	 * Get {@link MetadataRestriction} for metadata field
-	 *
-	 * @param projectId               Identifier for {@link Project}
-	 * @param metadataTemplateFieldId Identifier for {@link MetadataTemplateField}
-	 * @return {@link MetadataRestriction}
-	 */
-	@GetMapping(value = "/metadata-field-restriction")
-	public ResponseEntity<MetadataRestriction> getMetadataFieldRestriction(@RequestParam Long projectId,
-			@RequestParam Long metadataTemplateFieldId) {
-		return ResponseEntity.ok(uiSampleService.getMetadataFieldRestriction(projectId, metadataTemplateFieldId));
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, @RequestParam Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id, projectId));
 	}
 
 	/**
@@ -234,10 +218,9 @@ public class SamplesAjaxController {
 	 * @return {@link ResponseEntity} explaining to the user the results of the addition.
 	 */
 	@PostMapping(value = "/{id}/metadata")
-	public ResponseEntity<AjaxResponse> addSampleMetadata(@PathVariable Long id,
+	public ResponseEntity<AddSampleMetadataResponse> addSampleMetadata(@PathVariable Long id,
 			@RequestBody AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
-		return ResponseEntity.ok(
-				new AjaxSuccessResponse(uiSampleService.addSampleMetadata(id, addSampleMetadataRequest, locale)));
+		return ResponseEntity.ok(uiSampleService.addSampleMetadata(id, addSampleMetadataRequest, locale));
 	}
 
 	/**

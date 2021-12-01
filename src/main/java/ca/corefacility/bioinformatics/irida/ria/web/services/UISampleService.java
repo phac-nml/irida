@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRep
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import com.github.jsonldjava.shaded.com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -96,10 +95,18 @@ public class UISampleService {
 	 * @param id Identifier for a {@link Sample}
 	 * @return {@link SampleMetadata}
 	 */
-	public SampleMetadata getSampleMetadata(Long id) {
+	public SampleMetadata getSampleMetadata(Long id, Long projectId) {
 		Sample sample = sampleService.read(id);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
-		return new SampleMetadata(metadataForSample);
+
+		List<SampleMetadataFieldEntry> metadata = metadataForSample.stream()
+				.map(s -> new SampleMetadataFieldEntry(s.getField()
+						.getId(), s.getField()
+						.getLabel(), s.getValue(), s.getId(), getMetadataFieldRestriction(projectId, s.getField().getId())))
+				.sorted(Comparator.comparing(SampleMetadataFieldEntry::getMetadataTemplateField))
+				.collect(Collectors.toList());
+
+		return new SampleMetadata(metadata);
 
 	}
 
@@ -110,13 +117,17 @@ public class UISampleService {
 	 * @param metadataTemplateFieldId Identifier for {@link MetadataTemplateField}
 	 * @return {@link MetadataRestriction}
 	 */
-	public MetadataRestriction getMetadataFieldRestriction(Long projectId, Long metadataTemplateFieldId) {
+	private ProjectMetadataRole getMetadataFieldRestriction(Long projectId, Long metadataTemplateFieldId) {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
 				metadataTemplateFieldId);
 		MetadataRestriction metadataRestriction = metadataRestrictionRepository.getRestrictionForFieldAndProject(
 				project, metadataTemplateField);
-		return metadataRestriction;
+		if(metadataRestriction != null) {
+			return metadataRestriction.getLevel();
+		}
+
+		return null;
 	}
 
 	/**
@@ -197,7 +208,7 @@ public class UISampleService {
 	 * @param locale                   {@link Locale} for the currently logged in user
 	 * @return message indicating update status
 	 */
-	public String addSampleMetadata(Long sampleId, AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
+	public AddSampleMetadataResponse addSampleMetadata(Long sampleId, AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(
 				addSampleMetadataRequest.getMetadataRestriction());
@@ -209,16 +220,22 @@ public class UISampleService {
 				metadataTemplateField, metadataRole);
 
 		String message = "";
-		if (!Strings.isNullOrEmpty(addSampleMetadataRequest.getMetadataEntry())) {
-			MetadataEntry entry = new MetadataEntry(addSampleMetadataRequest.getMetadataEntry(), "text", templateField);
-			sampleService.mergeSampleMetadata(sample, Sets.newHashSet(entry));
+		MetadataEntry entry = null;
+		Long entryId = null;
 
+		if (!Strings.isNullOrEmpty(addSampleMetadataRequest.getMetadataEntry())) {
+			entry = new MetadataEntry(addSampleMetadataRequest.getMetadataEntry(), "text", templateField);
+			entry.setSample(sample);
+			entryId = metadataEntryRepository.save(entry).getId();
 			message = messageSource.getMessage("server.sample.metadata.add.success",
 					new Object[] { addSampleMetadataRequest.getMetadataField(),
 							addSampleMetadataRequest.getMetadataEntry(), metadataRestriction.getLevel() }, locale);
 		}
 
-		return message;
+		return new AddSampleMetadataResponse(metadataTemplateField.getId(), metadataTemplateField.getLabel(), entry.getValue(), entryId, metadataRestriction.getLevel()
+				.name(), message);
+
+
 	}
 
 	/**
@@ -269,7 +286,7 @@ public class UISampleService {
 					.equals(updateSampleMetadataRequest.getMetadataEntry())) {
 				existingMetadataEntry.get()
 						.setValue(updateSampleMetadataRequest.getMetadataEntry());
-				sampleService.mergeSampleMetadata(sample, Sets.newHashSet(existingMetadataEntry.get()));
+				metadataEntryRepository.save(existingMetadataEntry.get());
 				sampleUpdated = true;
 			}
 		}

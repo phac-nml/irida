@@ -6,21 +6,21 @@ import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { SingleEndFileRenderer } from "../../sequence-files/SingleEndFileRenderer";
 import { DragUpload } from "../../files/DragUpload";
+import { useSelector } from "react-redux";
 
 /**
  * React component to display sample files.
  *
- * @param id - sample identifier
- * @param projectId - project identifier
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFiles({ id, projectId }) {
+export function SampleFiles() {
+  const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const [loading, setLoading] = React.useState(true);
   const [files, setFiles] = React.useState();
 
   React.useEffect(() => {
-    fetchSampleFiles({ sampleId: id, projectId })
+    fetchSampleFiles({ sampleId: sample.identifier, projectId })
       .then((data) => {
         /*
       Remove any file types that do not have associated files.
@@ -32,7 +32,7 @@ export function SampleFiles({ id, projectId }) {
         setLoading(false);
       })
       .catch((e) => notification.error({ message: e }));
-  }, [id, projectId]);
+  }, [sample.identifier, projectId]);
 
   const options = {
     multiple: true,
@@ -61,7 +61,10 @@ export function SampleFiles({ id, projectId }) {
       />
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-          <SingleEndFileRenderer files={files.singles} sampleId={id} />
+          <SingleEndFileRenderer
+            files={files.singles}
+            sampleId={sample.identifier}
+          />
         </SequenceFileTypeRenderer>
       )}
       {files.paired && (
@@ -70,14 +73,17 @@ export function SampleFiles({ id, projectId }) {
             <PairedFileRenderer
               key={`pair-${pair.identifier}`}
               pair={pair}
-              sampleId={id}
+              sampleId={sample.identifier}
             />
           ))}
         </SequenceFileTypeRenderer>
       )}
       {files.fast5 && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-          <SingleEndFileRenderer files={files.fast5} sampleId={id} />
+          <SingleEndFileRenderer
+            files={files.fast5}
+            sampleId={sample.identifier}
+          />
         </SequenceFileTypeRenderer>
       )}
       {files.assemblies && (

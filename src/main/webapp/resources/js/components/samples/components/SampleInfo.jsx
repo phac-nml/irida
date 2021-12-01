@@ -7,7 +7,7 @@ const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologySelect } from "../../ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
-
+import { useSelector } from "react-redux";
 const StyledList = styled(List)`
   .ant-list-item {
     padding: 15px;
@@ -23,12 +23,15 @@ const StyledList = styled(List)`
 
 /**
  * React component to display basic sample information
- * @param sample The sample to display information for
- * @param isModifiable If the current user is allowed to modify sample details or not
+ *
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleInfo({ sample, isModifiable }) {
+export function SampleInfo() {
+  const { sample, modifiable: isModifiable } = useSelector(
+    (state) => state.sampleReducer
+  );
+
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();
   const dateFormat = "YYYY-MM-DD";
 

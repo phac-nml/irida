@@ -4,25 +4,22 @@ import { useAddSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 const { Title } = Typography;
+import { addSampleMetadataField } from "../sampleSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 /**
  * Function to render Add New Metadata Field modal
- * @param sampleId - identifier for a sample
  * @param refetch - Function which refetches sample metadata for sample
- * @param projectId - The project identifier
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function AddNewMetadata({
-  sampleId,
-  refetch: refetchSampleMetadata,
-  projectId,
-  children,
-}) {
+export function AddNewMetadata({ refetch: refetchSampleMetadata, children }) {
+  const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const [visible, setVisible] = React.useState(false);
   const [addSampleMetadata] = useAddSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
+  const dispatch = useDispatch();
 
   const [form] = Form.useForm();
   useResetFormOnCloseModal({
@@ -34,17 +31,27 @@ export function AddNewMetadata({
     form.validateFields().then((values) => {
       // Add the new sample metadata and refetch the metadata
       addSampleMetadata({
-        sampleId,
+        sampleId: sample.identifier,
         projectId,
         metadataField: values.metadata_field_name,
         metadataEntry: values.metadata_field_value,
         metadataRestriction: values.metadata_field_permission,
       })
         .then((response) => {
+          const resData = response.data;
           if (response.error) {
             notification.error({ message: response.error.data.error });
           } else {
-            notification.success({ message: response.data.message });
+            notification.success({ message: response.data.responseMessage });
+            dispatch(
+              addSampleMetadataField({
+                fieldId: resData.fieldId,
+                entryId: resData.entryId,
+                metadataTemplateField: resData.metadataTemplateField,
+                metadataEntry: resData.metadataEntry,
+                metadataRestriction: resData.metadataRestriction,
+              })
+            );
             refetchSampleMetadata();
           }
           form.resetFields();

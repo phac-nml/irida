@@ -4,6 +4,8 @@ import { Tabs, Typography } from "antd";
 import { SampleFiles } from "./SampleFiles";
 import { SampleInfo } from "./SampleInfo";
 import { SampleAnalyses } from "./SampleAnalyses";
+import { useDispatch } from "react-redux";
+import { setProject, setSample } from "../sampleSlice";
 
 const { Paragraph } = Typography;
 
@@ -16,6 +18,15 @@ const { Paragraph } = Typography;
  * @constructor
  */
 export function SampleDetails({ details }) {
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(
+      setSample({ sample: details.sample, modifiable: details.modifiable })
+    );
+    dispatch(setProject(details.projectId));
+  }, [dispatch]);
+
   return (
     <>
       <Paragraph ellipsis={{ rows: 3, expandable: true }}>
@@ -23,23 +34,13 @@ export function SampleDetails({ details }) {
       </Paragraph>
       <Tabs defaultActiveKey="details">
         <Tabs.TabPane tab={i18n("SampleDetails.details")} key="details">
-          <SampleInfo
-            sample={details.sample}
-            isModifiable={details.modifiable}
-          />
+          <SampleInfo />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.metadata")} key="metadata">
-          <SampleMetadata
-            sampleId={details.sample.identifier}
-            isModifiable={details.modifiable}
-            projectId={details.projectId}
-          />
+          <SampleMetadata />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.files")} key="files">
-          <SampleFiles
-            id={details.sample.identifier}
-            projectId={details.projectId}
-          />
+          <SampleFiles />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("SampleDetails.analyses")} key="analyses">
           <SampleAnalyses />
