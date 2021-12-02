@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Col, Menu, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import UserAccountNav from "./UserAccountNav";
 
@@ -11,7 +11,7 @@ import UserAccountNav from "./UserAccountNav";
  */
 export default function UserAccountLayout() {
   return (
-    <PageWrapper title="User Account">
+    <PageWrapper title={i18n("UserAccountLayout.page.title")}>
       <Row>
         <Col span={5}>
           <UserAccountNav />

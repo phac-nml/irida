@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.users;
 
 import java.security.Principal;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -75,7 +76,7 @@ public class UsersAjaxController {
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
-	public ResponseEntity<UserDetailsResponse> updateUser(@PathVariable Long userId,
+	public ResponseEntity<Map<String, String>> updateUser(@PathVariable Long userId,
 			@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
 			@RequestParam(required = false) String email, @RequestParam(required = false) String phoneNumber,
 			@RequestParam(required = false) String systemRole,
@@ -87,9 +88,9 @@ public class UsersAjaxController {
 
 		if (response.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body(response);
+					.body(response.getErrors());
 		else
-			return ResponseEntity.ok(response);
+			return ResponseEntity.ok(null);
 
 	}
 

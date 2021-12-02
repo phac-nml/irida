@@ -21,11 +21,11 @@ export default function UserDetailsPage() {
 
   const onFormFinish = async(values) => {
     try {
-      await editUser({'userId': userId, ...values});
-      notification.success({ message: "User updated successfully." });
+      await editUser({'userId': userId, ...values}).unwrap();
+      notification.success({ message: i18n("UserDetailsPage.notification.success") });
     } catch (editUserErrorResponse) {
-      notification.error({ message: "An Error has occurred." });
-      setFormErrors(editUserErrorResponse.data.errors);
+      notification.error({ message: i18n("UserDetailsPage.notification.error") });
+      setFormErrors(editUserErrorResponse.data);
     }
   }
 
@@ -38,42 +38,42 @@ export default function UserDetailsPage() {
           initialValues={data.user}
           onFinish={onFormFinish}
         >
-          <Form.Item label="First Name" name="firstName" help={formErrors?.firstName} validateStatus={ formErrors?.firstName ? "error" : undefined }>
+          <Form.Item label={i18n("UserDetailsPage.form.label.firstName")} name="firstName" help={formErrors?.firstName} validateStatus={ formErrors?.firstName ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Last Name" name="lastName" help={formErrors?.lastName} validateStatus={ formErrors?.lastName ? "error" : undefined }>
+          <Form.Item label={i18n("UserDetailsPage.form.label.lastName")} name="lastName" help={formErrors?.lastName} validateStatus={ formErrors?.lastName ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Email" name="email" help={formErrors?.email} validateStatus={ formErrors?.email ? "error" : undefined }>
+          <Form.Item label={i18n("UserDetailsPage.form.label.email")} name="email" help={formErrors?.email} validateStatus={ formErrors?.email ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Phone Number" name="phoneNumber" help={formErrors?.phoneNumber} validateStatus={ formErrors?.phoneNumber ? "error" : undefined }>
+          <Form.Item label={i18n("UserDetailsPage.form.label.phoneNumber")} name="phoneNumber" help={formErrors?.phoneNumber} validateStatus={ formErrors?.phoneNumber ? "error" : undefined }>
             <Input disabled={formDisabled} />
           </Form.Item>
-          <Form.Item label="Language" name="locale">
+          <Form.Item label={i18n("UserDetailsPage.form.label.locale")} name="locale">
             <Select disabled={formDisabled}>
               { Object.keys(data.locales).map((key, index) =>
                 <Select.Option key={`user-account-details-locale-${index}`} value={key}>{data.locales[key]}</Select.Option>
               )}
             </Select>
           </Form.Item>
-          <Form.Item label="Role" name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined }>
+          <Form.Item label={i18n("UserDetailsPage.form.label.role")} name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined }>
             <Select disabled={formDisabled}>
               { Object.keys(data.allowedRoles).map((key, index) =>
                 <Select.Option key={`user-account-details-role-${index}`} value={key}>{data.allowedRoles[key]}</Select.Option>
               )}
             </Select>
           </Form.Item>
-          <Form.Item label="Enabled" name="enabled" valuePropName="checked">
+          <Form.Item label={i18n("UserDetailsPage.form.label.enabled")} name="enabled" valuePropName="checked">
             <Switch disabled={formDisabled} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={formDisabled}>Update User</Button>
+            <Button type="primary" htmlType="submit" disabled={formDisabled}>{i18n("UserDetailsPage.form.button.submit")}</Button>
           </Form.Item>
         </Form>
-        <Typography.Text type="secondary">Created on {moment(data.user.createdDate).format()}</Typography.Text>
-        <Typography.Text type="secondary">Modified on {moment(data.user.modifiedDate).format()}</Typography.Text>
-        <Typography.Text type="secondary">Last login on {moment(data.user.lastLogin).format()}</Typography.Text>
+        <Typography.Text type="secondary">{i18n("UserDetailsPage.createdDate", moment(data.user.createdDate).format())}</Typography.Text>
+        <Typography.Text type="secondary">{i18n("UserDetailsPage.modifiedDate", moment(data.user.modifiedDate).format())}</Typography.Text>
+        <Typography.Text type="secondary">{i18n("UserDetailsPage.lastLogin", moment(data.user.lastLogin).format())}</Typography.Text>
       </Space>
     );
   } else {
