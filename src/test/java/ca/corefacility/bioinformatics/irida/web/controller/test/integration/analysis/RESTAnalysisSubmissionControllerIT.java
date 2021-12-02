@@ -113,7 +113,7 @@ public class RESTAnalysisSubmissionControllerIT {
 				.body("resource.executionManagerAnalysisId", equalTo("XYZABC"))
 				.and()
 				.body("resource.links.rel",
-						hasItems(IanaLinkRelations.SELF, RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
+						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
 				.get(ANALYSIS_BASE + "/1/analysis");
 	}
 
