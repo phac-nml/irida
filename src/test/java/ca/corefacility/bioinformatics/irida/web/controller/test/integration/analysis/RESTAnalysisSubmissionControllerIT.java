@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -95,7 +96,7 @@ public class RESTAnalysisSubmissionControllerIT {
 	public void testReadSubmission() {
 		asAdmin().expect().body("resource.name", equalTo("another analysis")).and()
 				.body("resource.analysisState", equalTo(AnalysisState.COMPLETED.toString()))
-				.body("resource.links.rel", hasItems(Link.REL_SELF, RESTAnalysisSubmissionController.ANALYSIS_REL))
+				.body("resource.links.rel", hasItems(IanaLinkRelations.SELF, RESTAnalysisSubmissionController.ANALYSIS_REL))
 				.when().get(ANALYSIS_BASE + "/1");
 	}
 
@@ -113,7 +114,7 @@ public class RESTAnalysisSubmissionControllerIT {
 				.body("resource.executionManagerAnalysisId", equalTo("XYZABC"))
 				.and()
 				.body("resource.links.rel",
-						hasItems(Link.REL_SELF, RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
+						hasItems(IanaLinkRelations.SELF, RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
 				.get(ANALYSIS_BASE + "/1/analysis");
 	}
 
@@ -133,7 +134,7 @@ public class RESTAnalysisSubmissionControllerIT {
 		}
 		
 		asAdmin().expect().body("resource.executionManagerFileId", equalTo("123-456-789")).and()
-				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(Link.REL_SELF))
+				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(IanaLinkRelations.SELF))
 				.when().get(ANALYSIS_BASE + "/1/analysis/file/1");
 
 		// get the tree file
