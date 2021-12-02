@@ -19,14 +19,16 @@ export default function UserDetailsPage() {
 
   const [formErrors, setFormErrors] = useState();
 
-  const onFormFinish = async(values) => {
-    try {
-      await editUser({'userId': userId, ...values}).unwrap();
-      notification.success({ message: i18n("UserDetailsPage.notification.success") });
-    } catch (editUserErrorResponse) {
-      notification.error({ message: i18n("UserDetailsPage.notification.error") });
-      setFormErrors(editUserErrorResponse.data);
-    }
+  const onFormFinish = (values) => {
+    editUser({'userId': userId, ...values})
+      .unwrap()
+      .then((payload) => {
+        notification.success({ message: i18n("UserDetailsPage.notification.success") });
+      })
+      .catch((error) => {
+        notification.error({ message: i18n("UserDetailsPage.notification.error") });
+        setFormErrors(error.data);
+      });
   }
 
   if (isSuccess) {
