@@ -105,14 +105,4 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 				.favorPathExtension(true)
 				.mediaTypes(mediaTypes);
 	}
-
-	@Bean
-	public MessageSource messageSource() {
-		String[] resources = { "classpath:/i18n/oauth" };
-
-		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasenames(resources);
-		source.setDefaultEncoding("UTF-8");
-		return source;
-	}
 }

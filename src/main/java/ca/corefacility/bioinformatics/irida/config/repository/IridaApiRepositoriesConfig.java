@@ -14,15 +14,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
@@ -45,27 +40,6 @@ public class IridaApiRepositoriesConfig {
 	 * The order for transaction management.
 	 */
 	public static final int TRANSACTION_MANAGEMENT_ORDER = 1000;
-
-	@Autowired
-	private DataConfig dataConfig;
-
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-			JpaVendorAdapter jpaVendorAdapter) {
-		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-		factory.setDataSource(dataSource);
-		factory.setJpaVendorAdapter(jpaVendorAdapter);
-		factory.setJpaProperties(dataConfig.getJpaProperties());
-		factory.setPackagesToScan("ca.corefacility.bioinformatics.irida.model",
-				"ca.corefacility.bioinformatics.irida.repositories.relational.auditing");
-
-		return factory;
-	}
-
-	@Bean
-	public PlatformTransactionManager transactionManager() {
-		return new JpaTransactionManager();
-	}
 
 	@Bean(initMethod = "initialize")
 	public RevisionListener revisionListener() {

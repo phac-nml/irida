@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
 import liquibase.integration.spring.SpringLiquibase;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.hibernate.cfg.AvailableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,19 +9,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
  * Configuration for IRIDA's JDBC Datasource
  */
 @Configuration
-public class IridaApiJdbcDataSourceConfig implements DataConfig {
+public class IridaApiJdbcDataSourceConfig {
 
 	@Autowired
 	Environment environment;
@@ -105,55 +100,5 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		springLiquibase.setIgnoreClasspathPrefix(true);
 
 		return springLiquibase;
-	}
-
-	@Bean
-	public DataSource dataSource() {
-		BasicDataSource basicDataSource = new BasicDataSource();
-
-		basicDataSource.setDriverClassName(environment.getProperty("jdbc.driver"));
-		basicDataSource.setUrl(environment.getProperty("jdbc.url"));
-		basicDataSource.setUsername(environment.getProperty("jdbc.username"));
-		basicDataSource.setPassword(environment.getProperty("jdbc.password"));
-		basicDataSource.setInitialSize(environment.getProperty("jdbc.pool.initialSize", Integer.class));
-		basicDataSource.setMaxTotal(environment.getProperty("jdbc.pool.maxActive", Integer.class));
-		basicDataSource.setMaxWaitMillis(environment.getProperty("jdbc.pool.maxWait", Long.class));
-		basicDataSource.setTestOnBorrow(environment.getProperty("jdbc.pool.testOnBorrow", Boolean.class));
-		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
-		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
-		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
-
-		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
-
-		return basicDataSource;
-	}
-
-	@Bean
-	public JpaVendorAdapter jpaVendorAdapter() {
-		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setShowSql(false);
-		adapter.setGenerateDdl(true);
-		adapter.setDatabase(Database.MYSQL);
-		return adapter;
-	}
-
-	@Bean
-	public Properties getJpaProperties() {
-		Properties properties = new Properties();
-		properties.setProperty(AvailableSettings.DIALECT, environment.getProperty(AvailableSettings.DIALECT));
-		properties.setProperty(AvailableSettings.HBM2DDL_AUTO, environment.getProperty(AvailableSettings.HBM2DDL_AUTO));
-
-		// if import_files is empty it tries to load any properties file it can
-		// find. Stopping this here.
-		String importFiles = environment.getProperty(AvailableSettings.HBM2DDL_IMPORT_FILES);
-
-		if (!StringUtils.isEmpty(importFiles)) {
-			properties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, importFiles);
-		}
-
-		properties.setProperty("org.hibernate.envers.store_data_at_delete",
-				environment.getProperty("org.hibernate.envers.store_data_at_delete"));
-		properties.setProperty("show_sql", "false");
-		return properties;
 	}
 }
