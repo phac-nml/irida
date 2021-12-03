@@ -47,13 +47,14 @@ public class ProjectUserGroupsPage extends AbstractPage {
 		return table.getRows().size();
 	}
 
-	public void removeUserGroups(int row) {
+	public void removeUserGroups(int position) {
 		WebDriverWait wait = new WebDriverWait(driver, 2);
-		removeButtons.get(row).click();
+		WebElement row = removeButtons.get(position);
+		row.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-confirm")));
 		WebElement removeConfirm = driver.findElement(By.className("t-remove-confirm"));
 		removeConfirm.click();
-		waitForTime(200);
+		wait.until(ExpectedConditions.stalenessOf(row));
 	}
 
 	public void addUserGroup(String name) {
