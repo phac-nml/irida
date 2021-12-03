@@ -42,8 +42,4 @@ public class CurrentUser {
 	public boolean isAdmin() {
 		return isAdmin;
 	}
-
-	public int add(int a, int b) {
-		return a + b;
-	}
 }
