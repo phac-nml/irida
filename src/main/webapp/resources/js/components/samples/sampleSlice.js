@@ -54,8 +54,8 @@ export const setEditSampleMetadata = createAction(
  */
 export const removeSampleMetadataField = createAction(
   `sample/removeSampleMetadataField`,
-  ({ field, entryId }) => ({
-    payload: { field, entryId },
+  ({ entryId }) => ({
+    payload: { entryId },
   })
 );
 
@@ -142,6 +142,15 @@ const sampleSlice = createSlice({
     });
 
     builder.addCase(addSampleMetadataField, (state, action) => {
+      /*
+       If an existing field has the same label then we filter it out before adding to the state
+       */
+      state.metadata = state.metadata.filter(
+        (metadataFieldEntry) =>
+          metadataFieldEntry.metadataTemplateField !==
+          action.payload.metadataTemplateField
+      );
+
       const newMetadataFieldEntry = {
         metadataTemplateField: action.payload.metadataTemplateField,
         fieldId: action.payload.fieldId,
@@ -155,7 +164,6 @@ const sampleSlice = createSlice({
     builder.addCase(removeSampleMetadataField, (state, action) => {
       state.metadata = state.metadata.filter(
         (metadataFieldEntry) =>
-          metadataFieldEntry.field !== action.payload.field &&
           metadataFieldEntry.entryId !== action.payload.entryId
       );
     });

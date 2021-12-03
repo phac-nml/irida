@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRep
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -60,8 +61,9 @@ public class UISampleService {
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService, MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository,
-	MetadataRestrictionRepository metadataRestrictionRepository) {
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService,
+			MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository,
+			MetadataRestrictionRepository metadataRestrictionRepository) {
 
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -197,21 +199,49 @@ public class UISampleService {
 		Project project = projectService.read(addSampleMetadataRequest.getProjectId());
 		MetadataTemplateField templateField = new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(),
 				"text");
-		MetadataTemplateField metadataTemplateField = metadataTemplateService.saveMetadataField(templateField);
-		MetadataRestriction metadataRestriction = metadataTemplateService.setMetadataRestriction(project,
-				metadataTemplateField, metadataRole);
+
+		MetadataTemplateField existingTemplateField = metadataTemplateService.readMetadataFieldByLabel(
+				addSampleMetadataRequest.getMetadataField());
+
+		if (existingTemplateField == null) {
+			metadataTemplateService.saveMetadataField(templateField);
+		}
+
+		MetadataRestriction metadataRestriction = null;
 
 		String message = "";
-		MetadataEntry entry = null;
+		MetadataEntry entry;
 		Long entryId = null;
 		String entryValue = "";
+		Set<MetadataEntry> metadataEntrySet = new HashSet<>();
+		MetadataTemplateField metadataTemplateField = null;
 
 		if (!Strings.isNullOrEmpty(addSampleMetadataRequest.getMetadataEntry())) {
 			entry = new MetadataEntry(addSampleMetadataRequest.getMetadataEntry(), "text", templateField);
-			entry.setSample(sample);
-			MetadataEntry savedEntry = metadataEntryRepository.save(entry);
-			entryId = savedEntry.getId();
-			entryValue = savedEntry.getValue();
+			metadataEntrySet.add(entry);
+			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+
+			Optional<MetadataEntry> savedEntry = sampleService.getMetadataForSample(sample)
+					.stream()
+					.filter(s -> s.getField()
+							.equals(templateField))
+					.findFirst();
+
+			if (savedEntry.isPresent()) {
+				entryId = savedEntry.get()
+						.getId();
+
+				entryValue = savedEntry.get()
+						.getValue();
+
+				metadataTemplateField = savedEntry.get()
+						.getField();
+
+				metadataRestriction = metadataTemplateService.setMetadataRestriction(project, metadataTemplateField,
+						metadataRole);
+				metadataRestrictionRepository.save(metadataRestriction);
+			}
+
 			message = messageSource.getMessage("server.sample.metadata.add.success",
 					new Object[] { addSampleMetadataRequest.getMetadataField(),
 							addSampleMetadataRequest.getMetadataEntry(), metadataRestriction.getLevel() }, locale);
@@ -226,13 +256,31 @@ public class UISampleService {
 	/**
 	 * Remove metadata from the sample
 	 *
+	 * @param projectId       The project id
 	 * @param metadataField   The metadata field
 	 * @param metadataEntryId The metadata entry id
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return message indicating deletion status
 	 */
-	public String removeSampleMetadata(String metadataField, Long metadataEntryId, Locale locale) {
+	public String removeSampleMetadata(Long projectId, String metadataField, Long metadataEntryId, Locale locale) {
+		Project project = projectService.read(projectId);
+		List<Sample> sampleList = sampleService.getSamplesForProject(project)
+				.stream()
+				.map((s) -> s.getObject())
+				.collect(Collectors.toList());
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(metadataField);
+		Long fieldUsageCount = metadataEntryRepository.getMetadataEntriesCountBySamplesAndField(metadataTemplateField,
+				sampleList);
 		metadataEntryRepository.deleteById(metadataEntryId);
+		MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+				project, metadataTemplateField);
+		/*
+		 Only delete the restriction on the field if there is only one place
+		 where the field is in use within the project
+		 */
+		if (fieldUsageCount == 1) {
+			metadataRestrictionRepository.delete(restrictionToDelete);
+		}
 
 		return messageSource.getMessage("server.sample.metadata.remove.success", new Object[] { metadataField },
 				locale);
@@ -251,43 +299,100 @@ public class UISampleService {
 		Sample sample = sampleService.read(sampleId);
 		Project project = projectService.read(updateSampleMetadataRequest.getProjectId());
 		boolean sampleUpdated = false;
-		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
+				updateSampleMetadataRequest.getMetadataField());
+		MetadataTemplateField existingFieldWithLabel = metadataTemplateService.readMetadataField(
 				updateSampleMetadataRequest.getMetadataFieldId());
-
-		// Only update metadata field if a change was made
-		if (!metadataTemplateField.getLabel()
-				.equals(updateSampleMetadataRequest.getMetadataField())) {
-			metadataTemplateField.setLabel(updateSampleMetadataRequest.getMetadataField());
-			metadataTemplateService.updateMetadataField(metadataTemplateField);
-			sampleUpdated = true;
-		}
-
-		Optional<MetadataEntry> existingMetadataEntry = metadataEntryRepository.findById(
-				updateSampleMetadataRequest.getMetadataEntryId());
-
-		if (existingMetadataEntry.isPresent()) {
-			// Only update metadata entry if a change was made
-			if (!existingMetadataEntry.get()
-					.getValue()
-					.equals(updateSampleMetadataRequest.getMetadataEntry())) {
-				existingMetadataEntry.get()
-						.setValue(updateSampleMetadataRequest.getMetadataEntry());
-				metadataEntryRepository.save(existingMetadataEntry.get());
-				sampleUpdated = true;
-			}
-		}
-
-		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
-				project, metadataTemplateField);
+		Set<MetadataEntry> metadataEntrySet = new HashSet<>();
 
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(
 				updateSampleMetadataRequest.getMetadataRestriction());
 
-		// Only update metadata field restriction if a change was made
-		if (currentRestriction == null || !currentRestriction.getLevel()
-				.equals(projectMetadataRole.getLevel())) {
+		// Update the metadata field and project metadata role
+		if (metadataTemplateField == null) {
+			if (existingFieldWithLabel == null) {
+				metadataTemplateField = new MetadataTemplateField(updateSampleMetadataRequest.getMetadataField(),
+						"text");
+			} else {
+				metadataTemplateField = existingFieldWithLabel;
+				metadataTemplateField.setLabel(updateSampleMetadataRequest.getMetadataField());
+			}
+			metadataTemplateService.updateMetadataField(metadataTemplateField);
+		} else {
+			ProjectMetadataRole roleFromUpdateRequest = projectMetadataRole;
+			projectMetadataRole = getMetadataFieldRestriction(project.getId(), metadataTemplateField.getId());
+
+			/*
+			 We want to only set the role from the update request if it
+			 is different than the current metadata role for the field
+			 */
+			if (projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest)) {
+				projectMetadataRole = roleFromUpdateRequest;
+			}
+		}
+
+		// Update the metadata entry
+		MetadataEntry prevEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(metadataTemplateField,
+				sample);
+		boolean fieldOrValUpdated = false;
+		if (prevEntry != null) {
+			if (!prevEntry.getField()
+					.equals(metadataTemplateField)) {
+				prevEntry.setField(metadataTemplateField);
+				fieldOrValUpdated = true;
+			}
+			if (!prevEntry.getValue()
+					.equals(updateSampleMetadataRequest.getMetadataEntry())) {
+				prevEntry.setValue(updateSampleMetadataRequest.getMetadataEntry());
+				fieldOrValUpdated = true;
+			}
+
+			if (fieldOrValUpdated) {
+				metadataEntrySet.add(prevEntry);
+			}
+		} else {
+			MetadataEntry entry = new MetadataEntry(updateSampleMetadataRequest.getMetadataEntry(), "text",
+					metadataTemplateField);
+			metadataEntrySet.add(entry);
+			fieldOrValUpdated = true;
+		}
+
+		//Only merge if changes were made to field or value
+		if (fieldOrValUpdated) {
+			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+		}
+
+		/*
+		 Get the metadata restriction for the field and update if there is no previous
+		 restriction on the field or a user modifies the restriction for the field
+		 */
+		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+				project, metadataTemplateField);
+
+		if (currentRestriction == null) {
 			metadataTemplateService.setMetadataRestriction(project, metadataTemplateField, projectMetadataRole);
 			sampleUpdated = true;
+		} else {
+			if (!currentRestriction.getLevel()
+					.equals(projectMetadataRole)) {
+				currentRestriction.setLevel(projectMetadataRole);
+				sampleUpdated = true;
+				metadataRestrictionRepository.save(currentRestriction);
+			}
+		}
+
+		// Delete existing field/entry/restriction if user updates field to an existing field label
+		MetadataTemplateField fieldToDelete = metadataTemplateService.readMetadataField(
+				updateSampleMetadataRequest.getMetadataFieldId());
+		if (fieldToDelete != null && !fieldToDelete.getLabel()
+				.equals(metadataTemplateField.getLabel())) {
+			MetadataEntry metadataEntryToDelete = metadataEntryRepository.getMetadataEntryById(
+					updateSampleMetadataRequest.getMetadataEntryId());
+			MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+					project, fieldToDelete);
+			metadataRestrictionRepository.delete(restrictionToDelete);
+			metadataEntryRepository.delete(metadataEntryToDelete);
+			metadataTemplateService.deleteMetadataField(fieldToDelete);
 		}
 
 		// If sample metadata was updated then update the sample modified date
@@ -338,8 +443,10 @@ public class UISampleService {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
 			SequenceFilePair sfp = (SequenceFilePair) obj;
-			String firstFileSize = sfp.getForwardSequenceFile().getFileSize();
-			String secondFileSize = sfp.getReverseSequenceFile().getFileSize();
+			String firstFileSize = sfp.getForwardSequenceFile()
+					.getFileSize();
+			String secondFileSize = sfp.getReverseSequenceFile()
+					.getFileSize();
 
 			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize));
 		}
@@ -363,7 +470,8 @@ public class UISampleService {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
 			SingleEndSequenceFile sf = (SingleEndSequenceFile) obj;
-			String fileSize = sf.getSequenceFile().getFileSize();
+			String fileSize = sf.getSequenceFile()
+					.getFileSize();
 			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
 		}
 
@@ -381,10 +489,11 @@ public class UISampleService {
 				sample, Fast5Object.class);
 
 		List<SampleSequencingObjectFileModel> fast5Files = new ArrayList<>();
-		for(SampleSequencingObjectJoin join : fast5FileJoins) {
+		for (SampleSequencingObjectJoin join : fast5FileJoins) {
 			SequencingObject obj = join.getObject();
 			Fast5Object f5 = (Fast5Object) obj;
-			String fileSize = f5.getFile().getFileSize();
+			String fileSize = f5.getFile()
+					.getFileSize();
 			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
 		}
 		return fast5Files;
@@ -399,7 +508,7 @@ public class UISampleService {
 	public List<SampleGenomeAssemblyFileModel> getGenomeAssembliesForSample(Sample sample) {
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 		List<SampleGenomeAssemblyFileModel> assemblyFiles = new ArrayList<>();
-		for(SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
+		for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
 			GenomeAssembly obj = join.getObject();
 			String fileSize = obj.getFileSize();
 			assemblyFiles.add(new SampleGenomeAssemblyFileModel(obj, fileSize));

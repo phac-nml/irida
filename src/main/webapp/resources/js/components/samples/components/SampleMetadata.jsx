@@ -43,6 +43,7 @@ export function SampleMetadata() {
 
   const removeMetadata = (field, entryId) => {
     removeSampleMetadata({
+      projectId,
       field,
       entryId,
     })

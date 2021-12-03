@@ -402,4 +402,5 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			metadataTemplateRepository.save(originalDefault);
 		}
 	}
+
 }
