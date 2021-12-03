@@ -53,7 +53,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-confirm")));
 		WebElement removeConfirm = driver.findElement(By.className("t-remove-confirm"));
 		removeConfirm.click();
-		wait.until(ExpectedConditions.invisibilityOf(removeConfirm));
+		waitForTime(200);
 	}
 
 	public void addUserGroup(String name) {
@@ -67,7 +67,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 		WebElement modalOkBtn = addUserGroupModal.findElement(By.cssSelector(".ant-btn.ant-btn-primary"));
 		wait.until(ExpectedConditions.elementToBeClickable(modalOkBtn));
 		modalOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOf(addUserGroupModal));
+		waitForTime(200);
 	}
 }
 
