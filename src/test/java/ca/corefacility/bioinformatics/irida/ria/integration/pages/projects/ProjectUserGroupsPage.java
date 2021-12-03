@@ -48,7 +48,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 	}
 
 	public void removeUserGroups(int row) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, 4);
 		WebElement rowButton = removeButtons.get(row);
 		rowButton.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-confirm")));
@@ -68,7 +68,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 		WebElement modalOkBtn = addUserGroupModal.findElement(By.cssSelector(".ant-btn.ant-btn-primary"));
 		wait.until(ExpectedConditions.elementToBeClickable(modalOkBtn));
 		modalOkBtn.click();
-		waitForTime(200);
+		wait.until(ExpectedConditions.invisibilityOf(addUserGroupModal));
 	}
 }
 
