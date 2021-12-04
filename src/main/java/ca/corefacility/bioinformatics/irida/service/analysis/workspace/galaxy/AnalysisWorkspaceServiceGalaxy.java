@@ -33,7 +33,7 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -137,9 +139,49 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			Path outputDirectory) throws IOException, ExecutionManagerDownloadException, ExecutionManagerException {
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
-
+		boolean isHtml = dataset.getDataTypeExt().equals("html");
 		Path outputFile = outputDirectory.resolve(fileName);
-		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, outputFile);
+
+		// Galaxy packs HTML outputs in zip files, so we need to unpack the HTML from the zip
+		if (isHtml) {
+			Path tmpFile = Files.createTempFile("irida", null);
+			tmpFile.toFile().deleteOnExit(); // ensure that this is deleted even if we exit before explicitly deleting it
+
+			galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, tmpFile);
+
+			try (FileInputStream fis = new FileInputStream(tmpFile.toString());
+				 BufferedInputStream bis = new BufferedInputStream(fis);
+				 ZipInputStream zis = new ZipInputStream(bis)) {
+				ZipEntry ze;
+				int entryCount = 0;
+				while ((ze = zis.getNextEntry()) != null) {
+					entryCount++;
+					// write unzipped HTML to IRIDA file output path
+					if (ze.getName().endsWith(".html")) {
+						outputFile = outputDirectory.resolve(fileName);
+						try (FileOutputStream fos = new FileOutputStream(outputFile.toString())) {
+							int len = 0;
+							byte[] buffer = new byte[2048];
+							while((len = zis.read(buffer)) > 0) {
+								fos.write(buffer, 0, len);
+							}
+						}
+					}
+				}
+				// in theory a HTML output in Galaxy can contain multiple files (HTML, images etc)
+				// but there is no way to support that in IRIDA at this point, so all that we can
+				// do at this stage is warn that the output will likely be incorrect
+				if (entryCount != 1) {
+					logger.warn(String.format("When unpacking zipped HTML for %s, got %d entries, expect display to be incorrect",
+							dataset.getName(), entryCount));
+				}
+			}
+			// clean up temp file
+			tmpFile.toFile().delete();
+		} else {
+			galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, outputFile);
+		}
+
 		final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(analysisId,
 				fileName);
 
