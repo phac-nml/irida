@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserProjectDetailsResponse;
 
 /**
  * Handles asynchronous requests for the administration users table.
@@ -92,6 +93,17 @@ public class UsersAjaxController {
 		else
 			return ResponseEntity.ok(null);
 
+	}
+
+	/**
+	 * Get the projects associated with a user
+	 *
+	 * @param userId - the id for the user to show project details for
+	 * @return a {@link TableResponse} containing the list of projects associated with a users.
+	 */
+	@RequestMapping("/{userId}/projects/list")
+	public ResponseEntity<UserProjectDetailsResponse> getUserProjects(@PathVariable("userId") Long userId) {
+		return ResponseEntity.ok(UIUsersService.getUserProjects(userId));
 	}
 
 	/**

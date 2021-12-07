@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserProjectDetailsModel;
 
 /**
  * A specialized service layer for projects.
@@ -200,12 +201,18 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User}.
 	 *
-	 * @param user
-	 * 		the user to get projects for.
-	 *
+	 * @param user the user to get projects for.
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
+
+	/**
+	 * Get all {@link Project}s associated with a particular {@link User}.
+	 *
+	 * @param user the user to get projects for.
+	 * @return the projects associated with the user.
+	 */
+	public List<UserProjectDetailsModel> getUserProjectDetailsForUser(User user);
 
 	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}

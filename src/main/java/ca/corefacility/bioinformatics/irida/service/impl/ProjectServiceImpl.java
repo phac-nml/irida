@@ -60,6 +60,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserProjectDetailsModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import com.google.common.collect.ImmutableList;
@@ -500,6 +501,28 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return new ImmutableList.Builder<Join<Project, User>>().addAll(userJoinProjects)
 				.addAll(groupJoinProjects)
 				.build();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public List<UserProjectDetailsModel> getUserProjectDetailsForUser(User user) {
+		List<UserProjectDetailsModel> newList = new ArrayList<>();
+		final List<UserProjectDetailsModel> groupJoinProjects = ugpjRepository.findProjectsByUser(user)
+				.stream()
+				.map(ugpj -> new UserProjectDetailsModel((UserGroupProjectJoin) ugpj))
+				.collect(Collectors.toList());
+		final List<UserProjectDetailsModel> userJoinProjects = pujRepository.getProjectsForUser(user)
+				.stream()
+				.map(puj -> new UserProjectDetailsModel((ProjectUserJoin) puj))
+				.collect(Collectors.toList());
+		newList.addAll(groupJoinProjects);
+		newList.addAll(userJoinProjects);
+
+		return newList;
 	}
 
 	/**

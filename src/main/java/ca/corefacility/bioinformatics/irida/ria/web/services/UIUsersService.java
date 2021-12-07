@@ -29,9 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -282,5 +280,17 @@ public class UIUsersService {
 		}
 
 		return errors;
+	}
+
+	/**
+	 * Get the projects associated with a user
+	 *
+	 * @param userId - the id for the user to show project details for
+	 * @return user project details for a specific user
+	 */
+	public UserProjectDetailsResponse getUserProjects(Long userId) {
+		User user = userService.read(userId);
+		List<UserProjectDetailsModel> projectsForUser = projectService.getUserProjectDetailsForUser(user);
+		return new UserProjectDetailsResponse(projectsForUser);
 	}
 }

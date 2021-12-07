@@ -13,7 +13,7 @@ export const usersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),
-  tagTypes: ["Users"],
+  tagTypes: ["Users", "Projects"],
   endpoints: (build) => ({
     /*
     Get user details.
@@ -23,6 +23,15 @@ export const usersApi = createApi({
         url: `/${userId}`,
       }),
       providesTags: ["Users"],
+    }),
+    /*
+    Get user projects.
+    */
+    getUserProjectDetails: build.query({
+      query: (userId) => ({
+        url: `/${userId}/projects/list`,
+      }),
+        providesTags: ["Projects"],
     }),
     /*
     Edit user details.
@@ -40,6 +49,7 @@ export const usersApi = createApi({
 
 export const {
   useGetUserDetailsQuery,
+  useGetUserProjectDetailsQuery,
   useEditUserDetailsMutation
 } = usersApi;
 
