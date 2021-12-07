@@ -116,6 +116,21 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	}
 
 	/**
+	 * Checks if a dataset has a HTML datatype
+	 *
+	 * @param dataset
+	 * 			A Galaxy dataset (possibly with some missing details i.e. nulls
+	 * @return true if the Dataset is html, false otherwise
+	 */
+	private boolean datasetIsHtml(Dataset dataset) {
+		try {
+			return dataset.getDataTypeExt().equals("html");
+		} catch (NullPointerException e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Builds a new AnalysisOutputFile from the given file in Galaxy.
 	 * 
 	 * @param analysisId
@@ -139,7 +154,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			Path outputDirectory) throws IOException, ExecutionManagerDownloadException, ExecutionManagerException {
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
-		boolean isHtml = dataset.getDataTypeExt().equals("html");
+		boolean isHtml = datasetIsHtml(dataset);
 		Path outputFile = outputDirectory.resolve(fileName);
 
 		// Galaxy packs HTML outputs in zip files, so we need to unpack the HTML from the zip
