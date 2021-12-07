@@ -1,12 +1,23 @@
-import { Form, Input, Modal, notification, Select, Typography } from "antd";
+import {
+  Form,
+  Input,
+  Modal,
+  notification,
+  Popover,
+  Select,
+  Typography,
+} from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
-const { Title } = Typography;
 import { editSampleMetadata, setEditSampleMetadata } from "../sampleSlice";
+import { IconWarningOutlined } from "../../icons/Icons";
+import { grey6 } from "../../../styles/colors";
+import { WarningAlert } from "../../alerts";
 
+const { Title } = Typography;
 /**
  * Function to render Update Metadata Field modal
  * @returns {JSX.Element}
@@ -86,7 +97,28 @@ export function EditMetadata() {
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
-              label={i18n("SampleMetadata.modal.fieldName")}
+              label={
+                <span>
+                  {i18n("SampleMetadata.modal.fieldName")}
+                  <Popover
+                    content={
+                      <WarningAlert
+                        message={i18n(
+                          "SampleMetadata.edit.modal.warning.message"
+                        )}
+                      />
+                    }
+                  >
+                    <IconWarningOutlined
+                      style={{
+                        margin: "0 4px",
+                        cursor: "help",
+                        color: grey6,
+                      }}
+                    />
+                  </Popover>
+                </span>
+              }
               initialValue={field}
               rules={[
                 {

@@ -13,7 +13,6 @@ import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { blue6 } from "../../../../styles/colors";
 import { IconExperiment } from "../../../../components/icons/Icons";
-import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 const { Search } = Input;
 
 export function AnalysisSampleRenderer() {
@@ -66,11 +65,14 @@ export function AnalysisSampleRenderer() {
                   item.sampleId == 0 ? (
                     item.sampleName
                   ) : (
-                    <SampleDetailViewer sampleId={item.sampleId}>
-                      <Button style={{ padding: "0px" }} type="link">
-                        {item.sampleName}
-                      </Button>
-                    </SampleDetailViewer>
+                    <a
+                      href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+                      target="_blank"
+                      className="t-paired-end-sample-name"
+                      style={{ color: blue6 }}
+                    >
+                      {item.sampleName}
+                    </a>
                   )
                 }
                 description={

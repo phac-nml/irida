@@ -88,6 +88,7 @@ public class UISampleService {
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
+
 		return new SampleDetails(sample, isModifiable, cartService.isSampleInCart(id));
 	}
 
