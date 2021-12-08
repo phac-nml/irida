@@ -118,12 +118,16 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	private Dataset output1Dataset;
 	private Dataset output2Dataset;
+	private Dataset output1HtmlDataset;
 	private String output1Filename = "output1.txt";
+	private String output1HtmlFilename = "output1.html";
 	private String output2Filename = "output2.txt";
 
 	private UUID workflowId = IridaWorkflowTestBuilder.DEFAULT_ID;
 	private UUID workflowIdMultiSamples = IridaWorkflowTestBuilder.MULTI_SAMPLES_ID;
+	private UUID workflowIdHtml = IridaWorkflowTestBuilder.HTML_ID;
 	private IridaWorkflow iridaWorkflowSingle = IridaWorkflowTestBuilder.buildTestWorkflowSingle();
+	private IridaWorkflow iridaWorkflowSingleHtml = IridaWorkflowTestBuilder.buildTestWorkflowSingleHtml();
 	private IridaWorkflow iridaWorkflowSingleNoReference = IridaWorkflowTestBuilder
 			.buildTestWorkflowSingleNoReference();
 	private IridaWorkflow iridaWorkflowPaired = IridaWorkflowTestBuilder.buildTestWorkflowPaired();
@@ -208,6 +212,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		output2Dataset = new Dataset();
 		output2Dataset.setId("2");
 		output2Dataset.setName("output2.txt");
+
+		output1HtmlDataset = new Dataset();
+		output1HtmlDataset.setId("1");
+		output1HtmlDataset.setName("output1.html");
+		output1HtmlDataset.setDataType("html");
+		output1HtmlDataset.setFileExt("html");
 
 		collectionResponseSingle = new CollectionResponse();
 		collectionResponseSingle.setId(COLLECTION_SINGLE_ID);
@@ -746,6 +756,52 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				analysis.getAnalysisOutputFile("output2").getLabel());
 
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
+	}
+
+	/**
+	 * Tests successfully getting analysis results from Galaxy with single end
+	 * input files and HTML output
+	 *
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 */
+	@Test
+	public void testGetAnalysisResultsSuccessSingleEndHtml() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
+		Set<SingleEndSequenceFile> singleFiles = Sets.newHashSet(sampleSingleSequenceFileMap.values());
+
+		submission = AnalysisSubmission.builder(workflowIdHtml).name("my analysis").inputFiles(singleInputFiles)
+				.referenceFile(referenceFile).build();
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(sequencingObjectService.getSequencingObjectsForAnalysisSubmission(submission))
+				.thenReturn(Sets.newHashSet(singleFiles));
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowIdHtml)).thenReturn(iridaWorkflowSingleHtml);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1HtmlFilename, HISTORY_ID)).thenReturn(output1HtmlDataset);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+
+		when(sequencingObjectService.getUniqueSamplesForSequencingObjects(singleFiles))
+				.thenReturn(sampleSingleSequenceFileMap);
+
+		assertNotNull("workflowPreparation is null", workflowPreparation);
+		assertNotNull("submission is null", submission);
+		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
+
+		assertNotNull("analysis is not valid", analysis);
+		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
+		assertEquals("missing output file for analysis", Paths.get("output1.html"),
+				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+		assertEquals("missing label for analysis output file", "SampleA-output1.html",
+				analysis.getAnalysisOutputFile("output1").getLabel());
+		assertEquals("missing output file for analysis", "SampleA-output2.txt",
+				analysis.getAnalysisOutputFile("output2").getLabel());
+
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.html", HISTORY_ID);
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
 	}
 

@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 public class IridaWorkflowTestBuilder {
 	public final static UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	public static final UUID MULTI_SAMPLES_ID = UUID.fromString("a8a573ef-b51e-409a-9a26-3fb79a6b894e");
+	public static final UUID HTML_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db7");
 
 	/**
 	 * Builds a default test {@link IridaWorkflow} which accepts single input
@@ -37,6 +38,10 @@ public class IridaWorkflowTestBuilder {
 	 */
 	public static IridaWorkflow buildTestWorkflowSingle() {
 		return buildTestWorkflow(DEFAULT_ID, Input.SINGLE, "reference", true);
+	}
+
+	public static IridaWorkflow buildTestWorkflowSingleHtml() {
+		return buildTestWorkflow(HTML_ID, Input.SINGLE, "reference", true);
 	}
 
 	/**
@@ -169,7 +174,11 @@ public class IridaWorkflowTestBuilder {
 			AnalysisType analysisType, Input input, String reference, boolean requiresSingleSample)
 			throws MalformedURLException {
 		List<IridaWorkflowOutput> outputs = new LinkedList<>();
-		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
+		if (id == HTML_ID) {
+			outputs.add(new IridaWorkflowOutput("output1", "output1.html"));
+		} else {
+			outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
+		}
 		outputs.add(new IridaWorkflowOutput("output2", "output2.txt"));
 
 		List<IridaWorkflowToolRepository> tools = new LinkedList<>();
