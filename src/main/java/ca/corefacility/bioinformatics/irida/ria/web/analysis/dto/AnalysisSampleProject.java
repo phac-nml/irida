@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
+/**
+ * Used to return a sample linked to a project to the UI.
+ */
 public class AnalysisSampleProject {
 	private Long sampleId;
 	private Long projectId;
