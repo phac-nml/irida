@@ -112,6 +112,7 @@ export function AddNewMetadata({ children }) {
             <Form.Item
               name="metadata_field_permission"
               label={i18n("SampleMetadata.modal.restriction")}
+              initialValue={metadataRoles ? metadataRoles[0].value : ""}
               rules={[
                 {
                   required: true,
