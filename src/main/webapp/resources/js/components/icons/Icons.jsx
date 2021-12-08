@@ -57,6 +57,7 @@ import {
   UsergroupAddOutlined,
   UsergroupDeleteOutlined,
   UserOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import React from "react";
 import { blue6 } from "../../styles/colors";
@@ -207,6 +208,9 @@ export const IconCalendarTwoTone = ({ ...props }) => (
 );
 
 export const IconShare = ({ ...props }) => <ShareAltOutlined {...props} />;
+
+export const IconWarningOutlined = ({ ...props }) =>
+  <WarningOutlined {...props} />;
 
 /*
 File Type Icons

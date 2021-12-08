@@ -1,9 +1,13 @@
-import { Form, Popover, Select, Space, Tag, Tooltip } from "antd";
+import { Form, Popover, Select, Space, Tag, Tooltip, Typography } from "antd";
 import React from "react";
-import { IconInfoCircle } from "../../../../../components/icons/Icons";
+import {
+  IconInfoCircle,
+  IconWarningOutlined
+} from "../../../components/icons/Icons";
+import { blue6, red6 } from "../../../styles/colors";
 import {
   getColourForRestriction
-} from "../../../../../utilities/restriction-utilities";
+} from "../../../utilities/restriction-utilities";
 
 /**
  * React component to allow the user to select the level of restiction for a
@@ -26,8 +30,6 @@ export function TargetMetadataRestriction({
     validateStatus: "",
   });
 
-  console.log(field);
-
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -45,17 +47,45 @@ export function TargetMetadataRestriction({
     return restriction?.label;
   }
 
-  if (!field.new) {
-    return <Space>
-      <Tag color={getColourForRestriction(field.restriction)}>
-        {getRestrictionLabel(field.restriction)}
-      </Tag>
-      <Popover title={"Higher Restictriction Level"}
-               placement="right"
-               content={"This value is set it the target project and can be updated in the project settings."}>
-        <IconInfoCircle/>
-      </Popover>
-    </Space>;
+  if (field.target) {
+    if (field.difference >= 0) {
+      return (
+        <Space>
+          <Tag color={getColourForRestriction(field.restriction)}>
+            {getRestrictionLabel(field.restriction)}
+          </Tag>
+          <Popover
+            title={"Higher Restictriction Level"}
+            placement="right"
+            content={
+              "This value is set it the target project and can be updated in the project settings."
+            }
+          >
+            <IconInfoCircle style={{ color: blue6 }} />
+          </Popover>
+        </Space>
+      );
+    }
+    return (
+      <Space>
+        <Tag color={getColourForRestriction(field.restriction)}>
+          {getRestrictionLabel(field.restriction)}
+        </Tag>
+        <Popover
+          title={
+            <Typography.Text strong style={{ color: red6 }}>
+              {"CAUTION: LOWER RESTRICTION IN TARGET PROJECT"}
+            </Typography.Text>
+          }
+          placement="right"
+          content={
+            "This value is set it the target project and can be updated in the project settings."
+          }
+        >
+          <IconWarningOutlined style={{ color: red6 }} />
+        </Popover>
+      </Space>
+    );
   }
 
   return (

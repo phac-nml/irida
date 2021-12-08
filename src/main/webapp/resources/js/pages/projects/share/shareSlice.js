@@ -34,9 +34,20 @@ export const updateMoveSamples = createAction(
   })
 );
 
-export const setMetadataRestrictions = createAction(`share/setMetadataRestrictions`, (restrictions) => {
-
-});
+/**
+ * Sets up the origainl restrictions to be the ame as what are on the source project.
+ * This will change once a target project is selcted
+ */
+export const setMetadataRestrictions = createAction(
+  `share/setMetadataRestrictions`,
+  (metadataRestrictions) => ({
+    payload: {
+      metadataRestrictions: metadataRestrictions.map(r => ({
+        ...r,
+        initial: true
+      })),
+    },
+  }));
 
 /**
  * Set up the initial state.  This is pulled from session storage which should
@@ -64,6 +75,7 @@ const initialState = (() => {
     currentProject,
     locked: false,
     remove: false,
+    metadataRestrictions: [],
   };
 })();
 
@@ -90,6 +102,10 @@ const shareSlice = createSlice({
       if (action.payload.remove) {
         state.locked = false;
       }
+    });
+
+    builder.addCase(setMetadataRestrictions, (state, action) => {
+      state.metadataRestrictions = action.payload.metadataRestrictions;
     });
   },
 });

@@ -1,6 +1,6 @@
 import { Table, Tag } from "antd";
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getMetadataRestrictions,
   useGetMetadataFieldsForProjectQuery,
@@ -9,16 +9,18 @@ import {
   compareRestrictionLevels,
   getColourForRestriction,
 } from "../../../utilities/restriction-utilities";
-import { TargetMetadataRestriction } from "../settings/components/metadata/TargetMetadataRestriction";
+import { setMetadataRestrictions } from "./shareSlice";
+import { TargetMetadataRestriction } from "./TargetMetadataRestriction";
 
 export function ShareMetadata() {
+  const dispatch = useDispatch();
   /**
    * Available restrictions for metadata fields
    */
   const [restrictions, setRestrictions] = React.useState([]);
   const [targetFields, setTargetFields] = React.useState([]);
 
-  const { currentProject, projectId } = useSelector(
+  const { currentProject, projectId, metadataRestrictions } = useSelector(
     (state) => state.shareReducer
   );
 
@@ -26,64 +28,50 @@ export function ShareMetadata() {
    * Get the fields for the current project.  The restrictions from these fields
    * will act as a base for the restriction level when the fields are shared.
    */
-  const {
-    data: sourceFields,
-    isLoading: loadingFields,
-  } = useGetMetadataFieldsForProjectQuery(currentProject);
+  const { data: sourceFields } = useGetMetadataFieldsForProjectQuery(
+    currentProject
+  );
 
   /**
-   * Target project metadata fields. Needed to determine which fields will be
+   * Target project metadata fields. Needed to determine, which fields will be
    * on both projects so that the new restriction for a field should start at
    * the highest level of restriction.
    */
-  const {
-    data: targetExistingFields = [],
-  } = useGetMetadataFieldsForProjectQuery(projectId, {
-    skip: !projectId,
-  });
-
-  useEffect(() => {
-    if (sourceFields) {
-      if (targetExistingFields.length) {
-        const existing = targetExistingFields.reduce(
-          (fields, field) => ({
-            ...fields,
-            [field.fieldKey]: field,
-          }),
-          {}
-        );
-        const newFields = sourceFields.map((field) => {
-          if (existing[field.fieldKey]) {
-            const difference = compareRestrictionLevels(
-              field.restriction,
-              existing[field.fieldKey].restriction
-            );
-            if (difference <= 0) {
-              return { ...field, difference };
-            } else {
-              return {
-                ...field,
-                difference,
-                restriction: existing[field.fieldKey].restriction,
-              };
-            }
-          } else {
-            return { ...field, new: true };
-          }
-        });
-        setTargetFields(newFields);
-      } else {
-        // Set all the difference to 0 since the fields do not exist in the
-        // target project
-        const newFields = sourceFields.map((f) => ({
-          ...f,
-          difference: 0,
-          new: true,
-        }));
-        setTargetFields(newFields);
-      }
+  const { data: targetExistingFields } = useGetMetadataFieldsForProjectQuery(
+    projectId,
+    {
+      skip: !projectId,
     }
-  }, [loadingFields, sourceFields, targetExistingFields]);
+  );
+
+  React.useEffect(() => {
+    if (sourceFields && targetExistingFields) {
+      const existing = targetExistingFields.reduce(
+        (fields, field) => ({
+          ...fields,
+          [field.fieldKey]: field,
+        }),
+        {}
+      );
+      const fields = sourceFields.map((field) => {
+        const f = { ...field, current: field.restriction };
+        delete f.initial;
+        if (existing[f.fieldKey]) {
+          /*
+          If field exists in target project
+           */
+          f.target = existing[f.fieldKey].restriction;
+          f.difference = compareRestrictionLevels(f.restriction, f.target);
+          f.restriction = f.difference < 0 ? f.target : f.current;
+        }
+        return f;
+      });
+      dispatch(setMetadataRestrictions(fields));
+    } else if (sourceFields) {
+      // Allow user to see what the restrictions are on the source fields
+      dispatch(setMetadataRestrictions(sourceFields));
+    }
+  }, [dispatch, sourceFields, targetExistingFields]);
 
   /**
    * On load, get metadata restrictions that are possible for a project.
@@ -119,7 +107,7 @@ export function ShareMetadata() {
     {
       title: "Current Restriction",
       key: "current",
-      dataIndex: "restriction",
+      dataIndex: "current",
       render(text, item, index) {
         const field = restrictions.find(
           (r) => r.value === sourceFields[index].restriction
@@ -138,8 +126,8 @@ export function ShareMetadata() {
       title: "Target Restriction",
       key: "target",
       dataIndex: "restriction",
-      render(currentRestriction, item, index) {
-        if (typeof targetFields !== "undefined") {
+      render(currentRestriction, item) {
+        if (targetExistingFields !== undefined) {
           return (
             <TargetMetadataRestriction
               field={item}
@@ -156,18 +144,17 @@ export function ShareMetadata() {
       key: "new",
       dataIndex: "fieldKey",
       width: 100,
-      render(restriction, item, index) {
-        console.log({ NEW: item });
-        return item.new ? <Tag>NEW</Tag> : <></>;
+      render(restriction, item) {
+        if (targetExistingFields === undefined || item.target) return undefined;
+        return <Tag>NEW</Tag>;
       },
     },
   ];
 
-  console.log(targetFields);
   return (
     <Table
       columns={columns}
-      dataSource={targetFields}
+      dataSource={metadataRestrictions}
       scroll={{ y: 600 }}
       pagination={false}
     />
