@@ -242,10 +242,12 @@ public class UISampleService {
 						metadataRole);
 				metadataRestrictionRepository.save(metadataRestriction);
 			}
+			String metadataRestrictionString = messageSource.getMessage(
+					"metadataRole." + metadataRestriction.getLevel(), new Object[] {}, locale);
 
 			message = messageSource.getMessage("server.sample.metadata.add.success",
 					new Object[] { addSampleMetadataRequest.getMetadataField(),
-							addSampleMetadataRequest.getMetadataEntry(), metadataRestriction.getLevel() }, locale);
+							addSampleMetadataRequest.getMetadataEntry(), metadataRestrictionString }, locale);
 		}
 
 		return new AddSampleMetadataResponse(metadataTemplateField.getId(), metadataTemplateField.getLabel(),
