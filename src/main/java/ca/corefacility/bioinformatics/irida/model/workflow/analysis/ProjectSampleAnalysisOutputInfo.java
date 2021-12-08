@@ -26,13 +26,14 @@ public class ProjectSampleAnalysisOutputInfo {
 	private String userFirstName;
 	private String userLastName;
 	private IridaWorkflowDescription workflowDescription;
+	private Long projectId;
 
 	public ProjectSampleAnalysisOutputInfo() {}
 
 	public ProjectSampleAnalysisOutputInfo(Long sampleId, String sampleName, Long analysisId,
 			String analysisOutputFileKey, String filePath, Long analysisOutputFileId, AnalysisType analysisType,
 			UUID workflowId, Date createdDate, String analysisSubmissionName, Long analysisSubmissionId, Long userId,
-			String userFirstName, String userLastName) {
+			String userFirstName, String userLastName, Long projectId) {
 		this.sampleId = sampleId;
 		this.sampleName = sampleName;
 		this.analysisId = analysisId;
@@ -48,6 +49,7 @@ public class ProjectSampleAnalysisOutputInfo {
 		this.userFirstName = userFirstName;
 		this.userLastName = userLastName;
 		this.workflowDescription = null;
+		this.projectId = projectId;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class ProjectSampleAnalysisOutputInfo {
 				+ ", analysisType=" + analysisType + ", workflowId=" + workflowId + ", createdDate=" + createdDate
 				+ ", analysisSubmissionName='" + analysisSubmissionName + '\'' + ", analysisSubmissionId="
 				+ analysisSubmissionId + ", userId=" + userId + ", userFirstName='" + userFirstName + '\''
-				+ ", userLastName='" + userLastName + '\'' + '}';
+				+ ", userLastName='" + userLastName + ", projectId='" + projectId +  '\'' + '}';
 	}
 
 	@Override
@@ -77,7 +79,8 @@ public class ProjectSampleAnalysisOutputInfo {
 				getAnalysisSubmissionName(), that.getAnalysisSubmissionName()) && Objects.equals(
 				getAnalysisSubmissionId(), that.getAnalysisSubmissionId()) && Objects.equals(getUserId(),
 				that.getUserId()) && Objects.equals(getUserFirstName(), that.getUserFirstName()) && Objects.equals(
-				getUserLastName(), that.getUserLastName());
+				getUserLastName(), that.getUserLastName()) && Objects.equals(
+				getProjectId(), that.getProjectId());
 	}
 
 	@Override
@@ -86,7 +89,7 @@ public class ProjectSampleAnalysisOutputInfo {
 		return Objects.hash(getSampleId(), getSampleName(), getAnalysisId(), getAnalysisOutputFileKey(), getFilePath(),
 				getAnalysisOutputFileId(), getAnalysisType(), getWorkflowId(), getCreatedDate(),
 				getAnalysisSubmissionName(), getAnalysisSubmissionId(), getUserId(), getUserFirstName(),
-				getUserLastName());
+				getUserLastName(), getProjectId());
 	}
 
 	public Long getSampleId() {
@@ -207,5 +210,13 @@ public class ProjectSampleAnalysisOutputInfo {
 
 	public IridaWorkflowDescription getWorkflowDescription() {
 		return workflowDescription;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
 	}
 }

@@ -11,6 +11,7 @@ import {
   prepareAnalysisOutputsDownload,
 } from "../../apis/analyses/analyses";
 import debounce from "lodash/debounce";
+import { SampleDetailViewer } from "../samples/SampleDetailViewer";
 
 const { Search } = Input;
 
@@ -55,17 +56,18 @@ export default function SingleSampleAnalysisOutputs({
       dataIndex: "sampleName",
       render(sampleName, record) {
         return (
-          <a
-            href={setBaseUrl(
-              projectId
-                ? `/projects/${projectId}/samples/${record.sampleId}`
-                : `/samples/${record.sampleId}`
-            )}
-            target="_blank"
-            className="t-sample-name"
+          <SampleDetailViewer
+            sampleId={record.sampleId}
+            projectId={projectId ? projectId : record.projectId}
           >
-            {sampleName}
-          </a>
+            <Button
+              style={{ padding: "0px" }}
+              type="link"
+              className="t-sample-name"
+            >
+              {sampleName}
+            </Button>
+          </SampleDetailViewer>
         );
       },
     },

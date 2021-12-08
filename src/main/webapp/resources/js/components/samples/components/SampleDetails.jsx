@@ -13,18 +13,19 @@ const { Paragraph } = Typography;
  * React component to render the details of a sample, including metadata
  * and files.
  *
- * @param details
+ * @param details - The sample details
+ * @param projectId - identifier for a project if provided
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetails({ details }) {
+export function SampleDetails({ details, projectId }) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     dispatch(
       setSample({ sample: details.sample, modifiable: details.modifiable })
     );
-    dispatch(setProject(details.projectId));
+    dispatch(setProject(details.projectId ? details.projectId : projectId));
   }, [dispatch]);
 
   return (
