@@ -55,28 +55,24 @@ export function EditMetadata() {
         metadataEntryId: entryId,
         metadataEntry: values.metadata_field_value,
         metadataRestriction: values.metadata_field_permission,
-      })
-        .then((response) => {
-          if (response.error) {
-            notification.error({ message: response.error.data.error });
-          } else {
-            notification.success({ message: response.data.message });
-            dispatch(
-              editSampleMetadata({
-                fieldId,
-                entryId,
-                field: values.metadata_field_name,
-                entry: values.metadata_field_value,
-                restriction: values.metadata_field_permission,
-              })
-            );
-          }
-          form.resetFields();
-          dispatch(setEditSampleMetadata({ editModalVisible: false }));
-        })
-        .catch((error) => {
-          notification.error({ message: error });
-        });
+      }).then((response) => {
+        if (response.error) {
+          notification.error({ message: response.error.data.error });
+        } else {
+          notification.success({ message: response.data.message });
+          dispatch(
+            editSampleMetadata({
+              fieldId,
+              entryId,
+              field: values.metadata_field_name,
+              entry: values.metadata_field_value,
+              restriction: values.metadata_field_permission,
+            })
+          );
+        }
+        form.resetFields();
+        dispatch(setEditSampleMetadata({ editModalVisible: false }));
+      });
     });
   };
 
