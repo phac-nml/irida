@@ -119,7 +119,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "WHERE\n"
 			+ "  psample.project_id = :projectId\n"
 			+ "  AND asub.workflow_id IN (:workflowIds)\n"
-			+ "  AND asub.automated=1";
+			+ "  AND asub.automated=1\n";
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("projectId", projectId);
@@ -160,7 +160,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
-			+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id\n"
+			+ "  LEFT JOIN project_sample psample ON s.id = psample.sample_id\n"
 			+ "WHERE\n"
 			+ "  asub.submitter = :userId\n";
 		// @formatter:on
