@@ -1,13 +1,15 @@
 import { Form, Popover, Select, Space, Tag, Tooltip, Typography } from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
 import {
   IconInfoCircle,
-  IconWarningOutlined
+  IconWarningOutlined,
 } from "../../../components/icons/Icons";
 import { blue6, red6 } from "../../../styles/colors";
 import {
   getColourForRestriction
 } from "../../../utilities/restriction-utilities";
+import { updateMetadataRestriction } from "./shareSlice";
 
 /**
  * React component to allow the user to select the level of restiction for a
@@ -20,11 +22,9 @@ import {
  * @returns {JSX.Element}
  * @constructor
  */
-export function TargetMetadataRestriction({
-                                            field = {},
-                                            restrictions = [],
-                                            onChange
-                                          }) {
+export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
+  const dispatch = useDispatch();
+
   const [feedback, setFeedback] = React.useState({
     hasFeedback: false,
     validateStatus: "",
@@ -46,6 +46,9 @@ export function TargetMetadataRestriction({
     const restriction = restrictions?.find((r) => r.value === value);
     return restriction?.label;
   }
+
+  const onChange = (field, value) =>
+    dispatch(updateMetadataRestriction({ field, value }));
 
   if (field.target) {
     if (field.difference >= 0) {

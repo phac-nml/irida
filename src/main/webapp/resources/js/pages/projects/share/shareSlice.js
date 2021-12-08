@@ -1,4 +1,7 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
+import {
+  compareRestrictionLevels
+} from "../../../utilities/restriction-utilities";
 
 /**
  * Action to set the target project for the samples
@@ -48,6 +51,15 @@ export const setMetadataRestrictions = createAction(
       })),
     },
   }));
+
+export const updateMetadataRestriction = createAction(`share/updateMetadataRestriction`, ({
+                                                                                            field,
+                                                                                            value
+                                                                                          }) => ({
+  payload: {
+    field, value
+  }
+}));
 
 /**
  * Set up the initial state.  This is pulled from session storage which should
@@ -106,6 +118,23 @@ const shareSlice = createSlice({
 
     builder.addCase(setMetadataRestrictions, (state, action) => {
       state.metadataRestrictions = action.payload.metadataRestrictions;
+    });
+
+    builder.addCase(updateMetadataRestriction, (state, action) => {
+      const { field, value } = action.payload;
+      const index = state.metadataRestrictions.findIndex(
+        (f) => f.fieldKey === field.fieldKey
+      );
+      if (index >= 0) {
+        field.restriction = value;
+        field.difference = compareRestrictionLevels(
+          state.metadataRestrictions[index].restriction,
+          value
+        );
+        const updatedFields = [...state.metadataRestrictions];
+        updatedFields[index] = field;
+        state.metadataRestrictions = updatedFields;
+      }
     });
   },
 });

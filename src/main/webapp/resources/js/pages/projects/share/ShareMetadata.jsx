@@ -81,23 +81,6 @@ export function ShareMetadata() {
     getMetadataRestrictions().then(setRestrictions);
   }, []);
 
-  const updateRestrictionForField = (field, level) => {
-    // Find the field
-    const fieldIndex = targetFields.findIndex(
-      (f) => f.fieldKey === field.fieldKey
-    );
-    if (fieldIndex >= 0) {
-      field.restriction = level;
-      field.difference = compareRestrictionLevels(
-        sourceFields[fieldIndex].restriction,
-        field.restriction
-      );
-      const updatedFields = [...targetFields];
-      updatedFields[fieldIndex] = field;
-      setTargetFields(updatedFields);
-    }
-  };
-
   const columns = [
     {
       title: "Field",
@@ -131,7 +114,6 @@ export function ShareMetadata() {
           return (
             <TargetMetadataRestriction
               field={item}
-              onChange={updateRestrictionForField}
               restrictions={restrictions}
             />
           );
