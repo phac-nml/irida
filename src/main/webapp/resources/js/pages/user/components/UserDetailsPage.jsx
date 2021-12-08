@@ -5,8 +5,6 @@ import moment from 'moment';
 
 import { useGetUserDetailsQuery, useEditUserDetailsMutation } from "../../../apis/users/users";
 
-const formDisabled = false;
-
 /**
  * React component to display the user details page.
  * @returns {*}
@@ -41,36 +39,36 @@ export default function UserDetailsPage() {
           onFinish={onFormFinish}
         >
           <Form.Item label={i18n("UserDetailsPage.form.label.firstName")} name="firstName" help={formErrors?.firstName} validateStatus={ formErrors?.firstName ? "error" : undefined }>
-            <Input disabled={formDisabled} />
+            <Input />
           </Form.Item>
           <Form.Item label={i18n("UserDetailsPage.form.label.lastName")} name="lastName" help={formErrors?.lastName} validateStatus={ formErrors?.lastName ? "error" : undefined }>
-            <Input disabled={formDisabled} />
+            <Input />
           </Form.Item>
           <Form.Item label={i18n("UserDetailsPage.form.label.email")} name="email" help={formErrors?.email} validateStatus={ formErrors?.email ? "error" : undefined }>
-            <Input disabled={formDisabled} />
+            <Input />
           </Form.Item>
           <Form.Item label={i18n("UserDetailsPage.form.label.phoneNumber")} name="phoneNumber" help={formErrors?.phoneNumber} validateStatus={ formErrors?.phoneNumber ? "error" : undefined }>
-            <Input disabled={formDisabled} />
+            <Input />
           </Form.Item>
           <Form.Item label={i18n("UserDetailsPage.form.label.locale")} name="locale">
-            <Select disabled={formDisabled}>
+            <Select>
               { Object.keys(data.locales).map((key, index) =>
                 <Select.Option key={`user-account-details-locale-${index}`} value={key}>{data.locales[key]}</Select.Option>
               )}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("UserDetailsPage.form.label.role")} name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined }>
-            <Select disabled={formDisabled}>
+          <Form.Item label={i18n("UserDetailsPage.form.label.role")} name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined } hidden={data.user.role !== "ROLE_ADMIN"}>
+            <Select>
               { Object.keys(data.allowedRoles).map((key, index) =>
                 <Select.Option key={`user-account-details-role-${index}`} value={key}>{data.allowedRoles[key]}</Select.Option>
               )}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("UserDetailsPage.form.label.enabled")} name="enabled" valuePropName="checked">
-            <Switch disabled={formDisabled} />
+          <Form.Item label={i18n("UserDetailsPage.form.label.enabled")} name="enabled" valuePropName="checked" hidden={data.user.role !== "ROLE_ADMIN"}>
+            <Switch />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={formDisabled}>{i18n("UserDetailsPage.form.button.submit")}</Button>
+            <Button type="primary" htmlType="submit">{i18n("UserDetailsPage.form.button.submit")}</Button>
           </Form.Item>
         </Form>
         <Typography.Text type="secondary">{i18n("UserDetailsPage.createdDate", moment(data.user.createdDate).format())}</Typography.Text>
