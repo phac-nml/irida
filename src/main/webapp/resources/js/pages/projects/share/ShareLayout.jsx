@@ -31,6 +31,7 @@ export function ShareLayout({ redirect }) {
     locked,
     projectId,
     remove,
+    metadataRestrictions,
   } = useSelector((state) => state.shareReducer);
 
   const [
@@ -70,6 +71,10 @@ export function ShareLayout({ redirect }) {
       currentId: currentProject,
       targetId: projectId,
       remove,
+      restrictions: metadataRestrictions.map(({ restriction, id }) => ({
+        restriction,
+        identifier: id,
+      })),
     }).then(({ data }) => {
       setResult(data.message);
     });

@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSa
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
@@ -45,10 +46,11 @@ public class UISampleServiceTest {
 		UpdateSamplePermission updateSamplePermission = mock(UpdateSamplePermission.class);
 		SequencingObjectService sequencingObjectService = mock(SequencingObjectService.class);
 		GenomeAssemblyService genomeAssemblyService = mock(GenomeAssemblyService.class);
+		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		MessageSource messageSource = mock(MessageSource.class);
 		UICartService cartService = mock(UICartService.class);
 		service = new UISampleService(sampleService, projectService, updateSamplePermission, sequencingObjectService,
-				genomeAssemblyService, messageSource, cartService);
+				genomeAssemblyService, metadataTemplateService, messageSource, cartService);
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);
