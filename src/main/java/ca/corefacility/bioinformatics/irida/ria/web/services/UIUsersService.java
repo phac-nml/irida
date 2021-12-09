@@ -102,7 +102,8 @@ public class UIUsersService {
 						.body(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
 			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.body(messageSource.getMessage("server.AdminUsersService.error", new Object[] { user.getUsername() }, locale));
+						.body(messageSource.getMessage("server.AdminUsersService.error",
+								new Object[] { user.getUsername() }, locale));
 			}
 
 		}
@@ -129,6 +130,8 @@ public class UIUsersService {
 		User principalUser = userService.getUserByUsername(principal.getName());
 
 		Locale locale = LocaleContextHolder.getLocale();
+
+		response.setAdmin(isAdmin(principal));
 
 		// check if we should show an edit button
 		boolean canEditUser = canEditUser(principalUser, user);

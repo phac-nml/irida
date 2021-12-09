@@ -13,6 +13,7 @@ public class UserDetailsResponse extends AjaxResponse {
 	private String currentRole;
 	private boolean mailConfigured;
 	private boolean mailFailure;
+	private boolean isAdmin;
 	private boolean canEditUser;
 	private boolean canCreatePasswordReset;
 	private Map<String, String> locales;
@@ -49,6 +50,14 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	public void setMailFailure(boolean mailFailure) {
 		this.mailFailure = mailFailure;
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+	public void setAdmin(boolean admin) {
+		isAdmin = admin;
 	}
 
 	public boolean isCanEditUser() {

@@ -57,18 +57,18 @@ export default function UserDetailsPage() {
               )}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("UserDetailsPage.form.label.role")} name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined } hidden={data.user.role !== "ROLE_ADMIN"}>
+          <Form.Item label={i18n("UserDetailsPage.form.label.role")} name="role" help={formErrors?.role} validateStatus={ formErrors?.role ? "error" : undefined } hidden={!data.admin}>
             <Select>
               { Object.keys(data.allowedRoles).map((key, index) =>
                 <Select.Option key={`user-account-details-role-${index}`} value={key}>{data.allowedRoles[key]}</Select.Option>
               )}
             </Select>
           </Form.Item>
-          <Form.Item label={i18n("UserDetailsPage.form.label.enabled")} name="enabled" valuePropName="checked" hidden={data.user.role !== "ROLE_ADMIN"}>
+          <Form.Item label={i18n("UserDetailsPage.form.label.enabled")} name="enabled" valuePropName="checked" hidden={!data.admin}>
             <Switch />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">{i18n("UserDetailsPage.form.button.submit")}</Button>
+            <Button type="primary" htmlType="submit" disabled={!data.canEditUser}>{i18n("UserDetailsPage.form.button.submit")}</Button>
           </Form.Item>
         </Form>
         <Typography.Text type="secondary">{i18n("UserDetailsPage.createdDate", moment(data.user.createdDate).format())}</Typography.Text>
