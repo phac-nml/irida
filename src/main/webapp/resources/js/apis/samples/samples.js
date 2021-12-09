@@ -4,6 +4,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const URL = setBaseUrl(`ajax/samples`);
 
+/**
+ * Redux API to handle queries based on samples
+ */
 export const sampleApi = createApi({
   reducerPath: `sampleApi`,
   baseQuery: fetchBaseQuery({
@@ -31,13 +34,76 @@ export const sampleApi = createApi({
       }),
       invalidatesTags: ["SampleDetails"],
     }),
+    addSampleMetadata: build.mutation({
+      query: ({
+        sampleId,
+        projectId,
+        metadataField,
+        metadataEntry,
+        metadataRestriction,
+      }) => ({
+        url: `/${sampleId}/metadata`,
+        body: { projectId, metadataField, metadataEntry, metadataRestriction },
+        method: "POST",
+      }),
+      invalidatesTags: ["SampleMetadata"],
+    }),
+    removeSampleMetadata: build.mutation({
+      query: ({ field, entryId, projectId }) => ({
+        url: `/metadata?projectId=${projectId}&metadataField=${field}&metadataEntryId=${entryId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["SampleMetadata"],
+    }),
+    updateSampleMetadata: build.mutation({
+      query: ({
+        sampleId,
+        projectId,
+        metadataFieldId,
+        metadataField,
+        metadataEntryId,
+        metadataEntry,
+        metadataRestriction,
+      }) => ({
+        url: `/${sampleId}/metadata`,
+        body: {
+          projectId,
+          metadataFieldId,
+          metadataField,
+          metadataEntryId,
+          metadataEntry,
+          metadataRestriction,
+        },
+        method: "PUT",
+      }),
+      invalidatesTags: ["SampleMetadata"],
+    }),
   }),
 });
 
 export const {
   useGetSampleDetailsQuery,
   useUpdateSampleDetailsMutation,
+  useAddSampleMetadataMutation,
+  useRemoveSampleMetadataMutation,
+  useUpdateSampleMetadataMutation,
 } = sampleApi;
+
+/**
+ * Gets the sample metadata.
+ * @param {Object} params
+ * @returns {Promise<{}|T>}
+ */
+export const fetchMetadataForSample = async ({ sampleId, projectId }) => {
+  try {
+    const { data } = await axios.get(
+      setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`)
+    );
+    return data;
+  } catch (e) {
+    return Promise.reject();
+  }
+};
 
 /**
  * Get file details for a sample
@@ -48,7 +114,7 @@ export const {
 export async function fetchSampleFiles({ sampleId, projectId }) {
   try {
     const response = await axios(
-      `${URL}/${sampleId}/files${projectId ? `?projectId=${projectId}` : null}`
+      `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
     );
     return response.data;
   } catch (e) {

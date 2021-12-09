@@ -58,5 +58,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
-  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
+  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/index.js",
 };

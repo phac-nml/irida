@@ -6,14 +6,14 @@
 import React, { useContext, useLayoutEffect, useState } from "react";
 
 import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesContext";
-import { Avatar, Input, List } from "antd";
+import { AnalysisContext } from "../../../../contexts/AnalysisContext";
+import { Avatar, Button, Input, List } from "antd";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { blue6 } from "../../../../styles/colors";
+import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import { IconExperiment } from "../../../../components/icons/Icons";
-
 const { Search } = Input;
 
 export function AnalysisSampleRenderer() {
@@ -28,6 +28,8 @@ export function AnalysisSampleRenderer() {
     getAnalysisInputSamples,
   } = useContext(AnalysisSamplesContext);
 
+  const { analysisContext } = useContext(AnalysisContext);
+
   useLayoutEffect(() => {
     if (analysisSamplesContext.samples === null) {
       getAnalysisInputSamples();
@@ -39,7 +41,13 @@ export function AnalysisSampleRenderer() {
     null
   );
   const SEQ_FILES_BASE_URL = setBaseUrl("sequenceFiles");
-  const SAMPLES_BASE_URL = setBaseUrl("samples");
+
+  const getProjectId = (sampleId) => {
+    let sampleProjectObj = analysisContext.sampleProjects.find(
+      (s) => (s.sampleId = sampleId)
+    );
+    return sampleProjectObj.projectId;
+  };
 
   const renderPairedEndSamples = () => {
     return (
@@ -66,14 +74,14 @@ export function AnalysisSampleRenderer() {
                   item.sampleId == 0 ? (
                     item.sampleName
                   ) : (
-                    <a
-                      href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-                      target="_blank"
-                      className="t-paired-end-sample-name"
-                      style={{ color: blue6 }}
+                    <SampleDetailViewer
+                      sampleId={item.sampleId}
+                      projectId={getProjectId(item.sampleId)}
                     >
-                      {item.sampleName}
-                    </a>
+                      <Button style={{ padding: 0 }} type="link">
+                        {item.sampleName}
+                      </Button>
+                    </SampleDetailViewer>
                   )
                 }
                 description={
@@ -129,14 +137,14 @@ export function AnalysisSampleRenderer() {
                   item.sampleId == 0 ? (
                     item.sampleName
                   ) : (
-                    <a
-                      href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
-                      target="_blank"
-                      className="t-single-end-sample-name"
-                      style={{ color: blue6 }}
+                    <SampleDetailViewer
+                      sampleId={item.sampleId}
+                      projectId={getProjectId(item.sampleId)}
                     >
-                      {item.sampleName}
-                    </a>
+                      <Button style={{ padding: 0 }} type="link">
+                        {item.sampleName}
+                      </Button>
+                    </SampleDetailViewer>
                   )
                 }
                 description={

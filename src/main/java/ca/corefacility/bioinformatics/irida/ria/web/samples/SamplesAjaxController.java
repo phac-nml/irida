@@ -8,6 +8,8 @@ import java.util.*;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -26,9 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.UpdateSampleAttributeRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -177,23 +176,87 @@ public class SamplesAjaxController {
 	}
 
 	/**
+	 * Get {@link Sample} metadata for a specific sample.
+	 *
+	 * @param id        {@link Long} identifier for a sample.
+	 * @param projectId {@link Long} identifier for a project
+	 * @return {@link SampleMetadata} for the {@link Sample}
+	 */
+	@GetMapping(value = "/{id}/metadata")
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, @RequestParam Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id, projectId));
+	}
+
+	/**
 	 * Update a field within the sample details.
 	 *
-	 * @param id {@link Long} identifier for the sample
-	 * @param request   {@link UpdateSampleAttributeRequest} details about which field to update
-	 * @param locale    {@link Locale} for the currently logged in user
+	 * @param id      {@link Long} identifier for the sample
+	 * @param request {@link UpdateSampleAttributeRequest} details about which field to update
+	 * @param locale  {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@PutMapping(value = "/{id}/details")
-	public ResponseEntity<AjaxResponse> updateSampleDetails(@PathVariable Long id, @RequestBody UpdateSampleAttributeRequest request, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateSampleDetails(@PathVariable Long id,
+			@RequestBody UpdateSampleAttributeRequest request, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateSampleDetails(id, request, locale)));
 		} catch (ConstraintViolationException e) {
 			String constraintViolations = "";
-			for(ConstraintViolation a : e.getConstraintViolations()) {
+			for (ConstraintViolation a : e.getConstraintViolations()) {
 				constraintViolations += a.getMessage() + "\n";
 			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(constraintViolations));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(constraintViolations));
+		}
+	}
+
+	/**
+	 * Add a metadata field and entry to {@link Sample}
+	 *
+	 * @param id                       {@link Long} identifier for the sample
+	 * @param addSampleMetadataRequest DTO containing sample metadata to add params
+	 * @param locale                   {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the addition.
+	 */
+	@PostMapping(value = "/{id}/metadata")
+	public ResponseEntity<AddSampleMetadataResponse> addSampleMetadata(@PathVariable Long id,
+			@RequestBody AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
+		return ResponseEntity.ok(uiSampleService.addSampleMetadata(id, addSampleMetadataRequest, locale));
+	}
+
+	/**
+	 * Remove metadata field and entry from {@link Sample}
+	 *
+	 * @param projectId       The project identifier
+	 * @param metadataField   The metadata field
+	 * @param metadataEntryId The metadata entry identifier
+	 * @param locale          {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the deletion.
+	 */
+	@DeleteMapping(value = "/metadata")
+	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam Long projectId,
+			@RequestParam String metadataField, @RequestParam Long metadataEntryId, Locale locale) {
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				uiSampleService.removeSampleMetadata(projectId, metadataField, metadataEntryId, locale)));
+	}
+
+	/**
+	 * Update a metadata field entry for {@link Sample}
+	 *
+	 * @param id                          The sample identifier
+	 * @param updateSampleMetadataRequest DTO containing sample metadata update params
+	 * @param locale                      {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/metadata")
+	public ResponseEntity<AjaxResponse> updateSampleMetadata(@PathVariable Long id,
+			@RequestBody UpdateSampleMetadataRequest updateSampleMetadataRequest, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateSampleMetadata(id, updateSampleMetadataRequest, locale)));
+		} catch (EntityExistsException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

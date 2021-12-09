@@ -1,9 +1,9 @@
 import React from "react";
 
 import { render } from "react-dom";
-import UserSingleSampleAnalysisOutputs from "./UserSingleSampleAnalysisOutputs";
+import UserSingleSampleAnalysisOutputs from "./components/UserSingleSampleAnalysisOutputs";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import store from "../../projects/project-analyses/store";
+import store from "./store";
 import { Provider } from "react-redux";
 
 /*

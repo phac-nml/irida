@@ -1,36 +1,32 @@
 import React from "react";
-import { DatePicker, List, notification, Typography } from "antd";
+import { DatePicker, Empty, List, notification, Typography } from "antd";
 import { useUpdateSampleDetailsMutation } from "../../../apis/samples/samples";
-import styled from "styled-components";
 import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologySelect } from "../../ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
+import { useSelector } from "react-redux";
+import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
+import { EditMetadata } from "./EditMetadata";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as VList } from "react-window";
 
-const StyledList = styled(List)`
-  .ant-list-item {
-    padding: 15px;
-    div.ant-typography,
-    .ant-typography p {
-      margin-bottom: 0;
-    }
-    .ant-typography.ant-typography-edit-content {
-      margin: 0;
-    }
-  }
-`;
+const DEFAULT_HEIGHT = 600;
 
 /**
  * React component to display basic sample information
- * @param sample The sample to display information for
- * @param isModifiable If the current user is allowed to modify sample details or not
+ *
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleInfo({ sample, isModifiable }) {
+export function SampleInfo() {
+  const { sample, modifiable: isModifiable } = useSelector(
+    (state) => state.sampleReducer
+  );
+
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = i18n("SampleInfo.date.format");
 
   /*
   Updates the field with the provided value. If nothing has
@@ -240,15 +236,44 @@ export function SampleInfo({ sample, isModifiable }) {
     },
   ];
 
+  const renderDetailsListItem = ({ index, style }) => {
+    const item = detailsData[index];
+
+    return (
+      <List.Item style={style}>
+        <List.Item.Meta title={item.title} description={item.value} />
+      </List.Item>
+    );
+  };
+
   return (
-    <StyledList
-      itemLayout="horizontal"
-      dataSource={detailsData}
-      renderItem={(item) => (
-        <List.Item>
-          <List.Item.Meta title={item.title} description={item.value} />
-        </List.Item>
+    <div
+      style={{
+        height: DEFAULT_HEIGHT,
+        width: "100%",
+      }}
+    >
+      {detailsData.length ? (
+        <>
+          <AutoSizer>
+            {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+              <VList
+                itemCount={detailsData.length}
+                itemSize={70}
+                height={height}
+                width={width}
+              >
+                {renderDetailsListItem}
+              </VList>
+            )}
+          </AutoSizer>
+          <MetadataRolesProvider>
+            <EditMetadata />
+          </MetadataRolesProvider>
+        </>
+      ) : (
+        <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
       )}
-    />
+    </div>
   );
 }

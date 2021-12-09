@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +63,7 @@ public class SamplesAjaxControllerTest {
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		uiSampleService = mock(UISampleService.class);
 		MessageSource messageSource = mock(MessageSource.class);
+
 		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService,
 				uiSampleService, messageSource);
 

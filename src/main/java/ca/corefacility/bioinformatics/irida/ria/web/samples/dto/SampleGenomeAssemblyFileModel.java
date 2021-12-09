@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 

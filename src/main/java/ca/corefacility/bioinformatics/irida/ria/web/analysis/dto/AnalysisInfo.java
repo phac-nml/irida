@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis.dto;
 
+import java.util.List;
+
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
@@ -20,10 +22,12 @@ public class AnalysisInfo {
 	private boolean isCompleted;
 	private boolean isError;
 	private boolean treeDefault;
+	private List<AnalysisSampleProject> analysisSampleProjects;
 
 	public AnalysisInfo(AnalysisSubmission analysis, String analysisName, AnalysisState analysisState,
 			String analysisType, String analysisViewer, boolean isAdmin, boolean mailConfigured,
-			AnalysisState previousState, Long duration, boolean isCompleted, boolean isError, boolean treeDefault) {
+			AnalysisState previousState, Long duration, boolean isCompleted, boolean isError, boolean treeDefault,
+			List<AnalysisSampleProject> analysisSampleProjects) {
 		this.analysis = analysis;
 		this.analysisName = analysisName;
 		this.analysisState = analysisState;
@@ -36,6 +40,7 @@ public class AnalysisInfo {
 		this.isCompleted = isCompleted;
 		this.isError = isError;
 		this.treeDefault = treeDefault;
+		this.analysisSampleProjects = analysisSampleProjects;
 	}
 
 	public AnalysisSubmission getAnalysis() {
@@ -132,5 +137,13 @@ public class AnalysisInfo {
 
 	public void setTreeDefault(boolean treeDefault) {
 		this.treeDefault = treeDefault;
+	}
+
+	public List<AnalysisSampleProject> getAnalysisSampleProjects() {
+		return analysisSampleProjects;
+	}
+
+	public void setAnalysisSampleProjects(List<AnalysisSampleProject> analysisSampleProjects) {
+		this.analysisSampleProjects = analysisSampleProjects;
 	}
 }

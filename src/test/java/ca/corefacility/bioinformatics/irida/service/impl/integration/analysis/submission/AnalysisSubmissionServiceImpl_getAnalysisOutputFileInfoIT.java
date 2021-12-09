@@ -75,10 +75,10 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 		final Date date = getDate();
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(2L, "sample2", 4L, "sistr", "sistr2.json", 4L,
 						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"not sharing my sistr", 4L, null, null, null),
+						"not sharing my sistr", 4L, null, null, null, 1L),
 				new ProjectSampleAnalysisOutputInfo(4L, "sample3", 8L, "sistr", "sistr8.json", 8L,
 						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"not sharing my sistr 8", 8L, null, null, null));
+						"not sharing my sistr 8", 8L, null, null, null, null));
 	}
 
 	@Test
@@ -96,26 +96,26 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 		final Date date = getDate();
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(1L, "sample1", 1L, "contigs", "contigs.fasta", 1L,
 				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date, "sub1",
-						1L, 2L, "This", "Guy"),
+						1L, 2L, "This", "Guy", 1L),
 				new ProjectSampleAnalysisOutputInfo(2L, "sample2", 1L, "contigs", "contigs.fasta", 1L,
 						BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
-						"sub1", 1L, 2L, "This", "Guy"));
+						"sub1", 1L, 2L, "This", "Guy", 1L));
 	}
 
 	private Set<ProjectSampleAnalysisOutputInfo> expectedAutomatedOutputsForProject1() throws ParseException {
 		final Date date = getDate();
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(1L, "sample1", 6L, "contigs", "contigs6.fasta", 6L,
 				BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
-						"auto assembly 6", 6L, 1L, "Ad", "Min"),
+						"auto assembly 6", 6L, 1L, "Ad", "Min", 1L),
 				new ProjectSampleAnalysisOutputInfo(1L, "sample1", 7L, "sistr", "sistr7.json", 7L,
 						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"auto sistr 7", 7L, 1L, "Ad", "Min"),
+						"auto sistr 7", 7L, 1L, "Ad", "Min", 1L),
 				new ProjectSampleAnalysisOutputInfo(2L, "sample2", 2L, "contigs", "contigs2.fasta", 2L,
 						BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION, UUID.fromString("92ecf046-ee09-4271-b849-7a82625d6b60"), date,
-						"auto assembly", 2L, 1L, "Ad", "Min"),
+						"auto assembly", 2L, 1L, "Ad", "Min", 1L),
 				new ProjectSampleAnalysisOutputInfo(2L, "sample2", 3L, "sistr", "sistr.json", 3L,
 						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"auto sistr", 3L, 1L, "Ad", "Min"));
+						"auto sistr", 3L, 1L, "Ad", "Min", 1L));
 	}
 
 	private Date getDate() throws ParseException {

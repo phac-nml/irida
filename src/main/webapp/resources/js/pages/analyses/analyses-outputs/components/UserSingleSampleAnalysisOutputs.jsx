@@ -1,7 +1,7 @@
 import React from "react";
-import SingleSampleAnalysisOutputs from "../../../components/analyses-outputs/SingleSampleAnalysisOutputs";
-import { useGetUserSingleSampleAnalysisOutputsQuery } from "../../../apis/analyses/analyses";
-import { PageWrapper } from "../../../components/page/PageWrapper";
+import SingleSampleAnalysisOutputs from "../../../../components/analyses-outputs/SingleSampleAnalysisOutputs";
+import { useGetUserSingleSampleAnalysisOutputsQuery } from "../../../../apis/analyses/analyses";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
 
 /**
  * React component for getting the yser single sample analysis outputs

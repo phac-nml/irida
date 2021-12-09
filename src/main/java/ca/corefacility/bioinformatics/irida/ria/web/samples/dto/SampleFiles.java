@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleGenomeAssemblyFileModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
 /**
