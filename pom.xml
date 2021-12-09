@@ -108,108 +108,44 @@
 
 	<dependencies>
 		<!-- Spring Core Framework -->
-		<!--<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-jcl</artifactId>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.aspectj</groupId>
-					<artifactId>aspectjweaver</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-		</dependency>-->
 
 		<!-- Security -->
-		<!--<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
 			<version>${jsr250.api.version}</version>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>org.apache.oltu.oauth2</groupId>
 			<artifactId>org.apache.oltu.oauth2.client</artifactId>
 			<version>${oltu.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Database -->
-		<!--<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring.data.jpa.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.aspectj</groupId>
-					<artifactId>aspectjrt</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-envers</artifactId>
-			<version>${spring.data.envers.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -217,6 +153,17 @@
 				<exclusion>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+			<version>${spring.data.envers.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -291,6 +238,14 @@
 					<artifactId>xml-apis</artifactId>
 					<groupId>xml-apis</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -299,8 +254,20 @@
 			<version>${apache.jena.version}</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>xml-apis</artifactId>
 					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -323,41 +290,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-			<version>${spring.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-lang</groupId>
-					<artifactId>commons-lang</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.springframework.hateoas</groupId>
-			<artifactId>spring-hateoas</artifactId>
-			<version>${spring.hateoas.version}</version>
-		</dependency>-->
-		<!--<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
@@ -369,16 +305,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-yaml</artifactId>
-			<version>${jackson.dataformat.yaml.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
@@ -438,32 +364,7 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Servlet -->
-		<!--<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>javax.el-api</artifactId>
-			<version>${javax.el-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.el</groupId>
-			<artifactId>el-ri</artifactId>
-			<version>${el.ri.version}</version>
-		</dependency>-->
-
 		<!-- Testing -->
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest</artifactId>
-			<version>${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -476,24 +377,22 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.junit.jupiter</groupId>
-					<artifactId>junit-jupiter-api</artifactId>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-test-autoconfigure</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest</artifactId>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.mockito</groupId>
 					<artifactId>mockito-junit-jupiter</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<!--<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.ws</groupId>
@@ -506,7 +405,7 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
@@ -567,18 +466,6 @@
 			<version>${jsoup.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test-mvc-htmlunit</artifactId>
-			<version>${spring-test-mvc-htmlunit.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
@@ -597,25 +484,6 @@
 			<version>${mockftpserver.version}</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!--<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<version>${jsonpath.version}</version>
-			<scope>test</scope>
-		</dependency>-->
-
-		<!-- Logging -->
-		<!--<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>-->
 
 		<!-- Utilities -->
 		<dependency>
@@ -977,18 +845,6 @@
 					<password>${liquibase.config.password}</password>
 					<changeLogFile>${liquibase.config.changeLogFile}</changeLogFile>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-beans</artifactId>
-						<version>${spring.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-context</artifactId>
-						<version>${spring.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<!-- Maven WAR plugin -->
@@ -1197,9 +1053,6 @@
 		<slf4j.version>1.7.26</slf4j.version>
 		<guava.version>28.0-jre</guava.version>
 		<spring.boot.starter.version>2.2.5.RELEASE</spring.boot.starter.version>
-		<spring.version>5.2.2.RELEASE</spring.version>
-		<spring.security.version>5.2.1.RELEASE</spring.security.version>
-		<spring.data.jpa.version>2.2.0.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>2.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>3.0.7.RELEASE</spring.ws.test.version>
@@ -1212,9 +1065,7 @@
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.9-nml-custom</fastqc.version>
-		<aspectj.version>1.8.2</aspectj.version>
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
-		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>3.12.0</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
@@ -1224,10 +1075,7 @@
 		<jackson.version>2.12.1</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
 		<commons.fileupload.version>1.3.1</commons.fileupload.version>
-		<javax.el-api.version>3.0.0</javax.el-api.version>
-		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
 		<spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
-		<el.ri.version>1.0</el.ri.version>
 		<oltu.version>1.0.0</oltu.version>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
@@ -1236,25 +1084,21 @@
 		<apache.poi.version>3.17</apache.poi.version>
 		<javax.mail.version>1.6.2</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
-		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
 		<selenium-driver.version>3.141.59</selenium-driver.version>
 		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
 		<attoparser.version>2.0.4.RELEASE</attoparser.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
-		<jsonpath.version>2.4.0</jsonpath.version>
 		<imgscalr.version>4.2</imgscalr.version>
-		<jackson.dataformat.yaml.version>2.12.1</jackson.dataformat.yaml.version>
 		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 		<pf4j.version>2.4.0</pf4j.version>
-		<hamcrest.version>2.2</hamcrest.version>
 		<javax.activation.version>1.2.0</javax.activation.version>
 		<com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
 		<org.springdoc.openapi.webmvc.version>1.5.6</org.springdoc.openapi.webmvc.version>
 
 		<!-- plugins -->
-		<maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
-		<maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
+		<maven.failsafe.plugin.version>3.0.0-M5</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
 		<maven.javadoc.plugin.version>3.1.0</maven.javadoc.plugin.version>
 		<maven.checkstyle.plugin.version>3.0.0</maven.checkstyle.plugin.version>
 		<maven.jacoco.plugin.version>0.8.3</maven.jacoco.plugin.version>
