@@ -12,13 +12,17 @@ import {
 import { setMetadataRestrictions } from "./shareSlice";
 import { TargetMetadataRestriction } from "./TargetMetadataRestriction";
 
+/**
+ * React component to display metadata restrictions.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function ShareMetadata() {
   const dispatch = useDispatch();
   /**
    * Available restrictions for metadata fields
    */
   const [restrictions, setRestrictions] = React.useState([]);
-  const [targetFields, setTargetFields] = React.useState([]);
 
   const { currentProject, projectId, metadataRestrictions } = useSelector(
     (state) => state.shareReducer
