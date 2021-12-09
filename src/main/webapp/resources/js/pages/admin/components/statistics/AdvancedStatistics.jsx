@@ -3,10 +3,15 @@
  * which displays statistics in charts
  */
 
-import React, { useEffect, useState } from "react";
 import { Bar, Column, Line, Pie } from "@ant-design/charts";
 import { Card, Form, PageHeader, Spin } from "antd";
-import { TimePeriodSelect } from "./TimePeriodSelect";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getUpdatedStatistics } from "../../../../apis/admin/admin";
+
+import { SPACE_LG, SPACE_MD } from "../../../../styles/spacing";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { getChartConfiguration } from "../../chart-config";
 
 import {
   chartTypes,
@@ -14,28 +19,26 @@ import {
   defaultTimePeriod,
   statisticTypes,
 } from "../../statistics-constants";
-
-import { SPACE_LG, SPACE_MD } from "../../../../styles/spacing";
 import { ChartTypeButtons } from "./ChartTypeButtons";
-import { getChartConfiguration } from "../../chart-config";
-import { useNavigate } from "@reach/router";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { getUpdatedStatistics } from "../../../../apis/admin/admin";
+import { TimePeriodSelect } from "./TimePeriodSelect";
 
-export default function AdvancedStatistics({ statType }) {
+export default function AdvancedStatistics() {
+  const params = useParams();
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [chartType, setChartType] = useState(defaultChartType);
   const [data, setData] = useState([]);
 
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
-
   useEffect(() => {
-    getUpdatedStatistics(statType, defaultTimePeriod).then(({ statistics }) => {
-      setData(statistics);
-      setLoading(false);
-    });
-  }, [statType]);
+    getUpdatedStatistics(params.statType, defaultTimePeriod).then(
+      ({ statistics }) => {
+        setData(statistics);
+        setLoading(false);
+      }
+    );
+  }, [params.statType]);
 
   const components = {
     [chartTypes.BAR]: Bar,
@@ -45,18 +48,28 @@ export default function AdvancedStatistics({ statType }) {
   };
 
   const TITLES = {
-    [statisticTypes.ANALYSES]: i18n("AdminPanelStatistics.advancedStatistics.titleAnalysesRan"),
-    [statisticTypes.PROJECTS]: i18n("AdminPanelStatistics.advancedStatistics.titleProjectsCreated"),
-    [statisticTypes.SAMPLES]: i18n("AdminPanelStatistics.advancedStatistics.titleSamplesCreated"),
-    [statisticTypes.USERS]: i18n("AdminPanelStatistics.advancedStatistics.titleUsersCreated"),
+    [statisticTypes.ANALYSES]: i18n(
+      "AdminPanelStatistics.advancedStatistics.titleAnalysesRan"
+    ),
+    [statisticTypes.PROJECTS]: i18n(
+      "AdminPanelStatistics.advancedStatistics.titleProjectsCreated"
+    ),
+    [statisticTypes.SAMPLES]: i18n(
+      "AdminPanelStatistics.advancedStatistics.titleSamplesCreated"
+    ),
+    [statisticTypes.USERS]: i18n(
+      "AdminPanelStatistics.advancedStatistics.titleUsersCreated"
+    ),
   };
 
   function updateTimePeriod(e) {
     setLoading(true);
-    getUpdatedStatistics(statType, e.target.value).then(({ statistics }) => {
-      setData(statistics);
-      setLoading(false);
-    });
+    getUpdatedStatistics(params.statType, e.target.value).then(
+      ({ statistics }) => {
+        setData(statistics);
+        setLoading(false);
+      }
+    );
   }
 
   function displayChart() {
@@ -70,7 +83,7 @@ export default function AdvancedStatistics({ statType }) {
   return (
     <>
       <PageHeader
-        title={TITLES[statType]}
+        title={TITLES[params.statType]}
         onBack={() => navigate(setBaseUrl(`/admin/statistics`))}
       />
       <Card style={{ margin: SPACE_LG }}>

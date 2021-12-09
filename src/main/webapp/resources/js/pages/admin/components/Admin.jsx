@@ -15,6 +15,7 @@ import { Route, Routes } from "react-router-dom";
 import { ContentLoading } from "../../../components/loader";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ADMIN } from "../routes";
+import { AdminContent } from "./AdminContent";
 import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu";
 
@@ -26,7 +27,12 @@ const AdvancedStatistics = lazy(() =>
 const BasicStats = lazy(() => import("./statistics/BasicStats"));
 
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
-const AdminUserGroupsPage = lazy(() => import("./AdminUserGroupsPage"));
+const UserGroupsPage = lazy(() =>
+  import("../../UserGroupsPage/components/UserGroupsPage")
+);
+const UserGroupsDetailsPage = lazy(() =>
+  import("../../UserGroupsPage/components/UserGroupDetailsPage")
+);
 const ClientListingPage = lazy(() =>
   import("./clients/listing/ClientListingPage")
 );
@@ -59,46 +65,44 @@ export default function Admin() {
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Routes>
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}
-                element={<BasicStats />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.STATISTICS}/:statType`}
-                element={<AdvancedStatistics />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.USERS}`}
-                element={<AdminUsersPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/*`}
-                element={<AdminUserGroupsPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.CLIENTS}`}
-                element={<ClientListingPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.REMOTE_API}`}
-                element={<AdminRemoteApiPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}/:remoteId`}
-                element={<AdminRemoteApiDetailsPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.SEQUENCING_RUNS}`}
-                element={<AdminSequencingRunsPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.NCBIEXPORTS}`}
-                element={<AdminNcbiExportsPage />}
-              />
-              <Route
-                path={`${DEFAULT_URL}/${ADMIN.ANNOUNCEMENTS}`}
-                element={<AnnouncementAdminPage />}
-              />
+              <Route path={`${DEFAULT_URL}/`} element={<AdminContent />}>
+                <Route index path={ADMIN.STATISTICS} element={<BasicStats />} />
+                <Route
+                  path={`${ADMIN.STATISTICS}/:statType`}
+                  element={<AdvancedStatistics />}
+                />
+                <Route path={ADMIN.USERS} element={<AdminUsersPage />} />
+
+                <Route
+                  path={`${ADMIN.USERGROUPS}/list`}
+                  element={<UserGroupsPage />}
+                />
+                <Route
+                  path={`${ADMIN.USERGROUPS}/:id`}
+                  element={<UserGroupsDetailsPage />}
+                />
+                <Route path={ADMIN.CLIENTS} element={<ClientListingPage />} />
+                <Route
+                  path={ADMIN.REMOTE_API}
+                  element={<AdminRemoteApiPage />}
+                />
+                <Route
+                  path={`${ADMIN.REMOTEAPI}/:remoteId`}
+                  element={<AdminRemoteApiDetailsPage />}
+                />
+                <Route
+                  path={ADMIN.SEQUENCING_RUNS}
+                  element={<AdminSequencingRunsPage />}
+                />
+                <Route
+                  path={ADMIN.NCBIEXPORTS}
+                  element={<AdminNcbiExportsPage />}
+                />
+                <Route
+                  path={ADMIN.ANNOUNCEMENTS}
+                  element={<AnnouncementAdminPage />}
+                />
+              </Route>
             </Routes>
           </Suspense>
         </Content>

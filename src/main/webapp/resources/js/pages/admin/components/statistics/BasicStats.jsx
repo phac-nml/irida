@@ -4,26 +4,26 @@
  * charts
  */
 
-import React from "react";
-import { Card, Col, Row, Statistic } from "antd";
-import { SPACE_MD } from "../../../../styles/spacing";
 import { TinyColumn } from "@ant-design/charts";
+import { Card, Col, Row, Statistic } from "antd";
+import React from "react";
+import { Link } from "react-router-dom";
+
+import styled from "styled-components";
+import { getAdminStatistics } from "../../../../apis/admin/admin";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
+import { blue6 } from "../../../../styles/colors";
+import { SPACE_MD } from "../../../../styles/spacing";
+
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+
+import { getTinyChartConfiguration } from "../../chart-config";
 import { ADMINSTATS } from "../../routes";
 
 import {
   defaultTimePeriod,
   defaultTimePeriodText,
 } from "../../statistics-constants";
-
-import { getTinyChartConfiguration } from "../../chart-config";
-
-import styled from "styled-components";
-import { blue6 } from "../../../../styles/colors";
-
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { Link } from "@reach/router";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { getAdminStatistics } from "../../../../apis/admin/admin";
 
 const LinkCard = styled(Card)`
   &:hover {

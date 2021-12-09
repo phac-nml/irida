@@ -68,7 +68,7 @@ export default function AdminHeader() {
             <Menu.Item key="groups">
               <Link
                 onClick={() => setSelectedKeys("users")}
-                to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}
+                to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/list`}
                 className={"t-admin-groups-link"}
               >
                 {i18n("AdminPanel.userGroupList")}
