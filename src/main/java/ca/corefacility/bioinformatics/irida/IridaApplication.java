@@ -2,9 +2,11 @@ package ca.corefacility.bioinformatics.irida;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.context.annotation.Import;
+
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 
 @SpringBootApplication(
 	exclude = {
@@ -12,10 +14,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 		LiquibaseAutoConfiguration.class,
 	}
 )
-@EntityScan(basePackages = {
-	"ca.corefacility.bioinformatics.irida.model",
-	"ca.corefacility.bioinformatics.irida.repositories.relational.auditing"
-})
+@Import(IridaApiPropertyPlaceholderConfig.class)
 public class IridaApplication {
 
 	public static void main(String[] args) {
