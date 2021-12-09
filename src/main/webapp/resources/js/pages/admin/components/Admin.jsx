@@ -91,7 +91,7 @@ export default function Admin() {
                   element={<AdminRemoteApiDetailsPage />}
                 />
                 <Route
-                  path={ADMIN.SEQUENCING_RUNS}
+                  path={ADMIN.SEQUENCINGRUNS}
                   element={<AdminSequencingRunsPage />}
                 />
                 <Route
