@@ -38,7 +38,7 @@ export default function AdminHeader() {
         </Link>
         <Menu
           className={"t-admin-side-menu"}
-          style={{ height: "100vh" }}
+          style={{ height: "calc(100vh - 65px)" }}
           theme={"dark"}
           mode={"inline"}
           selectedKeys={[selectedKeys]}
