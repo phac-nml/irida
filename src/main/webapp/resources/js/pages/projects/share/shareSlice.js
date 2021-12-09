@@ -52,17 +52,21 @@ export const setMetadataRestrictions = createAction(
     },
   }));
 
-export const updateMetadataRestriction = createAction(`share/updateMetadataRestriction`, ({
-                                                                                            field,
-                                                                                            value
-                                                                                          }) => ({
-  payload: {
-    field, value
-  }
-}));
+/**
+ * Update one of the metadata restrictions with a specific value
+ */
+export const updateMetadataRestriction = createAction(
+  `share/updateMetadataRestriction`,
+  ({ field, value }) => ({
+    payload: {
+      field,
+      value,
+    },
+  })
+);
 
 /**
- * Set up the initial state.  This is pulled from session storage which should
+ * Set up the initial state. This is pulled from session storage which should
  * be accessed by the key "share".  The stringified object should be of the format:
  * <code>
  *   {
