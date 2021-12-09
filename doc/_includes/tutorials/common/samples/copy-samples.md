@@ -1,8 +1,13 @@
 ## Sharing and Moving Samples
 
-Sharing and moving samples has been completely re-designed for the January 2022 release of IRIDA in an effort to allow faster sharing or moving greater number of samples.  It is important to remember that you must be a manager on both the current project and the project you are trying to share or move samples to.
+Sharing and moving samples has been completely re-designed for the January 2022 release of IRIDA in an effort to allow
+faster sharing or moving greater number of samples. It is important to remember that you must be a manager on both the
+current project and the project you are trying to share or move samples to.
 
-Samples can be selected using the checkboxes on the Project > Samples page.  Once the required samples are selected, choose the "Share / Move Samples".
+Samples can be selected on either the project samples page or the linelist page:
+
+1. Project Samples Page: Click the "Sample Tools" dropdown and select "Share / Move Samples".
+2. Linelist Page: click the "Share Samples" button.
 
 ![Share samples link.]({{ site.baseurl }}/images/tutorials/common/samples/share-link.png)
 
@@ -12,9 +17,11 @@ Once selected, you will be redirected to the new Share / Move Samples page.
 
 ### Destination Project Selection
 
-The first action is to select the destination project.  Start typing the name of the destination project in the "Select a project to share samples with" input.  As you type a list of projects will be presented, select the project you want.
+The first action is to select the destination project. Start typing the name of the destination project in the "Select a
+project to share samples with" input. As you type a list of projects will be presented, select the project you want.
 
-![Share samples select destination from dropdown.]({{ site.baseurl }}/images/tutorials/common/samples/share-destination.png)
+![Share samples select destination from dropdown.]({{ site.baseurl
+}}/images/tutorials/common/samples/share-destination.png)
 
 ### Sample Review
 

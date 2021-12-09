@@ -7,6 +7,8 @@ import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -20,7 +22,19 @@ import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.Generic
  * A repository for storing Sample objects
  * 
  */
-public interface SampleRepository extends IridaJpaRepository<Sample, Long>, SampleRepositoryCustom {
+public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
+
+	/**
+	 * Get the {@link Sample}s associated with a {@link Project}
+	 *
+	 * @param project
+	 *            The {@link Project} 
+	 * @return the list of associated {@link Sample}s
+	 */
+	@EntityGraph(value = "sampleOnly", type = EntityGraphType.FETCH)
+	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1")
+	public List<Sample> getSamplesForProjectShallow(Project project);
+
 	/**
 	 * Get a {@link Sample} with the given string sample identifier from a
 	 * specific project.
