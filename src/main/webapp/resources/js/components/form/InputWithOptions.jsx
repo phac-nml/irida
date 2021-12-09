@@ -11,7 +11,7 @@ import { isTruthy } from "../../utilities/form-utilities";
 export function InputWithOptions({ item }) {
   if (item.options.length === 1) {
     return (
-      <Form.Item name={item.name}>
+      <Form.Item name={item.name} label={item.label}>
         <Input type="text" value={item.options[0].value} disabled />
       </Form.Item>
     );
