@@ -83,7 +83,7 @@ export default function Admin() {
                 />
                 <Route path={ADMIN.CLIENTS} element={<ClientListingPage />} />
                 <Route
-                  path={ADMIN.REMOTE_API}
+                  path={ADMIN.REMOTEAPI}
                   element={<AdminRemoteApiPage />}
                 />
                 <Route
