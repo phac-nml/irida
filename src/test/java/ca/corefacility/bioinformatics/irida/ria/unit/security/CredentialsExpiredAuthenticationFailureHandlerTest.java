@@ -22,12 +22,12 @@ import org.springframework.security.core.AuthenticationException;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpiredAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 public class CredentialsExpiredAuthenticationFailureHandlerTest {
-	private CredentialsExpriredAuthenticationFailureHandler handler;
+	private CredentialsExpiredAuthenticationFailureHandler handler;
 	private PasswordResetService resetService;
 	private UserService userService;
 
@@ -35,7 +35,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 	public void setUp() {
 		resetService = mock(PasswordResetService.class);
 		userService = mock(UserService.class);
-		handler = new CredentialsExpriredAuthenticationFailureHandler(resetService, userService);
+		handler = new CredentialsExpiredAuthenticationFailureHandler(resetService, userService);
 
 	}
 

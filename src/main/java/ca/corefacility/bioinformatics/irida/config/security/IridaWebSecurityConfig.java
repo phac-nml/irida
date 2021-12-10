@@ -19,7 +19,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
-import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpiredAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
 
 /**
@@ -50,7 +50,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 
 		@Autowired
-		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
+        CredentialsExpiredAuthenticationFailureHandler authFailureHandler;
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {

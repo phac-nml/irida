@@ -33,14 +33,14 @@ import com.google.common.collect.ImmutableList;
  *
  */
 @Component
-public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
-	private static final Logger logger = LoggerFactory.getLogger(CredentialsExpriredAuthenticationFailureHandler.class);
+public class CredentialsExpiredAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+	private static final Logger logger = LoggerFactory.getLogger(CredentialsExpiredAuthenticationFailureHandler.class);
 
 	private final PasswordResetService resetService;
 	private final UserService userService;
 
 	@Autowired
-	public CredentialsExpriredAuthenticationFailureHandler(PasswordResetService resetService, UserService userService) {
+	public CredentialsExpiredAuthenticationFailureHandler(PasswordResetService resetService, UserService userService) {
 		this.resetService = resetService;
 		this.userService = userService;
 	}
