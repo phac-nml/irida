@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import com.google.common.base.Strings;
 
 public class RemoteAPIsPage extends AbstractPage {
-	private static final String RELATIVE_URL = "admin/remote_api";
+	private static final String RELATIVE_URL = "remote_api";
 
 	@FindBy(css = ".t-remoteapi-table table")
 	private WebElement table;

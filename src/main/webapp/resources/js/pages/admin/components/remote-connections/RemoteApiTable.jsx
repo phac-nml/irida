@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
 import {
   PagedTable,
   PagedTableContext,
@@ -26,12 +25,12 @@ export function RemoteApiTable() {
       dataIndex: "name",
       render(text, record) {
         return isAdmin() ? (
-          <Link
-            to={setBaseUrl(`/admin/remote_api/${record.id}`)}
+          <a
+            href={setBaseUrl(`/admin/remote_api/${record.id}`)}
             className="t-api-name"
           >
             {text}
-          </Link>
+          </a>
         ) : (
           <span className="t-api-name">{text}</span>
         );
