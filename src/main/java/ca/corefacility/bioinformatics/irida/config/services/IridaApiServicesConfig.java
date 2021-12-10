@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
@@ -74,6 +75,10 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Configuration for the IRIDA platform.
  */
 @Configuration
+@EntityScan(basePackages = {
+	"ca.corefacility.bioinformatics.irida.model",
+	"ca.corefacility.bioinformatics.irida.repositories.relational.auditing"
+})
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
 		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class, IridaWorkflowsConfig.class})
