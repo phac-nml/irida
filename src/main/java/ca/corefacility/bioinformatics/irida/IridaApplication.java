@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfigurati
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 
 @SpringBootApplication(
 	exclude = {
@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlac
 		LiquibaseAutoConfiguration.class,
 	}
 )
-@Import(IridaApiPropertyPlaceholderConfig.class)
+@Import(IridaApiServicesConfig.class)
 public class IridaApplication {
 
 	public static void main(String[] args) {
