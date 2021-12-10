@@ -630,10 +630,6 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>${maven.build.helper.plugin.version}</version>
@@ -646,13 +642,50 @@
 						</goals>
 						<configuration>
 							<portNames>
-								<portName>jetty.port</portName>
+								<portName>server.port</portName>
 							</portNames>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<wait>1000</wait>
+					<maxAttempts>1000</maxAttempts>
+					<jvmArguments>${failsafeArgLine}</jvmArguments>
+				</configuration>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+						<configuration>
+							<skip>${tomcat.skip}</skip>
+							<systemPropertyVariables>
+								<spring.profiles.active>it</spring.profiles.active>
+								<irida.db.profile>it</irida.db.profile>
+								<server.port>${server.port}</server.port>
+								<server.base.url>http://localhost:${server.port}</server.base.url>
+								<jdbc.url>${jdbc.url}</jdbc.url>
+							</systemPropertyVariables>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+						<configuration>
+							<skip>${tomcat.skip}</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.plugin.version}</version>
 				<configuration>
@@ -689,11 +722,10 @@
 							<!--suppress UnresolvedMavenProperty -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
-								<jetty.port>${jetty.port}</jetty.port>
+								<server.port>${server.port}</server.port>
 								<spring.profiles.active>it</spring.profiles.active>
 								<irida.db.profile>it</irida.db.profile>
-								<jetty.port>${jetty.port}</jetty.port>
-								<server.base.url>http://localhost:${jetty.port}</server.base.url>
+								<server.base.url>http://localhost:${server.port}</server.base.url>
 							</systemPropertyVariables>
 							<rerunFailingTestsCount>5</rerunFailingTestsCount>
 						</configuration>
@@ -886,62 +918,6 @@
 				</executions>
 			</plugin>
 
-			<!-- Jetty plugin -->
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${maven.jetty.plugin.version}</version>
-				<configuration>
-					<scanIntervalSeconds>0</scanIntervalSeconds>
-					<stopPort>9966</stopPort>
-					<stopKey>STOP</stopKey>
-				</configuration>
-				<executions>
-					<execution>
-						<id>start-jetty</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-							<goal>start</goal>
-						</goals>
-						<configuration>
-							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<stopPort>9966</stopPort>
-							<stopKey>STOP</stopKey>
-							<!--<daemon>true</daemon>-->
-							<systemProperties>
-								<systemProperty>
-									<!-- Setting spring profile for integration tests to "it". Also
-										done in failsafe plugin -->
-									<name>spring.profiles.active</name>
-									<value>it</value>
-								</systemProperty>
-								<systemProperty>
-									<!-- Setting spring profile for integration tests to "it". Also
-										done in failsafe plugin -->
-									<name>irida.db.profile</name>
-									<value>it</value>
-								</systemProperty>
-								<systemProperty>
-									<name>jetty.port</name>
-									<value>${jetty.port}</value>
-								</systemProperty>
-								<systemProperty>
-									<name>server.base.url</name>
-									<value>http://localhost:${jetty.port}</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-					</execution>
-					<execution>
-						<id>stop-jetty</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -1034,7 +1010,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<apiDocsUrl>http://localhost:${jetty.port}/v3/api-docs</apiDocsUrl>
+					<apiDocsUrl>http://localhost:${server.port}/v3/api-docs</apiDocsUrl>
 					<outputFileName>open-api.json</outputFileName>
 					<outputDir>doc/swagger-ui</outputDir>
 					<skip>false</skip>
@@ -1105,7 +1081,6 @@
 		<maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
 		<maven.war.plugin.version>3.2.2</maven.war.plugin.version>
-		<maven.jetty.plugin.version>9.4.24.v20191120</maven.jetty.plugin.version>
 		<maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
 		<maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
 		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
@@ -1159,7 +1134,7 @@
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
 				</exclude.tests>
-				<jetty.skip>true</jetty.skip>
+				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>
 		<profile>
@@ -1180,7 +1155,7 @@
 				<exclude.tests>
 					**/AnalysisExecutionServiceGalaxyIT.java,
 				</exclude.tests>
-				<jetty.skip>true</jetty.skip>
+				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>
 		<profile>
@@ -1192,7 +1167,7 @@
 					**/AnalysisExecutionServiceGalaxyIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
-				<jetty.skip>true</jetty.skip>
+				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>
 		<profile>
