@@ -9,19 +9,19 @@ import { isTruthy } from "../../utilities/form-utilities";
  * @constructor
  */
 export function InputWithOptions({ item }) {
-   if (isTruthy(item.options)) {
-     return (
-       <Form.Item name={item.name} valuePropName="checked">
-         <Checkbox>{item.label}</Checkbox>
-       </Form.Item>
-     );
-   } else if (item.options.length < 6) {
-     return (
-       <Form.Item name={item.name} label={item.label}>
-         <Radio.Group options={item.options} />
-       </Form.Item>
-     );
-   }
+  if (isTruthy(item.options)) {
+    return (
+      <Form.Item name={item.name} valuePropName="checked">
+        <Checkbox>{item.label}</Checkbox>
+      </Form.Item>
+    );
+  } else if (item.options.length < 6) {
+    return (
+      <Form.Item name={item.name} label={item.label}>
+        <Radio.Group options={item.options} />
+      </Form.Item>
+    );
+  }
   return (
     <Form.Item name={item.name} label={item.label}>
       <Select>
