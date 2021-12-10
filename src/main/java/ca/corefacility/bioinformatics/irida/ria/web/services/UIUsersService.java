@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
- * Handles service call for the the administration of the IRIDA users.
+ * Handles service call for the administration of the IRIDA users.
  */
 @Component
 public class UIUsersService {
@@ -118,7 +118,7 @@ public class UIUsersService {
 	 * @param userId      - the id for the user to show details for
 	 * @param mailFailure - if sending a user activation e-mail passed or failed
 	 * @param principal   - the currently logged in user
-	 * @return user details for a specific user
+	 * @return {@link UserDetailsResponse} that contains user details for a specific user
 	 */
 	public UserDetailsResponse getUser(Long userId, Boolean mailFailure, Principal principal) {
 		UserDetailsResponse response = new UserDetailsResponse();
