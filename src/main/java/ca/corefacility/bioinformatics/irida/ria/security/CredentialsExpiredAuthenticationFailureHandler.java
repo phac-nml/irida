@@ -43,6 +43,7 @@ public class CredentialsExpiredAuthenticationFailureHandler extends SimpleUrlAut
 	public CredentialsExpiredAuthenticationFailureHandler(PasswordResetService resetService, UserService userService) {
 		this.resetService = resetService;
 		this.userService = userService;
+		this.setUseForward(true);
 	}
 
 	/**
