@@ -1,4 +1,4 @@
-import { Checkbox, Form, Input, Radio, Select } from "antd";
+import { Checkbox, Form, Radio, Select } from "antd";
 import React from "react";
 import { isTruthy } from "../../utilities/form-utilities";
 
@@ -9,25 +9,19 @@ import { isTruthy } from "../../utilities/form-utilities";
  * @constructor
  */
 export function InputWithOptions({ item }) {
-  if (item.options.length === 1) {
-    return (
-      <Form.Item name={item.name} label={item.label}>
-        <Input type="text" value={item.options[0].value} disabled />
-      </Form.Item>
-    );
-  } else if (isTruthy(item.options)) {
-    return (
-      <Form.Item name={item.name} valuePropName="checked">
-        <Checkbox>{item.label}</Checkbox>
-      </Form.Item>
-    );
-  } else if (item.options.length < 6) {
-    return (
-      <Form.Item name={item.name} label={item.label}>
-        <Radio.Group options={item.options} />
-      </Form.Item>
-    );
-  }
+   if (isTruthy(item.options)) {
+     return (
+       <Form.Item name={item.name} valuePropName="checked">
+         <Checkbox>{item.label}</Checkbox>
+       </Form.Item>
+     );
+   } else if (item.options.length < 6) {
+     return (
+       <Form.Item name={item.name} label={item.label}>
+         <Radio.Group options={item.options} />
+       </Form.Item>
+     );
+   }
   return (
     <Form.Item name={item.name} label={item.label}>
       <Select>
