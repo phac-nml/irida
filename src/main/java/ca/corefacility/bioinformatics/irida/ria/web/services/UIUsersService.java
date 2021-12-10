@@ -162,33 +162,6 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Check if the logged in user is an Admin
-	 *
-	 * @param principal The logged in user to check
-	 * @return if the user is an admin
-	 */
-	private boolean isAdmin(Principal principal) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return readPrincipal.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
-	}
-
-	/**
-	 * Check if the logged in user is allowed to edit the given user.
-	 *
-	 * @param principalUser - the currently logged in principal
-	 * @param user          - the user to edit
-	 * @return boolean if the principal can edit the user
-	 */
-	private boolean canEditUser(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
-		boolean usersEqual = user.equals(principalUser);
-
-		return principalAdmin || usersEqual;
-	}
-
-	/**
 	 * Submit a user edit
 	 *
 	 * @param userId      The id of the user to edit (required)
@@ -285,5 +258,32 @@ public class UIUsersService {
 		}
 
 		return errors;
+	}
+
+	/**
+	 * Check if the logged in user is allowed to edit the given user.
+	 *
+	 * @param principalUser - the currently logged in principal
+	 * @param user          - the user to edit
+	 * @return boolean if the principal can edit the user
+	 */
+	private boolean canEditUser(User principalUser, User user) {
+		boolean principalAdmin = principalUser.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
+
+		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is an Admin
+	 *
+	 * @param principal The logged in user to check
+	 * @return if the user is an admin
+	 */
+	private boolean isAdmin(Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
 	}
 }
