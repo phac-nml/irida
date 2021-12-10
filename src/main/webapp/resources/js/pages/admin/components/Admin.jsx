@@ -65,8 +65,8 @@ export default function Admin() {
         <Content>
           <Suspense fallback={<ContentLoading />}>
             <Routes>
-              <Route path={`${DEFAULT_URL}/`} element={<AdminContent />}>
-                <Route index path={ADMIN.STATISTICS} element={<BasicStats />} />
+              <Route path={DEFAULT_URL} element={<AdminContent />}>
+                <Route path={ADMIN.STATISTICS} element={<BasicStats />} />
                 <Route
                   path={`${ADMIN.STATISTICS}/:statType`}
                   element={<AdvancedStatistics />}
