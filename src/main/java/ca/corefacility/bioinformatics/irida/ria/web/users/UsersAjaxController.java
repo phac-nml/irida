@@ -87,7 +87,7 @@ public class UsersAjaxController {
 				systemRole, userLocale, enabled, principal, request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
