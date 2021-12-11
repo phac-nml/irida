@@ -48,7 +48,6 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 /**
  */
 @Configuration
-@EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
