@@ -34,24 +34,22 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+    /*
+    Update the disabled status of a user by user id.
+    */
+    setUsersDisabledStatus: build.mutation({
+      query: ({ isEnabled, id }) => ({
+        url: `/edit`,
+        params: { isEnabled, id },
+        method: "PUT",
+      }),
+    }),
   }),
 });
 
 export const {
   useGetUserDetailsQuery,
-  useEditUserDetailsMutation
+  useEditUserDetailsMutation,
+  useSetUsersDisabledStatusMutation
 } = usersApi;
 
-/**
- * Update the disabled status of a user by user id
- * @param {boolean} isEnabled - the new state of the user
- * @param {number} id - identifier for the user
- * @returns {Promise<AxiosResponse<T>>}
- */
-export async function setUsersDisabledStatus({ isEnabled, id }) {
-  try {
-    return await axios.put(`${BASE_URL}/edit?isEnabled=${isEnabled}&id=${id}`);
-  } catch (e) {
-    console.log(e);
-  }
-}

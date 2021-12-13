@@ -14,6 +14,9 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { UsersTable } from "../../../components/UsersTable/UsersTable";
 
+import store from '../../user/store'
+import { Provider } from 'react-redux'
+
 export default function AdminUsersPage() {
   // The following renders the Users component view
   return (
@@ -28,7 +31,9 @@ export default function AdminUsersPage() {
       }
     >
       <PagedTableProvider url={setBaseUrl("ajax/users/list")}>
-        <UsersTable />
+        <Provider store={store}>
+          <UsersTable />
+        </Provider>
       </PagedTableProvider>
     </PageWrapper>
   );
