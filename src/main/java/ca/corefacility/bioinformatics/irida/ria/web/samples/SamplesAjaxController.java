@@ -272,6 +272,11 @@ public class SamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
+	@DeleteMapping("/{id}/files")
+	public ResponseEntity<String> deleteSequencingObjectFromSample(@PathVariable Long id, @RequestParam Long sequencingObjectId, Locale locale) {
+		return ResponseEntity.ok(uiSampleService.deleteSequencingObjectFromSample(id, sequencingObjectId, locale));
+	}
+
 	/**
 	 * Get a list of all {@link Sample} identifiers within a specific project
 	 *

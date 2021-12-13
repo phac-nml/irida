@@ -430,6 +430,19 @@ public class UISampleService {
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
 
+	public String deleteSequencingObjectFromSample(Long sampleId, Long sequencingObjectId, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
+
+		try {
+			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
+			return "Successfully removed sequencingobject from sample";
+		} catch(Exception e) {
+			return messageSource.getMessage("samples.files.remove.error",
+					new Object[] { sequencingObject.getLabel() }, locale);
+		}
+	}
+
 	/**
 	 * Get a list of paired end sequence files for a sample
 	 *

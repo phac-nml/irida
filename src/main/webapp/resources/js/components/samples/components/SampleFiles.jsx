@@ -6,7 +6,8 @@ import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { SingleEndFileRenderer } from "../../sequence-files/SingleEndFileRenderer";
 import { DragUpload } from "../../files/DragUpload";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSampleFiles } from "../sampleFilesSlice";
 
 /**
  * React component to display sample files.
@@ -16,20 +17,13 @@ import { useSelector } from "react-redux";
  */
 export function SampleFiles() {
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
-  const [loading, setLoading] = React.useState(true);
-  const [files, setFiles] = React.useState();
+  const { files, loading } = useSelector((state) => state.sampleFilesReducer);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     fetchSampleFiles({ sampleId: sample.identifier, projectId })
       .then((data) => {
-        /*
-      Remove any file types that do not have associated files.
-       */
-        Object.keys(data).forEach(
-          (key) => !data[key].length && delete data[key]
-        );
-        setFiles(data);
-        setLoading(false);
+        dispatch(setSampleFiles(data));
       })
       .catch((e) => notification.error({ message: e }));
   }, [sample.identifier, projectId]);
@@ -96,6 +90,14 @@ export function SampleFiles() {
       )}
     </Space>
   ) : (
-    <Empty description={i18n("SampleFiles.no-files")} />
+    <Space size={`large`} direction={`vertical`} style={{ width: `100%` }}>
+      <DragUpload
+        className="t-upload-sample-files"
+        uploadText={i18n("SampleFiles.uploadText")}
+        uploadHint={i18n("SampleFiles.uploadHint")}
+        options={options}
+      />
+      <Empty description={i18n("SampleFiles.no-files")} />
+    </Space>
   );
 }

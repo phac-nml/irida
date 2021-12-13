@@ -24,6 +24,7 @@ export function PairedFileRenderer({ pair, sampleId }) {
       fastqcLink: setBaseUrl(
         `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.forwardSequenceFile.identifier}`
       ),
+      forwardFile: true,
     },
     {
       label: pair.fileInfo.reverseSequenceFile.label,
@@ -33,6 +34,7 @@ export function PairedFileRenderer({ pair, sampleId }) {
       fastqcLink: setBaseUrl(
         `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.reverseSequenceFile.identifier}`
       ),
+      forwardFile: false,
     },
   ];
 
@@ -42,7 +44,16 @@ export function PairedFileRenderer({ pair, sampleId }) {
       header={<SequenceFileHeader file={pair.fileInfo} />}
       layout={`vertical`}
       dataSource={files}
-      renderItem={(file) => <SequenceFileDetailsRenderer file={file} />}
+      renderItem={(file) => {
+        return (
+          <SequenceFileDetailsRenderer
+            file={file}
+            isForwardFile={file.forwardFile}
+            sequencingObjectId={pair.fileInfo.identifier}
+            sampleId={sampleId}
+          />
+        );
+      }}
     />
   );
 }
