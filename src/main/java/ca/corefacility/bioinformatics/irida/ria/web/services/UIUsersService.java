@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -164,51 +165,44 @@ public class UIUsersService {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId      The id of the user to edit (required)
-	 * @param firstName   The firstname to update
-	 * @param lastName    the lastname to update
-	 * @param email       the email to update
-	 * @param phoneNumber the phone number to update
-	 * @param systemRole  the role to update
-	 * @param userLocale  The locale the user selected
-	 * @param enabled     whether the user account should be enabled or disabled.
-	 * @param principal   a reference to the logged in user.
-	 * @param request     the request
+	 * @param userId          The id of the user to edit (required)
+	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
+	 * @param principal       a reference to the logged in user
+	 * @param request         the request
 	 * @return The name of the user view
 	 */
-	public UserDetailsResponse updateUser(Long userId, String firstName, String lastName, String email,
-			String phoneNumber, String systemRole, String userLocale, String enabled, Principal principal,
+	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
 
 		UserDetailsResponse response = new UserDetailsResponse();
 		Map<String, String> errors = new HashMap<>();
 		Map<String, Object> updatedValues = new HashMap<>();
 
-		if (!Strings.isNullOrEmpty(firstName)) {
-			updatedValues.put("firstName", firstName);
+		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
+			updatedValues.put("firstName", userEditRequest.getFirstName());
 		}
 
-		if (!Strings.isNullOrEmpty(lastName)) {
-			updatedValues.put("lastName", lastName);
+		if (!Strings.isNullOrEmpty(userEditRequest.getLastName())) {
+			updatedValues.put("lastName", userEditRequest.getLastName());
 		}
 
-		if (!Strings.isNullOrEmpty(email)) {
-			updatedValues.put("email", email);
+		if (!Strings.isNullOrEmpty(userEditRequest.getEmail())) {
+			updatedValues.put("email", userEditRequest.getEmail());
 		}
 
-		if (!Strings.isNullOrEmpty(phoneNumber)) {
-			updatedValues.put("phoneNumber", phoneNumber);
+		if (!Strings.isNullOrEmpty(userEditRequest.getPhoneNumber())) {
+			updatedValues.put("phoneNumber", userEditRequest.getPhoneNumber());
 		}
 
-		if (!Strings.isNullOrEmpty(userLocale)) {
-			updatedValues.put("locale", userLocale);
+		if (!Strings.isNullOrEmpty(userEditRequest.getUserLocale())) {
+			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
 
 		if (isAdmin(principal)) {
-			updatedValues.put("enabled", !Strings.isNullOrEmpty(enabled));
+			updatedValues.put("enabled", !Strings.isNullOrEmpty(userEditRequest.getEnabled()));
 
-			if (!Strings.isNullOrEmpty(systemRole)) {
-				Role newRole = Role.valueOf(systemRole);
+			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
+				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
 
 				updatedValues.put("systemRole", newRole);
 			}
