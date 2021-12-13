@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { setUsersDisabledStatus } from "../../apis/users/users";
+import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
 import { Button, Checkbox } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../ant.design/table-renderers";
@@ -14,6 +14,7 @@ import { IconEdit } from "../icons/Icons";
 export function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
 
   function updateUser(user) {
     setUsersDisabledStatus({
