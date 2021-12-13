@@ -87,12 +87,12 @@ export function ShareMetadata() {
 
   const columns = [
     {
-      title: "Field",
+      title: i18n("ShareMetadata.field"),
       key: "label",
       dataIndex: "label",
     },
     {
-      title: "Current Restriction",
+      title: i18n("ShareMetadata.current"),
       key: "current",
       dataIndex: "current",
       render(text, item, index) {
@@ -110,7 +110,7 @@ export function ShareMetadata() {
       },
     },
     {
-      title: "Target Restriction",
+      title: i18n("ShareMetadata.target"),
       key: "target",
       dataIndex: "restriction",
       render(currentRestriction, item) {
@@ -132,7 +132,7 @@ export function ShareMetadata() {
       width: 100,
       render(restriction, item) {
         if (targetExistingFields === undefined || item.target) return undefined;
-        return <Tag>NEW</Tag>;
+        return <Tag>{i18n("ShareMadata.newField")}</Tag>;
       },
     },
   ];
