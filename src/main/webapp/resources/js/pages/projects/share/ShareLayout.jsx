@@ -1,4 +1,4 @@
-import { Button, Space, Tabs } from "antd";
+import { Space, Tabs } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
@@ -8,7 +8,6 @@ import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
-import { IconShare } from "../../../components/icons/Icons";
 import { ShareError } from "./ShareError";
 import { ShareMetadata } from "./ShareMetadata";
 import { ShareProject } from "./ShareProject";
@@ -98,10 +97,10 @@ export function ShareLayout({ redirect }) {
         <Space direction="vertical" style={{ width: `100%` }}>
           <ShareProject currentProject={currentProject} />
           <Tabs>
-            <Tabs.TabPane tab={"Samples"} key="samples">
+            <Tabs.TabPane tab={i18n("ShareLayout.samples")} key="samples">
               <ShareSamples samples={samples} redirect={redirect} />
             </Tabs.TabPane>
-            <Tabs.TabPane tab={"Metadata Fields"} key="metadata">
+            <Tabs.TabPane tab={i18n("ShareLayout.fields")} key="metadata">
               <ShareMetadata />
             </Tabs.TabPane>
           </Tabs>
