@@ -8,6 +8,7 @@ import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
+import { IconShare } from "../../../components/icons/Icons";
 import { ShareError } from "./ShareError";
 import { ShareMetadata } from "./ShareMetadata";
 import { ShareProject } from "./ShareProject";
