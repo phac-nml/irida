@@ -12,6 +12,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
  * @see RepresentationModel
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true, value = {"hibernateLazyInitializer"})
 public class IridaRepresentationModel {
 	private final List<Link> links;
 

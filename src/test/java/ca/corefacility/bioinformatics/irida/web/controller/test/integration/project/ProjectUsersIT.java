@@ -13,6 +13,10 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,8 +40,12 @@ import com.jayway.restassured.response.Response;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@ImportAutoConfiguration({
+    DataSourceAutoConfiguration.class,
+    HibernateJpaAutoConfiguration.class,
+})
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
+		IridaApiPropertyPlaceholderConfig.class }, initializers = ConfigFileApplicationContextInitializer.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectUsersIntegrationTest.xml")

@@ -118,7 +118,7 @@ test_service() {
 }
 
 test_rest() {
-	mvn clean verify -Prest_testing -B -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Dspring.datasource.dbcp2.maxWait=$DB_MAX_WAIT_MILLIS $@
+	mvn clean verify -Prest_testing -B -Dspring-boot.run.arguments="--spring.datasource.url=$JDBC_URL" -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dsequence.file.base.directory=$SEQUENCE_FILE_DIR -Dreference.file.base.directory=$REFERENCE_FILE_DIR -Doutput.file.base.directory=$OUTPUT_FILE_DIR -Dspring.datasource.dbcp2.maxWait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	return $exit_code
 }

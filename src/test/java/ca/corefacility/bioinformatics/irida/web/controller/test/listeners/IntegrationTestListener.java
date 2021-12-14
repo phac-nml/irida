@@ -24,6 +24,6 @@ public class IntegrationTestListener extends RunListener {
         logger.debug("Setting up RestAssured.");
 
         RestAssured.requestContentType(ContentType.JSON);
-        RestAssured.port = Integer.valueOf(System.getProperty("jetty.port"));
+        RestAssured.port = Integer.valueOf(System.getProperty("server.port"));
     }
 }

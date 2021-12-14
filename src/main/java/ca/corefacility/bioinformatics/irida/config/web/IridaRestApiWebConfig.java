@@ -24,6 +24,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
 import ca.corefacility.bioinformatics.irida.web.spring.view.*;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableMap;
 

@@ -15,6 +15,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -35,8 +39,12 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@ImportAutoConfiguration({
+    DataSourceAutoConfiguration.class,
+    HibernateJpaAutoConfiguration.class,
+})
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class })
+		IridaApiPropertyPlaceholderConfig.class }, initializers = ConfigFileApplicationContextInitializer.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/user/UserIntegrationTest.xml")
