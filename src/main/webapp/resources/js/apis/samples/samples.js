@@ -55,7 +55,6 @@ export const sampleApi = createApi({
       }),
       invalidatesTags: ["SampleMetadata"],
     }),
-
     updateSampleMetadata: build.mutation({
       query: ({
         sampleId,
@@ -79,6 +78,13 @@ export const sampleApi = createApi({
       }),
       invalidatesTags: ["SampleMetadata"],
     }),
+    removeSampleFiles: build.mutation({
+      query: ({ sampleId, fileObjectId, type }) => ({
+        url: `/${sampleId}/files?fileObjectId=${fileObjectId}&fileType=${type}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["SampleFiles"],
+    }),
   }),
 });
 
@@ -88,6 +94,7 @@ export const {
   useAddSampleMetadataMutation,
   useRemoveSampleMetadataMutation,
   useUpdateSampleMetadataMutation,
+  useRemoveSampleFilesMutation,
 } = sampleApi;
 
 /**
@@ -118,17 +125,6 @@ export async function fetchSampleFiles({ sampleId, projectId }) {
       `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
     );
     return response.data;
-  } catch (e) {
-    return Promise.reject(e.response.data);
-  }
-}
-
-export async function deleteSampleFiles({ sampleId, sequencingObjectId }) {
-  try {
-    const response = await axios.delete(
-      `${URL}/${sampleId}/files?sequencingObjectId=${sequencingObjectId}`
-    );
-    console.log(response);
   } catch (e) {
     return Promise.reject(e.response.data);
   }

@@ -85,6 +85,7 @@ export function SampleFiles() {
           <SingleEndFileRenderer
             files={files.assemblies}
             fastqcResults={false}
+            sampleId={sample.identifier}
           />
         </SequenceFileTypeRenderer>
       )}

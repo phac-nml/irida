@@ -273,8 +273,13 @@ public class SamplesAjaxController {
 	}
 
 	@DeleteMapping("/{id}/files")
-	public ResponseEntity<String> deleteSequencingObjectFromSample(@PathVariable Long id, @RequestParam Long sequencingObjectId, Locale locale) {
-		return ResponseEntity.ok(uiSampleService.deleteSequencingObjectFromSample(id, sequencingObjectId, locale));
+	public ResponseEntity<AjaxResponse> deleteFilesFromSample(@PathVariable Long id, @RequestParam Long fileObjectId,
+			@RequestParam String fileType, Locale locale) {
+		if (fileType.equals("sequencingObject")) {
+			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.deleteSequencingObjectFromSample(id, fileObjectId, locale)));
+		} else {
+			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.deleteGenomeAssemblyFromSample(id, fileObjectId, locale)));
+		}
 	}
 
 	/**

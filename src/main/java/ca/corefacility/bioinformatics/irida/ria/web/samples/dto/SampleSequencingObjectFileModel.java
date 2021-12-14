@@ -9,11 +9,13 @@ public class SampleSequencingObjectFileModel {
 	private SequencingObject fileInfo;
 	private String firstFileSize;
 	private String secondFileSize;
+	private String fileType;
 
 	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize) {
 		this.fileInfo = fileInfo;
 		this.firstFileSize = firstFileSize;
 		this.secondFileSize = secondFileSize;
+		this.fileType = "sequencingObject";
 	}
 
 	public SequencingObject getFileInfo() {
@@ -39,4 +41,9 @@ public class SampleSequencingObjectFileModel {
 	public void setSecondFileSize(String secondFileSize) {
 		this.secondFileSize = secondFileSize;
 	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
 }

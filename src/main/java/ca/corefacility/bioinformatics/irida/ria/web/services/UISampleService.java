@@ -436,10 +436,36 @@ public class UISampleService {
 
 		try {
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
-			return "Successfully removed sequencingobject from sample";
+			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess",
+					new Object[] { }, locale);
 		} catch(Exception e) {
 			return messageSource.getMessage("samples.files.remove.error",
 					new Object[] { sequencingObject.getLabel() }, locale);
+		}
+	}
+
+	public String deleteGenomeAssemblyFromSample(Long sampleId, Long genomeAssemblyId, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+
+		Optional<SampleGenomeAssemblyJoin> genomeAssemblyJoin = genomeAssemblyService.getAssembliesForSample(sample)
+				.stream()
+				.filter(obj -> obj.getObject()
+						.getId() == genomeAssemblyId).findFirst();
+
+		genomeAssemblyJoin.get().getObject().getLabel();
+
+		if(genomeAssemblyJoin.isPresent()) {
+			try {
+				genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
+				return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess",
+						new Object[] { }, locale);
+			} catch (Exception e) {
+				return messageSource.getMessage("samples.files.remove.error",
+						new Object[] { genomeAssemblyJoin.get().getObject().getLabel() }, locale);
+			}
+		} else {
+			return messageSource.getMessage("server.SampleFiles.unableToRemoveGenomeAssembly",
+					new Object[] { }, locale);
 		}
 	}
 

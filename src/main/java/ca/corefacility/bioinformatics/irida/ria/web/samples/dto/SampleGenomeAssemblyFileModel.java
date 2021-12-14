@@ -8,10 +8,12 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 public class SampleGenomeAssemblyFileModel {
 	private GenomeAssembly fileInfo;
 	private String firstFileSize;
+	private String fileType;
 
 	public SampleGenomeAssemblyFileModel(GenomeAssembly fileInfo, String firstFileSize) {
 		this.fileInfo = fileInfo;
 		this.firstFileSize = firstFileSize;
+		this.fileType = "assembly";
 	}
 
 	public GenomeAssembly getFileInfo() {
@@ -28,5 +30,9 @@ public class SampleGenomeAssemblyFileModel {
 
 	public void setFirstFileSize(String firstFileSize) {
 		this.firstFileSize = firstFileSize;
+	}
+
+	public String getFileType() {
+		return fileType;
 	}
 }

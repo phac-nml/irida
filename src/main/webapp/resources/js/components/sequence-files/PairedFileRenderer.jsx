@@ -14,7 +14,6 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * @constructor
  */
 export function PairedFileRenderer({ pair, sampleId }) {
-  console.log(pair);
   const files = [
     {
       label: pair.fileInfo.forwardSequenceFile.label,
@@ -25,6 +24,7 @@ export function PairedFileRenderer({ pair, sampleId }) {
         `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.forwardSequenceFile.identifier}`
       ),
       forwardFile: true,
+      fileType: pair.fileType,
     },
     {
       label: pair.fileInfo.reverseSequenceFile.label,
@@ -49,7 +49,7 @@ export function PairedFileRenderer({ pair, sampleId }) {
           <SequenceFileDetailsRenderer
             file={file}
             isForwardFile={file.forwardFile}
-            sequencingObjectId={pair.fileInfo.identifier}
+            fileObjectId={pair.fileInfo.identifier}
             sampleId={sampleId}
           />
         );
