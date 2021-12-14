@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-
-public class UserEditRequest extends AjaxResponse {
+/**
+ * Data transfer object for editing user details.
+ */
+public class UserEditRequest {
 	private String firstName;
 	private String lastName;
 	private String email;
