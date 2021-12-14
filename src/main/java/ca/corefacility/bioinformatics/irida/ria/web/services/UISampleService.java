@@ -430,42 +430,60 @@ public class UISampleService {
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
 
+	/**
+	 * Remove a sequencing object linked to a {@link Sample}
+	 *
+	 * @param id                 Identifier for a sample
+	 * @param sequencingObjectId Identifier for the sequencingObject
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return {@link String} explaining to the user the results of the delete.
+	 */
 	public String deleteSequencingObjectFromSample(Long sampleId, Long sequencingObjectId, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
-			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess",
-					new Object[] { }, locale);
-		} catch(Exception e) {
-			return messageSource.getMessage("samples.files.remove.error",
-					new Object[] { sequencingObject.getLabel() }, locale);
+			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
+					locale);
+		} catch (Exception e) {
+			return messageSource.getMessage("samples.files.remove.error", new Object[] { sequencingObject.getLabel() },
+					locale);
 		}
 	}
 
+	/**
+	 * Remove a genome assembly linked to a {@link Sample}
+	 *
+	 * @param id               Identifier for a sample
+	 * @param genomeAssemblyId Identifier for the GenomeAssembly
+	 * @param locale           {@link Locale} for the currently logged in user
+	 * @return {@link String} explaining to the user the results of the delete.
+	 */
 	public String deleteGenomeAssemblyFromSample(Long sampleId, Long genomeAssemblyId, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 
 		Optional<SampleGenomeAssemblyJoin> genomeAssemblyJoin = genomeAssemblyService.getAssembliesForSample(sample)
 				.stream()
 				.filter(obj -> obj.getObject()
-						.getId() == genomeAssemblyId).findFirst();
+						.getId() == genomeAssemblyId)
+				.findFirst();
 
-		genomeAssemblyJoin.get().getObject().getLabel();
+		genomeAssemblyJoin.get()
+				.getObject()
+				.getLabel();
 
-		if(genomeAssemblyJoin.isPresent()) {
+		if (genomeAssemblyJoin.isPresent()) {
 			try {
 				genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
-				return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess",
-						new Object[] { }, locale);
+				return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {},
+						locale);
 			} catch (Exception e) {
-				return messageSource.getMessage("samples.files.remove.error",
-						new Object[] { genomeAssemblyJoin.get().getObject().getLabel() }, locale);
+				return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssemblyJoin.get()
+						.getObject().getLabel() }, locale);
 			}
 		} else {
-			return messageSource.getMessage("server.SampleFiles.unableToRemoveGenomeAssembly",
-					new Object[] { }, locale);
+			return messageSource.getMessage("server.SampleFiles.unableToRemoveGenomeAssembly", new Object[] {}, locale);
 		}
 	}
 

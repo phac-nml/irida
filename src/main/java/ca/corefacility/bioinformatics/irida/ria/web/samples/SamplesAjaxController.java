@@ -272,13 +272,24 @@ public class SamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
+	/**
+	 * Remove a sequencing object or genome assembly linked to a {@link Sample}
+	 *
+	 * @param id           Identifier for a sample
+	 * @param fileObjectId Identifier for the genome assembly or sequencing object
+	 * @param fileType     The type of file (sequencing object or genome assembly)
+	 * @param locale       {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the delete.
+	 */
 	@DeleteMapping("/{id}/files")
 	public ResponseEntity<AjaxResponse> deleteFilesFromSample(@PathVariable Long id, @RequestParam Long fileObjectId,
 			@RequestParam String fileType, Locale locale) {
 		if (fileType.equals("sequencingObject")) {
-			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.deleteSequencingObjectFromSample(id, fileObjectId, locale)));
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.deleteSequencingObjectFromSample(id, fileObjectId, locale)));
 		} else {
-			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.deleteGenomeAssemblyFromSample(id, fileObjectId, locale)));
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(uiSampleService.deleteGenomeAssemblyFromSample(id, fileObjectId, locale)));
 		}
 	}
 
