@@ -20,6 +20,24 @@ public class UserDetailsResponse extends AjaxResponse {
 	private Map<String, String> allowedRoles;
 	private Map<String, String> errors;
 
+	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
+			boolean mailFailure, boolean isAdmin, boolean canEditUser, boolean canCreatePasswordReset,
+			Map<String, String> locales, Map<String, String> allowedRoles) {
+		this.userDetails = userDetails;
+		this.currentRole = currentRole;
+		this.mailConfigured = mailConfigured;
+		this.mailFailure = mailFailure;
+		this.isAdmin = isAdmin;
+		this.canEditUser = canEditUser;
+		this.canCreatePasswordReset = canCreatePasswordReset;
+		this.locales = locales;
+		this.allowedRoles = allowedRoles;
+	}
+
+	public UserDetailsResponse(Map<String, String> errors) {
+		this.errors = errors;
+	}
+
 	public UserDetailsModel getUser() {
 		return userDetails;
 	}

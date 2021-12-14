@@ -122,30 +122,20 @@ public class UIUsersService {
 	 * @return {@link UserDetailsResponse} that contains user details for a specific user
 	 */
 	public UserDetailsResponse getUser(Long userId, Boolean mailFailure, Principal principal) {
-		UserDetailsResponse response = new UserDetailsResponse();
 		User user = userService.read(userId);
 		UserDetailsModel userDetails = new UserDetailsModel(user);
-		response.setUser(userDetails);
-		response.setMailFailure(mailFailure);
-
 		User principalUser = userService.getUserByUsername(principal.getName());
-
 		Locale locale = LocaleContextHolder.getLocale();
-
-		response.setAdmin(isAdmin(principal));
-
+		Boolean mailConfigured = emailController.isMailConfigured();
+		boolean isAdmin = isAdmin(principal);
 		// check if we should show an edit button
 		boolean canEditUser = canEditUser(principalUser, user);
-		response.setCanEditUser(canEditUser);
-		response.setMailConfigured(emailController.isMailConfigured());
-
-		response.setCanCreatePasswordReset(PasswordResetController.canCreatePasswordReset(principalUser, user));
+		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
 		Map<String, String> localeNames = new HashMap<>();
 		for (Locale aLocale : locales) {
 			localeNames.put(aLocale.getLanguage(), aLocale.getDisplayName());
 		}
-		response.setLocales(localeNames);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role aRole : adminAllowedRoles) {
@@ -153,13 +143,12 @@ public class UIUsersService {
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
 			roleNames.put(aRole.getName(), roleName);
 		}
-		response.setAllowedRoles(roleNames);
 
 		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
 				.getName(), null, locale);
-		response.setCurrentRole(currentRoleName);
 
-		return response;
+		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin, canEditUser,
+				canCreatePasswordReset, localeNames, roleNames);
 	}
 
 	/**
@@ -173,8 +162,6 @@ public class UIUsersService {
 	 */
 	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
-
-		UserDetailsResponse response = new UserDetailsResponse();
 		Map<String, String> errors = new HashMap<>();
 		Map<String, Object> updatedValues = new HashMap<>();
 
@@ -213,11 +200,10 @@ public class UIUsersService {
 				userService.updateFields(userId, updatedValues);
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
-				response.setErrors(errors);
 			}
 		}
 
-		return response;
+		return new UserDetailsResponse(errors);
 	}
 
 	/**
