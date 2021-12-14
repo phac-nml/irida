@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Col, Row } from 'antd';
+import { Col, Row } from "antd";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import UserAccountNav from "./UserAccountNav";
 

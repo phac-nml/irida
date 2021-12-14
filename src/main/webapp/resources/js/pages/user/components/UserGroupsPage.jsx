@@ -6,7 +6,5 @@ import React from "react";
  * @constructor
  */
 export default function UserGroupsPage() {
-  return (
-    <div>User Groups Page</div>
-  );
+  return <div>User Groups Page</div>;
 }

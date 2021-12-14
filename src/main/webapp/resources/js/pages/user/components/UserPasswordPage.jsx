@@ -6,7 +6,5 @@ import React from "react";
  * @constructor
  */
 export default function UserPasswordPage() {
-  return (
-    <div>User Password Page</div>
-  );
+  return <div>User Password Page</div>;
 }

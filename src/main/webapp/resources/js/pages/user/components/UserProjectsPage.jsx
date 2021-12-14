@@ -6,7 +6,5 @@ import React from "react";
  * @constructor
  */
 export default function UserProjectsPage() {
-  return (
-    <div>User Projects Page</div>
-  );
+  return <div>User Projects Page</div>;
 }
