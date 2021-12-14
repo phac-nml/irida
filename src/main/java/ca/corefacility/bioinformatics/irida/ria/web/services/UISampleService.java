@@ -433,7 +433,7 @@ public class UISampleService {
 	/**
 	 * Remove a sequencing object linked to a {@link Sample}
 	 *
-	 * @param id                 Identifier for a sample
+	 * @param sampleId           Identifier for a sample
 	 * @param sequencingObjectId Identifier for the sequencingObject
 	 * @param locale             {@link Locale} for the currently logged in user
 	 * @return {@link String} explaining to the user the results of the delete.
@@ -455,7 +455,7 @@ public class UISampleService {
 	/**
 	 * Remove a genome assembly linked to a {@link Sample}
 	 *
-	 * @param id               Identifier for a sample
+	 * @param sampleId         Identifier for a sample
 	 * @param genomeAssemblyId Identifier for the GenomeAssembly
 	 * @param locale           {@link Locale} for the currently logged in user
 	 * @return {@link String} explaining to the user the results of the delete.
