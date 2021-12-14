@@ -8,8 +8,15 @@ import { Menu } from "antd";
  * @constructor
  */
 export default function UserAccountNav() {
+  const lastElement = window.location.pathname.split("/").pop();
+  const defaultSelectedKey = lastElement.match(
+    "details|groups|projects|security|password"
+  )
+    ? lastElement
+    : "details";
+
   return (
-    <Menu mode="inline" defaultSelectedKeys={["details"]}>
+    <Menu mode="inline" defaultSelectedKeys={[defaultSelectedKey]}>
       <Menu.Item key="details">
         <Link to="details">{i18n("UserAccountNav.menu.details")}</Link>
       </Menu.Item>
