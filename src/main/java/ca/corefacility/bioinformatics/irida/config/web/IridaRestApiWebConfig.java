@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,12 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 		module.addSerializer(Path.class, new PathJson.PathSerializer());
 		jsonView.getObjectMapper()
 				.registerModule(module);
+
+		// java.util.date fields (i.e. createdDate, modifiedDate, etc) are stored in the database with
+		// seconds precision, but are generated at higher precision. To combat this, previously the entity
+		// was re-read from the database. Now we are just formatting the date with 0s for milliseconds
+		// portion.
+		jsonView.getObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.'000Z'"));
 
 		views.add(jsonView);
 
