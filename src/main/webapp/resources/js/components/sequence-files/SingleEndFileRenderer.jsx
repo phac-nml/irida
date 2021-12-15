@@ -1,12 +1,9 @@
 import React from "react";
-import { Avatar, Button, List, notification, Popconfirm, Space } from "antd";
+import { Avatar, Button, List, Space } from "antd";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { IconDownloadFile, IconFile, IconRemove } from "../icons/Icons";
+import { IconDownloadFile, IconFile } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
-import { removeSampleFiles } from "../samples/sampleFilesSlice";
-import { useDispatch } from "react-redux";
-import { useRemoveSampleFilesMutation } from "../../apis/samples/samples";
 
 /**
  * React component to display single end file details
@@ -14,6 +11,9 @@ import { useRemoveSampleFilesMutation } from "../../apis/samples/samples";
  * @param {array} files
  * @param sampleId
  * @param fastqcResults
+ * @function download assembly file function
+ * @function download sequence file function
+ * @function remove files from sample function
  * @returns {JSX.Element}
  * @constructor
  */
@@ -21,28 +21,22 @@ export function SingleEndFileRenderer({
   files,
   sampleId,
   fastqcResults = true,
+  downloadAssemblyFile = () => {},
+  downloadSequenceFile = () => {},
+  removeSampleFiles,
 }) {
-  const dispatch = useDispatch();
-  const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
-
-  const removeSingleFileFromSample = ({ fileObjectId, type }) => {
-    removeSampleFilesFromSample({ sampleId, fileObjectId, type })
-      .then(({ data }) => {
-        notification.success({ message: data.message });
-        dispatch(removeSampleFiles({ fileObjectId, type }));
-      })
-      .catch((error) => {
-        notification.error({ message: error });
-      });
-  };
-
   return (
     <List
       bordered
       dataSource={files}
       renderItem={(file) => [
         <List.Item>
-          <SequenceFileHeader file={file.fileInfo} />
+          <SequenceFileHeader
+            file={file.fileInfo}
+            removeSampleFiles={removeSampleFiles}
+            fileObjectId={file.fileInfo.identifier}
+            type={file.fileType}
+          />
         </List.Item>,
         <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>
           <List.Item.Meta
@@ -73,28 +67,22 @@ export function SingleEndFileRenderer({
                     {file.firstFileSize}
                   </span>
                   <Button
-                    style={{ marginRight: SPACE_XS }}
                     shape="circle"
                     icon={<IconDownloadFile />}
-                  />
-                  <Popconfirm
-                    placement="left"
-                    title={
+                    onClick={() =>
                       file.fileType === "assembly"
-                        ? i18n("SampleFiles.deleteGenomeAssembly")
-                        : i18n("SampleFiles.deleteSequencingObject")
+                        ? downloadAssemblyFile({
+                            sampleId,
+                            genomeAssemblyId: file.fileInfo.identifier,
+                          })
+                        : downloadSequenceFile({
+                            sequencingObjectId: file.fileInfo.identifier,
+                            sequenceFileId: file.fileInfo.sequenceFile
+                              ? file.fileInfo.sequenceFile.identifier
+                              : file.fileInfo.file.identifier,
+                          })
                     }
-                    okText={i18n("SampleFiles.okText")}
-                    cancelText={i18n("SampleFiles.cancelText")}
-                    onConfirm={() =>
-                      removeSingleFileFromSample({
-                        fileObjectId: file.fileInfo.identifier,
-                        type: file.fileType,
-                      })
-                    }
-                  >
-                    <Button shape="circle" icon={<IconRemove />} />
-                  </Popconfirm>
+                  />
                 </Space>
               </div>
             }

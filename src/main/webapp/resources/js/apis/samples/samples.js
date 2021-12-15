@@ -4,6 +4,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const URL = setBaseUrl(`ajax/samples`);
 
+const SEQUENCE_FILES_URL = setBaseUrl("/sequenceFiles/");
+
 /**
  * Redux API to handle queries based on samples
  */
@@ -128,4 +130,33 @@ export async function fetchSampleFiles({ sampleId, projectId }) {
   } catch (e) {
     return Promise.reject(e.response.data);
   }
+}
+
+/**
+ * Download genome assembly file
+ * @param {number} sampleId - identifier for a sample
+ * @param {number} genomeAssemblyId - identifier for the genomeassembly to download
+ * @returns {Promise<any>}
+ */
+export function downloadGenomeAssemblyFile({ sampleId, genomeAssemblyId }) {
+  window.open(
+    `${URL}/${sampleId}/assembly/download?genomeAssemblyId=${genomeAssemblyId}`,
+    "_blank"
+  );
+}
+
+/**
+ * Download a sequence file
+ * @param {number} sequencingObjectId - identifier for the sequencingobject
+ * @param {number} sequenceFileId - identifier for the sequence file to download
+ * @returns {Promise<any>}
+ */
+export function downloadSequencingObjectFile({
+  sequencingObjectId,
+  sequenceFileId,
+}) {
+  window.open(
+    `${SEQUENCE_FILES_URL}/download/${sequencingObjectId}/file/${sequenceFileId}`,
+    "_blank"
+  );
 }

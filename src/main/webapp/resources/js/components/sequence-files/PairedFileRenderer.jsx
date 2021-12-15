@@ -10,10 +10,17 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  *
  * @param {array} pair
  * @param sampleId
+ * @function download sequence file function
+ * @function remove files from sample function
  * @returns {JSX.Element}
  * @constructor
  */
-export function PairedFileRenderer({ pair, sampleId }) {
+export function PairedFileRenderer({
+  pair,
+  sampleId,
+  downloadSequenceFile = () => {},
+  removeSampleFiles = () => {},
+}) {
   const files = [
     {
       label: pair.fileInfo.forwardSequenceFile.label,
@@ -41,7 +48,14 @@ export function PairedFileRenderer({ pair, sampleId }) {
   return (
     <List
       bordered
-      header={<SequenceFileHeader file={pair.fileInfo} />}
+      header={
+        <SequenceFileHeader
+          file={pair.fileInfo}
+          fileObjectId={pair.fileInfo.identifier}
+          type={pair.fileType}
+          removeSampleFiles={removeSampleFiles}
+        />
+      }
       layout={`vertical`}
       dataSource={files}
       renderItem={(file) => {
@@ -51,6 +65,7 @@ export function PairedFileRenderer({ pair, sampleId }) {
             isForwardFile={file.forwardFile}
             fileObjectId={pair.fileInfo.identifier}
             sampleId={sampleId}
+            downloadSequenceFile={downloadSequenceFile}
           />
         );
       }}

@@ -13,7 +13,7 @@ export const setSampleFiles = createAction(
 /**
  * Action to remove files from sample
  */
-export const removeSampleFiles = createAction(
+export const removeFileObjectFromSample = createAction(
   `sampleFiles/removeSampleFiles`,
   ({ fileObjectId, type }) => ({
     payload: { fileObjectId, type },
@@ -46,7 +46,7 @@ const sampleFilesSlice = createSlice({
       state.loading = false;
     });
 
-    builder.addCase(removeSampleFiles, (state, action) => {
+    builder.addCase(removeFileObjectFromSample, (state, action) => {
       const fileTypes = state.files;
 
       if (action.payload.type === "sequencingObject") {

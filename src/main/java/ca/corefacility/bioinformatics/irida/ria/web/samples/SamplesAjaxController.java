@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -291,6 +292,19 @@ public class SamplesAjaxController {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(uiSampleService.deleteGenomeAssemblyFromSample(id, fileObjectId, locale)));
 		}
+	}
+
+	/**
+	 * Download a GenomeAssembly file
+	 *
+	 * @param sampleId         Identifier for a sample
+	 * @param genomeAssemblyId Identifier for the genome assembly
+	 * @param response         {@link HttpServletResponse}
+	 */
+	@GetMapping("/{sampleId}/assembly/download")
+	public void downloadAssembly(@PathVariable Long sampleId, @RequestParam Long genomeAssemblyId,
+			HttpServletResponse response) throws IOException {
+		uiSampleService.downloadAssembly(sampleId, genomeAssemblyId, response);
 	}
 
 	/**

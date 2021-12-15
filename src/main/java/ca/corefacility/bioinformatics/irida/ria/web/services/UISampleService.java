@@ -1,10 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
@@ -462,29 +467,34 @@ public class UISampleService {
 	 */
 	public String deleteGenomeAssemblyFromSample(Long sampleId, Long genomeAssemblyId, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
-		Optional<SampleGenomeAssemblyJoin> genomeAssemblyJoin = genomeAssemblyService.getAssembliesForSample(sample)
-				.stream()
-				.filter(obj -> obj.getObject()
-						.getId() == genomeAssemblyId)
-				.findFirst();
-
-		genomeAssemblyJoin.get()
-				.getObject()
-				.getLabel();
-
-		if (genomeAssemblyJoin.isPresent()) {
-			try {
-				genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
-				return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {},
-						locale);
-			} catch (Exception e) {
-				return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssemblyJoin.get()
-						.getObject().getLabel() }, locale);
-			}
-		} else {
-			return messageSource.getMessage("server.SampleFiles.unableToRemoveGenomeAssembly", new Object[] {}, locale);
+		try {
+			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
+			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {},
+					locale);
+		} catch (Exception e) {
+			return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssembly.getLabel() }, locale);
 		}
+	}
+
+	/**
+	 * Download a GenomeAssembly file
+	 *
+	 * @param sampleId         Identifier for a sample
+	 * @param genomeAssemblyId Identifier for the genome assembly
+	 * @param response         {@link HttpServletResponse}
+	 */
+	public void downloadAssembly(Long sampleId, Long genomeAssemblyId, HttpServletResponse response)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
+
+		Path path = genomeAssembly.getFile();
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	/**
