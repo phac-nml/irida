@@ -52,9 +52,9 @@ public class NcbiExportPage extends AbstractPage {
 	public static NcbiExportPage goTo(WebDriver driver, Long projectId, Collection<Long> sampleIds) {
 
 		StringJoiner stringJoiner = new StringJoiner("&");
-		sampleIds.forEach(s -> stringJoiner.add("ids[]=" + s.toString()));
+		sampleIds.forEach(s -> stringJoiner.add("ids%5B%5D=" + s.toString()));
 
-		String url = "/projects/" + projectId + "/export/ncbi?" + stringJoiner.toString();
+		String url = "projects/" + projectId + "/export/ncbi?" + stringJoiner.toString();
 		get(driver, url);
 		return PageFactory.initElements(driver, NcbiExportPage.class);
 	}
