@@ -15,7 +15,5 @@ export default function UserProjectsPage() {
   console.log(userId);
   console.log(data);
 
-  return (
-    <div>User Projects Page</div>
-  );
+  return <div>User Projects Page</div>;
 }

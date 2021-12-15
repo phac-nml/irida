@@ -18,6 +18,9 @@ import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
+import store from '../../user/store'
+import { Provider } from 'react-redux'
+
 const { Content } = Layout;
 
 const AdvancedStatistics = lazy(() =>
@@ -52,6 +55,7 @@ export default function Admin() {
    * the components are only loaded if the corresponding tab is clicked
    */
   return (
+  <Provider store={store}>
     <Layout>
       <AdminSideMenu />
       <Layout>
@@ -86,5 +90,6 @@ export default function Admin() {
         </Content>
       </Layout>
     </Layout>
+  </Provider>
   );
 }

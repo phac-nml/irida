@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
- * Handles service call for the the administration of the IRIDA users.
+ * Handles service call for the administration of the IRIDA users.
  */
 @Component
 public class UIUsersService {
@@ -100,7 +100,8 @@ public class UIUsersService {
 						.body(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
 			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.body(messageSource.getMessage("server.AdminUsersService.error", new Object[] { user.getUsername() }, locale));
+						.body(messageSource.getMessage("server.AdminUsersService.error",
+								new Object[] { user.getUsername() }, locale));
 			}
 
 		}
@@ -115,31 +116,23 @@ public class UIUsersService {
 	 * @param userId      - the id for the user to show details for
 	 * @param mailFailure - if sending a user activation e-mail passed or failed
 	 * @param principal   - the currently logged in user
-	 * @return user details for a specific user
+	 * @return {@link UserDetailsResponse} that contains user details for a specific user
 	 */
 	public UserDetailsResponse getUser(Long userId, Boolean mailFailure, Principal principal) {
-		UserDetailsResponse response = new UserDetailsResponse();
 		User user = userService.read(userId);
 		UserDetailsModel userDetails = new UserDetailsModel(user);
-		response.setUser(userDetails);
-		response.setMailFailure(mailFailure);
-
 		User principalUser = userService.getUserByUsername(principal.getName());
-
 		Locale locale = LocaleContextHolder.getLocale();
-
+		Boolean mailConfigured = emailController.isMailConfigured();
+		boolean isAdmin = isAdmin(principal);
 		// check if we should show an edit button
 		boolean canEditUser = canEditUser(principalUser, user);
-		response.setCanEditUser(canEditUser);
-		response.setMailConfigured(emailController.isMailConfigured());
-
-		response.setCanCreatePasswordReset(PasswordResetController.canCreatePasswordReset(principalUser, user));
+		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
 		Map<String, String> localeNames = new HashMap<>();
 		for (Locale aLocale : locales) {
 			localeNames.put(aLocale.getLanguage(), aLocale.getDisplayName());
 		}
-		response.setLocales(localeNames);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role aRole : adminAllowedRoles) {
@@ -147,90 +140,53 @@ public class UIUsersService {
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
 			roleNames.put(aRole.getName(), roleName);
 		}
-		response.setAllowedRoles(roleNames);
 
 		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
 				.getName(), null, locale);
-		response.setCurrentRole(currentRoleName);
 
-		return response;
-	}
-
-	/**
-	 * Check if the logged in user is an Admin
-	 *
-	 * @param principal The logged in user to check
-	 * @return if the user is an admin
-	 */
-	private boolean isAdmin(Principal principal) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return readPrincipal.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
-	}
-
-	/**
-	 * Check if the logged in user is allowed to edit the given user.
-	 *
-	 * @param principalUser - the currently logged in principal
-	 * @param user          - the user to edit
-	 * @return boolean if the principal can edit the user
-	 */
-	private boolean canEditUser(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
-		boolean usersEqual = user.equals(principalUser);
-
-		return principalAdmin || usersEqual;
+		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin, canEditUser,
+				canCreatePasswordReset, localeNames, roleNames);
 	}
 
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId      The id of the user to edit (required)
-	 * @param firstName   The firstname to update
-	 * @param lastName    the lastname to update
-	 * @param email       the email to update
-	 * @param phoneNumber the phone number to update
-	 * @param systemRole  the role to update
-	 * @param userLocale  The locale the user selected
-	 * @param enabled     whether the user account should be enabled or disabled.
-	 * @param principal   a reference to the logged in user.
-	 * @param request     the request
+	 * @param userId          The id of the user to edit (required)
+	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
+	 * @param principal       a reference to the logged in user
+	 * @param request         the request
 	 * @return The name of the user view
 	 */
-	public UserDetailsResponse updateUser(Long userId, String firstName, String lastName, String email,
-			String phoneNumber, String systemRole, String userLocale, String enabled, Principal principal,
+	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
-
-		UserDetailsResponse response = new UserDetailsResponse();
 		Map<String, String> errors = new HashMap<>();
 		Map<String, Object> updatedValues = new HashMap<>();
 
-		if (!Strings.isNullOrEmpty(firstName)) {
-			updatedValues.put("firstName", firstName);
+		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
+			updatedValues.put("firstName", userEditRequest.getFirstName());
 		}
 
-		if (!Strings.isNullOrEmpty(lastName)) {
-			updatedValues.put("lastName", lastName);
+		if (!Strings.isNullOrEmpty(userEditRequest.getLastName())) {
+			updatedValues.put("lastName", userEditRequest.getLastName());
 		}
 
-		if (!Strings.isNullOrEmpty(email)) {
-			updatedValues.put("email", email);
+		if (!Strings.isNullOrEmpty(userEditRequest.getEmail())) {
+			updatedValues.put("email", userEditRequest.getEmail());
 		}
 
-		if (!Strings.isNullOrEmpty(phoneNumber)) {
-			updatedValues.put("phoneNumber", phoneNumber);
+		if (!Strings.isNullOrEmpty(userEditRequest.getPhoneNumber())) {
+			updatedValues.put("phoneNumber", userEditRequest.getPhoneNumber());
 		}
 
-		if (!Strings.isNullOrEmpty(userLocale)) {
-			updatedValues.put("locale", userLocale);
+		if (!Strings.isNullOrEmpty(userEditRequest.getUserLocale())) {
+			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
 
 		if (isAdmin(principal)) {
-			updatedValues.put("enabled", !Strings.isNullOrEmpty(enabled));
+			updatedValues.put("enabled", !Strings.isNullOrEmpty(userEditRequest.getEnabled()));
 
-			if (!Strings.isNullOrEmpty(systemRole)) {
-				Role newRole = Role.valueOf(systemRole);
+			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
+				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
 
 				updatedValues.put("systemRole", newRole);
 			}
@@ -241,11 +197,10 @@ public class UIUsersService {
 				userService.updateFields(userId, updatedValues);
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
-				response.setErrors(errors);
 			}
 		}
 
-		return response;
+		return new UserDetailsResponse(errors);
 	}
 
 	/**
@@ -292,5 +247,32 @@ public class UIUsersService {
 		User user = userService.read(userId);
 		List<UserProjectDetailsModel> projectsForUser = projectService.getUserProjectDetailsForUser(user);
 		return new UserProjectDetailsResponse(projectsForUser);
+	}
+	
+	/**
+	 * Check if the logged in user is allowed to edit the given user.
+	 *
+	 * @param principalUser - the currently logged in principal
+	 * @param user          - the user to edit
+	 * @return boolean if the principal can edit the user
+	 */
+	private boolean canEditUser(User principalUser, User user) {
+		boolean principalAdmin = principalUser.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
+
+		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is an Admin
+	 *
+	 * @param principal The logged in user to check
+	 * @return if the user is an admin
+	 */
+	private boolean isAdmin(Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
 	}
 }

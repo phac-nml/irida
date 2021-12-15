@@ -13,11 +13,30 @@ public class UserDetailsResponse extends AjaxResponse {
 	private String currentRole;
 	private boolean mailConfigured;
 	private boolean mailFailure;
+	private boolean isAdmin;
 	private boolean canEditUser;
 	private boolean canCreatePasswordReset;
 	private Map<String, String> locales;
 	private Map<String, String> allowedRoles;
 	private Map<String, String> errors;
+
+	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
+			boolean mailFailure, boolean isAdmin, boolean canEditUser, boolean canCreatePasswordReset,
+			Map<String, String> locales, Map<String, String> allowedRoles) {
+		this.userDetails = userDetails;
+		this.currentRole = currentRole;
+		this.mailConfigured = mailConfigured;
+		this.mailFailure = mailFailure;
+		this.isAdmin = isAdmin;
+		this.canEditUser = canEditUser;
+		this.canCreatePasswordReset = canCreatePasswordReset;
+		this.locales = locales;
+		this.allowedRoles = allowedRoles;
+	}
+
+	public UserDetailsResponse(Map<String, String> errors) {
+		this.errors = errors;
+	}
 
 	public UserDetailsModel getUser() {
 		return userDetails;
@@ -49,6 +68,14 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	public void setMailFailure(boolean mailFailure) {
 		this.mailFailure = mailFailure;
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+	public void setAdmin(boolean admin) {
+		isAdmin = admin;
 	}
 
 	public boolean isCanEditUser() {

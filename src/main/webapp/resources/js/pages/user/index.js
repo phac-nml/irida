@@ -15,30 +15,12 @@ render(
   <Provider store={store}>
     <BrowserRouter basename={setBaseUrl("/users")}>
       <Routes>
-        <Route
-          path="/:userId"
-          element={<UserAccountLayout />}
-        >
-          <Route
-            index
-            element={<UserDetailsPage />}
-          />
-          <Route
-            path="details"
-            element={<UserDetailsPage />}
-          />
-          <Route
-            path="groups"
-            element={<UserGroupsPage />}
-          />
-          <Route
-            path="projects"
-            element={<UserProjectsPage />}
-          />
-          <Route
-            path="password"
-            element={<UserPasswordPage />}
-          />
+        <Route path="/:userId" element={<UserAccountLayout />}>
+          <Route index element={<UserDetailsPage />} />
+          <Route path="details" element={<UserDetailsPage />} />
+          <Route path="groups" element={<UserGroupsPage />} />
+          <Route path="projects" element={<UserProjectsPage />} />
+          <Route path="password" element={<UserPasswordPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

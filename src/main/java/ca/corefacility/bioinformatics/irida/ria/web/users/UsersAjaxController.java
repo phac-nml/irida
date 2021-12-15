@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserProjectDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 
 /**
  * Handles asynchronous requests for the administration users table.
@@ -64,31 +61,20 @@ public class UsersAjaxController {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId      The id of the user to edit (required)
-	 * @param firstName   The firstname to update
-	 * @param lastName    the lastname to update
-	 * @param email       the email to update
-	 * @param phoneNumber the phone number to update
-	 * @param systemRole  the role to update
-	 * @param userLocale  The locale the user selected
-	 * @param enabled     whether the user account should be enabled or disabled.
-	 * @param principal   a reference to the logged in user.
-	 * @param request     the request
+	 * @param userId          The id of the user to edit (required)
+	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
+	 * @param principal       a reference to the logged in user
+	 * @param request         the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> updateUser(@PathVariable Long userId,
-			@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
-			@RequestParam(required = false) String email, @RequestParam(required = false) String phoneNumber,
-			@RequestParam(required = false) String systemRole,
-			@RequestParam(required = false, name = "locale") String userLocale,
-			@RequestParam(required = false) String enabled, Principal principal, HttpServletRequest request) {
+			@RequestBody UserEditRequest userEditRequest, Principal principal, HttpServletRequest request) {
 
-		UserDetailsResponse response = UIUsersService.updateUser(userId, firstName, lastName, email, phoneNumber,
-				systemRole, userLocale, enabled, principal, request);
+		UserDetailsResponse response = UIUsersService.updateUser(userId, userEditRequest, principal, request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
