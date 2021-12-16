@@ -30,15 +30,45 @@ export const usersApi = createApi({
       query: (userId) => ({
         url: `/${userId}/projects/list`,
       }),
-        providesTags: ["Projects"],
+      /**
+      Transforming the response to include a unique row key for rendering the ant design table.
+      */
+      transformResponse(response) {
+        const transformed = {
+          ...response,
+          projects: response.projects.map((project, index) => ({
+            ...project,
+            rowKey: `user-projects-row-${index}`,
+          })),
+        };
+        return transformed;
+      },
+      providesTags: ["Projects"],
     }),
     /*
     Edit user details.
     */
     editUserDetails: build.mutation({
-      query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, enabled }) => ({
+      query: ({
+        userId,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        role,
+        locale,
+        enabled,
+      }) => ({
         url: `/${userId}/edit`,
-        body: { firstName, lastName, email, phoneNumber, systemRole: role, locale, enabled },
+        body: {
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
+          systemRole: role,
+          locale,
+          enabled,
+        },
         method: "POST",
       }),
       invalidatesTags: ["Users"],
@@ -60,6 +90,5 @@ export const {
   useGetUserDetailsQuery,
   useGetUserProjectDetailsQuery,
   useEditUserDetailsMutation,
-  useSetUsersDisabledStatusMutation
+  useSetUsersDisabledStatusMutation,
 } = usersApi;
-
