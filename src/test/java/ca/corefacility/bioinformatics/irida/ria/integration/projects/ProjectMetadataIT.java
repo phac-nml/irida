@@ -52,7 +52,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 				page.getNumberOfMetadataTemplates());
 
 		// Set the first template as the default for the project which is the template created above
-		page.setDefaultTemplate();
+		page.setDefaultTemplate(newTemplateName);
 		// The remove button for the default template should be disabled.
 		page.removeButtonIsDisabled();
 
@@ -60,7 +60,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		Assert.assertFalse(page.allFieldsTemplateIsDefault());
 
 		// The current default template
-		page.gotoTemplate("An awesome name");
+		page.gotoTemplate(newTemplateName);
 		Assert.assertTrue(page.defaultTemplateTagVisible());
 
 		page.gotoMetadataTemplates();

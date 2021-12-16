@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * 
  */
 @Entity
+@NamedEntityGraph(name = "sampleOnly")
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)

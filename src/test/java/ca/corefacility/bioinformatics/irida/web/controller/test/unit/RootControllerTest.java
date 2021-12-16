@@ -47,7 +47,7 @@ public class RootControllerTest {
 			}
 		}
 
-		assertNotNull(r.getLink("self"));
-		assertNotNull(r.getLink("version"));
+		assertTrue(r.getLink("self").isPresent());
+		assertTrue(r.getLink("version").isPresent());
 	}
 }
