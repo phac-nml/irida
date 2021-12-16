@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.springframework.web.util.UriUtils;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -52,7 +53,7 @@ public class NcbiExportPage extends AbstractPage {
 	public static NcbiExportPage goTo(WebDriver driver, Long projectId, Collection<Long> sampleIds) {
 
 		StringJoiner stringJoiner = new StringJoiner("&");
-		sampleIds.forEach(s -> stringJoiner.add("ids%5B%5D=" + s.toString()));
+		sampleIds.forEach(s -> stringJoiner.add(UriUtils.encodeQuery("ids[]=" + s.toString(), "UTF-8")));
 
 		String url = "projects/" + projectId + "/export/ncbi?" + stringJoiner.toString();
 		get(driver, url);
