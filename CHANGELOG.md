@@ -10,7 +10,7 @@ Changes
 * [Developer/UI]: Updated to the latest release of `react-router-dom` v6.0.2.
 * [UI]: Refactored share/move samples between projects to use a separate page.
 * [UI]: Added capability to share/move samples between projects from the line list page.
-* [DEVELOPER]: Upgraded Spring Hateoas to 1.0.3.RELEASE
+* [Developer]: Upgraded Spring Hateoas to 1.0.3.RELEASE
 
 21.05 to 21.09
 --------------

@@ -15,7 +15,6 @@ import com.google.common.net.HttpHeaders;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 
