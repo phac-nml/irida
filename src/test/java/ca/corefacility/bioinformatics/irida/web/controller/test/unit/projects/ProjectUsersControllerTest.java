@@ -79,13 +79,13 @@ public class ProjectUsersControllerTest {
 		User ur = users.iterator()
 				.next();
 		assertTrue(ur.getLink("self")
-				.getHref()
+				.map(i -> i.getHref()).orElse(null)
 				.endsWith(username));
-		Link relationship = ur.getLink(RESTGenericController.REL_RELATIONSHIP);
+		Link relationship = ur.getLink(RESTGenericController.REL_RELATIONSHIP).map(i -> i).orElse(null);
 		assertNotNull(relationship);
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + username, relationship.getHref());
 		assertTrue(users.getLink("self")
-				.getHref()
+				.map(i -> i.getHref()).orElse(null)
 				.contains(p.getId()
 						.toString()));
 	}
@@ -130,19 +130,19 @@ public class ProjectUsersControllerTest {
 		assertEquals("Username must be correct", user.getUsername(), u.getUsername());
 		//check for a correct relationship link
 		assertTrue("relationship link must be correct", lrr.getLink("self")
-				.getHref()
+				.map(i -> i.getHref()).orElse(null)
 				.endsWith(u.getUsername()));
-		Link relationship = lrr.getLink(RESTGenericController.REL_RELATIONSHIP);
+		Link relationship = lrr.getLink(RESTGenericController.REL_RELATIONSHIP).map(i -> i).orElse(null);
 		assertNotNull("relationship link must exist", relationship);
 		assertEquals("relationship link must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), relationship.getHref());
 		// confirm that a project link exists
-		Link projectLink = lrr.getLink(RESTProjectsController.REL_PROJECT);
+		Link projectLink = lrr.getLink(RESTProjectsController.REL_PROJECT).map(i -> i).orElse(null);
 		assertNotNull("project link must exist", projectLink);
 		assertEquals("project link must be correct", "http://localhost/api/projects/" + p.getId(),
 				projectLink.getHref());
 		// confirm that a project users link exists
-		Link projectUsersLink = lrr.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
+		Link projectUsersLink = lrr.getLink(RESTProjectUsersController.REL_PROJECT_USERS).map(i -> i).orElse(null);
 		assertNotNull("project users link must exist", projectUsersLink);
 		assertEquals("project users link must be correct", "http://localhost/api/projects/" + p.getId() + "/users",
 				projectUsersLink.getHref());
@@ -190,19 +190,19 @@ public class ProjectUsersControllerTest {
 		assertEquals("Username must be correct", user.getUsername(), u.getUsername());
 		//check for a correct relationship link
 		assertTrue("relationship link must be correct", lrr.getLink("self")
-				.getHref()
+				.map(i -> i.getHref()).orElse(null)
 				.endsWith(u.getUsername()));
-		Link relationship = lrr.getLink(RESTGenericController.REL_RELATIONSHIP);
+		Link relationship = lrr.getLink(RESTGenericController.REL_RELATIONSHIP).map(i -> i).orElse(null);
 		assertNotNull("relationship link must exist", relationship);
 		assertEquals("relationship link must be correct",
 				"http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), relationship.getHref());
 		// confirm that a project link exists
-		Link projectLink = lrr.getLink(RESTProjectsController.REL_PROJECT);
+		Link projectLink = lrr.getLink(RESTProjectsController.REL_PROJECT).map(i -> i).orElse(null);
 		assertNotNull("project link must exist", projectLink);
 		assertEquals("project link must be correct", "http://localhost/api/projects/" + p.getId(),
 				projectLink.getHref());
 		// confirm that a project users link exists
-		Link projectUsersLink = lrr.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
+		Link projectUsersLink = lrr.getLink(RESTProjectUsersController.REL_PROJECT_USERS).map(i -> i).orElse(null);
 		assertNotNull("project users link must exist", projectUsersLink);
 		assertEquals("project users link must be correct", "http://localhost/api/projects/" + p.getId() + "/users",
 				projectUsersLink.getHref());
@@ -224,12 +224,12 @@ public class ProjectUsersControllerTest {
 
 		RootResource r = responseResource.getResource();
 		// confirm that a project link exists
-		Link projectLink = r.getLink(RESTProjectsController.REL_PROJECT);
+		Link projectLink = r.getLink(RESTProjectsController.REL_PROJECT).map(i -> i).orElse(null);
 		assertNotNull(projectLink);
 		assertEquals("http://localhost/api/projects/" + p.getId(), projectLink.getHref());
 
 		// confirm that a project users link exists
-		Link projectUsersLink = r.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
+		Link projectUsersLink = r.getLink(RESTProjectUsersController.REL_PROJECT_USERS).map(i -> i).orElse(null);
 		assertNotNull(projectUsersLink);
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/users", projectUsersLink.getHref());
 	}

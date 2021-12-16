@@ -11,6 +11,7 @@ Changes
 * [UI]: Refactored share/move samples between projects to use a separate page.
 * [UI]: Added capability to share/move samples between projects from the line list page.
 * [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
+* [Developer]: Upgraded Spring Hateoas to 1.0.3.RELEASE
 
 21.05 to 21.09
 --------------

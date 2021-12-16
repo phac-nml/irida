@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
@@ -31,7 +31,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class SequencingObject extends IridaResourceSupport implements MutableIridaThing, RemoteSynchronizable {
+public abstract class SequencingObject extends IridaRepresentationModel implements MutableIridaThing, RemoteSynchronizable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

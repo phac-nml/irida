@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -19,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -77,8 +79,8 @@ public class GenericControllerTest {
 		IdentifiableTestEntity testResource = responseObject.getResource();
 		assertNotNull("Resource should not be null", testResource);
 		assertTrue("Resource from model should be equivalent to resource added to model", testResource.equals(entity));
-		assertTrue("Model should contain a self-reference", testResource.getLink(Link.REL_SELF)
-				.getHref()
+		assertTrue("Model should contain a self-reference", testResource.getLink(IanaLinkRelations.SELF.value())
+				.map(i -> i.getHref()).orElse(null)
 				.endsWith(identifier.toString()));
 	}
 
@@ -86,7 +88,7 @@ public class GenericControllerTest {
 	public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
 		ResponseResource<RootResource> responseObject = controller.delete(2L);
 		RootResource rootResource = responseObject.getResource();
-		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION);
+		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION).map(i -> i).orElse(null);
 		assertNotNull(l);
 		assertEquals("http://localhost/api/generic", l.getHref());
 	}
@@ -116,8 +118,8 @@ public class GenericControllerTest {
 		}
 
 		IdentifiableTestEntity resource = responseObject.getResource();
-		assertTrue(resource.getLink(Link.REL_SELF)
-				.getHref()
+		assertTrue(resource.getLink(IanaLinkRelations.SELF.value())
+				.map(i -> i.getHref()).orElse(null)
 				.endsWith(identifier.toString()));
 	}
 
@@ -137,7 +139,7 @@ public class GenericControllerTest {
 		when(crudService.updateFields(identifier, updatedFields)).thenReturn(entity);
 		ResponseResource<RootResource> responseObject = controller.update(identifier, updatedFields);
 		RootResource r = responseObject.getResource();
-		assertNotNull(r.getLink(Link.REL_SELF));
+		assertNotNull(r.getLink(IanaLinkRelations.SELF.value()));
 		assertNotNull(r.getLink(RESTGenericController.REL_COLLECTION));
 	}
 

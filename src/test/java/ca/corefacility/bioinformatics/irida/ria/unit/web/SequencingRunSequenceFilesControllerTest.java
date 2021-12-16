@@ -14,7 +14,7 @@ import com.google.common.net.HttpHeaders;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.hateoas.Link;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.ControllerLinkBuilder.linkTo;
 
 /**
  * Tests for {@link RESTSequencingRunSequenceFilesController}.
@@ -69,8 +69,8 @@ public class SequencingRunSequenceFilesControllerTest {
 				.slash(seqId)
 				.withSelfRel()
 				.getHref();
-		assertEquals("Sequence file location should be correct", seqFileLocation, res.getLink(Link.REL_SELF)
-				.getHref());
+		assertEquals("Sequence file location should be correct", seqFileLocation, res.getLink(IanaLinkRelations.SELF.value())
+				.map(i -> i.getHref()).orElse(null));
 		assertEquals("Sequence file location should be correct", seqFileLocation,
 				response.getHeader(HttpHeaders.LOCATION));
 		assertEquals("HTTP status must be CREATED", HttpStatus.CREATED.value(), response.getStatus());
