@@ -1,4 +1,3 @@
-import { Button, Space, Tabs } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
@@ -8,12 +7,9 @@ import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
-import { IconShare } from "../../../components/icons/Icons";
-import { ShareError } from "./ShareError";
 import { ShareMetadata } from "./ShareMetadata";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
-import { ShareSuccess } from "./ShareSuccess";
 
 /**
  * React component to layout the components for sharing/moving samples between
@@ -22,7 +18,7 @@ import { ShareSuccess } from "./ShareSuccess";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareLayout({ redirect }) {
+export function ShareLayout({ redirect, step, nextStep, previousStep }) {
   const [result, setResult] = React.useState();
 
   const {
@@ -83,44 +79,57 @@ export function ShareLayout({ redirect }) {
   const SHOW_BUTTON = samples.length > 0;
   const DISABLED = samples.length === 0 || typeof projectId === "undefined";
 
-  return (
-    <>
-      {typeof result === "string" ? (
-        <ShareSuccess
-          removed={remove}
-          samples={samples}
-          currentProject={currentProject}
-          project={projects.find((project) => project.identifier === projectId)}
-        />
-      ) : typeof projectId !== "undefined" && isError ? (
-        <ShareError error={error} redirect={redirect} />
-      ) : (
-        <Space direction="vertical" style={{ width: `100%` }}>
-          <ShareProject currentProject={currentProject} />
-          <Tabs>
-            <Tabs.TabPane tab={i18n("ShareLayout.samples")} key="samples">
-              <ShareSamples samples={samples} redirect={redirect} />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab={i18n("ShareLayout.fields")} key="metadata">
-              <ShareMetadata />
-            </Tabs.TabPane>
-          </Tabs>
-          {SHOW_BUTTON && (
-            <div style={{ display: "flex", flexDirection: "row-reverse" }}>
-              <Button
-                type="primary"
-                className="t-share-button"
-                disabled={DISABLED}
-                onClick={() => shareSamples()}
-                loading={isLoading}
-                icon={<IconShare />}
-              >
-                {i18n("ShareButton.button")}
-              </Button>
-            </div>
-          )}
-        </Space>
-      )}
-    </>
-  );
+  let component;
+
+  if (step === 0) {
+    return <ShareProject/>;
+  } else if (step === 1) {
+    return <ShareSamples samples={samples} redirect={redirect}/>;
+  } else if (step === 2) {
+    return <ShareMetadata/>;
+  } else if (step === 3) {
+    return <h1>REVIEW</h1>;
+  }
 }
+
+// return (
+//   <>
+//     {typeof result === "string" ? (
+//       <ShareSuccess
+//         removed={remove}
+//         samples={samples}
+//         currentProject={currentProject}
+//         project={projects.find((project) => project.identifier === projectId)}
+//       />
+//     ) : typeof projectId !== "undefined" && isError ? (
+//       <ShareError error={error} redirect={redirect} />
+//     ) : (
+//       <Space direction="vertical" style={{ width: `100%` }}>
+//         <ShareProject currentProject={currentProject} />
+//         <Tabs>
+//           <Tabs.TabPane tab={i18n("ShareLayout.samples")} key="samples">
+//             <ShareSamples samples={samples} redirect={redirect} />
+//           </Tabs.TabPane>
+//           <Tabs.TabPane tab={i18n("ShareLayout.fields")} key="metadata">
+//             <ShareMetadata />
+//           </Tabs.TabPane>
+//         </Tabs>
+//         {SHOW_BUTTON && (
+//           <div style={{ display: "flex", flexDirection: "row-reverse" }}>
+//             <Button
+//               type="primary"
+//               className="t-share-button"
+//               disabled={DISABLED}
+//               onClick={() => shareSamples()}
+//               loading={isLoading}
+//               icon={<IconShare />}
+//             >
+//               {i18n("ShareButton.button")}
+//             </Button>
+//           </div>
+//         )}
+//       </Space>
+//     )}
+//   </>
+// );
+// }

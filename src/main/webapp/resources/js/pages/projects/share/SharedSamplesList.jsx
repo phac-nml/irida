@@ -2,11 +2,7 @@ import { Avatar, Button, List, Space, Tooltip, Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { FixedSizeList as VList } from "react-window";
-import {
-  IconLocked,
-  IconRemove,
-  IconUnlocked,
-} from "../../../components/icons/Icons";
+import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
 import {
   SampleDetailViewer
 } from "../../../components/samples/SampleDetailViewer";
@@ -30,18 +26,13 @@ export function SharedSamplesList({ list = [] }) {
         style={{ ...style }}
         className="t-share-sample"
         actions={[
-          <Tooltip
+          <Button
             key="remove"
-            placement="left"
-            title={i18n("ShareSamples.remove")}
+            type="link"
+            onClick={() => dispatch(removeSample(sample.id))}
           >
-            <Button
-              size="small"
-              shape="circle"
-              icon={<IconRemove />}
-              onClick={() => dispatch(removeSample(sample.id))}
-            />
-          </Tooltip>,
+            {i18n("ShareSamples.remove")}
+          </Button>,
         ]}
       >
         <List.Item.Meta
@@ -61,7 +52,11 @@ export function SharedSamplesList({ list = [] }) {
               </Tooltip>
             ) : (
               <Tooltip title={i18n("ShareSamples.avatar.locked")}>
-                <Avatar className="t-locked-sample" size="small" icon={<IconLocked />} />
+                <Avatar
+                  className="t-locked-sample"
+                  size="small"
+                  icon={<IconLocked />}
+                />
               </Tooltip>
             )
           }
