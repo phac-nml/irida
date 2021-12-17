@@ -120,24 +120,6 @@ export function UsersTable() {
     },
   ];
 
-  if (IS_ADMIN) {
-    columns.push({
-      fixed: "right",
-      key: "edit",
-      render(text, item) {
-        return (
-          <Button
-            className="t-edit-user"
-            shape="circle"
-            href={setBaseUrl(`users/${item.id}/edit`)}
-          >
-            <IconEdit />
-          </Button>
-        );
-      },
-    });
-  }
-
   return (
     <PagedTable
       columns={columns}
