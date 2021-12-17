@@ -66,10 +66,6 @@ import com.google.common.collect.Sets;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ImportAutoConfiguration({
-    DataSourceAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class
-})
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles("test")

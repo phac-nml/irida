@@ -10,6 +10,10 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import com.google.common.util.concurrent.MoreExecutors;
+
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -27,6 +31,10 @@ import java.util.concurrent.Executor;
  *
  */
 @Configuration
+@ImportAutoConfiguration({
+	DataSourceAutoConfiguration.class,
+	HibernateJpaAutoConfiguration.class,
+})
 @Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestFilesystemConfig.class,
 		IridaApiJdbcDataSourceConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class,

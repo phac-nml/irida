@@ -719,7 +719,7 @@
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<server.port>${server.port}</server.port>
-								<spring.profiles.active>it</spring.profiles.active>
+								<spring.profiles.active>test</spring.profiles.active>
 								<irida.db.profile>it</irida.db.profile>
 								<server.base.url>http://localhost:${server.port}</server.base.url>
 							</systemPropertyVariables>
