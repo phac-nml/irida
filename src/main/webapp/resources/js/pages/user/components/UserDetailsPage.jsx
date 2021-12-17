@@ -10,7 +10,7 @@ import {
   Switch,
   Typography,
 } from "antd";
-import moment from "moment";
+import { formatDate } from "../../../utilities/date-utilities";
 
 import {
   useGetUserDetailsQuery,
@@ -45,8 +45,6 @@ export default function UserDetailsPage() {
       });
   };
 
-console.log(data);
-
   if (isSuccess) {
     return (
       <Space direction="vertical">
@@ -59,32 +57,55 @@ console.log(data);
           <Form.Item
             label={i18n("UserDetailsPage.form.label.firstName")}
             name="firstName"
-            help={formErrors?.find(error => error.field === "firstName")?.message}
-            validateStatus={formErrors?.find(error => error.field === "firstName") ? "error" : undefined}
+            help={
+              formErrors?.find((error) => error.field === "firstName")?.message
+            }
+            validateStatus={
+              formErrors?.find((error) => error.field === "firstName")
+                ? "error"
+                : undefined
+            }
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("UserDetailsPage.form.label.lastName")}
             name="lastName"
-            help={formErrors?.find(error => error.field === "lastName")?.message}
-            validateStatus={formErrors?.find(error => error.field === "lastName") ? "error" : undefined}
+            help={
+              formErrors?.find((error) => error.field === "lastName")?.message
+            }
+            validateStatus={
+              formErrors?.find((error) => error.field === "lastName")
+                ? "error"
+                : undefined
+            }
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("UserDetailsPage.form.label.email")}
             name="email"
-            help={formErrors?.find(error => error.field === "email")?.message}
-            validateStatus={formErrors?.find(error => error.field === "email") ? "error" : undefined}
+            help={formErrors?.find((error) => error.field === "email")?.message}
+            validateStatus={
+              formErrors?.find((error) => error.field === "email")
+                ? "error"
+                : undefined
+            }
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("UserDetailsPage.form.label.phoneNumber")}
             name="phoneNumber"
-            help={formErrors?.find(error => error.field === "phoneNumber")?.message}
-            validateStatus={formErrors?.find(error => error.field === "phoneNumber") ? "error" : undefined}
+            help={
+              formErrors?.find((error) => error.field === "phoneNumber")
+                ?.message
+            }
+            validateStatus={
+              formErrors?.find((error) => error.field === "phoneNumber")
+                ? "error"
+                : undefined
+            }
           >
             <Input />
           </Form.Item>
@@ -106,8 +127,12 @@ console.log(data);
           <Form.Item
             label={i18n("UserDetailsPage.form.label.role")}
             name="role"
-            help={formErrors?.find(error => error.field === "role")?.message}
-            validateStatus={formErrors?.find(error => error.field === "role") ? "error" : undefined}
+            help={formErrors?.find((error) => error.field === "role")?.message}
+            validateStatus={
+              formErrors?.find((error) => error.field === "role")
+                ? "error"
+                : undefined
+            }
             hidden={!data.admin}
           >
             <Select>
@@ -140,22 +165,28 @@ console.log(data);
           </Form.Item>
         </Form>
         <Typography.Text type="secondary">
-          {i18n(
-            "UserDetailsPage.createdDate",
-            moment(data.user.createdDate).format()
-          )}
+          {data.user.createdDate
+            ? i18n(
+                "UserDetailsPage.createdDate",
+                formatDate({ date: data.user.createdDate })
+              )
+            : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
-          {i18n(
-            "UserDetailsPage.modifiedDate",
-            moment(data.user.modifiedDate).format()
-          )}
+          {data.user.modifiedDate
+            ? i18n(
+                "UserDetailsPage.modifiedDate",
+                formatDate({ date: data.user.modifiedDate })
+              )
+            : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
-          {i18n(
-            "UserDetailsPage.lastLogin",
-            moment(data.user.lastLogin).format()
-          )}
+          {data.user.lastLogin
+            ? i18n(
+                "UserDetailsPage.lastLogin",
+                formatDate({ date: data.user.lastLogin })
+              )
+            : ""}
         </Typography.Text>
       </Space>
     );
