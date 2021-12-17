@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 
 /**
  * Handles asynchronous requests for the administration users table.
@@ -71,7 +68,7 @@ public class UsersAjaxController {
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> updateUser(@PathVariable Long userId,
+	public ResponseEntity<List<UserDetailsError>> updateUser(@PathVariable Long userId,
 			@RequestBody UserEditRequest userEditRequest, Principal principal, HttpServletRequest request) {
 
 		UserDetailsResponse response = UIUsersService.updateUser(userId, userEditRequest, principal, request);

@@ -45,6 +45,8 @@ export default function UserDetailsPage() {
       });
   };
 
+console.log(data);
+
   if (isSuccess) {
     return (
       <Space direction="vertical">
@@ -57,32 +59,32 @@ export default function UserDetailsPage() {
           <Form.Item
             label={i18n("UserDetailsPage.form.label.firstName")}
             name="firstName"
-            help={formErrors?.firstName}
-            validateStatus={formErrors?.firstName ? "error" : undefined}
+            help={formErrors?.find(error => error.field === "firstName")?.message}
+            validateStatus={formErrors?.find(error => error.field === "firstName") ? "error" : undefined}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("UserDetailsPage.form.label.lastName")}
             name="lastName"
-            help={formErrors?.lastName}
-            validateStatus={formErrors?.lastName ? "error" : undefined}
+            help={formErrors?.find(error => error.field === "lastName")?.message}
+            validateStatus={formErrors?.find(error => error.field === "lastName") ? "error" : undefined}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("UserDetailsPage.form.label.email")}
             name="email"
-            help={formErrors?.email}
-            validateStatus={formErrors?.email ? "error" : undefined}
+            help={formErrors?.find(error => error.field === "email")?.message}
+            validateStatus={formErrors?.find(error => error.field === "email") ? "error" : undefined}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("UserDetailsPage.form.label.phoneNumber")}
             name="phoneNumber"
-            help={formErrors?.phoneNumber}
-            validateStatus={formErrors?.phoneNumber ? "error" : undefined}
+            help={formErrors?.find(error => error.field === "phoneNumber")?.message}
+            validateStatus={formErrors?.find(error => error.field === "phoneNumber") ? "error" : undefined}
           >
             <Input />
           </Form.Item>
@@ -91,12 +93,12 @@ export default function UserDetailsPage() {
             name="locale"
           >
             <Select>
-              {Object.keys(data.locales).map((key, index) => (
+              {data.locales.map((locale, index) => (
                 <Select.Option
                   key={`user-account-details-locale-${index}`}
-                  value={key}
+                  value={locale.language}
                 >
-                  {data.locales[key]}
+                  {locale.name}
                 </Select.Option>
               ))}
             </Select>
@@ -104,17 +106,17 @@ export default function UserDetailsPage() {
           <Form.Item
             label={i18n("UserDetailsPage.form.label.role")}
             name="role"
-            help={formErrors?.role}
-            validateStatus={formErrors?.role ? "error" : undefined}
+            help={formErrors?.find(error => error.field === "role")?.message}
+            validateStatus={formErrors?.find(error => error.field === "role") ? "error" : undefined}
             hidden={!data.admin}
           >
             <Select>
-              {Object.keys(data.allowedRoles).map((key, index) => (
+              {data.allowedRoles.map((role, index) => (
                 <Select.Option
                   key={`user-account-details-role-${index}`}
-                  value={key}
+                  value={role.code}
                 >
-                  {data.allowedRoles[key]}
+                  {role.name}
                 </Select.Option>
               ))}
             </Select>

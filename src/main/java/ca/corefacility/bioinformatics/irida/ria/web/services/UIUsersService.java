@@ -29,10 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -132,16 +129,16 @@ public class UIUsersService {
 		boolean canEditUser = canEditUser(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
-		Map<String, String> localeNames = new HashMap<>();
+		List<UserDetailsLocale> localeNames = new ArrayList<>();
 		for (Locale aLocale : locales) {
-			localeNames.put(aLocale.getLanguage(), aLocale.getDisplayName());
+			localeNames.add(new UserDetailsLocale(aLocale.getLanguage(), aLocale.getDisplayName()));
 		}
 
-		Map<String, String> roleNames = new HashMap<>();
+		List<UserDetailsRole> roleNames = new ArrayList<>();
 		for (Role aRole : adminAllowedRoles) {
 			String roleMessageName = "systemrole." + aRole.getName();
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
-			roleNames.put(aRole.getName(), roleName);
+			roleNames.add(new UserDetailsRole(aRole.getName(), roleName));
 		}
 
 		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
@@ -162,8 +159,8 @@ public class UIUsersService {
 	 */
 	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
-		Map<String, String> errors = new HashMap<>();
 		Map<String, Object> updatedValues = new HashMap<>();
+		List<UserDetailsError> errors = new ArrayList<>();
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
 			updatedValues.put("firstName", userEditRequest.getFirstName());
@@ -213,8 +210,8 @@ public class UIUsersService {
 	 * @param locale The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
-	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
-		Map<String, String> errors = new HashMap<>();
+	private List<UserDetailsError> handleCreateUpdateException(Exception ex, Locale locale) {
+		List<UserDetailsError> errors = new ArrayList<>();
 		if (ex instanceof ConstraintViolationException) {
 			ConstraintViolationException cvx = (ConstraintViolationException) ex;
 			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
@@ -222,19 +219,21 @@ public class UIUsersService {
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				String errorKey = violation.getPropertyPath()
 						.toString();
-				errors.put(errorKey, violation.getMessage());
+				errors.add(new UserDetailsError(errorKey, violation.getMessage()));
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+				errors.add(new UserDetailsError("email",
+						messageSource.getMessage("user.edit.emailConflict", null, locale)));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
-			errors.put(eex.getFieldName(), eex.getMessage());
+			errors.add(new UserDetailsError(eex.getFieldName(), eex.getMessage()));
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+			errors.add(new UserDetailsError("password",
+					messageSource.getMessage("user.edit.passwordReused", null, locale)));
 		}
 
 		return errors;
