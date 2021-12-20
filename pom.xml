@@ -145,12 +145,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -166,13 +160,6 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>${liquibase.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>snakeyaml</artifactId>
-					<groupId>org.yaml</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -188,21 +175,6 @@
 				<exclusion>
 					<groupId>org.jboss.logging</groupId>
 					<artifactId>jboss-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>xml-apis</artifactId>
-					<groupId>xml-apis</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>javax.activation-api</artifactId>
-					<groupId>javax.activation</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -268,15 +240,6 @@
 			</exclusions>
 		</dependency>
 
-		<!-- This dependency is brought in by hibernate and jena with conflicting
-			versions. Solution was to exclude it from both of their imports and import
-			it explicitly. -->
-		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>${xml.apis.version}</version>
-		</dependency>
-
 		<!-- Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -320,44 +283,24 @@
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring5</artifactId>
-			<version>${thymeleaf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
-			<version>${thymeleaf-extras-springsecurity4.version}</version>
+			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.mxab.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-data-attribute</artifactId>
-			<version>${thymeleaf-extras-data-attribute.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
 			<artifactId>thymeleaf-layout-dialect</artifactId>
-			<version>${thymeleaf-layout-dialect.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.attoparser</groupId>
-			<artifactId>attoparser</artifactId>
-			<version>${attoparser.version}</version>
 		</dependency>
 
 		<!-- Mail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>javax.mail</artifactId>
-			<version>${javax.mail.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.activation</groupId>
-					<artifactId>activation</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- Testing -->
@@ -387,18 +330,6 @@
 				<exclusion>
 					<groupId>org.mockito</groupId>
 					<artifactId>mockito-junit-jupiter</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.ws</groupId>
-			<artifactId>spring-ws-test</artifactId>
-			<version>${spring.ws.test.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -454,12 +385,6 @@
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>${jsoup.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -531,25 +456,6 @@
 			<version>${pf4j.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.sun.activation</groupId>
-			<artifactId>javax.activation</artifactId>
-			<version>${javax.activation.version}</version>
-		</dependency>
-
-		<!-- Validation API -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate.validator.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.logging</groupId>
-					<artifactId>jboss-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- Galaxy -->
 		<dependency>
 			<groupId>com.github.jmchilton.blend4j</groupId>
@@ -565,13 +471,6 @@
 					<groupId>com.sun.xml.bind</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<!-- Image manipulation -->
-		<dependency>
-			<groupId>org.imgscalr</groupId>
-			<artifactId>imgscalr-lib</artifactId>
-			<version>${imgscalr.version}</version>
 		</dependency>
 
 		<!-- Clojure nREPL -->
@@ -1030,38 +929,26 @@
 		<spring.ws.test.version>3.0.7.RELEASE</spring.ws.test.version>
 		<mockito.version>1.10.19</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
-		<hibernate.version>5.4.7.Final</hibernate.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
 		<commons.dbcp.version>2.0.1</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.9-nml-custom</fastqc.version>
-		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>3.12.0</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
-		<xml.apis.version>1.4.01</xml.apis.version>
-		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
 		<commons.fileupload.version>1.3.1</commons.fileupload.version>
 		<spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
 		<oltu.version>1.0.0</oltu.version>
-		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
-		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
-		<thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
 		<apache.poi.version>3.17</apache.poi.version>
-		<javax.mail.version>1.6.2</javax.mail.version>
-		<jsoup.version>1.7.3</jsoup.version>
 		<selenium-driver.version>3.141.59</selenium-driver.version>
 		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
-		<attoparser.version>2.0.4.RELEASE</attoparser.version>
 		<powermock.version>1.6.2</powermock.version>
 		<mockftpserver.version>2.6</mockftpserver.version>
-		<imgscalr.version>4.2</imgscalr.version>
 		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 		<pf4j.version>2.4.0</pf4j.version>
 		<javax.activation.version>1.2.0</javax.activation.version>
@@ -1105,7 +992,6 @@
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 	</properties>
 

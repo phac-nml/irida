@@ -47,7 +47,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

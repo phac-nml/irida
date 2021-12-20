@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.function.Function;
 
@@ -82,9 +81,6 @@ public class ProjectsControllerTest {
 
 	@Test
 	public void testGetSpecificProjectPage() {
-		Model model = new ExtendedModelMap();
-		Long projectId = 1L;
-		Principal principal = () -> USER_NAME;
 		List<Join<Project, User>> projects = getProjectsForUser();
 		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
 				getUsersForProjectByRole());
