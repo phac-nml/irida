@@ -95,14 +95,14 @@ tmp_dir_cleanup() {
 	rm -rf $SEQUENCE_FILE_DIR/*
 	rm -rf $REFERENCE_FILE_DIR/*
 	rm -rf $OUTPUT_FILE_DIR/*
-	#rm -f $OPEN_API_FILE
+	rm -f $OPEN_API_FILE
 }
 
 posttest_cleanup() {
 	rm -rf $SEQUENCE_FILE_DIR
 	rm -rf $REFERENCE_FILE_DIR
 	rm -rf $OUTPUT_FILE_DIR
-	#rm -f $OPEN_API_FILE
+	rm -f $OPEN_API_FILE
 }
 
 exit_error() {

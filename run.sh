@@ -10,4 +10,4 @@ else
    echo "Updating database schema without dropping"
   fi
 
-mvn clean jetty:run -Dspring.profiles.active=dev ${ADD}
+mvn clean spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev" ${ADD}
