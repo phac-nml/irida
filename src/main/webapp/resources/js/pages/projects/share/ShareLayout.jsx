@@ -50,7 +50,7 @@ export function ShareLayout({ redirect, step, nextStep, previousStep }) {
   });
 
   /*
-  originalSamples contains all samples, here we are filtering it
+  params.remoteId contains all samples, here we are filtering it
   to only show samples that are not in the target project.
    */
   let samples = originalSamples.filter(
@@ -82,11 +82,11 @@ export function ShareLayout({ redirect, step, nextStep, previousStep }) {
   let component;
 
   if (step === 0) {
-    return <ShareProject/>;
+    return <ShareProject />;
   } else if (step === 1) {
-    return <ShareSamples samples={samples} redirect={redirect}/>;
+    return <ShareSamples samples={samples} redirect={redirect} />;
   } else if (step === 2) {
-    return <ShareMetadata/>;
+    return <ShareMetadata />;
   } else if (step === 3) {
     return <h1>REVIEW</h1>;
   }

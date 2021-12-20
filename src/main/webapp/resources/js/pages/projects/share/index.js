@@ -11,6 +11,7 @@ import { ShareMetadata } from "./ShareMetadata";
 import { ShareNoSamples } from "./ShareNoSamples";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
+import { ShareSuccess } from "./ShareSuccess";
 import store from "./store";
 
 /**
@@ -24,6 +25,7 @@ function ShareApp() {
   const [prevDisabled, setPrevDisabled] = useState(true);
   const [nextDisabled, setNextDisabled] = useState(true);
   const [error, setError] = useState(undefined);
+  const [finished, setFinished] = useState(false);
 
   /*
   Create redirect href to project samples page.
@@ -71,6 +73,10 @@ function ShareApp() {
       setPrevDisabled(true);
       setNextDisabled(projectId === undefined && typeof error === "undefined");
       return;
+    } else if (step === 1) {
+      setPrevDisabled(false);
+      setNextDisabled(filtered.length === 0);
+      return;
     }
     setPrevDisabled(false);
     setNextDisabled(step === steps.length - 1);
@@ -102,7 +108,7 @@ function ShareApp() {
   const submit = async () => {
     try {
       await shareSamplesWithProject({
-        sampleIds: samples.map((s) => s.id),
+        sampleIds: filtered.map((s) => s.id),
         locked,
         currentId: currentProject,
         targetId: projectId,
@@ -112,6 +118,7 @@ function ShareApp() {
           identifier: id,
         })),
       });
+      setFinished(true);
     } catch (e) {
       setError(e);
     }
@@ -139,29 +146,33 @@ function ShareApp() {
                 </Steps>
               </Col>
               <Col span={18}>
-                <Space direction="vertical" style={{ width: `100%` }}>
-                  {steps[step].component}
-                  {error}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Button disabled={prevDisabled} onClick={previousStep}>
-                      Previous
-                    </Button>
-                    {step === steps.length - 1 ? (
-                      <Button onClick={submit} type="primary">
-                        {i18n("ShareButton.button")}
+                {finished ? (
+                  <ShareSuccess />
+                ) : (
+                  <Space direction="vertical" style={{ width: `100%` }}>
+                    {steps[step].component}
+                    {error}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Button disabled={prevDisabled} onClick={previousStep}>
+                        Previous
                       </Button>
-                    ) : (
-                      <Button disabled={nextDisabled} onClick={nextStep}>
-                        Next
-                      </Button>
-                    )}
-                  </div>
-                </Space>
+                      {step === steps.length - 1 ? (
+                        <Button onClick={submit} type="primary">
+                          {i18n("ShareButton.button")}
+                        </Button>
+                      ) : (
+                        <Button disabled={nextDisabled} onClick={nextStep}>
+                          Next
+                        </Button>
+                      )}
+                    </div>
+                  </Space>
+                )}
               </Col>
             </Row>
           </PageHeader>
