@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Import;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 
+/**
+ * Entry point to Spring Boot application
+ */
 @SpringBootApplication(
 	exclude = {
 		ThymeleafAutoConfiguration.class,
