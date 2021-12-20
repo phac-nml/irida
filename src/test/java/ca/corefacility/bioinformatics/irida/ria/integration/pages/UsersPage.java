@@ -18,9 +18,6 @@ public class UsersPage extends AbstractPage {
 	@FindBy(css = ".t-cb-enable input[type='checkbox']")
 	private List<WebElement> enableCheckboxes;
 
-	@FindBy(className = "t-edit-user")
-	private List<WebElement> editUserBtns;
-
 	public UsersPage(WebDriver driver) {
 		super(driver);
 	}
@@ -36,9 +33,10 @@ public class UsersPage extends AbstractPage {
 		table = AntTable.getTable(driver);
 		return PageFactory.initElements(driver, UsersPage.class);
 	}
-	
+
 	public int usersTableSize() {
-		return table.getRows().size();
+		return table.getRows()
+				.size();
 	}
 
 	public boolean isTableSortedByUsername() {
@@ -53,13 +51,12 @@ public class UsersPage extends AbstractPage {
 		table.sortColumn("t-username-col");
 	}
 
-	public void sortTableByModifiedDate() { table.sortColumn("t-modified-col");}
-
-	public boolean canUserModifyUserState() {
-		return enableCheckboxes.get(0).isEnabled();
+	public void sortTableByModifiedDate() {
+		table.sortColumn("t-modified-col");
 	}
 
-	public boolean canUserAccessUserEditPage() {
-		return editUserBtns.size() > 0;
+	public boolean canUserModifyUserState() {
+		return enableCheckboxes.get(0)
+				.isEnabled();
 	}
 }
