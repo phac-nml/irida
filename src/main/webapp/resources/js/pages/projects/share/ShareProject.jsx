@@ -59,7 +59,9 @@ export function ShareProject() {
 
   return (
     <Space direction="vertical" style={{ display: "block" }}>
-      <Typography.Text strong>{i18n("ShareSamples.projects")}</Typography.Text>
+      <Typography.Title level={5}>
+        {i18n("ShareSamples.projects")}
+      </Typography.Title>
       <Select
         autoFocus
         showSearch

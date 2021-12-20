@@ -2,7 +2,10 @@ import { Button, Card, Col, PageHeader, Row, Space, Steps } from "antd";
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
-import { useGetSampleIdsForProjectQuery } from "../../../apis/projects/samples";
+import {
+  useGetSampleIdsForProjectQuery,
+  useShareSamplesWithProjectMutation,
+} from "../../../apis/projects/samples";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadata } from "./ShareMetadata";
 import { ShareNoSamples } from "./ShareNoSamples";
@@ -20,7 +23,6 @@ function ShareApp() {
   const [step, setStep] = useState(0);
   const [prevDisabled, setPrevDisabled] = useState(true);
   const [nextDisabled, setNextDisabled] = useState(true);
-  const [samples, setSamples] = useState();
   const [error, setError] = useState(undefined);
 
   /*
@@ -30,9 +32,19 @@ function ShareApp() {
     () => window.location.href.match(/(.*)\/share/)[1]
   );
 
-  const { originalSamples = [], currentProject, projectId } = useSelector(
-    (state) => state.shareReducer
-  );
+  const {
+    originalSamples = [],
+    currentProject,
+    locked,
+    projectId,
+    remove,
+    metadataRestrictions,
+  } = useSelector((state) => state.shareReducer);
+
+  const [
+    shareSamplesWithProject,
+    { isLoading, isError, error: shareError },
+  ] = useShareSamplesWithProjectMutation();
 
   const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
     skip: !projectId,
@@ -84,6 +96,27 @@ function ShareApp() {
   const nextStep = () => setStep(step + 1);
   const previousStep = () => setStep(step - 1);
 
+  /**
+   * Server call to actually share samples with another project.
+   */
+  const submit = async () => {
+    try {
+      await shareSamplesWithProject({
+        sampleIds: samples.map((s) => s.id),
+        locked,
+        currentId: currentProject,
+        targetId: projectId,
+        remove,
+        restrictions: metadataRestrictions.map(({ restriction, id }) => ({
+          restriction,
+          identifier: id,
+        })),
+      });
+    } catch (e) {
+      setError(e);
+    }
+  };
+
   return (
     <Row>
       <Col xl={{ span: 18, offset: 3 }} xs={24}>
@@ -118,9 +151,15 @@ function ShareApp() {
                     <Button disabled={prevDisabled} onClick={previousStep}>
                       Previous
                     </Button>
-                    <Button disabled={nextDisabled} onClick={nextStep}>
-                      Next
-                    </Button>
+                    {step === steps.length - 1 ? (
+                      <Button onClick={submit} type="primary">
+                        {i18n("ShareButton.button")}
+                      </Button>
+                    ) : (
+                      <Button disabled={nextDisabled} onClick={nextStep}>
+                        Next
+                      </Button>
+                    )}
                   </div>
                 </Space>
               </Col>

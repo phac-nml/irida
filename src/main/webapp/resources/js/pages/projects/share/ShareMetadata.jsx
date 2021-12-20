@@ -141,7 +141,6 @@ export function ShareMetadata() {
     <Table
       columns={columns}
       dataSource={metadataRestrictions}
-      pagination={false}
     />
   );
 }

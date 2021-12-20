@@ -23,6 +23,9 @@ export function ShareSamples({ samples = [], redirect }) {
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
+      <Typography.Title level={5}>
+        {i18n("ShareSamplesList.title")}
+      </Typography.Title>
       {SHOW_SAMPLES && (
         <>
           <SharedSamplesList list={samples} />
