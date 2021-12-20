@@ -1167,7 +1167,7 @@
 		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
 		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
 		<thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
-		<apache.poi.version>3.17</apache.poi.version>
+		<apache.poi.version>5.1.0</apache.poi.version>
 		<javax.mail.version>1.6.2</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
