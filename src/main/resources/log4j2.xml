@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="debug" strict="true" name="IRIDAConfig"
-               packages="ca.corefacility.bioinformatics.irida">
+<Configuration status="debug" strict="true" name="IRIDAConfig">
   <Appenders>
     <Appender type="Console" name="STDOUT">
       <Layout type="PatternLayout" pattern="%d{DATE} %5p %C:%L - %m%n"/>
-      <Filters>
-        <Filter type="MarkerFilter" marker="FLOW" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="DENY" onMismatch="ACCEPT"/>
-      </Filters>
     </Appender>
   </Appenders>
  
