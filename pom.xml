@@ -564,7 +564,6 @@
 								<irida.db.profile>it</irida.db.profile>
 								<server.port>${server.port}</server.port>
 								<server.base.url>http://localhost:${server.port}</server.base.url>
-								<jdbc.url>${jdbc.url}</jdbc.url>
 							</systemPropertyVariables>
 						</configuration>
 					</execution>
@@ -938,6 +937,7 @@
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>3.12.0</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
+		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
