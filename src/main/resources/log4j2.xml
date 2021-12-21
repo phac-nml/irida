@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="IRIDAConfig"
+               packages="ca.corefacility.bioinformatics.irida">
+  <Appenders>
+    <Appender type="Console" name="STDOUT">
+      <Layout type="PatternLayout" pattern="%d{DATE} %5p %C:%L - %m%n"/>
+      <Filters>
+        <Filter type="MarkerFilter" marker="FLOW" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="DENY" onMismatch="ACCEPT"/>
+      </Filters>
+    </Appender>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="ca.corefacility.bioinformatics.irida" level="debug" additivity="false">
+      <AppenderRef ref="STDOUT"/>
+    </Logger>
+    <Logger name="ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter" level="error" additivity="false">
+      <AppenderRef ref="STDOUT"/>
+    </Logger>
+    <Logger name="org.pf4j.AbstractPluginManager" level="info" additivity="false">
+      <AppenderRef ref="STDOUT"/>
+    </Logger>
+    <Logger name="org.pf4j.CompoundPluginDescriptorFinder" level="off" additivity="false">
+      <AppenderRef ref="STDOUT"/>
+    </Logger>
+ 
+    <Root level="error">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
