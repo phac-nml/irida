@@ -4,7 +4,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>21.09.1</version>
+	<version>21.09.2</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -557,9 +557,9 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 
 		<!-- Utilities -->
@@ -1130,6 +1130,7 @@
 		<commons.cli.version>1.2</commons.cli.version>
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.32</slf4j.version>
+		<log4j.version>2.17.0</log4j.version>
 		<guava.version>28.0-jre</guava.version>
 		<spring.version>5.2.2.RELEASE</spring.version>
 		<spring.security.version>5.2.1.RELEASE</spring.security.version>
