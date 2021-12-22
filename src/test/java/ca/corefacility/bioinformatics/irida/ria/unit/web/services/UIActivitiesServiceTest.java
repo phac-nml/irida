@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 public class UIActivitiesServiceTest {
 	private UIActivitiesService service;
