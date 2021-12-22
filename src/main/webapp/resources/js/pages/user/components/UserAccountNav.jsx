@@ -10,7 +10,7 @@ import { Menu } from "antd";
 export default function UserAccountNav() {
   const lastElement = window.location.pathname.split("/").pop();
   const defaultSelectedKey = lastElement.match(
-    "details|groups|projects|security|password"
+    "details|projects|security|password"
   )
     ? lastElement
     : "details";
@@ -19,9 +19,6 @@ export default function UserAccountNav() {
     <Menu mode="inline" defaultSelectedKeys={[defaultSelectedKey]}>
       <Menu.Item key="details">
         <Link to="details">{i18n("UserAccountNav.menu.details")}</Link>
-      </Menu.Item>
-      <Menu.Item key="groups">
-        <Link to="groups">{i18n("UserAccountNav.menu.groups")}</Link>
       </Menu.Item>
       <Menu.Item key="projects">
         <Link to="projects">{i18n("UserAccountNav.menu.projects")}</Link>
