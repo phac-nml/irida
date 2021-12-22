@@ -25,7 +25,7 @@ import {
  */
 export default function UserDetailsPage() {
   const { userId } = useParams();
-  const { data, isLoading } = useGetUserDetailsQuery(userId);
+  const { data: userDetails, isLoading } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
 
   const [formErrors, setFormErrors] = useState();
@@ -42,7 +42,7 @@ export default function UserDetailsPage() {
         notification.error({
           message: i18n("UserDetailsPage.notification.error"),
         });
-        setFormErrors(error.data);
+        setFormErrors(error.userDetails);
       });
   };
 
@@ -52,10 +52,10 @@ export default function UserDetailsPage() {
         <ContentLoading message={i18n("UserDetailsPage.loading.message")} />
       ) : (
         <Space direction="vertical">
-          <Typography.Title level={4}>{data.user.username}</Typography.Title>
+          <Typography.Title level={4}>{userDetails.user.username}</Typography.Title>
           <Form
             layout="vertical"
-            initialValues={data.user}
+            initialValues={userDetails.user}
             onFinish={onFormFinish}
           >
             <Form.Item
@@ -121,7 +121,7 @@ export default function UserDetailsPage() {
               name="locale"
             >
               <Select>
-                {data.locales.map((locale, index) => (
+                {userDetails.locales.map((locale, index) => (
                   <Select.Option
                     key={`user-account-details-locale-${index}`}
                     value={locale.language}
@@ -142,14 +142,14 @@ export default function UserDetailsPage() {
                   ? "error"
                   : undefined
               }
-              hidden={!data.admin}
+              hidden={!userDetails.admin}
             >
               <Select>
-                {data.allowedRoles.map((role, index) => (
+                {userDetails.allowedRoles.map((role, index) => (
                   <Select.Option
                     key={`user-account-details-role-${index}`}
                     value={role.code}
-                    disabled={!data.canEditUserStatus}
+                    disabled={!userDetails.canEditUserStatus}
                   >
                     {role.name}
                   </Select.Option>
@@ -160,41 +160,41 @@ export default function UserDetailsPage() {
               label={i18n("UserDetailsPage.form.label.enabled")}
               name="enabled"
               valuePropName="checked"
-              hidden={!data.admin}
+              hidden={!userDetails.admin}
             >
-              <Switch disabled={!data.canEditUserStatus} />
+              <Switch disabled={!userDetails.canEditUserStatus} />
             </Form.Item>
             <Form.Item>
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={!data.canEditUserInfo}
+                disabled={!userDetails.canEditUserInfo}
               >
                 {i18n("UserDetailsPage.form.button.submit")}
               </Button>
             </Form.Item>
           </Form>
           <Typography.Text type="secondary">
-            {data.user.createdDate
+            {userDetails.user.createdDate
               ? i18n(
                   "UserDetailsPage.createdDate",
-                  formatDate({ date: data.user.createdDate })
+                  formatDate({ date: userDetails.user.createdDate })
                 )
               : ""}
           </Typography.Text>
           <Typography.Text type="secondary">
-            {data.user.modifiedDate
+            {userDetails.user.modifiedDate
               ? i18n(
                   "UserDetailsPage.modifiedDate",
-                  formatDate({ date: data.user.modifiedDate })
+                  formatDate({ date: userDetails.user.modifiedDate })
                 )
               : ""}
           </Typography.Text>
           <Typography.Text type="secondary">
-            {data.user.lastLogin
+            {userDetails.user.lastLogin
               ? i18n(
                   "UserDetailsPage.lastLogin",
-                  formatDate({ date: data.user.lastLogin })
+                  formatDate({ date: userDetails.user.lastLogin })
                 )
               : ""}
           </Typography.Text>
