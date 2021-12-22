@@ -940,6 +940,7 @@
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.32</slf4j.version>
 		<log4j.version>2.17.0</log4j.version>
+		<logback.version>1.2.9</logback.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<spring.boot.starter.version>2.2.5.RELEASE</spring.boot.starter.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
