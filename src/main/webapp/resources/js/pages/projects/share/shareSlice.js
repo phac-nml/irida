@@ -6,8 +6,8 @@ import {
 /**
  * Action to set the target project for the samples
  */
-export const setProject = createAction(`share/setProject`, (projectId) => ({
-  payload: { projectId },
+export const setProject = createAction(`share/setProject`, (targetProject) => ({
+  payload: { targetProject },
 }));
 
 /**
@@ -100,7 +100,7 @@ const shareSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder.addCase(setProject, (state, action) => {
-      state.projectId = action.payload.projectId;
+      state.targetProject = action.payload.targetProject;
     });
 
     builder.addCase(removeSample, (state, action) => {

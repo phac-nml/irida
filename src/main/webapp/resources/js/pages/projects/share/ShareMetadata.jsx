@@ -24,7 +24,7 @@ export function ShareMetadata() {
    */
   const [restrictions, setRestrictions] = React.useState([]);
 
-  const { currentProject, projectId, metadataRestrictions } = useSelector(
+  const { currentProject, targetProject, metadataRestrictions } = useSelector(
     (state) => state.shareReducer
   );
 
@@ -42,9 +42,9 @@ export function ShareMetadata() {
    * the highest level of restriction.
    */
   const { data: targetExistingFields } = useGetMetadataFieldsForProjectQuery(
-    projectId,
+    targetProject.identifier,
     {
-      skip: !projectId,
+      skip: !targetProject,
     }
   );
 

@@ -57,6 +57,12 @@ export function ShareProject() {
     setOptions(formatted);
   };
 
+  function onChange(projectId) {
+    const project = projects.find((p) => p.identifier === projectId);
+    console.log(project);
+    dispatch(setProject(project));
+  }
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Typography.Title level={5}>
@@ -72,7 +78,7 @@ export function ShareProject() {
         className="t-share-project"
         filterOption={false}
         onSearch={handleSearch}
-        onChange={(projectId) => dispatch(setProject(projectId))}
+        onChange={onChange}
       />
     </Space>
   );

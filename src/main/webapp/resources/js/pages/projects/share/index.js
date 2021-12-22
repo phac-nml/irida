@@ -38,7 +38,7 @@ function ShareApp() {
     originalSamples = [],
     currentProject,
     locked,
-    projectId,
+    targetProject,
     remove,
     metadataRestrictions,
   } = useSelector((state) => state.shareReducer);
@@ -48,9 +48,13 @@ function ShareApp() {
     { isLoading, isError, error: shareError },
   ] = useShareSamplesWithProjectMutation();
 
-  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(projectId, {
-    skip: !projectId,
-  });
+  console.log(targetProject);
+  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
+    targetProject?.identifier,
+    {
+      skip: !targetProject?.identifier,
+    }
+  );
 
   const filtered = originalSamples.filter(
     (sample) => !existingIds.includes(sample.id)
@@ -71,7 +75,9 @@ function ShareApp() {
   useEffect(() => {
     if (step === 0) {
       setPrevDisabled(true);
-      setNextDisabled(projectId === undefined && typeof error === "undefined");
+      setNextDisabled(
+        targetProject === undefined && typeof error === "undefined"
+      );
       return;
     } else if (step === 1) {
       setPrevDisabled(false);
@@ -80,7 +86,7 @@ function ShareApp() {
     }
     setPrevDisabled(false);
     setNextDisabled(step === steps.length - 1);
-  }, [error, projectId, step, steps.length]);
+  }, [error, targetProject, step, steps.length]);
 
   /*
   1. No Samples - this would be if the user came to this page from anything
@@ -111,7 +117,7 @@ function ShareApp() {
         sampleIds: filtered.map((s) => s.id),
         locked,
         currentId: currentProject,
-        targetId: projectId,
+        targetId: targetProject.identifier,
         remove,
         restrictions: metadataRestrictions.map(({ restriction, id }) => ({
           restriction,
@@ -147,7 +153,12 @@ function ShareApp() {
               </Col>
               <Col span={18}>
                 {finished ? (
-                  <ShareSuccess />
+                  <ShareSuccess
+                    currentProject={currentProject}
+                    samples={filtered}
+                    removed={remove}
+                    project={targetProject}
+                  />
                 ) : (
                   <Space direction="vertical" style={{ width: `100%` }}>
                     {steps[step].component}
