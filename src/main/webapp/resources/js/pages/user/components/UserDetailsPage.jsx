@@ -140,6 +140,7 @@ export default function UserDetailsPage() {
                 <Select.Option
                   key={`user-account-details-role-${index}`}
                   value={role.code}
+                  disabled={!data.canEditUserStatus}
                 >
                   {role.name}
                 </Select.Option>
@@ -152,13 +153,13 @@ export default function UserDetailsPage() {
             valuePropName="checked"
             hidden={!data.admin}
           >
-            <Switch />
+            <Switch disabled={!data.canEditUserStatus} />
           </Form.Item>
           <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
-              disabled={!data.canEditUser}
+              disabled={!data.canEditUserInfo}
             >
               {i18n("UserDetailsPage.form.button.submit")}
             </Button>

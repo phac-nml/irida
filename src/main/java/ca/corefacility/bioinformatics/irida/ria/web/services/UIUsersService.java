@@ -127,8 +127,8 @@ public class UIUsersService {
 		Locale locale = LocaleContextHolder.getLocale();
 		Boolean mailConfigured = emailController.isMailConfigured();
 		boolean isAdmin = isAdmin(principal);
-		// check if we should show an edit button
-		boolean canEditUser = canEditUser(principalUser, user);
+		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
+		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
 		List<UserDetailsLocale> localeNames = new ArrayList<>();
@@ -146,8 +146,8 @@ public class UIUsersService {
 		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
 				.getName(), null, locale);
 
-		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin, canEditUser,
-				canCreatePasswordReset, localeNames, roleNames);
+		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
+				canEditUserInfo, canEditUserStatus, canCreatePasswordReset, localeNames, roleNames);
 	}
 
 	/**
@@ -249,18 +249,33 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Check if the logged in user is allowed to edit the given user.
+	 * Check if the logged in user is allowed to edit user information for the given user.
 	 *
 	 * @param principalUser - the currently logged in principal
 	 * @param user          - the user to edit
-	 * @return boolean if the principal can edit the user
+	 * @return boolean if the principal can edit the user information
 	 */
-	private boolean canEditUser(User principalUser, User user) {
+	private boolean canEditUserInfo(User principalUser, User user) {
 		boolean principalAdmin = principalUser.getAuthorities()
 				.contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is allowed to edit user status for the given user.
+	 *
+	 * @param principalUser - the currently logged in principal
+	 * @param user          - the user to edit
+	 * @return boolean if the principal can edit the user status
+	 */
+	private boolean canEditUserStatus(User principalUser, User user) {
+		boolean principalAdmin = principalUser.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
+
+		return !(principalAdmin && usersEqual);
 	}
 
 	/**

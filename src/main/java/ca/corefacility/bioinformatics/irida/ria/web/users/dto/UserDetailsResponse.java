@@ -14,21 +14,23 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean mailConfigured;
 	private boolean mailFailure;
 	private boolean isAdmin;
-	private boolean canEditUser;
+	private boolean canEditUserInfo;
+	private boolean canEditUserStatus;
 	private boolean canCreatePasswordReset;
 	private List<UserDetailsLocale> locales;
 	private List<UserDetailsRole> allowedRoles;
 	private List<UserDetailsError> errors;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
-			boolean mailFailure, boolean isAdmin, boolean canEditUser, boolean canCreatePasswordReset,
-			List<UserDetailsLocale> locales, List<UserDetailsRole> allowedRoles) {
+			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
+			boolean canCreatePasswordReset, List<UserDetailsLocale> locales, List<UserDetailsRole> allowedRoles) {
 		this.userDetails = userDetails;
 		this.currentRole = currentRole;
 		this.mailConfigured = mailConfigured;
 		this.mailFailure = mailFailure;
 		this.isAdmin = isAdmin;
-		this.canEditUser = canEditUser;
+		this.canEditUserInfo = canEditUserInfo;
+		this.canEditUserStatus = canEditUserStatus;
 		this.canCreatePasswordReset = canCreatePasswordReset;
 		this.locales = locales;
 		this.allowedRoles = allowedRoles;
@@ -78,12 +80,20 @@ public class UserDetailsResponse extends AjaxResponse {
 		isAdmin = admin;
 	}
 
-	public boolean isCanEditUser() {
-		return canEditUser;
+	public boolean isCanEditUserInfo() {
+		return canEditUserInfo;
 	}
 
-	public void setCanEditUser(boolean canEditUser) {
-		this.canEditUser = canEditUser;
+	public void setCanEditUserInfo(boolean canEditUserInfo) {
+		this.canEditUserInfo = canEditUserInfo;
+	}
+
+	public boolean isCanEditUserStatus() {
+		return canEditUserStatus;
+	}
+
+	public void setCanEditUserStatus(boolean canEditUserStatus) {
+		this.canEditUserStatus = canEditUserStatus;
 	}
 
 	public boolean isCanCreatePasswordReset() {
