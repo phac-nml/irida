@@ -411,6 +411,18 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-to-slf4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
 		<!-- Utilities -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -927,6 +939,7 @@
 		<commons.io.version>2.11.0</commons.io.version>
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.32</slf4j.version>
+		<log4j.version>2.17.0</log4j.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<spring.boot.starter.version>2.2.5.RELEASE</spring.boot.starter.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
