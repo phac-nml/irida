@@ -59,7 +59,6 @@ export function ShareProject() {
 
   function onChange(projectId) {
     const project = projects.find((p) => p.identifier === projectId);
-    console.log(project);
     dispatch(setProject(project));
   }
 
