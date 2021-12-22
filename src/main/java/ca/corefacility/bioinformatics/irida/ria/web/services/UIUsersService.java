@@ -185,7 +185,9 @@ public class UIUsersService {
 		}
 
 		if (isAdmin(principal)) {
-			updatedValues.put("enabled", !Strings.isNullOrEmpty(userEditRequest.getEnabled()));
+			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
+				updatedValues.put("enabled", userEditRequest.getEnabled());
+			}
 
 			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
 				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
