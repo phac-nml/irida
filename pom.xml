@@ -237,6 +237,14 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -265,6 +273,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons.io.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
@@ -277,6 +290,10 @@
 				<exclusion>
 					<artifactId>stax-api</artifactId>
 					<groupId>stax</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j-api</artifactId>
+					<groupId>org.apache.logging.log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -919,9 +936,10 @@
 
 		<!-- Dependencies -->
 		<commons.cli.version>1.2</commons.cli.version>
+		<commons.io.version>2.11.0</commons.io.version>
 		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.26</slf4j.version>
-		<guava.version>28.0-jre</guava.version>
+		<slf4j.version>1.7.32</slf4j.version>
+		<guava.version>31.0.1-jre</guava.version>
 		<spring.boot.starter.version>2.2.5.RELEASE</spring.boot.starter.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>2.2.0.RELEASE</spring.data.envers.version>
@@ -935,16 +953,16 @@
 		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.9-nml-custom</fastqc.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
-		<apache.jena.version>3.12.0</apache.jena.version>
+		<apache.jena.version>4.3.2</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
-		<commons.fileupload.version>1.3.1</commons.fileupload.version>
+		<commons.fileupload.version>1.4</commons.fileupload.version>
 		<spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
 		<oltu.version>1.0.0</oltu.version>
-		<apache.poi.version>3.17</apache.poi.version>
+		<apache.poi.version>5.1.0</apache.poi.version>
 		<selenium-driver.version>3.141.59</selenium-driver.version>
 		<selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
 		<powermock.version>1.6.2</powermock.version>
