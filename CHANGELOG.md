@@ -4,6 +4,7 @@ Changes
 21.09 to 22.01
 --------------
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [All]: Updated some dependency packages to latest versions to remove any `Critical|High` issues as reported by Grype <https://github.com/anchore/grype>. (21.09.2)
 
 21.05 to 21.09
 --------------
