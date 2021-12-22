@@ -30,6 +30,14 @@ export default function UserDetailsPage() {
 
   const [formErrors, setFormErrors] = useState();
 
+  const getError = (fieldName, message) => {
+    if (message) {
+      return formErrors?.find((error) => error.field === fieldName)?.message;
+    } else {
+      return formErrors?.filter((error) => error.field === fieldName).length > 0;
+    }
+  };
+
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
       .unwrap()
@@ -42,7 +50,7 @@ export default function UserDetailsPage() {
         notification.error({
           message: i18n("UserDetailsPage.notification.error"),
         });
-        setFormErrors(error.userDetails);
+        setFormErrors(error.data);
       });
   };
 
@@ -52,7 +60,9 @@ export default function UserDetailsPage() {
         <ContentLoading message={i18n("UserDetailsPage.loading.message")} />
       ) : (
         <Space direction="vertical">
-          <Typography.Title level={4}>{userDetails.user.username}</Typography.Title>
+          <Typography.Title level={4}>
+            {userDetails.user.username}
+          </Typography.Title>
           <Form
             layout="vertical"
             initialValues={userDetails.user}
@@ -61,14 +71,9 @@ export default function UserDetailsPage() {
             <Form.Item
               label={i18n("UserDetailsPage.form.label.firstName")}
               name="firstName"
-              help={
-                formErrors?.find((error) => error.field === "firstName")
-                  ?.message
-              }
+              help={getError("firstName", true)}
               validateStatus={
-                formErrors?.find((error) => error.field === "firstName")
-                  ? "error"
-                  : undefined
+                getError("firstName", false) ? "error" : undefined
               }
             >
               <Input />
@@ -76,42 +81,25 @@ export default function UserDetailsPage() {
             <Form.Item
               label={i18n("UserDetailsPage.form.label.lastName")}
               name="lastName"
-              help={
-                formErrors?.find((error) => error.field === "lastName")?.message
-              }
-              validateStatus={
-                formErrors?.find((error) => error.field === "lastName")
-                  ? "error"
-                  : undefined
-              }
+              help={getError("lastName", true)}
+              validateStatus={getError("lastName", false) ? "error" : undefined}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.email")}
               name="email"
-              help={
-                formErrors?.find((error) => error.field === "email")?.message
-              }
-              validateStatus={
-                formErrors?.find((error) => error.field === "email")
-                  ? "error"
-                  : undefined
-              }
+              help={getError("email", true)}
+              validateStatus={getError("email", false) ? "error" : undefined}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.phoneNumber")}
               name="phoneNumber"
-              help={
-                formErrors?.find((error) => error.field === "phoneNumber")
-                  ?.message
-              }
+              help={getError("phoneNumber", true)}
               validateStatus={
-                formErrors?.find((error) => error.field === "phoneNumber")
-                  ? "error"
-                  : undefined
+                getError("phoneNumber", false) ? "error" : undefined
               }
             >
               <Input />
@@ -134,14 +122,8 @@ export default function UserDetailsPage() {
             <Form.Item
               label={i18n("UserDetailsPage.form.label.role")}
               name="role"
-              help={
-                formErrors?.find((error) => error.field === "role")?.message
-              }
-              validateStatus={
-                formErrors?.find((error) => error.field === "role")
-                  ? "error"
-                  : undefined
-              }
+              help={getError("role", true)}
+              validateStatus={getError("role", false) ? "error" : undefined}
               hidden={!userDetails.admin}
             >
               <Select>
