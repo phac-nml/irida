@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -27,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class RemoteAPIControllerTest {
@@ -65,52 +62,6 @@ public class RemoteAPIControllerTest {
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 		String list = remoteAPIController.list(model, principal);
 		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
-	}
-
-	@Test
-	public void testGetAddRemoteAPIPage() {
-		ExtendedModelMap model = new ExtendedModelMap();
-
-		String addClientPage = remoteAPIController.getAddRemoteAPIPage(model);
-
-		assertEquals(RemoteAPIController.ADD_API_PAGE, addClientPage);
-		assertTrue(model.containsAttribute("errors"));
-	}
-
-	@Test
-	public void testPostCreateRemoteAPI() {
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		client.setId(1L);
-		ExtendedModelMap model = new ExtendedModelMap();
-
-		when(remoteAPIService.create(client)).thenReturn(client);
-
-		String postCreateClient = remoteAPIController.postCreateRemoteAPI(client, model, locale);
-
-		assertEquals("redirect:/admin/remote_api/1", postCreateClient);
-		verify(remoteAPIService).create(client);
-	}
-
-	@Test
-	public void testPostCreateRemoteAPIError() {
-		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
-		client.setId(1L);
-		ExtendedModelMap model = new ExtendedModelMap();
-		Locale locale = LocaleContextHolder.getLocale();
-
-		DataIntegrityViolationException ex = new DataIntegrityViolationException(
-				"Error: " + RemoteAPI.SERVICE_URI_CONSTRAINT_NAME);
-
-		when(remoteAPIService.create(client)).thenThrow(ex);
-
-		String postCreateClient = remoteAPIController.postCreateRemoteAPI(client, model, locale);
-
-		assertEquals(RemoteAPIController.ADD_API_PAGE, postCreateClient);
-		assertTrue(model.containsAttribute("errors"));
-		@SuppressWarnings("unchecked") Map<String, String> errors = (Map<String, String>) model.get("errors");
-		assertTrue(errors.containsKey("serviceURI"));
-
-		verify(remoteAPIService).create(client);
 	}
 
 	@Test(expected = IridaOAuthException.class)

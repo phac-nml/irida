@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
@@ -7,15 +18,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -29,6 +31,7 @@ public class RemoteAPIAjaxControllerTest {
 	private RemoteAPIService remoteAPIService;
 	private UIRemoteAPIService uiRemoteAPIService;
 	private RemoteAPIAjaxController controller;
+	private MessageSource messageSource;
 
 	private final RemoteAPI REMOTE_API_01 = new RemoteAPI("Toronto", "http://toronto.nowhere", "", "toronto", "123456");
 	private final RemoteAPI REMOTE_API_02 = new RemoteAPI("Washington", "http://washington.nowhere", "", "washington",
@@ -38,7 +41,8 @@ public class RemoteAPIAjaxControllerTest {
 	public void init() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		uiRemoteAPIService = mock(UIRemoteAPIService.class);
-		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService);
+		messageSource = mock(MessageSource.class);
+		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService, messageSource);
 
 		Page<RemoteAPI> remoteAPIPage = new Page<>() {
 			@Override
