@@ -132,8 +132,7 @@ public class UIMetadataFileImportService {
 
 					if (!Strings.isNullOrEmpty(header)) {
 						// Need to ignore empty headers.
-						if (cell.getCellTypeEnum()
-								.equals(CellType.NUMERIC)) {
+						if (cell.getCellType().equals(CellType.NUMERIC)) {
 								/*
 								This is a special handler for number cells.  It was requested that numbers
 								keep their formatting from their excel files.  E.g. 2.222222 with formatting
@@ -171,7 +170,7 @@ public class UIMetadataFileImportService {
 		Iterator<Cell> headerIterator = row.cellIterator();
 		while (headerIterator.hasNext()) {
 			Cell headerCell = headerIterator.next();
-			CellType cellType = headerCell.getCellTypeEnum();
+			CellType cellType = headerCell.getCellType();
 
 			String headerValue;
 			if (cellType.equals(CellType.STRING)) {

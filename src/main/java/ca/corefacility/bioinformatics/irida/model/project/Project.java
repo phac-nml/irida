@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.project;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -40,7 +40,7 @@ import java.util.Objects;
 @Table(name = "project")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Project extends IridaResourceSupport
+public class Project extends IridaRepresentationModel
 		implements MutableIridaThing, Comparable<Project>, RemoteSynchronizable {
 
 	@Id

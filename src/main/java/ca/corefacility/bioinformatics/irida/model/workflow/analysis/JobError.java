@@ -11,7 +11,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
@@ -30,7 +30,7 @@ import com.google.gson.JsonParser;
 @Entity
 @Table(name = "job_error")
 @EntityListeners(AuditingEntityListener.class)
-public class JobError extends IridaResourceSupport implements IridaThing, Comparable<JobError> {
+public class JobError extends IridaRepresentationModel implements IridaThing, Comparable<JobError> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private final Long id;

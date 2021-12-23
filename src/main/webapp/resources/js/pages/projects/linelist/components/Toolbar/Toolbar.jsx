@@ -1,16 +1,17 @@
-import React, { Component, Suspense } from "react";
-import { connect } from "react-redux";
+import { Button, Form, Input, Popover, Space } from "antd";
 
 import PropTypes from "prop-types";
-import { actions as entryActions } from "../../reducers/entries";
-import { ExportDropDown } from "../Export/ExportDropdown";
-import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
-import { Button, Form, Input, Popover } from "antd";
+import React, { Component, Suspense } from "react";
+import { connect } from "react-redux";
 import {
   IconCloudUpload,
   IconQuestion,
 } from "../../../../../components/icons/Icons";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { actions as entryActions } from "../../reducers/entries";
+import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
+import { ExportDropDown } from "../Export/ExportDropdown";
+import { ShareSampleButton } from "../ShareSampleButton";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
@@ -55,22 +56,17 @@ export class ToolbarComponent extends Component {
   render() {
     return (
       <div className="toolbar">
-        <div className="toolbar-group">
-          <Form layout="inline">
-            <Form.Item>
-              <ExportDropDown
-                csv={this.props.exportCSV}
-                excel={this.props.exportXLSX}
-              />
-            </Form.Item>
-            <Form.Item>
-              <AddSamplesToCartButton
-                selectedCount={this.props.selectedCount}
-                addSamplesToCart={this.props.addSamplesToCart}
-              />
-            </Form.Item>
-          </Form>
-        </div>
+        <Space>
+          <ExportDropDown
+            csv={this.props.exportCSV}
+            excel={this.props.exportXLSX}
+          />
+          {window.project.canManage && <ShareSampleButton />}
+          <AddSamplesToCartButton
+            selectedCount={this.props.selectedCount}
+            addSamplesToCart={this.props.addSamplesToCart}
+          />
+        </Space>
         <div className="toolbar-group">
           <Form layout="inline">
             {window.project.canManage ? (

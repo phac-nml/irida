@@ -6,7 +6,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
@@ -37,7 +37,7 @@ public class Fast5ObjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Fast5O
 	}
 
 	@Override
-	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
+	protected <T extends IridaRepresentationModel> T setRemoteStatus(T entity, RemoteAPI api) {
 		entity = super.setRemoteStatus(entity, api);
 
 		Fast5Object fast5Object = (Fast5Object) entity;

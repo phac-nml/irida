@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -318,7 +320,18 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *  Gets provenance for file selected
 	 */
 	public void getFileProvenance(int fileNum) {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebElement firstTool = null;
+
+		if (toolList.size() > 0) {
+			firstTool = toolList.get(0);
+		}
+
 		files.get(fileNum).click();
+
+		if (firstTool != null) {
+			wait.until(ExpectedConditions.invisibilityOf(firstTool));
+		}
 	}
 
 	/**
