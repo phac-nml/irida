@@ -1,5 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
+import java.security.Principal;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.HandlerMapping;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -9,28 +26,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.collect.ImmutableMap;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.HandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller handling basic operations for listing, viewing, adding, and
@@ -90,62 +87,6 @@ public class RemoteAPIController extends BaseController {
     @RequestMapping("/{apiId}")
     public String details() {
         return DETAILS_PAGE;
-    }
-
-    /**
-     * Get the create client page
-     *
-     * @param model Model for the view
-     * @return The name of the create client page
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String getAddRemoteAPIPage(Model model) {
-        if (!model.containsAttribute("errors")) {
-            model.addAttribute("errors", new HashMap<String, String>());
-        }
-
-        return ADD_API_PAGE;
-    }
-
-    /**
-     * Create a new client
-     *
-     * @param client The client to add
-     * @param model  Model for the view
-     * @param locale Locale of the current user session
-     * @return Redirect to the newly created client page, or back to the
-     * creation page in case of an error.
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String postCreateRemoteAPI(RemoteAPI client, Model model, Locale locale) {
-
-        Map<String, String> errors = new HashMap<>();
-        String responsePage = null;
-        try {
-            RemoteAPI create = remoteAPIService.create(client);
-            responsePage = "redirect:/admin/remote_api/" + create.getId();
-        } catch (ConstraintViolationException ex) {
-            logger.error("Error creating api: " + ex.getMessage());
-            errors.putAll(getErrorsFromViolationException(ex));
-        } catch (DataIntegrityViolationException ex) {
-            logger.error("Error creating api: " + ex.getMessage());
-            errors.putAll(getErrorsFromDataIntegrityViolationException(ex, errorMessages, messageSource, locale));
-        }
-
-        if (!errors.isEmpty()) {
-            model.addAttribute("errors", errors);
-
-            model.addAttribute("given_name", client.getName());
-            model.addAttribute("given_clientId", client.getClientId());
-            model.addAttribute("given_clientSecret", client.getClientSecret());
-            model.addAttribute("given_serviceURI", client.getServiceURI());
-
-            responsePage = getAddRemoteAPIPage(model);
-        }
-
-        return responsePage;
     }
 
     /**
