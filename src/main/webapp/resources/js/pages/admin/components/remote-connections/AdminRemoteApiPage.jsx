@@ -8,11 +8,16 @@
  */
 
 import React from "react";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { RemoteApiTable } from "./RemoteApiTable";
+import {
+  PagedTableProvider
+} from "../../../../components/ant.design/PagedTable";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
+import {
+  CreateRemoteApiModal
+} from "../../../remote-apis/CreateRemoteApiModal";
+import { RemoteApiTable } from "./RemoteApiTable";
 
 export default function AdminRemoteApiPage() {
   // The following renders the Remote Api component view
@@ -20,11 +25,10 @@ export default function AdminRemoteApiPage() {
     <PageWrapper
       title={i18n("AdminPanel.remoteApi")}
       headerExtras={
-        <AddNewButton
+        <CreateRemoteApiModal><AddNewButton
           className={"t-add-remote-api-btn"}
           text={i18n("AdminPanel.addRemoteApi")}
-          href={setBaseUrl("remote_api/create")}
-        />
+        /></CreateRemoteApiModal>
       }
     >
       <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
