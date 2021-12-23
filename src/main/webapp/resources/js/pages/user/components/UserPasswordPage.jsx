@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  Space,
-  Typography,
-} from "antd";
+import { Alert, Button, Form, Input, Space, Typography } from "antd";
 
 /**
  * React component to display the user password page.
@@ -16,56 +9,70 @@ import {
 export default function UserPasswordPage() {
   const [valid, setValid] = React.useState(true);
 
-  return(
+  return (
     <Space direction="vertical">
-      <Typography.Title level={4}>{i18n("UserPasswordPage.page.title")}</Typography.Title>
+      <Typography.Title level={4}>
+        {i18n("UserPasswordPage.page.title")}
+      </Typography.Title>
       <Alert
         message={i18n("UserPasswordPage.alert.title")}
         description={
           <Typography.Paragraph>
             {i18n("UserPasswordPage.alert.description")}
-              <ul>
-                <li>{i18n("UserPasswordPage.alert.rule1")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule2")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule3")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule4")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule5")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule6")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule7")}</li>
-                <li>{i18n("UserPasswordPage.alert.rule8")}</li>
-              </ul>
-            </Typography.Paragraph>
-          }
-          type="error"
-          showIcon
-        />
-      <Form
-        layout="vertical"
-        autoComplete="off"
-      >
+            <ul>
+              <li>{i18n("UserPasswordPage.alert.rule1")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule2")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule3")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule4")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule5")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule6")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule7")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule8")}</li>
+              <li>{i18n("UserPasswordPage.alert.rule9")}</li>
+            </ul>
+          </Typography.Paragraph>
+        }
+        type="error"
+        showIcon
+      />
+      <Form layout="vertical" autoComplete="off">
         <Form.Item
-          label="Password"
+          label={i18n("UserPasswordPage.form.label.password")}
           name="password"
-          rules={[{ required: true, message: 'Password canot be blank.' }]}
+          rules={[
+            { required: true, message: i18n("UserPasswordPage.alert.rule1") },
+            { min: 8, message: i18n("UserPasswordPage.alert.rule2") },
+          ]}
         >
           <Input.Password />
         </Form.Item>
         <Form.Item
-          label="Confirm Password"
+          label={i18n("UserPasswordPage.form.label.confirmPassword")}
           name="confirmPassword"
-          rules={[{ required: true, message: 'Confirm password canot be blank.' }]}
+          dependencies={["password"]}
+          rules={[
+            { required: true, message: i18n("UserPasswordPage.alert.rule1") },
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(i18n("UserPasswordPage.alert.rule7"));
+              },
+            }),
+          ]}
         >
           <Input.Password />
         </Form.Item>
         <Form.Item>
           <Button
             type="primary"
-            htmlType="submit"
+            htmlType={i18n("UserPasswordPage.form.button.submit=")}
           >
             Submit
           </Button>
         </Form.Item>
       </Form>
     </Space>
-  )
+  );
 }
