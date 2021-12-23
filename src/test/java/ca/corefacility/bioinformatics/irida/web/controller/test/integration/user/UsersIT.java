@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.hasItems;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.jayway.restassured.http.ContentType;
+import io.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.Test;

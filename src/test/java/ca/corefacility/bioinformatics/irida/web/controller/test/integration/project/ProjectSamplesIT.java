@@ -45,11 +45,11 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
-import static com.jayway.restassured.path.json.JsonPath.from;
+import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -385,9 +385,9 @@ public class ProjectSamplesIT {
 
 		final Response r = asAdmin().expect()
 				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when()
 				.given()
 				.urlEncodingEnabled(false)
+				.when()
 				.get(projectSampleUri);
 		final String responseBody = r.getBody()
 				.asString();

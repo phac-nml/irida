@@ -25,7 +25,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static com.jayway.restassured.path.json.JsonPath.from;
+import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,6 +48,7 @@ public class RESTSampleMetadataControllerIT {
 		final String projectUri = "/api/projects/" + projectId;
 		final String projectJson = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
+				.when()
 				.get(projectUri)
 				.asString();
 
@@ -79,6 +80,7 @@ public class RESTSampleMetadataControllerIT {
 		final String sampleUri = "/api/samples/" + sampleId;
 		final String sampleJson = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
+				.when()
 				.get(sampleUri)
 				.asString();
 
@@ -103,6 +105,7 @@ public class RESTSampleMetadataControllerIT {
 		final String sampleUri = "/api/samples/" + sampleId;
 		final String sampleJson = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
+				.when()
 				.get(sampleUri)
 				.asString();
 
@@ -120,6 +123,7 @@ public class RESTSampleMetadataControllerIT {
 				.body("resource.metadata", not(hasKey("field1")))
 				.and()
 				.body("resource.metadata", not(hasKey("field2")))
+				.when()
 				.post(metadataUri);
 	}
 
@@ -130,6 +134,7 @@ public class RESTSampleMetadataControllerIT {
 		final String sampleUri = "/api/samples/" + sampleId;
 		final String sampleJson = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
+				.when()
 				.get(sampleUri)
 				.asString();
 
@@ -145,6 +150,7 @@ public class RESTSampleMetadataControllerIT {
 				.body("resource.metadata", not(hasKey("field2")))
 				.and()
 				.body("resource.metadata.field1.value", equalTo("newval"))
+				.when()
 				.post(metadataUri);
 	}
 
@@ -155,6 +161,7 @@ public class RESTSampleMetadataControllerIT {
 		final String sampleUri = "/api/samples/" + sampleId;
 		final String sampleJson = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
+				.when()
 				.get(sampleUri)
 				.asString();
 
@@ -172,6 +179,7 @@ public class RESTSampleMetadataControllerIT {
 				.body("resource.metadata", hasKey("field1"))
 				.and()
 				.body("resource.metadata", hasKey("field1"))
+				.when()
 				.put(metadataUri);
 	}
 
@@ -182,6 +190,7 @@ public class RESTSampleMetadataControllerIT {
 		final String sampleUri = "/api/samples/" + sampleId;
 		final String sampleJson = asUser().expect()
 				.statusCode(HttpStatus.OK.value())
+				.when()
 				.get(sampleUri)
 				.asString();
 
@@ -197,6 +206,7 @@ public class RESTSampleMetadataControllerIT {
 				.body("resource.metadata", hasKey("field2"))
 				.and()
 				.body("resource.metadata.field1.value", equalTo("newval"))
+				.when()
 				.put(metadataUri);
 	}
 }

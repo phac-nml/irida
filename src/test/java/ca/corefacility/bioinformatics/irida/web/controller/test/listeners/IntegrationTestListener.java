@@ -6,8 +6,9 @@ import org.junit.runner.notification.RunListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
 
 /**
  * Global settings for REST API integration tests.
@@ -23,7 +24,10 @@ public class IntegrationTestListener extends RunListener {
     public void testRunStarted(Description description) throws Exception {
         logger.debug("Setting up RestAssured.");
 
-        RestAssured.requestContentType(ContentType.JSON);
-        RestAssured.port = Integer.valueOf(System.getProperty("server.port"));
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .setContentType(ContentType.JSON)
+                .setAccept(ContentType.JSON)
+                .setPort(Integer.valueOf(System.getProperty("server.port")))
+                .build();
     }
 }

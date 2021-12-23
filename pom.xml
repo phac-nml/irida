@@ -362,16 +362,14 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.jayway.restassured</groupId>
+			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-			<version>${rest.assured.version}</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-path</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.springtestdbunit</groupId>
@@ -959,7 +957,6 @@
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
-		<rest.assured.version>2.3.4</rest.assured.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
 		<spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
 		<oltu.version>1.0.0</oltu.version>

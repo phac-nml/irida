@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sam
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static com.jayway.restassured.path.json.JsonPath.from;
+import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.both;
@@ -39,7 +39,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
-import com.jayway.restassured.response.Response;
+import io.restassured.response.Response;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
