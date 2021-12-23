@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -26,6 +25,9 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Controller to handle asynchronous requests for remote connections
+ */
 @RestController
 @RequestMapping("/ajax/remote_api")
 public class RemoteApiAjaxController extends BaseController {
@@ -57,7 +59,7 @@ public class RemoteApiAjaxController extends BaseController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping(value = "/create")
 	public ResponseEntity<AjaxResponse> postCreateRemoteAPI(RemoteAPI client, Locale locale) {
-		Map<String, String> errors = new HashMap<>();
+		Map<String, String> errors;
 		try {
 			RemoteAPI remoteAPI = remoteAPIService.create(client);
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(remoteAPI.getId()));
