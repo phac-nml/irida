@@ -170,6 +170,7 @@ public class RemoteAPIAjaxController extends BaseController {
      *
      * @param client The client to add
      * @param locale Locale of the current user session
+     * @return result of creating the remote api
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
