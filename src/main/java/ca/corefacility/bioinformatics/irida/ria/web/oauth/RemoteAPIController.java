@@ -80,16 +80,6 @@ public class RemoteAPIController extends BaseController {
     }
 
     /**
-     * Get an individual remote API's page
-     *
-     * @return The name of the remote api details page view
-     */
-    @RequestMapping("/{apiId}")
-    public String details() {
-        return DETAILS_PAGE;
-    }
-
-    /**
      * Get the HTML modal for connecting to a remote API
      *
      * @param apiId Identifier for the remote API to connect to.
