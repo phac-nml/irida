@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -157,7 +157,7 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 		verify(userService).getUsersWithEmailSubscriptions();
 
-		verifyZeroInteractions(eventService);
+		verifyNoInteractions(eventService);
 
 		verify(emailController, times(0)).sendSubscriptionUpdateEmail(any(User.class), any(List.class));
 	}

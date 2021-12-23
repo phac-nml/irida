@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class ReadSamplePermissionTest {
 
 		verify(psjRepository).getProjectForSample(s);
 		// we didn't need to load the domain object for this test.
-		verifyZeroInteractions(sampleRepository);
+		verifyNoInteractions(sampleRepository);
 	}
 
 	@Test
@@ -137,6 +137,6 @@ public class ReadSamplePermissionTest {
 		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(psjRepository);
+		verifyNoInteractions(psjRepository);
 	}
 }

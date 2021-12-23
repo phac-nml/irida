@@ -444,7 +444,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
 		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
-		verifyZeroInteractions(emailController);
+		verifyNoInteractions(emailController);
 	}
 
 	/**

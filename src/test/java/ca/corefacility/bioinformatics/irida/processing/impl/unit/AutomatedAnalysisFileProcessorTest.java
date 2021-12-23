@@ -198,7 +198,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 
-		verifyZeroInteractions(submissionRepository);
+		verifyNoInteractions(submissionRepository);
 	}
 
 	@Test

@@ -259,7 +259,7 @@ public class UsersControllerTest {
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
-		verifyZeroInteractions(passwordResetService);
+		verifyNoInteractions(passwordResetService);
 		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), eq(null));
 	}
 

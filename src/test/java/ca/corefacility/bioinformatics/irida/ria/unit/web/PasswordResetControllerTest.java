@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
@@ -159,7 +159,7 @@ public class PasswordResetControllerTest {
 		assertTrue(model.containsKey("emailError"));
 
 		verify(userService).loadUserByEmail(email);
-		verifyZeroInteractions(emailController);
+		verifyNoInteractions(emailController);
 	}
 
 	@Test

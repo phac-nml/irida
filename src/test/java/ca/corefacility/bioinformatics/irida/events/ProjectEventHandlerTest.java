@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -224,6 +224,6 @@ public class ProjectEventHandlerTest {
 
 		handler.delegate(methodEvent);
 
-		verifyZeroInteractions(eventRepository);
+		verifyNoInteractions(eventRepository);
 	}
 }

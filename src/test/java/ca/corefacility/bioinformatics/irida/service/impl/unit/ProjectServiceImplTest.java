@@ -202,7 +202,7 @@ public class ProjectServiceImplTest {
 
 		projectService.addSampleToProject(p, s, true);
 
-		verifyZeroInteractions(sampleRepository, psjRepository);
+		verifyNoInteractions(sampleRepository, psjRepository);
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -446,7 +446,7 @@ public class ProjectServiceImplTest {
 
 		verify(psjRepository).delete(j);
 
-		verifyZeroInteractions(sampleRepository);
+		verifyNoInteractions(sampleRepository);
 
 	}
 	

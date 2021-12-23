@@ -167,7 +167,7 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(projectService, times(2)).update(any(Project.class));
 		verify(projectRemoteService).getProjectHash(remoteProject);
-		verifyZeroInteractions(sampleRemoteService);
+		verifyNoInteractions(sampleRemoteService);
 		assertNull((remoteProject).getDefaultMetadataTemplate());
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
