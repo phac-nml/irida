@@ -8,15 +8,11 @@
  */
 
 import React from "react";
-import {
-  PagedTableProvider
-} from "../../../../components/ant.design/PagedTable";
+import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import {
-  CreateRemoteApiModal
-} from "../../../remote-apis/CreateRemoteApiModal";
+import { CreateRemoteApiModal } from "../../../remote-apis/CreateRemoteApiModal";
 import { RemoteApiTable } from "./RemoteApiTable";
 
 export default function AdminRemoteApiPage() {
