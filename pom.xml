@@ -149,7 +149,6 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
-			<version>${spring.data.envers.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -938,10 +937,7 @@
 		<log4j.version>2.17.0</log4j.version>
 		<logback.version>1.2.9</logback.version>
 		<guava.version>31.0.1-jre</guava.version>
-		<spring.boot.starter.version>2.2.5.RELEASE</spring.boot.starter.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
-		<spring.data.envers.version>2.2.0.RELEASE</spring.data.envers.version>
-		<spring.ws.test.version>3.0.7.RELEASE</spring.ws.test.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.3.0</spring.test.dbunit.version>
 		<dbunit.version>2.7.2</dbunit.version>
@@ -954,7 +950,6 @@
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
-		<spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
 		<oltu.version>1.0.0</oltu.version>
 		<apache.poi.version>5.1.0</apache.poi.version>
 		<selenium-driver.version>3.141.59</selenium-driver.version>
