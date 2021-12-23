@@ -4,11 +4,15 @@ Changes
 21.09 to 22.01
 --------------
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [All]: Updated some dependency packages to latest versions to remove any `Critical|High` issues as reported by Grype <https://github.com/anchore/grype>. (21.09.2)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 * [Developer]: Updated `antd` to version 4.16.13
 * [Developer/UI]: Refreshed the metadata uploader.
 * [Developer/UI]: Updated to the latest release of `react-router-dom` v6.0.2.
 * [UI]: Refactored share/move samples between projects to use a separate page.
+* [UI]: Added capability to share/move samples between projects from the line list page.
+* [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
+* [Developer]: Upgraded Spring Hateoas to 1.0.3.RELEASE
 
 21.05 to 21.09
 --------------

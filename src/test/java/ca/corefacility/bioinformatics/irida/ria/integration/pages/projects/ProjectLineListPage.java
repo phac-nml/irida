@@ -68,6 +68,12 @@ public class ProjectLineListPage extends ProjectPageBase {
 	@FindBy(css = "span[data-tour-elem=\"badge\"")
 	private WebElement tourStepBadge;
 
+	@FindBy(className = "t-share-button")
+	private WebElement shareButton;
+
+	@FindBy(css = ".ag-pinned-left-cols-container .ag-selection-checkbox")
+	private List<WebElement> rowSelectCheckboxes;
+
 	public ProjectLineListPage(WebDriver driver) {
 		super(driver);
 	}
@@ -190,6 +196,25 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public boolean isImportMetadataBtnVisible() {
-		return driver.findElements(By.className("t-import-metadata-btn")).size() > 0;
+		return driver.findElements(By.className("t-import-metadata-btn"))
+				.size() > 0;
+	}
+
+	public boolean isShareButtonVisible() {
+		return driver.findElements(By.className("t-share-btn"))
+				.size() > 0;
+	}
+
+	public boolean isShareButtonEnabled() {
+		return shareButton.isEnabled();
+	}
+
+	public void selectRow(int row) {
+		rowSelectCheckboxes.get(row)
+				.click();
+	}
+
+	public void shareSelectedSamples() {
+		shareButton.click();
 	}
 }

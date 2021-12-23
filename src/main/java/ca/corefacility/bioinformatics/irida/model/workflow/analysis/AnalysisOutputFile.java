@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
@@ -43,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 @Entity
 @Table(name = "analysis_output_file")
 @EntityListeners(RelativePathTranslatorListener.class)
-public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
+public class AnalysisOutputFile extends IridaRepresentationModel implements IridaThing, VersionedFileFields<Long> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisOutputFile.class);
 
 	@Id

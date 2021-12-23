@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -27,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
@@ -125,27 +127,27 @@ public class UIUsersService {
 		Locale locale = LocaleContextHolder.getLocale();
 		Boolean mailConfigured = emailController.isMailConfigured();
 		boolean isAdmin = isAdmin(principal);
-		// check if we should show an edit button
-		boolean canEditUser = canEditUser(principalUser, user);
+		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
+		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
-		Map<String, String> localeNames = new HashMap<>();
+		List<UserDetailsLocale> localeNames = new ArrayList<>();
 		for (Locale aLocale : locales) {
-			localeNames.put(aLocale.getLanguage(), aLocale.getDisplayName());
+			localeNames.add(new UserDetailsLocale(aLocale.getLanguage(), aLocale.getDisplayName()));
 		}
 
-		Map<String, String> roleNames = new HashMap<>();
+		List<UserDetailsRole> roleNames = new ArrayList<>();
 		for (Role aRole : adminAllowedRoles) {
 			String roleMessageName = "systemrole." + aRole.getName();
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
-			roleNames.put(aRole.getName(), roleName);
+			roleNames.add(new UserDetailsRole(aRole.getName(), roleName));
 		}
 
 		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
 				.getName(), null, locale);
 
-		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin, canEditUser,
-				canCreatePasswordReset, localeNames, roleNames);
+		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
+				canEditUserInfo, canEditUserStatus, canCreatePasswordReset, localeNames, roleNames);
 	}
 
 	/**
@@ -159,8 +161,8 @@ public class UIUsersService {
 	 */
 	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
-		Map<String, String> errors = new HashMap<>();
 		Map<String, Object> updatedValues = new HashMap<>();
+		List<UserDetailsError> errors = new ArrayList<>();
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
 			updatedValues.put("firstName", userEditRequest.getFirstName());
@@ -183,7 +185,9 @@ public class UIUsersService {
 		}
 
 		if (isAdmin(principal)) {
-			updatedValues.put("enabled", !Strings.isNullOrEmpty(userEditRequest.getEnabled()));
+			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
+				updatedValues.put("enabled", userEditRequest.getEnabled());
+			}
 
 			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
 				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
@@ -194,7 +198,14 @@ public class UIUsersService {
 
 		if (errors.isEmpty()) {
 			try {
-				userService.updateFields(userId, updatedValues);
+				User user = userService.updateFields(userId, updatedValues);
+
+				// If the user is updating their account make sure you update it in the session variable
+				if (user != null && principal.getName()
+						.equals(user.getUsername())) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
+				}
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
 			}
@@ -210,8 +221,8 @@ public class UIUsersService {
 	 * @param locale The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
-	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
-		Map<String, String> errors = new HashMap<>();
+	private List<UserDetailsError> handleCreateUpdateException(Exception ex, Locale locale) {
+		List<UserDetailsError> errors = new ArrayList<>();
 		if (ex instanceof ConstraintViolationException) {
 			ConstraintViolationException cvx = (ConstraintViolationException) ex;
 			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
@@ -219,19 +230,21 @@ public class UIUsersService {
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				String errorKey = violation.getPropertyPath()
 						.toString();
-				errors.put(errorKey, violation.getMessage());
+				errors.add(new UserDetailsError(errorKey, violation.getMessage()));
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+				errors.add(new UserDetailsError("email",
+						messageSource.getMessage("user.edit.emailConflict", null, locale)));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
-			errors.put(eex.getFieldName(), eex.getMessage());
+			errors.add(new UserDetailsError(eex.getFieldName(), eex.getMessage()));
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+			errors.add(new UserDetailsError("password",
+					messageSource.getMessage("user.edit.passwordReused", null, locale)));
 		}
 
 		return errors;
@@ -248,20 +261,35 @@ public class UIUsersService {
 		List<UserProjectDetailsModel> projectsForUser = projectService.getUserProjectDetailsForUser(user);
 		return new UserProjectDetailsResponse(projectsForUser);
 	}
-	
+
 	/**
-	 * Check if the logged in user is allowed to edit the given user.
+	 * Check if the logged in user is allowed to edit user information for the given user.
 	 *
 	 * @param principalUser - the currently logged in principal
 	 * @param user          - the user to edit
-	 * @return boolean if the principal can edit the user
+	 * @return boolean if the principal can edit the user information
 	 */
-	private boolean canEditUser(User principalUser, User user) {
+	private boolean canEditUserInfo(User principalUser, User user) {
 		boolean principalAdmin = principalUser.getAuthorities()
 				.contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is allowed to edit user status for the given user.
+	 *
+	 * @param principalUser - the currently logged in principal
+	 * @param user          - the user to edit
+	 * @return boolean if the principal can edit the user status
+	 */
+	private boolean canEditUserStatus(User principalUser, User user) {
+		boolean principalAdmin = principalUser.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
+
+		return !(principalAdmin && usersEqual);
 	}
 
 	/**

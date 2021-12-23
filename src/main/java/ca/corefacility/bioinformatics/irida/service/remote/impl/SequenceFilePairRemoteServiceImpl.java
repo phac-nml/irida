@@ -38,7 +38,7 @@ public class SequenceFilePairRemoteServiceImpl extends SequencingObjectRemoteSer
 	 */
 	@Override
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample) {
-		Link link = sample.getLink(SAMPLE_SEQENCE_FILE_PAIRS_REL);
+		Link link = sample.getLink(SAMPLE_SEQENCE_FILE_PAIRS_REL).map(i -> i).orElse(null);
 		String href = link.getHref();
 
 		RemoteAPI remoteApiForURI = getRemoteApiForURI(href);

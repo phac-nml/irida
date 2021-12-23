@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
-import java.util.Map;
+import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
@@ -14,27 +14,29 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean mailConfigured;
 	private boolean mailFailure;
 	private boolean isAdmin;
-	private boolean canEditUser;
+	private boolean canEditUserInfo;
+	private boolean canEditUserStatus;
 	private boolean canCreatePasswordReset;
-	private Map<String, String> locales;
-	private Map<String, String> allowedRoles;
-	private Map<String, String> errors;
+	private List<UserDetailsLocale> locales;
+	private List<UserDetailsRole> allowedRoles;
+	private List<UserDetailsError> errors;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
-			boolean mailFailure, boolean isAdmin, boolean canEditUser, boolean canCreatePasswordReset,
-			Map<String, String> locales, Map<String, String> allowedRoles) {
+			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
+			boolean canCreatePasswordReset, List<UserDetailsLocale> locales, List<UserDetailsRole> allowedRoles) {
 		this.userDetails = userDetails;
 		this.currentRole = currentRole;
 		this.mailConfigured = mailConfigured;
 		this.mailFailure = mailFailure;
 		this.isAdmin = isAdmin;
-		this.canEditUser = canEditUser;
+		this.canEditUserInfo = canEditUserInfo;
+		this.canEditUserStatus = canEditUserStatus;
 		this.canCreatePasswordReset = canCreatePasswordReset;
 		this.locales = locales;
 		this.allowedRoles = allowedRoles;
 	}
 
-	public UserDetailsResponse(Map<String, String> errors) {
+	public UserDetailsResponse(List<UserDetailsError> errors) {
 		this.errors = errors;
 	}
 
@@ -78,12 +80,20 @@ public class UserDetailsResponse extends AjaxResponse {
 		isAdmin = admin;
 	}
 
-	public boolean isCanEditUser() {
-		return canEditUser;
+	public boolean isCanEditUserInfo() {
+		return canEditUserInfo;
 	}
 
-	public void setCanEditUser(boolean canEditUser) {
-		this.canEditUser = canEditUser;
+	public void setCanEditUserInfo(boolean canEditUserInfo) {
+		this.canEditUserInfo = canEditUserInfo;
+	}
+
+	public boolean isCanEditUserStatus() {
+		return canEditUserStatus;
+	}
+
+	public void setCanEditUserStatus(boolean canEditUserStatus) {
+		this.canEditUserStatus = canEditUserStatus;
 	}
 
 	public boolean isCanCreatePasswordReset() {
@@ -94,27 +104,27 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canCreatePasswordReset = canCreatePasswordReset;
 	}
 
-	public Map<String, String> getLocales() {
+	public List<UserDetailsLocale> getLocales() {
 		return locales;
 	}
 
-	public void setLocales(Map<String, String> locales) {
+	public void setLocales(List<UserDetailsLocale> locales) {
 		this.locales = locales;
 	}
 
-	public Map<String, String> getAllowedRoles() {
+	public List<UserDetailsRole> getAllowedRoles() {
 		return allowedRoles;
 	}
 
-	public void setAllowedRoles(Map<String, String> allowedRoles) {
+	public void setAllowedRoles(List<UserDetailsRole> allowedRoles) {
 		this.allowedRoles = allowedRoles;
 	}
 
-	public Map<String, String> getErrors() {
+	public List<UserDetailsError> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(Map<String, String> errors) {
+	public void setErrors(List<UserDetailsError> errors) {
 		this.errors = errors;
 	}
 

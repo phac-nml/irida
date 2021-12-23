@@ -24,11 +24,11 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
 import com.google.common.collect.Lists;
@@ -50,7 +50,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
@@ -101,8 +100,8 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull(resources);
 		assertEquals(1, resources.size());
 
-		Link selfCollection = resources.getLink(Link.REL_SELF);
-		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		Link selfCollection = resources.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
+		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation =
 				sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + so.getSequenceFile()
@@ -114,7 +113,7 @@ public class SampleSequenceFilesControllerTest {
 		// confirm that the self rel for an individual sequence file exists
 		SequenceFile sfr = resources.iterator()
 				.next();
-		Link self = sfr.getLink(Link.REL_SELF);
+		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
 		assertEquals(sequenceFileLocation, self.getHref());
 		assertEquals(so.getSequenceFile()
 				.getFile(), sfr.getFile());
@@ -138,8 +137,8 @@ public class SampleSequenceFilesControllerTest {
 		RootResource resource = responseResource.getResource();
 		assertNotNull(resource);
 
-		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
+		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 
@@ -171,9 +170,9 @@ public class SampleSequenceFilesControllerTest {
 		assertEquals(so.getSequenceFile()
 				.getFile(), sfr.getFile());
 
-		Link self = sfr.getLink(Link.REL_SELF);
-		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
+		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation =
@@ -263,9 +262,9 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull("sequence file must not be null", sfr);
 
 		assertEquals("response must have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
-		Link self = sfr.getLink(Link.REL_SELF);
-		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
+		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
+		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + sf.getId();
@@ -378,9 +377,9 @@ public class SampleSequenceFilesControllerTest {
 		SequenceFilePair returnVal = (SequenceFilePair) responseResource.getResource();
 		assertNotNull("sequence file pair should not be null", returnVal);
 
-		Link selfCollection = returnVal.getLink(Link.REL_SELF);
-		Link sampleRC = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-		Link sampleSequenceFiles = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link selfCollection = returnVal.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
+		Link sampleRC = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
+		Link sampleSequenceFiles = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String pairLocation = sampleLocation + "/pairs/" + pair.getId();
@@ -402,7 +401,7 @@ public class SampleSequenceFilesControllerTest {
 
 		for (int i = 0; i < 2; i++) {
 			SequenceFile returnedFile = filesIterator.next();
-			Link self = returnedFile.getLink(Link.REL_SELF);
+			Link self = returnedFile.getLink(IanaLinkRelations.SELF.value()).map(l -> l).orElse(null);
 
 			assertNotNull("Self link should not be null", self);
 			assertEquals("Self reference should be correct", sequenceFileLocs[i], self.getHref());
