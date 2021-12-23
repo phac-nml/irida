@@ -3,11 +3,24 @@ import React from "react";
 import { PagedTableContext } from "../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
+/**
+ * Component for creating a new remote api client
+ *
+ * @param {JSX.Element} children - Button to click to open the modal
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function CreateRemoteApiModal({ children }) {
   const { updateTable } = React.useContext(PagedTableContext);
   const [visible, setVisible] = React.useState(false);
   const [form] = Form.useForm();
 
+  /**
+   * Handles submission of form for creating remote api.
+   *
+   * Ensures that all fields are valid and checks against server exceptions
+   * @returns {Promise<void>}
+   */
   const submitForm = async () => {
     const values = await form.validateFields();
 
@@ -25,7 +38,7 @@ export function CreateRemoteApiModal({ children }) {
       setVisible(false);
       updateTable();
     } else {
-      // Dynamically set the erros for fields
+      // Dynamically set the errors for fields
       const fields = Object.entries(data.errors).map(([field, error]) => ({
         name: field,
         errors: [error],
