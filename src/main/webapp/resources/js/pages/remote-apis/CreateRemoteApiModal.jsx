@@ -1,14 +1,37 @@
 import { Form, Input, Modal } from "antd";
 import React from "react";
+import { PagedTableContext } from "../../components/ant.design/PagedTable";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 export function CreateRemoteApiModal({ children }) {
+  const { updateTable } = React.useContext(PagedTableContext);
   const [visible, setVisible] = React.useState(false);
   const [form] = Form.useForm();
 
   const submitForm = async () => {
     const values = await form.validateFields();
-    form.resetFields();
-    console.log(values);
+
+    const formData = new FormData();
+    Object.keys(values).forEach((entry) =>
+      formData.append(entry, values[entry])
+    );
+    const response = await fetch(setBaseUrl(`/ajax/remote_api/create`), {
+      method: `POST`,
+      body: formData,
+    });
+    const data = await response.json();
+    if (!data.errors) {
+      form.resetFields();
+      setVisible(false);
+      updateTable();
+    } else {
+      // Dynamically set the erros for fields
+      const fields = Object.entries(data.errors).map(([field, error]) => ({
+        name: field,
+        errors: [error],
+      }));
+      form.setFields(fields);
+    }
   };
 
   return (
@@ -58,7 +81,12 @@ export function CreateRemoteApiModal({ children }) {
           <Form.Item
             name="serviceURI"
             label={i18n("remoteapi.serviceurl")}
-            rules={[{ required: true }]}
+            rules={[
+              { required: true },
+              {
+                pattern: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+              },
+            ]}
           >
             <Input />
           </Form.Item>

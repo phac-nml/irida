@@ -22,18 +22,20 @@ import { RemoteApiTable } from "./RemoteApiTable";
 export default function AdminRemoteApiPage() {
   // The following renders the Remote Api component view
   return (
-    <PageWrapper
-      title={i18n("AdminPanel.remoteApi")}
-      headerExtras={
-        <CreateRemoteApiModal><AddNewButton
-          className={"t-add-remote-api-btn"}
-          text={i18n("AdminPanel.addRemoteApi")}
-        /></CreateRemoteApiModal>
-      }
-    >
-      <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
+    <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
+      <PageWrapper
+        title={i18n("AdminPanel.remoteApi")}
+        headerExtras={
+          <CreateRemoteApiModal>
+            <AddNewButton
+              className={"t-add-remote-api-btn"}
+              text={i18n("AdminPanel.addRemoteApi")}
+            />
+          </CreateRemoteApiModal>
+        }
+      >
         <RemoteApiTable />
-      </PagedTableProvider>
-    </PageWrapper>
+      </PageWrapper>
+    </PagedTableProvider>
   );
 }
