@@ -5191,7 +5191,7 @@ __metadata:
   resolution: "datatables.net@npm:1.11.3"
   dependencies:
     jquery: ">=1.7"
-  checksum: c996a092af4d5c69d63c6ca95b2be6136924f7779089e4f06163a3fff5a9e2c44766c0e5f19bf84251a5c486fddc7ab0494d9ab49a0ad02b2e0b16a375a6bf74
+  checksum: 0bed39cee15d00d6776f5c1aba31fafcb7351863683a656d168699297d2c5c5d0e97bfb690393a0a0393fc27b9e6c4ea8f8701190d746ab59d33e60441c6434b
   languageName: node
   linkType: hard
 
