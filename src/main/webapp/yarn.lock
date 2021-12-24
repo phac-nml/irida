@@ -5177,12 +5177,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"datatables.net@npm:1.10.24, datatables.net@npm:^1.10.15, datatables.net@npm:^1.10.19":
+"datatables.net@npm:1.10.24, datatables.net@npm:^1.10.15":
   version: 1.10.24
   resolution: "datatables.net@npm:1.10.24"
   dependencies:
     jquery: ">=1.7"
   checksum: 7ca575a769aac10684e839aed254433f5a66bb5f116e5e8f7fab671bd6df596b9708ede57ce605003c9ae54bf3c3f70f52b41030a3a634518975519059540a0c
+  languageName: node
+  linkType: hard
+
+"datatables.net@npm:^1.11.3":
+  version: 1.11.3
+  resolution: "datatables.net@npm:1.11.3"
+  dependencies:
+    jquery: ">=1.7"
+  checksum: c996a092af4d5c69d63c6ca95b2be6136924f7779089e4f06163a3fff5a9e2c44766c0e5f19bf84251a5c486fddc7ab0494d9ab49a0ad02b2e0b16a375a6bf74
   languageName: node
   linkType: hard
 
@@ -7219,7 +7228,7 @@ fsevents@^2.1.2:
     clipboard: ^1.7.1
     css-loader: ^5.0.1
     css-minimizer-webpack-plugin: ^1.2.0
-    datatables.net: ^1.10.19
+    datatables.net: ^1.11.3
     datatables.net-bs: ^1.10.19
     datatables.net-buttons: ^1.5.4
     datatables.net-buttons-bs: ^1.5.4
