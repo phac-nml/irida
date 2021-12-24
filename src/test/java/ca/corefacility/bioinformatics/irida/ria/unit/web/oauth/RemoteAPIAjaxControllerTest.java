@@ -1,23 +1,26 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
-
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -145,5 +148,31 @@ public class RemoteAPIAjaxControllerTest {
 				any(String[].class));
 		assertEquals("Should have 1 Remote API", 1, response.getDataSource()
 				.size());
+	}
+
+	@Test
+	public void testPostCreateRemoteAPI_goodRequest() {
+		RemoteAPI client = new RemoteAPI("NEW CLIENT", "http://example.com", "", "CLIENT_ID", "CLIENT_SECRET");
+		RemoteAPI createdClient = new RemoteAPI("NEW CLIENT", "http://example.com", "", "CLIENT_ID", "CLIENT_SECRET");
+		createdClient.setId(1L);
+
+		when(remoteAPIService.create(client)).thenReturn(createdClient);
+		ResponseEntity response = controller.postCreateRemoteAPI(client, Locale.ENGLISH);
+		assertEquals("Should have a response status of 200", response.getStatusCode(), HttpStatus.OK);
+		AjaxCreateItemSuccessResponse ajaxCreateItemSuccessResponse = (AjaxCreateItemSuccessResponse) response.getBody();
+		assertEquals("Should return the id of the newly created remote api", 1L, ajaxCreateItemSuccessResponse.getId());
+		String foobar = "baz";
+	}
+
+	@Test
+	public void testPostCreateRemoteAPI_badRequest() {
+		RemoteAPI client = new RemoteAPI(null, null, "", "CLIENT_ID", "CLIENT_SECRET");
+		RemoteAPI createdClient = new RemoteAPI(null, null, "", "CLIENT_ID", "CLIENT_SECRET");
+		createdClient.setId(1L);
+
+		when(remoteAPIService.create(client)).thenReturn(createdClient);
+		ResponseEntity response = controller.postCreateRemoteAPI(client, Locale.ENGLISH);
+
+		verify(remoteAPIService, times(1)).create(client);
 	}
 }
