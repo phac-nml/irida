@@ -20,19 +20,17 @@ export default function UserPasswordPage() {
           <Typography.Paragraph>
             {i18n("UserPasswordPage.alert.description")}
             <ul>
-              <li>{i18n("UserPasswordPage.alert.rule1")}</li>
               <li>{i18n("UserPasswordPage.alert.rule2")}</li>
               <li>{i18n("UserPasswordPage.alert.rule3")}</li>
               <li>{i18n("UserPasswordPage.alert.rule4")}</li>
               <li>{i18n("UserPasswordPage.alert.rule5")}</li>
               <li>{i18n("UserPasswordPage.alert.rule6")}</li>
-              <li>{i18n("UserPasswordPage.alert.rule7")}</li>
               <li>{i18n("UserPasswordPage.alert.rule8")}</li>
               <li>{i18n("UserPasswordPage.alert.rule9")}</li>
             </ul>
           </Typography.Paragraph>
         }
-        type="error"
+        type="info"
         showIcon
       />
       <Form layout="vertical" autoComplete="off">
@@ -42,6 +40,10 @@ export default function UserPasswordPage() {
           rules={[
             { required: true, message: i18n("UserPasswordPage.alert.rule1") },
             { min: 8, message: i18n("UserPasswordPage.alert.rule2") },
+            { pattern: new RegExp("^.*[A-Z].*$"), message: i18n("UserPasswordPage.alert.rule3") },
+            { pattern: new RegExp("^.*[a-z].*$"), message: i18n("UserPasswordPage.alert.rule4") },
+            { pattern: new RegExp("^.*[0-9].*$"), message: i18n("UserPasswordPage.alert.rule5") },
+            { pattern: new RegExp("^.*[^A-Za-z0-9].*$"), message: i18n("UserPasswordPage.alert.rule6") },
           ]}
         >
           <Input.Password />
@@ -54,10 +56,11 @@ export default function UserPasswordPage() {
             { required: true, message: i18n("UserPasswordPage.alert.rule1") },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                if (!value || getFieldValue("password") === value) {
+                if (getFieldValue("password") !== value) {
+                  return Promise.reject(i18n("UserPasswordPage.alert.rule7"));
+                } else {
                   return Promise.resolve();
                 }
-                return Promise.reject(i18n("UserPasswordPage.alert.rule7"));
               },
             }),
           ]}
@@ -67,7 +70,7 @@ export default function UserPasswordPage() {
         <Form.Item>
           <Button
             type="primary"
-            htmlType={i18n("UserPasswordPage.form.button.submit=")}
+            htmlType={i18n("UserPasswordPage.form.button.submit")}
           >
             Submit
           </Button>
