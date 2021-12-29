@@ -88,7 +88,7 @@ public class IridaApiJdbcDataSourceConfig {
 		final String hbm2ddlAuto = environment.getProperty(AvailableSettings.HBM2DDL_AUTO);
 		Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
 
-		if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
+		if (StringUtils.hasLength(importFiles) || StringUtils.hasLength(hbm2ddlAuto)) {
 			logger.debug("Running hibernate -> not importing SQL file or running Liquibase.");
 			if (liquibaseShouldRun) {
 				// log that we're disabling liquibase regardless of what was

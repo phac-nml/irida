@@ -223,12 +223,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		logger.debug("configureDefaultServletHandling");
-		configurer.enable();
-	}
-
-	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(galaxySessionInterceptor());

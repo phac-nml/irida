@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
  * Interceptor for handling UI BreadCrumbs
  */
 @Component
-public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
+public class BreadCrumbInterceptor implements AsyncHandlerInterceptor {
 	private static final Logger logger = LoggerFactory.getLogger(BreadCrumbInterceptor.class);
 
 	@Autowired
@@ -60,7 +60,6 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		super.postHandle(request, response, handler, modelAndView);
 
 		String servletPath = request.getServletPath();
 
@@ -111,7 +110,7 @@ public class BreadCrumbInterceptor extends HandlerInterceptorAdapter {
 					breadCrumbs.add(new BreadCrumb(messageSource.getMessage("bc." + next, new Object[] {}, locale),
 							url.append(next)
 									.toString()));
-				} else if (NumberUtils.isNumber(next)) {
+				} else if (NumberUtils.isCreatable(next)) {
 					String parent = partsList.get(parts.previousIndex() - 1);
 					if (parent.equals("projects")) {
 						Project project = projectService.read(Long.parseLong(next));

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -53,7 +53,7 @@ import static org.junit.Assert.assertTrue;
 	HibernateJpaAutoConfiguration.class,
 })
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiPropertyPlaceholderConfig.class, IridaDbUnitConfig.class },
-		initializers = ConfigFileApplicationContextInitializer.class)
+		initializers = ConfigDataApplicationContextInitializer.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @DbUnitConfiguration(dataSetLoader = NullReplacementDatasetLoader.class)
