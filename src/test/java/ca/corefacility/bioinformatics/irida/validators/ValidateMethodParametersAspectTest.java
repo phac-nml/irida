@@ -74,7 +74,7 @@ public class ValidateMethodParametersAspectTest {
 		String first = "first";
 		Set<ConstraintViolation<Object>> violations = new HashSet<>();
 		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Object.class, null,
-				null, first, PathImpl.createRootPath(), null, null, null));
+				null, first, PathImpl.createRootPath(), null, null));
 		when(validator.validate(any())).thenReturn(violations);
 		proxy.testOneValidParameter(first);
 	}
