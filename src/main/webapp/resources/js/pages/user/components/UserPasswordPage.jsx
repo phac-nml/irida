@@ -24,6 +24,7 @@ export default function UserPasswordPage() {
   const { userId } = useParams();
   const { data: userDetails, isLoading } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
+  const [form] = Form.useForm();
   const [formErrors, setFormErrors] = useState();
 
   const getError = (fieldName, message) => {
@@ -43,6 +44,7 @@ export default function UserPasswordPage() {
         notification.success({
           message: i18n("UserPasswordPage.notification.success"),
         });
+        form.resetFields();
       })
       .catch((error) => {
         notification.error({
@@ -80,7 +82,12 @@ export default function UserPasswordPage() {
             type="info"
             showIcon
           />
-          <Form layout="vertical" onFinish={onFormFinish} autoComplete="off">
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFormFinish}
+            autoComplete="off"
+          >
             <Form.Item
               label={i18n("UserPasswordPage.form.label.password")}
               name="password"
