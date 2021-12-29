@@ -10,6 +10,8 @@ public class UserEditRequest {
 	private String phoneNumber;
 	private String systemRole;
 	private String userLocale;
+	private String password;
+	private String confirmPassword;
 	private String enabled;
 
 	public String getFirstName() {
@@ -58,6 +60,22 @@ public class UserEditRequest {
 
 	public void setUserLocale(String userLocale) {
 		this.userLocale = userLocale;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
 	}
 
 	public String getEnabled() {

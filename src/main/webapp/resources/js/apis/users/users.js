@@ -27,9 +27,9 @@ export const usersApi = createApi({
     Edit user details.
     */
     editUserDetails: build.mutation({
-      query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, enabled }) => ({
+      query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, password, confirmPassword, enabled }) => ({
         url: `/${userId}/edit`,
-        body: { firstName, lastName, email, phoneNumber, systemRole: role, locale, enabled },
+        body: { firstName, lastName, email, phoneNumber, systemRole: role, locale, password, confirmPassword, enabled },
         method: "POST",
       }),
       invalidatesTags: ["Users"],
