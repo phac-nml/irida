@@ -498,6 +498,12 @@
 			<groupId>com.monitorjbl</groupId>
 			<artifactId>xlsx-streamer</artifactId>
 			<version>${com.monitorjbl.xml.streamer.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Generates the OpenAPI rest service definition located at http://localhost:8080/v3/api-docs -->
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
