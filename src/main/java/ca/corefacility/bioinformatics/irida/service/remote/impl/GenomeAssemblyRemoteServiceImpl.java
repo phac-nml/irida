@@ -47,7 +47,7 @@ public class GenomeAssemblyRemoteServiceImpl extends RemoteServiceImpl<UploadedA
 		if (!sample.hasLink(SAMPLE_ASSEMBLY_REL)) {
 			throw new LinkNotFoundException("No link for rel: " + SAMPLE_ASSEMBLY_REL);
 		}
-		Link link = sample.getLink(SAMPLE_ASSEMBLY_REL);
+		Link link = sample.getLink(SAMPLE_ASSEMBLY_REL).map(i -> i).orElse(null);
 		String href = link.getHref();
 
 		RemoteAPI remoteApiForURI = getRemoteApiForURI(href);

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AbstractAnalysisSubmission extends IridaResourceSupport implements MutableIridaThing {
+public abstract class AbstractAnalysisSubmission extends IridaRepresentationModel implements MutableIridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")

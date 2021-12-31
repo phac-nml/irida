@@ -8,7 +8,7 @@
  * @param {Element} The options to check if they are truthy
  */
 export function isTruthy(options) {
-  if (options.length > 2) return false;
+  if (options.length !== 2) return false;
   return (
     (typeof options[0].value === "boolean" &&
       typeof options[1].value === "boolean") ||
