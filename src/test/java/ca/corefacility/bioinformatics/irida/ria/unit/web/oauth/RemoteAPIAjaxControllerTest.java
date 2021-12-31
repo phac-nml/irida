@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
@@ -24,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -159,18 +162,16 @@ public class RemoteAPIAjaxControllerTest {
 
 		when(remoteAPIService.create(client)).thenReturn(createdClient);
 
-		ResponseEntity response = controller.postCreateRemoteAPI(client, Locale.ENGLISH);
+		ResponseEntity<AjaxResponse> response = controller.postCreateRemoteAPI(client, Locale.ENGLISH);
 		assertEquals("Should have a response status of 200", response.getStatusCode(), HttpStatus.OK);
 		AjaxCreateItemSuccessResponse ajaxCreateItemSuccessResponse = (AjaxCreateItemSuccessResponse) response.getBody();
+		assert ajaxCreateItemSuccessResponse != null;
 		assertEquals("Should return the id of the newly created remote api", 1L, ajaxCreateItemSuccessResponse.getId());
-		String foobar = "baz";
 	}
 
 	@Test
 	public void testPostCreateRemoteAPI_badRequest() {
 		RemoteAPI client = new RemoteAPI(null, null, "", "CLIENT_ID", "CLIENT_SECRET");
-		RemoteAPI createdClient = new RemoteAPI(null, null, "", "CLIENT_ID", "CLIENT_SECRET");
-		createdClient.setId(1L);
 
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();
 		ValidatorFactory factory = configuration.buildValidatorFactory();
@@ -182,8 +183,16 @@ public class RemoteAPIAjaxControllerTest {
 
 		when(remoteAPIService.create(client)).thenThrow(new ConstraintViolationException(constraintViolations));
 
-		ResponseEntity response = controller.postCreateRemoteAPI(client, Locale.ENGLISH);
-
+		ResponseEntity<AjaxResponse> response = controller.postCreateRemoteAPI(client, Locale.ENGLISH);
 		verify(remoteAPIService, times(1)).create(client);
+		assertEquals("Should return a 422 response", response.getStatusCode(), HttpStatus.UNPROCESSABLE_ENTITY);
+		AjaxFormErrorResponse formErrorsResponse = (AjaxFormErrorResponse)response.getBody();
+		assert formErrorsResponse != null;
+		Map<String, String> formErrors = formErrorsResponse.getErrors();
+		assertEquals("Form should have 3 errors", 3, formErrors.keySet()
+				.size());
+		assertTrue("Should have a serviceUri error", formErrors.containsKey("serviceURI"));
+		assertTrue("Should have a name error", formErrors.containsKey("name"));
+		assertTrue("Should have a label error", formErrors.containsKey("label"));
 	}
 }
