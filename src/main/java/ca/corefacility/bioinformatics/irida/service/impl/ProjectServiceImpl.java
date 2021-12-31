@@ -522,6 +522,20 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		newList.addAll(groupJoinProjects);
 		newList.addAll(userJoinProjects);
 
+		Map<Long, List<UserProjectDetailsModel>> result1 = newList.stream()
+				.collect(Collectors.groupingBy(UserProjectDetailsModel::getProjectId));
+
+		Map<Long, Optional<UserProjectDetailsModel>> result2 = newList.stream()
+				.collect(Collectors.groupingBy(UserProjectDetailsModel::getProjectId, Collectors.maxBy(
+						(x, y) -> x.getCreatedDate()
+								.compareTo(y.getCreatedDate()))));
+
+		Map<Long, Optional<UserProjectDetailsModel>> result3 = newList.stream()
+				.collect(Collectors.groupingBy(UserProjectDetailsModel::getProjectId,
+						Collectors.maxBy(UserProjectDetailsModel::compareTo)));
+
+		List<UserProjectDetailsModel> result4 = new ArrayList(result3.values());
+
 		return newList;
 	}
 

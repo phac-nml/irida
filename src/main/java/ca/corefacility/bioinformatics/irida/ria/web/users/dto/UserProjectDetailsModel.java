@@ -7,7 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 
-public class UserProjectDetailsModel {
+public class UserProjectDetailsModel implements Comparable<UserProjectDetailsModel> {
 	private Long projectId;
 	private String projectName;
 	private String roleName;
@@ -103,5 +103,22 @@ public class UserProjectDetailsModel {
 
 	public void setEmailSubscribed(boolean emailSubscribed) {
 		isEmailSubscribed = emailSubscribed;
+	}
+
+	@Override
+	public int compareTo(UserProjectDetailsModel other) {
+		int result = 0;
+
+		if (this.roleName.equals(other.roleName)) {
+			result = this.createdDate.compareTo(other.createdDate);
+		} else {
+			if (this.roleName.equals(ProjectRole.PROJECT_OWNER.toString())) {
+				result = 1;
+			} else if (this.roleName.equals(ProjectRole.PROJECT_USER.toString())) {
+				result = -1;
+			}
+		}
+
+		return result;
 	}
 }
