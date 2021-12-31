@@ -30,7 +30,7 @@ export function SingleEndFileRenderer({
       bordered
       dataSource={files}
       renderItem={(file) => [
-        <List.Item>
+        <List.Item key={`file-header-${file.id}`}>
           <SequenceFileHeader
             file={file.fileInfo}
             removeSampleFiles={removeSampleFiles}

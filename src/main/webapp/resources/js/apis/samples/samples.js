@@ -160,3 +160,63 @@ export function downloadSequencingObjectFile({
     "_blank"
   );
 }
+
+/**
+ * Upload sequence files
+ * @param sampleId - identifier for the sample
+ * @param formData - sequence files to upload
+ * @param config - configuration for the upload
+ * @returns {Promise<any>}
+ */
+export async function uploadSequenceFiles({ sampleId, formData, config }) {
+  try {
+    const response = await axios.post(
+      `${URL}/${sampleId}/sequenceFiles/upload`,
+      formData,
+      config
+    );
+    return response.data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
+
+/**
+ * Upload assembly files
+ * @param sampleId - identifier for the sample
+ * @param formData - assembly files to upload
+ * @param config - configuration for the upload
+ * @returns {Promise<any>}
+ */
+export async function uploadAssemblyFiles({ sampleId, formData, config }) {
+  try {
+    const response = await axios.post(
+      `${URL}/${sampleId}/assemblies/upload`,
+      formData,
+      config
+    );
+    return response.data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
+
+/**
+ * Upload fast5 files
+ * @param sampleId - identifier for the sample
+ * @param formData - fast5 files to upload
+ * @param config - configuration for the upload
+ * @returns {Promise<any>}
+ */
+export async function uploadFast5Files({ sampleId, formData, config }) {
+  try {
+    const response = await axios.post(
+      `${URL}/${sampleId}/fast5/upload`,
+      formData,
+      config
+    );
+    return response.data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
