@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Empty,
-  List,
-  notification,
-  Progress,
-  Result,
-  Space,
-} from "antd";
+import { Button, Empty, List, notification, Progress, Space } from "antd";
 import { IconLoading } from "../../icons/Icons";
 import {
   downloadGenomeAssemblyFile,
@@ -272,7 +264,7 @@ export function SampleFiles() {
 
   return loading ? (
     <IconLoading />
-  ) : Object.keys(files).length !== 0 ? (
+  ) : (
     <Space size="large" direction="vertical" style={{ width: `100%` }}>
       <DragUpload
         className="t-upload-sample-files"
@@ -285,11 +277,24 @@ export function SampleFiles() {
           <Button type="primary" onClick={() => uploadFiles()}>
             Start Upload
           </Button>
-          {sequenceFiles.length ? <Progress percent={progress} /> : null}
-          {assemblyFiles.length ? (
-            <Progress percent={assemblyProgress} />
-          ) : null}
-          {fast5Files.length ? <Progress percent={fast5Progress} /> : null}
+          <div>
+            {sequenceFiles.length ? (
+              <span>
+                Sequence file upload Progress: <Progress percent={progress} />
+              </span>
+            ) : null}
+            {assemblyFiles.length ? (
+              <span>
+                Assembly file upload Progress:{" "}
+                <Progress percent={assemblyProgress} />
+              </span>
+            ) : null}
+            {fast5Files.length ? (
+              <span>
+                Fast5 file upload Progress: <Progress percent={fast5Progress} />
+              </span>
+            ) : null}
+          </div>
           Files to upload to sample:
           <List split={false}>
             {filesToUpload.map((currFile) => {
@@ -299,82 +304,58 @@ export function SampleFiles() {
         </div>
       ) : null}
 
-      <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <Space size="large" direction="vertical" style={{ width: `100%` }}>
-          {files.singles && (
-            <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-              <SingleEndFileRenderer
-                files={files.singles}
-                sampleId={sample.identifier}
-                downloadSequenceFile={downloadSequenceFile}
-                removeSampleFiles={removeSampleFiles}
-              />
-            </SequenceFileTypeRenderer>
-          )}
-          {files.paired && (
-            <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
-              {files.paired.map((pair) => (
-                <PairedFileRenderer
-                  key={`pair-${pair.identifier}`}
-                  pair={pair}
+      {Object.keys(files).length !== 0 ? (
+        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+          <Space size="large" direction="vertical" style={{ width: `100%` }}>
+            {files.singles && (
+              <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
+                <SingleEndFileRenderer
+                  files={files.singles}
                   sampleId={sample.identifier}
                   downloadSequenceFile={downloadSequenceFile}
                   removeSampleFiles={removeSampleFiles}
                 />
-              ))}
-            </SequenceFileTypeRenderer>
-          )}
-          {files.fast5 && (
-            <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-              <SingleEndFileRenderer
-                files={files.fast5}
-                sampleId={sample.identifier}
-                downloadSequenceFile={downloadSequenceFile}
-                removeSampleFiles={removeSampleFiles}
-              />
-            </SequenceFileTypeRenderer>
-          )}
-          {files.assemblies && (
-            <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-              <SingleEndFileRenderer
-                files={files.assemblies}
-                fastqcResults={false}
-                sampleId={sample.identifier}
-                downloadAssemblyFile={downloadAssemblyFile}
-                removeSampleFiles={removeSampleFiles}
-              />
-            </SequenceFileTypeRenderer>
-          )}
-        </Space>
-      </div>
-    </Space>
-  ) : (
-    <Space size={`large`} direction={`vertical`} style={{ width: `100%` }}>
-      <DragUpload
-        className="t-upload-sample-files"
-        uploadText={i18n("SampleFiles.uploadText")}
-        uploadHint={i18n("SampleFiles.uploadHint")}
-        options={options}
-      />
-      <Empty description={i18n("SampleFiles.no-files")} />
-      {filesToUpload.length ? (
-        <div>
-          <Button type="primary" onClick={() => uploadFiles()}>
-            Start Upload
-          </Button>
-          {sequenceFiles.length ? <Progress percent={progress} /> : null}
-          {assemblyFiles.length ? (
-            <Progress percent={assemblyProgress} />
-          ) : null}
-          {fast5Files.length ? <Progress percent={fast5Progress} /> : null}
-          Files to upload to sample:
-          <List split={false}>
-            {filesToUpload.map((currFile) => {
-              return <List.Item>- {currFile.name}</List.Item>;
-            })}
-          </List>
+              </SequenceFileTypeRenderer>
+            )}
+            {files.paired && (
+              <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
+                {files.paired.map((pair) => (
+                  <PairedFileRenderer
+                    key={`pair-${pair.identifier}`}
+                    pair={pair}
+                    sampleId={sample.identifier}
+                    downloadSequenceFile={downloadSequenceFile}
+                    removeSampleFiles={removeSampleFiles}
+                  />
+                ))}
+              </SequenceFileTypeRenderer>
+            )}
+            {files.fast5 && (
+              <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
+                <SingleEndFileRenderer
+                  files={files.fast5}
+                  sampleId={sample.identifier}
+                  downloadSequenceFile={downloadSequenceFile}
+                  removeSampleFiles={removeSampleFiles}
+                />
+              </SequenceFileTypeRenderer>
+            )}
+            {files.assemblies && (
+              <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
+                <SingleEndFileRenderer
+                  files={files.assemblies}
+                  fastqcResults={false}
+                  sampleId={sample.identifier}
+                  downloadAssemblyFile={downloadAssemblyFile}
+                  removeSampleFiles={removeSampleFiles}
+                />
+              </SequenceFileTypeRenderer>
+            )}
+          </Space>
         </div>
-      ) : null}
+      ) : (
+        <Empty description={i18n("SampleFiles.no-files")} />
+      )}
     </Space>
   );
 }
