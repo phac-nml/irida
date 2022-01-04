@@ -24,8 +24,7 @@ export default function UserAccountLayout() {
         <Col span={5}>
           <UserAccountNav />
         </Col>
-        <Col span={1} />
-        <Col span={18}>
+        <Col offset={1} span={18}>
           <Outlet />
         </Col>
       </Row>
