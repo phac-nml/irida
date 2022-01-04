@@ -34,4 +34,15 @@ public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(apisPage.checkRemoteApiExistsInTable("a client"));
 		assertTrue(apisPage.checkRemoteApiExistsInTable("another client"));
 	}
+
+	@Test
+	public void testCreateRemoteAPI() {
+		LoginPage.loginAsAdmin(driver());
+		RemoteAPIsPage page = RemoteAPIsPage.goTo(driver());
+		int clientsTableSize = page.remoteApisTableSize();
+		assertEquals(2, clientsTableSize);
+
+		page.openAddRemoteModal();
+		page.enterApiDetails("FOOBAR", "", "FLDSK", "https://example.com");
+	}
 }

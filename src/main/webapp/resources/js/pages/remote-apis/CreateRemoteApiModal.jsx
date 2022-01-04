@@ -50,6 +50,7 @@ export function CreateRemoteApiModal({ children }) {
   return (
     <>
       {React.cloneElement(children, {
+        className: "t-add-remote-api-btn",
         onClick: () => setVisible(true),
       })}
       <Modal
@@ -73,7 +74,9 @@ export function CreateRemoteApiModal({ children }) {
           <Form.Item
             name="name"
             label={i18n("remoteapi.name")}
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: i18n("remoteapi.name.required") },
+            ]}
           >
             <Input />
           </Form.Item>
