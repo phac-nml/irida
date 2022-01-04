@@ -37,7 +37,7 @@ public class ValidateMethodParametersAspectTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		AnnotatedMethodsClass target = new AnnotatedMethodsClass();
 		AnnotatedInterfaceImpl interfaceProxyTarget = new AnnotatedInterfaceImpl();
 		AspectJProxyFactory proxyFactory = new AspectJProxyFactory(target);

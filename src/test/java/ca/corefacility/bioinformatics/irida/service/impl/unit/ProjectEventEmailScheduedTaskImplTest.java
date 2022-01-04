@@ -49,7 +49,7 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		task = new ProjectEventEmailScheduledTaskImpl(userService, eventService, projectService, emailController);
 

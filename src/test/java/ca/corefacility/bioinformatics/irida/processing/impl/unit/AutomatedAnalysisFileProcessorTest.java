@@ -74,7 +74,7 @@ public class AutomatedAnalysisFileProcessorTest {
 
 	@Before
 	public void setUp() throws IridaWorkflowNotFoundException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		processor = new AutomatedAnalysisFileProcessor(ssoRepository, psjRepository, submissionRepository,
 				templateRepository, pasRepository, workflowsService, objectRepository, messageSource);

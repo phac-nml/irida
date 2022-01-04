@@ -35,7 +35,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		setupLibrariesTest();
 	}
 	

@@ -127,7 +127,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
 			NoSuchValueException, IridaWorkflowAnalysisTypeException, AnalysisAlreadySetException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		String submissionName = "name";
 		Set<SequencingObject> submissionInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));

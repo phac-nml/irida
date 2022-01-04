@@ -75,7 +75,7 @@ public class ProjectSynchronizationServiceTest {
 
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
 				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,

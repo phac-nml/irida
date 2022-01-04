@@ -48,7 +48,7 @@ public class IridaWorkflowLoaderServiceTest {
 
 	@Before
 	public void setup() throws IridaWorkflowException, IOException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		AnalysisTypesServiceImpl analysisTypesService = new AnalysisTypesServiceImpl();
 		analysisTypesService.registerDefaultTypes();

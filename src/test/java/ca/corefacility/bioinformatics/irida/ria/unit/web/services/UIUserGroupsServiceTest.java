@@ -67,7 +67,7 @@ public class UIUserGroupsServiceTest {
 
 		when(userGroupService.search(any(), any())).thenReturn(getPagedUserGroups());
 		when(userGroupService.read(GROUP_1.getId())).thenReturn(GROUP_1);
-		when(messageSource.getMessage(anyString(), anyObject(), any())).thenReturn("DONE!");
+		when(messageSource.getMessage(anyString(), any(), any())).thenReturn("DONE!");
 	}
 
 	@Test

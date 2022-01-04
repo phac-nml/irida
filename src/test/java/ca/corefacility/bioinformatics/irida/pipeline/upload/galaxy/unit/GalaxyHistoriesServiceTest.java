@@ -91,7 +91,7 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Before
 	public void setup() throws URISyntaxException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		
 		when(okayResponse.getStatusInfo()).thenReturn(
 				ClientResponse.Status.OK);

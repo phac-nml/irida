@@ -80,7 +80,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 	 */
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
 				userRepository, sequencingObjectRepository, seqObjectPermission, pasRepository, readProjectPermission);

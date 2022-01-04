@@ -52,7 +52,7 @@ public class ProjectOwnerPermissionTest {
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		user.setSystemRole(Role.ROLE_USER);
 		user.setUsername("tom");
 
