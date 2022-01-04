@@ -510,7 +510,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public List<UserProjectDetailsModel> getUserProjectDetailsForUser(User user) {
-		List<UserProjectDetailsModel> newList = new ArrayList<>();
+		List<UserProjectDetailsModel> combinedList = new ArrayList<>();
 		final List<UserProjectDetailsModel> groupJoinProjects = ugpjRepository.findProjectsByUser(user)
 				.stream()
 				.map(ugpj -> new UserProjectDetailsModel((UserGroupProjectJoin) ugpj))
@@ -519,22 +519,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.stream()
 				.map(puj -> new UserProjectDetailsModel((ProjectUserJoin) puj))
 				.collect(Collectors.toList());
-		newList.addAll(groupJoinProjects);
-		newList.addAll(userJoinProjects);
+		combinedList.addAll(groupJoinProjects);
+		combinedList.addAll(userJoinProjects);
 
-		Map<Long, List<UserProjectDetailsModel>> result1 = newList.stream()
-				.collect(Collectors.groupingBy(UserProjectDetailsModel::getProjectId));
-
-		Map<Long, Optional<UserProjectDetailsModel>> result2 = newList.stream()
-				.collect(Collectors.groupingBy(UserProjectDetailsModel::getProjectId, Collectors.maxBy(
-						(x, y) -> x.getCreatedDate()
-								.compareTo(y.getCreatedDate()))));
-
-		Map<Long, Optional<UserProjectDetailsModel>> result3 = newList.stream()
+		List<UserProjectDetailsModel> newList = combinedList.stream()
 				.collect(Collectors.groupingBy(UserProjectDetailsModel::getProjectId,
-						Collectors.maxBy(UserProjectDetailsModel::compareTo)));
-
-		List<UserProjectDetailsModel> result4 = new ArrayList(result3.values());
+						Collectors.maxBy(UserProjectDetailsModel::compareTo)))
+				.values()
+				.stream()
+				.map(Optional::get)
+				.sorted(Comparator.comparingLong(UserProjectDetailsModel::getProjectId))
+				.collect(Collectors.toList());
 
 		return newList;
 	}

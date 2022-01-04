@@ -6,7 +6,7 @@ import {
   Typography,
 } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import moment from "moment";
+import { formatDate } from "../../../utilities/date-utilities";
 import { useGetUserProjectDetailsQuery } from "../../../apis/users/users";
 
 /**
@@ -18,6 +18,11 @@ export default function UserProjectsPage() {
   const { userId } = useParams();
   const { data, isSuccess } = useGetUserProjectDetailsQuery(userId);
   const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'projectId',
+      key: 'projectId',
+    },
     {
       title: 'Name',
       dataIndex: 'projectName',
@@ -36,15 +41,10 @@ export default function UserProjectsPage() {
       }
     },
     {
-      title: 'Group',
-      dataIndex: 'groupName',
-      key: 'groupName',
-    },
-    {
       title: 'Date Added',
       dataIndex: 'createdDate',
       key: 'createdDate',
-      render: ((text) => moment(text).format())
+      render: ((text) => formatDate({ date: text }))
     },
     {
       title: 'Subscribed',
