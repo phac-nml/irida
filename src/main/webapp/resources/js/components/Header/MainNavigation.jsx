@@ -110,7 +110,6 @@ export function MainNavigation() {
               <a
                 className="t-admin-panel-btn"
                 href={setBaseUrl("/admin/statistics")}
-                href={setBaseUrl("/admin/statistics")}
               >
                 {i18n("MainNavigation.admin").toUpperCase()}
               </a>
