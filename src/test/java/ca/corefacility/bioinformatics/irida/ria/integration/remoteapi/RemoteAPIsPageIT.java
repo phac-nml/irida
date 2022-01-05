@@ -48,7 +48,7 @@ public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals("Should contain 1 error", 1, page.getCreateErrors().size());
 		page.enterApiDetails("FOOBAR", "32dsrf32rsdf3w323", "FLDSK", "https://example.com");
-		page.submitCreateFormAndWait();
+		page.submitCreateForm();
 		assertEquals("Should be 3 clients in table", 3, page.remoteApisTableSize());
 	}
 }

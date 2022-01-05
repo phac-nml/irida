@@ -95,7 +95,7 @@ public class RemoteAPIsPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ant-form-item-explain.ant-form-item-explain-error")));
 	}
 
-	public void submitCreateFormAndWait() {
+	public void submitCreateForm() {
 		submitCreateRemoteBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.invisibilityOf(addRemoteModal));
