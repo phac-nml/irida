@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import {
   Button,
@@ -67,24 +67,28 @@ export default function UserDetailsPage() {
             <Form.Item
               label={i18n("UserDetailsPage.form.label.firstName")}
               name="firstName"
+              rules={[{ required: true }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.lastName")}
               name="lastName"
+              rules={[{ required: true }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.email")}
               name="email"
+              rules={[{ required: true }, { type: "email" }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.phoneNumber")}
               name="phoneNumber"
+              rules={[{ required: true }]}
             >
               <Input />
             </Form.Item>
