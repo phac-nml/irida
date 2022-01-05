@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Empty, List, notification, Progress, Space } from "antd";
+import { Collapse, Empty, List, notification, Progress, Space } from "antd";
 import { IconLoading } from "../../icons/Icons";
 import {
   downloadGenomeAssemblyFile,
@@ -21,6 +21,8 @@ import {
   uploadAssemblyFiles,
   uploadFast5Files,
 } from "../../../apis/samples/samples";
+import { WarningAlert } from "../../alerts";
+const { Panel } = Collapse;
 
 /**
  * React component to display, remove, download, and upload sample files
@@ -34,12 +36,15 @@ export function SampleFiles() {
   const dispatch = useDispatch();
 
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
-  const [progress, setProgress] = React.useState(0);
+
+  const [seqFileprogress, setSeqFileProgress] = React.useState(0);
   const [assemblyProgress, setAssemblyProgress] = React.useState(0);
   const [fast5Progress, setFast5Progress] = React.useState(0);
+
   const [sequenceFiles, setSequenceFiles] = React.useState([]);
   const [assemblyFiles, setAssemblyFiles] = React.useState([]);
   const [fast5Files, setFast5Files] = React.useState([]);
+
   const [filesToUpload, setFilesToUpload] = React.useState([]);
 
   const acceptedFileTypes =
@@ -63,17 +68,30 @@ export function SampleFiles() {
   React.useEffect(getSampleFiles, [sample.identifier, projectId]);
 
   /*
+  Call function to upload files to server once files are
+  selected through the open file dialog or if they are
+  dragged and dropped
+   */
+  React.useEffect(() => {
+    uploadFiles();
+  }, [filesToUpload]);
+
+  /*
   Custom function to upload sequence, assembly, and fast5 files uploaded
   using the ant design upload (DragUpload) component
    */
   const uploadFiles = () => {
     if (sequenceFiles.length) {
-      const config = {
+      const seqFileUploadconfig = {
         headers: { "content-type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
-          setProgress((progressEvent.loaded / progressEvent.total) * 100.0);
           if (progressEvent.loaded === progressEvent.total) {
             setSequenceFiles([]);
+            setSeqFileProgress(0);
+          } else {
+            setSeqFileProgress(
+              (progressEvent.loaded / progressEvent.total) * 100.0
+            );
           }
         },
       };
@@ -83,29 +101,35 @@ export function SampleFiles() {
         formData.append(`file[${index}]`, sequenceFiles[index]);
       });
 
-      uploadSequenceFiles({ sampleId: sample.identifier, formData, config })
+      uploadSequenceFiles({
+        sampleId: sample.identifier,
+        formData,
+        config: seqFileUploadconfig,
+      })
         .then(() => {
           notification.success({
-            message: "Successfully uploaded fastq files",
+            message: i18n("SampleFiles.successfullyUploaded", "sequence"),
           });
           getSampleFiles();
         })
         .catch((error) => {
           notification.error({
-            message: "There was an error uploading the fastq files",
+            message: i18n("SampleFiles.uploadError", "sequence"),
           });
         });
     }
 
     if (assemblyFiles.length) {
-      const assemblyConfig = {
+      const assemblyUploadConfig = {
         headers: { "content-type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
-          setAssemblyProgress(
-            (progressEvent.loaded / progressEvent.total) * 100.0
-          );
           if (progressEvent.loaded === progressEvent.total) {
             setAssemblyFiles([]);
+            setAssemblyProgress(0);
+          } else {
+            setAssemblyProgress(
+              (progressEvent.loaded / progressEvent.total) * 100.0
+            );
           }
         },
       };
@@ -118,30 +142,32 @@ export function SampleFiles() {
       uploadAssemblyFiles({
         sampleId: sample.identifier,
         formData,
-        config: assemblyConfig,
+        config: assemblyUploadConfig,
       })
         .then(() => {
           notification.success({
-            message: "Successfully uploaded fasta files",
+            message: i18n("SampleFiles.successfullyUploaded", "assembly"),
           });
           getSampleFiles();
         })
         .catch((error) => {
           notification.error({
-            message: "There was an error uploading the fasta files",
+            message: i18n("SampleFiles.uploadError", "assembly"),
           });
         });
     }
 
     if (fast5Files.length) {
-      const fast5Config = {
+      const fast5UploadConfig = {
         headers: { "content-type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
-          setFast5Progress(
-            (progressEvent.loaded / progressEvent.total) * 100.0
-          );
           if (progressEvent.loaded === progressEvent.total) {
             setFast5Files([]);
+            setFast5Progress(0);
+          } else {
+            setFast5Progress(
+              (progressEvent.loaded / progressEvent.total) * 100.0
+            );
           }
         },
       };
@@ -154,24 +180,24 @@ export function SampleFiles() {
       uploadFast5Files({
         sampleId: sample.identifier,
         formData,
-        config: fast5Config,
+        config: fast5UploadConfig,
       })
         .then(() => {
           notification.success({
-            message: "Successfully uploaded fast5 files",
+            message: i18n("SampleFiles.successfullyUploaded", "fast5"),
           });
           getSampleFiles();
         })
         .catch((error) => {
           notification.error({
-            message: "There was an error uploading the fast5 files",
+            message: i18n("SampleFiles.uploadError", "fast5"),
           });
         });
     }
   };
 
   // Options for DragUpload component
-  const options = {
+  const sampleFileUploadOptions = {
     multiple: true,
     showUploadList: false,
     accept: acceptedFileTypes,
@@ -230,7 +256,9 @@ export function SampleFiles() {
     },
   };
 
-  // Download sequence files
+  /*
+  Download sequence files (paired, single, fast5)
+   */
   const downloadSequenceFile = ({ sequencingObjectId, sequenceFileId }) => {
     notification.success({
       message: i18n("SampleFiles.startingSequenceFileDownload"),
@@ -238,7 +266,9 @@ export function SampleFiles() {
     downloadSequencingObjectFile({ sequencingObjectId, sequenceFileId });
   };
 
-  // Download genome assembly files
+  /*
+   Download genome assembly files
+   */
   const downloadAssemblyFile = ({ sampleId, genomeAssemblyId }) => {
     notification.success({
       message: i18n("SampleFiles.startingAssemblyDownload"),
@@ -246,7 +276,9 @@ export function SampleFiles() {
     downloadGenomeAssemblyFile({ sampleId, genomeAssemblyId });
   };
 
-  // Remove sequencingobjects and/or genomeassembly objects from sample
+  /*
+  Remove sequencingobjects and/or genomeassembly objects from sample
+   */
   const removeSampleFiles = ({ fileObjectId, type }) => {
     removeSampleFilesFromSample({
       sampleId: sample.identifier,
@@ -270,37 +302,86 @@ export function SampleFiles() {
         className="t-upload-sample-files"
         uploadText={i18n("SampleFiles.uploadText")}
         uploadHint={i18n("SampleFiles.uploadHint")}
-        options={options}
+        options={sampleFileUploadOptions}
       />
-      {filesToUpload.length ? (
+      {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
         <div>
-          <Button type="primary" onClick={() => uploadFiles()}>
-            Start Upload
-          </Button>
           <div>
-            {sequenceFiles.length ? (
-              <span>
-                Sequence file upload Progress: <Progress percent={progress} />
-              </span>
-            ) : null}
-            {assemblyFiles.length ? (
-              <span>
-                Assembly file upload Progress:{" "}
-                <Progress percent={assemblyProgress} />
-              </span>
-            ) : null}
-            {fast5Files.length ? (
-              <span>
-                Fast5 file upload Progress: <Progress percent={fast5Progress} />
-              </span>
-            ) : null}
+            <WarningAlert
+              message={i18n("SampleFiles.doNotCloseWindowWarning")}
+            />
+            <div>
+              {sequenceFiles.length ? (
+                <span>
+                  {i18n("SampleFiles.uploadProgress", "Sequence")}
+                  :
+                  <Progress percent={seqFileprogress} />
+                  <Collapse>
+                    <Panel
+                      header={i18n("SampleFiles.filesUploading", "Sequence")}
+                      key="1"
+                    >
+                      <List split={false}>
+                        {sequenceFiles.map((currFile, index) => {
+                          return (
+                            <List.Item key={`seq-file-${index}`}>
+                              - {currFile.name}
+                            </List.Item>
+                          );
+                        })}
+                      </List>
+                    </Panel>
+                  </Collapse>
+                </span>
+              ) : null}
+              {assemblyFiles.length ? (
+                <span>
+                  {i18n("SampleFiles.uploadProgress", "Assembly")}
+                  :
+                  <Progress percent={assemblyProgress} />
+                  <Collapse>
+                    <Panel
+                      header={i18n("SampleFiles.filesUploading", "Assembly")}
+                      key="1"
+                    >
+                      <List split={false}>
+                        {assemblyFiles.map((currFile, index) => {
+                          return (
+                            <List.Item key={`assembly-file-${index}`}>
+                              - {currFile.name}
+                            </List.Item>
+                          );
+                        })}
+                      </List>
+                    </Panel>
+                  </Collapse>
+                </span>
+              ) : null}
+              {fast5Files.length ? (
+                <span>
+                  {i18n("SampleFiles.uploadProgress", "Fast5")}
+                  :
+                  <Progress percent={fast5Progress} />
+                  <Collapse>
+                    <Panel
+                      header={i18n("SampleFiles.filesUploading", "Fast5")}
+                      key="1"
+                    >
+                      <List split={false}>
+                        {fast5Files.map((currFile, index) => {
+                          return (
+                            <List.Item key={`fast5-file-${index}`}>
+                              - {currFile.name}
+                            </List.Item>
+                          );
+                        })}
+                      </List>
+                    </Panel>
+                  </Collapse>
+                </span>
+              ) : null}
+            </div>
           </div>
-          Files to upload to sample:
-          <List split={false}>
-            {filesToUpload.map((currFile) => {
-              return <List.Item>- {currFile.name}</List.Item>;
-            })}
-          </List>
         </div>
       ) : null}
 
