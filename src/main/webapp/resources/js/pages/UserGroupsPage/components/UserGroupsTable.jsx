@@ -15,6 +15,7 @@ const { Paragraph } = Typography;
  * @constructor
  */
 export function UserGroupsTable({ baseUrl }) {
+  console.log(baseUrl);
   const columns = [
     {
       title: i18n("UserGroupsTable.name"),

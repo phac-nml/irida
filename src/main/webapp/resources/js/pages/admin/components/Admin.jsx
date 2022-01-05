@@ -75,7 +75,11 @@ export default function Admin() {
 
                 <Route
                   path={`${ADMIN.USERGROUPS}/list`}
-                  element={<UserGroupsPage />}
+                  element={
+                    <UserGroupsPage
+                      baseUrl={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}
+                    />
+                  }
                 />
                 <Route
                   path={`${ADMIN.USERGROUPS}/:id`}
