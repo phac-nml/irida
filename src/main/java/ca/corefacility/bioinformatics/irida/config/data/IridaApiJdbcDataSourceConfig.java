@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
 import liquibase.integration.spring.SpringLiquibase;
+import liquibase.integration.spring.SpringResourceAccessor;
+
 import org.hibernate.cfg.AvailableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
@@ -43,17 +46,17 @@ public class IridaApiJdbcDataSourceConfig {
 		}
 
 		@Override
-		protected SpringResourceOpener createResourceOpener() {
-			return new ApplicationContextSpringResourceOpener(getChangeLog());
+		protected SpringResourceAccessor createResourceOpener() {
+			return new ApplicationContextSpringResourceOpener(resourceLoader);
 		}
 		
 		/**
 		 * Custom SpringResourceOpener that gives access to the application context.
 		 *
 		 */
-		public class ApplicationContextSpringResourceOpener extends SpringResourceOpener {
-			public ApplicationContextSpringResourceOpener(final String parentFile) {
-				super(parentFile);
+		public class ApplicationContextSpringResourceOpener extends SpringResourceAccessor {
+			public ApplicationContextSpringResourceOpener(final ResourceLoader resourceLoader) {
+				super(resourceLoader);
 			}
 			
 			public ApplicationContext getApplicationContext() {
@@ -102,7 +105,6 @@ public class IridaApiJdbcDataSourceConfig {
 		}
 
 		springLiquibase.setShouldRun(liquibaseShouldRun);
-		springLiquibase.setIgnoreClasspathPrefix(true);
 
 		return springLiquibase;
 	}

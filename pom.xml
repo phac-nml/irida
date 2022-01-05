@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.5.RELEASE</version>
+		<version>2.2.13.RELEASE</version>
 		<relativePath/>
 	</parent>
 	<groupId>ca.corefacility.bioinformatics</groupId>
@@ -117,6 +117,10 @@
 					<artifactId>log4j-to-slf4j</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
 		<!-- Security -->
@@ -941,12 +945,13 @@
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.3.0</spring.test.dbunit.version>
 		<dbunit.version>2.7.2</dbunit.version>
+		<commons.dbcp.version>2.9.0</commons.dbcp.version>
 		<commons.net.version>3.6</commons.net.version>
 		<fastqc.version>0.11.9-nml-custom</fastqc.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>4.3.2</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
-		<liquibase.version>3.5.1</liquibase.version>
+		<liquibase.version>4.3.5</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
@@ -957,7 +962,6 @@
 		<mockftpserver.version>2.6</mockftpserver.version>
 		<jvm-breakglass.version>0.0.8</jvm-breakglass.version>
 		<pf4j.version>2.4.0</pf4j.version>
-		<javax.activation.version>1.2.0</javax.activation.version>
 		<com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
 		<org.springdoc.openapi.webmvc.version>1.5.6</org.springdoc.openapi.webmvc.version>
 
