@@ -484,6 +484,7 @@ public class UISampleService {
 	 * @param sampleId         Identifier for a sample
 	 * @param genomeAssemblyId Identifier for the genome assembly
 	 * @param response         {@link HttpServletResponse}
+	 * @throws IOException if the file cannot be read
 	 */
 	public void downloadAssembly(Long sampleId, Long genomeAssemblyId, HttpServletResponse response)
 			throws IOException {

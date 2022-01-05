@@ -300,6 +300,7 @@ public class SamplesAjaxController {
 	 * @param sampleId         Identifier for a sample
 	 * @param genomeAssemblyId Identifier for the genome assembly
 	 * @param response         {@link HttpServletResponse}
+	 * @throws IOException if the file cannot be read
 	 */
 	@GetMapping("/{sampleId}/assembly/download")
 	public void downloadAssembly(@PathVariable Long sampleId, @RequestParam Long genomeAssemblyId,
