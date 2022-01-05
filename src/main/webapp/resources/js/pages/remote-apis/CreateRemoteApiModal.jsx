@@ -121,7 +121,7 @@ export function CreateRemoteApiModal({ children }) {
                 message: i18n("remoteapi.serviceurl.required"),
               },
               {
-                pattern: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+                type: "url",
                 message: i18n("remoteapi.serviceurl.url"),
               },
             ]}

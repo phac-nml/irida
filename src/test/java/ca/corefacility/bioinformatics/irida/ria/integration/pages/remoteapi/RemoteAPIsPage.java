@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import com.google.common.base.Strings;
 
 public class RemoteAPIsPage extends AbstractPage {
-	private static final String RELATIVE_URL = "remote_api";
+	private static final String RELATIVE_URL = "admin/remote_api";
 
 	@FindBy(css = ".t-remoteapi-table table")
 	private WebElement table;
@@ -105,5 +105,11 @@ public class RemoteAPIsPage extends AbstractPage {
 		return errorAlerts.stream()
 				.map(WebElement::getText)
 				.collect(Collectors.toUnmodifiableList());
+	}
+
+	public void createRemoteApi(String name, String clientId, String clientSecret, String serviceURI) {
+		openAddRemoteModal();
+		enterApiDetails(name, clientId, clientSecret, serviceURI);
+		submitCreateForm();
 	}
 }

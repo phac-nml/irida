@@ -73,7 +73,6 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		deleteButton.click();
 		wait.until(ExpectedConditions.visibilityOf(deleteConfirmButton));
 		deleteConfirmButton.click();
-		String foobar;
 	}
 
 	public void confirmDelete() {
