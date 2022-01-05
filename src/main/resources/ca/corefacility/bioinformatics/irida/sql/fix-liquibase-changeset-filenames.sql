@@ -1,0 +1,3 @@
+UPDATE DATABASECHANGELOG
+SET FILENAME = TRIM("classpath:" from FILENAME)
+WHERE FILENAME like "classpath:%";

@@ -12,7 +12,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.init.ScriptException;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
@@ -102,10 +107,33 @@ public class IridaApiJdbcDataSourceConfig {
 						+ "]");
 			}
 			liquibaseShouldRun = Boolean.FALSE;
+		} else {
+			logger.info("Removing 'classpath:' prefix from FILENAME column in DATABASECHANGELOG table.");
+			fixLiquibaseChangeSetFilenames(dataSource);
 		}
 
 		springLiquibase.setShouldRun(liquibaseShouldRun);
 
 		return springLiquibase;
+	}
+
+	/**
+	 * Method to execute sql before liquibase initializes DB to strip `classpath:`
+	 * prefix from FILENAME column in DATABASECHANGELOG table. Fixes issue where
+	 * liquibase 3.5.1 was including prefix when run through spring but not via
+	 * command line. (https://liquibase.jira.com/browse/CORE-2766)
+	 * 
+	 * @param dataSource
+	 * @throws ScriptException
+	 */
+	private void fixLiquibaseChangeSetFilenames(DataSource dataSource) throws ScriptException {
+		ResourceLoader resourceLoader = new DefaultResourceLoader();
+		Resource sqlScript = resourceLoader.getResource("classpath:ca/corefacility/bioinformatics/irida/sql/fix-liquibase-changeset-filenames.sql");
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.setContinueOnError(false);
+		populator.setSeparator(";");
+		populator.setSqlScriptEncoding("utf-8");
+		populator.addScript(sqlScript);
+		DatabasePopulatorUtils.execute(populator, dataSource);
 	}
 }
