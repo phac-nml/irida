@@ -86,14 +86,29 @@ export function CreateRemoteApiModal({ children }) {
           <Form.Item
             name="clientId"
             label={i18n("remoteapi.clientid")}
-            rules={[{ required: true }, { pattern: /^\S+$/g }]}
+            rules={[
+              { required: true, message: i18n("remoteapi.clientid.required") },
+              {
+                pattern: /^\S+$/g,
+                message: i18n("remoteapi.clientid.no-spaces"),
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="clientSecret"
             label={i18n("remoteapi.details.secret")}
-            rules={[{ required: true }, { pattern: /^\S+$/g }]}
+            rules={[
+              {
+                required: true,
+                message: i18n("remoteapi.details.secret.required"),
+              },
+              {
+                pattern: /^\S+$/g,
+                message: i18n("remoteapi.details.secret.no-spaces"),
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -101,9 +116,13 @@ export function CreateRemoteApiModal({ children }) {
             name="serviceURI"
             label={i18n("remoteapi.serviceurl")}
             rules={[
-              { required: true },
+              {
+                required: true,
+                message: i18n("remoteapi.serviceurl.required"),
+              },
               {
                 pattern: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+                message: i18n("remoteapi.serviceurl.url"),
               },
             ]}
           >
