@@ -162,7 +162,7 @@ public class UIUsersService {
 	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
 		Map<String, Object> updatedValues = new HashMap<>();
-		List<UserDetailsError> errors = new ArrayList<>();
+		Map<String, String> errors = new HashMap<>();
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
 			updatedValues.put("firstName", userEditRequest.getFirstName());
@@ -221,8 +221,8 @@ public class UIUsersService {
 	 * @param locale The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
-	private List<UserDetailsError> handleCreateUpdateException(Exception ex, Locale locale) {
-		List<UserDetailsError> errors = new ArrayList<>();
+	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
 		if (ex instanceof ConstraintViolationException) {
 			ConstraintViolationException cvx = (ConstraintViolationException) ex;
 			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
@@ -230,21 +230,19 @@ public class UIUsersService {
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				String errorKey = violation.getPropertyPath()
 						.toString();
-				errors.add(new UserDetailsError(errorKey, violation.getMessage()));
+				errors.put(errorKey, violation.getMessage());
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.add(new UserDetailsError("email",
-						messageSource.getMessage("user.edit.emailConflict", null, locale)));
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
-			errors.add(new UserDetailsError(eex.getFieldName(), eex.getMessage()));
+			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.add(new UserDetailsError("password",
-					messageSource.getMessage("user.edit.passwordReused", null, locale)));
+			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
 		}
 
 		return errors;

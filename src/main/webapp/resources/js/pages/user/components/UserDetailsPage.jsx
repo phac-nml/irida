@@ -27,16 +27,7 @@ export default function UserDetailsPage() {
   const { userId } = useParams();
   const { data: userDetails, isLoading } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
-
-  const [formErrors, setFormErrors] = useState();
-
-  const getError = (fieldName, message) => {
-    if (message) {
-      return formErrors?.find((error) => error.field === fieldName)?.message;
-    } else {
-      return formErrors?.filter((error) => error.field === fieldName).length > 0;
-    }
-  };
+  const [form] = Form.useForm();
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
@@ -50,7 +41,11 @@ export default function UserDetailsPage() {
         notification.error({
           message: i18n("UserDetailsPage.notification.error"),
         });
-        setFormErrors(error.data);
+        const fields = Object.entries(error.data).map(([field, error]) => ({
+          name: field,
+          errors: [error],
+        }));
+        form.setFields(fields);
       });
   };
 
@@ -64,6 +59,7 @@ export default function UserDetailsPage() {
             {userDetails.user.username}
           </Typography.Title>
           <Form
+            form={form}
             layout="vertical"
             initialValues={userDetails.user}
             onFinish={onFormFinish}
@@ -71,36 +67,24 @@ export default function UserDetailsPage() {
             <Form.Item
               label={i18n("UserDetailsPage.form.label.firstName")}
               name="firstName"
-              help={getError("firstName", true)}
-              validateStatus={
-                getError("firstName", false) ? "error" : undefined
-              }
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.lastName")}
               name="lastName"
-              help={getError("lastName", true)}
-              validateStatus={getError("lastName", false) ? "error" : undefined}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.email")}
               name="email"
-              help={getError("email", true)}
-              validateStatus={getError("email", false) ? "error" : undefined}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label={i18n("UserDetailsPage.form.label.phoneNumber")}
               name="phoneNumber"
-              help={getError("phoneNumber", true)}
-              validateStatus={
-                getError("phoneNumber", false) ? "error" : undefined
-              }
             >
               <Input />
             </Form.Item>
@@ -122,8 +106,6 @@ export default function UserDetailsPage() {
             <Form.Item
               label={i18n("UserDetailsPage.form.label.role")}
               name="role"
-              help={getError("role", true)}
-              validateStatus={getError("role", false) ? "error" : undefined}
               hidden={!userDetails.admin}
             >
               <Select>
