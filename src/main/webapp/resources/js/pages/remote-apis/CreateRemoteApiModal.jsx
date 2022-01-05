@@ -55,7 +55,7 @@ export function CreateRemoteApiModal({ children }) {
       })}
       <Modal
         className="t-create-api"
-        title={`Add Remote Connection`}
+        title={i18n("remoteapi.add")}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={submitForm}
