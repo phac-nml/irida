@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -126,7 +127,7 @@ public class UIUsersService {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Locale locale = LocaleContextHolder.getLocale();
 		Boolean mailConfigured = emailController.isMailConfigured();
-		boolean isAdmin = isAdmin(principal);
+		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
@@ -161,6 +162,7 @@ public class UIUsersService {
 	 */
 	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
+		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
 
@@ -184,7 +186,7 @@ public class UIUsersService {
 			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
 
-		if (isAdmin(principal)) {
+		if (RoleUtilities.isAdmin(principalUser)) {
 			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
 				updatedValues.put("enabled", userEditRequest.getEnabled());
 			}
@@ -278,15 +280,4 @@ public class UIUsersService {
 		return !(principalAdmin && usersEqual);
 	}
 
-	/**
-	 * Check if the logged in user is an Admin
-	 *
-	 * @param principal The logged in user to check
-	 * @return if the user is an admin
-	 */
-	private boolean isAdmin(Principal principal) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return readPrincipal.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
-	}
 }
