@@ -107,10 +107,7 @@ export function MainNavigation() {
           )}
           {isAdmin && (
             <Menu.Item key="admin:link">
-              <a
-                className="t-admin-panel-btn"
-                href={setBaseUrl("/admin/statistics")}
-              >
+              <a className="t-admin-panel-btn" href={setBaseUrl("/admin")}>
                 {i18n("MainNavigation.admin").toUpperCase()}
               </a>
             </Menu.Item>

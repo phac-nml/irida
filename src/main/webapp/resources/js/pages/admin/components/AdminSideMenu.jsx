@@ -45,7 +45,7 @@ export default function AdminHeader() {
         >
           <Menu.Item key="statistics">
             <Link
-              to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}
+              to={`${DEFAULT_URL}`}
               onClick={() => setSelectedKeys("statistics")}
               className={"t-admin-statistics-link"}
             >
