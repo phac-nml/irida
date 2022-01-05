@@ -44,5 +44,11 @@ public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.openAddRemoteModal();
 		page.enterApiDetails("FOOBAR", "", "FLDSK", "https://example.com");
+		page.submitCreateFormWithErrors();
+
+		assertEquals("Should contain 1 error", 1, page.getCreateErrors().size());
+		page.enterApiDetails("FOOBAR", "32dsrf32rsdf3w323", "FLDSK", "https://example.com");
+		page.submitCreateFormAndWait();
+		assertEquals("Should be 3 clients in table", 3, page.remoteApisTableSize());
 	}
 }

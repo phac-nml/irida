@@ -59,6 +59,9 @@ export function CreateRemoteApiModal({ children }) {
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={submitForm}
+        okButtonProps={{
+          className: "t-submit-btn",
+        }}
       >
         <Form
           form={form}

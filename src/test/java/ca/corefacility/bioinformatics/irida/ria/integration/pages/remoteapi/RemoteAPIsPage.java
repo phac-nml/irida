@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -37,6 +38,12 @@ public class RemoteAPIsPage extends AbstractPage {
 
 	@FindBy(id = "remote_api_serviceURI")
 	private WebElement serviceURIInput;
+
+	@FindBy(className = "t-submit-btn")
+	private WebElement submitCreateRemoteBtn;
+
+	@FindBy(css = ".ant-form-item-explain div[role=\"alert\"]")
+	private List<WebElement> errorAlerts;
 
 	public RemoteAPIsPage(WebDriver driver) {
 		super(driver);
@@ -80,5 +87,23 @@ public class RemoteAPIsPage extends AbstractPage {
 		clientIdInput.sendKeys(clientId);
 		clientSecretInput.sendKeys(clientSecret);
 		serviceURIInput.sendKeys(serviceURI);
+	}
+
+	public void submitCreateFormWithErrors() {
+		submitCreateRemoteBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ant-form-item-explain.ant-form-item-explain-error")));
+	}
+
+	public void submitCreateFormAndWait() {
+		submitCreateRemoteBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.invisibilityOf(addRemoteModal));
+	}
+
+	public List<String> getCreateErrors() {
+		return errorAlerts.stream()
+				.map(WebElement::getText)
+				.collect(Collectors.toUnmodifiableList());
 	}
 }
