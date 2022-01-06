@@ -145,10 +145,7 @@ export default function UserGroupDetailsPage({ baseUrl }) {
   );
 
   return (
-    <PageWrapper
-      title={"User Groups"}
-      onBack={() => navigate(baseUrl, { replace: true })}
-    >
+    <PageWrapper title={"User Groups"} onBack={() => navigate(-1)}>
       <Tabs
         defaultActiveKey="details"
         tabPosition="left"
