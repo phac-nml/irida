@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+ca.corefacility.bioinformatics.irida.config.environment.IridaEnvironmentPostProcessor
