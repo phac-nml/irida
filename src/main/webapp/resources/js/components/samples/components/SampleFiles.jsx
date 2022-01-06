@@ -1,31 +1,25 @@
 import React from "react";
-import { Collapse, Empty, List, notification, Progress, Space } from "antd";
+import { Empty, notification, Space } from "antd";
 import { IconLoading } from "../../icons/Icons";
-import {
-  downloadGenomeAssemblyFile,
-  downloadSequencingObjectFile,
-  fetchSampleFiles,
-  useRemoveSampleFilesMutation,
-} from "../../../apis/samples/samples";
-import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
-import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
-import { SingleEndFileRenderer } from "../../sequence-files/SingleEndFileRenderer";
+import { WarningAlert } from "../../alerts";
+
 import { DragUpload } from "../../files/DragUpload";
+import { SequenceFileUploadProgress } from "./upload-progress/SequenceFileUploadProgress";
+import { AssemblyFileUploadProgress } from "./upload-progress/AssemblyFileUploadProgress";
+import { Fast5FileUploadProgress } from "./upload-progress/Fast5FileUploadProgress";
+import { SampleFileList } from "./SampleFileList";
 import { useDispatch, useSelector } from "react-redux";
+import { setSampleFiles } from "../sampleFilesSlice";
+
 import {
-  removeFileObjectFromSample,
-  setSampleFiles,
-} from "../sampleFilesSlice";
-import {
+  fetchSampleFiles,
   uploadSequenceFiles,
   uploadAssemblyFiles,
   uploadFast5Files,
 } from "../../../apis/samples/samples";
-import { WarningAlert } from "../../alerts";
-const { Panel } = Collapse;
 
 /**
- * React component to display, remove, download, and upload sample files
+ * React component to display sample files and upload files to sample
  *
  * @returns {JSX.Element}
  * @constructor
@@ -35,9 +29,7 @@ export function SampleFiles() {
   const { files, loading } = useSelector((state) => state.sampleFilesReducer);
   const dispatch = useDispatch();
 
-  const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
-
-  const [seqFileprogress, setSeqFileProgress] = React.useState(0);
+  const [seqFileProgress, setSeqFileProgress] = React.useState(0);
   const [assemblyProgress, setAssemblyProgress] = React.useState(0);
   const [fast5Progress, setFast5Progress] = React.useState(0);
 
@@ -256,44 +248,6 @@ export function SampleFiles() {
     },
   };
 
-  /*
-  Download sequence files (paired, single, fast5)
-   */
-  const downloadSequenceFile = ({ sequencingObjectId, sequenceFileId }) => {
-    notification.success({
-      message: i18n("SampleFiles.startingSequenceFileDownload"),
-    });
-    downloadSequencingObjectFile({ sequencingObjectId, sequenceFileId });
-  };
-
-  /*
-   Download genome assembly files
-   */
-  const downloadAssemblyFile = ({ sampleId, genomeAssemblyId }) => {
-    notification.success({
-      message: i18n("SampleFiles.startingAssemblyDownload"),
-    });
-    downloadGenomeAssemblyFile({ sampleId, genomeAssemblyId });
-  };
-
-  /*
-  Remove sequencingobjects and/or genomeassembly objects from sample
-   */
-  const removeSampleFiles = ({ fileObjectId, type }) => {
-    removeSampleFilesFromSample({
-      sampleId: sample.identifier,
-      fileObjectId,
-      type,
-    })
-      .then(({ data }) => {
-        notification.success({ message: data.message });
-        dispatch(removeFileObjectFromSample({ fileObjectId, type }));
-      })
-      .catch((error) => {
-        notification.error({ message: error });
-      });
-  };
-
   return loading ? (
     <IconLoading />
   ) : (
@@ -312,73 +266,22 @@ export function SampleFiles() {
             />
             <div>
               {sequenceFiles.length ? (
-                <span>
-                  {i18n("SampleFiles.uploadProgress", "Sequence")}
-                  :
-                  <Progress percent={seqFileprogress} />
-                  <Collapse>
-                    <Panel
-                      header={i18n("SampleFiles.filesUploading", "Sequence")}
-                      key="1"
-                    >
-                      <List split={false}>
-                        {sequenceFiles.map((currFile, index) => {
-                          return (
-                            <List.Item key={`seq-file-${index}`}>
-                              - {currFile.name}
-                            </List.Item>
-                          );
-                        })}
-                      </List>
-                    </Panel>
-                  </Collapse>
-                </span>
+                <SequenceFileUploadProgress
+                  sequenceFiles={sequenceFiles}
+                  seqFileProgress={seqFileProgress}
+                />
               ) : null}
               {assemblyFiles.length ? (
-                <span>
-                  {i18n("SampleFiles.uploadProgress", "Assembly")}
-                  :
-                  <Progress percent={assemblyProgress} />
-                  <Collapse>
-                    <Panel
-                      header={i18n("SampleFiles.filesUploading", "Assembly")}
-                      key="1"
-                    >
-                      <List split={false}>
-                        {assemblyFiles.map((currFile, index) => {
-                          return (
-                            <List.Item key={`assembly-file-${index}`}>
-                              - {currFile.name}
-                            </List.Item>
-                          );
-                        })}
-                      </List>
-                    </Panel>
-                  </Collapse>
-                </span>
+                <AssemblyFileUploadProgress
+                  assemblyFiles={assemblyFiles}
+                  assemblyProgress={assemblyProgress}
+                />
               ) : null}
               {fast5Files.length ? (
-                <span>
-                  {i18n("SampleFiles.uploadProgress", "Fast5")}
-                  :
-                  <Progress percent={fast5Progress} />
-                  <Collapse>
-                    <Panel
-                      header={i18n("SampleFiles.filesUploading", "Fast5")}
-                      key="1"
-                    >
-                      <List split={false}>
-                        {fast5Files.map((currFile, index) => {
-                          return (
-                            <List.Item key={`fast5-file-${index}`}>
-                              - {currFile.name}
-                            </List.Item>
-                          );
-                        })}
-                      </List>
-                    </Panel>
-                  </Collapse>
-                </span>
+                <Fast5FileUploadProgress
+                  fast5Files={fast5Files}
+                  fast5Progress={fast5Progress}
+                />
               ) : null}
             </div>
           </div>
@@ -386,54 +289,7 @@ export function SampleFiles() {
       ) : null}
 
       {Object.keys(files).length !== 0 ? (
-        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-          <Space size="large" direction="vertical" style={{ width: `100%` }}>
-            {files.singles && (
-              <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-                <SingleEndFileRenderer
-                  files={files.singles}
-                  sampleId={sample.identifier}
-                  downloadSequenceFile={downloadSequenceFile}
-                  removeSampleFiles={removeSampleFiles}
-                />
-              </SequenceFileTypeRenderer>
-            )}
-            {files.paired && (
-              <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
-                {files.paired.map((pair) => (
-                  <PairedFileRenderer
-                    key={`pair-${pair.identifier}`}
-                    pair={pair}
-                    sampleId={sample.identifier}
-                    downloadSequenceFile={downloadSequenceFile}
-                    removeSampleFiles={removeSampleFiles}
-                  />
-                ))}
-              </SequenceFileTypeRenderer>
-            )}
-            {files.fast5 && (
-              <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-                <SingleEndFileRenderer
-                  files={files.fast5}
-                  sampleId={sample.identifier}
-                  downloadSequenceFile={downloadSequenceFile}
-                  removeSampleFiles={removeSampleFiles}
-                />
-              </SequenceFileTypeRenderer>
-            )}
-            {files.assemblies && (
-              <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-                <SingleEndFileRenderer
-                  files={files.assemblies}
-                  fastqcResults={false}
-                  sampleId={sample.identifier}
-                  downloadAssemblyFile={downloadAssemblyFile}
-                  removeSampleFiles={removeSampleFiles}
-                />
-              </SequenceFileTypeRenderer>
-            )}
-          </Space>
-        </div>
+        <SampleFileList files={files} sampleId={sample.identifier} />
       ) : (
         <Empty description={i18n("SampleFiles.no-files")} />
       )}
