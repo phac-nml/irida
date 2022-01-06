@@ -25,14 +25,14 @@
 		<developer>
 			<id>eric</id>
 			<name>Eric Enns</name>
-			<email>eric.enns@canada.ca</email>
+			<email>eric.enns@phac-aspc.gc.ca</email>
 			<organization>Public Health Agency of Canada</organization>
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>aaron</id>
 			<name>Aaron Petkau</name>
-			<email>aaron.petkau@canada.ca</email>
+			<email>aaron.petkau@phac-aspc.gc.ca</email>
 			<organization>Public Health Agency of Canada</organization>
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
