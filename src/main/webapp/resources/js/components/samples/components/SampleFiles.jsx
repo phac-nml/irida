@@ -4,9 +4,7 @@ import { IconLoading } from "../../icons/Icons";
 import { WarningAlert } from "../../alerts";
 
 import { DragUpload } from "../../files/DragUpload";
-import { SequenceFileUploadProgress } from "./upload-progress/SequenceFileUploadProgress";
-import { AssemblyFileUploadProgress } from "./upload-progress/AssemblyFileUploadProgress";
-import { Fast5FileUploadProgress } from "./upload-progress/Fast5FileUploadProgress";
+import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
 import { SampleFileList } from "./SampleFileList";
 import { useDispatch, useSelector } from "react-redux";
 import { setSampleFiles } from "../sampleFilesSlice";
@@ -17,6 +15,7 @@ import {
   uploadAssemblyFiles,
   uploadFast5Files,
 } from "../../../apis/samples/samples";
+import { SPACE_MD } from "../../../styles/spacing";
 
 /**
  * React component to display sample files and upload files to sample
@@ -267,24 +266,28 @@ export function SampleFiles() {
           <div>
             <WarningAlert
               message={i18n("SampleFiles.doNotCloseWindowWarning")}
+              style={{ marginBottom: SPACE_MD }}
             />
             <div>
               {sequenceFiles.length ? (
-                <SequenceFileUploadProgress
-                  sequenceFiles={sequenceFiles}
-                  seqFileProgress={seqFileProgress}
+                <FileUploadProgress
+                  files={sequenceFiles}
+                  uploadProgress={seqFileProgress}
+                  type="Sequence"
                 />
               ) : null}
               {assemblyFiles.length ? (
-                <AssemblyFileUploadProgress
-                  assemblyFiles={assemblyFiles}
-                  assemblyProgress={assemblyProgress}
+                <FileUploadProgress
+                  files={assemblyFiles}
+                  uploadProgress={assemblyProgress}
+                  type="Assembly"
                 />
               ) : null}
               {fast5Files.length ? (
-                <Fast5FileUploadProgress
-                  fast5Files={fast5Files}
-                  fast5Progress={fast5Progress}
+                <FileUploadProgress
+                  files={fast5Files}
+                  uploadProgress={fast5Progress}
+                  type="Fast5"
                 />
               ) : null}
             </div>
