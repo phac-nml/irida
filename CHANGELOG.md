@@ -13,6 +13,7 @@ Changes
 * [UI]: Added capability to share/move samples between projects from the line list page.
 * [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
 * [Developer]: Upgraded Spring Hateoas to 1.0.3.RELEASE
+* [UI]: Updated Create Remote Api to use Ant Design.
 
 21.05 to 21.09
 --------------
@@ -40,6 +41,7 @@ Changes
 * [Developer]: Updated chromedriver to v93.0.1.
 * [Database]: Updated query to improve performance for metadata in REST API and line list.
 * [UI]: Fixed bug when exporting samples from project > samples page while using filter by file, all sample were exported.
+
 
 21.01 to 21.05
 --------------
