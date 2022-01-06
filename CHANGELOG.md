@@ -4,6 +4,7 @@ Changes
 21.09 to 22.01
 --------------
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [All]: Updated some dependency packages to latest versions to remove any `Critical|High` issues as reported by Grype <https://github.com/anchore/grype>. (21.09.2)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 * [Developer]: Updated `antd` to version 4.16.13
 * [Developer/UI]: Refreshed the metadata uploader.
