@@ -977,6 +977,7 @@
 		<maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
 		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.7.1</maven.site.plugin.version>
+		<maven-resources-plugin.version>2.6</maven-resources-plugin.version>
 		<errorprone.version>2.5</errorprone.version>
 		<frontend-maven-plugin.version>1.11.2</frontend-maven-plugin.version>
 		<node.version>v14.16.0</node.version>
