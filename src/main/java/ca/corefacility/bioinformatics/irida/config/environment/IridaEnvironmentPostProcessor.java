@@ -13,14 +13,15 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 
+/**
+ * EnvironmentPostProcessor to translate deprecated properties into valid properties.
+ */
 public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
     /**
      * The default order for the processor.
      */
-    public static final int DEFAULT_ORDER = Ordered.LOWEST_PRECEDENCE;
-
-    private int order = DEFAULT_ORDER;
+    public static final int ORDER = Ordered.LOWEST_PRECEDENCE;
 
     private final Log logger;
 
@@ -33,16 +34,12 @@ public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, 
         translateDeprecatedProperties(environment);
     }
 
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
     @Override
     public int getOrder() {
-        return order;
+        return ORDER;
     }
 
-    public void translateDeprecatedProperties(ConfigurableEnvironment env) {
+    private void translateDeprecatedProperties(ConfigurableEnvironment env) {
 		ImmutableMap<String, String> deprecatedPropertiesMap = ImmutableMap.<String, String>builder()
 			.put("jdbc.url", "spring.datasource.url")
 			.put("jdbc.username", "spring.datasource.username")
