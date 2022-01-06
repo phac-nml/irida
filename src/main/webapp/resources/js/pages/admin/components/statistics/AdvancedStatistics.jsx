@@ -84,7 +84,7 @@ export default function AdvancedStatistics() {
     <>
       <PageHeader
         title={TITLES[params.statType]}
-        onBack={() => navigate(setBaseUrl(`/admin/statistics`))}
+        onBack={() => navigate(setBaseUrl(`/admin`))}
       />
       <Card style={{ margin: SPACE_LG }}>
         <Form
