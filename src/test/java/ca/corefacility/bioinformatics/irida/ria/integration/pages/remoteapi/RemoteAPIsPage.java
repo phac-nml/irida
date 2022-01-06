@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -55,6 +56,11 @@ public class RemoteAPIsPage extends AbstractPage {
 		return PageFactory.initElements(driver, RemoteAPIsPage.class);
 	}
 
+	public static RemoteAPIsPage goToUserPage(WebDriver driver) {
+		get(driver, RELATIVE_URL);
+		return PageFactory.initElements(driver, RemoteAPIsPage.class);
+	}
+
 	public int remoteApisTableSize() {
 		return table.findElements(By.className("ant-table-row")).size();
 	}
@@ -83,9 +89,13 @@ public class RemoteAPIsPage extends AbstractPage {
 	}
 
 	public void enterApiDetails(String name, String clientId, String clientSecret, String serviceURI) {
+		nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		nameInput.sendKeys(name);
+		clientIdInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		clientIdInput.sendKeys(clientId);
+		clientSecretInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		clientSecretInput.sendKeys(clientSecret);
+		serviceURIInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		serviceURIInput.sendKeys(serviceURI);
 	}
 
