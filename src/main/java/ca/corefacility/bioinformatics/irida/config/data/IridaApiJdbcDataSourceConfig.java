@@ -92,6 +92,7 @@ public class IridaApiJdbcDataSourceConfig {
 		final String importFiles = environment.getProperty(AvailableSettings.HBM2DDL_IMPORT_FILES);
 		final String hbm2ddlAuto = environment.getProperty(AvailableSettings.HBM2DDL_AUTO);
 		Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
+		Boolean fixLiquibaseChangeSetFilenames = environment.getProperty("fix.liquibase.changeset.filenames", Boolean.class, true);
 
 		if (StringUtils.hasLength(importFiles) || StringUtils.hasLength(hbm2ddlAuto)) {
 			logger.debug("Running hibernate -> not importing SQL file or running Liquibase.");
@@ -107,7 +108,7 @@ public class IridaApiJdbcDataSourceConfig {
 						+ "]");
 			}
 			liquibaseShouldRun = Boolean.FALSE;
-		} else {
+		} else if (fixLiquibaseChangeSetFilenames) {
 			logger.info("Removing 'classpath:' prefix from FILENAME column in DATABASECHANGELOG table.");
 			fixLiquibaseChangeSetFilenames(dataSource);
 		}
@@ -129,11 +130,7 @@ public class IridaApiJdbcDataSourceConfig {
 	private void fixLiquibaseChangeSetFilenames(DataSource dataSource) throws ScriptException {
 		ResourceLoader resourceLoader = new DefaultResourceLoader();
 		Resource sqlScript = resourceLoader.getResource("classpath:ca/corefacility/bioinformatics/irida/sql/fix-liquibase-changeset-filenames.sql");
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		populator.setContinueOnError(false);
-		populator.setSeparator(";");
-		populator.setSqlScriptEncoding("utf-8");
-		populator.addScript(sqlScript);
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator(sqlScript);
 		DatabasePopulatorUtils.execute(populator, dataSource);
 	}
 }
