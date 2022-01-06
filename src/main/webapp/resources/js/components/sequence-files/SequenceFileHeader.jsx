@@ -2,7 +2,7 @@ import React from "react";
 import { CalendarDate } from "../CalendarDate";
 import { Button, Popconfirm } from "antd";
 import { IconRemove } from "../icons/Icons";
-
+import { useSelector } from "react-redux";
 /**
  * React component to display paired end file details
  *
@@ -19,6 +19,8 @@ export function SequenceFileHeader({
   type,
   removeSampleFiles = () => {},
 }) {
+  const { modifiable } = useSelector((state) => state.sampleReducer);
+
   return (
     <div
       style={{
@@ -28,24 +30,26 @@ export function SequenceFileHeader({
       }}
     >
       <CalendarDate date={file.createdDate} />
-      <Popconfirm
-        placement="left"
-        title={
-          type === "assembly"
-            ? i18n("SampleFiles.deleteGenomeAssembly")
-            : i18n("SampleFiles.deleteSequencingObject")
-        }
-        okText={i18n("SampleFiles.okText")}
-        cancelText={i18n("SampleFiles.cancelText")}
-        onConfirm={() =>
-          removeSampleFiles({
-            fileObjectId,
-            type,
-          })
-        }
-      >
-        <Button shape="circle" icon={<IconRemove />} />
-      </Popconfirm>
+      {modifiable ? (
+        <Popconfirm
+          placement="left"
+          title={
+            type === "assembly"
+              ? i18n("SampleFiles.deleteGenomeAssembly")
+              : i18n("SampleFiles.deleteSequencingObject")
+          }
+          okText={i18n("SampleFiles.okText")}
+          cancelText={i18n("SampleFiles.cancelText")}
+          onConfirm={() =>
+            removeSampleFiles({
+              fileObjectId,
+              type,
+            })
+          }
+        >
+          <Button shape="circle" icon={<IconRemove />} />
+        </Popconfirm>
+      ) : null}
     </div>
   );
 }

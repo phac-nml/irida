@@ -25,7 +25,9 @@ import {
  * @constructor
  */
 export function SampleFiles() {
-  const { sample, projectId } = useSelector((state) => state.sampleReducer);
+  const { sample, projectId, modifiable } = useSelector(
+    (state) => state.sampleReducer
+  );
   const { files, loading } = useSelector((state) => state.sampleFilesReducer);
   const dispatch = useDispatch();
 
@@ -82,7 +84,7 @@ export function SampleFiles() {
             setSeqFileProgress(0);
           } else {
             setSeqFileProgress(
-              (progressEvent.loaded / progressEvent.total) * 100.0
+              Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
             );
           }
         },
@@ -120,7 +122,7 @@ export function SampleFiles() {
             setAssemblyProgress(0);
           } else {
             setAssemblyProgress(
-              (progressEvent.loaded / progressEvent.total) * 100.0
+              Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
             );
           }
         },
@@ -158,7 +160,7 @@ export function SampleFiles() {
             setFast5Progress(0);
           } else {
             setFast5Progress(
-              (progressEvent.loaded / progressEvent.total) * 100.0
+              Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
             );
           }
         },
@@ -252,12 +254,14 @@ export function SampleFiles() {
     <IconLoading />
   ) : (
     <Space size="large" direction="vertical" style={{ width: `100%` }}>
-      <DragUpload
-        className="t-upload-sample-files"
-        uploadText={i18n("SampleFiles.uploadText")}
-        uploadHint={i18n("SampleFiles.uploadHint")}
-        options={sampleFileUploadOptions}
-      />
+      {modifiable ? (
+        <DragUpload
+          className="t-upload-sample-files"
+          uploadText={i18n("SampleFiles.uploadText")}
+          uploadHint={i18n("SampleFiles.uploadHint")}
+          options={sampleFileUploadOptions}
+        />
+      ) : null}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
         <div>
           <div>

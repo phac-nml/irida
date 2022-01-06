@@ -17,16 +17,16 @@ import { useDispatch } from "react-redux";
  *
  * @param files The list of files to display
  * @param sampleId The sample identifier
+ * @param modifiable If the sample can be modified by the user or not
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFileList({ files, sampleId }) {
+export function SampleFileList({ files, sampleId, modifiable }) {
   const dispatch = useDispatch();
-
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
 
   /*
-Download sequence files (paired, single, fast5)
+  Download sequence files (paired, single, fast5)
  */
   const downloadSequenceFile = ({ sequencingObjectId, sequenceFileId }) => {
     notification.success({
