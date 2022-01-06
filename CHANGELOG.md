@@ -13,6 +13,7 @@ Changes
 * [UI]: Added capability to share/move samples between projects from the line list page.
 * [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
 * [Developer]: Upgraded Spring Hateoas to 1.0.3.RELEASE
+* [Developer]: Updated to use Yarn v3 and updated browserlist to v4.19.17.
 * [UI]: Updated Create Remote Api to use Ant Design.
 
 21.05 to 21.09
