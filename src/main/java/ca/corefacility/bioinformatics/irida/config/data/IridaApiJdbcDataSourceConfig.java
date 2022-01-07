@@ -108,7 +108,9 @@ public class IridaApiJdbcDataSourceConfig {
 						+ "]");
 			}
 			liquibaseShouldRun = Boolean.FALSE;
-		} else if (fixLiquibaseChangeSetFilenames) {
+		}
+		
+		if (liquibaseShouldRun && fixLiquibaseChangeSetFilenames) {
 			logger.info("Removing 'classpath:' prefix from FILENAME column in DATABASECHANGELOG table.");
 			fixLiquibaseChangeSetFilenames(dataSource);
 		}
@@ -131,6 +133,7 @@ public class IridaApiJdbcDataSourceConfig {
 		ResourceLoader resourceLoader = new DefaultResourceLoader();
 		Resource sqlScript = resourceLoader.getResource("classpath:ca/corefacility/bioinformatics/irida/sql/fix-liquibase-changeset-filenames.sql");
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator(sqlScript);
+		populator.setSeparator("^;");
 		DatabasePopulatorUtils.execute(populator, dataSource);
 	}
 }
