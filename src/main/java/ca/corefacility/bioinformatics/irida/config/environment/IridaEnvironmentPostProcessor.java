@@ -72,7 +72,7 @@ public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, 
 			}
 		}
 
-        if ( propertySources.size() > 0 ) {
+        if ( properties.size() > 0 ) {
             this.logger.error("Adding translated deprecated properties as highest priority property source.");
 		    propertySources.addFirst(new PropertiesPropertySource("deprecatedProperties", properties));
         }
