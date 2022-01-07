@@ -23,9 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.google.common.collect.Maps;
@@ -34,11 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -146,7 +146,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, tmpOutputFile);
 		Path outputFile = outputDirectory.resolve(fileName);
-		if (isZippedFile(tmpOutputFile)) {
+		if (FileUtilities.isZippedFile(tmpOutputFile)) {
 			outputFile = outputDirectory.resolve(fileName + ".zip");
 		}
 
@@ -158,23 +158,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 				toolExecution);
 
 		return analysisOutputFile;
-	}
-
-	private boolean isZippedFile(final Path path) throws IOException {
-		final byte[] ZIP_HEADER = {
-			(byte) 0x50,
-			(byte) 0x4B
-		};
-		final byte[] buf = new byte[2];
-
-		try (
-			final InputStream in = Files.newInputStream(path);
-		) {
-			if (in.read(buf) != 2)
-				return false;
-		}
-
-		return Arrays.equals(buf, ZIP_HEADER) ? true : false;
 	}
 
 	/**

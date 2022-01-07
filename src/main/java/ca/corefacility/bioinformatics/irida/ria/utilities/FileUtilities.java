@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public class FileUtilities {
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
 	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
-	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)$");
+	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)(.zip)+$");
 
 	/**
 	 * Utility method for download a zip file containing all output files from
@@ -443,5 +444,22 @@ public class FileUtilities {
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+
+	public static boolean isZippedFile(final Path path) throws IOException {
+		final byte[] ZIP_HEADER = {
+			(byte) 0x50,
+			(byte) 0x4B
+		};
+		final byte[] buf = new byte[2];
+
+		try (
+			final InputStream in = Files.newInputStream(path);
+		) {
+			if (in.read(buf) != 2)
+				return false;
+		}
+
+		return Arrays.equals(buf, ZIP_HEADER) ? true : false;
 	}
 }

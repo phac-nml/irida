@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -189,9 +192,13 @@ public class AnalysisController {
 			if (file.getFile()
 					.toFile()
 					.getName()
-					.contains(filename) && FilenameUtils.getExtension(filename)
-					.equals(htmlExt)) {
-				outputFile = file;
+					.contains(filename)) {
+				String fileExt = FileUtilities.getFileExt(file.getFile()
+						.getFileName()
+						.toString());
+				if (fileExt.equals(htmlExt)) {
+					outputFile = file;
+				}
 				break;
 			}
 		}
@@ -200,23 +207,57 @@ public class AnalysisController {
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
 
-		try (InputStream inputStream = new FileInputStream(outputFile.getFile()
-				.toString()); OutputStream outputStream = response.getOutputStream()) {
-			// Copy the file contents to the response outputstream
-			IOUtils.copy(inputStream, outputStream);
-		} catch (IOException e) {
-			logger.debug("Html output not found.");
-			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
-					new Object[] { filename }, locale);
-			OutputStream outputStream = response.getOutputStream();
-			/*
-			Write the htmlNotFound message to the outputstream. We do this
-			so that the page doesn't error and will instead display the
-			message.
-			 */
-			outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
-			outputStream.flush();
-			outputStream.close();
+		if (FileUtilities.isZippedFile(outputFile.getFile())) {
+			try (InputStream inputStream = new FileInputStream(outputFile.getFile()
+					.toString()); BufferedInputStream bis = new BufferedInputStream(inputStream);
+					ZipInputStream zis = new ZipInputStream(bis);
+					OutputStream outputStream = response.getOutputStream()) {
+				ZipEntry ze;
+				while ((ze = zis.getNextEntry()) != null) {
+					if (ze.getName().endsWith(".html")) {
+						int len = 0;
+						byte[] buffer = new byte[2048];
+						while ((len = zis.read(buffer)) > 0) {
+							outputStream.write(buffer, 0, len);
+						}
+						break;
+					}
+				}
+			} catch (IOException e) {
+				logger.debug("Html output not found.");
+				String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
+						new Object[] { filename }, locale);
+				OutputStream outputStream = response.getOutputStream();
+				/*
+				Write the htmlNotFound message to the outputstream. We do this
+				so that the page doesn't error and will instead display the
+				message.
+				*/
+				outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
+				outputStream.flush();
+				outputStream.close();
+			}
+		} else {
+
+			try (InputStream inputStream = new FileInputStream(outputFile.getFile()
+					.toString()); OutputStream outputStream = response.getOutputStream()) {
+				// Copy the file contents to the response outputstream
+				IOUtils.copy(inputStream, outputStream);
+			} catch (IOException e) {
+				logger.debug("Html output not found.");
+				String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
+						new Object[] { filename }, locale);
+				OutputStream outputStream = response.getOutputStream();
+				/*
+				Write the htmlNotFound message to the outputstream. We do this
+				so that the page doesn't error and will instead display the
+				message.
+				*/
+				outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
+				outputStream.flush();
+				outputStream.close();
+			}
+
 		}
 	}
 }
