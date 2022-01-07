@@ -17,10 +17,12 @@ export function DragUpload({ uploadText, uploadHint, options, ...props }) {
     <div style={{ marginBottom: SPACE_SM }} {...props}>
       <Dragger {...options}>
         <p className="ant-upload-drag-icon">
-          <IconFileUpload />
+          <IconFileUpload style={{ fontSize: "24px" }} />
         </p>
-        <p className="ant-upload-text">{uploadText}</p>
-        <p className="ant-upload-hint" style={{ padding: SPACE_SM }}>
+        <p className="ant-upload-text" style={{ fontSize: "14px" }}>
+          {uploadText}
+        </p>
+        <p className="ant-upload-hint" style={{ fontSize: "12px" }}>
           {uploadHint}
         </p>
       </Dragger>
