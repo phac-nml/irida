@@ -453,7 +453,7 @@ public class FileUtilities {
 	 *
 	 * @param path The {@link Path} to the file to test.
 	 * @return A {@link Boolean} indicating whether the file is a zip file.
-	 * @throws IOException
+	 * @throws IOException If an invalid {@link Path} is passed
 	 */
 	public static boolean isZippedFile(final Path path) throws IOException {
 		try (
