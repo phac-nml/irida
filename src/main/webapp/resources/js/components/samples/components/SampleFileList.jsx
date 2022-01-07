@@ -1,5 +1,5 @@
 import React from "react";
-import { notification, Space } from "antd";
+import { notification, Space, Tag, Tooltip } from "antd";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { SingleEndFileRenderer } from "../../sequence-files/SingleEndFileRenderer";
 import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
@@ -11,6 +11,12 @@ import {
 
 import { removeFileObjectFromSample } from "../sampleFilesSlice";
 import { useDispatch } from "react-redux";
+import {
+  IconCheckCircle,
+  IconClock,
+  IconSyncSpin,
+  IconRemove,
+} from "../../icons/Icons";
 
 /**
  * React component to display, remove, download files
@@ -25,6 +31,13 @@ export function SampleFileList({ files, sampleId, modifiable }) {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
 
+  const fileProcessTranslations = {
+    UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
+    QUEUED: i18n("SampleFilesList.fileProcessingState.QUEUED"),
+    PROCESSING: i18n("SampleFilesList.fileProcessingState.PROCESSING"),
+    FINISHED: i18n("SampleFilesList.fileProcessingState.FINISHED"),
+    ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
+  };
   /*
   Download sequence files (paired, single, fast5)
  */
@@ -63,6 +76,30 @@ export function SampleFileList({ files, sampleId, modifiable }) {
       });
   };
 
+  /*
+  Gets the processing state as a tag (icon) with a tooltip
+   */
+  const getProcessingStateTag = (processingState) => {
+    let tagColor = "default";
+    let icon = <IconClock />;
+
+    if (processingState === "FINISHED") {
+      tagColor = "success";
+      icon = <IconCheckCircle />;
+    } else if (processingState === "ERROR") {
+      tagColor = "error";
+      icon = <IconRemove />;
+    } else if (processingState === "PROCESSING") {
+      tagColor = "processing";
+      icon = <IconSyncSpin />;
+    }
+    return (
+      <Tooltip placement="top" title={fileProcessTranslations[processingState]}>
+        <Tag color={tagColor}>{icon}</Tag>
+      </Tooltip>
+    );
+  };
+
   return (
     <div style={{ maxHeight: "400px", overflowY: "auto" }}>
       <Space size="large" direction="vertical" style={{ width: `100%` }}>
@@ -73,6 +110,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
               sampleId={sampleId}
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
+              getProcessingState={getProcessingStateTag}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -85,6 +123,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
                 sampleId={sampleId}
                 downloadSequenceFile={downloadSequenceFile}
                 removeSampleFiles={removeSampleFiles}
+                getProcessingState={getProcessingStateTag}
               />
             ))}
           </SequenceFileTypeRenderer>
@@ -96,6 +135,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
               sampleId={sampleId}
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
+              getProcessingState={getProcessingStateTag}
             />
           </SequenceFileTypeRenderer>
         )}

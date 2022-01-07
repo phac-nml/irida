@@ -9,6 +9,7 @@ import { IconDownloadFile } from "../icons/Icons";
  * @param file The file to display details for
  * @param fileObjectId The sequencingobject identifier
  * @function download sequence file function
+ * @function get file processing state function
  * @returns {JSX.Element}
  * @constructor
  */
@@ -16,6 +17,7 @@ export function SequenceFileDetailsRenderer({
   file,
   fileObjectId,
   downloadSequenceFile = () => {},
+  getProcessingState = () => {},
 }) {
   return (
     <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>
@@ -27,6 +29,7 @@ export function SequenceFileDetailsRenderer({
               {file.label}
             </a>
             <Space direction="horizontal" size="small">
+              {getProcessingState(file.processingState)}
               <span style={{ marginRight: SPACE_XS }}>{file.filesize}</span>
               <Button
                 shape="circle"

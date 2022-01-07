@@ -12,6 +12,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * @param sampleId
  * @function download sequence file function
  * @function remove files from sample function
+ * @function get file processing state function
  * @returns {JSX.Element}
  * @constructor
  */
@@ -20,6 +21,7 @@ export function PairedFileRenderer({
   sampleId,
   downloadSequenceFile = () => {},
   removeSampleFiles = () => {},
+  getProcessingState = () => {},
 }) {
   const files = [
     {
@@ -32,6 +34,7 @@ export function PairedFileRenderer({
       ),
       forwardFile: true,
       fileType: pair.fileType,
+      processingState: pair.fileInfo.processingState,
     },
     {
       label: pair.fileInfo.reverseSequenceFile.label,
@@ -42,6 +45,7 @@ export function PairedFileRenderer({
         `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.reverseSequenceFile.identifier}`
       ),
       forwardFile: false,
+      processingState: pair.fileInfo.processingState,
     },
   ];
 
@@ -66,6 +70,7 @@ export function PairedFileRenderer({
             fileObjectId={pair.fileInfo.identifier}
             sampleId={sampleId}
             downloadSequenceFile={downloadSequenceFile}
+            getProcessingState={getProcessingState}
           />
         );
       }}

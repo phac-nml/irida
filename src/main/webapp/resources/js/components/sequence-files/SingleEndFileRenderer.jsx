@@ -14,6 +14,7 @@ import { SPACE_XS } from "../../styles/spacing";
  * @function download assembly file function
  * @function download sequence file function
  * @function remove files from sample function
+ * @function get file processing state function
  * @returns {JSX.Element}
  * @constructor
  */
@@ -23,7 +24,8 @@ export function SingleEndFileRenderer({
   fastqcResults = true,
   downloadAssemblyFile = () => {},
   downloadSequenceFile = () => {},
-  removeSampleFiles,
+  removeSampleFiles = () => {},
+  getProcessingState = () => {},
 }) {
   return (
     <List
@@ -63,6 +65,9 @@ export function SingleEndFileRenderer({
                 )}
 
                 <Space direction="horizontal" size="small">
+                  {file.fileType === "assembly"
+                    ? null
+                    : getProcessingState(file.fileInfo.processingState)}
                   <span style={{ marginRight: SPACE_XS }}>
                     {file.firstFileSize}
                   </span>
