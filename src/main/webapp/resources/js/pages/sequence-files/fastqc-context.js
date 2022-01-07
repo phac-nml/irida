@@ -29,13 +29,14 @@ function FastQCProvider({ children, sequenceObjectId, fileId }) {
 
   React.useEffect(() => {
     getFastQCDetails(sequenceObjectId, fileId).then(
-      ({ analysisFastQC, sequenceFile }) => {
+      ({ analysisFastQC, sequenceFile, sequencingObject }) => {
         dispatch({
           type: TYPES.LOADED,
           payload: {
             loading: false,
             fastQC: analysisFastQC,
             file: sequenceFile,
+            processingState: sequencingObject.processingState,
           },
         });
       }

@@ -42,7 +42,15 @@ function FastQCMenu({ route, uri }) {
 }
 
 function FastQCContent({ children, route, uri }) {
-  const { loading, fastQC, file } = useFastQCState();
+  const { loading, fastQC, file, processingState } = useFastQCState();
+
+  const processingStateTranslations = {
+    UNPROCESSED: i18n("FastQC.sequencingobject.unprocessed"),
+    QUEUED: i18n("FastQC.sequencingobject.queued"),
+    PROCESSING: i18n("FastQC.sequencingobject.processing"),
+    ERROR: i18n("FastQC.sequencingobject.error"),
+    FINISHED: i18n("FastQC.sequencingobject.finished"),
+  };
 
   return loading ? (
     <ContentLoading />
@@ -56,7 +64,7 @@ function FastQCContent({ children, route, uri }) {
       ) : (
         <div>
           <InfoAlert
-            message={i18n("FastQC.noResults")}
+            message={processingStateTranslations[processingState]}
             style={{ marginBottom: SPACE_XS }}
             className="t-fastQC-no-run"
           />
