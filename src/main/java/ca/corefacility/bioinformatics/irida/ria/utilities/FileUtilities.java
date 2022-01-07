@@ -9,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletOutputStream;
@@ -42,7 +44,7 @@ public class FileUtilities {
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
 	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
-	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)(.zip)+$");
+	private static final Pattern regexExt = Pattern.compile("^.*?\\.(\\w+)(\\.zip)?$");
 
 	/**
 	 * Utility method for download a zip file containing all output files from
@@ -446,20 +448,25 @@ public class FileUtilities {
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
+	/**
+	 * Determine if a file is a zip file.
+	 *
+	 * @param path The {@link Path} to the file to test.
+	 * @return A {@link Boolean} indicating whether the file is a zip file.
+	 * @throws IOException
+	 */
 	public static boolean isZippedFile(final Path path) throws IOException {
-		final byte[] ZIP_HEADER = {
-			(byte) 0x50,
-			(byte) 0x4B
-		};
-		final byte[] buf = new byte[2];
-
 		try (
-			final InputStream in = Files.newInputStream(path);
+			final InputStream in = new FileInputStream(path.toString());
+			final ZipInputStream z = new ZipInputStream(in);
 		) {
-			if (in.read(buf) != 2)
+			// if the file is empty then don't consider as zip
+			if (in.available() == 0) {
 				return false;
+			}
+			return true;
+		} catch (ZipException ignored) {
+			return false;
 		}
-
-		return Arrays.equals(buf, ZIP_HEADER) ? true : false;
 	}
 }
