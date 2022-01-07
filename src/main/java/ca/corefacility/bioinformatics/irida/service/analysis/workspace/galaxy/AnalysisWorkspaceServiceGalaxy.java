@@ -34,8 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -138,8 +141,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
 
+		Path tmpOutputFile = Files.createTempFile(dataset.getName(), null);
+		tmpOutputFile.toFile().deleteOnExit();
+
+		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, tmpOutputFile);
 		Path outputFile = outputDirectory.resolve(fileName);
-		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, outputFile);
+		if (isZippedFile(tmpOutputFile)) {
+			outputFile = outputDirectory.resolve(fileName + ".zip");
+		}
+
+		Files.move(tmpOutputFile, outputFile, StandardCopyOption.REPLACE_EXISTING);
 		final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(analysisId,
 				fileName);
 
@@ -147,6 +158,23 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 				toolExecution);
 
 		return analysisOutputFile;
+	}
+
+	private boolean isZippedFile(final Path path) throws IOException {
+		final byte[] ZIP_HEADER = {
+			(byte) 0x50,
+			(byte) 0x4B
+		};
+		final byte[] buf = new byte[2];
+
+		try (
+			final InputStream in = Files.newInputStream(path);
+		) {
+			if (in.read(buf) != 2)
+				return false;
+		}
+
+		return Arrays.equals(buf, ZIP_HEADER) ? true : false;
 	}
 
 	/**
