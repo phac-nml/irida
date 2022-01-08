@@ -452,7 +452,7 @@ public class FileUtilities {
 	 * Determine if a file is a zip file.
 	 *
 	 * @param path The {@link Path} to the file to test.
-	 * @return A {@link Boolean} indicating whether the file is a zip file.
+	 * @return A boolean indicating whether the file is a zip file.
 	 * @throws IOException If an invalid {@link Path} is passed
 	 */
 	public static boolean isZippedFile(final Path path) throws IOException {
@@ -460,11 +460,8 @@ public class FileUtilities {
 			final InputStream in = new FileInputStream(path.toString());
 			final ZipInputStream z = new ZipInputStream(in);
 		) {
-			// if the file is empty then don't consider as zip
-			if (in.available() == 0) {
-				return false;
-			}
-			return true;
+			// If we can read an entry we know that it is a zip
+			return z.getNextEntry() != null;
 		} catch (ZipException ignored) {
 			return false;
 		}
