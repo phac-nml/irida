@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.io.support.ResourcePropertySource;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -56,13 +59,16 @@ public class ToolsListExporter {
 	
 	private static final AnalysisTypesService analysisTypesService = new AnalysisTypesServiceImpl();
 
-	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException {
+	private static Map<AnalysisType, IridaWorkflow> getDefaultWorkflows() throws IridaWorkflowNotFoundException, IOException {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
 		analysisTypesService.registerDefaultTypes();
 
 		context.getEnvironment().setActiveProfiles("dev");
-		context.register(new Class[] { IridaApiPropertyPlaceholderConfig.class, IridaWorkflowsConfig.class });
+		MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+		propertySources.addFirst(new ResourcePropertySource("classpath:/ca/corefacility/bioinformatics/irida/config/filesystem.properties"));
+		propertySources.addFirst(new ResourcePropertySource("classpath:/ca/corefacility/bioinformatics/irida/config/workflows.properties"));
+		context.register(new Class[] { IridaWorkflowsConfig.class });
 		context.refresh();
 
 		IridaWorkflowsService iridaWorkflowsService = context.getBean(IridaWorkflowsService.class);
