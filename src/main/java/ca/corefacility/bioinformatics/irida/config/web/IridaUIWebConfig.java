@@ -181,7 +181,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 	/**
 	 * This is to handle any templates (usually just the login page) that are overridden
-	 * by and organization.  The location of these files can be modified within the configuration.properties
+	 * by and organization.  The location of these files can be modified within the application.properties
 	 * file.
 	 *
 	 * @return {@link FileTemplateResolver}
