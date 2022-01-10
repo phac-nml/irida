@@ -6,16 +6,14 @@ import {
   IconWarningOutlined,
 } from "../../../components/icons/Icons";
 import { blue6, red6 } from "../../../styles/colors";
-import {
-  getColourForRestriction
-} from "../../../utilities/restriction-utilities";
+import { getColourForRestriction } from "../../../utilities/restriction-utilities";
 import { updateMetadataRestriction } from "./shareSlice";
 
 /**
  * React component to allow the user to select the level of restiction for a
  * metadata field in the destination project.
  *
- * @param {object} field - field to set value on
+ * @param {object} field - field to get the value on
  *  project, if it is not in the target project it get the current restriction.
  * @param {array} restrictions - list of available restrictions
  * @param {function} onChange - change handler
