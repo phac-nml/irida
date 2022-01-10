@@ -32,9 +32,8 @@ export function ShareMetadata() {
    * Get the fields for the current project.  The restrictions from these fields
    * will act as a base for the restriction level when the fields are shared.
    */
-  const { data: sourceFields } = useGetMetadataFieldsForProjectQuery(
-    currentProject
-  );
+  const { data: sourceFields } =
+    useGetMetadataFieldsForProjectQuery(currentProject);
 
   /**
    * Target project metadata fields. Needed to determine, which fields will be
@@ -58,17 +57,21 @@ export function ShareMetadata() {
         {}
       );
       const fields = sourceFields.map((field) => {
-        const f = { ...field, current: field.restriction };
-        delete f.initial;
-        if (existing[f.fieldKey]) {
+        const newField = { ...field, current: field.restriction };
+        delete newField.initial;
+        if (existing[newField.fieldKey]) {
           /*
           If field exists in target project
            */
-          f.target = existing[f.fieldKey].restriction;
-          f.difference = compareRestrictionLevels(f.restriction, f.target);
-          f.restriction = f.difference < 0 ? f.target : f.current;
+          newField.target = existing[newField.fieldKey].restriction;
+          newField.difference = compareRestrictionLevels(
+            newField.restriction,
+            newField.target
+          );
+          newField.restriction =
+            newField.difference < 0 ? newField.target : newField.current;
         }
-        return f;
+        return newField;
       });
       dispatch(setMetadataRestrictions(fields));
     } else if (sourceFields) {
@@ -137,10 +140,5 @@ export function ShareMetadata() {
     },
   ];
 
-  return (
-    <Table
-      columns={columns}
-      dataSource={metadataRestrictions}
-    />
-  );
+  return <Table columns={columns} dataSource={metadataRestrictions} />;
 }
