@@ -31,6 +31,10 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
 
   React.useEffect(() => {
+    /*
+    Differnence is the calculated difference between the restrictions levels.
+    If the difference is < 0 show a warning icon.
+    */
     if (field.difference > 0) {
       setFeedback({
         hasFeedback: true,
