@@ -19,19 +19,12 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaDbUnitConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.utils.NullReplacementDatasetLoader;
@@ -48,12 +41,7 @@ import static org.junit.Assert.assertTrue;
  * Common functionality to all UI integration tests.
  */
 @ActiveProfiles("it")
-@ImportAutoConfiguration({
-	DataSourceAutoConfiguration.class,
-	HibernateJpaAutoConfiguration.class,
-})
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiPropertyPlaceholderConfig.class, IridaDbUnitConfig.class },
-		initializers = ConfigDataApplicationContextInitializer.class)
+@SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @DbUnitConfiguration(dataSetLoader = NullReplacementDatasetLoader.class)
