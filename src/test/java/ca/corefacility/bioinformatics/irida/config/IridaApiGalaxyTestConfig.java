@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionSer
 import ca.corefacility.bioinformatics.irida.config.analysis.GalaxyExecutionTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaDbUnitConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
@@ -14,10 +15,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
@@ -30,7 +30,7 @@ import java.util.concurrent.Executor;
  *
  *
  */
-@Configuration
+@TestConfiguration
 @ImportAutoConfiguration({
 	DataSourceAutoConfiguration.class,
 	HibernateJpaAutoConfiguration.class,
@@ -38,8 +38,7 @@ import java.util.concurrent.Executor;
 @Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestFilesystemConfig.class,
 		IridaApiJdbcDataSourceConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class,
-		IridaWorkflowsGalaxyIntegrationTestConfig.class })
-@Profile("test")
+		IridaWorkflowsGalaxyIntegrationTestConfig.class, IridaDbUnitConfig.class })
 public class IridaApiGalaxyTestConfig {
 
 	/**

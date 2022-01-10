@@ -2,10 +2,9 @@ package ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy;
 
 import java.net.MalformedURLException;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -16,8 +15,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
  * skip all Galaxy-related tests.
  * 
  */
-@Configuration
-@Profile("test")
+@TestConfiguration
 @Conditional(WindowsPlatformCondition.class)
 public class WindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 

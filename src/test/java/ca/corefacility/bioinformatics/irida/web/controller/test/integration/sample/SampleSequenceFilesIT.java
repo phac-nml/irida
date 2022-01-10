@@ -23,7 +23,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,7 +36,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
 import io.restassured.response.Response;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaDbUnitConfig;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
@@ -47,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@Import(IridaDbUnitConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sample/SampleSequenceFilesIntegrationTest.xml")
