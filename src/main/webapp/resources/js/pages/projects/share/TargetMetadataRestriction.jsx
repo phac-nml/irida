@@ -60,7 +60,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
             {getRestrictionLabel(field.restriction)}
           </Tag>
           <Popover
-            title={i18n("TargetMetadataRestriction.higher.title")}
+            title={i18n("TargetMetadataRestriction.higher")}
             placement="right"
             content={i18n("TargetMetadataRestriction.target-project-setting")}
           >
@@ -77,7 +77,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
         <Popover
           title={
             <Typography.Text strong style={{ color: red6 }}>
-              {"CAUTION: LOWER RESTRICTION IN TARGET PROJECT"}
+              {i18n("TargetMetadataRestriction.lower.caution")}
             </Typography.Text>
           }
           placement="right"
