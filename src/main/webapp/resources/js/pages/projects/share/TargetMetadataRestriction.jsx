@@ -91,7 +91,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
 
   return (
     <Tooltip
-      title="Lower restriction"
+      title={i18n("TargetMetadataRestriction.lower")}
       placement="right"
       visible={tooltipVisible}
     >

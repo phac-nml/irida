@@ -1,7 +1,5 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import {
-  compareRestrictionLevels
-} from "../../../utilities/restriction-utilities";
+import { compareRestrictionLevels } from "../../../utilities/restriction-utilities";
 
 /**
  * Action to set the target project for the samples
@@ -38,19 +36,20 @@ export const updateMoveSamples = createAction(
 );
 
 /**
- * Sets up the origainl restrictions to be the ame as what are on the source project.
+ * Sets up the original restrictions to be the ame as what are on the source project.
  * This will change once a target project is selcted
  */
 export const setMetadataRestrictions = createAction(
   `share/setMetadataRestrictions`,
   (metadataRestrictions) => ({
     payload: {
-      metadataRestrictions: metadataRestrictions.map(r => ({
+      metadataRestrictions: metadataRestrictions.map((r) => ({
         ...r,
-        initial: true
+        initial: true,
       })),
     },
-  }));
+  })
+);
 
 /**
  * Update one of the metadata restrictions with a specific value
