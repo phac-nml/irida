@@ -25,7 +25,7 @@ export const getColourForRestriction = (restriction) => COLOURS[restriction];
  * Compare two metadata restrictions.
  *
  * Right now levels can be easily compared by their string values (e.g. "LEVEL_1 < LEVEL_2"
- * would evalueat to true).  This helper function is here incase those values ever change
+ * would evaluate to true).  This helper function is here incase those values ever change
  * so we do not need to go everywhere in the code to update.
  *
  * @param level1 - existing restriction
