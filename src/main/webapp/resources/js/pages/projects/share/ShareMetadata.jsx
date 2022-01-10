@@ -100,7 +100,7 @@ export function ShareMetadata() {
       dataIndex: "current",
       render(text, item, index) {
         const field = restrictions.find(
-          (r) => r.value === sourceFields[index].restriction
+          (restriction) => restriction.value === sourceFields[index].restriction
         );
         if (field) {
           return (
