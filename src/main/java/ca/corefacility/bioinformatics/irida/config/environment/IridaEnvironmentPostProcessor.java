@@ -21,7 +21,7 @@ public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, 
     /**
      * The default order for the processor.
      */
-    public static final int ORDER = Ordered.LOWEST_PRECEDENCE;
+    public static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 11; // after ConfigDataEnvironmentPostProcessor
 
     private final Log logger;
 
