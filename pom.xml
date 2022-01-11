@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.8</version>
+		<version>2.6.2</version>
 		<relativePath/>
 	</parent>
 	<groupId>ca.corefacility.bioinformatics</groupId>
@@ -127,11 +127,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>${jsr250.api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.oltu.oauth2</groupId>
@@ -318,7 +313,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -333,10 +327,6 @@
 				<exclusion>
 					<groupId>org.junit.jupiter</groupId>
 					<artifactId>junit-jupiter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.mockito</groupId>
@@ -407,12 +397,10 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-to-slf4j</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 
 		<!-- Utilities -->
@@ -443,11 +431,6 @@
 			<artifactId>biojava3-core</artifactId>
 			<version>${biojava.version}</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.11</version>
-		</dependency>-->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
@@ -491,7 +474,6 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>${com.google.code.gson.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.monitorjbl/xlsx-streamer -->
 		<dependency>
@@ -935,24 +917,18 @@
 		<!-- Dependencies -->
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.io.version>2.11.0</commons.io.version>
-		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.32</slf4j.version>
-		<log4j.version>2.17.0</log4j.version>
-		<logback.version>1.2.9</logback.version>
+		<log4j2.version>2.17.1</log4j2.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
-		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.3.0</spring.test.dbunit.version>
 		<dbunit.version>2.7.2</dbunit.version>
-		<commons.dbcp.version>2.9.0</commons.dbcp.version>
-		<commons.net.version>3.6</commons.net.version>
+		<commons.net.version>3.8.0</commons.net.version>
 		<fastqc.version>0.11.9-nml-custom</fastqc.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
 		<apache.jena.version>4.3.2</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
 		<liquibase.version>4.3.5</liquibase.version>
 		<biojava.version>3.0</biojava.version>
-		<jackson.version>2.12.1</jackson.version>
 		<commons.fileupload.version>1.4</commons.fileupload.version>
 		<oltu.version>1.0.0</oltu.version>
 		<apache.poi.version>5.1.0</apache.poi.version>
@@ -982,7 +958,6 @@
 		<frontend-maven-plugin.version>1.11.2</frontend-maven-plugin.version>
 		<node.version>v14.16.0</node.version>
 		<yarn.version>v1.22.5</yarn.version>
-		<com.google.code.gson.version>2.8.6</com.google.code.gson.version>
 		<org.springdoc.openapi.maven.version>1.3</org.springdoc.openapi.maven.version>
 
 		<!-- project configuration -->

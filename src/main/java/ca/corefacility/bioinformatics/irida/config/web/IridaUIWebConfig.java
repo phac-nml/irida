@@ -43,7 +43,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 /**
  */
