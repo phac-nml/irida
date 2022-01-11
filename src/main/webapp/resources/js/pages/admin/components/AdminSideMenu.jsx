@@ -1,15 +1,15 @@
 /*
  * This file renders the AdminSideMenu component
  */
+import { Layout, Menu } from "antd";
 /*
  * The following import statements makes available
  * all the elements required by the component
  */
 import React from "react";
-import {Layout, Menu} from "antd";
-import {setBaseUrl} from "../../../utilities/url-utilities";
-import {Link} from "@reach/router";
-import {ADMIN} from "../routes";
+import { Link } from "react-router-dom";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ADMIN } from "../routes";
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;
@@ -38,14 +38,14 @@ export default function AdminHeader() {
         </Link>
         <Menu
           className={"t-admin-side-menu"}
-          style={{ height: "100vh" }}
+          style={{ height: "calc(100vh - 65px)" }}
           theme={"dark"}
           mode={"inline"}
           selectedKeys={[selectedKeys]}
         >
           <Menu.Item key="statistics">
             <Link
-              to={`${DEFAULT_URL}/${ADMIN.STATISTICS}`}
+              to={`${DEFAULT_URL}`}
               onClick={() => setSelectedKeys("statistics")}
               className={"t-admin-statistics-link"}
             >
@@ -68,7 +68,7 @@ export default function AdminHeader() {
             <Menu.Item key="groups">
               <Link
                 onClick={() => setSelectedKeys("users")}
-                to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}
+                to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/list`}
                 className={"t-admin-groups-link"}
               >
                 {i18n("AdminPanel.userGroupList")}
