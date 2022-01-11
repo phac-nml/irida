@@ -149,12 +149,13 @@ export default function UserDetailsPage() {
               </Select>
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.enabled.label")}
               name="enabled"
               valuePropName="checked"
               hidden={!userDetails.admin}
             >
-              <Checkbox disabled={!userDetails.canEditUserStatus} />
+              <Checkbox disabled={!userDetails.canEditUserStatus}>
+                {i18n("UserDetailsPage.form.enabled.label")}
+              </Checkbox>
             </Form.Item>
             <Form.Item>
               <Button
