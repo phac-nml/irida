@@ -46,7 +46,6 @@ function ShareApp() {
   const [shareSamplesWithProject, { isLoading, isError, error: shareError }] =
     useShareSamplesWithProjectMutation();
 
-  console.log(targetProject);
   const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
     targetProject?.identifier,
     {
