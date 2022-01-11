@@ -65,35 +65,35 @@ export default function UserDetailsPage() {
             onFinish={onFormFinish}
           >
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.firstName")}
+              label={i18n("UserDetailsPage.form.firstName.label")}
               name="firstName"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: i18n("UserDetailsPage.form.firstName.required") }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.lastName")}
+              label={i18n("UserDetailsPage.form.lastName.label")}
               name="lastName"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: i18n("UserDetailsPage.form.lastName.required") }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.email")}
+              label={i18n("UserDetailsPage.form.email.label")}
               name="email"
-              rules={[{ required: true }, { type: "email" }]}
+              rules={[{ required: true, message: i18n("UserDetailsPage.form.email.required") }, { type: "email", message: i18n("UserDetailsPage.form.email.type") }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.phoneNumber")}
+              label={i18n("UserDetailsPage.form.phoneNumber.label")}
               name="phoneNumber"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: i18n("UserDetailsPage.form.phoneNumber.required") }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.locale")}
+              label={i18n("UserDetailsPage.form.locale.label")}
               name="locale"
             >
               <Select>
@@ -108,7 +108,7 @@ export default function UserDetailsPage() {
               </Select>
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.role")}
+              label={i18n("UserDetailsPage.form.role.label")}
               name="role"
               hidden={!userDetails.admin}
             >
@@ -125,7 +125,7 @@ export default function UserDetailsPage() {
               </Select>
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.enabled")}
+              label={i18n("UserDetailsPage.form.enabled.label")}
               name="enabled"
               valuePropName="checked"
               hidden={!userDetails.admin}
