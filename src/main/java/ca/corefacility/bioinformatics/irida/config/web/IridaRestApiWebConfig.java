@@ -105,7 +105,6 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 				MediaType.valueOf("application/genbank"));
 		configurer.ignoreAcceptHeader(false)
 				.defaultContentType(MediaType.APPLICATION_JSON)
-				.favorPathExtension(true)
 				.mediaTypes(mediaTypes);
 	}
 }
