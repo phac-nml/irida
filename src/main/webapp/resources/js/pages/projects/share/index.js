@@ -1,7 +1,18 @@
-import { Button, Card, Col, PageHeader, Row, Space, Steps } from "antd";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  PageHeader,
+  Row,
+  Space,
+  Steps,
+  Skeleton,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
+import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -52,6 +63,11 @@ function ShareApp() {
       skip: !targetProject?.identifier,
     }
   );
+
+  const { data: projects, isLoading: projectsLoading } =
+    useGetPotentialProjectsToShareToQuery(currentProject, {
+      skip: !currentProject,
+    });
 
   const filtered = originalSamples.filter(
     (sample) => !existingIds.includes(sample.id)
@@ -130,61 +146,75 @@ function ShareApp() {
   return (
     <Row>
       <Col xl={{ span: 18, offset: 3 }} xs={24}>
-        <Card>
-          <PageHeader
-            ghost={false}
-            title={i18n("ShareSamples.title")}
-            onBack={goToPrevious}
-          >
-            <Row>
-              <Col span={6}>
-                <Steps
-                  direction="vertical"
-                  current={step}
-                  style={{ height: 400 }}
-                >
-                  {steps.map((step) => (
-                    <Steps.Step key={step.title} title={step.title} />
-                  ))}
-                </Steps>
-              </Col>
-              <Col span={18}>
-                {finished ? (
-                  <ShareSuccess
-                    currentProject={currentProject}
-                    samples={filtered}
-                    removed={remove}
-                    project={targetProject}
-                  />
-                ) : (
-                  <Space direction="vertical" style={{ width: `100%` }}>
-                    {steps[step].component}
-                    {error}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
+        <Skeleton loading={projectsLoading} active>
+          <Card>
+            <PageHeader
+              ghost={false}
+              title={i18n("ShareSamples.title")}
+              onBack={goToPrevious}
+            >
+              {projects && projects.length === 0 ? (
+                <Alert
+                  message={"You have no projects to share these samples with"}
+                  description={
+                    "You either need to create a new project, or be a manager on one of your other projects"
+                  }
+                />
+              ) : (
+                <Row>
+                  <Col span={6}>
+                    <Steps
+                      direction="vertical"
+                      current={step}
+                      style={{ height: 400 }}
                     >
-                      <Button disabled={prevDisabled} onClick={previousStep}>
-                        {i18n("ShareLayout.previous")}
-                      </Button>
-                      {step === steps.length - 1 ? (
-                        <Button onClick={submit} type="primary">
-                          {i18n("ShareButton.button")}
-                        </Button>
-                      ) : (
-                        <Button disabled={nextDisabled} onClick={nextStep}>
-                          Next
-                        </Button>
-                      )}
-                    </div>
-                  </Space>
-                )}
-              </Col>
-            </Row>
-          </PageHeader>
-        </Card>
+                      {steps.map((step) => (
+                        <Steps.Step key={step.title} title={step.title} />
+                      ))}
+                    </Steps>
+                  </Col>
+                  <Col span={18}>
+                    {finished ? (
+                      <ShareSuccess
+                        currentProject={currentProject}
+                        samples={filtered}
+                        removed={remove}
+                        project={targetProject}
+                      />
+                    ) : (
+                      <Space direction="vertical" style={{ width: `100%` }}>
+                        {steps[step].component}
+                        {error}
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Button
+                            disabled={prevDisabled}
+                            onClick={previousStep}
+                          >
+                            {i18n("ShareLayout.previous")}
+                          </Button>
+                          {step === steps.length - 1 ? (
+                            <Button onClick={submit} type="primary">
+                              {i18n("ShareButton.button")}
+                            </Button>
+                          ) : (
+                            <Button disabled={nextDisabled} onClick={nextStep}>
+                              Next
+                            </Button>
+                          )}
+                        </div>
+                      </Space>
+                    )}
+                  </Col>
+                </Row>
+              )}
+            </PageHeader>
+          </Card>
+        </Skeleton>
       </Col>
     </Row>
   );
