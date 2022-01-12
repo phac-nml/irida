@@ -127,7 +127,13 @@ test_ui() {
     SELENIUM_OPTS=""
     if [ "$SELENIUM_DOCKER" = false ];
     then
-        SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROME_DRIVER"
+		if [ -z ${CHROMEWEBDRIVER} ]
+		then
+			# use default CHROME_DRIVER if CHROMEWEBDRIVER env var is not set
+        	SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROME_DRIVER"
+		else
+        	SELENIUM_OPTS="-Dwebdriver.chrome.driver=$CHROMEWEBDRIVER"
+		fi
     else
         # create the $TMP_DIRECTORY/irida folder before docker runs so that root doesn't create it
         mkdir -p $TMP_DIRECTORY/irida
