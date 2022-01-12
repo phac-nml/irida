@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -126,7 +127,7 @@ public class UIUsersService {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Locale locale = LocaleContextHolder.getLocale();
 		Boolean mailConfigured = emailController.isMailConfigured();
-		boolean isAdmin = isAdmin(principal);
+		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
@@ -161,8 +162,9 @@ public class UIUsersService {
 	 */
 	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request) {
+		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
-		List<UserDetailsError> errors = new ArrayList<>();
+		Map<String, String> errors = new HashMap<>();
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
 			updatedValues.put("firstName", userEditRequest.getFirstName());
@@ -183,7 +185,7 @@ public class UIUsersService {
 		if (!Strings.isNullOrEmpty(userEditRequest.getUserLocale())) {
 			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
-
+		
 		String password = userEditRequest.getPassword();
 		String confirmPassword = userEditRequest.getConfirmPassword();
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
@@ -195,7 +197,7 @@ public class UIUsersService {
 			}
 		}
 
-		if (isAdmin(principal)) {
+		if (RoleUtilities.isAdmin(principalUser)) {
 			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
 				updatedValues.put("enabled", userEditRequest.getEnabled());
 			}
@@ -232,8 +234,8 @@ public class UIUsersService {
 	 * @param locale The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
-	private List<UserDetailsError> handleCreateUpdateException(Exception ex, Locale locale) {
-		List<UserDetailsError> errors = new ArrayList<>();
+	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
 		if (ex instanceof ConstraintViolationException) {
 			ConstraintViolationException cvx = (ConstraintViolationException) ex;
 			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
@@ -241,21 +243,19 @@ public class UIUsersService {
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				String errorKey = violation.getPropertyPath()
 						.toString();
-				errors.add(new UserDetailsError(errorKey, violation.getMessage()));
+				errors.put(errorKey, violation.getMessage());
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.add(new UserDetailsError("email",
-						messageSource.getMessage("user.edit.emailConflict", null, locale)));
+				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
-			errors.add(new UserDetailsError(eex.getFieldName(), eex.getMessage()));
+			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.add(new UserDetailsError("password",
-					messageSource.getMessage("user.edit.passwordReused", null, locale)));
+			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
 		}
 
 		return errors;
@@ -291,15 +291,4 @@ public class UIUsersService {
 		return !(principalAdmin && usersEqual);
 	}
 
-	/**
-	 * Check if the logged in user is an Admin
-	 *
-	 * @param principal The logged in user to check
-	 * @return if the user is an admin
-	 */
-	private boolean isAdmin(Principal principal) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return readPrincipal.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
-	}
 }

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
@@ -19,7 +20,7 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean canCreatePasswordReset;
 	private List<UserDetailsLocale> locales;
 	private List<UserDetailsRole> allowedRoles;
-	private List<UserDetailsError> errors;
+	private Map<String, String> errors;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
 			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
@@ -36,7 +37,7 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.allowedRoles = allowedRoles;
 	}
 
-	public UserDetailsResponse(List<UserDetailsError> errors) {
+	public UserDetailsResponse(Map<String, String> errors) {
 		this.errors = errors;
 	}
 
@@ -120,11 +121,11 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.allowedRoles = allowedRoles;
 	}
 
-	public List<UserDetailsError> getErrors() {
+	public Map<String, String> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<UserDetailsError> errors) {
+	public void setErrors(Map<String, String> errors) {
 		this.errors = errors;
 	}
 

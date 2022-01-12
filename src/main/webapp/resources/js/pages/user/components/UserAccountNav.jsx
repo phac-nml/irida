@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu } from "antd";
 
 /**
@@ -8,7 +8,7 @@ import { Menu } from "antd";
  * @constructor
  */
 export default function UserAccountNav() {
-  const lastElement = window.location.pathname.split("/").pop();
+  const lastElement = useLocation().pathname.split("/").pop();
   const defaultSelectedKey = lastElement.match(
     "details|projects|security|password"
   )
