@@ -1,7 +1,4 @@
 #!/bin/bash
 
-SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-
-pushd $SCRIPTPATH
-yarn run chromedriver $@
-popd
+# run using whatever chromedriver we can find on the PATH
+chromedriver $@
