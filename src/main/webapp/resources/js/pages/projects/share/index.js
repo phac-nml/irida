@@ -76,7 +76,7 @@ function ShareApp() {
   const steps = [
     {
       title: i18n("ShareLayout.project"),
-      component: <ShareProject />,
+      component: <ShareProject projects={projects} />,
     },
     {
       title: i18n("ShareLayout.samples"),
