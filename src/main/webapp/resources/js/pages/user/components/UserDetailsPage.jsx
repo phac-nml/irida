@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import {
   Button,
+  Checkbox,
   Form,
   Input,
   notification,
   Select,
   Space,
-  Switch,
   Typography,
 } from "antd";
 import { ContentLoading } from "../../../components/loader";
@@ -27,16 +27,7 @@ export default function UserDetailsPage() {
   const { userId } = useParams();
   const { data: userDetails, isLoading } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
-
-  const [formErrors, setFormErrors] = useState();
-
-  const getError = (fieldName, message) => {
-    if (message) {
-      return formErrors?.find((error) => error.field === fieldName)?.message;
-    } else {
-      return formErrors?.filter((error) => error.field === fieldName).length > 0;
-    }
-  };
+  const [form] = Form.useForm();
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
@@ -50,7 +41,11 @@ export default function UserDetailsPage() {
         notification.error({
           message: i18n("UserDetailsPage.notification.error"),
         });
-        setFormErrors(error.data);
+        const fields = Object.entries(error.data).map(([field, error]) => ({
+          name: field,
+          errors: [error],
+        }));
+        form.setFields(fields);
       });
   };
 
@@ -64,48 +59,65 @@ export default function UserDetailsPage() {
             {userDetails.user.username}
           </Typography.Title>
           <Form
+            form={form}
             layout="vertical"
             initialValues={userDetails.user}
             onFinish={onFormFinish}
           >
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.firstName")}
+              label={i18n("UserDetailsPage.form.firstName.label")}
               name="firstName"
-              help={getError("firstName", true)}
-              validateStatus={
-                getError("firstName", false) ? "error" : undefined
-              }
+              rules={[
+                {
+                  required: true,
+                  message: i18n("UserDetailsPage.form.firstName.required"),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.lastName")}
+              label={i18n("UserDetailsPage.form.lastName.label")}
               name="lastName"
-              help={getError("lastName", true)}
-              validateStatus={getError("lastName", false) ? "error" : undefined}
+              rules={[
+                {
+                  required: true,
+                  message: i18n("UserDetailsPage.form.lastName.required"),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.email")}
+              label={i18n("UserDetailsPage.form.email.label")}
               name="email"
-              help={getError("email", true)}
-              validateStatus={getError("email", false) ? "error" : undefined}
+              rules={[
+                {
+                  required: true,
+                  message: i18n("UserDetailsPage.form.email.required"),
+                },
+                {
+                  type: "email",
+                  message: i18n("UserDetailsPage.form.email.type"),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.phoneNumber")}
+              label={i18n("UserDetailsPage.form.phoneNumber.label")}
               name="phoneNumber"
-              help={getError("phoneNumber", true)}
-              validateStatus={
-                getError("phoneNumber", false) ? "error" : undefined
-              }
+              rules={[
+                {
+                  required: true,
+                  message: i18n("UserDetailsPage.form.phoneNumber.required"),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.locale")}
+              label={i18n("UserDetailsPage.form.locale.label")}
               name="locale"
             >
               <Select>
@@ -120,10 +132,8 @@ export default function UserDetailsPage() {
               </Select>
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.role")}
+              label={i18n("UserDetailsPage.form.role.label")}
               name="role"
-              help={getError("role", true)}
-              validateStatus={getError("role", false) ? "error" : undefined}
               hidden={!userDetails.admin}
             >
               <Select>
@@ -139,12 +149,13 @@ export default function UserDetailsPage() {
               </Select>
             </Form.Item>
             <Form.Item
-              label={i18n("UserDetailsPage.form.label.enabled")}
               name="enabled"
               valuePropName="checked"
               hidden={!userDetails.admin}
             >
-              <Switch disabled={!userDetails.canEditUserStatus} />
+              <Checkbox disabled={!userDetails.canEditUserStatus}>
+                {i18n("UserDetailsPage.form.enabled.label")}
+              </Checkbox>
             </Form.Item>
             <Form.Item>
               <Button

@@ -4,6 +4,7 @@ import { Col, Row } from "antd";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import UserAccountNav from "./UserAccountNav";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { isAdmin } from "../../../utilities/role-utilities";
 
 /**
  * React component that layouts the user account page.
@@ -11,7 +12,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
  * @constructor
  */
 export default function UserAccountLayout() {
-  const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
   const goToAdminUserListPage = () =>
     (window.location.href = setBaseUrl(`admin/users`));
 
@@ -24,8 +24,7 @@ export default function UserAccountLayout() {
         <Col span={5}>
           <UserAccountNav />
         </Col>
-        <Col span={1} />
-        <Col span={18}>
+        <Col offset={1} span={18}>
           <Outlet />
         </Col>
       </Row>
