@@ -66,7 +66,9 @@ export function SampleFiles() {
   dragged and dropped
    */
   React.useEffect(() => {
-    uploadFiles();
+    if (filesToUpload.length) {
+      uploadFiles();
+    }
   }, [filesToUpload]);
 
   /*
@@ -296,7 +298,7 @@ export function SampleFiles() {
       ) : null}
 
       {Object.keys(files).length !== 0 ? (
-        <SampleFileList files={files} sampleId={sample.identifier} />
+        <SampleFileList />
       ) : (
         <Empty description={i18n("SampleFiles.no-files")} />
       )}

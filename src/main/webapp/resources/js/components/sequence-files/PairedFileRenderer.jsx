@@ -4,12 +4,11 @@ import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { SequenceFileDetailsRenderer } from "./SequenceFileDetailsRenderer";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
-
+import { useSelector } from "react-redux";
 /**
  * React component to display paired end file details
  *
  * @param {array} pair
- * @param sampleId
  * @function download sequence file function
  * @function remove files from sample function
  * @function get file processing state function
@@ -18,11 +17,12 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  */
 export function PairedFileRenderer({
   pair,
-  sampleId,
   downloadSequenceFile = () => {},
   removeSampleFiles = () => {},
   getProcessingState = () => {},
 }) {
+  const { sample } = useSelector((state) => state.sampleReducer);
+
   const files = [
     {
       label: pair.fileInfo.forwardSequenceFile.label,
@@ -30,7 +30,7 @@ export function PairedFileRenderer({
       icon: <ArrowRightOutlined />,
       filesize: pair.firstFileSize,
       fastqcLink: setBaseUrl(
-        `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.forwardSequenceFile.identifier}`
+        `samples/${sample.identifier}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.forwardSequenceFile.identifier}`
       ),
       forwardFile: true,
       fileType: pair.fileType,
@@ -42,7 +42,7 @@ export function PairedFileRenderer({
       icon: <ArrowLeftOutlined />,
       filesize: pair.secondFileSize,
       fastqcLink: setBaseUrl(
-        `samples/${sampleId}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.reverseSequenceFile.identifier}`
+        `samples/${sample.identifier}/sequenceFiles/${pair.fileInfo.identifier}/file/${pair.fileInfo.reverseSequenceFile.identifier}`
       ),
       forwardFile: false,
       processingState: pair.fileInfo.processingState,
@@ -68,7 +68,6 @@ export function PairedFileRenderer({
             file={file}
             isForwardFile={file.forwardFile}
             fileObjectId={pair.fileInfo.identifier}
-            sampleId={sampleId}
             downloadSequenceFile={downloadSequenceFile}
             getProcessingState={getProcessingState}
           />

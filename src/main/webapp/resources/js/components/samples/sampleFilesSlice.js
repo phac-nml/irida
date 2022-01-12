@@ -20,6 +20,15 @@ export const removeFileObjectFromSample = createAction(
   })
 );
 
+export const updatedSequencingObjects = createAction(
+  `sampleFiles/updatedSequencingObjects`,
+  ({ updatedSeqObjects }) => ({
+    payload: { updatedSeqObjects },
+  })
+);
+
+export const fetchUpdatedSeqObjectsDelay = 30000; // 30 seconds
+
 /**
  * Set up the initial state.
  */
@@ -44,6 +53,57 @@ const sampleFilesSlice = createSlice({
         state.files = fileData;
       }
       state.loading = false;
+    });
+
+    builder.addCase(updatedSequencingObjects, (state, action) => {
+      let updatedSeqObjects = action.payload.updatedSeqObjects;
+
+      if (Boolean(updatedSeqObjects.paired.length)) {
+        updatedSeqObjects.paired.map((updatedPairedObj) => {
+          state.files.paired = state.files.paired.map((currentPairedObj) =>
+            currentPairedObj.fileInfo.identifier ===
+            updatedPairedObj.fileInfo.identifier
+              ? {
+                  ...currentPairedObj,
+                  fileInfo: updatedPairedObj.fileInfo,
+                  firstFileSize: updatedPairedObj.firstFileSize,
+                  secondFileSize: updatedPairedObj.secondFileSize,
+                }
+              : currentPairedObj
+          );
+        });
+      }
+
+      if (updatedSeqObjects.singles.length) {
+        updatedSeqObjects.singles.map((updatedSingleEndFileObj) => {
+          state.files.singles = state.files.singles.map(
+            (currentSingleFileObj) =>
+              currentSingleFileObj.fileInfo.identifier ===
+              updatedSingleEndFileObj.fileInfo.identifier
+                ? {
+                    ...currentSingleFileObj,
+                    fileInfo: updatedSingleEndFileObj.fileInfo,
+                    firstFileSize: updatedSingleEndFileObj.firstFileSize,
+                  }
+                : currentSingleFileObj
+          );
+        });
+      }
+
+      if (Boolean(updatedSeqObjects.fast5.length)) {
+        updatedSeqObjects.fast5.map((updatedFast5FileObj) => {
+          state.files.fast5 = state.files.fast5.map((currentFast5FileObj) =>
+            currentFast5FileObj.fileInfo.identifier ===
+            updatedFast5FileObj.fileInfo.identifier
+              ? {
+                  ...currentFast5FileObj,
+                  fileInfo: updatedFast5FileObj.fileInfo,
+                  firstFileSize: updatedFast5FileObj.firstFileSize,
+                }
+              : currentFast5FileObj
+          );
+        });
+      }
     });
 
     builder.addCase(removeFileObjectFromSample, (state, action) => {

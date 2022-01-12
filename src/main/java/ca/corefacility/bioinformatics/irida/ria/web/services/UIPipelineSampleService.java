@@ -42,10 +42,10 @@ public class UIPipelineSampleService {
 				LaunchSample launchSample = new LaunchSample(sample, project);
 				List<SampleSequencingObjectFileModel> files = new ArrayList<>();
 				if (paired) {
-					files.addAll(sampleService.getPairedSequenceFilesForSample(sample, project));
+					files.addAll(sampleService.getPairedSequenceFilesForSample(sample, project, null));
 				}
 				if (singles) {
-					files.addAll(sampleService.getSingleEndSequenceFilesForSample(sample, project));
+					files.addAll(sampleService.getSingleEndSequenceFilesForSample(sample, project, null));
 				}
 				launchSample.setFiles(files);
 				samples.add(launchSample);

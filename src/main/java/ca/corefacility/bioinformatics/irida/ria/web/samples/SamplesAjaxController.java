@@ -274,6 +274,21 @@ public class SamplesAjaxController {
 	}
 
 	/**
+	 * Get updated sample sequencing objects for given sequencing object ids
+	 *
+	 * @param id                  Identifier for a sample
+	 * @param sequencingObjectIds Identifiers for updated sequencing objects to get
+	 * @param projectId           Identifier for the project the sample belongs to
+	 * @return {@link ResponseEntity} list of {@link SampleFiles} objects
+	 */
+	@GetMapping("/{id}/updated-sequencing-objects")
+	public ResponseEntity<SampleFiles> getUpdatedSequencingObjects(@PathVariable Long id,
+			@RequestParam(value = "sequencingObjectIds[]") List<Long> sequencingObjectIds,
+			@RequestParam(required = false) Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getUpdatedSequencingObjects(id, sequencingObjectIds, projectId));
+	}
+
+	/**
 	 * Remove a sequencing object or genome assembly linked to a {@link Sample}
 	 *
 	 * @param id           Identifier for a sample

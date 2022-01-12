@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
@@ -33,10 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -427,12 +424,44 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project);
-		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project);
-		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample);
+		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project, null);
+		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project, null);
+		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample, project, null);
 		List<SampleGenomeAssemblyFileModel> genomeAssemblies = getGenomeAssembliesForSample(sample);
 
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
+	}
+
+	/**
+	 * Get updated sample sequencing objects for given sequencing object ids
+	 *
+	 * @param sampleId            Identifier for a sample
+	 * @param sequencingObjectIds Identifiers for updated sequencing objects to get
+	 * @param projectId           Identifier for the project the sample belongs to
+	 * @return list of {@link SampleFiles} objects
+	 */
+	public SampleFiles getUpdatedSequencingObjects(Long sampleId, List<Long> sequencingObjectIds, Long projectId) {
+		Sample sample = sampleService.read(sampleId);
+
+		Project project = null;
+		if (projectId != null) {
+			project = projectService.read(projectId);
+		}
+
+		/*
+		Only get updated sequencing object info for the provided sequencing object ids
+		 */
+		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project,
+				sequencingObjectIds);
+		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project,
+				sequencingObjectIds);
+		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample, project, sequencingObjectIds);
+
+		/*
+		 We set assemblies to null as they don't have any file processing that was run on the files
+		 so we don't require any updated info for these files
+		 */
+		return new SampleFiles(singles, filePairs, fast5, null);
 	}
 
 	/**
@@ -501,13 +530,20 @@ public class UISampleService {
 	/**
 	 * Get a list of paired end sequence files for a sample
 	 *
-	 * @param sample  the {@link Sample} to get the files for.
-	 * @param project the {@link Project} the sample belongs to
+	 * @param sample              the {@link Sample} to get the files for.
+	 * @param project             the {@link Project} the sample belongs to
+	 * @param sequencingObjectIds The ids of the sequencing objects to return
 	 * @return list of paired end sequence files
 	 */
-	public List<SampleSequencingObjectFileModel> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
+	public List<SampleSequencingObjectFileModel> getPairedSequenceFilesForSample(Sample sample, Project project,
+			List<Long> sequencingObjectIds) {
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectIds == null ?
+				sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class) :
+				sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class)
+						.stream()
+						.filter(j -> sequencingObjectIds.contains(j.getObject()
+								.getId()))
+						.collect(Collectors.toList());
 		// add project to qc entries and filter any unavailable entries
 		List<SampleSequencingObjectFileModel> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -528,13 +564,20 @@ public class UISampleService {
 	/**
 	 * Get a list of single end sequence files for a sample
 	 *
-	 * @param sample  the {@link Sample} to get the files for.
-	 * @param project the {@link Project} the sample belongs to
+	 * @param sample              the {@link Sample} to get the files for.
+	 * @param project             the {@link Project} the sample belongs to
+	 * @param sequencingObjectIds The ids of the sequencing objects to return
 	 * @return list of single end sequence files
 	 */
-	public List<SampleSequencingObjectFileModel> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+	public List<SampleSequencingObjectFileModel> getSingleEndSequenceFilesForSample(Sample sample, Project project,
+			List<Long> sequencingObjectIds) {
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectIds == null ?
+				sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class) :
+				sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class)
+						.stream()
+						.filter(j -> sequencingObjectIds.contains(j.getObject()
+								.getId()))
+						.collect(Collectors.toList());
 
 		List<SampleSequencingObjectFileModel> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -552,16 +595,25 @@ public class UISampleService {
 	/**
 	 * Get a list of fast5 sequence files for a sample
 	 *
-	 * @param sample the {@link Sample} to get the files for.
+	 * @param sample              the {@link Sample} to get the files for.
+	 * @param project             the {@link Project} the sample belongs to
+	 * @param sequencingObjectIds The ids of the sequencing objects to return
 	 * @return list of fast5 sequence files
 	 */
-	public List<SampleSequencingObjectFileModel> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
+	public List<SampleSequencingObjectFileModel> getFast5FilesForSample(Sample sample, Project project,
+			List<Long> sequencingObjectIds) {
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectIds == null ?
+				sequencingObjectService.getSequencesForSampleOfType(sample, Fast5Object.class) :
+				sequencingObjectService.getSequencesForSampleOfType(sample, Fast5Object.class)
+						.stream()
+						.filter(j -> sequencingObjectIds.contains(j.getObject()
+								.getId()))
+						.collect(Collectors.toList());
 
 		List<SampleSequencingObjectFileModel> fast5Files = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : fast5FileJoins) {
 			SequencingObject obj = join.getObject();
+			enhanceQcEntries(obj, project);
 			Fast5Object f5 = (Fast5Object) obj;
 			String fileSize = f5.getFile()
 					.getFileSize();

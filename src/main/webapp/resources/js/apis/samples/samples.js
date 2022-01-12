@@ -85,7 +85,6 @@ export const sampleApi = createApi({
         url: `/${sampleId}/files?fileObjectId=${fileObjectId}&fileType=${type}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["SampleFiles"],
     }),
   }),
 });
@@ -125,6 +124,30 @@ export async function fetchSampleFiles({ sampleId, projectId }) {
   try {
     const response = await axios(
       `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
+    );
+    return response.data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
+
+/**
+ * Get updated sequencing objects details for a sample
+ * @param {number} sampleId - identifier for a sample
+ * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.
+ * @param {array} sequencingObjectIds - identifiers for updated sequencing objects to get.
+ * @returns {Promise<any>}
+ */
+export async function fetchUpdatedSequencingObjects({
+  sampleId,
+  projectId,
+  sequencingObjectIds,
+}) {
+  try {
+    const response = await axios(
+      `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds[]=${sequencingObjectIds}&${
+        projectId && `?projectId=${projectId}`
+      }`
     );
     return response.data;
   } catch (e) {

@@ -4,12 +4,12 @@ import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile, IconFile } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
+import { useSelector } from "react-redux";
 
 /**
  * React component to display single end file details
  *
  * @param {array} files
- * @param sampleId
  * @param fastqcResults
  * @function download assembly file function
  * @function download sequence file function
@@ -20,13 +20,14 @@ import { SPACE_XS } from "../../styles/spacing";
  */
 export function SingleEndFileRenderer({
   files,
-  sampleId,
   fastqcResults = true,
   downloadAssemblyFile = () => {},
   downloadSequenceFile = () => {},
   removeSampleFiles = () => {},
   getProcessingState = () => {},
 }) {
+  const { sample } = useSelector((state) => state.sampleReducer);
+
   return (
     <List
       bordered
@@ -50,10 +51,10 @@ export function SingleEndFileRenderer({
                     href={
                       file.fileInfo.sequenceFile
                         ? setBaseUrl(
-                            `samples/${sampleId}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.sequenceFile.identifier}`
+                            `samples/${sample.identifier}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.sequenceFile.identifier}`
                           )
                         : setBaseUrl(
-                            `samples/${sampleId}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.file.identifier}`
+                            `samples/${sample.identifier}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.file.identifier}`
                           )
                     }
                     target="_blank"
@@ -77,7 +78,7 @@ export function SingleEndFileRenderer({
                     onClick={() =>
                       file.fileType === "assembly"
                         ? downloadAssemblyFile({
-                            sampleId,
+                            sampleId: sample.identifier,
                             genomeAssemblyId: file.fileInfo.identifier,
                           })
                         : downloadSequenceFile({

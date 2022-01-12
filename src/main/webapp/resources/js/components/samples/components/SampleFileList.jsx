@@ -6,30 +6,35 @@ import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
 import {
   downloadGenomeAssemblyFile,
   downloadSequencingObjectFile,
+  fetchUpdatedSequencingObjects,
   useRemoveSampleFilesMutation,
 } from "../../../apis/samples/samples";
 
-import { removeFileObjectFromSample } from "../sampleFilesSlice";
-import { useDispatch } from "react-redux";
+import {
+  removeFileObjectFromSample,
+  updatedSequencingObjects,
+  fetchUpdatedSeqObjectsDelay,
+} from "../sampleFilesSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
   IconCheckCircle,
   IconClock,
   IconSyncSpin,
   IconRemove,
 } from "../../icons/Icons";
+import { useInterval } from "../../../hooks";
 
 /**
  * React component to display, remove, download files
  *
- * @param files The list of files to display
- * @param sampleId The sample identifier
- * @param modifiable If the sample can be modified by the user or not
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFileList({ files, sampleId, modifiable }) {
+export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
+  const { sample, projectId } = useSelector((state) => state.sampleReducer);
+  const { files } = useSelector((state) => state.sampleFilesReducer);
 
   const fileProcessTranslations = {
     UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -63,7 +68,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
    */
   const removeSampleFiles = ({ fileObjectId, type }) => {
     removeSampleFilesFromSample({
-      sampleId: sampleId,
+      sampleId: sample.identifier,
       fileObjectId,
       type,
     })
@@ -75,6 +80,69 @@ export function SampleFileList({ files, sampleId, modifiable }) {
         notification.error({ message: error });
       });
   };
+
+  /*
+   Get updated processing states for the sequencing objects
+   which were still getting processed
+   */
+  useInterval(() => {
+    let seqObjIdsSingles = files.singles
+      ?.filter((singleEndFile) => {
+        return (
+          singleEndFile.fileInfo.processingState !== "FINISHED" &&
+          singleEndFile.fileInfo.processingState !== "ERROR"
+        );
+      })
+      .map((singleEndFile) => singleEndFile.fileInfo.identifier);
+
+    let seqObjIdsPaired = files.paired
+      ?.filter((pair) => {
+        return (
+          pair.fileInfo.processingState !== "FINISHED" &&
+          pair.fileInfo.processingState !== "ERROR"
+        );
+      })
+      .map((pair) => pair.fileInfo.identifier);
+
+    let seqObjIdsFast5 = files.fast5
+      ?.filter((fast5File) => {
+        return (
+          fast5File.fileInfo.processingState !== "FINISHED" &&
+          fast5File.fileInfo.processingState !== "ERROR"
+        );
+      })
+      .map((fast5File) => fast5File.fileInfo.identifier);
+
+    let sequencingObjectIds = [];
+
+    if (typeof seqObjIdsSingles !== "undefined") {
+      sequencingObjectIds = [...sequencingObjectIds, ...seqObjIdsSingles];
+    }
+    if (typeof seqObjIdsPaired !== "undefined") {
+      sequencingObjectIds = [...sequencingObjectIds, ...seqObjIdsPaired];
+    }
+    if (typeof seqObjIdsFast5 !== "undefined") {
+      sequencingObjectIds = [...sequencingObjectIds, ...seqObjIdsFast5];
+    }
+
+    if (sequencingObjectIds.length) {
+      fetchUpdatedSequencingObjects({
+        sampleId: sample.identifier,
+        projectId,
+        sequencingObjectIds,
+      })
+        .then((data) => {
+          dispatch(
+            updatedSequencingObjects({
+              updatedSeqObjects: data,
+            })
+          );
+        })
+        .catch((error) => {
+          notification.error({ message: error });
+        });
+    }
+  }, fetchUpdatedSeqObjectsDelay);
 
   /*
   Gets the processing state as a tag (icon) with a tooltip
@@ -107,7 +175,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
           <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
             <SingleEndFileRenderer
               files={files.singles}
-              sampleId={sampleId}
+              sampleId={sample.identifier}
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
@@ -120,7 +188,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
               <PairedFileRenderer
                 key={`pair-${pair.identifier}`}
                 pair={pair}
-                sampleId={sampleId}
+                sampleId={sample.identifier}
                 downloadSequenceFile={downloadSequenceFile}
                 removeSampleFiles={removeSampleFiles}
                 getProcessingState={getProcessingStateTag}
@@ -132,7 +200,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
           <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
             <SingleEndFileRenderer
               files={files.fast5}
-              sampleId={sampleId}
+              sampleId={sample.identifier}
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
@@ -144,7 +212,7 @@ export function SampleFileList({ files, sampleId, modifiable }) {
             <SingleEndFileRenderer
               files={files.assemblies}
               fastqcResults={false}
-              sampleId={sampleId}
+              sampleId={sample.identifier}
               downloadAssemblyFile={downloadAssemblyFile}
               removeSampleFiles={removeSampleFiles}
             />
