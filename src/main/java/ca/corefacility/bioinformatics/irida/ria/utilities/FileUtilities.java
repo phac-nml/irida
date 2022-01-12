@@ -239,11 +239,11 @@ public class FileUtilities {
 	}
 
 	/**
-	 * Get file extension from filename.
+	 * Get file extension from filepath.
 	 * <p>
 	 * Uses simple regex to parse file extension {@code ^.*\.(\w+)$}.
 	 *
-	 * @param filename Filename
+	 * @param filepath The {@link Path} of a file to retrieve ext.
 	 * @return File extension if found; otherwise empty string
 	 */
 	public static String getFileExt(Path filepath) {
