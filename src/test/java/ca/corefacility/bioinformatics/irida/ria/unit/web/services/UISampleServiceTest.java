@@ -1,19 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
-import java.util.Locale;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -23,8 +15,15 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
 import com.google.common.collect.ImmutableList;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+
+import java.util.Locale;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -90,6 +89,7 @@ public class UISampleServiceTest {
 		request.setCurrentId(CURRENT_PROJECT_ID);
 		request.setTargetId(TARGET_PROJECT_ID);
 		request.setSampleIds(ImmutableList.of(SAMPLE_ID));
+		request.setRestrictions(ImmutableList.of(new ShareMetadataRestriction(1L, "LEVEL_1")));
 		request.setRemove(false);
 		request.setLocked(false);
 		service.shareSamplesWithProject(request, Locale.CANADA);
