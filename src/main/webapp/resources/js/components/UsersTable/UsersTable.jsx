@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { setUsersDisabledStatus } from "../../apis/users/users";
+import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
 import { Button, Checkbox } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../ant.design/table-renderers";
@@ -14,6 +14,7 @@ import { IconEdit } from "../icons/Icons";
 export function UsersTable() {
   const { updateTable } = useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
 
   function updateUser(user) {
     setUsersDisabledStatus({
@@ -118,24 +119,6 @@ export function UsersTable() {
       dataIndex: "lastLogin",
     },
   ];
-
-  if (IS_ADMIN) {
-    columns.push({
-      fixed: "right",
-      key: "edit",
-      render(text, item) {
-        return (
-          <Button
-            className="t-edit-user"
-            shape="circle"
-            href={setBaseUrl(`users/${item.id}/edit`)}
-          >
-            <IconEdit />
-          </Button>
-        );
-      },
-    });
-  }
 
   return (
     <PagedTable

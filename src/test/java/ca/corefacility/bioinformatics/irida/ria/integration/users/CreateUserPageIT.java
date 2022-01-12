@@ -1,17 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreateUserPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/CreateUserPageIT.xml")
 public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateUserPage createPage;

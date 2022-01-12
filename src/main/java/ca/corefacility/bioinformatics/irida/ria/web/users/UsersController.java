@@ -4,8 +4,6 @@ import java.security.Principal;
 import java.security.SecureRandom;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -26,15 +24,9 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -46,16 +38,13 @@ import com.google.common.collect.Lists;
 
 /**
  * Controller for all {@link User} related views
- *
  */
 @Controller
 @RequestMapping(value = "/users")
 public class UsersController {
 	private static final String USERS_PAGE = "user/list";
-	private static final String SPECIFIC_USER_PAGE = "user/user_details";
-	private static final String EDIT_USER_PAGE = "user/edit";
+	private static final String SPECIFIC_USER_PAGE = "user/account";
 	private static final String CREATE_USER_PAGE = "user/create";
-	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	private final List<Locale> locales;
@@ -97,232 +86,29 @@ public class UsersController {
 	/**
 	 * Request for a specific user details page.
 	 *
-	 * @param userId
-	 *            The id for the user to show details for.
-	 * @param model
-	 *            Spring model to populate the html page
-	 * @param principal
-	 *            the currently logged in user
-	 * @param mailFailure
-	 * 			  if sending a user activation e-mail passed or failed
-	 *
-	 * @return The name of the user/details page
+	 * @return The name of the user account page
 	 */
-
-	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public String getUserSpecificPage(@PathVariable("userId") Long userId,
-									  @RequestParam(value = "mailFailure", required = false, defaultValue = "false") final Boolean mailFailure,
-			final Model model, Principal principal) {
-		logger.debug("Getting project information for [User " + userId + "]");
-
-		// add the user to the model
-		User user = userService.read(userId);
-		model.addAttribute("user", user);
-		model.addAttribute("mailFailure", mailFailure);
-
-		User principalUser = userService.getUserByUsername(principal.getName());
-
-		Locale locale = LocaleContextHolder.getLocale();
-
-		// add the user's role to the model
-		String roleMessageName = "systemrole." + user.getSystemRole().getName();
-		String systemRole = messageSource.getMessage(roleMessageName, null, locale);
-		model.addAttribute("systemRole", systemRole);
-
-		// check if we should show an edit button
-		boolean canEditUser = canEditUser(principalUser, user);
-		model.addAttribute("canEditUser", canEditUser);
-		model.addAttribute("mailConfigured", emailController.isMailConfigured());
-
-		model.addAttribute("canCreatePasswordReset",
-				PasswordResetController.canCreatePasswordReset(principalUser, user));
-
-		// show the user's projects
-		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-
-		// add the projects to the model list
-		List<Map<String, Object>> projects = new ArrayList<>();
-		for (Join<Project, User> join : projectsForUser) {
-			ProjectUserJoin pujoin = (ProjectUserJoin) join;
-			Project project = join.getSubject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("identifier", project.getId());
-			map.put("name", project.getName());
-			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER));
-			map.put("subscribed" , pujoin.isEmailSubscription());
-
-			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
-			map.put("role", messageSource.getMessage(proleMessageName, null, locale));
-			map.put("date", pujoin.getCreatedDate());
-			projects.add(map);
-		}
-		model.addAttribute("projects", projects);
-
+	@RequestMapping({ "/{userId}", "/{userId}/*" })
+	public String getUserDetailsPage() {
 		return SPECIFIC_USER_PAGE;
 	}
 
 	/**
 	 * Get the currently logged in user's page
 	 *
-	 * @param model
-	 *            The model to pass on
-	 * @param principal
-	 *            The currently logged in user
-	 *
+	 * @param principal a reference to the logged in user.
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
-	@RequestMapping("/current")
-	public String getLoggedInUserPage(Model model, Principal principal) {
+	@RequestMapping({ "/current" })
+	public String getLoggedInUserPage(Principal principal) {
 		User readPrincipal = userService.getUserByUsername(principal.getName());
-
-		return getUserSpecificPage(readPrincipal.getId(), false, model, principal);
-	}
-
-	/**
-	 * Submit a user edit
-	 *
-	 * @param userId          The id of the user to edit (required)
-	 * @param firstName       The firstname to update
-	 * @param lastName        the lastname to update
-	 * @param email           the email to update
-	 * @param phoneNumber     the phone number to update
-	 * @param systemRole      the role to update
-	 * @param userLocale      The locale the user selected
-	 * @param password        the password to update
-	 * @param confirmPassword password confirmation
-	 * @param model           The model to work on
-	 * @param enabled         whether the user account should be enabled or disabled.
-	 * @param principal       a reference to the logged in user.
-	 * @param request         the request
-	 * @return The name of the user view
-	 */
-	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
-	public String updateUser(@PathVariable Long userId, @RequestParam(required = false) String firstName,
-			@RequestParam(required = false) String lastName, @RequestParam(required = false) String email,
-			@RequestParam(required = false) String phoneNumber, @RequestParam(required = false) String systemRole,
-			@RequestParam(required = false, name = "locale") String userLocale,
-			@RequestParam(required = false) String password, @RequestParam(required = false) String enabled,
-			@RequestParam(required = false) String confirmPassword, Model model, Principal principal,
-			HttpServletRequest request) {
-		logger.debug("Updating user " + userId);
-
-		Map<String, String> errors = new HashMap<>();
-
-		Map<String, Object> updatedValues = new HashMap<>();
-
-		if (!Strings.isNullOrEmpty(firstName)) {
-			updatedValues.put("firstName", firstName);
-		}
-
-		if (!Strings.isNullOrEmpty(lastName)) {
-			updatedValues.put("lastName", lastName);
-		}
-
-		if (!Strings.isNullOrEmpty(email)) {
-			updatedValues.put("email", email);
-		}
-
-		if (!Strings.isNullOrEmpty(phoneNumber)) {
-			updatedValues.put("phoneNumber", phoneNumber);
-		}
-
-		if (!Strings.isNullOrEmpty(userLocale)) {
-			updatedValues.put("locale", userLocale);
-		}
-
-		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
-			if (!password.equals(confirmPassword)) {
-				errors.put("password", messageSource.getMessage("user.edit.password.match", null, request.getLocale()));
-			} else {
-				updatedValues.put("password", password);
-			}
-		}
-
-		if (isAdmin(principal)) {
-			logger.debug("User is admin");
-			updatedValues.put("enabled", !Strings.isNullOrEmpty(enabled));
-
-			if (!Strings.isNullOrEmpty(systemRole)) {
-				Role newRole = Role.valueOf(systemRole);
-
-				updatedValues.put("systemRole", newRole);
-			}
-		}
-
-		String returnView;
-		if (errors.isEmpty()) {
-			try {
-				User user = userService.updateFields(userId, updatedValues);
-				returnView = "redirect:/users/" + userId;
-
-				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName()
-						.equals(user.getUsername())) {
-					HttpSession session = request.getSession();
-					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-				}
-
-			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				errors = handleCreateUpdateException(ex, request.getLocale());
-
-				model.addAttribute("errors", errors);
-
-				returnView = getEditUserPage(userId, model);
-			}
-		} else {
-			model.addAttribute("errors", errors);
-			returnView = getEditUserPage(userId, model);
-		}
-
-		return returnView;
-	}
-
-	/**
-	 * Get the user edit page
-	 *
-	 * @param userId
-	 *            The ID of the user to get
-	 * @param model
-	 *            The model for the returned view
-	 *
-	 * @return The user edit view
-	 */
-	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
-	@PreAuthorize("hasPermission(#userId, 'canUpdateUser')")
-	public String getEditUserPage(@PathVariable Long userId, Model model) {
-		logger.trace("Getting edit project page for [User " + userId + "]");
-		User user = userService.read(userId);
-		model.addAttribute("user", user);
-
-		Locale locale = LocaleContextHolder.getLocale();
-
-		model.addAttribute("locales", locales);
-
-		Map<String, String> roleNames = new HashMap<>();
-		for (Role role : adminAllowedRoles) {
-			if (!role.equals(user.getSystemRole())) {
-				String roleMessageName = ROLE_MESSAGE_PREFIX + role.getName();
-				String roleName = messageSource.getMessage(roleMessageName, null, locale);
-				roleNames.put(role.getName(), roleName);
-			}
-		}
-
-		model.addAttribute("allowedRoles", roleNames);
-
-		String currentRoleName = messageSource.getMessage(ROLE_MESSAGE_PREFIX + user.getSystemRole().getName(), null,
-				locale);
-
-		model.addAttribute("currentRole", currentRoleName);
-
-		if (!model.containsAttribute("errors")) {
-			model.addAttribute("errors", new HashMap<String, String>());
-		}
-
-		return EDIT_USER_PAGE;
+		Long id = readPrincipal.getId();
+		return "redirect:/users/" + id;
 	}
 
 	/**
 	 * Get the user creation view
+	 *
 	 * @param model Model for the view
 	 * @return user creation view
 	 */
@@ -458,6 +244,7 @@ public class UsersController {
 
 	/**
 	 * Check that email not already taken
+	 *
 	 * @param email Email address to check existence of
 	 * @return true if email not taken
 	 */
@@ -475,11 +262,8 @@ public class UsersController {
 	/**
 	 * Handle exceptions for the create and update pages
 	 *
-	 * @param ex
-	 *            an exception to handle
-	 * @param locale
-	 *            The locale to work with
-	 *
+	 * @param ex     an exception to handle
+	 * @param locale The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
 	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
@@ -491,20 +275,21 @@ public class UsersController {
 
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				logger.debug(violation.getMessage());
-				String errorKey = violation.getPropertyPath().toString();
+				String errorKey = violation.getPropertyPath()
+						.toString();
 				errors.put(errorKey, violation.getMessage());
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			logger.debug(divx.getMessage());
-			if (divx.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+			if (divx.getMessage()
+					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
 				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
-		}
-		else if(ex instanceof PasswordReusedException){
+		} else if (ex instanceof PasswordReusedException) {
 			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
 		}
 
@@ -512,34 +297,16 @@ public class UsersController {
 	}
 
 	/**
-	 * Check if the logged in user is allowed to edit the given user.
-	 *
-	 * @param principalUser
-	 *            The currently logged in principal
-	 * @param user
-	 *            The user to edit
-	 *
-	 * @return boolean if the principal can edit the user
-	 */
-	private boolean canEditUser(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
-		boolean usersEqual = user.equals(principalUser);
-
-		return principalAdmin || usersEqual;
-	}
-
-	/**
 	 * Check if the logged in user is an Admin
 	 *
-	 * @param principal
-	 *            The logged in user to check
-	 *
+	 * @param principal The logged in user to check
 	 * @return if the user is an admin
 	 */
 	private boolean isAdmin(Principal principal) {
 		logger.trace("Checking if user is admin");
 		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
+		return readPrincipal.getAuthorities()
+				.contains(Role.ROLE_ADMIN);
 	}
 
 	/**

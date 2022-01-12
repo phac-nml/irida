@@ -1,16 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UserDetailsPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.List;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.Assert.*;
 
+@Ignore
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UserDetailsPageIT.xml")
 public class UserDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private UserDetailsPage usersPage;
