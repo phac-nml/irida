@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -138,7 +139,8 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 
 	@Override
 	public String getLabel() {
-		return Strings.isNullOrEmpty(labelPrefix) ? file.toFile().getName() : labelPrefix + '-' + file.toFile().getName();
+		String filename = FileUtilities.getFileExt(file).equals("html-zip") ? file.toFile().getName() + ".zip" : file.toFile().getName();
+		return Strings.isNullOrEmpty(labelPrefix) ? filename : labelPrefix + '-' + filename;
 	}
 
 	@Override
