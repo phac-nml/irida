@@ -155,10 +155,8 @@ function ShareApp() {
             >
               {projects && projects.length === 0 ? (
                 <Alert
-                  message={"You have no projects to share these samples with"}
-                  description={
-                    "You either need to create a new project, or be a manager on one of your other projects"
-                  }
+                  message={i18n("ShareSamples.no-project.message")}
+                  description={i18n("ShareSamples.no-project.description")}
                 />
               ) : (
                 <Row>
