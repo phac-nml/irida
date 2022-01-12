@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import {
   Alert,
@@ -25,17 +25,6 @@ export default function UserPasswordPage() {
   const { data: userDetails, isLoading } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
-  const [formErrors, setFormErrors] = useState();
-
-  const getError = (fieldName, message) => {
-    if (message) {
-      return formErrors?.find((error) => error.field === fieldName)?.message;
-    } else {
-      return (
-        formErrors?.filter((error) => error.field === fieldName).length > 0
-      );
-    }
-  };
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
@@ -50,7 +39,11 @@ export default function UserPasswordPage() {
         notification.error({
           message: i18n("UserPasswordPage.notification.error"),
         });
-        setFormErrors(error.data);
+        const fields = Object.entries(error.data).map(([field, error]) => ({
+          name: field,
+          errors: [error],
+        }));
+        form.setErrors(fields);
       });
   };
 
@@ -91,8 +84,6 @@ export default function UserPasswordPage() {
             <Form.Item
               label={i18n("UserPasswordPage.form.label.password")}
               name="password"
-              help={getError("password", true)}
-              validateStatus={getError("password", false) ? "error" : undefined}
               rules={[
                 {
                   required: true,

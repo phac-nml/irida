@@ -185,13 +185,12 @@ public class UIUsersService {
 		if (!Strings.isNullOrEmpty(userEditRequest.getUserLocale())) {
 			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
-		
+
 		String password = userEditRequest.getPassword();
 		String confirmPassword = userEditRequest.getConfirmPassword();
 		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
 			if (!password.equals(confirmPassword)) {
-				errors.add(new UserDetailsError("password",
-						messageSource.getMessage("user.edit.password.match", null, request.getLocale())));
+				errors.put("password", messageSource.getMessage("user.edit.password.match", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", password);
 			}
