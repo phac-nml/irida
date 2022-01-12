@@ -186,17 +186,20 @@ public class AnalysisController {
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 		String htmlExt = "html";
+		String htmlZipExt = "html-zip";
+		Boolean zipped = false;
 
 		for (AnalysisOutputFile file : files) {
 			if (file.getFile()
 					.toFile()
 					.getName()
 					.contains(filename)) {
-				String fileExt = FileUtilities.getFileExt(file.getFile()
-						.getFileName()
-						.toString());
+				String fileExt = FileUtilities.getFileExt(file.getFile());
 				if (fileExt.equals(htmlExt)) {
 					outputFile = file;
+				} else if (fileExt.equals(htmlZipExt)) {
+					outputFile = file;
+					zipped = true;
 				}
 				break;
 			}
@@ -206,7 +209,7 @@ public class AnalysisController {
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
 
-		if (FileUtilities.isZippedFile(outputFile.getFile())) {
+		if (zipped) {
 			try (InputStream inputStream = new FileInputStream(outputFile.getFile()
 					.toString()); BufferedInputStream bis = new BufferedInputStream(inputStream);
 					ZipInputStream zis = new ZipInputStream(bis);

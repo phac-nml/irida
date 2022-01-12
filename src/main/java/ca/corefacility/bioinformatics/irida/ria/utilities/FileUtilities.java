@@ -44,7 +44,7 @@ public class FileUtilities {
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
 	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
-	private static final Pattern regexExt = Pattern.compile("^.*?\\.(\\w+)(\\.zip)?$");
+	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)$");
 
 	/**
 	 * Utility method for download a zip file containing all output files from
@@ -246,13 +246,23 @@ public class FileUtilities {
 	 * @param filename Filename
 	 * @return File extension if found; otherwise empty string
 	 */
-	public static String getFileExt(String filename) {
-		Matcher matcher = regexExt.matcher(filename);
+	public static String getFileExt(Path filepath) {
+		Matcher matcher = regexExt.matcher(filepath.getFileName().toString());
 		String ext = "";
 		if (matcher.matches()) {
-			ext = matcher.group(1);
+			ext = matcher.group(1).toLowerCase();
 		}
-		return ext.toLowerCase();
+		if (ext.equals("html")) {
+			try {
+				if (isZippedFile(filepath)) {
+					ext = "html-zip";
+				}
+			} catch (IOException e) {
+				logger.error("Could not find file " + filepath.toString());
+			}
+		}
+
+		return ext;
 	}
 
 	/**

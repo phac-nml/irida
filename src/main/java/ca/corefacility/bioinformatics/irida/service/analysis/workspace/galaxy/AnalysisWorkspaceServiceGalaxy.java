@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -141,16 +139,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
 
-		Path tmpOutputFile = Files.createTempFile(dataset.getName(), null);
-		tmpOutputFile.toFile().deleteOnExit();
-
-		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, tmpOutputFile);
 		Path outputFile = outputDirectory.resolve(fileName);
-		if (FileUtilities.isZippedFile(tmpOutputFile)) {
-			outputFile = outputDirectory.resolve(fileName + ".zip");
-		}
-
-		Files.move(tmpOutputFile, outputFile, StandardCopyOption.REPLACE_EXISTING);
+		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, outputFile);
 		final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(analysisId,
 				fileName);
 
