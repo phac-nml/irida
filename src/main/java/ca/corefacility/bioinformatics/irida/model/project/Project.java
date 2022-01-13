@@ -1,5 +1,4 @@
 package ca.corefacility.bioinformatics.irida.model.project;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +15,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
+
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "project")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Project extends IridaResourceSupport
+public class Project extends IridaRepresentationModel
 		implements MutableIridaThing, Comparable<Project>, RemoteSynchronizable {
 
 	@Id

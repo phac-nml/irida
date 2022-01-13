@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
@@ -31,7 +31,7 @@ public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryI
 	}
 	
 	@Override
-	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
+	protected <T extends IridaRepresentationModel> T setRemoteStatus(T entity, RemoteAPI api) {
 		entity = super.setRemoteStatus(entity, api);
 
 		SingleEndSequenceFile singleFile = (SingleEndSequenceFile) entity;

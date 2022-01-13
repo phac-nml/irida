@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
@@ -73,7 +73,7 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> imp
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
 		// get the metadata link
-		Link metadataLink = sample.getLink(METADATA_REL);
+		Link metadataLink = sample.getLink(METADATA_REL).map(i -> i).orElse(null);
 
 		// request metadata response
 		ResponseEntity<ResourceWrapper<SampleMetadataWrapper>> exchange = restTemplate.exchange(metadataLink.getHref(),
@@ -88,7 +88,7 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> imp
 	/**
 	 * Class to capture the response from a sample metadata request
 	 */
-	private static class SampleMetadataWrapper extends IridaResourceSupport {
+	private static class SampleMetadataWrapper extends IridaRepresentationModel {
 		Map<String, MetadataEntry> metadata;
 
 		@JsonProperty
