@@ -89,7 +89,7 @@ function AnalysisOutputsProvider(props) {
           }
 
           if (!hasHtmlFile) {
-            hasHtmlFile = getPreviewForFileType(el.fileExt, "html") || getPreviewForFileType(el.fileExt, "html-zip");
+            hasHtmlFile = getPreviewForFileType(el.fileExt, "html");
           }
         });
       }
