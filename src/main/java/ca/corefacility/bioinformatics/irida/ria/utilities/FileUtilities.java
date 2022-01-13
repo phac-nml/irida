@@ -21,6 +21,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -260,9 +261,18 @@ public class FileUtilities {
 		return ext;
 	}
 
-	public static String getUniqueFilename(Path absPath, String sampleName, Long sampleId, Long analysisSubmissionId) {
-		String ext = getFileExt(absPath);
-		String filename = absPath.getFileName().toString();
+	/**
+	 * Get a unique filename for a filePath from an analysis output file.
+	 *
+	 * @param filePath The {@link Path} of the file to generate a unique filename for
+	 * @param sampleName The name of the {@link Sample} associated with the analysis
+	 * @param sampleId The id of the {@link Sample} associated with the analysis
+	 * @param analysisSubmissionId The id of the {@link AnalysisSubmission} that generated the file
+	 * @return Unique filename of the format SAMPLENAME-sampleId-SAMPLEID-analysisSubmissionId-ANALYSISSUBMISSIONID-ORIGFILENAME
+	 */
+	public static String getUniqueFilename(Path filePath, String sampleName, Long sampleId, Long analysisSubmissionId) {
+		String ext = getFileExt(filePath);
+		String filename = filePath.getFileName().toString();
 	
 		String prefix = sampleName + "-sampleId-" + sampleId + "-analysisSubmissionId-" + analysisSubmissionId + "-";
 		filename = prefix + filename;

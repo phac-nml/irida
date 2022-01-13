@@ -181,7 +181,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		return analysisOutputs;
 	}
 
-	public class PSAOIRowMapper extends BeanPropertyRowMapper<ProjectSampleAnalysisOutputInfo> {
+	class PSAOIRowMapper extends BeanPropertyRowMapper<ProjectSampleAnalysisOutputInfo> {
 
 		private Path outputFileBaseDirectory;
 		
