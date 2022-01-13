@@ -150,13 +150,8 @@ public class FileUtilities {
 					throw new FileNotFoundException("File '" + file.getFile().toFile().getAbsolutePath() + "' does not exist!");
 				}
 				// 1) Build a folder/file name
-				// building similar filename for each analysis output file as:
-				// resources/js/pages/projects/project-analysis-outputs.js#downloadSelected
-				String outputFilename = file.getFile()
-						.getFileName()
-						.toString();
 				// trying to pack as much useful info into the filename as possible!
-				outputFilename = outputInfo.getSampleName() + "-sampleId-" + outputInfo.getSampleId() + "-analysisSubmissionId-" + outputInfo.getAnalysisSubmissionId() + "-" + outputFilename;
+				String outputFilename = getUniqueFilename(file.getFile(), outputInfo.getSampleName(), outputInfo.getSampleId(), + outputInfo.getAnalysisSubmissionId());
 				// 2) Tell the zip stream that we are starting a new entry in
 				// the archive.
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
@@ -263,6 +258,20 @@ public class FileUtilities {
 		}
 
 		return ext;
+	}
+
+	public static String getUniqueFilename(Path absPath, String sampleName, Long sampleId, Long analysisSubmissionId) {
+		String ext = getFileExt(absPath);
+		String filename = absPath.getFileName().toString();
+	
+		String prefix = sampleName + "-sampleId-" + sampleId + "-analysisSubmissionId-" + analysisSubmissionId + "-";
+		filename = prefix + filename;
+		if (ext.equals("html-zip")) {
+			filename = filename + ".zip";
+		}
+		logger.debug("File Name: " + filename);
+
+		return filename;
 	}
 
 	/**
