@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -34,7 +34,7 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 @RequestMapping("/api/generic")
-public abstract class RESTGenericController<Type extends IridaResourceSupport & IridaThing & Comparable<Type>> {
+public abstract class RESTGenericController<Type extends IridaRepresentationModel & IridaThing & Comparable<Type>> {
 
 	/**
 	 * name of the objects used to render the view classes.

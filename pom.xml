@@ -23,37 +23,44 @@
 
 	<developers>
 		<developer>
+			<id>eric</id>
+			<name>Eric Enns</name>
+			<email>eric.enns@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
+		</developer>
+		<developer>
 			<id>aaron</id>
 			<name>Aaron Petkau</name>
-			<email>aaron.petkau@canada.ca</email>
+			<email>aaron.petkau@phac-aspc.gc.ca</email>
 			<organization>Public Health Agency of Canada</organization>
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>josh</id>
 			<name>Josh Adam</name>
-			<email>josh.adam@canada.ca</email>
-			<organization>Public Health Agency of Canada</organization>
-			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
-		</developer>
-		<developer>
-			<id>tom</id>
-			<name>Thomas Matthews</name>
-			<email>thomas.matthews@canada.ca</email>
+			<email>josh.adam@phac-aspc.gc.ca</email>
 			<organization>Public Health Agency of Canada</organization>
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>deep</id>
 			<name>Sukhdeep Sidhu</name>
-			<email>sukhdeep.sidhu@canada.ca</email>
+			<email>sukhdeep.sidhu@phac-aspc.gc.ca</email>
 			<organization>Public Health Agency of Canada</organization>
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
 		<developer>
 			<id>jeff</id>
 			<name>Jeffrey Thiessen</name>
-			<email>jeffrey.thiessen@canada.ca</email>
+			<email>jeffrey.thiessen@phac-aspc.gc.ca</email>
+			<organization>Public Health Agency of Canada</organization>
+			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
+		</developer>
+		<developer>
+			<id>katherine</id>
+			<name>Katherine Thiessen</name>
+			<email>katherine.thiessen@phac-aspc.gc.ca</email>
 			<organization>Public Health Agency of Canada</organization>
 			<organizationUrl>https://www.canada.ca/en/public-health.html</organizationUrl>
 		</developer>
@@ -61,11 +68,14 @@
 	<contributors>
 		<contributor>
 			<name>Franklin Bristow</name>
-			<email>fbristow@cs.umanitoba.ca</email>
-			<organization>Department of Computer Science - University of Manitoba</organization>
-			<organizationUrl>https://www.cs.umanitoba.ca</organizationUrl>
 			<roles>
-				<role>developer</role>
+				<role>Emeritus</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Thomas Matthews</name>
+			<roles>
+				<role>Emeritus</role>
 			</roles>
 		</contributor>
 	</contributors>
@@ -270,6 +280,14 @@
 					<artifactId>xml-apis</artifactId>
 					<groupId>xml-apis</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -280,6 +298,14 @@
 				<exclusion>
 					<artifactId>xml-apis</artifactId>
 					<groupId>xml-apis</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -347,6 +373,11 @@
 			<version>${jackson.dataformat.yaml.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons.io.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>${commons.fileupload.version}</version>
@@ -359,6 +390,10 @@
 				<exclusion>
 					<artifactId>stax-api</artifactId>
 					<groupId>stax</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j-api</artifactId>
+					<groupId>org.apache.logging.log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -557,9 +592,9 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 
 		<!-- Utilities -->
@@ -1128,9 +1163,11 @@
 
 		<!-- Dependencies -->
 		<commons.cli.version>1.2</commons.cli.version>
+		<commons.io.version>2.11.0</commons.io.version>
 		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.26</slf4j.version>
-		<guava.version>28.0-jre</guava.version>
+		<slf4j.version>1.7.32</slf4j.version>
+		<log4j.version>2.17.0</log4j.version>
+		<guava.version>31.0.1-jre</guava.version>
 		<spring.version>5.2.2.RELEASE</spring.version>
 		<spring.security.version>5.2.1.RELEASE</spring.security.version>
 		<spring.data.jpa.version>2.2.0.RELEASE</spring.data.jpa.version>
@@ -1150,24 +1187,24 @@
 		<hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.blend4j.version>0.2.1-2201df9</com.github.jmchilton.blend4j.version>
-		<apache.jena.version>3.12.0</apache.jena.version>
+		<apache.jena.version>4.3.2</apache.jena.version>
 		<commons-csv.version>1.8</commons-csv.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.5.1</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<jackson.version>2.12.1</jackson.version>
 		<rest.assured.version>2.3.4</rest.assured.version>
-		<commons.fileupload.version>1.3.1</commons.fileupload.version>
+		<commons.fileupload.version>1.4</commons.fileupload.version>
 		<javax.el-api.version>3.0.0</javax.el-api.version>
 		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-		<spring.hateoas.version>0.19.0.RELEASE</spring.hateoas.version>
+		<spring.hateoas.version>1.0.3.RELEASE</spring.hateoas.version>
 		<el.ri.version>1.0</el.ri.version>
 		<oltu.version>1.0.0</oltu.version>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
 		<thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
 		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
 		<thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
-		<apache.poi.version>3.17</apache.poi.version>
+		<apache.poi.version>5.1.0</apache.poi.version>
 		<javax.mail.version>1.6.2</javax.mail.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<spring-test-mvc-htmlunit.version>1.0.0.M1</spring-test-mvc-htmlunit.version>
@@ -1201,9 +1238,9 @@
 		<maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
 		<maven.site.plugin.version>3.7.1</maven.site.plugin.version>
 		<errorprone.version>2.5</errorprone.version>
-		<frontend-maven-plugin.version>1.11.2</frontend-maven-plugin.version>
+		<frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
 		<node.version>v14.16.0</node.version>
-		<yarn.version>v1.22.5</yarn.version>
+		<yarn.version>v1.22.17</yarn.version>
 		<com.google.code.gson.version>2.8.6</com.google.code.gson.version>
 		<org.springdoc.openapi.maven.version>1.3</org.springdoc.openapi.maven.version>
 
