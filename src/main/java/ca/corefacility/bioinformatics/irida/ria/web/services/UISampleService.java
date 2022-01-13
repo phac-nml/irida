@@ -718,6 +718,7 @@ public class UISampleService {
 	 * @param sampleId The {@link Sample} id to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
 	 * @return list of {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
+	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	public List<SampleSequencingObjectFileModel> uploadSequenceFiles(Long sampleId, MultipartHttpServletRequest request)
 			throws IOException {
@@ -757,6 +758,7 @@ public class UISampleService {
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
 	 * @return list {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
+	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	public List<SampleSequencingObjectFileModel> uploadFast5Files(Long sampleId, MultipartHttpServletRequest request) throws IOException {
 		Sample sample = sampleService.read(sampleId);
@@ -783,6 +785,7 @@ public class UISampleService {
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
 	 * @return list {@link SampleGenomeAssemblyFileModel} containing the newly created genome assemblies
+	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	public List<SampleGenomeAssemblyFileModel> uploadAssemblies(Long sampleId, MultipartHttpServletRequest request)
 			throws IOException {
