@@ -12,20 +12,25 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -708,6 +713,108 @@ public class UISampleService {
 	}
 
 	/**
+	 * Upload {@link SequenceFile}'s to a sample
+	 *
+	 * @param sampleId The {@link Sample} id to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @return list of {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
+	 */
+	public List<SampleSequencingObjectFileModel> uploadSequenceFiles(Long sampleId, MultipartHttpServletRequest request)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
+
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		SamplePairer samplePairer = new SamplePairer(files);
+		final Map<String, List<MultipartFile>> pairedFiles = samplePairer.getPairedFiles(files);
+		final List<MultipartFile> singleFiles = samplePairer.getSingleFiles(files);
+
+		try {
+			for (String key : pairedFiles.keySet()) {
+				List<MultipartFile> list = pairedFiles.get(key);
+				sampleSequencingObjectFileModels.add(createSequenceFilePairsInSample(list, sample));
+			}
+
+			for (MultipartFile file : singleFiles) {
+				sampleSequencingObjectFileModels.add(createSequenceFileInSample(file, sample));
+			}
+
+			return sampleSequencingObjectFileModels;
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Upload {@link Fast5Object}'s to a sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @return list {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
+	 */
+	public List<SampleSequencingObjectFileModel> uploadFast5Files(Long sampleId, MultipartHttpServletRequest request) throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		try {
+			for (MultipartFile file : files) {
+				sampleSequencingObjectFileModels.add(createFast5FileInSample(file, sample));
+			}
+			return sampleSequencingObjectFileModels;
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Upload {@link GenomeAssembly}'s to a sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @return list {@link SampleGenomeAssemblyFileModel} containing the newly created genome assemblies
+	 */
+	public List<SampleGenomeAssemblyFileModel> uploadAssemblies(Long sampleId, MultipartHttpServletRequest request)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		List<SampleGenomeAssemblyFileModel> sampleGenomeAssemblyFileModels = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		try {
+			for (MultipartFile file : files) {
+				Path temp = Files.createTempDirectory(null);
+				Path target = temp.resolve(file.getOriginalFilename());
+				file.transferTo(target.toFile());
+				UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
+
+				GenomeAssembly genomeAssembly = genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly)
+						.getObject();
+
+				sampleGenomeAssemblyFileModels.add(
+						new SampleGenomeAssemblyFileModel(genomeAssembly, uploadedAssembly.getFileSize()));
+
+			}
+			return sampleGenomeAssemblyFileModels;
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
 	 * Get {@link MetadataRestriction} for metadata field
 	 *
 	 * @param projectId               Identifier for {@link Project}
@@ -725,5 +832,68 @@ public class UISampleService {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
+	 * to a {@link Sample}
+	 *
+	 * @param pair   {@link List} of {@link MultipartFile}
+	 * @param sample {@link Sample} to add the pair to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SampleSequencingObjectFileModel createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample)
+			throws IOException {
+		SequenceFile firstFile = createSequenceFile(pair.get(0));
+		SequenceFile secondFile = createSequenceFile(pair.get(1));
+		return new SampleSequencingObjectFileModel(
+				sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile),
+						sample)
+						.getObject(), firstFile.getFileSize(), secondFile.getFileSize());
+	}
+
+	/**
+	 * Create a {@link SequenceFile} and add it to a {@link Sample}
+	 *
+	 * @param file   {@link MultipartFile}
+	 * @param sample {@link Sample} to add the file to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SampleSequencingObjectFileModel createSequenceFileInSample(MultipartFile file, Sample sample)
+			throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
+		return new SampleSequencingObjectFileModel(
+				sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample)
+						.getObject(), sequenceFile.getFileSize(), null);
+	}
+
+	/**
+	 * Create a {@link Fast5Object} and add it to a {@link Sample}
+	 *
+	 * @param file   {@link MultipartFile}
+	 * @param sample {@link Sample} to add the file to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SampleSequencingObjectFileModel createFast5FileInSample(MultipartFile file, Sample sample)
+			throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
+		return new SampleSequencingObjectFileModel(
+				sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample)
+						.getObject(), sequenceFile.getFileSize(), null);
+	}
+
+	/**
+	 * Private method to move the sequence file into the correct directory and
+	 * create the {@link SequenceFile} object.
+	 *
+	 * @param file {@link MultipartFile} sequence file uploaded.
+	 * @return {@link SequenceFile}
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+		file.transferTo(target.toFile());
+		return new SequenceFile(target);
 	}
 }

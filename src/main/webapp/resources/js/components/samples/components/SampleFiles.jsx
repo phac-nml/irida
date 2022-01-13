@@ -7,7 +7,12 @@ import { DragUpload } from "../../files/DragUpload";
 import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
 import { SampleFileList } from "./SampleFileList";
 import { useDispatch, useSelector } from "react-redux";
-import { setSampleFiles } from "../sampleFilesSlice";
+import {
+  addToSequenceFiles,
+  addToAssemblyFiles,
+  addToFast5Files,
+  setSampleFiles,
+} from "../sampleFilesSlice";
 
 import {
   fetchSampleFiles,
@@ -101,11 +106,12 @@ export function SampleFiles() {
         formData,
         config: seqFileUploadconfig,
       })
-        .then(() => {
+        .then((response) => {
+          console.log(response);
           notification.success({
             message: i18n("SampleFiles.successfullyUploaded", "sequence"),
           });
-          getSampleFiles();
+          dispatch(addToSequenceFiles({ sequenceFiles: response }));
         })
         .catch((error) => {
           notification.error({
@@ -139,11 +145,11 @@ export function SampleFiles() {
         formData,
         config: assemblyUploadConfig,
       })
-        .then(() => {
+        .then((response) => {
           notification.success({
             message: i18n("SampleFiles.successfullyUploaded", "assembly"),
           });
-          getSampleFiles();
+          dispatch(addToAssemblyFiles({ assemblies: response }));
         })
         .catch((error) => {
           notification.error({
@@ -177,11 +183,11 @@ export function SampleFiles() {
         formData,
         config: fast5UploadConfig,
       })
-        .then(() => {
+        .then((response) => {
           notification.success({
             message: i18n("SampleFiles.successfullyUploaded", "fast5"),
           });
-          getSampleFiles();
+          dispatch(addToFast5Files({ fast5: response }));
         })
         .catch((error) => {
           notification.error({

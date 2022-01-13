@@ -27,6 +27,27 @@ export const updatedSequencingObjects = createAction(
   })
 );
 
+export const addToSequenceFiles = createAction(
+  `sampleFiles/addToSequenceFiles`,
+  ({ sequenceFiles }) => ({
+    payload: { sequenceFiles },
+  })
+);
+
+export const addToAssemblyFiles = createAction(
+  `sampleFiles/addToAssemblyFiles`,
+  ({ assemblies }) => ({
+    payload: { assemblies },
+  })
+);
+
+export const addToFast5Files = createAction(
+  `sampleFiles/addToFast5Files`,
+  ({ fast5 }) => ({
+    payload: { fast5 },
+  })
+);
+
 export const fetchUpdatedSeqObjectsDelay = 30000; // 30 seconds
 
 /**
@@ -53,6 +74,47 @@ const sampleFilesSlice = createSlice({
         state.files = fileData;
       }
       state.loading = false;
+    });
+
+    builder.addCase(addToSequenceFiles, (state, action) => {
+      let seqFiles = action.payload.sequenceFiles;
+
+      seqFiles.map((seqFile) => {
+        if (seqFile.secondFileSize !== null) {
+          if (!state.files["paired"]) {
+            state.files.paired = [];
+          }
+          state.files.paired = [...state.files.paired, seqFile];
+        } else {
+          if (!state.files["singles"]) {
+            state.files.singles = [];
+          }
+
+          state.files.singles = [...state.files.singles, seqFile];
+        }
+      });
+    });
+
+    builder.addCase(addToAssemblyFiles, (state, action) => {
+      let newAssemblies = action.payload.assemblies;
+
+      if (!state.files["assemblies"]) {
+        state.files.assemblies = [];
+      }
+      newAssemblies.map((newAssembly) => {
+        state.files.assemblies = [...state.files.assemblies, newAssembly];
+      });
+    });
+
+    builder.addCase(addToFast5Files, (state, action) => {
+      let newFast5s = action.payload.fast5;
+
+      newFast5s.map((newFast5) => {
+        if (!state.files["fast5"]) {
+          state.files.fast5 = [];
+        }
+        state.files.fast5 = [...state.files.fast5, newFast5];
+      });
     });
 
     builder.addCase(updatedSequencingObjects, (state, action) => {
