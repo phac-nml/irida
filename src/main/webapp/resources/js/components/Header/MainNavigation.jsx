@@ -1,12 +1,12 @@
-import React from "react";
 import { Avatar, Col, Menu, Row, Space } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import React from "react";
 import { SPACE_MD } from "../../styles/spacing";
+import { primaryColour, theme } from "../../utilities/theme-utilities";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconCog, IconQuestionCircle, IconUser } from "../icons/Icons";
 import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
-import { primaryColour, theme } from "../../utilities/theme-utilities";
 import "./main-navigation/style.css";
 
 export function MainNavigation() {
@@ -86,11 +86,11 @@ export function MainNavigation() {
           {!isAdmin && (
             <Menu.SubMenu title={<IconCog />}>
               {isManager && (
-              <Menu.Item key="user:users">
-                <a href={setBaseUrl("/users")}>
-                  {i18n("nav.main.users-list")}
-                </a>
-              </Menu.Item>
+                <Menu.Item key="user:users">
+                  <a href={setBaseUrl("/users")}>
+                    {i18n("nav.main.users-list")}
+                  </a>
+                </Menu.Item>
               )}
               <Menu.Item key="user:groups">
                 <a href={setBaseUrl("/groups")}>
@@ -118,6 +118,7 @@ export function MainNavigation() {
                 <a
                   href="https://irida.corefacility.ca/documentation/user/user"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   {i18n("nav.main.userguide")}
                 </a>

@@ -1,4 +1,4 @@
-import { useNavigate } from "@reach/router";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Popconfirm, Tabs, Typography } from "antd";
 import React, { useContext, useEffect, useReducer } from "react";
 import {
@@ -31,13 +31,13 @@ const reducer = (state, action) => {
 
 /**
  * React component to display a page for viewing User Group Details.
- * @param {number} id - identifier for the user group
  * @param baseUrl - either /admin/groups for admin panel or /groups for main app
  * baseUrl should already be set in parent component
  * @returns {*}
  * @constructor
  */
-export default function UserGroupDetailsPage({ id, baseUrl }) {
+export default function UserGroupDetailsPage({ baseUrl }) {
+  const { id } = useParams();
   const { userGroupsContextDeleteUserGroup } = useContext(UserGroupsContext);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -145,10 +145,7 @@ export default function UserGroupDetailsPage({ id, baseUrl }) {
   );
 
   return (
-    <PageWrapper
-      title={"User Groups"}
-      onBack={() => navigate(baseUrl, { replace: true })}
-    >
+    <PageWrapper title={"User Groups"} onBack={() => navigate(-1)}>
       <Tabs
         defaultActiveKey="details"
         tabPosition="left"

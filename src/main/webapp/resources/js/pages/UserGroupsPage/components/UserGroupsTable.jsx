@@ -1,8 +1,8 @@
+import { Typography } from "antd";
 import React from "react";
+import { Link } from "react-router-dom";
 import { PagedTable } from "../../../components/ant.design/PagedTable";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { Typography } from "antd";
-import { Link } from "@reach/router";
 import { CreateNewUserGroupButton } from "./CreateNewUserGroupButton";
 
 const { Paragraph } = Typography;

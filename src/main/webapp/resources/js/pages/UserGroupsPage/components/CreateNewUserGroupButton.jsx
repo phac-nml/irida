@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { Form, Input, Modal } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createUserGroup } from "../../../apis/users/groups";
-import { useNavigate } from "@reach/router";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { useResetFormOnCloseModal } from "../../../hooks";
 
 /**
