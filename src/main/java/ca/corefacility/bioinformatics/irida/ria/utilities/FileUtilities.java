@@ -45,6 +45,7 @@ public class FileUtilities {
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
 	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
+	public static final String EXTENSION_HTML_ZIP = ".html.zip";
 	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)$");
 
 	/**
@@ -257,6 +258,9 @@ public class FileUtilities {
 				logger.error("Could not find file " + filepath.toString());
 			}
 		}
+		if (ext.equals("zip") && filepath.getFileName().toString().endsWith(EXTENSION_HTML_ZIP)) {
+			ext = "html-zip";
+		}
 
 		return ext;
 	}
@@ -276,7 +280,7 @@ public class FileUtilities {
 	
 		String prefix = sampleName + "-sampleId-" + sampleId + "-analysisSubmissionId-" + analysisSubmissionId + "-";
 		filename = prefix + filename;
-		if (ext.equals("html-zip")) {
+		if (ext.equals("html-zip") && !filename.endsWith(EXTENSION_HTML_ZIP)) {
 			filename = filename + ".zip";
 		}
 		logger.debug("File Name: " + filename);

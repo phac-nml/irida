@@ -3,14 +3,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,21 +213,32 @@ public class AnalysisController {
 		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
 
 		if (zipped) {
-			try (InputStream inputStream = new FileInputStream(outputFile.getFile()
-					.toString()); BufferedInputStream bis = new BufferedInputStream(inputStream);
-					ZipInputStream zis = new ZipInputStream(bis);
+			String htmlFile = outputFile.getFile().toFile().toString();
+			if (htmlFile.endsWith(".html.zip")) {
+				htmlFile = htmlFile.substring(0, htmlFile.length()-4);
+			}
+			try (ZipFile zipFile = new ZipFile(outputFile.getFile().toFile());
 					OutputStream outputStream = response.getOutputStream()) {
-				ZipEntry ze;
-				while ((ze = zis.getNextEntry()) != null) {
-					if (ze.getName().endsWith(".html")) {
-						int len = 0;
-						byte[] buffer = new byte[2048];
-						while ((len = zis.read(buffer)) > 0) {
-							outputStream.write(buffer, 0, len);
+				// Try to find an entry whose name matches the AnalysisOutputFile name
+				ZipEntry zipEntry = zipFile.getEntry(htmlFile);
+				// If not found add `.html` to the filename and see if that exists
+				// This enables us to find `quast.html.html` inside of `quast.html.zip`
+				if (zipEntry == null) {
+					zipEntry = zipFile.getEntry(htmlFile + ".html");
+				}
+				// If none match, then find the first html file in the zip
+				if (zipEntry == null) {
+					Enumeration<? extends ZipEntry> entries = zipFile.entries();
+					while(entries.hasMoreElements()) {
+						ZipEntry entry = entries.nextElement();
+						if (entry.getName().endsWith(".html")) {
+							zipEntry = entry;
+							break;
 						}
-						break;
 					}
 				}
+				InputStream is = zipFile.getInputStream(zipEntry);
+				IOUtils.copy(is, outputStream);
 			} catch (IOException e) {
 				logger.debug("Html output not found.");
 				String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",

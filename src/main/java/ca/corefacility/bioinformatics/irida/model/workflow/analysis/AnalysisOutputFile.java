@@ -139,7 +139,10 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 
 	@Override
 	public String getLabel() {
-		String filename = FileUtilities.getFileExt(file).equals("html-zip") ? file.toFile().getName() + ".zip" : file.toFile().getName();
+		String filename = file.toFile().getName();
+		if (FileUtilities.getFileExt(file).equals("html-zip") && !file.endsWith("html.zip")) {
+			filename = filename + ".zip";
+		}
 		return Strings.isNullOrEmpty(labelPrefix) ? filename : labelPrefix + '-' + filename;
 	}
 
