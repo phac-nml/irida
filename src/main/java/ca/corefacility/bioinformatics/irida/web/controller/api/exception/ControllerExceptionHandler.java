@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
@@ -281,7 +281,7 @@ public class ControllerExceptionHandler {
 	private List<String> getProperties(Class<? extends Object> clazz) {
 		BeanInfo info = null;
 		try {
-			info = Introspector.getBeanInfo(clazz, IridaResourceSupport.class);
+			info = Introspector.getBeanInfo(clazz, IridaRepresentationModel.class);
 		} catch (IntrospectionException e) {
 			e.printStackTrace();
 		}

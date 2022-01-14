@@ -45,8 +45,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.net.HttpHeaders;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Controller for managing relationships between {@link Sample} and
@@ -661,7 +661,7 @@ public class RESTSampleSequenceFilesController {
 
 			// add location header
 			response.addHeader(HttpHeaders.LOCATION, sequencingObject.getLink("self")
-					.getHref());
+					.map(i -> i.getHref()).orElse(null));
 
 			// set the response status.
 			response.setStatus(HttpStatus.CREATED.value());
@@ -724,11 +724,11 @@ public class RESTSampleSequenceFilesController {
 	private static SequenceFilePair addSequenceFilePairLinks(SequenceFilePair pair, Long sampleId) {
 		SequenceFile forward = pair.getForwardSequenceFile();
 		String forwardLink = forward.getLink("self")
-				.getHref();
+				.map(i -> i.getHref()).orElse(null);
 
 		SequenceFile reverse = pair.getReverseSequenceFile();
 		String reverseLink = reverse.getLink("self")
-				.getHref();
+				.map(i -> i.getHref()).orElse(null);
 
 		pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
 		pair.add(new Link(reverseLink, REL_PAIR_REVERSE));

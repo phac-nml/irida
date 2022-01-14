@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
-import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import { RemoteApiStatus } from "./RemoteApiStatus";
-import { Link } from "@reach/router";
+import {
+  formatInternationalizedDateTime
+} from "../../../../utilities/date-utilities";
 import { isAdmin } from "../../../../utilities/role-utilities";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { RemoteApiStatus } from "./RemoteApiStatus";
 
 /**
  * Render a table to display remote API's
@@ -24,12 +25,12 @@ export function RemoteApiTable() {
       dataIndex: "name",
       render(text, record) {
         return isAdmin() ? (
-          <Link
-            to={setBaseUrl(`/admin/remote_api/${record.id}`)}
+          <a
+            href={setBaseUrl(`/admin/remote_api/${record.id}`)}
             className="t-api-name"
           >
             {text}
-          </Link>
+          </a>
         ) : (
           <span className="t-api-name">{text}</span>
         );

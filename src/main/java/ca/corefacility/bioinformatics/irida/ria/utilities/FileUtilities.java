@@ -347,7 +347,7 @@ public class FileUtilities {
 					if (cell == null) {
 						cell = new StreamingCell(i, row.getRowNum(), false);
 					}
-					CellType cellType = cell.getCellTypeEnum();
+					CellType cellType = cell.getCellType();
 					int columnIndex = cell.getColumnIndex();
 					if (columnIndex < headers.size()) {
 						// Convert a boolean or numeric column value to a string if
@@ -398,7 +398,7 @@ public class FileUtilities {
 		Iterator<Cell> headerIterator = row.cellIterator();
 		while (headerIterator.hasNext()) {
 			Cell headerCell = headerIterator.next();
-			CellType cellType = headerCell.getCellTypeEnum();
+			CellType cellType = headerCell.getCellType();
 			int columnIndex = headerCell.getColumnIndex();
 
 			String headerValue;

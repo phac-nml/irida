@@ -2,11 +2,13 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,15 +19,15 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 
 /**
  * Adds a collection of {@link Link}s to extending objects. Similar to
- * {@link ResourceSupport}
+ * {@link RepresentationModel}
  * 
- * @see ResourceSupport
+ * @see RepresentationModel
  *
  */
-public class IridaResourceSupport {
+public class IridaRepresentationModel {
 	private final List<Link> links;
 
-	public IridaResourceSupport() {
+	public IridaRepresentationModel() {
 		this.links = new ArrayList<Link>();
 	}
 
@@ -98,15 +100,15 @@ public class IridaResourceSupport {
 	 *            the String rel to get a link for
 	 * @return the link with the given rel or {@literal null} if none found.
 	 */
-	public Link getLink(String rel) {
+	public Optional<Link> getLink(String rel) {
 
 		for (Link link : links) {
-			if (link.getRel().equals(rel)) {
-				return link;
+			if (link.getRel().value().equals(rel)) {
+				return Optional.of(link);
 			}
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -131,7 +133,7 @@ public class IridaResourceSupport {
 			return false;
 		}
 
-		IridaResourceSupport that = (IridaResourceSupport) obj;
+		IridaRepresentationModel that = (IridaRepresentationModel) obj;
 
 		return this.links.equals(that.links);
 	}
@@ -152,11 +154,8 @@ public class IridaResourceSupport {
 	 */
 	@JsonIgnore
 	public String getSelfHref() {
-		Link link = getLink(Link.REL_SELF);
-		if (link != null) {
-			return link.getHref();
-		}
-		return null;
+		Optional<Link> link = getLink(IanaLinkRelations.SELF.value());
+		return link.map(i -> i.getHref()).orElse(null);
 	}
 
 	/**
