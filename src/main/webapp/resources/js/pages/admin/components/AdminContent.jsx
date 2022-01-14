@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { getUserGroupRoles } from "../../../apis/users/groups";
-import { RolesProvider } from "../../../contexts/roles-context";
 import { UserGroupsProvider } from "../../../contexts/UserGroupsContext";
+import { UserGroupRolesProvider } from "../../../contexts/usergroup-roles-context";
 
 /**
  * React component to wrap providers around the content within the admin panel.
@@ -12,9 +12,9 @@ import { UserGroupsProvider } from "../../../contexts/UserGroupsContext";
 export function AdminContent() {
   return (
     <UserGroupsProvider>
-      <RolesProvider getRolesFn={getUserGroupRoles}>
+      <UserGroupRolesProvider getRolesFn={getUserGroupRoles}>
         <Outlet />
-      </RolesProvider>
+      </UserGroupRolesProvider>
     </UserGroupsProvider>
   );
 }

@@ -28,7 +28,7 @@ export function AddUserToGroupButton({
    */
   const userRef = useRef();
 
-  const { roles: projectRoles } = useUserGroupRoles();
+  const { roles: userGroupRoles } = useUserGroupRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -165,7 +165,7 @@ export function AddUserToGroupButton({
               style={{ display: "flex" }}
               onChange={(e) => setProjectRole(e.target.value)}
             >
-              {projectRoles.map((role) => (
+              {userGroupRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
                   {role.label}
                 </Radio.Button>
