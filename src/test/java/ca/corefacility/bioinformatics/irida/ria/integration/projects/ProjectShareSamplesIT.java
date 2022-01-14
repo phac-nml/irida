@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -11,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Share
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
+@Ignore
 public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 	private ShareSamplesPage shareSamplesPage = ShareSamplesPage.initPage(driver());
 
