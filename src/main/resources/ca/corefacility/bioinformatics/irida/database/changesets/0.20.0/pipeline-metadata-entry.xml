@@ -7,9 +7,6 @@
 
     <changeSet id="pipeline-metadata-entry" author="tom">
 
-        <validCheckSum>7:04d990c0430b5fd7bd63f5bfc462584b</validCheckSum>
-        <validCheckSum>7:fe424670afa75882a10c9178073eecc1</validCheckSum>
-
         <createTable tableName="pipeline_metadata_entry">
             <column name="id" type="bigint(20)">
                 <constraints nullable="false" primaryKey="true" foreignKeyName="FK_PIPELINE_METADATA_ENTRY"

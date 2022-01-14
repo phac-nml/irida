@@ -7,8 +7,6 @@
 
 	<changeSet id="sample-sequencingobject" author="tom">
 
-		<validCheckSum>7:dc5edf7e83bce7650a6a12d81048ef8f</validCheckSum>
-		<validCheckSum>7:6f832717697f7095ad53978d328b9317</validCheckSum>
 		<!-- Create the join tables -->
 		<createTable tableName="sample_sequencingobject">
 			<column name="id" type="bigint(20)" autoIncrement="true">
