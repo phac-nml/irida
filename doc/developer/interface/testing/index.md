@@ -52,14 +52,14 @@ mvn clean jetty:run -B -Pui_testing \
 
 You need to match up the version of [Chrome] with [chromedriver]. For example, [Chrome] v66 needs [chromedriver] v2.39 or v2.40 (see https://sites.google.com/a/chromium.org/chromedriver/downloads)
 
-You can specify which [chromedriver] to use with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver` otherwise, the `node_modules` version of [chromedriver] is used for running UI tests.
+You can specify which [chromedriver] to use with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver` otherwise, [chromedriver] is automatically detected from your PATH.
 
 
 ### Using [selenium/standalone-chrome]
 
 To use [selenium/standalone-chrome] you will need to have docker installed on your machine.
 
-Then when running the ui tests make sure to specify the `--selenium-docker` option otherwise, the `node_modules` version of [chromedriver] is used for running UI tests.
+Then when running the ui tests make sure to specify the `--selenium-docker` option otherwise, the default [chromedriver] is used for running UI tests.
 
 
 Running specific UI tests through [IntelliJ] IDEA

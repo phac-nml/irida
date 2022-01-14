@@ -73,7 +73,7 @@ public class RESTSampleAssemblyControllerTest {
 				.iterator()
 				.next();
 
-		assertNotNull("has self rel", genomeAssembly.getLink("self"));
+		assertTrue("has self rel", genomeAssembly.getLink("self").isPresent());
 		assertEquals("should be same assembly", assemblyFromAnalysis.getId(), genomeAssembly.getId());
 	}
 
@@ -84,7 +84,7 @@ public class RESTSampleAssemblyControllerTest {
 
 		GenomeAssembly genomeAssembly = responseResource.getResource();
 
-		assertNotNull("has self rel", genomeAssembly.getLink("self"));
+		assertTrue("has self rel", genomeAssembly.getLink("self").isPresent());
 		assertEquals("should be same assembly", assemblyFromAnalysis.getId(), genomeAssembly.getId());
 	}
 

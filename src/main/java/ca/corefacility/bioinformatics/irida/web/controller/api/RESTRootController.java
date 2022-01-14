@@ -29,8 +29,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RES
 
 import com.google.common.collect.Sets;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * A basis for clients to begin discovering other URLs in our API.

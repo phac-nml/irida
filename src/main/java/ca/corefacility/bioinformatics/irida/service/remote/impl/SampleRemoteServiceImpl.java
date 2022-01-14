@@ -40,7 +40,7 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 	 */
 	@Override
 	public List<Sample> getSamplesForProject(Project project) {
-		Link link = project.getLink(PROJECT_SAMPLES_REL);
+		Link link = project.getLink(PROJECT_SAMPLES_REL).map(i -> i).orElse(null);
 		String samplesHref = link.getHref();
 		return list(samplesHref, project.getRemoteStatus().getApi());
 	}
