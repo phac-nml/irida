@@ -15,6 +15,7 @@ Changes
 * [Developer]: Upgraded Spring Hateoas to 1.0.3.RELEASE
 * [Developer]: Updated to use Yarn v3 and updated browserlist to v4.19.17.
 * [Developer]: Added parsing of CHROMEWEBDRIVER in ./run-tests.sh to detect and use chromedriver provided by github actions ubuntu20.04 image.
+* [UI/Workflow]: Added in support for displaying html files found inside of zipped html output files.
 
 21.05 to 21.09
 --------------
