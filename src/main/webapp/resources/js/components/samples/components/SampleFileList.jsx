@@ -43,6 +43,11 @@ export function SampleFileList() {
     FINISHED: i18n("SampleFilesList.fileProcessingState.FINISHED"),
     ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
   };
+
+  const qcEntryTranslations = {
+    COVERAGE: i18n("SampleFilesList.qcEntry.COVERAGE"),
+    PROCESSING: i18n("SampleFilesList.qcEntry.PROCESSING"),
+  };
   /*
   Download sequence files (paired, single, fast5)
  */
@@ -179,6 +184,7 @@ export function SampleFileList() {
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
+              qcEntryTranslations={qcEntryTranslations}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -192,6 +198,7 @@ export function SampleFileList() {
                 downloadSequenceFile={downloadSequenceFile}
                 removeSampleFiles={removeSampleFiles}
                 getProcessingState={getProcessingStateTag}
+                qcEntryTranslations={qcEntryTranslations}
               />
             ))}
           </SequenceFileTypeRenderer>
@@ -204,6 +211,7 @@ export function SampleFileList() {
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
+              qcEntryTranslations={qcEntryTranslations}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -215,6 +223,7 @@ export function SampleFileList() {
               sampleId={sample.identifier}
               downloadAssemblyFile={downloadAssemblyFile}
               removeSampleFiles={removeSampleFiles}
+              qcEntryTranslations={qcEntryTranslations}
             />
           </SequenceFileTypeRenderer>
         )}

@@ -1,10 +1,11 @@
 import React from "react";
-import { List } from "antd";
+import { List, Tag } from "antd";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { SequenceFileDetailsRenderer } from "./SequenceFileDetailsRenderer";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { useSelector } from "react-redux";
+
 /**
  * React component to display paired end file details
  *
@@ -12,6 +13,7 @@ import { useSelector } from "react-redux";
  * @function download sequence file function
  * @function remove files from sample function
  * @function get file processing state function
+ * @param qcEntryTranslationKeys Translation keys for qc entries
  * @returns {JSX.Element}
  * @constructor
  */
@@ -20,6 +22,7 @@ export function PairedFileRenderer({
   downloadSequenceFile = () => {},
   removeSampleFiles = () => {},
   getProcessingState = () => {},
+  qcEntryTranslations,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -64,13 +67,33 @@ export function PairedFileRenderer({
       dataSource={files}
       renderItem={(file) => {
         return (
-          <SequenceFileDetailsRenderer
-            file={file}
-            isForwardFile={file.forwardFile}
-            fileObjectId={pair.fileInfo.identifier}
-            downloadSequenceFile={downloadSequenceFile}
-            getProcessingState={getProcessingState}
-          />
+          <div>
+            <SequenceFileDetailsRenderer
+              file={file}
+              isForwardFile={file.forwardFile}
+              fileObjectId={pair.fileInfo.identifier}
+              downloadSequenceFile={downloadSequenceFile}
+              getProcessingState={getProcessingState}
+            />
+            {pair.qcEntries !== null && !file.forwardFile ? (
+              <List.Item
+                key={`file-${file.id}-qc-entry`}
+                style={{ width: `100%` }}
+              >
+                <List.Item.Meta
+                  title={pair.qcEntries.map((entry) => {
+                    return (
+                      <Tag
+                        color={entry.status === "POSITIVE" ? "green" : "red"}
+                      >
+                        {qcEntryTranslations[entry.type] + entry.message}
+                      </Tag>
+                    );
+                  })}
+                />
+              </List.Item>
+            ) : null}
+          </div>
         );
       }}
     />

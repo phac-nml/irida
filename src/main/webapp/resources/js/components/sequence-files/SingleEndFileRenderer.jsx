@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Button, List, Space } from "antd";
+import { Avatar, Button, List, Space, Tag } from "antd";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile, IconFile } from "../icons/Icons";
@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
  * @function download sequence file function
  * @function remove files from sample function
  * @function get file processing state function
+ * @param qcEntryTranslationKeys
  * @returns {JSX.Element}
  * @constructor
  */
@@ -25,6 +26,7 @@ export function SingleEndFileRenderer({
   downloadSequenceFile = () => {},
   removeSampleFiles = () => {},
   getProcessingState = () => {},
+  qcEntryTranslations,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -94,6 +96,19 @@ export function SingleEndFileRenderer({
             }
           />
         </List.Item>,
+        file.qcEntries !== null ? (
+          <List.Item key={`file-${file.id}-qc-entry`} style={{ width: `100%` }}>
+            <List.Item.Meta
+              title={file.qcEntries.map((entry) => {
+                return (
+                  <Tag color={entry.status === "POSITIVE" ? "green" : "red"}>
+                    {qcEntryTranslations[entry.type] + entry.message}
+                  </Tag>
+                );
+              })}
+            />
+          </List.Item>
+        ) : null,
       ]}
     />
   );

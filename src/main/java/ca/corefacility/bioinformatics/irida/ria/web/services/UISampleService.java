@@ -560,7 +560,7 @@ public class UISampleService {
 			String secondFileSize = sfp.getReverseSequenceFile()
 					.getFileSize();
 
-			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize));
+			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize,  obj.getQcEntries()));
 		}
 
 		return filePairs;
@@ -591,7 +591,7 @@ public class UISampleService {
 			SingleEndSequenceFile sf = (SingleEndSequenceFile) obj;
 			String fileSize = sf.getSequenceFile()
 					.getFileSize();
-			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
+			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null,  obj.getQcEntries()));
 		}
 
 		return singles;
@@ -622,7 +622,7 @@ public class UISampleService {
 			Fast5Object f5 = (Fast5Object) obj;
 			String fileSize = f5.getFile()
 					.getFileSize();
-			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
+			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null,  obj.getQcEntries()));
 		}
 		return fast5Files;
 	}
@@ -849,10 +849,10 @@ public class UISampleService {
 			throws IOException {
 		SequenceFile firstFile = createSequenceFile(pair.get(0));
 		SequenceFile secondFile = createSequenceFile(pair.get(1));
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile),
+				sample).getObject();
 		return new SampleSequencingObjectFileModel(
-				sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile),
-						sample)
-						.getObject(), firstFile.getFileSize(), secondFile.getFileSize());
+				sequencingObject, firstFile.getFileSize(), secondFile.getFileSize(), sequencingObject.getQcEntries());
 	}
 
 	/**
@@ -865,9 +865,10 @@ public class UISampleService {
 	private SampleSequencingObjectFileModel createSequenceFileInSample(MultipartFile file, Sample sample)
 			throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample)
+				.getObject();
 		return new SampleSequencingObjectFileModel(
-				sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample)
-						.getObject(), sequenceFile.getFileSize(), null);
+				sequencingObject, sequenceFile.getFileSize(), null, sequencingObject.getQcEntries());
 	}
 
 	/**
@@ -880,9 +881,10 @@ public class UISampleService {
 	private SampleSequencingObjectFileModel createFast5FileInSample(MultipartFile file, Sample sample)
 			throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample)
+				.getObject();
 		return new SampleSequencingObjectFileModel(
-				sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample)
-						.getObject(), sequenceFile.getFileSize(), null);
+				sequencingObject, sequenceFile.getFileSize(), null, sequencingObject.getQcEntries());
 	}
 
 	/**

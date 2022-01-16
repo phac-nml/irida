@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
+import java.util.Set;
+
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
@@ -10,12 +13,14 @@ public class SampleSequencingObjectFileModel {
 	private String firstFileSize;
 	private String secondFileSize;
 	private String fileType;
+	private Set<QCEntry> qcEntries;
 
-	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize) {
+	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize, Set<QCEntry> qcEntries) {
 		this.fileInfo = fileInfo;
 		this.firstFileSize = firstFileSize;
 		this.secondFileSize = secondFileSize;
 		this.fileType = "sequencingObject";
+		this.qcEntries = qcEntries;
 	}
 
 	public SequencingObject getFileInfo() {
@@ -46,4 +51,11 @@ public class SampleSequencingObjectFileModel {
 		return fileType;
 	}
 
+	public Set<QCEntry> getQcEntries() {
+		return qcEntries;
+	}
+
+	public void setQcEntries(Set<QCEntry> qcEntries) {
+		this.qcEntries = qcEntries;
+	}
 }
