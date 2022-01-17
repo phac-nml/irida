@@ -130,6 +130,7 @@ const sampleFilesSlice = createSlice({
                   fileInfo: updatedPairedObj.fileInfo,
                   firstFileSize: updatedPairedObj.firstFileSize,
                   secondFileSize: updatedPairedObj.secondFileSize,
+                  qcEntries: updatedPairedObj.qcEntries,
                 }
               : currentPairedObj
           );
@@ -146,6 +147,7 @@ const sampleFilesSlice = createSlice({
                     ...currentSingleFileObj,
                     fileInfo: updatedSingleEndFileObj.fileInfo,
                     firstFileSize: updatedSingleEndFileObj.firstFileSize,
+                    qcEntries: updatedSingleEndFileObj.qcEntries,
                   }
                 : currentSingleFileObj
           );
@@ -161,6 +163,7 @@ const sampleFilesSlice = createSlice({
                   ...currentFast5FileObj,
                   fileInfo: updatedFast5FileObj.fileInfo,
                   firstFileSize: updatedFast5FileObj.firstFileSize,
+                  qcEntries: updatedFast5FileObj.qcEntries,
                 }
               : currentFast5FileObj
           );

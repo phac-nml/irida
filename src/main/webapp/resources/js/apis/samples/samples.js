@@ -145,8 +145,8 @@ export async function fetchUpdatedSequencingObjects({
 }) {
   try {
     const response = await axios(
-      `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds[]=${sequencingObjectIds}&${
-        projectId && `?projectId=${projectId}`
+      `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds[]=${sequencingObjectIds}${
+        projectId && `&projectId=${projectId}`
       }`
     );
     return response.data;

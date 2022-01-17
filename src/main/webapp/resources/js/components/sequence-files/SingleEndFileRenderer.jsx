@@ -101,7 +101,10 @@ export function SingleEndFileRenderer({
             <List.Item.Meta
               title={file.qcEntries.map((entry) => {
                 return (
-                  <Tag color={entry.status === "POSITIVE" ? "green" : "red"}>
+                  <Tag
+                    key={`file-${file.id}-qc-entry-status`}
+                    color={entry.status === "POSITIVE" ? "green" : "red"}
+                  >
                     {qcEntryTranslations[entry.type] + entry.message}
                   </Tag>
                 );
