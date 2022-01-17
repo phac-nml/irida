@@ -80,9 +80,25 @@ const SettingsLayout = () => (
     <Routes>
       <Route
         path={setBaseUrl("/projects/:projectId/settings/")}
-        element={<ProjectSettings/>}
+        element={<ProjectSettings />}
       >
-        <Route path={`details`} element={<ProjectDetails/>}/>
+        <Route path="details" element={<ProjectDetails />} />
+        <Route path="processing" element={<ProjectProcessing />} />
+        <Route path="members" element={<ProjectMembers />} />
+        <Route path="groups" element={<ProjectGroups />} />
+        <Route path="metadata" element={<MetadataLayout />}>
+          <Route path="fields" element={<MetadataFields />} />
+          <Route path="templates" element={<MetadataTemplates />} />
+        </Route>
+        {/*<MetadataLayout path="/metadata">*/}
+        {/*  <MetadataFields path="/fields" />*/}
+        {/*  <MetadataTemplates path="/templates" />*/}
+        {/*  {project.canManage ? (*/}
+        {/*    <MetadataTemplateManager path="/templates/:id" />*/}
+        {/*  ) : (*/}
+        {/*    <MetadataTemplateMember path="/templates/:id" />*/}
+        {/*  )}*/}
+        {/*</MetadataLayout>*/}
       </Route>
     </Routes>
   </Suspense>
@@ -102,8 +118,6 @@ const ProjectSettings = () => {
     skip: !params?.projectId,
   });
 
-  console.log(project);
-
   const [basePath] = useState(() =>
     setBaseUrl(`/projects/${params.projectId}/settings/`)
   );
@@ -122,20 +136,11 @@ const ProjectSettings = () => {
           <Row>
             <Col lg={24} xxl={12}>
               <RolesProvider getRolesFn={getProjectRoles}>
-                <Outlet/>
+                <Outlet />
                 {/*<Routes>*/}
-                {/*<ProjectProcessing path="/processing" />*/}
-                {/*<ProjectMembers path="/members" />*/}
-                {/*<ProjectGroups path="/groups" />*/}
-                {/*<MetadataLayout path="/metadata">*/}
-                {/*  <MetadataFields path="/fields" />*/}
-                {/*  <MetadataTemplates path="/templates" />*/}
-                {/*  {project.canManage ? (*/}
-                {/*    <MetadataTemplateManager path="/templates/:id" />*/}
-                {/*  ) : (*/}
-                {/*    <MetadataTemplateMember path="/templates/:id" />*/}
-                {/*  )}*/}
-                {/*</MetadataLayout>*/}
+                {/**/}
+                {/**/}
+
                 {/*<AssociatedProjects path="/associated" />*/}
                 {/*<ReferenceFiles path="/references" />*/}
                 {/*<ProjectSynchronizationSettings path="/remote" />*/}
@@ -154,7 +159,7 @@ const ProjectSettings = () => {
 render(
   <BrowserRouter>
     <Provider store={store}>
-      <SettingsLayout/>
+      <SettingsLayout />
     </Provider>
   </BrowserRouter>,
   document.querySelector("#root")

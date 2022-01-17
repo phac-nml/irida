@@ -1,14 +1,17 @@
-import { Link } from "@reach/router";
 import { Menu } from "antd";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 /**
  * Component to handle navigation within the project settings page
  * @returns {JSX.Element}
  * @constructor
  */
-export default function SettingsNav({ basePath, showRemote = false, canManage = false }) {
+export default function SettingsNav({
+                                      basePath,
+                                      showRemote = false,
+                                      canManage = false
+                                    }) {
   const location = useLocation();
   const [key, setKey] = React.useState();
 
@@ -25,16 +28,22 @@ export default function SettingsNav({ basePath, showRemote = false, canManage = 
         </Link>
       </Menu.Item>
       <Menu.Item key="processing">
-        <Link to="processing">{i18n("project.settings.page.processing")}</Link>
+        <Link to={`${basePath}processing`}>
+          {i18n("project.settings.page.processing")}
+        </Link>
       </Menu.Item>
       <Menu.Item key="members">
-        <Link to="members">{i18n("project.settings.page.members")}</Link>
+        <Link to={`${basePath}members`}>
+          {i18n("project.settings.page.members")}
+        </Link>
       </Menu.Item>
       <Menu.Item key="groups">
-        <Link to="groups">{i18n("project.settings.page.groups")}</Link>
+        <Link to={`${basePath}groups`}>
+          {i18n("project.settings.page.groups")}
+        </Link>
       </Menu.Item>
       <Menu.Item key="metadata">
-        <Link className="t-m-field-link" to="metadata/fields">
+        <Link className="t-m-field-link" to={`${basePath}metadata/fields`}>
           {i18n("project.settings.page.metadata")}
         </Link>
       </Menu.Item>

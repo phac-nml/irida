@@ -10,6 +10,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
@@ -45,11 +46,11 @@ const HoverItem = styled(List.Item)`
 /**
  * Component to display all metadata templates associated with a project.
  *
- * @param projectId
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MetadataTemplates({ projectId }) {
+export default function MetadataTemplates() {
+  const { projectId } = useParams();
   const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
   const [templates, setTemplates] = React.useState([]);
 
