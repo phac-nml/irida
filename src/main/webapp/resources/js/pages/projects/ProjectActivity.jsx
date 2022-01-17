@@ -61,7 +61,7 @@ function ProjectActivity({ projectId }) {
       </Typography.Title>
       <Row>
         <Col md={24} lg={12}>
-          <Space direction={"vertical"} style={{ display: "block" }}>
+          <Space direction={"vertical"} style={{ width: `100%` }}>
             <div
               style={{
                 maxHeight: 600,
