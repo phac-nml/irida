@@ -2,7 +2,13 @@ import { Col, Layout, Row, Spin } from "antd";
 import React, { Suspense, useState } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Outlet,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
