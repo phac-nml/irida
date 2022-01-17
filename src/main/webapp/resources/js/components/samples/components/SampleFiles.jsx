@@ -107,7 +107,6 @@ export function SampleFiles() {
         config: seqFileUploadconfig,
       })
         .then((response) => {
-          console.log(response);
           notification.success({
             message: i18n("SampleFiles.successfullyUploaded", "sequence"),
           });
