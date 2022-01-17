@@ -1,4 +1,3 @@
-import { navigate } from "@reach/router";
 import {
   Button,
   List,
@@ -12,7 +11,7 @@ import {
 } from "antd";
 import differenceBy from "lodash/differenceBy";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
   useGetTemplatesForProjectQuery,
@@ -43,6 +42,7 @@ const { Paragraph, Text } = Typography;
  * @constructor
  */
 export default function MetadataTemplateManager() {
+  const navigate = useNavigate();
   const { id, projectId } = useParams();
   const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
 
