@@ -1,14 +1,8 @@
-import { Col, Layout, Row } from "antd";
+import { Col, Layout, Row, Spinner } from "antd";
 import React, { Suspense, useState } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import {
-  BrowserRouter,
-  Outlet,
-  Route,
-  Routes,
-  useParams,
-} from "react-router-dom";
+import { BrowserRouter, Route, useParams } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
@@ -74,7 +68,7 @@ const { Content, Sider } = Layout;
  * @constructor
  */
 const SettingsLayout = () => (
-  <Suspense fallback={<div>LOADING</div>}>
+  <Suspense fallback={<Spinner />}>
     <Routes>
       <Route
         path={setBaseUrl("/projects/:projectId/settings/")}
@@ -90,6 +84,8 @@ const SettingsLayout = () => (
           <Route path="templates/:id" element={<MetadataTemplate />} />
         </Route>
         <Route path="associated" element={<AssociatedProjects />} />
+        <Route path="references" element={<ReferenceFiles />} />
+        <Route path="delete" element={<DeleteProject />} />
       </Route>
     </Routes>
   </Suspense>
@@ -102,15 +98,14 @@ const SettingsLayout = () => (
  * @constructor
  */
 const ProjectSettings = () => {
-  const params = useParams();
-  console.log(params);
+  const { projectId } = useParams();
 
-  const { data: project = {} } = useGetProjectDetailsQuery(params.projectId, {
-    skip: !params?.projectId,
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId, {
+    skip: !projectId,
   });
 
   const [basePath] = useState(() =>
-    setBaseUrl(`/projects/${params.projectId}/settings/`)
+    setBaseUrl(`/projects/${projectId}/settings/`)
   );
 
   return (
@@ -128,16 +123,6 @@ const ProjectSettings = () => {
             <Col lg={24} xxl={12}>
               <RolesProvider getRolesFn={getProjectRoles}>
                 <Outlet />
-                {/*<Routes>*/}
-                {/**/}
-                {/**/}
-
-                {/**/}
-                {/*<ReferenceFiles path="/references" />*/}
-                {/*<ProjectSynchronizationSettings path="/remote" />*/}
-                {/*{project.canManage && <DeleteProject path="/delete" />}*/}
-                {/*<Redirect from="/" to="/details" />*/}
-                {/*</Routes>*/}
               </RolesProvider>
             </Col>
           </Row>
