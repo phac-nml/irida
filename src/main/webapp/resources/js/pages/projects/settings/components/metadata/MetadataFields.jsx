@@ -18,9 +18,8 @@ export default function MetadataFields() {
   const { projectId } = useParams();
 
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
-    projectId
-  );
+  const { data: fields, isLoading } =
+    useGetMetadataFieldsForProjectQuery(projectId);
 
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
@@ -51,7 +50,7 @@ export default function MetadataFields() {
   ];
 
   return (
-    <Space direction="vertical" style={{ display: "block" }}>
+    <Space direction="vertical" style={{ width: `100%` }}>
       {project.canManage && (
         <Space>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>

@@ -33,14 +33,12 @@ const MetadataLayout = React.lazy(() =>
 const MetadataFields = React.lazy(() =>
   import("./components/metadata/MetadataFields")
 );
-const MetadataTemplateManager = React.lazy(() =>
-  import("./components/metadata/MetadataTemplateManager")
-);
-const MetadataTemplateMember = React.lazy(() =>
-  import("./components/metadata/MetadataTemplateMember")
-);
 const MetadataTemplates = React.lazy(() =>
   import("./components/metadata/MetadataTemplates")
+);
+
+const MetadataTemplate = React.lazy(() =>
+  import("./components/metadata/MetadataTemplate")
 );
 
 const AssociatedProjects = React.lazy(() =>
@@ -89,6 +87,7 @@ const SettingsLayout = () => (
         <Route path="metadata" element={<MetadataLayout />}>
           <Route path="fields" element={<MetadataFields />} />
           <Route path="templates" element={<MetadataTemplates />} />
+          <Route path="templates/:id" element={<MetadataTemplate />} />
         </Route>
         {/*<MetadataLayout path="/metadata">*/}
         {/*  <MetadataFields path="/fields" />*/}
