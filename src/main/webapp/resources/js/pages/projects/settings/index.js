@@ -89,15 +89,7 @@ const SettingsLayout = () => (
           <Route path="templates" element={<MetadataTemplates />} />
           <Route path="templates/:id" element={<MetadataTemplate />} />
         </Route>
-        {/*<MetadataLayout path="/metadata">*/}
-        {/*  <MetadataFields path="/fields" />*/}
-        {/*  <MetadataTemplates path="/templates" />*/}
-        {/*  {project.canManage ? (*/}
-        {/*    <MetadataTemplateManager path="/templates/:id" />*/}
-        {/*  ) : (*/}
-        {/*    <MetadataTemplateMember path="/templates/:id" />*/}
-        {/*  )}*/}
-        {/*</MetadataLayout>*/}
+        <Route path="associated" element={<AssociatedProjects />} />
       </Route>
     </Routes>
   </Suspense>
@@ -140,7 +132,7 @@ const ProjectSettings = () => {
                 {/**/}
                 {/**/}
 
-                {/*<AssociatedProjects path="/associated" />*/}
+                {/**/}
                 {/*<ReferenceFiles path="/references" />*/}
                 {/*<ProjectSynchronizationSettings path="/remote" />*/}
                 {/*{project.canManage && <DeleteProject path="/delete" />}*/}
