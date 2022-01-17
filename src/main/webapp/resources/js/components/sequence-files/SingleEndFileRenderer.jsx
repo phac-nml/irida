@@ -96,7 +96,7 @@ export function SingleEndFileRenderer({
             }
           />
         </List.Item>,
-        file.qcEntries !== null ? (
+        file.fileType === "sequencingObject" && file.qcEntries !== null ? (
           <List.Item key={`file-${file.id}-qc-entry`} style={{ width: `100%` }}>
             <List.Item.Meta
               title={file.qcEntries.map((entry) => {
