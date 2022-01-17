@@ -9,9 +9,7 @@ import { Menu } from "antd";
  */
 export default function UserAccountNav() {
   const lastElement = useLocation().pathname.split("/").pop();
-  const defaultSelectedKey = lastElement.match(
-    "details|projects|security|password"
-  )
+  const defaultSelectedKey = lastElement.match("details|projects|security")
     ? lastElement
     : "details";
 
@@ -23,14 +21,9 @@ export default function UserAccountNav() {
       <Menu.Item key="projects">
         <Link to="projects">{i18n("UserAccountNav.menu.projects")}</Link>
       </Menu.Item>
-      <Menu.ItemGroup
-        key="security"
-        title={i18n("UserAccountNav.menu.security")}
-      >
-        <Menu.Item key="password">
-          <Link to="password">{i18n("UserAccountNav.menu.password")}</Link>
-        </Menu.Item>
-      </Menu.ItemGroup>
+      <Menu.Item key="security">
+        <Link to="security">{i18n("UserAccountNav.menu.security")}</Link>
+      </Menu.Item>
     </Menu>
   );
 }

@@ -23,7 +23,7 @@ render(
           <Route index element={<UserDetailsPage />} />
           <Route path="details" element={<UserDetailsPage />} />
           <Route path="projects" element={<UserProjectsPage />} />
-          <Route path="password" element={<UserPasswordPage />} />
+          <Route path="security" element={<UserPasswordPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

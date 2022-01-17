@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   Button,
@@ -18,7 +17,6 @@ import {
   useGetUserDetailsQuery,
   useEditUserDetailsMutation,
 } from "../../../apis/users/users";
-import { setUserDetails } from "../services/userReducer";
 
 /**
  * React component to display the user details page.
@@ -26,24 +24,10 @@ import { setUserDetails } from "../services/userReducer";
  * @constructor
  */
 export default function UserDetailsPage() {
-  const dispatch = useDispatch();
   const { userId } = useParams();
-  const {
-    data: userDetails,
-    isLoading,
-    isSuccess,
-  } = useGetUserDetailsQuery(userId);
+  const { data: userDetails, isLoading } = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
-
-  if (isSuccess) {
-    dispatch(
-      setUserDetails(
-        userDetails.canCreatePasswordReset,
-        userDetails.mailConfigured
-      )
-    );
-  }
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })

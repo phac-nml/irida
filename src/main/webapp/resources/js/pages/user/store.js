@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { usersApi } from "../../apis/users/users";
-import { userReducer } from "./services/userReducer";
+import { passwordResetApi } from "../../apis/passwordReset";
 
 /*
 Redux Store for user details.
@@ -8,9 +8,12 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
  */
 export default configureStore({
   reducer: {
-    userReducer,
     [usersApi.reducerPath]: usersApi.reducer,
+    [passwordResetApi.reducerPath]: passwordResetApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(usersApi.middleware),
+    getDefaultMiddleware().concat(
+      usersApi.middleware,
+      passwordResetApi.middleware
+    ),
 });
