@@ -1,4 +1,4 @@
-import { Col, Layout, Row, Spinner } from "antd";
+import { Col, Layout, Row, Spin } from "antd";
 import React, { Suspense, useState } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
@@ -68,7 +68,7 @@ const { Content, Sider } = Layout;
  * @constructor
  */
 const SettingsLayout = () => (
-  <Suspense fallback={<Spinner />}>
+  <Suspense fallback={<Spin />}>
     <Routes>
       <Route
         path={setBaseUrl("/projects/:projectId/settings/")}
