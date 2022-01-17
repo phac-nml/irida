@@ -3,12 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -169,14 +172,21 @@ public class AnalysisController {
 				.getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 		String htmlExt = "html";
+		String htmlZipExt = "html-zip";
+		Boolean zipped = false;
 
 		for (AnalysisOutputFile file : files) {
 			if (file.getFile()
 					.toFile()
 					.getName()
-					.contains(filename) && FilenameUtils.getExtension(filename)
-					.equals(htmlExt)) {
-				outputFile = file;
+					.contains(filename)) {
+				String fileExt = FileUtilities.getFileExt(file.getFile());
+				if (fileExt.equals(htmlExt)) {
+					outputFile = file;
+				} else if (fileExt.equals(htmlZipExt)) {
+					outputFile = file;
+					zipped = true;
+				}
 				break;
 			}
 		}
@@ -185,23 +195,68 @@ public class AnalysisController {
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
 
-		try (InputStream inputStream = new FileInputStream(outputFile.getFile()
-				.toString()); OutputStream outputStream = response.getOutputStream()) {
-			// Copy the file contents to the response outputstream
-			IOUtils.copy(inputStream, outputStream);
-		} catch (IOException e) {
-			logger.debug("Html output not found.");
-			String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
-					new Object[] { filename }, locale);
-			OutputStream outputStream = response.getOutputStream();
-			/*
-			Write the htmlNotFound message to the outputstream. We do this
-			so that the page doesn't error and will instead display the
-			message.
-			 */
-			outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
-			outputStream.flush();
-			outputStream.close();
+		if (zipped) {
+			String htmlFile = outputFile.getFile().toFile().toString();
+			if (htmlFile.endsWith(".html.zip")) {
+				htmlFile = htmlFile.substring(0, htmlFile.length()-4);
+			}
+			try (ZipFile zipFile = new ZipFile(outputFile.getFile().toFile());
+					OutputStream outputStream = response.getOutputStream()) {
+				// Try to find an entry whose name matches the AnalysisOutputFile name
+				ZipEntry zipEntry = zipFile.getEntry(htmlFile);
+				// If not found add `.html` to the filename and see if that exists
+				// This enables us to find `quast.html.html` inside of `quast.html.zip`
+				if (zipEntry == null) {
+					zipEntry = zipFile.getEntry(htmlFile + ".html");
+				}
+				// If none match, then find the first html file in the zip
+				if (zipEntry == null) {
+					Enumeration<? extends ZipEntry> entries = zipFile.entries();
+					while(entries.hasMoreElements()) {
+						ZipEntry entry = entries.nextElement();
+						if (entry.getName().endsWith(".html")) {
+							zipEntry = entry;
+							break;
+						}
+					}
+				}
+				InputStream is = zipFile.getInputStream(zipEntry);
+				IOUtils.copy(is, outputStream);
+			} catch (IOException e) {
+				logger.debug("Html output not found.");
+				String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
+						new Object[] { filename }, locale);
+				OutputStream outputStream = response.getOutputStream();
+				/*
+				Write the htmlNotFound message to the outputstream. We do this
+				so that the page doesn't error and will instead display the
+				message.
+				*/
+				outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
+				outputStream.flush();
+				outputStream.close();
+			}
+		} else {
+
+			try (InputStream inputStream = new FileInputStream(outputFile.getFile()
+					.toString()); OutputStream outputStream = response.getOutputStream()) {
+				// Copy the file contents to the response outputstream
+				IOUtils.copy(inputStream, outputStream);
+			} catch (IOException e) {
+				logger.debug("Html output not found.");
+				String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
+						new Object[] { filename }, locale);
+				OutputStream outputStream = response.getOutputStream();
+				/*
+				Write the htmlNotFound message to the outputstream. We do this
+				so that the page doesn't error and will instead display the
+				message.
+				*/
+				outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
+				outputStream.flush();
+				outputStream.close();
+			}
+
 		}
 	}
 }

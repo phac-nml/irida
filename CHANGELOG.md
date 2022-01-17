@@ -14,6 +14,7 @@ Changes
 * [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
 * [Developer]: Updated to use Yarn v3 and updated browserlist to v4.19.17.
 * [Developer]: Added parsing of CHROMEWEBDRIVER in ./run-tests.sh to detect and use chromedriver provided by github actions ubuntu20.04 image.
+* [UI/Workflow]: Added in support for displaying html files found inside of zipped html output files.
 * [Developer]: Converted the project from bare Spring to Spring Boot 2.6.2, which involved upgrading a number of dependencies.
 
 21.05 to 21.09
