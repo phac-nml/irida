@@ -611,6 +611,7 @@
 							<!--suppress UnresolvedMavenProperty -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
+								<junit.platform.execution.listeners.deactivate>${exclude.test.listeners}</junit.platform.execution.listeners.deactivate>
 								<server.port>${server.port}</server.port>
 								<spring.profiles.active>test</spring.profiles.active>
 								<irida.db.profile>it</irida.db.profile>
@@ -991,6 +992,7 @@
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
 				</exclude.tests>
+				<exclude.test.listeners>ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener</exclude.test.listeners>
 				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>

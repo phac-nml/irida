@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,9 +20,8 @@ import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -72,7 +71,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -115,7 +113,7 @@ public class SequencingObjectServiceImplIT {
 	@Qualifier("sequenceFileBaseDirectory")
 	private Path baseDirectory;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		Files.createDirectories(baseDirectory);
 		FileUtils.cleanDirectory(baseDirectory.toFile());
@@ -160,11 +158,11 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject pair = sequenceFilePairsForSample.iterator().next().getObject();
 
 		for (SequenceFile file : pair.getFiles()) {
-			assertTrue("file id should be in set", fileIds.contains(file.getId()));
+			assertTrue(fileIds.contains(file.getId()), "file id should be in set");
 			fileIds.remove(file.getId());
 		}
 
-		assertTrue("all file ids should have been found", fileIds.isEmpty());
+		assertTrue(fileIds.isEmpty(), "all file ids should have been found");
 	}
 
 	@Test
@@ -192,11 +190,11 @@ public class SequencingObjectServiceImplIT {
 
 		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
 
-		assertEquals("should be one qc entries", 1, qcEntries.size());
+		assertEquals(1, qcEntries.size(), "should be one qc entries");
 		QCEntry qcEntry = qcEntries.iterator().next();
-		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
+		assertTrue(qcEntry instanceof CoverageQCEntry, "should be coverage entry");
 		CoverageQCEntry coverage = (CoverageQCEntry) qcEntry;
-		assertEquals("should be 18 bases", 18, coverage.getTotalBases());
+		assertEquals(18, coverage.getTotalBases(), "should be 18 bases");
 	}
 
 	@Test
@@ -221,10 +219,10 @@ public class SequencingObjectServiceImplIT {
 
 		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
 
-		assertFalse("should be a qc entry", qcEntries.isEmpty());
+		assertFalse(qcEntries.isEmpty(), "should be a qc entry");
 		QCEntry qc = qcEntries.iterator().next();
 
-		assertTrue("should be a FileProcessorErrorQCEntry", qc instanceof FileProcessorErrorQCEntry);
+		assertTrue(qc instanceof FileProcessorErrorQCEntry, "should be a FileProcessorErrorQCEntry");
 	}
 
 	@Test
@@ -276,7 +274,7 @@ public class SequencingObjectServiceImplIT {
 				.create(singleEndSequenceFile);
 		logger.trace("Finished saving the file.");
 
-		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		assertNotNull(sequencingObject.getId(), "ID wasn't assigned.");
 
 		// Sleeping for a bit to let file processing run
 		Thread.sleep(15000);
@@ -292,27 +290,27 @@ public class SequencingObjectServiceImplIT {
 				Thread.sleep(1000);
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
-		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
+		assertEquals(expectedRevisionNumber, sf.getFileRevisionNumber(), "Wrong version number after processing.");
 
 		// verify the file checksum was taken properly
-		assertEquals("checksum should be equal", CHECKSUM, sf.getUploadSha256());
+		assertEquals(CHECKSUM, sf.getUploadSha256(), "checksum should be equal");
 
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
-		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
+		assertNotNull(analysis, "FastQCAnalysis should have been created for the file.");
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
-		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
-		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
+		assertNotNull(overrepresentedSequences, "No overrepresented sequences were found.");
+		assertEquals(1, overrepresentedSequences.size(), "Wrong number of overrepresented sequences were found.");
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
-		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
-		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
-		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
+		assertEquals(SEQUENCE, overrepresentedSequence.getSequence(), "Sequence was not the correct sequence.");
+		assertEquals(2, overrepresentedSequence.getOverrepresentedSequenceCount(), "The count was not correct.");
+		assertEquals(new BigDecimal("100.00"), overrepresentedSequence.getPercentage(), "The percent was not correct.");
 
 		// confirm that the file structure is correct
 		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
-		assertTrue("Revision directory doesn't exist.", Files.exists(idDirectory
-				.resolve(Paths.get(sf.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))));
+		assertTrue(Files.exists(idDirectory.resolve(Paths.get(sf.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))),
+				"Revision directory doesn't exist.");
 		// no other files or directories should be beneath the ID directory
 		int fileCount = 0;
 		Iterator<Path> dir = Files.newDirectoryStream(idDirectory).iterator();
@@ -320,7 +318,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 1, fileCount);
+		assertEquals(1, fileCount, "Wrong number of directories beneath the id directory");
 	}
 
 	@Test
@@ -340,7 +338,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject sequencingObject = objectService.create(singleEndSequenceFile);
 		logger.trace("Finished saving the file.");
 
-		assertNotNull("ID wasn't assigned.", sequencingObject.getId());
+		assertNotNull(sequencingObject.getId(), "ID wasn't assigned.");
 
 		// Sleeping for a bit to let file processing run
 		Thread.sleep(10000);
@@ -362,28 +360,28 @@ public class SequencingObjectServiceImplIT {
 		//one more sleep to make sure everything's settled
 		Thread.sleep(1000);
 
-		assertEquals("Wrong version number after processing.", expectedRevisionNumber, sf.getFileRevisionNumber());
-		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
+		assertEquals(expectedRevisionNumber, sf.getFileRevisionNumber(), "Wrong version number after processing.");
+		assertFalse(sf.getFile().getFileName().toString().endsWith(".gz"), "File name is still gzipped.");
 		AnalysisFastQC analysis = asRole(Role.ROLE_ADMIN, "admin").analysisService
 				.getFastQCAnalysisForSequenceFile(readObject, sf.getId());
 
 		// verify the file checksum was taken properly
-		assertEquals("checksum should be equal", ZIPPED_CHECKSUM, sf.getUploadSha256());
+		assertEquals(ZIPPED_CHECKSUM, sf.getUploadSha256(), "checksum should be equal");
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
-		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
-		assertEquals("Wrong number of overrepresented sequences were found.", 1, overrepresentedSequences.size());
+		assertNotNull(overrepresentedSequences, "No overrepresented sequences were found.");
+		assertEquals(1, overrepresentedSequences.size(), "Wrong number of overrepresented sequences were found.");
 		OverrepresentedSequence overrepresentedSequence = overrepresentedSequences.iterator().next();
-		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
-		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
-		assertEquals("The percent was not correct.", new BigDecimal("100.00"), overrepresentedSequence.getPercentage());
+		assertEquals(SEQUENCE, overrepresentedSequence.getSequence(), "Sequence was not the correct sequence.");
+		assertEquals(2, overrepresentedSequence.getOverrepresentedSequenceCount(), "The count was not correct.");
+		assertEquals(new BigDecimal("100.00"), overrepresentedSequence.getPercentage(), "The percent was not correct.");
 
 		// confirm that the file structure is correct
 		String filename = sequenceFile.getFileName().toString();
 		filename = filename.substring(0, filename.lastIndexOf('.'));
 		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
-		assertTrue("Revision directory doesn't exist.",
-				Files.exists(idDirectory.resolve(Paths.get(sf.getFileRevisionNumber().toString(), filename))));
+		assertTrue(Files.exists(idDirectory.resolve(Paths.get(sf.getFileRevisionNumber().toString(), filename))),
+				"Revision directory doesn't exist.");
 		// no other files or directories should be beneath the ID directory
 		int fileCount = 0;
 		Iterator<Path> dir = Files.newDirectoryStream(idDirectory).iterator();
@@ -391,7 +389,7 @@ public class SequencingObjectServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
+		assertEquals(2, fileCount, "Wrong number of directories beneath the id directory");
 	}
 
 	@Test
@@ -400,10 +398,12 @@ public class SequencingObjectServiceImplIT {
 		assertNotNull(objectService.read(2L));
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testReadSequenceFileAsUserNoPermissions() {
-		objectService.read(2L);
+		assertThrows(AccessDeniedException.class, () -> {
+			objectService.read(2L);
+		});
 	}
 
 	@Test
@@ -411,8 +411,8 @@ public class SequencingObjectServiceImplIT {
 	public void testReadOptionalProperties() {
 		SequencingObject sequencingObject = objectService.read(2L);
 		SequenceFile read = sequencingObject.getFileWithId(1L);
-		assertEquals("5", read.getOptionalProperty("samplePlate"));
-		assertEquals("10", read.getOptionalProperty("sampleWell"));
+		assertEquals(read.getOptionalProperty("samplePlate"), "5");
+		assertEquals(read.getOptionalProperty("sampleWell"), "10");
 	}
 
 	@Test
@@ -446,13 +446,13 @@ public class SequencingObjectServiceImplIT {
 
 		List<QCEntry> qcEntries = sampleService.getQCEntriesForSample(readSample);
 
-		assertEquals("should be one qc entry", 1, qcEntries.size());
+		assertEquals(1, qcEntries.size(), "should be one qc entry");
 		QCEntry qcEntry = qcEntries.iterator().next();
 		qcEntry.addProjectSettings(project);
 
-		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
-		assertEquals("qc should have passed", QCEntryStatus.POSITIVE, qcEntry.getStatus());
-		assertEquals("should be 6x coverage", "6x", qcEntry.getMessage());
+		assertTrue(qcEntry instanceof CoverageQCEntry, "should be coverage entry");
+		assertEquals(QCEntryStatus.POSITIVE, qcEntry.getStatus(), "qc should have passed");
+		assertEquals(qcEntry.getMessage(), "6x", "should be 6x coverage");
 
 		project.setMinimumCoverage(10);
 		project = projectService.update(project);
@@ -461,11 +461,11 @@ public class SequencingObjectServiceImplIT {
 		Thread.sleep(10000);
 
 		qcEntries = sampleService.getQCEntriesForSample(readSample);
-		assertEquals("should be one qc entry", 1, qcEntries.size());
+		assertEquals(1, qcEntries.size(), "should be one qc entry");
 		qcEntry = qcEntries.iterator().next();
 		qcEntry.addProjectSettings(project);
-		assertTrue("should be coverage entry", qcEntry instanceof CoverageQCEntry);
-		assertEquals("qc should have failed", QCEntryStatus.NEGATIVE, qcEntry.getStatus());
+		assertTrue(qcEntry instanceof CoverageQCEntry, "should be coverage entry");
+		assertEquals(QCEntryStatus.NEGATIVE, qcEntry.getStatus(), "qc should have failed");
 	}
 
 	/**
@@ -481,15 +481,15 @@ public class SequencingObjectServiceImplIT {
 		Sample sa2 = sampleService.read(2L);
 
 		Map<Sample, SequencingObject> sampleMap = objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
-		assertEquals("Incorrect number of results returned in sample map", 2, sampleMap.size());
-		assertEquals("Incorrect sequencing object mapped to sample", s2.getId(), sampleMap.get(sa1).getId());
-		assertEquals("Incorrect sequencing object mapped to sample", s1.getId(), sampleMap.get(sa2).getId());
+		assertEquals(2, sampleMap.size(), "Incorrect number of results returned in sample map");
+		assertEquals(s2.getId(), sampleMap.get(sa1).getId(), "Incorrect sequencing object mapped to sample");
+		assertEquals(s1.getId(), sampleMap.get(sa2).getId(), "Incorrect sequencing object mapped to sample");
 	}
 
 	/**
 	 * Tests failure when a sample for one sequencing object does not exist.
 	 */
-	@Test(expected=EntityNotFoundException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUniqueSamplesForSequencingObjectsFailNoSample() {
 		SequencingObject s1 = objectService.read(1L);
@@ -497,19 +497,23 @@ public class SequencingObjectServiceImplIT {
 
 		sampleRepository.deleteById(1L);
 
-		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
+		assertThrows(EntityNotFoundException.class, () -> {
+			objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
+		});
 	}
 
 	/**
 	 * Tests failure for duplicate samples in sequencing objects.
 	 */
-	@Test(expected=DuplicateSampleException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUniqueSamplesForSequencingObjectsFailDuplicateSample() {
 		SequencingObject s1 = objectService.read(1L);
 		SequencingObject s4 = objectService.read(4L);
 
-		objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
+		assertThrows(DuplicateSampleException.class, () -> {
+			objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
+		});
 	}
 
 	@Test
@@ -551,17 +555,17 @@ public class SequencingObjectServiceImplIT {
 		// re-read the concatenated file so file processing will be complete
 		concatenateSequences = sampleService.getSampleForSequencingObject(concatenateSequences.getObject());
 
-		assertTrue("new seq collection should contain originals", newSeqs.containsAll(originalSeqs));
-		assertTrue("new seq collection should contain new object", newSeqs.contains(concatenateSequences));
-		assertEquals("new seq collection should have 1 more object", originalSeqs.size() + 1, newSeqs.size());
+		assertTrue(newSeqs.containsAll(originalSeqs), "new seq collection should contain originals");
+		assertTrue(newSeqs.contains(concatenateSequences), "new seq collection should contain new object");
+		assertEquals(originalSeqs.size() + 1, newSeqs.size(), "new seq collection should have 1 more object");
 
 		SequencingObject newSeqObject = concatenateSequences.getObject();
 		SequenceFile newFile = newSeqObject.getFiles().iterator().next();
-		assertTrue("new file should contain new name", newFile.getFileName().contains(newFileName));
+		assertTrue(newFile.getFileName().contains(newFileName), "new file should contain new name");
 
 		long newFileSize = newFile.getFile().toFile().length();
 
-		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
+		assertEquals(originalLength * 2, newFileSize, "new file should be 2x size of originals");
 	}
 
 	private SequenceFile createSequenceFile(String name) throws IOException{

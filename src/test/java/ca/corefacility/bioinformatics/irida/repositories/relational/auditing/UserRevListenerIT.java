@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.hibernate.envers.AuditReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.history.Revision;
@@ -13,7 +12,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -24,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.security.annotations.WithMockOAuth2Client;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -49,7 +46,7 @@ public class UserRevListenerIT {
 		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId()).orElse(null);
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
 				findLastChangeRevision.getRevisionNumber().orElse(null));
-		assertEquals("client id should be set in revision", Long.valueOf(1), findRevision.getClientId());
+		assertEquals(Long.valueOf(1), findRevision.getClientId(), "client id should be set in revision");
 	}
 
 	@Test

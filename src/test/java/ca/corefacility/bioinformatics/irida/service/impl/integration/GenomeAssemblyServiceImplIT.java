@@ -3,8 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import java.nio.file.Path;
 import java.util.Collection;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,7 +11,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
@@ -27,10 +25,10 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -51,21 +49,21 @@ public class GenomeAssemblyServiceImplIT {
 	public void testGetAssembliesForSampleSuccess() {
 		Sample s = sampleService.read(1L);
 		Collection<SampleGenomeAssemblyJoin> joins = genomeAssemblyService.getAssembliesForSample(s);
-		assertEquals("should have same size for assemblies", 1, joins.size());
+		assertEquals(1, joins.size(), "should have same size for assemblies");
 
 		SampleGenomeAssemblyJoin join = joins.iterator()
 				.next();
-		assertEquals("Should be same sample", s.getId(), join.getSubject()
-				.getId());
-		assertEquals("Should be same assembly", Long.valueOf(1), join.getObject()
-				.getId());
+		assertEquals(s.getId(), join.getSubject().getId(), "Should be same sample");
+		assertEquals(Long.valueOf(1), join.getObject().getId(), "Should be same assembly");
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testGetAssembliesForSampleFail() {
-		Sample s = sampleService.read(1L);
-		genomeAssemblyService.getAssembliesForSample(s);
+		assertThrows(AccessDeniedException.class, () -> {
+			Sample s = sampleService.read(1L);
+			genomeAssemblyService.getAssembliesForSample(s);
+		});
 	}
 
 	@Test
@@ -75,24 +73,28 @@ public class GenomeAssemblyServiceImplIT {
 		Sample s = sampleService.read(1L);
 
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
-		assertEquals("should have same path for assembly", expectedAssemblyPath, genomeAssembly.getFile());
+		assertEquals(expectedAssemblyPath, genomeAssembly.getFile(), "should have same path for assembly");
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testGetGenomeAssemblyForSampleFailNoAssembly() {
 		Sample s = sampleService.read(1L);
-		genomeAssemblyService.getGenomeAssemblyForSample(s, 2L);
+		assertThrows(EntityNotFoundException.class, () -> {
+			genomeAssemblyService.getGenomeAssemblyForSample(s, 2L);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testGetGenomeAssemblyForSampleFailDenied() {
-		Sample s = sampleService.read(1L);
-		genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			Sample s = sampleService.read(1L);
+			genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+		});
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testRemoveGenomeAssemblyFromSampleSuccess() {
 		Sample s = sampleService.read(1L);
@@ -100,16 +102,20 @@ public class GenomeAssemblyServiceImplIT {
 
 		genomeAssemblyService.removeGenomeAssemblyFromSample(s, 1L);
 
-		genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+		assertThrows(EntityNotFoundException.class, () -> {
+			genomeAssemblyService.getGenomeAssemblyForSample(s, 1L);
+		});
 
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testRemoveGenomeAssemblyFromSampleFail() {
-		Sample s = sampleService.read(1L);
-		assertNotNull(genomeAssemblyService.getGenomeAssemblyForSample(s, 1L));
+		assertThrows(AccessDeniedException.class, () -> {
+			Sample s = sampleService.read(1L);
+			assertNotNull(genomeAssemblyService.getGenomeAssemblyForSample(s, 1L));
 
-		genomeAssemblyService.removeGenomeAssemblyFromSample(s, 1L);
+			genomeAssemblyService.removeGenomeAssemblyFromSample(s, 1L);
+		});
 	}
 }

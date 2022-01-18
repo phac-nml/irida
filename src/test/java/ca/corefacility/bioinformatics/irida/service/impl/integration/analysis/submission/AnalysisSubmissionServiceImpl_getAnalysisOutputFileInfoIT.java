@@ -4,15 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -26,12 +24,11 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for an analysis service methods for getting analysis output file info for projects and users.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -51,9 +48,9 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	public void testGetAllAnalysisOutputInfoSharedWithAProject() throws ParseException {
 		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(
 				1L);
-		assertEquals("There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 2L,
-				infos.size());
-		assertEquals("All outputs must match expected", new HashSet<>(infos), expectedSharedOutputsForProject1());
+		assertEquals(2L, infos.size(),
+				"There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
+		assertEquals(new HashSet<>(infos), expectedSharedOutputsForProject1(), "All outputs must match expected");
 	}
 
 	@Test
@@ -61,9 +58,9 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	public void testGetAllAutomatedAnalysisOutputInfoForAProject() throws ParseException {
 		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(
 				1L);
-		assertEquals("There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 4L,
-				infos.size());
-		assertEquals("All outputs must match expected", new HashSet<>(infos), expectedAutomatedOutputsForProject1());
+		assertEquals(4L, infos.size(),
+				"There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
+		assertEquals(new HashSet<>(infos), expectedAutomatedOutputsForProject1(), "All outputs must match expected");
 	}
 
 	private Set<ProjectSampleAnalysisOutputInfo> expectedUserOutputs() throws ParseException {
@@ -82,9 +79,9 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 		final User user = userRepository.loadUserByUsername("otherguy");
 		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService.getAllUserAnalysisOutputInfo(
 				user);
-		assertEquals("There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size(), 2L,
-				infos.size());
-		assertEquals("All outputs must match expected", new HashSet<>(infos), expectedUserOutputs());
+		assertEquals(2L, infos.size(),
+				"There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
+		assertEquals(new HashSet<>(infos), expectedUserOutputs(), "All outputs must match expected");
 	}
 
 	private Set<ProjectSampleAnalysisOutputInfo> expectedSharedOutputsForProject1() throws ParseException {

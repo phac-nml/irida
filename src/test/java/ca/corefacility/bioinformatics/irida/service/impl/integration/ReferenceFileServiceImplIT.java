@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
@@ -32,7 +31,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -56,15 +54,17 @@ public class ReferenceFileServiceImplIT {
 	public void testGetReferenceFilesForProject() {
 		Project p = projectService.read(1L);
 		List<Join<Project, ReferenceFile>> prs = referenceFileService.getReferenceFilesForProject(p);
-		assertEquals("Wrong number of reference files for project.", 1, prs.size());
+		assertEquals(1, prs.size(), "Wrong number of reference files for project.");
 		ReferenceFile rf = prs.iterator().next().getObject();
-		assertEquals("Wrong reference file attached to project.", Long.valueOf(1), rf.getId());
+		assertEquals(Long.valueOf(1), rf.getId(), "Wrong reference file attached to project.");
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user", roles = "USER")
 	public void testReadNotAllowed() {
-		referenceFileService.read(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			referenceFileService.read(1L);
+		});
 	}
 
 	@Test
@@ -79,29 +79,33 @@ public class ReferenceFileServiceImplIT {
 	public void testDeleteReferenceFile() {
 		Project p = projectService.read(1L);
 		List<Join<Project, ReferenceFile>> prs = referenceFileService.getReferenceFilesForProject(p);
-		assertEquals("Wrong number of reference files for project.", 1, prs.size());
+		assertEquals(1, prs.size(), "Wrong number of reference files for project.");
 		ReferenceFile rf = prs.iterator().next().getObject();
-		assertEquals("Wrong reference file attached to project.", Long.valueOf(1), rf.getId());
+		assertEquals(Long.valueOf(1), rf.getId(), "Wrong reference file attached to project.");
 		
 		referenceFileService.delete(rf.getId());
 		p = projectService.read(1L);
 		prs = referenceFileService.getReferenceFilesForProject(p);
-		assertEquals("No more reference files should be in the project.", 0, prs.size());
+		assertEquals(0, prs.size(), "No more reference files should be in the project.");
 	}
 	
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user", roles = "USER")
 	public void testDeleteRefereneFilePermissionDenied() {
-		referenceFileService.delete(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			referenceFileService.delete(1L);
+		});
 	}
 	
-	@Test(expected = UnsupportedReferenceFileContentError.class)
+	@Test
 	@WithMockUser(username = "user", roles = "USER")
 	public void testAddReferenceFileWithAmbiguousBases() throws URISyntaxException {
 		final ReferenceFile rf = new ReferenceFile();
 		final Path ambiguousBasesRefFile = Paths.get(getClass().getResource(
 				"/ca/corefacility/bioinformatics/irida/service/testReferenceAmbiguous.fasta").toURI());
 		rf.setFile(ambiguousBasesRefFile);
-		referenceFileService.create(rf);
+		assertThrows(UnsupportedReferenceFileContentError.class, () -> {
+			referenceFileService.create(rf);
+		});
 	}
 }
