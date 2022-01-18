@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -24,7 +24,7 @@ public class UIClientServiceTest {
 	private IridaClientDetailsService clientDetailsService;
 	private UIClientService service;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		clientDetailsService = mock(IridaClientDetailsService.class);
 		service = new UIClientService(clientDetailsService);

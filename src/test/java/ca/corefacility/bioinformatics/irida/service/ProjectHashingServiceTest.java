@@ -12,12 +12,12 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class ProjectHashingServiceTest {
@@ -32,7 +32,7 @@ public class ProjectHashingServiceTest {
 
     ProjectHashingService service;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
 

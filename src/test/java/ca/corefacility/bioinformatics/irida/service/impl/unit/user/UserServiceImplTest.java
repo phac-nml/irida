@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
@@ -15,8 +16,8 @@ import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUser
 import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -56,7 +57,7 @@ public class UserServiceImplTest {
 	private Validator validator;
 	private PasswordEncoder passwordEncoder;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		validator = mock(Validator.class);
 		userRepository = mock(UserRepository.class);
@@ -67,12 +68,14 @@ public class UserServiceImplTest {
 				validator);
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	// should throw the exception to the caller instead of swallowing it.
 	public void testBadUsername() {
 		String username = "superwrongusername";
 		when(userRepository.loadUserByUsername(username)).thenThrow(new EntityNotFoundException("not found"));
-		userService.getUserByUsername(username);
+		assertThrows(EntityNotFoundException.class, () -> {
+			userService.getUserByUsername(username);
+		});
 	}
 
 	@Test
@@ -94,7 +97,7 @@ public class UserServiceImplTest {
 		when(userRepository.findRevisions(id)).thenReturn(Revisions.of(Lists.newArrayList()));
 
 		User u = userService.updateFields(id, properties);
-		assertEquals("User-type was not returned.", persisted, u);
+		assertEquals(persisted, u, "User-type was not returned.");
 
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).findById(id);
@@ -121,7 +124,7 @@ public class UserServiceImplTest {
 		when(userRepository.save(u)).thenReturn(u);
 
 		userService.create(u);
-		assertEquals("User password was not encoded.", encodedPassword, u.getPassword());
+		assertEquals(encodedPassword, u.getPassword(), "User password was not encoded.");
 
 		verify(passwordEncoder).encode(password);
 		verify(userRepository).save(u);
@@ -188,10 +191,10 @@ public class UserServiceImplTest {
 		ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);
 		verify(userRepository).save(argument.capture());
 		User saved = argument.getValue();
-		assertEquals("password field was not encoded.", encodedPassword, saved.getPassword());
+		assertEquals(encodedPassword, saved.getPassword(), "password field was not encoded.");
 	}
 
-	@Test(expected = PasswordReusedException.class)
+	@Test
 	public void testUpdateExistingPassword() {
 		String password = "Password1";
 		String oldPassword = "oldPassword";
@@ -222,12 +225,14 @@ public class UserServiceImplTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
 		when(userRepository.findRevisions(1L)).thenReturn(Revisions.of(Lists.newArrayList(rev)));
 
-		userService.changePassword(1L, password);
+		assertThrows(PasswordReusedException.class, () -> {
+			userService.changePassword(1L, password);
+		});
 
 		verify(userRepository, times(0)).save(any(User.class));
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testCreateUserWithIntegrityConstraintViolations() {
 		User u = new User();
 
@@ -240,10 +245,12 @@ public class UserServiceImplTest {
 		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
 				new HashSet<ConstraintViolation<User>>());
 
-		userService.create(u);
+		assertThrows(EntityExistsException.class, () -> {
+			userService.create(u);
+		});
 	}
 
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test
 	public void testCreateUserWithUnknownIntegrityConstraintViolation() {
 		User u = new User();
 
@@ -253,10 +260,12 @@ public class UserServiceImplTest {
 		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
 				new HashSet<ConstraintViolation<User>>());
 
-		userService.create(u);
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			userService.create(u);
+		});
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testCreateUserWithUnknownIntegrityConstraintViolationName() {
 		User u = new User();
 
@@ -269,10 +278,12 @@ public class UserServiceImplTest {
 		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
 				new HashSet<ConstraintViolation<User>>());
 
-		userService.create(u);
+		assertThrows(EntityExistsException.class, () -> {
+			userService.create(u);
+		});
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testCreateUserWithNoConstraintViolationName() {
 		User u = new User();
 
@@ -284,7 +295,9 @@ public class UserServiceImplTest {
 		when(validator.validateValue(eq(User.class), eq("password"), any(String.class))).thenReturn(
 				new HashSet<ConstraintViolation<User>>());
 
-		userService.create(u);
+		assertThrows(EntityExistsException.class, () -> {
+			userService.create(u);
+		});
 	}
 
 	@Test
@@ -302,12 +315,14 @@ public class UserServiceImplTest {
 		assertEquals(u2, loadUserByEmail);
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testLoadUserByEmailNotFound() {
 		String email = "bademail@nowhere.com";
 		when(userRepository.loadUserByEmail(email)).thenReturn(null);
 
-		userService.loadUserByEmail(email);
+		assertThrows(EntityNotFoundException.class, () -> {
+			userService.loadUserByEmail(email);
+		});
 
 	}
 	

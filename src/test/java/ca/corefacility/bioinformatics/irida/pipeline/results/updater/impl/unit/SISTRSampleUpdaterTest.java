@@ -20,8 +20,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.nio.file.Path;
@@ -30,7 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -47,7 +48,7 @@ public class SISTRSampleUpdaterTest {
 
 	private UUID uuid = UUID.randomUUID();
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IridaWorkflowNotFoundException {
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
@@ -112,12 +113,12 @@ public class SISTRSampleUpdaterTest {
 
 				MetadataEntry value = e.getValue();
 
-				assertEquals("metadata values should match", expected, value.getValue());
+				assertEquals(expected, value.getValue(), "metadata values should match");
 				found++;
 			}
 		}
-		assertEquals("should have found the same number of results", expectedResults.keySet()
-				.size(), found);
+		assertEquals(expectedResults.keySet().size(), found,
+				"should have found the same number of results");
 
 		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
@@ -174,12 +175,12 @@ public class SISTRSampleUpdaterTest {
 
 				MetadataEntry value = e.getValue();
 
-				assertEquals("metadata values should match", expected, value.getValue());
+				assertEquals(expected, value.getValue(), "metadata values should match");
 				found++;
 			}
 		}
-		assertEquals("should have found the same number of results", expectedResults.keySet()
-				.size(), found);
+		assertEquals(expectedResults.keySet().size(), found,
+				"should have found the same number of results");
 
 		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
@@ -192,7 +193,7 @@ public class SISTRSampleUpdaterTest {
 				.next());
 	}
 
-	@Test(expected = PostProcessingException.class)
+	@Test
 	public void testUpdaterBadFile() throws PostProcessingException, AnalysisAlreadySetException {
 		Path outputPath = Paths.get("src/test/resources/files/snp_tree.tree");
 
@@ -208,10 +209,12 @@ public class SISTRSampleUpdaterTest {
 		Sample sample = new Sample();
 		sample.setId(1L);
 
-		updater.update(Lists.newArrayList(sample), submission);
+		assertThrows(PostProcessingException.class, () -> {
+			updater.update(Lists.newArrayList(sample), submission);
+		});
 	}
 
-	@Test(expected = PostProcessingException.class)
+	@Test
 	public void testUpdaterNoFile() throws PostProcessingException, AnalysisAlreadySetException {
 		Path outputPath = Paths.get("src/test/resources/files/not_really_a_file.txt");
 
@@ -227,6 +230,8 @@ public class SISTRSampleUpdaterTest {
 		Sample sample = new Sample();
 		sample.setId(1L);
 
-		updater.update(Lists.newArrayList(sample), submission);
+		assertThrows(PostProcessingException.class, () -> {
+			updater.update(Lists.newArrayList(sample), submission);
+		});
 	}
 }

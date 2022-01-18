@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -20,8 +21,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -83,7 +84,7 @@ public class ProjectServiceImplTest {
 
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		validator = mock(Validator.class);
 		projectRepository = mock(ProjectRepository.class);
@@ -160,7 +161,7 @@ public class ProjectServiceImplTest {
 		verify(pujRepository).save(join);
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testAddUserToProjectTwice() {
 		User u = new User("test", "test@nowhere.com", "PASSWOD!1", "Test", "User", "1234");
 		u.setId(1111L);
@@ -170,7 +171,9 @@ public class ProjectServiceImplTest {
 
 		when(pujRepository.save(join)).thenThrow(new DataIntegrityViolationException("Duplicates."));
 
-		projectService.addUserToProject(p, u, r);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addUserToProject(p, u, r);
+		});
 	}
 
 	@Test
@@ -189,7 +192,7 @@ public class ProjectServiceImplTest {
 		verify(psjRepository).save(new ProjectSampleJoin(p, s, true));
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	public void testAddSampleToProjectNoSamplePersistedInvalidSample() {
 		Project p = project();
 		Sample s = new Sample();
@@ -200,12 +203,14 @@ public class ProjectServiceImplTest {
 
 		when(validator.validate(s)).thenReturn(violations);
 
-		projectService.addSampleToProject(p, s, true);
+		assertThrows(ConstraintViolationException.class, () -> {
+			projectService.addSampleToProject(p, s, true);
+		});
 
-		verifyNoInteractions(sampleRepository, psjRepository);
+		verifyNoInteractions(psjRepository);
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testAddSampleToProjectAlreadyAdded() {
 		Project p = project();
 		Sample s = new Sample();
@@ -217,12 +222,14 @@ public class ProjectServiceImplTest {
 		when(psjRepository.save(any(ProjectSampleJoin.class))).thenThrow(
 				new DataIntegrityViolationException("duplicate"));
 
-		projectService.addSampleToProject(p, s, true);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addSampleToProject(p, s, true);
+		});
 
 		verify(sampleRepository).save(s);
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testAddSampleWithSameSequencerId() {
 		Project p = project();
 		Sample s = new Sample();
@@ -231,7 +238,9 @@ public class ProjectServiceImplTest {
 
 		when(sampleRepository.getSampleBySampleName(p, s.getSampleName())).thenReturn(otherSample);
 
-		projectService.addSampleToProject(p, s, true);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addSampleToProject(p, s, true);
+		});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -246,7 +255,7 @@ public class ProjectServiceImplTest {
 
 		when(pujRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
 
-		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
+		assertTrue(projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER), "User has ownership of project.");
 	}
 
 	@Test
@@ -266,14 +275,16 @@ public class ProjectServiceImplTest {
 		verify(relatedProjectRepository).save(any(RelatedProjectJoin.class));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddSameRelatedProject() {
 		Project p1 = new Project("project 1");
 
-		projectService.addRelatedProject(p1, p1);
+		assertThrows(IllegalArgumentException.class, () -> {
+			projectService.addRelatedProject(p1, p1);
+		});
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	public void testAlreadyRelatedProject() {
 		Project p1 = new Project("project 1");
 		Project p2 = new Project("project 2");
@@ -281,7 +292,9 @@ public class ProjectServiceImplTest {
 		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenThrow(
 				new DataIntegrityViolationException("relation already exists"));
 
-		projectService.addRelatedProject(p1, p2);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addRelatedProject(p1, p2);
+		});
 	}
 
 	@Test
@@ -330,7 +343,7 @@ public class ProjectServiceImplTest {
 		verify(pujRepository).save(oldJoin);
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testUpdateProjectUserJoinNotExists() throws ProjectWithoutOwnerException {
 		Project project = new Project("Project 1");
 		User user = new User();
@@ -338,10 +351,12 @@ public class ProjectServiceImplTest {
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(null);
 
-		projectService.updateUserProjectRole(project, user, projectRole);
+		assertThrows(EntityNotFoundException.class, () -> {
+			projectService.updateUserProjectRole(project, user, projectRole);
+		});
 	}
 
-	@Test(expected = ProjectWithoutOwnerException.class)
+	@Test
 	public void testUpdateProjectUserJoinIllegalChange() throws ProjectWithoutOwnerException {
 		Project project = new Project("Project 1");
 		User user = new User();
@@ -354,7 +369,9 @@ public class ProjectServiceImplTest {
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
 
-		projectService.updateUserProjectRole(project, user, projectRole);
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			projectService.updateUserProjectRole(project, user, projectRole);
+		});
 
 	}
 
@@ -465,8 +482,8 @@ public class ProjectServiceImplTest {
 
 		final List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
-		assertEquals("User should be in 2 projects.", 2, projects.size());
-		assertTrue("Should have found user project join.", projects.stream().anyMatch(p -> p.getSubject().equals(p1)));
-		assertTrue("Should have found group project join.", projects.stream().anyMatch(p -> p.getSubject().equals(p2)));
+		assertEquals(2, projects.size(), "User should be in 2 projects.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(p1)), "Should have found user project join.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(p2)), "Should have found group project join.");
 	}
 }

@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.DirectoryEntry;
@@ -32,8 +32,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -74,14 +75,14 @@ public class ExportUploadServiceTest {
 
 		@SuppressWarnings("unchecked")
 		List<String> listNames = fileSystem.listNames(baseDirectory);
-		assertEquals("submission directory exists", 1, listNames.size());
+		assertEquals(1, listNames.size(), "submission directory exists");
 		String createdDirectory = baseDirectory + "/" + listNames.iterator().next();
 
-		assertTrue("submission.xml created", fileSystem.exists(createdDirectory + "/submission.xml"));
-		assertTrue("submit.ready created", fileSystem.exists(createdDirectory + "/submit.ready"));
+		assertTrue(fileSystem.exists(createdDirectory + "/submission.xml"), "submission.xml created");
+		assertTrue(fileSystem.exists(createdDirectory + "/submit.ready"), "submit.ready created");
 		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next()
 				.getSequenceFile();
-		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq"));
+		assertTrue(fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq"), "seqfile created");
 	}
 
 	@Test
@@ -119,17 +120,17 @@ public class ExportUploadServiceTest {
 
 		@SuppressWarnings("unchecked")
 		List<String> listNames = fileSystem.listNames(baseDirectory);
-		assertEquals("submission directory exists", 1, listNames.size());
+		assertEquals(1, listNames.size(), "submission directory exists");
 		String createdDirectory = baseDirectory + "/" + listNames.iterator().next();
 
-		assertTrue("submission.xml created", fileSystem.exists(createdDirectory + "/submission.xml"));
-		assertTrue("submit.ready created", fileSystem.exists(createdDirectory + "/submit.ready"));
+		assertTrue(fileSystem.exists(createdDirectory + "/submission.xml"), "submission.xml created");
+		assertTrue(fileSystem.exists(createdDirectory + "/submit.ready"), "submit.ready created");
 		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next()
 				.getSequenceFile();
-		assertTrue("seqfile created", fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq.gz"));
+		assertTrue(fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq.gz"), "seqfile created");
 	}
 
-	@Test(expected = UploadException.class)
+	@Test
 	public void testUploadSubmissionNoBaseDirectory() throws UploadException, IOException {
 		NcbiExportSubmission submission = createFakeSubmission(".fastq");
 
@@ -157,13 +158,15 @@ public class ExportUploadServiceTest {
 			exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
 			String xml = "<xml></xml>";
 
-			exportUploadService.uploadSubmission(submission, xml);
+			assertThrows(UploadException.class, () -> {
+				exportUploadService.uploadSubmission(submission, xml);
+			});
 		} finally {
 			server.stop();
 		}
 	}
 
-	@Test(expected = UploadException.class)
+	@Test
 	public void testUploadSubmissionBadCredentials() throws UploadException, IOException {
 		NcbiExportSubmission submission = createFakeSubmission(".fastq");
 
@@ -186,13 +189,15 @@ public class ExportUploadServiceTest {
 			exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
 			String xml = "<xml></xml>";
 
-			exportUploadService.uploadSubmission(submission, xml);
+			assertThrows(UploadException.class, () -> {
+				exportUploadService.uploadSubmission(submission, xml);
+			});
 		} finally {
 			server.stop();
 		}
 	}
 
-	@Test(expected = UploadException.class)
+	@Test
 	public void testUploadSubmissionBadServer() throws UploadException, IOException {
 		NcbiExportSubmission submission = createFakeSubmission(".fastq");
 
@@ -208,7 +213,9 @@ public class ExportUploadServiceTest {
 		exportUploadService.setConnectionDetails(ftpHost, ftpPort, ftpUser, ftpPassword, baseDirectory);
 		String xml = "<xml></xml>";
 
-		exportUploadService.uploadSubmission(submission, xml);
+		assertThrows(UploadException.class, () -> {
+			exportUploadService.uploadSubmission(submission, xml);
+		});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -265,10 +272,10 @@ public class ExportUploadServiceTest {
 			server.stop();
 		}
 
-		assertEquals("sample2 should have processing state", ExportUploadState.PROCESSING,
-				sample2.getSubmissionStatus());
-		assertEquals("sample3 should have processing state", ExportUploadState.SUBMITTED,
-				sample3.getSubmissionStatus());
+		assertEquals(ExportUploadState.PROCESSING, sample2.getSubmissionStatus(),
+				"sample2 should have processing state");
+		assertEquals(ExportUploadState.SUBMITTED, sample3.getSubmissionStatus(),
+				"sample3 should have processing state");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -338,9 +345,9 @@ public class ExportUploadServiceTest {
 			server.stop();
 		}
 
-		assertEquals("sample2 should have processing state", ExportUploadState.PROCESSED_OK,
-				sample2.getSubmissionStatus());
-		assertEquals("sample2 should have an accession", newAccession, sample2.getAccession());
+		assertEquals(ExportUploadState.PROCESSED_OK, sample2.getSubmissionStatus(),
+				"sample2 should have processing state");
+		assertEquals(newAccession, sample2.getAccession(), "sample2 should have an accession");
 
 		verify(sampleService).getSampleForSequencingObject(seqObject);
 
@@ -352,7 +359,7 @@ public class ExportUploadServiceTest {
 				.filter(e -> e.getField()
 						.equals(field))
 				.findAny();
-		assertTrue("saved sample should contain accession", metadataEntryOptional.isPresent());
+		assertTrue(metadataEntryOptional.isPresent(), "saved sample should contain accession");
 	}
 
 	/**

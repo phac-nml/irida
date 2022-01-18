@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import java.util.Map;
@@ -7,8 +8,8 @@ import java.util.Map;
 import javax.validation.Validator;
 
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
@@ -26,7 +27,7 @@ public class PasswordResetServiceImplTest {
 	private PasswordResetRepository passwordResetRepository;
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		validator = mock(Validator.class);
 		passwordResetRepository = mock(PasswordResetRepository.class);
@@ -38,10 +39,12 @@ public class PasswordResetServiceImplTest {
 		SecurityContextHolder.getContext().setAuthentication(null);
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void testCannotUpdateAPasswordReset() {
 		Map<String, Object> properties = ImmutableMap.of("user_id", (Object) "3");
-		passwordResetService.updateFields("1121-1212-1d2d1-df433", properties);
+		assertThrows(UnsupportedOperationException.class, () -> {
+			passwordResetService.updateFields("1121-1212-1d2d1-df433", properties);
+		});
 	}
 
 	@Test

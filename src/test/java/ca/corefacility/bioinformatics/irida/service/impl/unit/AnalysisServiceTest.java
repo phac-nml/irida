@@ -9,8 +9,8 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisServiceImpl;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class AnalysisServiceTest {
 	private AnalysisOutputFileRepository analysisOutputFileRepository;
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.analysisRepository = mock(AnalysisRepository.class);
 		this.analysisOutputFileRepository = mock(AnalysisOutputFileRepository.class);		this.validator = mock(Validator.class);

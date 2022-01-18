@@ -12,8 +12,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFac
 
 import com.google.common.net.HttpHeaders;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -34,7 +34,7 @@ public class SequencingRunSequenceFilesControllerTest {
 	private SequencingObjectService objectService;
 	private SequencingRunService miseqRunService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		miseqRunService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
@@ -63,17 +63,18 @@ public class SequencingRunSequenceFilesControllerTest {
 		verify(miseqRunService).read(sequencingrunId);
 
 		SequencingRun res = responseResource.getResource();
-		assertNotNull("Sequencing run should not be null", res);
+		assertNotNull(res, "Sequencing run should not be null");
 		String seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId)
 				.slash("sequenceFiles")
 				.slash(seqId)
 				.withSelfRel()
 				.getHref();
-		assertEquals("Sequence file location should be correct", seqFileLocation, res.getLink(IanaLinkRelations.SELF.value())
-				.map(i -> i.getHref()).orElse(null));
-		assertEquals("Sequence file location should be correct", seqFileLocation,
-				response.getHeader(HttpHeaders.LOCATION));
-		assertEquals("HTTP status must be CREATED", HttpStatus.CREATED.value(), response.getStatus());
+		assertEquals(seqFileLocation, res.getLink(IanaLinkRelations.SELF.value())
+				.map(i -> i.getHref()).orElse(null),
+				"Sequence file location should be correct");
+		assertEquals(seqFileLocation, response.getHeader(HttpHeaders.LOCATION),
+				"Sequence file location should be correct");
+		assertEquals(HttpStatus.CREATED.value(), response.getStatus(), "HTTP status must be CREATED");
 	}
 
 }

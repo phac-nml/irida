@@ -9,8 +9,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -32,8 +32,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -73,7 +74,7 @@ public class ProjectSynchronizationServiceTest {
 	Project neverSync;
 	RemoteAPI api;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
 
@@ -319,7 +320,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(objectService).createSequencingObjectInSample(fast5Object, sample);
 	}
 	
-	@Test(expected = ProjectSynchronizationException.class)
+	@Test
 	public void testSyncFilesError() {
 		Sample sample = new Sample();
 		
@@ -331,6 +332,8 @@ public class ProjectSynchronizationServiceTest {
 		when(pairRemoteService.mirrorSequencingObject(pair)).thenReturn(pair);
 		when(objectService.createSequencingObjectInSample(pair, sample)).thenThrow(new NullPointerException("Bad file"));
 		
-		syncService.syncSequenceFilePair(pair, sample);
+		assertThrows(ProjectSynchronizationException.class, () -> {
+			syncService.syncSequenceFilePair(pair, sample);
+		});
 	}
 }

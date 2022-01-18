@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -36,7 +36,7 @@ public class LineListControllerTest {
 	private ProjectOwnerPermission ownerPermission;
 	private MessageSource messageSource;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);

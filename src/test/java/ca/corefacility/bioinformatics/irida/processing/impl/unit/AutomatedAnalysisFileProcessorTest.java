@@ -28,8 +28,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -39,8 +39,8 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -72,7 +72,7 @@ public class AutomatedAnalysisFileProcessorTest {
 	IridaWorkflow sistrWorkflow;
 	User submitter;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IridaWorkflowNotFoundException {
 		MockitoAnnotations.openMocks(this);
 
@@ -133,7 +133,7 @@ public class AutomatedAnalysisFileProcessorTest {
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 		when(submissionRepository.save(any(AnalysisSubmission.class))).thenReturn(built);
 
-		assertTrue("should want to assemble file", processor.shouldProcessFile(pair));
+		assertTrue(processor.shouldProcessFile(pair), "should want to assemble file");
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
@@ -146,7 +146,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		AnalysisSubmission automatedAssembly = captor.getValue()
 				.getAutomatedAssembly();
 
-		assertEquals("Seq object should have an assembly associated", built, automatedAssembly);
+		assertEquals(built, automatedAssembly, "Seq object should have an assembly associated");
 	}
 
 	@Test
@@ -174,7 +174,7 @@ public class AutomatedAnalysisFileProcessorTest {
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 		when(submissionRepository.save(any(AnalysisSubmission.class))).thenReturn(built);
 
-		assertTrue("should want to assemble file", processor.shouldProcessFile(pair));
+		assertTrue(processor.shouldProcessFile(pair), "should want to assemble file");
 		processor.process(pair);
 
 		verify(submissionRepository).save(any(AnalysisSubmission.class));
@@ -236,7 +236,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		verify(pasRepository).save(captor.capture());
 
 		ProjectAnalysisSubmissionJoin captorValue = captor.getValue();
-		assertEquals("should have run file processor for one project", project, captorValue.getSubject());
+		assertEquals(project, captorValue.getSubject(), "should have run file processor for one project");
 
 	}
 }

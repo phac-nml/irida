@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.events;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -44,7 +44,7 @@ public class ProjectEventHandlerTest {
 	private ProjectRepository projectRepository;
 	private SampleRepository sampleRepository;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);

@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.Link;
 
 import com.google.common.collect.Lists;
@@ -29,7 +29,7 @@ public class SingleEndSequenceFileRemoteServiceImplTest {
 	SequenceFileRemoteRepository fileRepository;
 	RemoteAPIRepository apiRepo;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		repository = mock(SingleEndSequenceFileRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);

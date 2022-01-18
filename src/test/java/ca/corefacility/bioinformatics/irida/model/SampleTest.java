@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,8 +14,8 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.google.common.collect.Maps;
@@ -34,7 +34,7 @@ public class SampleTest {
 	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Configuration<?> configuration = Validation.byDefaultProvider()
 				.configure();
@@ -53,7 +53,7 @@ public class SampleTest {
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
 
-		assertEquals("Wrong number of violations.", 2, violations.size());
+		assertEquals(2, violations.size(), "Wrong number of violations.");
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class SampleTest {
 		s.setSampleName("");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
-		assertEquals("Wrong number of violations.", 1, violations.size());
+		assertEquals(1, violations.size(), "Wrong number of violations.");
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class SampleTest {
 		s.setSampleName("This name has a single quote ' and spaces and a period.");
 
 		Set<ConstraintViolation<Sample>> violations = validator.validate(s);
-		assertEquals("Wrong number of violations.", 3, violations.size());
+		assertEquals(3, violations.size(), "Wrong number of violations.");
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class SampleTest {
 			Sample s = new Sample();
 			s.setSampleName("ATLEAST3" + c);
 			Set<ConstraintViolation<Sample>> violations = validator.validate(s);
-			assertEquals("Wrong number of violations.", 1, violations.size());
+			assertEquals(1, violations.size(), "Wrong number of violations.");
 		}
 	}
 }
