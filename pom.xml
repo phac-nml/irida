@@ -627,6 +627,11 @@
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
+					<systemPropertyVariables>
+						<junit.platform.execution.listeners.deactivate>
+							ca.corefacility.bioinformatics.irida.junit5.listeners.Integration*
+						</junit.platform.execution.listeners.deactivate>
+					</systemPropertyVariables>
 					<!--suppress UnresolvedMavenProperty -->
 					<argLine>${surefireArgLine}</argLine>
 				</configuration>
@@ -992,15 +997,20 @@
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
 				</exclude.tests>
-				<exclude.test.listeners>ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener</exclude.test.listeners>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
+				</exclude.test.listeners>
 				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>
 		<profile>
 			<id>rest_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
