@@ -10,7 +10,7 @@
  */
 
 import React, { lazy, Suspense, useContext } from "react";
-import { Menu } from "antd";
+import { Menu, Skeleton } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
 import { AnalysisSteps } from "./AnalysisSteps";
@@ -41,17 +41,14 @@ const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
+  const { loading, isCompleted, isError, analysisViewer, treeDefault } =
+    analysisContext;
+
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 
   const title = (
     <>
-      {analysisContext.isCompleted ? (
-        <Success />
-      ) : analysisContext.isError ? (
-        <Error />
-      ) : (
-        <Running />
-      )}
+      {isCompleted ? <Success /> : isError ? <Error /> : <Running />}
       {analysisContext.analysisName}
     </>
   );
@@ -70,15 +67,15 @@ export default function Analysis() {
    * job has errored then the error tab key is set as
    * the default.
    */
-  const defaultKey = analysisContext.isCompleted
-    ? analysisContext.analysisViewer === "sistr"
+  const defaultKey = isCompleted
+    ? analysisViewer === "sistr"
       ? ANALYSIS.SISTR
-      : analysisContext.analysisViewer === "biohansel"
+      : analysisViewer === "biohansel"
       ? ANALYSIS.BIOHANSEL
-      : analysisContext.analysisViewer === "tree" && analysisContext.treeDefault
+      : analysisViewer === "tree" && treeDefault
       ? ANALYSIS.TREE
       : ANALYSIS.OUTPUT
-    : analysisContext.isError
+    : isError
     ? ANALYSIS.ERROR
     : ANALYSIS.SETTINGS;
 
@@ -90,7 +87,7 @@ export default function Analysis() {
   const getTabLinks = () => {
     let tabLinks = [];
 
-    if (analysisContext.isError) {
+    if (isError) {
       tabLinks.push(
         <Menu.Item key="error">
           <Link to={`${DEFAULT_URL}/${ANALYSIS.ERROR}/`}>
@@ -99,8 +96,8 @@ export default function Analysis() {
         </Menu.Item>
       );
     } else {
-      if (analysisContext.isCompleted) {
-        if (analysisContext.analysisViewer === "sistr") {
+      if (isCompleted) {
+        if (analysisViewer === "sistr") {
           tabLinks.push(
             <Menu.Item key="sistr">
               <Link to={`${DEFAULT_URL}/${ANALYSIS.SISTR}/`}>
@@ -108,7 +105,7 @@ export default function Analysis() {
               </Link>
             </Menu.Item>
           );
-        } else if (analysisContext.analysisViewer === "biohansel") {
+        } else if (analysisViewer === "biohansel") {
           tabLinks.push(
             <Menu.Item key="biohansel">
               <Link to={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}`}>
@@ -116,10 +113,7 @@ export default function Analysis() {
               </Link>
             </Menu.Item>
           );
-        } else if (
-          analysisContext.analysisViewer === "tree" &&
-          analysisContext.treeDefault
-        ) {
+        } else if (analysisViewer === "tree" && treeDefault) {
           tabLinks.push(
             <Menu.Item key="tree">
               <Link to={`${DEFAULT_URL}/${ANALYSIS.TREE}`}>
@@ -160,87 +154,72 @@ export default function Analysis() {
    * content depending on analysis state and type.
    */
   return (
-    <PageWrapper title={!analysisContext.loading ? title : ""}>
-      {!analysisContext.loading ? (
-        [
-          !analysisContext.isCompleted ? (
-            <AnalysisSteps key="analysis-steps" />
-          ) : null,
-          <Location key="analysis-router-location">
-            {(props) => {
-              const keyname = props.location.pathname.match(pathRegx);
+    <PageWrapper title={!loading ? title : ""}>
+      <Skeleton loading={loading} active>
+        {!isCompleted && <AnalysisSteps key="analysis-steps" />}
+        <Location key="analysis-router-location">
+          {(props) => {
+            const keyname = props.location.pathname.match(pathRegx);
 
-              return (
-                <Menu
-                  className="t-analysis-menu"
-                  mode="horizontal"
-                  selectedKeys={[keyname ? keyname[1] : defaultKey]}
-                >
-                  {getTabLinks()}
-                </Menu>
-              );
-            }}
-          </Location>,
-          <Suspense
-            fallback={<ContentLoading />}
-            key="analysis-content-suspense"
-          >
-            <AnalysisOutputsProvider>
-              <Router style={{ paddingTop: SPACE_MD }}>
-                <AnalysisError
-                  path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
-                  default={analysisContext.isError}
-                  key="error"
-                />
-                {analysisContext.isCompleted
-                  ? [
-                      <AnalysisSistr
-                        path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
-                        default={analysisContext.analysisViewer === "sistr"}
-                        key="sistr"
-                      />,
-                      <AnalysisBioHansel
-                        path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
-                        default={analysisContext.analysisViewer === "biohansel"}
-                        key="biohansel"
-                      />,
-                      <AnalysisPhylogeneticTree
-                        path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
-                        default={
-                          analysisContext.analysisViewer === "tree" &&
-                          analysisContext.treeDefault
-                        }
-                        key="tree"
-                      />,
-                      <AnalysisProvenance
-                        path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
-                        key="provenance"
-                      />,
-                      <AnalysisOutputFiles
-                        path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
-                        default={
-                          analysisContext.analysisViewer === "none" ||
-                          (analysisContext.analysisViewer === "tree" &&
-                            !analysisContext.treeDefault)
-                        }
-                        key="output"
-                      />,
-                    ]
-                  : null}
-                <AnalysisSettingsContainer
-                  path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/*`}
-                  default={
-                    !analysisContext.isError && !analysisContext.isCompleted
-                  }
-                  key="settings"
-                />
-              </Router>
-            </AnalysisOutputsProvider>
-          </Suspense>,
-        ]
-      ) : (
-        <ContentLoading />
-      )}
+            return (
+              <Menu
+                className="t-analysis-menu"
+                mode="horizontal"
+                selectedKeys={[keyname ? keyname[1] : defaultKey]}
+              >
+                {getTabLinks()}
+              </Menu>
+            );
+          }}
+        </Location>
+        <Suspense fallback={<ContentLoading />} key="analysis-content-suspense">
+          <AnalysisOutputsProvider>
+            <Router style={{ paddingTop: SPACE_MD }}>
+              <AnalysisError
+                path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
+                default={isError}
+                key="error"
+              />
+              {isCompleted
+                ? [
+                    <AnalysisSistr
+                      path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
+                      default={analysisViewer === "sistr"}
+                      key="sistr"
+                    />,
+                    <AnalysisBioHansel
+                      path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
+                      default={analysisViewer === "biohansel"}
+                      key="biohansel"
+                    />,
+                    <AnalysisPhylogeneticTree
+                      path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
+                      default={analysisViewer === "tree" && treeDefault}
+                      key="tree"
+                    />,
+                    <AnalysisProvenance
+                      path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
+                      key="provenance"
+                    />,
+                    <AnalysisOutputFiles
+                      path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
+                      default={
+                        analysisViewer === "none" ||
+                        (analysisViewer === "tree" && !treeDefault)
+                      }
+                      key="output"
+                    />,
+                  ]
+                : null}
+              <AnalysisSettingsContainer
+                path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/*`}
+                default={!isError && !isCompleted}
+                key="settings"
+              />
+            </Router>
+          </AnalysisOutputsProvider>
+        </Suspense>
+      </Skeleton>
     </PageWrapper>
   );
 }
