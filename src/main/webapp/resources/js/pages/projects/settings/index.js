@@ -74,7 +74,6 @@ const { Content, Sider } = Layout;
  * @constructor
  */
 const SettingsLayout = () => (
-  <Suspense fallback={<Spin />}>
     <Routes>
       <Route
         path={setBaseUrl("/projects/:projectId/settings/")}
@@ -95,7 +94,6 @@ const SettingsLayout = () => (
         <Route path="delete" element={<DeleteProject />} />
       </Route>
     </Routes>
-  </Suspense>
 );
 
 /**
@@ -129,7 +127,9 @@ const ProjectSettings = () => {
           <Row>
             <Col lg={24} xxl={12}>
               <RolesProvider getRolesFn={getProjectRoles}>
-                <Outlet />
+                <Suspense fallback={<Spin />}>
+                  <Outlet />
+                </Suspense>
               </RolesProvider>
             </Col>
           </Row>
