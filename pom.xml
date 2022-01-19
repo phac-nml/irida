@@ -1016,7 +1016,6 @@
 		<profile>
 			<id>galaxy_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/*Galaxy*IT.java,
 					**/AnalysisSubmissionServiceImplIT.java,
@@ -1025,18 +1024,23 @@
 					**/AnalysisExecutionServiceGalaxyIT.java,
 				</exclude.tests>
 				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>galaxy_pipeline_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
 				<include.tests>
 					**/AnalysisExecutionScheduledTaskImplIT.java,
 					**/AnalysisExecutionServiceGalaxyIT.java,
 					**/SNVPhylAnalysisIT.java,
 				</include.tests>
 				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
