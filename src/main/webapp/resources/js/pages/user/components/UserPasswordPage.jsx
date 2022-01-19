@@ -14,7 +14,7 @@ import {
   useEditUserDetailsMutation,
 } from "../../../apis/users/users";
 import { ContentLoading } from "../../../components/loader";
-import { UserResetPasswordModal } from "./UserResetPasswordModal";
+import { UserResetPasswordLink } from "./UserResetPasswordLink";
 
 /**
  * React component to display the user password page.
@@ -143,7 +143,7 @@ export default function UserPasswordPage() {
           </Form>
           {userDetails.user.canCreatePasswordReset &&
             userDetails.user.mailConfigured && (
-              <UserResetPasswordModal
+              <UserResetPasswordLink
                 firstName={userDetails.user.firstName}
                 lastName={userDetails.user.lastName}
               />

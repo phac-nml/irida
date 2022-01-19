@@ -1,23 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { Modal, notification } from "antd";
+import { notification, Popconfirm } from "antd";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
+import { IconQuestionCircle } from "../../../components/icons/Icons";
+import { red6 } from "../../../styles/colors";
 import { useCreatePasswordResetMutation } from "../../../apis/passwordReset";
 
 /**
- * React component to display the user account reset password modal.
+ * React component to display the user account reset password link with confirmation.
  * @param {string} firstName the first name of the user
  * @param {string} lastName the last name of the user
  * @returns {JSX.Element}
  * @constructor
  */
-export function UserResetPasswordModal({ firstName, lastName }) {
-  const [showModal, setShowModal] = useState(false);
+export function UserResetPasswordLink({ firstName, lastName }) {
   const { userId } = useParams();
   const [resetPassword] = useCreatePasswordResetMutation();
 
-  const handleOk = () => {
-    setShowModal(false);
+  const handleResetPassword = () => {
     resetPassword({ userId })
       .unwrap()
       .then(({ message }) => {
@@ -31,18 +31,13 @@ export function UserResetPasswordModal({ firstName, lastName }) {
   };
 
   return (
-    <>
-      <Modal
-        title="Reset Password"
-        visible={showModal}
-        onOk={handleOk}
-        onCancel={() => setShowModal(false)}
-      >
-        <p>
-          {i18n("UserResetPasswordModal.confirmation", firstName, lastName)}
-        </p>
-      </Modal>
-      <LinkButton text="Reset Password" onClick={() => setShowModal(true)} />
-    </>
+    <Popconfirm
+      placement={"topLeft"}
+      title={i18n("UserResetPasswordLink.confirm.title", firstName, lastName)}
+      onConfirm={handleResetPassword}
+      icon={<IconQuestionCircle style={{ color: red6 }} />}
+    >
+      <LinkButton text={i18n("UserResetPasswordLink.button.text")} />
+    </Popconfirm>
   );
 }
