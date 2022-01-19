@@ -31,9 +31,14 @@ export function setBaseUrl(url) {
   return `${BASE_URL}${url}`;
 }
 
-const projectIdRegex = /\/projects\/(\d+)/;
+/**
+ * Get the project id from the url.
+ * @param {string} url
+ * @returns the project id or null if not found
+ */
+export function getProjectIdFromUrl(url = window.location.href) {
+  const projectIdRegex = /\/projects\/(?<projectId>\d+)/;
 
-export function getProjectIdFromUrl() {
-  const result = projectIdRegex.exec(window.location.href);
-  return result ? result[1] : null;
+  const found = url.match(projectIdRegex);
+  return found.groups?.projectId;
 }
