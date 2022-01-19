@@ -4,6 +4,11 @@ import { useGetProjectDetailsQuery } from "../../../../../apis/projects/project"
 import MetadataTemplateManager from "./MetadataTemplateManager";
 import MetadataTemplateMember from "./MetadataTemplateMember";
 
+/**
+ * React component to determine if the user can manage the project,
+ * if so return the maanger component, otherwise return the member component
+ * @returns React.Component
+ */
 export default function MetadataTemplate() {
   const { id, projectId } = useParams();
 
