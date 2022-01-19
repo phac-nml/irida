@@ -23,13 +23,13 @@ export function AnalysisSteps() {
   const { analysisContext } = useContext(AnalysisContext);
 
   const analysisDuration = getHumanizedDuration({
-    date: analysisContext.duration
+    date: analysisContext.duration,
   });
   const analysisError = analysisContext.isError;
   const previousState = analysisContext.previousState;
   const analysisState = analysisContext.analysisState;
 
-  return (
+  return analysisContext.isCompleted ? null : (
     <Steps
       current={
         analysisError ? stateMap[previousState] : stateMap[analysisState]
@@ -49,10 +49,16 @@ export function AnalysisSteps() {
       />
       <Step
         title={i18n("AnalysisSteps.preparing")}
-        icon={analysisState === "PREPARING" || analysisState === "PREPARED" ? <Running /> : null}
+        icon={
+          analysisState === "PREPARING" || analysisState === "PREPARED" ? (
+            <Running />
+          ) : null
+        }
         description={
-          (analysisState === "PREPARED" || analysisState === "PREPARING") ||
-          ((previousState === "PREPARING" || previousState === "PREPARED") && analysisError)
+          analysisState === "PREPARED" ||
+          analysisState === "PREPARING" ||
+          ((previousState === "PREPARING" || previousState === "PREPARED") &&
+            analysisError)
             ? analysisDuration
             : null
         }
@@ -79,17 +85,24 @@ export function AnalysisSteps() {
       />
       <Step
         title={i18n("AnalysisSteps.completing")}
-        icon={analysisState === "COMPLETING" || analysisState === "FINISHED_RUNNING" ||
-              analysisState === "POST_PROCESSING" || analysisState === "TRANSFERRING" ?
-                <Running />
-              :
-                null
+        icon={
+          analysisState === "COMPLETING" ||
+          analysisState === "FINISHED_RUNNING" ||
+          analysisState === "POST_PROCESSING" ||
+          analysisState === "TRANSFERRING" ? (
+            <Running />
+          ) : null
         }
         description={
-          (analysisState === "COMPLETING" || analysisState === "FINISHED_RUNNING" ||
-            analysisState === "POST_PROCESSING" || analysisState === "TRANSFERRING") ||
-          ((previousState === "COMPLETING" || previousState === "FINISHED_RUNNING" ||
-            previousState === "POST_PROCESSING" || previousState === "TRANSFERRING") && analysisError)
+          analysisState === "COMPLETING" ||
+          analysisState === "FINISHED_RUNNING" ||
+          analysisState === "POST_PROCESSING" ||
+          analysisState === "TRANSFERRING" ||
+          ((previousState === "COMPLETING" ||
+            previousState === "FINISHED_RUNNING" ||
+            previousState === "POST_PROCESSING" ||
+            previousState === "TRANSFERRING") &&
+            analysisError)
             ? analysisDuration
             : null
         }

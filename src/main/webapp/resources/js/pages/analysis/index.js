@@ -1,9 +1,10 @@
 import React from "react";
 
 import { render } from "react-dom";
-import Analysis from "./components/Analysis";
+import { BrowserRouter } from "react-router-dom";
 import { AnalysisProvider } from "../../contexts/AnalysisContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import Analysis from "./components/Analysis";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -14,8 +15,10 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
 render(
-  <AnalysisProvider>
-    <Analysis />
-  </AnalysisProvider>,
+  <BrowserRouter>
+    <AnalysisProvider>
+      <Analysis />
+    </AnalysisProvider>
+  </BrowserRouter>,
   document.getElementById("root")
 );
