@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
 import java.util.*;
 
 import javax.validation.ConstraintViolation;
@@ -11,14 +10,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailSendException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
@@ -30,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for handling password reset flow
@@ -261,42 +261,13 @@ public class PasswordResetController {
 	}
 
 	/**
-	 * Create a new {@link PasswordReset} for the given {@link User}
-	 *
-	 * @param userId    The ID of the {@link User}
-	 * @param principal a reference to the logged in user.
-	 * @param locale    a reference to the locale specified by the browser.
-	 * @return a model indicating success or failure of the reset request.
+	 * Set an anonymous authentication token
 	 */
-	@RequestMapping(value = "/ajax/create/{userId}", method = RequestMethod.POST)
-	@ResponseBody
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId, Principal principal, Locale locale) {
-		User user = userService.read(userId);
-		User principalUser = userService.getUserByUsername(principal.getName());
-
-		Map<String, Object> response;
-		if (canCreatePasswordReset(principalUser, user)) {
-			try {
-				createNewPasswordReset(user);
-				response = ImmutableMap.of("success", true, "message",
-						messageSource.getMessage("password.reset.success-message", new Object[] { user.getFirstName() },
-								locale), "title",
-						messageSource.getMessage("password.reset.success-title", null, locale));
-			} catch (final MailSendException e) {
-				logger.error("Failed to send password reset e-mail.");
-				response = ImmutableMap.of("success", false, "message",
-						messageSource.getMessage("password.reset.error-message", null, locale), "title",
-						messageSource.getMessage("password.reset.error-title", null, locale));
-			}
-
-		} else {
-			response = ImmutableMap.of("success", false, "message",
-					messageSource.getMessage("password.reset.error-message", null, locale), "title",
-					messageSource.getMessage("password.reset.error-title", null, locale));
-		}
-
-		return response;
+	private void setAuthentication() {
+		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
+				ImmutableList.of(Role.ROLE_ANONYMOUS));
+		SecurityContextHolder.getContext()
+				.setAuthentication(anonymousToken);
 	}
 
 	/**
@@ -311,16 +282,6 @@ public class PasswordResetController {
 
 		// email the user their info
 		emailController.sendPasswordResetLinkEmail(user, passwordReset);
-	}
-
-	/**
-	 * Set an anonymous authentication token
-	 */
-	private void setAuthentication() {
-		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
-				ImmutableList.of(Role.ROLE_ANONYMOUS));
-		SecurityContextHolder.getContext()
-				.setAuthentication(anonymousToken);
 	}
 
 	/**

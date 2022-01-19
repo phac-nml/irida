@@ -14,20 +14,20 @@ import { useCreatePasswordResetMutation } from "../../../apis/passwordReset";
 export function UserResetPasswordModal({ firstName, lastName }) {
   const [showModal, setShowModal] = useState(false);
   const { userId } = useParams();
-  const [resetPassword] = useCreatePasswordResetMutation(userId);
+  const [resetPassword] = useCreatePasswordResetMutation();
 
   const handleOk = () => {
     setShowModal(false);
-    resetPassword({ userId: userId })
+    resetPassword({ userId })
       .unwrap()
       .then((payload) => {
         notification.success({
-          message: i18n("password.reset.success-message"),
+          message: payload,
         });
       })
-      .catch((error) => {
+      .catch((payload) => {
         notification.error({
-          message: i18n("password.reset.error-message"),
+          message: payload.data.error,
         });
       });
   };
@@ -40,7 +40,9 @@ export function UserResetPasswordModal({ firstName, lastName }) {
         onOk={handleOk}
         onCancel={() => setShowModal(false)}
       >
-        <p>Reset password for {firstName + " " + lastName}</p>
+        <p>
+          {i18n("UserResetPasswordModal.confirmation", firstName, lastName)}
+        </p>
       </Modal>
       <LinkButton text="Reset Password" onClick={() => setShowModal(true)} />
     </>

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../utilities/url-utilities";
 
-const BASE_URL = setBaseUrl(`password_reset/ajax`);
+const BASE_URL = setBaseUrl(`ajax/password_reset`);
 
 /**
  * Redux API for password resets.
