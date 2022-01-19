@@ -9,23 +9,29 @@
  *required by the components encompassed within
  */
 
+import { Skeleton, Space } from "antd";
 import React, { lazy, Suspense, useContext } from "react";
-import { Menu, Skeleton } from "antd";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { AnalysisOutputsProvider } from "../../../contexts/AnalysisOutputsContext";
-import { AnalysisSteps } from "./AnalysisSteps";
-import { PageWrapper } from "../../../components/page/PageWrapper";
 
-import { Link, Location, Router } from "@reach/router";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { ContentLoading } from "../../../components/loader/ContentLoading";
+import { PageWrapper } from "../../../components/page/PageWrapper";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import {
+  AnalysisOutputsProvider
+} from "../../../contexts/AnalysisOutputsContext";
 
 import { SPACE_MD } from "../../../styles/spacing";
-import AnalysisError from "./AnalysisError";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { ANALYSIS } from "../routes";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ANALYSIS } from "../routes";
+import AnalysisError from "./AnalysisError";
+import AnalysisMenu from "./AnalysisMenu";
+import { AnalysisSteps } from "./AnalysisSteps";
 import AnalysisTitle from "./AnalysisTitle";
-import { AnalysisMenu } from "../AnalysisMenu";
+import AnalysisDelete from "./settings/AnalysisDelete";
+import AnalysisDetails from "./settings/AnalysisDetails";
+import AnalysisSamples from "./settings/AnalysisSamples";
+import AnalysisShare from "./settings/AnalysisShare";
 
 const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
 const AnalysisPhylogeneticTree = React.lazy(() =>
@@ -40,9 +46,10 @@ const AnalysisOutputFiles = lazy(() => import("./AnalysisOutputFiles"));
 const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
 
 export default function Analysis() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-  const { loading, isCompleted, isError, analysisViewer, treeDefault } =
-    analysisContext;
+  const { loading } = analysisContext;
 
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 
@@ -54,43 +61,48 @@ export default function Analysis() {
     <PageWrapper title={<AnalysisTitle />}>
       <Skeleton loading={loading} active>
         <AnalysisSteps />
-        <AnalysisMenu />
-        <Suspense fallback={<ContentLoading />} key="analysis-content-suspense">
-          <AnalysisOutputsProvider>
-            <Router style={{ paddingTop: SPACE_MD }}>
-              <AnalysisError
-                path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
-                default={isError}
-              />
-              <AnalysisSistr
-                path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
-                default={analysisViewer === "sistr"}
-              />
-              <AnalysisBioHansel
-                path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
-                default={analysisViewer === "biohansel"}
-              />
-              <AnalysisPhylogeneticTree
-                path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
-                default={analysisViewer === "tree" && treeDefault}
-              />
-              <AnalysisProvenance
-                path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
-              />
-              <AnalysisOutputFiles
-                path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
-                default={
-                  analysisViewer === "none" ||
-                  (analysisViewer === "tree" && !treeDefault)
-                }
-              />
-              <AnalysisSettingsContainer
-                path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/*`}
-                default={!isError && !isCompleted}
-              />
-            </Router>
-          </AnalysisOutputsProvider>
-        </Suspense>
+        <Space direction="vertical" style={{ width: `100%` }}>
+          <AnalysisMenu />
+          <Suspense fallback={<ContentLoading />}>
+            <AnalysisOutputsProvider>
+              <Routes style={{ paddingTop: SPACE_MD }}>
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
+                  element={<AnalysisError />}
+                />
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.SISTR}/*`}
+                  element={<AnalysisSistr />}
+                />
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}/*`}
+                  element={<AnalysisBioHansel />}
+                />
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.TREE}/*`}
+                  element={<AnalysisPhylogeneticTree />}
+                />
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}
+                  element={<AnalysisProvenance />}
+                />
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}
+                  element={<AnalysisOutputFiles />}
+                />
+                <Route
+                  path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}
+                  element={<AnalysisSettingsContainer />}
+                >
+                  <Route path="details" element={<AnalysisDetails />} />
+                  <Route path="samples" element={<AnalysisSamples />} />
+                  <Route path="share" element={<AnalysisShare />} />
+                  <Route path="delete" element={<AnalysisDelete />} />
+                </Route>
+              </Routes>
+            </AnalysisOutputsProvider>
+          </Suspense>
+        </Space>
       </Skeleton>
     </PageWrapper>
   );
