@@ -20,10 +20,8 @@ export function UserResetPasswordModal({ firstName, lastName }) {
     setShowModal(false);
     resetPassword({ userId })
       .unwrap()
-      .then((payload) => {
-        notification.success({
-          message: payload,
-        });
+      .then(({ message }) => {
+        notification.success({ message });
       })
       .catch((payload) => {
         notification.error({
