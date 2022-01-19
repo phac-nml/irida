@@ -13,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
+/**
+ * Configures dbunit for use with a mariadb/mysql database, for integration testing.
+ *
+ */
 @Configuration
 public class IridaDbUnitConfig {
 

@@ -52,7 +52,7 @@ public class IridaApiJdbcDataSourceConfig {
 
 		@Override
 		protected SpringResourceAccessor createResourceOpener() {
-			return new ApplicationContextSpringResourceOpener(resourceLoader);
+			return new ApplicationContextSpringResourceOpener(getResourceLoader());
 		}
 		
 		/**
