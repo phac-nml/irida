@@ -37,14 +37,11 @@ export default function UserPasswordPage() {
         form.resetFields();
       })
       .catch((error) => {
-        notification.error({
-          message: i18n("UserPasswordPage.notification.error"),
-        });
         const fields = Object.entries(error.data).map(([field, error]) => ({
           name: field,
           errors: [error],
         }));
-        form.setErrors(fields);
+        form.setFields(fields);
       });
   };
 
