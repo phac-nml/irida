@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +168,6 @@ public class ProjectHashingServiceIT {
 	}
 
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	@Disabled("Test is putting the db in a weird state that is causing other tests to fail.")
 	@Test
 	public void hashChangesWithPipelineMetadataChanges() {
 		Project project = projectService.read(2L);
