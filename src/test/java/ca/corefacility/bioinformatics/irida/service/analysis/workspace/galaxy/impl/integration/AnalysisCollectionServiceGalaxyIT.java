@@ -31,7 +31,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
-import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +58,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
@@ -133,7 +133,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@BeforeEach
 	public void setup() throws URISyntaxException, IOException, IridaWorkflowLoadException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());

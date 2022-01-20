@@ -8,8 +8,8 @@ import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class ProjectIT {
 	public void testCreateProjectBadFieldName() {
 		Response r = asUser().body("{ \"projectName\": \"some stupid project\" }").expect().response()
 				.statusCode(HttpStatus.BAD_REQUEST.value()).when().post(PROJECTS);
-		assertTrue("body should contain 'You must provide a project name.'", r.getBody().asString().contains("You must provide a project name."));
+		assertTrue(r.getBody().asString().contains("You must provide a project name."), "body should contain 'You must provide a project name.'");
 	}
 
 	/**
@@ -72,10 +72,10 @@ public class ProjectIT {
 		Response r = asUser().and().body(project).expect().response().statusCode(HttpStatus.CREATED.value()).when()
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
-		assertNotNull("Project location must not be null",location);
+		assertNotNull(location, "Project location must not be null");
 		assertTrue(location.startsWith(ITestSystemProperties.BASE_URL + "/api/projects/"));
 		String responseBody = asUser().get(location).asString();
-		assertTrue("Result of POST must equal result of GET",r.asString().equals(responseBody));
+		assertTrue(r.asString().equals(responseBody), "Result of POST must equal result of GET");
 		String projectUsersLocation = from(responseBody).get("resource.links.find{it.rel=='project/users'}.href");
 		// confirm that the current user was added to the project.
 		asUser().expect().body("resource.resources.username", hasItem("fbristow")).when().get(projectUsersLocation);

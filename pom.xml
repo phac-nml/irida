@@ -313,11 +313,6 @@
 
 		<!-- Testing -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -331,6 +326,7 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -905,7 +901,6 @@
 		<commons.cli.version>1.2</commons.cli.version>
 		<commons.io.version>2.11.0</commons.io.version>
 		<log4j2.version>2.17.1</log4j2.version>
-		<junit.version>4.12</junit.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<spring.security.oauth.version>2.3.6.RELEASE</spring.security.oauth.version>
 		<spring.test.dbunit.version>1.3.0</spring.test.dbunit.version>

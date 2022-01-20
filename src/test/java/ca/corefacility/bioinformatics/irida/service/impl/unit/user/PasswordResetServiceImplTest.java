@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.validation.Validator;
 
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +34,7 @@ public class PasswordResetServiceImplTest {
 		passwordResetService = new PasswordResetServiceImpl(passwordResetRepository, validator);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		SecurityContextHolder.getContext().setAuthentication(null);
 	}

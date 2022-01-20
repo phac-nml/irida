@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import java.util.List;
 
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
-	@After
+	@AfterEach
 	public void resetTable() {
 		/*
 		This was added to ensure that after every test the samples table is returned to its default

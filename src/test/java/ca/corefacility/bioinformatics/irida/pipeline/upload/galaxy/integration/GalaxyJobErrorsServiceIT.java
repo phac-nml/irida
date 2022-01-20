@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +44,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Integration tests for getting job error info from Galaxy for {@link AnalysisSubmission}s.
@@ -87,7 +87,7 @@ public class GalaxyJobErrorsServiceIT {
 
 	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 		Path sequenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq")
 				.toURI());
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
