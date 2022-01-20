@@ -295,7 +295,9 @@ public class PasswordResetController {
 		Role userRole = user.getSystemRole();
 		Role principalRole = principalUser.getSystemRole();
 
-		if (principalRole.equals(Role.ROLE_ADMIN)) {
+		if (principalUser.equals(user)) {
+			return false;
+		} else if (principalRole.equals(Role.ROLE_ADMIN)) {
 			return true;
 		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
 			if (userRole.equals(Role.ROLE_ADMIN)) {
