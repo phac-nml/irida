@@ -579,15 +579,6 @@
 				<version>${maven.failsafe.plugin.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<properties>
-						<property>
-							<name>listener</name>
-							<!--suppress UnresolvedMavenProperty -->
-							<value>
-								${integration.test.listener}
-							</value>
-						</property>
-					</properties>
 				</configuration>
 				<executions>
 					<execution>
@@ -980,8 +971,11 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
 				<include.tests>**/ria/integration/**/*IT.java</include.tests>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
@@ -1000,6 +994,7 @@
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
 				<tomcat.skip>true</tomcat.skip>
 			</properties>
@@ -1009,7 +1004,8 @@
 			<properties>
 				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
 				<exclude.test.listeners>
-					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
 			</properties>
 		</profile>
@@ -1025,7 +1021,8 @@
 				</exclude.tests>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
-					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
 			</properties>
 		</profile>
@@ -1039,15 +1036,18 @@
 				</include.tests>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
-					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>all_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
 				<include.tests>**/*IT.java, **/IT*.java</include.tests>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 	</profiles>

@@ -4,8 +4,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -14,8 +14,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test to ensure the Announcement Control page works
@@ -30,7 +30,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	private AnnouncementDashboardPage dashboardPage;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsAdmin(driver());
 		controlPage = new AnnouncementControlPage(driver());
@@ -41,8 +41,8 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testConfirmTablePopulatedByAnnouncements() {
 		controlPage.goTo();
-		assertEquals("Announcement table should be populated by 6 announcements", 6,
-				controlPage.announcementTableSize());
+		assertEquals(6, controlPage.announcementTableSize(),
+				"Announcement table should be populated by 6 announcements");
 	}
 
 	@Test
@@ -52,13 +52,13 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<Date> announcementDates = controlPage.getCreatedDates();
 
-		assertTrue("List of announcements is not sorted correctly", checkDatesSortedDescending(announcementDates));
+		assertTrue(checkDatesSortedDescending(announcementDates), "List of announcements is not sorted correctly");
 
 		controlPage.clickDateCreatedHeader();
 
 		announcementDates = controlPage.getCreatedDates();
 
-		assertTrue("List of announcements is not sorted correctly", checkDatesSortedAscending(announcementDates));
+		assertTrue(checkDatesSortedAscending(announcementDates), "List of announcements is not sorted correctly");
 	}
 
     @Test
@@ -76,10 +76,9 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		// New messages should appear first in the table
 		String newTitle = controlPage.getAnnouncementTitle(0);
 
-		assertTrue("Unexpected announcement content.", newTitle.equals(title));
-		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
-				controlPage.getCreatedDates()
-						.size());
+		assertTrue(newTitle.equals(title), "Unexpected announcement content.");
+		assertEquals(numAnnouncementsBefore + 1, controlPage.getCreatedDates().size(),
+				"Unexpected number of announcements visible");
 	}
 
     @Test
@@ -108,7 +107,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	private void compareMessages(String announcement, String preview) {
-		assertTrue("Announcement preview does not match the message.", announcement.contains(preview));
+		assertTrue(announcement.contains(preview), "Announcement preview does not match the message.");
 	}
 
     @Test
@@ -123,7 +122,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		editAnnouncementComponent.enterAnnouncement(newTitle, newMessage, newPriority);
 
 		String announcementTitle = controlPage.getAnnouncementTitle(4);
-		assertTrue("Unexpected message content", newTitle.contains(announcementTitle));
+		assertTrue(newTitle.contains(announcementTitle), "Unexpected message content");
 	}
 
     @Test
@@ -131,7 +130,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
         controlPage.goTo();
 		List<Date> dates = controlPage.getCreatedDates();
 		controlPage.deleteAnnouncement(2);
-		assertEquals("Unexpected number of announcements", dates.size() - 1, controlPage.getCreatedDates().size());
+		assertEquals(dates.size() - 1, controlPage.getCreatedDates().size(), "Unexpected number of announcements");
 	}
 
     @Test
@@ -139,7 +138,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
         controlPage.goTo();
 		ViewAnnouncementComponent viewAnnouncementComponent = ViewAnnouncementComponent.goTo(driver());
 		controlPage.gotoViewMessage(0);
-		assertEquals("Unexpected number of user information rows in table", 6, viewAnnouncementComponent.getTableDataSize());
+		assertEquals(6, viewAnnouncementComponent.getTableDataSize(), "Unexpected number of user information rows in table");
     }
 
     /**

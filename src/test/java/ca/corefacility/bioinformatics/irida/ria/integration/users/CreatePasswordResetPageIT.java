@@ -4,18 +4,18 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/PasswordResetPageIT.xml")
 public class CreatePasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 
 	private CreatePasswordResetPage passwordResetPage;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		// Don't do login here! should be able to go through this without
 		// logging in

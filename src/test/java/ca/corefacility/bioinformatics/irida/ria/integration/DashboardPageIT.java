@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.components.Announcements;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.DashboardPage;
@@ -10,8 +10,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test to ensure the Dashboard page works
@@ -23,7 +23,7 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 	private DashboardPage dashboardPage;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsUser(driver());
 		dashboardPage = new DashboardPage(driver());
@@ -32,15 +32,15 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testReadingHighPriorityAnnouncements() {
 		Announcements announcements = Announcements.goTo(driver());
-		assertTrue("The priority announcements modal should be visible", announcements.isModalVisible());
-		assertEquals("The total unread priority announcements count does not match", 2, announcements.getTotalUnreadAnnouncements());
-		assertEquals("The total read priority announcements count does not match", 0, announcements.getTotalReadAnnouncements());
+		assertTrue(announcements.isModalVisible(), "The priority announcements modal should be visible");
+		assertEquals(2, announcements.getTotalUnreadAnnouncements(), "The total unread priority announcements count does not match");
+		assertEquals(0, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
 		announcements.getNextAnnouncement();
-		assertEquals("The total read priority announcements count does not match", 1, announcements.getTotalReadAnnouncements());
+		assertEquals(1, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
 
-		assertEquals("The announcements badge count does not match", 5, announcements.getBadgeCount());
+		assertEquals(5, announcements.getBadgeCount(), "The announcements badge count does not match");
 
 		announcements.getSubmenuAnnouncement();
-		assertEquals("The announcements title in the submenu does not match", "No cake", announcements.getSubmenuAnnouncementTitle(2));
+		assertEquals("No cake", announcements.getSubmenuAnnouncementTitle(2), "The announcements title in the submenu does not match");
 	}
 }

@@ -1,12 +1,13 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.listeners;
+package ca.corefacility.bioinformatics.irida.junit5.listeners;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.runner.Description;
-import org.junit.runner.Result;
-import org.junit.runner.notification.RunListener;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.TestPlan;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,37 +15,32 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.fail;
+public class IntegrationUITestListener implements TestExecutionListener {
+    
+    private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
+    public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
-/**
- * Global settings for UI integration tests.
- *
- */
-public class IntegrationUITestListener extends RunListener {
-	private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
-	public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
+    private static WebDriver driver;
 
-	private static WebDriver driver;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void testPlanExecutionStarted(TestPlan testPlan) {
+        logger.debug("Running ChromeDriver for UI tests.");
+        startWebDriver();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void testRunStarted(Description description) throws Exception {
-		logger.debug("Running ChromeDriver for UI tests.");
-		startWebDriver();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void testPlanExecutionFinished(TestPlan testPlan) {
+        logger.debug("Closing ChromDriver for UI tests.");
+        stopWebDriver();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void testRunFinished(Result result) throws Exception {
-		logger.debug("Closing ChromeDriver for UI tests.");
-		stopWebDriver();
-	}
-
-	/**
+    /**
 	 * Get a reference to the {@link WebDriver} used in the tests.
 	 *
 	 * @return the instance of {@link WebDriver} used in the tests.

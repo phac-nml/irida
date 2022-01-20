@@ -7,13 +7,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -22,20 +21,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.utils.NullReplacementDatasetLoader;
-import ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.google.common.base.Strings;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Common functionality to all UI integration tests.
@@ -45,7 +43,6 @@ import static org.junit.Assert.assertTrue;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @DbUnitConfiguration(dataSetLoader = NullReplacementDatasetLoader.class)
-@RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractIridaUIITChromeDriver {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractIridaUIITChromeDriver.class);
@@ -57,13 +54,13 @@ public class AbstractIridaUIITChromeDriver {
 	private static final String CHROMEDRIVER_PROP_KEY = "webdriver.chrome.driver";
 	private static final String CHROMEDRIVER_LOCATION = "src/main/webapp/chromedriver";
 
-    @Rule
+    @RegisterExtension
     public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
 
     /**
      * Code to execute before *each* test.
      */
-    @Before
+    @BeforeEach
     public void setUpTest() throws IOException {
     	// logout before everything else.
     	LoginPage.logout(driver());
@@ -72,7 +69,7 @@ public class AbstractIridaUIITChromeDriver {
     /**
      * Code to execute after *each* test.
      */
-    @After
+    @AfterEach
     public void tearDown() {
     	// NOTE: DO **NOT** log out in this method. This method happens because
     	// the @After method happens immediately after test failure, but before
@@ -83,7 +80,7 @@ public class AbstractIridaUIITChromeDriver {
     /**
      * Code to execute *once* after the class is finished.
      */
-    @AfterClass
+    @AfterAll
     public static void destroy() {
         if (isSingleTest) {
             logger.debug("Closing ChromeDriver for single test class.");
@@ -121,18 +118,18 @@ public class AbstractIridaUIITChromeDriver {
 	 */
 	public void checkTranslations(AbstractPage page, List<String> entries, String header) {
 		// Always check for app :)
-		assertTrue("Translations should be loaded for the  app bundle", page.ensureTranslationsLoaded("app"));
-		entries.forEach(entry -> assertTrue("Translations should be loaded for " + entry + " bundle",
-				page.ensureTranslationsLoaded(entry)));
+		assertTrue(page.ensureTranslationsLoaded("app"), "Translations should be loaded for the  app bundle");
+		entries.forEach(entry -> assertTrue(page.ensureTranslationsLoaded(entry),
+				"Translations should be loaded for " + entry + " bundle"));
 		if (!Strings.isNullOrEmpty(header)) {
-			assertTrue("Page title has been properly translated", page.ensurePageHeadingIsTranslated(header));
+			assertTrue(page.ensurePageHeadingIsTranslated(header), "Page title has been properly translated");
 		}
 	}
 
 	/**
 	 * Simple test watcher for taking screenshots of the browser on failure.
 	 */
-	private static class ScreenshotOnFailureWatcher extends TestWatcher {
+	private static class ScreenshotOnFailureWatcher implements TestWatcher {
 
 		private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
 
@@ -140,7 +137,7 @@ public class AbstractIridaUIITChromeDriver {
     	 * {@inheritDoc}
     	 */
     	@Override
-    	protected void failed(final Throwable t, final Description description) {
+    	public void testFailed(ExtensionContext context, Throwable t) {
 			logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot: " + t.getMessage(), t);
     		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
 
@@ -148,7 +145,7 @@ public class AbstractIridaUIITChromeDriver {
 
     		try {
 				final Path destination = Files.createTempFile(
-						"irida-" + description.getTestClass().getSimpleName() + "#" + description.getMethodName(),
+						"irida-" + context.getRequiredTestClass().getSimpleName() + "#" + context.getRequiredTestMethod().getName(),
 						".png");
     			Files.move(screenshot, destination, StandardCopyOption.REPLACE_EXISTING);
     			logger.info("Screenshot deposited at: [" + destination.toString() + "]");
