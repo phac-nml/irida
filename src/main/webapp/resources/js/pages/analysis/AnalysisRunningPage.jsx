@@ -1,31 +1,40 @@
-import React, { useContext } from "react";
-import { Link, Routes, Route } from "react-router-dom";
 import { Layout, Menu, PageHeader, Space } from "antd";
-import { AnalysisContext } from "../../contexts/AnalysisContext";
+import React, { useContext } from "react";
+import { Link, Route, Routes } from "react-router-dom";
 import { IconLoading } from "../../components/icons/Icons";
+import { AnalysisContext } from "../../contexts/AnalysisContext";
 import { blue6, grey1 } from "../../styles/colors";
-import { AnalysisSteps } from "./common/AnalysisSteps";
-import { ANALYSIS } from "./routes";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_LG } from "../../styles/spacing";
-import AnalysisError from "./components/AnalysisError";
-import AnalysisSettingsContainer from "./components/settings/AnalysisSettingsContainer";
-import AnalysisDetails from "./components/settings/AnalysisDetails";
-import AnalysisSamples from "./components/settings/AnalysisSamples";
-import AnalysisShare from "./components/settings/AnalysisShare";
-import AnalysisDelete from "./components/settings/AnalysisDelete";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { AnalysisSteps } from "./common/AnalysisSteps";
+
+const AnalysisDelete = React.lazy(() =>
+  import("./components/settings/AnalysisDelete")
+);
+const AnalysisDetails = React.lazy(() =>
+  import("./components/settings/AnalysisDetails")
+);
+const AnalysisSamples = React.lazy(() =>
+  import("./components/settings/AnalysisSamples")
+);
+const AnalysisSettingsContainer = React.lazy(() =>
+  import("./components/settings/AnalysisSettingsContainer")
+);
+const AnalysisShare = React.lazy(() =>
+  import("./components/settings/AnalysisShare")
+);
 
 const { Item } = Menu;
 
-export default function AnalysisErrorPage() {
+/**
+ * React component to render the status of an analysis that is running
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function AnalysisRunningPage() {
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-  const { analysis, isLoading, isCompleted, isError, analysisName } =
-    analysisContext;
-  const DEFAULT_URL = setBaseUrl(`/analysis/${analysis.identifier}`);
-
-  function handleMenu(e) {
-    setCurrent(e.key);
-  }
+  const { analysisName } = analysisContext;
+  const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 
   return (
     <Layout style={{ height: `100%` }}>
@@ -45,11 +54,7 @@ export default function AnalysisErrorPage() {
           style={{ margin: SPACE_LG, display: "flex" }}
         >
           <AnalysisSteps />
-          <Menu
-            mode="horizontal"
-            selectedKeys={["settings"]}
-            onClick={handleMenu}
-          >
+          <Menu mode="horizontal" selectedKeys={["settings"]}>
             <Item key="settings">
               <Link to={`${DEFAULT_URL}`}>{i18n("Analysis.settings")}</Link>
             </Item>

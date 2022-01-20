@@ -5,6 +5,7 @@ import {
   BoldOutlined,
   CalendarTwoTone,
   CheckCircleOutlined,
+  CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
@@ -242,5 +243,7 @@ export const IconSortDescending = ({ ...props }) => (
 export const IconCheckCircle = ({ ...props }) => (
   <CheckCircleOutlined {...props} />
 );
+
+export const IconCheck = ({ ...props }) => <CheckOutlined {...props} />;
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
