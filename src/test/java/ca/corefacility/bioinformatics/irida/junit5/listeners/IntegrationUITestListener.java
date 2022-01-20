@@ -16,31 +16,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IntegrationUITestListener implements TestExecutionListener {
-    
-    private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
-    public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
+	
+	private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
+	public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
-    private static WebDriver driver;
+	private static WebDriver driver;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void testPlanExecutionStarted(TestPlan testPlan) {
-        logger.debug("Running ChromeDriver for UI tests.");
-        startWebDriver();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void testPlanExecutionStarted(TestPlan testPlan) {
+		logger.debug("Running ChromeDriver for UI tests.");
+		startWebDriver();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void testPlanExecutionFinished(TestPlan testPlan) {
-        logger.debug("Closing ChromDriver for UI tests.");
-        stopWebDriver();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void testPlanExecutionFinished(TestPlan testPlan) {
+		logger.debug("Closing ChromDriver for UI tests.");
+		stopWebDriver();
+	}
 
-    /**
+	/**
 	 * Get a reference to the {@link WebDriver} used in the tests.
 	 *
 	 * @return the instance of {@link WebDriver} used in the tests.

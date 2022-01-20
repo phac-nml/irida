@@ -16,19 +16,19 @@ import io.restassured.http.ContentType;
  */
 public class IntegrationTestListener implements TestExecutionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(IntegrationTestListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(IntegrationTestListener.class);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void testPlanExecutionStarted(TestPlan testPlan) {
-        logger.debug("Setting up RestAssured.");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void testPlanExecutionStarted(TestPlan testPlan) {
+		logger.debug("Setting up RestAssured.");
 
-        RestAssured.requestSpecification = new RequestSpecBuilder()
-                .setContentType(ContentType.JSON)
-                .setAccept(ContentType.JSON)
-                .setPort(Integer.valueOf(System.getProperty("server.port")))
-                .build();
-    }
+		RestAssured.requestSpecification = new RequestSpecBuilder()
+				.setContentType(ContentType.JSON)
+				.setAccept(ContentType.JSON)
+				.setPort(Integer.valueOf(System.getProperty("server.port")))
+				.build();
+	}
 }
