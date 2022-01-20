@@ -11,6 +11,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Integration tests for project samples.
  */
+@Tag("RestIntegrationTest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })

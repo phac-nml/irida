@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,6 +29,7 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for users.
  * 
  */
+@Tag("RestIntegrationTest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

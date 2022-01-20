@@ -13,6 +13,7 @@ import java.util.Map;
 import io.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,6 +30,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * Integration tests for users.
  * 
  */
+@Tag("RestIntegrationTest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

@@ -4,6 +4,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
 import static org.hamcrest.Matchers.hasItems;
 
+@Tag("RestIntegrationTest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

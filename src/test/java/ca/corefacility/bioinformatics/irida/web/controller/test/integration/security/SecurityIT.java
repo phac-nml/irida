@@ -5,12 +5,14 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
  * General tests relating to security for the REST API.
  * 
  */
+@Tag("RestIntegrationTest")
 public class SecurityIT {
 
 	/**

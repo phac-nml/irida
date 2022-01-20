@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import io.restassured.response.Response;
  * Integration test for project and user.
  * 
  */
+@Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

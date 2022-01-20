@@ -583,6 +583,8 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
+							<!--suppress UnresolvedMavenProperty -->
+							<groups>${include.tags}</groups>
 							<!-- Uncomment below to disable Galaxy integration tests -->
 							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
 								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
@@ -997,7 +999,7 @@
 		<profile>
 			<id>rest_testing</id>
 			<properties>
-				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
+				<include.tags>RestIntegrationTest</include.tags>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,

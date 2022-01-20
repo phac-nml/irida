@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util
  * Integration tests for working with sequence files and samples.
  * 
  */
+@Tag("RestIntegrationTest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

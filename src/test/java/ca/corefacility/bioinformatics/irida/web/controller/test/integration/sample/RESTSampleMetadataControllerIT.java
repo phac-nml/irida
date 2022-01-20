@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sam
 
 import java.util.Map;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.*;
 
+@Tag("RestIntegrationTest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
