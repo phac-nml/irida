@@ -19,7 +19,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
@@ -145,7 +144,6 @@ public class CRUDServiceImplTest {
 		verify(crudRepository).save(ent2);
 	}
 
-	@Disabled
 	@Test
 	public void testUpdateMissingEntity() {
 		Long id = 1L;
@@ -264,7 +262,6 @@ public class CRUDServiceImplTest {
 		}
 	}
 
-	@Disabled
 	@Test
 	public void testInvalidDelete() {
 		Long id = 1L;
@@ -275,11 +272,10 @@ public class CRUDServiceImplTest {
 		});
 	}
 
-	@Disabled
 	@Test
 	public void testGetMissingEntity() {
 		Long id = 1L;
-		when(crudRepository.findById(id)).thenReturn(Optional.of(null));
+		when(crudRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(EntityNotFoundException.class, () -> {
 			crudService.read(id);

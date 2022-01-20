@@ -55,7 +55,6 @@ public class BasePermissionTest {
 	/**
 	 * Tests failing to allow permission due to an id not found.
 	 */
-	@Disabled
 	@Test
 	public void testEntityNotFound() {
 		assertThrows(EntityNotFoundException.class, () -> {
@@ -76,7 +75,6 @@ public class BasePermissionTest {
 	/**
 	 * Tests failing to allow permission for collection of single long id.
 	 */
-	@Disabled
 	@Test
 	public void testPermissionSingleCollectionLongFail() {
 		assertThrows(EntityNotFoundException.class, () -> {
@@ -99,7 +97,6 @@ public class BasePermissionTest {
 	 * Tests failing to allow permission for collection of two long ids (one id
 	 * exists, one doesn't).
 	 */
-	@Disabled
 	@Test
 	public void testPermissionTwoCollectionLongFail() {
 		when(crudRepository.findById(1L)).thenReturn(Optional.of(new Permittable(1L)));
