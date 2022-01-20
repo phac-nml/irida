@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.xml.bind.JAXBException;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +49,7 @@ import com.google.common.collect.Sets;
  * 
  *
  */
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,

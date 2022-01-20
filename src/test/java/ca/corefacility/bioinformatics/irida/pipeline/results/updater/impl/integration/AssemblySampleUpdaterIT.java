@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.integ
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 /**
  * Tests updating samples with assemblies.
  */
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,

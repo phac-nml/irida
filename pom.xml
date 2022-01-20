@@ -585,18 +585,6 @@
 						<configuration>
 							<!--suppress UnresolvedMavenProperty -->
 							<groups>${include.tags}</groups>
-							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
-								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
-								</excludes> -->
-							<includes>
-								<!--suppress UnresolvedMavenProperty -->
-								<include>${include.tests}</include>
-							</includes>
-							<excludes>
-								<!--suppress UnresolvedMavenProperty -->
-								<exclude>${exclude.tests}</exclude>
-							</excludes>
 							<!--suppress UnresolvedMavenProperty -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
@@ -978,16 +966,7 @@
 		<profile>
 			<id>service_testing</id>
 			<properties>
-				<include.tests>
-					**/service/impl/integration/**/*IT.java,
-					**/service/workflow/integration/**/*IT.java,
-					**/pipeline/results/**/*IT.java,
-					**/repositories/**/*IT.java
-				</include.tests>
-				<exclude.tests>**/*Galaxy*IT.java,
-					**/AnalysisExecutionScheduledTaskImplIT.java,
-					**/AnalysisSubmissionServiceImplIT.java,
-				</exclude.tests>
+				<include.tags><![CDATA[IntegrationTest & Service]]></include.tags>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
@@ -1031,7 +1010,7 @@
 		<profile>
 			<id>all_testing</id>
 			<properties>
-				<include.tests>**/*IT.java, **/IT*.java</include.tests>
+				<include.tags>IntegrationTest</include.tags>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
 				</exclude.test.listeners>
