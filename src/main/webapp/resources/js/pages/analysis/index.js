@@ -4,7 +4,7 @@ import { render } from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { AnalysisProvider } from "../../contexts/AnalysisContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import Analysis from "./components/Analysis";
+import Analysis from "./Analysis";
 
 /*
 WEBPACK PUBLIC PATH:

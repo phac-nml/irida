@@ -12,44 +12,51 @@
 import { Skeleton, Space } from "antd";
 import React, { lazy, Suspense, useContext } from "react";
 
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { PageWrapper } from "../../../components/page/PageWrapper";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import {
-  AnalysisOutputsProvider
-} from "../../../contexts/AnalysisOutputsContext";
+import { Route, Routes } from "react-router-dom";
+import { ContentLoading } from "../../components/loader/ContentLoading";
+import { PageWrapper } from "../../components/page/PageWrapper";
+import { AnalysisContext } from "../../contexts/AnalysisContext";
+import { AnalysisOutputsProvider } from "../../contexts/AnalysisOutputsContext";
 
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD } from "../../styles/spacing";
 
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { ANALYSIS } from "../routes";
-import AnalysisError from "./AnalysisError";
-import AnalysisMenu from "./AnalysisMenu";
-import { AnalysisSteps } from "./AnalysisSteps";
-import AnalysisTitle from "./AnalysisTitle";
-import AnalysisDelete from "./settings/AnalysisDelete";
-import AnalysisDetails from "./settings/AnalysisDetails";
-import AnalysisSamples from "./settings/AnalysisSamples";
-import AnalysisShare from "./settings/AnalysisShare";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { ANALYSIS } from "./routes";
+import AnalysisError from "./components/AnalysisError";
+import AnalysisMenu from "./components/AnalysisMenu";
+import { AnalysisSteps } from "./common/AnalysisSteps";
+import AnalysisTitle from "./components/AnalysisTitle";
+import AnalysisDelete from "./components/settings/AnalysisDelete";
+import AnalysisDetails from "./components/settings/AnalysisDetails";
+import AnalysisSamples from "./components/settings/AnalysisSamples";
+import AnalysisShare from "./components/settings/AnalysisShare";
+import AnalysisErrorPage from "./AnalysisErrorPage";
 
-const AnalysisBioHansel = React.lazy(() => import("./AnalysisBioHansel"));
+const AnalysisBioHansel = React.lazy(() =>
+  import("./components/AnalysisBioHansel")
+);
 const AnalysisPhylogeneticTree = React.lazy(() =>
-  import("./AnalysisPhylogeneticTree")
+  import("./components/AnalysisPhylogeneticTree")
 );
 
-const AnalysisSistr = React.lazy(() => import("./AnalysisSistr"));
+const AnalysisSistr = React.lazy(() => import("./components/AnalysisSistr"));
 const AnalysisSettingsContainer = lazy(() =>
-  import("./settings/AnalysisSettingsContainer")
+  import("./components/settings/AnalysisSettingsContainer")
 );
-const AnalysisOutputFiles = lazy(() => import("./AnalysisOutputFiles"));
-const AnalysisProvenance = lazy(() => import("./AnalysisProvenance"));
+const AnalysisOutputFiles = lazy(() =>
+  import("./components/AnalysisOutputFiles")
+);
+const AnalysisProvenance = lazy(() =>
+  import("./components/AnalysisProvenance")
+);
 
 export default function Analysis() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const { loading } = analysisContext;
+
+  if (!loading && analysisContext.isError) {
+    return <AnalysisErrorPage />;
+  }
 
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 

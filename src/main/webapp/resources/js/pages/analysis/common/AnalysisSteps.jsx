@@ -12,7 +12,6 @@ import React, { useContext } from "react";
 import { Steps } from "antd";
 import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
 
-import { SPACE_MD } from "../../../styles/spacing";
 import { Running, Success } from "../../../components/icons";
 
 import { getHumanizedDuration } from "../../../utilities/date-utilities";
@@ -35,7 +34,6 @@ export function AnalysisSteps() {
         analysisError ? stateMap[previousState] : stateMap[analysisState]
       }
       status={analysisError ? "error" : "finish"}
-      style={{ paddingBottom: SPACE_MD, paddingTop: SPACE_MD }}
     >
       <Step
         title={i18n("AnalysisSteps.new")}
