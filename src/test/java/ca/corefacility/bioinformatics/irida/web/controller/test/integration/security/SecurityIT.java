@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  * General tests relating to security for the REST API.
  * 
  */
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 public class SecurityIT {
 
 	/**

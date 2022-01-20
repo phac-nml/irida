@@ -35,7 +35,7 @@ import io.restassured.response.Response;
  * Integration tests for projects.
  * 
  */
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

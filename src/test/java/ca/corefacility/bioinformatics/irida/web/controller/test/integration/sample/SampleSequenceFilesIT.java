@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util
  * Integration tests for working with sequence files and samples.
  * 
  */
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

@@ -16,7 +16,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
 import static org.hamcrest.Matchers.hasItems;
 
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

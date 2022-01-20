@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Integration tests for project samples.
  */
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })

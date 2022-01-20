@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for users.
  * 
  */
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

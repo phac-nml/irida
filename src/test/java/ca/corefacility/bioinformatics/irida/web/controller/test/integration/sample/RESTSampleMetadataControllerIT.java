@@ -19,7 +19,7 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.*;
 
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

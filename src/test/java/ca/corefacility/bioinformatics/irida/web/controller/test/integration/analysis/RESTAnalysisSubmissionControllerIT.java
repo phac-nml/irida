@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
-@Tag("RestIntegrationTest")
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

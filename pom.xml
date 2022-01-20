@@ -999,7 +999,7 @@
 		<profile>
 			<id>rest_testing</id>
 			<properties>
-				<include.tags>RestIntegrationTest</include.tags>
+				<include.tags><![CDATA[IntegrationTest & Rest]]></include.tags>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
