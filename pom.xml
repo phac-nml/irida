@@ -968,7 +968,7 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
-				<include.tests>**/ria/integration/**/*IT.java</include.tests>
+				<include.tags><![CDATA[IntegrationTest & UI]]></include.tags>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
