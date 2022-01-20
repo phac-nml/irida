@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ import com.google.common.collect.Sets;
  * 
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy") @Tag("Pipeline")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)

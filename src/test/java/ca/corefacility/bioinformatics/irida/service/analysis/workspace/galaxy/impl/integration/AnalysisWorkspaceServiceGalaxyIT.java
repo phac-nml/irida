@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  *
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)

@@ -32,6 +32,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
  *
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)

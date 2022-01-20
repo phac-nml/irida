@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -68,6 +69,7 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for managing workflows in Galaxy.
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)

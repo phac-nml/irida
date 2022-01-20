@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
  * 
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy") @Tag("Pipeline")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)

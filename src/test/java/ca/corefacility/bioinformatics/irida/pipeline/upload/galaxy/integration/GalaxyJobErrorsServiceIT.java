@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 /**
  * Integration tests for getting job error info from Galaxy for {@link AnalysisSubmission}s.
  */
+@Tag("IntegrationTest") @Tag("Galaxy")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)

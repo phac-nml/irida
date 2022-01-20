@@ -9,6 +9,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.sun.jersey.api.client.ClientHandlerException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Tests for accessing Galaxy Tool Data Tables.
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
         initializers = ConfigDataApplicationContextInitializer.class)

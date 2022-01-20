@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.s
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  *
  */
+@Tag("IntegrationTest") @Tag("Galaxy")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)
