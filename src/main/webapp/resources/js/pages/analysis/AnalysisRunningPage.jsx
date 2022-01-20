@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import { Layout, Menu, PageHeader, Space } from "antd";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
-import { IconWarning } from "../../components/icons/Icons";
-import { grey1, red6 } from "../../styles/colors";
+import { IconLoading } from "../../components/icons/Icons";
+import { blue6, grey1 } from "../../styles/colors";
 import { AnalysisSteps } from "./common/AnalysisSteps";
 import { ANALYSIS } from "./routes";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -18,9 +18,6 @@ import AnalysisDelete from "./components/settings/AnalysisDelete";
 const { Item } = Menu;
 
 export default function AnalysisErrorPage() {
-  const [current, setCurrent] = React.useState(() => {
-    return window.location.href.includes("/settings") ? "settings" : "error";
-  });
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const { analysis, isLoading, isCompleted, isError, analysisName } =
     analysisContext;
@@ -31,32 +28,35 @@ export default function AnalysisErrorPage() {
   }
 
   return (
-    <Layout style={{ height: `100%`, width: `100%` }}>
-      <Layout.Content style={{ margin: 24, backgroundColor: grey1 }}>
+    <Layout style={{ height: `100%` }}>
+      <Layout.Content
+        style={{
+          margin: 24,
+          backgroundColor: grey1,
+        }}
+      >
         <PageHeader
           title={analysisName}
-          avatar={{ style: { backgroundColor: red6 }, icon: <IconWarning /> }}
+          avatar={{ style: { backgroundColor: blue6 }, icon: <IconLoading /> }}
         />
         <Space
           direction="vertical"
           size="large"
-          style={{ width: `100%`, margin: SPACE_LG }}
+          style={{ margin: SPACE_LG, display: "flex" }}
         >
           <AnalysisSteps />
-          <Menu mode="horizontal" selectedKeys={[current]} onClick={handleMenu}>
-            <Item key="error">
-              <Link to={`${DEFAULT_URL}`}>{i18n("Analysis.jobError")}</Link>
-            </Item>
+          <Menu
+            mode="horizontal"
+            selectedKeys={["settings"]}
+            onClick={handleMenu}
+          >
             <Item key="settings">
-              <Link to={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}`}>
-                {i18n("Analysis.settings")}
-              </Link>
+              <Link to={`${DEFAULT_URL}`}>{i18n("Analysis.settings")}</Link>
             </Item>
           </Menu>
           <Routes>
-            <Route path={DEFAULT_URL} element={<AnalysisError />} />
             <Route
-              path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}
+              path={`${DEFAULT_URL}/`}
               element={<AnalysisSettingsContainer />}
             >
               <Route index element={<AnalysisDetails />} />

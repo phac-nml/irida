@@ -31,6 +31,7 @@ import AnalysisDetails from "./components/settings/AnalysisDetails";
 import AnalysisSamples from "./components/settings/AnalysisSamples";
 import AnalysisShare from "./components/settings/AnalysisShare";
 import AnalysisErrorPage from "./AnalysisErrorPage";
+import AnalysisRunningPage from "./AnalysisRunningPage";
 
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
@@ -52,10 +53,15 @@ const AnalysisProvenance = lazy(() =>
 
 export default function Analysis() {
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-  const { loading } = analysisContext;
+  const { loading, isError, isCompleted } = analysisContext;
+  console.log(analysisContext);
 
-  if (!loading && analysisContext.isError) {
+  if (isError) {
     return <AnalysisErrorPage />;
+  } else if (isCompleted) {
+    // TODO: FILL THIS NEXT
+  } else {
+    return <AnalysisRunningPage />;
   }
 
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);

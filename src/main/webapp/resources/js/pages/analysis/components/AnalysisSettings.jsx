@@ -30,11 +30,7 @@ export default function AnalysisSettings() {
   const location = useLocation();
   const [current, setCurrent] = React.useState();
   const { analysisDetailsContext } = useContext(AnalysisDetailsContext);
-  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-
-  const DEFAULT_URL = setBaseUrl(
-    `/analysis/${analysisIdentifier}/` + ANALYSIS.SETTINGS
-  );
+  const { analysisContext } = useContext(AnalysisContext);
 
   const analysisRunning =
     !analysisContext.isError && !analysisContext.isCompleted;
@@ -56,26 +52,22 @@ export default function AnalysisSettings() {
       <Sider width={200} style={{ backgroundColor: grey1 }}>
         <Menu mode="vertical" selectedKeys={[current]}>
           <Menu.Item key="details">
-            <Link to={`${DEFAULT_URL}/${SETTINGS.DETAILS}`}>
-              {i18n("AnalysisDetails.details")}
-            </Link>
+            <Link to={""}>{i18n("AnalysisDetails.details")}</Link>
           </Menu.Item>
           <Menu.Item key="samples">
-            <Link to={`${DEFAULT_URL}/${SETTINGS.SAMPLES}`}>
-              {i18n("AnalysisSamples.samples")}
-            </Link>
+            <Link to={SETTINGS.SAMPLES}>{i18n("AnalysisSamples.samples")}</Link>
           </Menu.Item>
           {analysisDetailsContext.updatePermission
             ? [
                 analysisContext.isError ? null : (
                   <Menu.Item key="share">
-                    <Link to={`${DEFAULT_URL}/${SETTINGS.SHARE}`}>
+                    <Link to={SETTINGS.SHARE}>
                       {i18n("AnalysisShare.manageResults")}
                     </Link>
                   </Menu.Item>
                 ),
                 <Menu.Item key="delete">
-                  <Link to={`${DEFAULT_URL}/${SETTINGS.DELETE}`}>
+                  <Link to={SETTINGS.DELETE}>
                     {i18n("AnalysisDelete.deleteAnalysis")}
                   </Link>
                 </Menu.Item>,
