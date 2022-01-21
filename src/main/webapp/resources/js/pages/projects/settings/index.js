@@ -92,6 +92,7 @@ const SettingsLayout = () => (
       <Route path="references" element={<ReferenceFiles />} />
       <Route path="remote" element={<ProjectSynchronizationSettings />} />
       <Route path="delete" element={<DeleteProject />} />
+      <Route path="*" element={<ProjectDetails />} />
     </Route>
   </Routes>
 );
