@@ -13,20 +13,19 @@ export default function SettingsNav({
   canManage = false,
 }) {
   const location = useLocation();
-  const [key, setKey] = React.useState();
-
-  const keyRegex = /\/projects\/\d+\/settings\/(?<path>[\w_-]+)/;
-  React.useEffect(() => {
+  const [key, setKey] = React.useState(() => {
+    const keyRegex = /\/projects\/\d+\/settings\/(?<path>[\w_-]+)/;
     const found = location.pathname.match(keyRegex);
-    setKey(found.groups.path);
-  }, [location]);
+    if (found) {
+      return found.groups.path;
+    }
+    return "details";
+  });
 
   return (
-    <Menu selectedKeys={[key]}>
+    <Menu selectedKeys={[key]} onClick={(e) => setKey(e.key)}>
       <Menu.Item key="details">
-        <Link to={`${basePath}details`}>
-          {i18n("project.settings.page.details")}
-        </Link>
+        <Link to={basePath}>{i18n("project.settings.page.details")}</Link>
       </Menu.Item>
       <Menu.Item key="processing">
         <Link to={`${basePath}processing`}>

@@ -74,26 +74,26 @@ const { Content, Sider } = Layout;
  * @constructor
  */
 const SettingsLayout = () => (
-    <Routes>
-      <Route
-        path={setBaseUrl("/projects/:projectId/settings/")}
-        element={<ProjectSettings />}
-      >
-        <Route path="details" element={<ProjectDetails />} />
-        <Route path="processing" element={<ProjectProcessing />} />
-        <Route path="members" element={<ProjectMembers />} />
-        <Route path="groups" element={<ProjectGroups />} />
-        <Route path="metadata" element={<MetadataLayout />}>
-          <Route path="fields" element={<MetadataFields />} />
-          <Route path="templates" element={<MetadataTemplates />} />
-          <Route path="templates/:id" element={<MetadataTemplate />} />
-        </Route>
-        <Route path="associated" element={<AssociatedProjects />} />
-        <Route path="references" element={<ReferenceFiles />} />
-        <Route path="remote" element={<ProjectSynchronizationSettings />} />
-        <Route path="delete" element={<DeleteProject />} />
+  <Routes>
+    <Route
+      path={setBaseUrl("/projects/:projectId/settings")}
+      element={<ProjectSettings />}
+    >
+      <Route index element={<ProjectDetails />} />
+      <Route path="processing" element={<ProjectProcessing />} />
+      <Route path="members" element={<ProjectMembers />} />
+      <Route path="groups" element={<ProjectGroups />} />
+      <Route path="metadata" element={<MetadataLayout />}>
+        <Route path="fields" element={<MetadataFields />} />
+        <Route path="templates" element={<MetadataTemplates />} />
+        <Route path="templates/:id" element={<MetadataTemplate />} />
       </Route>
-    </Routes>
+      <Route path="associated" element={<AssociatedProjects />} />
+      <Route path="references" element={<ReferenceFiles />} />
+      <Route path="remote" element={<ProjectSynchronizationSettings />} />
+      <Route path="delete" element={<DeleteProject />} />
+    </Route>
+  </Routes>
 );
 
 /**
