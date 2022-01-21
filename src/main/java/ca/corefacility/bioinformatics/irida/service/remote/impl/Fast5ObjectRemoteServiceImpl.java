@@ -43,7 +43,7 @@ public class Fast5ObjectRemoteServiceImpl extends SequencingObjectRemoteServiceI
 		if (!sample.hasLink(REL_SAMPLE_SEQUENCE_FILE_FAST5)) {
 			throw new LinkNotFoundException("No link for rel: " + REL_SAMPLE_SEQUENCE_FILE_FAST5);
 		}
-		Link link = sample.getLink(REL_SAMPLE_SEQUENCE_FILE_FAST5);
+		Link link = sample.getLink(REL_SAMPLE_SEQUENCE_FILE_FAST5).map(i -> i).orElse(null);
 		String href = link.getHref();
 
 		RemoteAPI remoteApiForURI = getRemoteApiForURI(href);

@@ -61,7 +61,7 @@ public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> i
         RemoteAPI remoteAPI = project.getRemoteStatus().getApi();
 
         OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-        Link link = project.getLink(HASH_REL);
+        Link link = project.getLink(HASH_REL).map(i -> i).orElse(null);
 
         ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(), HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
 

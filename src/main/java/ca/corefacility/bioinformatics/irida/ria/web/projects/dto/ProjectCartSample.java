@@ -1,3 +1,4 @@
+
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -12,11 +13,13 @@ public class ProjectCartSample {
 	private long id;
 	private long projectId;
 	private String sampleName;
+	private boolean owner;
 
-	public ProjectCartSample(Sample sample, long projectId) {
+	public ProjectCartSample(Sample sample, long projectId, boolean owner) {
 		this.id = sample.getId();
 		this.sampleName = sample.getSampleName();
 		this.projectId = projectId;
+		this.owner = owner;
 	}
 
 	public long getId() {
@@ -29,5 +32,9 @@ public class ProjectCartSample {
 
 	public String getSampleName() {
 		return sampleName;
+	}
+
+	public boolean isOwner() {
+		return owner;
 	}
 }

@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 
 /**
  * Resource class for storing a full project hash for the REST API
  */
-public class ProjectHashResource extends IridaResourceSupport {
+public class ProjectHashResource extends IridaRepresentationModel {
     private Integer projectHash;
 
     public ProjectHashResource() {

@@ -16,6 +16,7 @@ public class ProjectSampleAnalysisOutputInfo {
 	private Long analysisId;
 	private String analysisOutputFileKey;
 	private String filePath;
+	private String filename;
 	private Long analysisOutputFileId;
 	private AnalysisType analysisType;
 	private UUID workflowId;
@@ -127,6 +128,14 @@ public class ProjectSampleAnalysisOutputInfo {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+	
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 
 	public Long getAnalysisOutputFileId() {

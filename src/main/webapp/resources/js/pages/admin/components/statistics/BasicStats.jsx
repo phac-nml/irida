@@ -4,26 +4,26 @@
  * charts
  */
 
-import React from "react";
-import { Card, Col, Row, Statistic } from "antd";
-import { SPACE_MD } from "../../../../styles/spacing";
 import { TinyColumn } from "@ant-design/charts";
+import { Card, Col, Row, Statistic } from "antd";
+import React from "react";
+import { Link } from "react-router-dom";
+
+import styled from "styled-components";
+import { getAdminStatistics } from "../../../../apis/admin/admin";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
+import { blue6 } from "../../../../styles/colors";
+import { SPACE_MD } from "../../../../styles/spacing";
+
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+
+import { getTinyChartConfiguration } from "../../chart-config";
 import { ADMINSTATS } from "../../routes";
 
 import {
   defaultTimePeriod,
   defaultTimePeriodText,
 } from "../../statistics-constants";
-
-import { getTinyChartConfiguration } from "../../chart-config";
-
-import styled from "styled-components";
-import { blue6 } from "../../../../styles/colors";
-
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { Link } from "@reach/router";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { getAdminStatistics } from "../../../../apis/admin/admin";
 
 const LinkCard = styled(Card)`
   &:hover {
@@ -49,37 +49,52 @@ export default function BasicStats() {
         setCards([
           {
             key: `analyses`,
-            title: i18n("AdminPanelStatistics.basicStatistics.titleAnalysesRan", defaultTimePeriodText),
+            title: i18n(
+              "AdminPanelStatistics.basicStatistics.titleAnalysesRan",
+              defaultTimePeriodText
+            ),
             value: analysesStats.reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.ANALYSES}`,
             chartData: analysesStats,
           },
           {
             key: `projects`,
-            title: i18n("AdminPanelStatistics.basicStatistics.titleProjectsCreated", defaultTimePeriodText),
+            title: i18n(
+              "AdminPanelStatistics.basicStatistics.titleProjectsCreated",
+              defaultTimePeriodText
+            ),
             value: projectStats.reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.PROJECTS}`,
             chartData: projectStats,
           },
           {
             key: `samples`,
-            title: i18n("AdminPanelStatistics.basicStatistics.titleSamplesCreated", defaultTimePeriodText),
+            title: i18n(
+              "AdminPanelStatistics.basicStatistics.titleSamplesCreated",
+              defaultTimePeriodText
+            ),
             value: sampleStats.reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.SAMPLES}`,
             chartData: sampleStats,
           },
           {
             key: `users`,
-            title: i18n("AdminPanelStatistics.basicStatistics.titleUsersCreated", defaultTimePeriodText),
+            title: i18n(
+              "AdminPanelStatistics.basicStatistics.titleUsersCreated",
+              defaultTimePeriodText
+            ),
             value: userStats.reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.USERS}`,
             chartData: userStats,
           },
           {
             key: `usersLoggedIn`,
-            title: i18n("AdminPanelStatistics.basicStatistics.titleUsersLoggedOn", defaultTimePeriodText),
+            title: i18n(
+              "AdminPanelStatistics.basicStatistics.titleUsersLoggedOn",
+              defaultTimePeriodText
+            ),
             value: usersLoggedIn,
-            url: `${DEFAULT_URL}`,
+            url: setBaseUrl(`/admin`),
             chartData: [],
           },
         ]);

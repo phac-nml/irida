@@ -13,7 +13,7 @@ const BASE_URL = setBaseUrl(`/ajax/projects/groups`);
 export async function removeUserGroupFromProject({ projectId, groupId }) {
   const params = new URLSearchParams({ projectId, groupId });
   try {
-    const { data } = axios.delete(`${BASE_URL}?${params.toString()}`);
+    const { data } = await axios.delete(`${BASE_URL}?${params.toString()}`);
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);

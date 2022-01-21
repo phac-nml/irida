@@ -28,11 +28,12 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -43,7 +44,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 @Entity
 @Table(name = "analysis_output_file")
 @EntityListeners(RelativePathTranslatorListener.class)
-public class AnalysisOutputFile extends IridaResourceSupport implements IridaThing, VersionedFileFields<Long> {
+public class AnalysisOutputFile extends IridaRepresentationModel implements IridaThing, VersionedFileFields<Long> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisOutputFile.class);
 
 	@Id
@@ -138,7 +139,11 @@ public class AnalysisOutputFile extends IridaResourceSupport implements IridaThi
 
 	@Override
 	public String getLabel() {
-		return Strings.isNullOrEmpty(labelPrefix) ? file.toFile().getName() : labelPrefix + '-' + file.toFile().getName();
+		String filename = file.toFile().getName();
+		if (FileUtilities.getFileExt(file).equals("html-zip") && !file.endsWith("html.zip")) {
+			filename = filename + ".zip";
+		}
+		return Strings.isNullOrEmpty(labelPrefix) ? filename : labelPrefix + '-' + filename;
 	}
 
 	@Override

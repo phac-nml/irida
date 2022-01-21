@@ -19,7 +19,7 @@ module.exports = {
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
-    "./resources/js/pages/projects/samples-metadata-import/index.js",
+    "./resources/js/pages/projects/samples-metadata-import",
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
   "project-samples-merge":
     "./resources/js/pages/projects/samples/modals/samples-merge.js",
@@ -34,6 +34,7 @@ module.exports = {
     "./resources/js/pages/projects/project-metadata-edit.js",
   "project-create": "./resources/js/pages/projects/create",
   "project-settings": "./resources/js/pages/projects/settings",
+  "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "visualizations-phylogenetics":

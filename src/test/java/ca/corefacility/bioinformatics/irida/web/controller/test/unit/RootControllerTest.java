@@ -40,14 +40,14 @@ public class RootControllerTest {
 		RootResource r = responseResource.getResource();
 		assertNotNull(r);
 		for (Link l : r.getLinks()) {
-			if (!l.getRel()
-					.equals("self") && !l.getRel()
+			if (!l.getRel().value()
+					.equals("self") && !l.getRel().value()
 					.equals("version")) {
-				assertTrue(controllers.containsKey(l.getRel()));
+				assertTrue(controllers.containsKey(l.getRel().value()));
 			}
 		}
 
-		assertNotNull(r.getLink("self"));
-		assertNotNull(r.getLink("version"));
+		assertTrue(r.getLink("self").isPresent());
+		assertTrue(r.getLink("version").isPresent());
 	}
 }

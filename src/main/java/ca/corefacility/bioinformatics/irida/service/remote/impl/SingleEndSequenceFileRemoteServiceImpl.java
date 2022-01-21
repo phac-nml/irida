@@ -39,7 +39,7 @@ public class SingleEndSequenceFileRemoteServiceImpl extends SequencingObjectRemo
 	 */
 	@Override
 	public List<SingleEndSequenceFile> getUnpairedFilesForSample(Sample sample) {
-		Link link = sample.getLink(SAMPLE_SEQENCE_FILE_UNPAIRED_REL);
+		Link link = sample.getLink(SAMPLE_SEQENCE_FILE_UNPAIRED_REL).map(i -> i).orElse(null);
 		String href = link.getHref();
 
 		RemoteAPI remoteApiForURI = getRemoteApiForURI(href);
