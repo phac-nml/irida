@@ -31,22 +31,22 @@ export default function AnalysisMenu({ type }) {
     <Menu selectedKeys={[current]} mode="horizontal" onClick={handleMenu}>
       {type === "sistr" && (
         <Item key="sistr">
-          <Link inddex>{i18n("Analysis.sistr")}</Link>
+          <Link to={DEFAULT_URL}>{i18n("Analysis.sistr")}</Link>
         </Item>
       )}
       {type === "biohansel" && (
         <Item key="biohansel">
-          <Link index>{i18n("Analysis.biohansel")}</Link>
+          <Link to={DEFAULT_URL}>{i18n("Analysis.biohansel")}</Link>
         </Item>
       )}
       {type === "tree" && analysisContext.treeDefault && (
         <Item key="tree">
-          <Link index>{i18n("Analysis.phylogeneticTree")}</Link>
+          <Link to={DEFAULT_URL}>{i18n("Analysis.phylogeneticTree")}</Link>
         </Item>
       )}
       {type === "output" ? (
         <Item key="output">
-          <Link to={`${DEFAULT_URL}/`}>{i18n("Analysis.outputFiles")}</Link>
+          <Link default>{i18n("Analysis.outputFiles")}</Link>
         </Item>
       ) : (
         <Item key="output">

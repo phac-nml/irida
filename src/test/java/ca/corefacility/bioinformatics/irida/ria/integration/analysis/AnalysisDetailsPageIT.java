@@ -422,7 +422,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
@@ -430,7 +430,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// should not be visible
 		assertFalse("email pipeline result status should be visible", page.emailPipelineResultStatusSelectVisible());
 
-		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/details");
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		// As this analysis is not in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
