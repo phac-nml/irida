@@ -1,13 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import {
-  Space,
-  Table,
-  Typography,
-} from "antd";
+import { notification, Space, Switch, Table, Typography } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
 import { useGetUserProjectDetailsQuery } from "../../../apis/users/users";
+import { useUpdateEmailSubscriptionMutation } from "../../../apis/projects/project-events";
 
 /**
  * React component to display the user projects page.
@@ -17,45 +14,78 @@ import { useGetUserProjectDetailsQuery } from "../../../apis/users/users";
 export default function UserProjectsPage() {
   const { userId } = useParams();
   const { data, isSuccess } = useGetUserProjectDetailsQuery(userId);
+  const [updateEmailSubscription] = useUpdateEmailSubscriptionMutation();
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'projectId',
-      key: 'projectId',
+      title: "ID",
+      dataIndex: "projectId",
+      key: "projectId",
     },
     {
-      title: 'Name',
-      dataIndex: 'projectName',
-      key: 'projectName',
-      render: (text, record) => <a href={setBaseUrl(`projects/${record.projectId}`)}>{text}</a>
+      title: "Name",
+      dataIndex: "projectName",
+      key: "projectName",
+      render: (text, record) => (
+        <a href={setBaseUrl(`projects/${record.projectId}`)}>{text}</a>
+      ),
     },
     {
-      title: 'Role',
-      dataIndex: 'roleName',
-      key: 'roleName',
+      title: "Role",
+      dataIndex: "roleName",
+      key: "roleName",
       render: (text) => {
-        if(text === "PROJECT_USER")
-          return i18n("projectRole.PROJECT_USER")
+        if (text === "PROJECT_USER") return i18n("projectRole.PROJECT_USER");
         else if (text === "PROJECT_OWNER")
-          return i18n("projectRole.PROJECT_OWNER")
-      }
+          return i18n("projectRole.PROJECT_OWNER");
+      },
     },
     {
-      title: 'Date Added',
-      dataIndex: 'createdDate',
-      key: 'createdDate',
-      render: ((text) => formatDate({ date: text }))
+      title: "Date Added",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      render: (text) => formatDate({ date: text }),
     },
     {
-      title: 'Subscribed',
-    }
+      title: "Subscribed",
+      dataIndex: "emailSubscribed",
+      key: "emailSubscribed",
+      render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateProjectSubscription(checked, record)} />,
+    },
   ];
+
+  console.log(data);
+
+  function updateProjectSubscription(checked, record) {
+    console.log(
+      "projectId = " +
+        record.projectId +
+        ", userId = " +
+        userId +
+        ", subscribe = " +
+        checked
+    );
+    updateEmailSubscription({ projectId: record.projectId, userId, subscribe: checked })
+      .then((payload) => {
+        notification.success({
+          message: "SUCCESS",
+        });
+      })
+      .catch((error) => {
+        notification.error({
+          message: "FAILED",
+        });
+      });
+  };
 
   if (isSuccess) {
     return (
       <Space direction="vertical">
         <Typography.Title level={4}>Projects</Typography.Title>
-        <Table dataSource={data.projects} columns={columns} rowKey={(row) => row.rowKey} />
+        <Table
+          dataSource={data.projects}
+          columns={columns}
+          rowKey={(row) => row.rowKey}
+        />
       </Space>
     );
   } else {
