@@ -25,9 +25,6 @@
 	<sequencing_run />
 	<sequencing_run_properties />
 
-	<project />
-	<related_project />
-
 	<tool_execution />
 	<tool_execution_parameters />
 	<tool_execution_prev_steps />
@@ -51,12 +48,15 @@
 
 	<analysis_submission />
 	<analysis_submission_parameters />
-	<project_analysis_submission/>
 
 	<metadata_field/>
 	<metadata_entry/>
 	<pipeline_metadata_entry/>
 	<metadata_template/>
+
+	<project />
+	<related_project />
+	<project_analysis_submission/>
 
 	<job_error />
 	
