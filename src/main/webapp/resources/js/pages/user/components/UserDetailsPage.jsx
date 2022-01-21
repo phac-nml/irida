@@ -23,9 +23,14 @@ export default function UserDetailsPage() {
   const { userId } = useParams();
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
-  const { user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus } = useSelector(
-    (state) => state.userReducer
-  );
+  const {
+    user,
+    admin,
+    locales,
+    allowedRoles,
+    canEditUserInfo,
+    canEditUserStatus,
+  } = useSelector((state) => state.userReducer);
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
@@ -50,7 +55,7 @@ export default function UserDetailsPage() {
   return (
     <Space direction="vertical">
       <Typography.Title level={4}>
-        {i18n("UserDetailsPage.page.title")}
+        {i18n("UserDetailsPage.title")}
       </Typography.Title>
       <Form
         form={form}

@@ -8,8 +8,8 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
  */
 export const setUserDetails = createAction(
   `rootReducers/setUserDetails`,
-  (user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus, canCreatePasswordReset, mailConfigured) => ({
-    payload: { user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus, canCreatePasswordReset, mailConfigured },
+  (user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, mailConfigured) => ({
+    payload: { user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, mailConfigured },
   })
 );
 
@@ -25,6 +25,7 @@ export const userReducer = createReducer(initialState, (builder) => {
     state.allowedRoles = action.payload.allowedRoles;
     state.canEditUserInfo = action.payload.canEditUserInfo;
     state.canEditUserStatus = action.payload.canEditUserStatus;
+    state.canChangePassword = action.payload.canChangePassword;
     state.canCreatePasswordReset = action.payload.canCreatePasswordReset;
     state.mailConfigured = action.payload.mailConfigured;
   });

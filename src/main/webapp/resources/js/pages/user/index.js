@@ -8,7 +8,7 @@ import store from "./store";
 const UserAccountLayout = React.lazy(() => import("./components/UserAccountLayout"));
 const UserDetailsPage = React.lazy(() => import("./components/UserDetailsPage"));
 const UserProjectsPage = React.lazy(() => import("./components/UserProjectsPage"));
-const UserPasswordPage = React.lazy(() => import("./components/UserPasswordPage"));
+const UserSecurityPage = React.lazy(() => import("./components/UserSecurityPage"));
 
 /**
  * React component that displays the user pages.
@@ -24,7 +24,7 @@ render(
             <Route index element={<UserDetailsPage />} />
             <Route path="details" element={<UserDetailsPage />} />
             <Route path="projects" element={<UserProjectsPage />} />
-            <Route path="security" element={<UserPasswordPage />} />
+            <Route path="security" element={<UserSecurityPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -36,6 +36,7 @@ export default function UserAccountLayout() {
         userDetails.allowedRoles,
         userDetails.canEditUserInfo,
         userDetails.canEditUserStatus,
+        userDetails.canChangePassword,
         userDetails.canCreatePasswordReset,
         userDetails.mailConfigured
       )

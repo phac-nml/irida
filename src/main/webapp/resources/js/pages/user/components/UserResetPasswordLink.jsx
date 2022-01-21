@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { notification, Popconfirm } from "antd";
+import { notification, Popconfirm, Typography } from "antd";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { IconQuestionCircle } from "../../../components/icons/Icons";
 import { red6 } from "../../../styles/colors";
@@ -31,13 +31,18 @@ export function UserResetPasswordLink({ firstName, lastName }) {
   };
 
   return (
-    <Popconfirm
-      placement={"topLeft"}
-      title={i18n("UserResetPasswordLink.confirm.title", firstName, lastName)}
-      onConfirm={handleResetPassword}
-      icon={<IconQuestionCircle style={{ color: red6 }} />}
-    >
-      <LinkButton text={i18n("UserResetPasswordLink.button.text")} />
-    </Popconfirm>
+    <>
+      <Typography.Title level={5}>
+        {i18n("UserResetPasswordLink.title")}
+      </Typography.Title>
+      <Popconfirm
+        placement={"topLeft"}
+        title={i18n("UserResetPasswordLink.confirm.title", firstName, lastName)}
+        onConfirm={handleResetPassword}
+        icon={<IconQuestionCircle style={{ color: red6 }} />}
+      >
+        <LinkButton text={i18n("UserResetPasswordLink.button.text")} />
+      </Popconfirm>
+    </>
   );
 }
