@@ -11,8 +11,10 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { LinkButton } from "../../../Buttons/LinkButton";
 import { IconBell } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
+import { theme } from "../../../../utilities/theme-utilities";
 
 const { Text } = Typography;
+const textColor = theme === "dark" ? "#fff" : "#222";
 
 /**
  * React component to display the bell icon and new announcement count badge
@@ -34,7 +36,7 @@ export function AnnouncementsSubMenu() {
   }
 
   const aMenu = (
-    <Menu className="t-announcements-submenu">
+    <Menu className="t-announcements-submenu" theme={theme}>
       {announcements.length == 0 ? (
         <Menu.Item
           key="announcement_none"
@@ -83,15 +85,15 @@ export function AnnouncementsSubMenu() {
   );
 
   return (
-      <Dropdown overlay={aMenu}>
-        <span className="announcements-dropdown">
-          <Badge
-            className="t-announcements-badge"
-            count={announcements && announcements.filter((a) => !a.read).length}
-          >
-            <IconBell />
-          </Badge>
-        </span>
-      </Dropdown>
+    <Dropdown overlay={aMenu}>
+      <span className="announcements-dropdown">
+        <Badge
+          className="t-announcements-badge"
+          count={announcements && announcements.filter((a) => !a.read).length}
+        >
+          <IconBell style={{ color: textColor }} />
+        </Badge>
+      </span>
+    </Dropdown>
   );
 }

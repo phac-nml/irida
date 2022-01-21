@@ -1,4 +1,4 @@
-import { Button, Dropdown, Grid, Menu, Space } from "antd";
+import { Button, Dropdown, Menu, Space, Row, Col } from "antd";
 import React from "react";
 import styled from "styled-components";
 import { primaryColour, theme } from "../../utilities/theme-utilities";
@@ -9,39 +9,41 @@ import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
 
-const { useBreakpoint } = Grid;
-
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 
 const textColor = theme === "dark" ? "#fff" : "#222";
 
-const NavStyle = styled.nav`
-  background-color: ${theme === "dark" ? "rgb(0, 21, 41)" : "#fff"};
-  height: 60px;
-  margin: 0;
-  padding: 0 2rem;
+const MenuStyle = styled.div`
   display: flex;
   justify-content: space-between;
   justify-self: end;
   align-items: center;
+  flex-wrap: wrap;
   font-size: 2rem;
   border-bottom: 5px solid ${primaryColour};
+  color: ${textColor};
 
-  button,
-  a {
-    color: ${textColor};
-    font-size: 1.5rem;
-  }
-
-  svg {
-    font-size: 22px;
-    color: ${textColor};
+  .ant-menu-item,
+  .ant-menu-item-active,
+  .ant-menu-item-selected,
+  .ant-menu-item-only-child {
+    background-color: #001529 !important;
   }
 
   .global-search {
     border-radius: 10px;
   }
+
+  .ant-dropdown-trigger {
+    color: ${textColor};
+    font-size: 1.5rem;
+  }
+`;
+
+const MenuItemStyle = styled(Menu.Item)`
+  width: 50px !important;
+  padding: 0 !important;
 `;
 
 const ProjectsMenu = (
@@ -142,60 +144,83 @@ const AccountMenu = (
 );
 
 export function MainNavigation() {
-  const screens = useBreakpoint();
-  console.log(screens);
-
   return (
-    <NavStyle>
-      <Space align="center">
-        <Button type="link" href={setBaseUrl("/")}>
-          <img
-            style={{ height: 28, width: 129 }}
-            src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
-            alt={i18n("global.title")}
-          />
-        </Button>
-        <Dropdown overlay={ProjectsMenu}>
-          <Button type="link">{i18n("nav.main.project")}</Button>
-        </Dropdown>
-        <Dropdown overlay={AnalysesMenu}>
-          <Button type="link">{i18n("nav.main.analysis")}</Button>
-        </Dropdown>
-        {isManager && (
-          <Dropdown overlay={UsersMenu}>
-            <Button type="link">{i18n("nav.main.users-list")}</Button>
-          </Dropdown>
-        )}
-        {isAdmin && (
-          <Button type="link" href={setBaseUrl("/remote_api")}>
-            {i18n("nav.main.remoteapis")}
-          </Button>
-        )}
-        {isAdmin && (
-          <Button
-            type="primary"
-            className="t-admin-panel-btn"
-            href={setBaseUrl("/admin")}
-          >
-            {i18n("MainNavigation.admin").toUpperCase()}
-          </Button>
-        )}
-      </Space>
-      <Space align="center">
-        <GlobalSearch />
-        <CartLink />
-        <AnnouncementsSubMenu />
-        <Dropdown overlay={HelpMenu}>
-          <Button type="link">
-            <IconQuestionCircle />
-          </Button>
-        </Dropdown>
-        <Dropdown overlay={AccountMenu}>
-          <Button type="link" icon={<IconUser />}>
-            {window.TL._USER.username}
-          </Button>
-        </Dropdown>
-      </Space>
-    </NavStyle>
+    <Row justify="center">
+      <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24}>
+        <Menu theme={theme} mode="inline">
+          <MenuStyle>
+            <Space align="center">
+              <Button type="link" href={setBaseUrl("/")}>
+                <img
+                  style={{ height: 28, width: 129 }}
+                  src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
+                  alt={i18n("global.title")}
+                />
+              </Button>
+              <Menu.Item key="projects">
+                <Dropdown overlay={ProjectsMenu}>
+                  <Button type="link">{i18n("nav.main.project")}</Button>
+                </Dropdown>
+              </Menu.Item>
+              <Menu.Item key="analyses">
+                <Dropdown overlay={AnalysesMenu}>
+                  <Button type="link">{i18n("nav.main.analysis")}</Button>
+                </Dropdown>
+              </Menu.Item>
+              {!isAdmin && isManager && (
+                <Menu.Item key="users">
+                  <Dropdown overlay={UsersMenu}>
+                    <Button type="link">{i18n("nav.main.users-list")}</Button>
+                  </Dropdown>
+                </Menu.Item>
+              )}
+              {!isAdmin && (
+                <Menu.Item key="remote-apis">
+                  <Button type="link" href={setBaseUrl("/remote_api")}>
+                    {i18n("nav.main.remoteapis")}
+                  </Button>
+                </Menu.Item>
+              )}
+            </Space>
+            <Space align="center">
+              <Menu.Item key="global-search">
+                <GlobalSearch />
+              </Menu.Item>
+              {isAdmin && (
+                <Menu.Item key="admin-panel">
+                  <Button
+                    type="primary"
+                    className="t-admin-panel-btn"
+                    href={setBaseUrl("/admin")}
+                  >
+                    {i18n("MainNavigation.admin").toUpperCase()}
+                  </Button>
+                </Menu.Item>
+              )}
+              <MenuItemStyle key="cart-link">
+                <CartLink />
+              </MenuItemStyle>
+              <Menu.Item key="announcements-dropdown-link">
+                <AnnouncementsSubMenu />
+              </Menu.Item>
+              <Menu.Item key="help-dropdown-link">
+                <Dropdown overlay={HelpMenu}>
+                  <Button type="link">
+                    <IconQuestionCircle />
+                  </Button>
+                </Dropdown>
+              </Menu.Item>
+              <Menu.Item key="account-dropdown-link">
+                <Dropdown overlay={AccountMenu}>
+                  <Button type="link" icon={<IconUser />}>
+                    {window.TL._USER.username}
+                  </Button>
+                </Dropdown>
+              </Menu.Item>
+            </Space>
+          </MenuStyle>
+        </Menu>
+      </Col>
+    </Row>
   );
 }

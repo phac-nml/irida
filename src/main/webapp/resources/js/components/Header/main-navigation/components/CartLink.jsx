@@ -4,6 +4,9 @@ import { getCartCount } from "../../../../apis/cart/cart";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconShoppingCart } from "../../../icons/Icons";
+import { theme } from "../../../../utilities/theme-utilities";
+
+const textColor = theme === "dark" ? "#fff" : "#222";
 
 /**
  * React component to display the cart icon and current counts in the
@@ -41,6 +44,7 @@ export function CartLink() {
         className="t-cart-count"
         href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
         icon={<IconShoppingCart data-count={count} />}
+        style={{ color: textColor }}
       />
     </Badge>
   );
