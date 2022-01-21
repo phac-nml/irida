@@ -1,5 +1,4 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 import { notification, Popconfirm, Typography } from "antd";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { IconQuestionCircle } from "../../../components/icons/Icons";
@@ -13,8 +12,7 @@ import { useCreatePasswordResetMutation } from "../../../apis/passwordReset";
  * @returns {JSX.Element}
  * @constructor
  */
-export function UserResetPasswordLink({ firstName, lastName }) {
-  const { userId } = useParams();
+export function UserResetPasswordLink({ userId, firstName, lastName }) {
   const [resetPassword] = useCreatePasswordResetMutation();
 
   const handleResetPassword = () => {

@@ -1,5 +1,4 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 import { Alert, Button, Form, Input, notification, Typography } from "antd";
 import { useEditUserDetailsMutation } from "../../../apis/users/users";
 
@@ -8,8 +7,7 @@ import { useEditUserDetailsMutation } from "../../../apis/users/users";
  * @returns {*}
  * @constructor
  */
-export function UserChangePasswordForm() {
-  const { userId } = useParams();
+export function UserChangePasswordForm({ userId }) {
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
 
