@@ -46,16 +46,16 @@
 	<workflow_named_parameters/>
 	<workflow_named_parameter_values/>
 
-	<analysis_submission />
-	<analysis_submission_parameters />
-
 	<metadata_field/>
 	<metadata_entry/>
-	<pipeline_metadata_entry/>
 	<metadata_template/>
 
 	<project />
 	<related_project />
+
+	<analysis_submission />
+	<analysis_submission_parameters />
+	<pipeline_metadata_entry/>
 	<project_analysis_submission/>
 
 	<job_error />
