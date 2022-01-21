@@ -7,6 +7,7 @@ import { useCreatePasswordResetMutation } from "../../../apis/passwordReset";
 
 /**
  * React component to display the user account reset password link with confirmation.
+ * @param {number} userId the identification number of the user
  * @param {string} firstName the first name of the user
  * @param {string} lastName the last name of the user
  * @returns {JSX.Element}

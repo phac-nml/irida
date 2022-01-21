@@ -4,6 +4,7 @@ import { useEditUserDetailsMutation } from "../../../apis/users/users";
 
 /**
  * React component to display the user change password form.
+ * @param {number} userId the identification number of the user
  * @returns {*}
  * @constructor
  */
