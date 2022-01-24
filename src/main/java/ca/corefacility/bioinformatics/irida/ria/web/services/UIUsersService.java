@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
@@ -49,19 +50,22 @@ public class UIUsersService {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final EmailController emailController;
-	private final MessageSource messageSource;
 	private final List<Locale> locales;
+	private final MessageSource messageSource;
+	private final PasswordEncoder passwordEncoder;
 
 	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
 	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
-			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource) {
+			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource,
+			PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.emailController = emailController;
 		this.locales = locales.getLocales();
 		this.messageSource = messageSource;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	/**
@@ -187,13 +191,19 @@ public class UIUsersService {
 			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
 
-		String password = userEditRequest.getPassword();
-		String confirmPassword = userEditRequest.getConfirmPassword();
-		if (!Strings.isNullOrEmpty(password) || !Strings.isNullOrEmpty(confirmPassword)) {
-			if (!password.equals(confirmPassword)) {
-				errors.put("password", messageSource.getMessage("user.edit.password.match", null, request.getLocale()));
+		String oldPassword = userEditRequest.getOldPassword();
+		String newPassword = userEditRequest.getNewPassword();
+		String confirmNewPassword = userEditRequest.getConfirmNewPassword();
+		if (!Strings.isNullOrEmpty(passwordEncoder.encode(oldPassword)) || !Strings.isNullOrEmpty(newPassword)
+				|| !Strings.isNullOrEmpty(confirmNewPassword)) {
+			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
+				errors.put("oldPassword",
+						messageSource.getMessage("user.edit.password.old.incorrect", null, request.getLocale()));
+			} else if (!newPassword.equals(confirmNewPassword)) {
+				errors.put("newPassword",
+						messageSource.getMessage("user.edit.password.new.match", null, request.getLocale()));
 			} else {
-				updatedValues.put("password", password);
+				updatedValues.put("password", newPassword);
 			}
 		}
 

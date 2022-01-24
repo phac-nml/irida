@@ -20,10 +20,10 @@ export default function UserSecurityPage() {
       <Typography.Title level={4}>
         {i18n("UserSecurityPage.title")}
       </Typography.Title>
-      {canChangePassword && <UserChangePasswordForm userId />}
+      {canChangePassword && <UserChangePasswordForm userId={userId} />}
       {canCreatePasswordReset && mailConfigured && (
         <UserResetPasswordLink
-          userId
+          userId={userId}
           firstName={user.firstName}
           lastName={user.lastName}
         />

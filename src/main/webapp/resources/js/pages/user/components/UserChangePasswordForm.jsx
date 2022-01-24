@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Alert, Button, Form, Input, notification, Typography } from "antd";
 import { useEditUserDetailsMutation } from "../../../apis/users/users";
 
@@ -11,15 +12,17 @@ import { useEditUserDetailsMutation } from "../../../apis/users/users";
 export function UserChangePasswordForm({ userId }) {
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
       .unwrap()
       .then((payload) => {
         notification.success({
-          message: i18n("UserPasswordPage.notification.success"),
+          message: i18n("UserChangePasswordForm.notification.success"),
         });
         form.resetFields();
+        navigate(`/${userId}/details`);
       })
       .catch((error) => {
         const fields = Object.entries(error.data).map(([field, error]) => ({
@@ -61,8 +64,20 @@ export function UserChangePasswordForm({ userId }) {
         autoComplete="off"
       >
         <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.password")}
-          name="password"
+          label={i18n("UserChangePasswordForm.form.label.oldPassword")}
+          name="oldPassword"
+          rules={[
+            {
+              required: true,
+              message: i18n("UserChangePasswordForm.alert.rule1"),
+            },
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          label={i18n("UserChangePasswordForm.form.label.newPassword")}
+          name="newPassword"
           rules={[
             {
               required: true,
@@ -90,9 +105,9 @@ export function UserChangePasswordForm({ userId }) {
           <Input.Password />
         </Form.Item>
         <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.confirmPassword")}
-          name="confirmPassword"
-          dependencies={["password"]}
+          label={i18n("UserChangePasswordForm.form.label.confirmNewPassword")}
+          name="confirmNewPassword"
+          dependencies={["newPassword"]}
           rules={[
             {
               required: true,
@@ -100,7 +115,7 @@ export function UserChangePasswordForm({ userId }) {
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                if (getFieldValue("password") !== value) {
+                if (getFieldValue("newPassword") !== value) {
                   return Promise.reject(
                     i18n("UserChangePasswordForm.alert.rule7")
                   );
