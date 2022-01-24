@@ -14,13 +14,16 @@ const { Content } = Layout;
  * @constructor
  */
 export function ProjectNav({ ...props }) {
+  const [current] = React.useState(() => {
+    const keyRegex = /\/projects\/\d+\/(?<path>[\w_-]+)/;
+    const found = location.pathname.match(keyRegex);
+    if (found) {
+      return found.groups.path;
+    }
+    return "samples";
+  });
   const projectId = getProjectIdFromUrl();
   const BASE_URL = setBaseUrl(`/projects/${projectId}`);
-
-  /*
-  Get the current page from the global project object
-   */
-  const current = /\/projects\/\d+\/([\w+-]+)/.exec(window.location.href)[1];
 
   return (
     <PageHeader

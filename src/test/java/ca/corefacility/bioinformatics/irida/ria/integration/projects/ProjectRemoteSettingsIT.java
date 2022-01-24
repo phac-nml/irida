@@ -6,14 +6,14 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectRemoteSettingsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>
@@ -52,10 +52,6 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 		String url = page.getProjectUrl();
 		assertFalse("URL should not be empty", url.isEmpty());
 		page.submitProject();
-
-		ProjectDetailsPage projectDetailsPage = ProjectDetailsPage.initElements(driver());
-		String dataProjectName = projectDetailsPage.getProjectName();
-		assertEquals("Should be on the remote project page", dataProjectName, name);
 
 		ProjectRemoteSettingsPage remoteSettingsPage = ProjectRemoteSettingsPage.initElements(driver());
 		final Long projectId = remoteSettingsPage.getProjectId();
