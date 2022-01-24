@@ -20,7 +20,7 @@ export default function UserSecurityPage() {
       <Typography.Title level={4}>
         {i18n("UserSecurityPage.title")}
       </Typography.Title>
-      {!(canCreatePasswordReset && mailConfigured)) && (
+      {!(canCreatePasswordReset && mailConfigured) && (
         <Alert
           message={i18n("UserSecurityPage.alert.title")}
           description={
