@@ -5,12 +5,12 @@ import { AnalysisContext } from "../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../contexts/AnalysisOutputsContext";
 import { SPACE_LG } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import AnalysisMenu from "./components/AnalysisMenu";
 import { ANALYSIS } from "./routes";
 
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
 );
-const AnalysisMenu = React.lazy(() => import("./components/AnalysisMenu"));
 const AnalysisOutputFiles = React.lazy(() => import("./components/AnalysisOutputFiles"));
 const AnalysisPhylogeneticTree = React.lazy(() => import("./components/AnalysisPhylogeneticTree"));
 const AnalysisProvenance = React.lazy(() => import("./components/AnalysisProvenance"));

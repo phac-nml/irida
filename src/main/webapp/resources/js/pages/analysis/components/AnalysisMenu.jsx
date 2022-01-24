@@ -22,9 +22,9 @@ export default function AnalysisMenu({ type }) {
     }
     return "output";
   });
+
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
-
   const handleMenu = (e) => setCurrent(e.key);
 
   return (
@@ -46,7 +46,7 @@ export default function AnalysisMenu({ type }) {
       )}
       {type === "output" ? (
         <Item key="output">
-          <Link default>{i18n("Analysis.outputFiles")}</Link>
+          <Link to={DEFAULT_URL}>{i18n("Analysis.outputFiles")}</Link>
         </Item>
       ) : (
         <Item key="output">
