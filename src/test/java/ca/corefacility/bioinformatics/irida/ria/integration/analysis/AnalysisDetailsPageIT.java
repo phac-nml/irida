@@ -59,7 +59,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testAnalysisDetails() {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 		assertEquals("There should be 7 labels for analysis details", 7, page.getNumberOfListItems());
 		// Analysis Description doesn't have a value

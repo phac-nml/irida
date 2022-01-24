@@ -118,7 +118,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return The initialized {@link AnalysisDetailsPage}
 	 */
 	public static AnalysisDetailsPage initPage(WebDriver driver, long analysisId, String tabKey) {
-		get(driver, RELATIVE_URL + analysisId + "/");
+		get(driver, RELATIVE_URL + analysisId + "/settings");
 		return PageFactory.initElements(driver, AnalysisDetailsPage.class);
 	}
 
