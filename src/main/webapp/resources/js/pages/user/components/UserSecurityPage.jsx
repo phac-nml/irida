@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Space, Typography } from "antd";
+import { Alert, Space, Typography } from "antd";
 import { UserChangePasswordForm } from "./UserChangePasswordForm";
 import { UserResetPasswordLink } from "./UserResetPasswordLink";
 
@@ -20,6 +20,18 @@ export default function UserSecurityPage() {
       <Typography.Title level={4}>
         {i18n("UserSecurityPage.title")}
       </Typography.Title>
+      {!(canChangePassword && canCreatePasswordReset && mailConfigured) && (
+        <Alert
+          message={i18n("UserSecurityPage.alert.title")}
+          description={
+            <Typography.Paragraph>
+              {i18n("UserSecurityPage.alert.description")}
+            </Typography.Paragraph>
+          }
+          type="info"
+          showIcon
+        />
+      )}
       {canChangePassword && <UserChangePasswordForm userId={userId} />}
       {canCreatePasswordReset && mailConfigured && (
         <UserResetPasswordLink
