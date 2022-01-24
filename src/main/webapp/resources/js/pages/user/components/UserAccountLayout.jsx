@@ -5,7 +5,6 @@ import { Col, Row } from "antd";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import UserAccountNav from "./UserAccountNav";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { isAdmin } from "../../../utilities/role-utilities";
 import { useGetUserDetailsQuery } from "../../../apis/users/users";
 import { ContentLoading } from "../../../components/loader";
 import { setUserDetails } from "../services/userReducer";
@@ -50,7 +49,7 @@ export default function UserAccountLayout() {
       ) : (
         <PageWrapper
           title={userDetails.user.username}
-          onBack={isAdmin ? goToAdminUserListPage : undefined}
+          onBack={userDetails.admin ? goToAdminUserListPage : undefined}
         >
           <Row>
             <Col span={5}>
