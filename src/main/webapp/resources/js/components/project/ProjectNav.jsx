@@ -1,8 +1,7 @@
-import { Router } from "@reach/router";
 import { Layout, Menu, PageHeader } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
@@ -14,11 +13,17 @@ const { Content } = Layout;
  * @returns {*}
  * @constructor
  */
-export function ProjectNav({ projectId, uri: BASE_URL, ...props }) {
-  /*
-  Get the current page from the global project object
-   */
-  const current = props["*"] || "samples";
+export function ProjectNav({ ...props }) {
+  const [current] = React.useState(() => {
+    const keyRegex = /\/projects\/\d+\/(?<path>[\w_-]+)/;
+    const found = location.pathname.match(keyRegex);
+    if (found) {
+      return found.groups.path;
+    }
+    return "samples";
+  });
+  const projectId = getProjectIdFromUrl();
+  const BASE_URL = setBaseUrl(`/projects/${projectId}`);
 
   return (
     <PageHeader
@@ -42,7 +47,7 @@ export function ProjectNav({ projectId, uri: BASE_URL, ...props }) {
           <Item key="export">
             <a href={`${BASE_URL}/export`}>{i18n("project.nav.exports")}</a>
           </Item>
-          <Item key="events">
+          <Item key="activity">
             <a href={`${BASE_URL}/activity`}>{i18n("project.nav.activity")}</a>
           </Item>
           <Item key="settings">
@@ -53,9 +58,5 @@ export function ProjectNav({ projectId, uri: BASE_URL, ...props }) {
     </PageHeader>
   );
 }
-render(
-  <Router>
-    <ProjectNav path={setBaseUrl("/projects/:projectId/**")} />
-  </Router>,
-  document.querySelector("#project-root")
-);
+
+render(<ProjectNav />, document.querySelector("#project-root"));
