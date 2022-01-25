@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -16,8 +13,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,13 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
-
-	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");
-
-	private final List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
-			ImmutableMap.of("href", "/projects", "text", "Projects"),
-			ImmutableMap.of("href", "/projects/1", "text", "project"),
-			ImmutableMap.of("href", "/projects/1/settings", "text", "Settings"));
 
 	@Test
 	public void testCanManagePageSetUp() {

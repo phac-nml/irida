@@ -106,7 +106,6 @@ public class UIPipelineServiceTest {
 
 		Map<Project, List<Sample>> cart = new HashMap<>();
 		projects.forEach(project -> {
-			Sample sample = new Sample("sample-" + project.getId());
 			cart.put(project, ImmutableList.of());
 		});
 		when(cartService.getFullCart()).thenReturn(cart);

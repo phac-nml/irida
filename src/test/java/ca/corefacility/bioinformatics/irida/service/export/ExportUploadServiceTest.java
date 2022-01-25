@@ -351,7 +351,7 @@ public class ExportUploadServiceTest {
 
 		verify(sampleService).getSampleForSequencingObject(seqObject);
 
-		ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
+		ArgumentCaptor<Set<MetadataEntry>> captor = ArgumentCaptor.forClass(Set.class);
 		verify(sampleService).mergeSampleMetadata(any(Sample.class), captor.capture());
 
 		Set<MetadataEntry> savedMetadata = captor.getValue();

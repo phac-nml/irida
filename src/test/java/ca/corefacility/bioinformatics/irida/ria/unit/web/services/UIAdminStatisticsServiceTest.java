@@ -32,6 +32,7 @@ public class UIAdminStatisticsServiceTest {
 	private StatisticTimePeriod statisticTimePeriod = StatisticTimePeriod.DAILY;
 	private List<GenericStatModel> genericStatModelList;
 
+	@SuppressWarnings("unchecked")
 	@BeforeEach
 	public void setUp() {
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);

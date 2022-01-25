@@ -202,6 +202,7 @@ public class UserServiceImplTest {
 
 		User revUser = new User();
 		revUser.setPassword(oldPassword);
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		Revision<Integer, User> rev = Revision.of(new RevisionMetadata() {
 			@Override
 			public Optional<Number> getRevisionNumber() {

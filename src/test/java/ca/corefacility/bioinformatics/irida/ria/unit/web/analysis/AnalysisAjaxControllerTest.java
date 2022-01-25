@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -32,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxControl
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
-import ca.corefacility.bioinformatics.irida.ria.web.services.AnalysesListingService;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -63,7 +61,6 @@ public class AnalysisAjaxControllerTest {
 	private UpdateAnalysisSubmissionPermission updatePermission;
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
-	private AnalysesListingService analysesListingService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 	private ExecutionManagerConfig configFileMock;

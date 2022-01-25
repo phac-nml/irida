@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class UIClientServiceTest {
@@ -38,7 +38,7 @@ public class UIClientServiceTest {
 		client2.setId(2L);
 		Page<IridaClientDetails> clientPage = new PageImpl<>(Lists.newArrayList(client1, client2));
 
-		when(clientDetailsService.search(any(Specification.class), any(Pageable.class))).thenReturn(clientPage);
+		when(clientDetailsService.search(ArgumentMatchers.<Specification<IridaClientDetails>>any(), any(Pageable.class))).thenReturn(clientPage);
 
 		ClientTableRequest params = new ClientTableRequest();
 		params.setCurrent(1);
@@ -49,6 +49,6 @@ public class UIClientServiceTest {
 
 		assertEquals(2, response.getDataSource().size());
 
-		verify(clientDetailsService).search(any(Specification.class), any(Pageable.class));
+		verify(clientDetailsService).search(ArgumentMatchers.<Specification<IridaClientDetails>>any(), any(Pageable.class));
 	}
 }

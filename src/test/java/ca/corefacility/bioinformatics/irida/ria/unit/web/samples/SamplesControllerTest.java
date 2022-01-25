@@ -134,7 +134,6 @@ public class SamplesControllerTest {
 				"Model should not be populated with non-updated attributes");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -192,7 +191,6 @@ public class SamplesControllerTest {
 		verifyNoInteractions(projectService);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();

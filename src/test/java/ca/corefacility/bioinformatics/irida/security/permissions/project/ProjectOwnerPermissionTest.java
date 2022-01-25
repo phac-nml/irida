@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 
 public class ProjectOwnerPermissionTest {
 
@@ -49,7 +48,6 @@ public class ProjectOwnerPermissionTest {
 	Long projectId = 1L;
 	User user = new User();
 
-	@SuppressWarnings("unchecked")
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);

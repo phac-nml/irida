@@ -26,16 +26,12 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
 	//Page objects
 	private AnnouncementControlPage controlPage;
-	private AnnouncementReadPage readPage;
-	private AnnouncementDashboardPage dashboardPage;
 
 	@Override
 	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsAdmin(driver());
 		controlPage = new AnnouncementControlPage(driver());
-		readPage = new AnnouncementReadPage(driver());
-		dashboardPage = new AnnouncementDashboardPage(driver());
 	}
 
 	@Test

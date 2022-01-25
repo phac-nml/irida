@@ -433,7 +433,8 @@ public class SampleServiceImplTest {
 
 		sampleService.mergeSampleMetadata(s1, inputMetadata);
 
-		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<Set<MetadataEntry>> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 
@@ -490,7 +491,8 @@ public class SampleServiceImplTest {
 
 		sampleService.mergeSampleMetadata(s1, inputMetadata);
 
-		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<Set<MetadataEntry>> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 
@@ -541,7 +543,8 @@ public class SampleServiceImplTest {
 
 		verify(metadataEntryRepository).deleteAll(metadataEntries);
 
-		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<Set<MetadataEntry>> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 

@@ -115,7 +115,6 @@ public class ProjectEventHandlerTest {
 		verify(projectRepository).save(any(Project.class));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleSequenceFileAddedEventSingle() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
@@ -145,7 +144,6 @@ public class ProjectEventHandlerTest {
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleSequenceFileAddedEventMultipleReturn() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
@@ -177,7 +175,6 @@ public class ProjectEventHandlerTest {
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testHandleSequenceFileAddedEventMultipleProjects() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;

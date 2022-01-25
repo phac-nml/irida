@@ -56,7 +56,6 @@ public class ProjectEventEmailScheduedTaskImplTest {
 		when(emailController.isMailConfigured()).thenReturn(true);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testEmailUserTasks() {
 		Date priorDateFromCronString = ProjectEventEmailScheduledTaskImpl

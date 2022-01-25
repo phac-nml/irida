@@ -286,7 +286,6 @@ public class SampleSequenceFilesControllerTest {
 	public void testAddNewSequenceFileToSampleCompletedRun() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
 		SequenceFileResource resource = new SequenceFileResource();
@@ -312,7 +311,6 @@ public class SampleSequenceFilesControllerTest {
 	public void testAddNewSequenceFileToSampleErrorRun() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
 		SequenceFileResource resource = new SequenceFileResource();

@@ -20,13 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 
-	private DashboardPage dashboardPage;
-
 	@Override
 	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsUser(driver());
-		dashboardPage = new DashboardPage(driver());
+		new DashboardPage(driver());
 	}
 
 	@Test

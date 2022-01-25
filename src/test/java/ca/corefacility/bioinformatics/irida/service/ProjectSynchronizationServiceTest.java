@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -240,7 +242,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
-		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), ArgumentMatchers.<Set<MetadataEntry>>any())).thenReturn(sample);
 		when(assemblyRemoteService.getGenomeAssembliesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());
@@ -275,7 +277,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
-		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), ArgumentMatchers.<Set<MetadataEntry>>any())).thenReturn(sample);
 		when(fast5ObjectRemoteService.getFast5FilesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());

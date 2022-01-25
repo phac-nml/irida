@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UIRemoteProjectServiceTest {
-	private MessageSource messageSource;
 	private ProjectService projectService;
 	private ProjectRemoteService projectRemoteService;
 	private UserService userService;
@@ -36,7 +35,6 @@ public class UIRemoteProjectServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		messageSource = mock(MessageSource.class);
 		projectService = mock(ProjectService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		userService = mock(UserService.class);

@@ -42,7 +42,6 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		page.createNewTemplate("Special Template", "Long description");
 		assertTrue(driver().getCurrentUrl().matches("(.*)/metadata/templates/\\d+"), "Should be on a template specific page");
 		final String newTemplateName = "An awesome name";
-		final String currentName = page.getTemplateName();
 		page.editTemplateName(newTemplateName);
 		assertEquals(newTemplateName, page.getTemplateName(), "New template name should be set as the template name");
 
@@ -92,6 +91,5 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 
 		page.gotoTemplate("test template");
 		assertFalse(page.canEditTemplateName(), "Should not be able to edit the template name");
-		String foobar = "ba";
 	}
 }

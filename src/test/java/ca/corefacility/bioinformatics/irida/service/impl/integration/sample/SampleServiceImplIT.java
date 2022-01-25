@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -71,11 +69,7 @@ public class SampleServiceImplIT {
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
 	@Autowired
-	private Path outputFileBaseDirectory;
-	@Autowired
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
-	@Autowired
-	private SampleRepository sampleRepository;
 
 	/**
 	 * Variation in a floating point number to be considered equal.

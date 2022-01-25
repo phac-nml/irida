@@ -325,7 +325,6 @@ public class ProjectServiceImplTest {
 		User user2 = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
 		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
-		@SuppressWarnings("unchecked")
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
 				ProjectRole.PROJECT_OWNER), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER));
 
@@ -363,7 +362,6 @@ public class ProjectServiceImplTest {
 		User user = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
 		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
-		@SuppressWarnings("unchecked")
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
 				ProjectRole.PROJECT_OWNER));
 
@@ -379,7 +377,6 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testGetProjectsForSample() {
 		Sample sample = new Sample("my sample");
-		@SuppressWarnings("unchecked")
 		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample, true),
 				new ProjectSampleJoin(new Project("p2"), sample, true));
 

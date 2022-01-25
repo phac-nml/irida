@@ -19,7 +19,6 @@ import org.springframework.security.core.GrantedAuthority;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.user.UpdateUserPermission;
 
 /**
  * Tests for {@link UpdateUserPermission}.

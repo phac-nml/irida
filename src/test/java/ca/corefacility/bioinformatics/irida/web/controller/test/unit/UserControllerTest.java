@@ -69,7 +69,7 @@ public class UserControllerTest {
 		when(projectService.getProjectsForUser(u)).thenReturn(projects);
 		// run the test
 		ResponseProjectResource<ResourceCollection<Project>> output = controller.getUserProjects(username);
-		@SuppressWarnings("unchecked") ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output.getProjectResources();
+		ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output.getProjectResources();
 		List<Project> projectResources = pulledProjects.getResources();
 		assertEquals(1, projectResources.size());
 		Project resource = projectResources.get(0);

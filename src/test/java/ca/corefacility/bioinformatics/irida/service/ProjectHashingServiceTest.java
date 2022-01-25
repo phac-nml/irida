@@ -7,8 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectHashingService;
-import ca.corefacility.bioinformatics.irida.service.remote.SequencingObjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

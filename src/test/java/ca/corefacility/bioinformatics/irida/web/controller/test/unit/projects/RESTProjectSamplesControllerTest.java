@@ -66,7 +66,7 @@ public class RESTProjectSamplesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(projectService.addSampleToProject(p, s, true)).thenReturn(r);
 
-		ResponseResource<Sample> responseObject = controller.addSampleToProject(p.getId(), s, response);
+		controller.addSampleToProject(p.getId(), s, response);
 
 		verify(projectService, times(1)).read(p.getId());
 		verify(projectService, times(1)).addSampleToProject(p, s, true);

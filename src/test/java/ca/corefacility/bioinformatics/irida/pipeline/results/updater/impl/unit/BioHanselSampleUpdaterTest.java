@@ -91,7 +91,7 @@ public class BioHanselSampleUpdaterTest {
 
 		bioHanselSampleUpdater.update(Lists.newArrayList(sample), submission);
 
-		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
+		ArgumentCaptor<Map<String, MetadataEntry>> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
 		verify(metadataTemplateService).convertMetadataStringsToSet(mapCaptor.capture());
@@ -106,7 +106,7 @@ public class BioHanselSampleUpdaterTest {
 		});
 		assertEquals(expectedResults.size(), found.get(), "Should have the same number of metadata entries");
 
-		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
+		ArgumentCaptor<Set<MetadataEntry>> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
 		verify(sampleService).mergeSampleMetadata(eq(sample), setCaptor.capture());
 

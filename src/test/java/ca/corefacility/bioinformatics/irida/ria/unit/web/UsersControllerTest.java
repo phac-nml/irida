@@ -50,7 +50,6 @@ public class UsersControllerTest {
 	private static final String USERS_DETAILS_PAGE = "user/user_details";
 	private static final String USER_EDIT_PAGE = "user/edit";
 
-	private static final long NUM_TOTAL_ELEMENTS = 2L;
 	private static final String USER_NAME = "testme";
 
 	Page<User> userPage;
@@ -96,7 +95,6 @@ public class UsersControllerTest {
 		User user = new User(userId, USER_NAME, null, null, null, null, null);
 		user.setSystemRole(Role.ROLE_USER);
 
-		@SuppressWarnings("unchecked")
 		List<Join<Project, User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user,
 				ProjectRole.PROJECT_USER));
 
@@ -134,7 +132,6 @@ public class UsersControllerTest {
 		User user = new User(userId, "tom", null, null, null, null, null);
 		user.setSystemRole(Role.ROLE_USER);
 
-		@SuppressWarnings("unchecked")
 		List<Join<Project, User>> joins = Lists.newArrayList(new ProjectUserJoin(new Project("good project"), user,
 				ProjectRole.PROJECT_USER));
 

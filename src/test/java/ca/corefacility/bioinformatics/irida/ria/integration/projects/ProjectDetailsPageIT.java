@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import org.junit.jupiter.api.Test;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
@@ -18,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectDetailsPageIT extends AbstractIridaUIITChromeDriver {
-
-	private ProjectDetailsPage page;
 
 	@Test
 	public void testProjectDetailsAsCollaborator() {

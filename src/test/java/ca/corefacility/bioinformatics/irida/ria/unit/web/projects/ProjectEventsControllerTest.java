@@ -102,7 +102,6 @@ public class ProjectEventsControllerTest {
 	public void testUnknownEvent() {
 		Long projectId = 1L;
 		Project project = new Project();
-		ExtendedModelMap model = new ExtendedModelMap();
 		ProjectEvent event = new ProjectEvent() {
 
 			@Override

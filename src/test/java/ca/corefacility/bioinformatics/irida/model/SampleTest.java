@@ -2,9 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.validation.Configuration;
 import javax.validation.ConstraintViolation;
@@ -18,15 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
