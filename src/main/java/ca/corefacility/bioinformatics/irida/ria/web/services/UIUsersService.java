@@ -198,10 +198,10 @@ public class UIUsersService {
 				confirmNewPassword)) {
 			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
 				errors.put("oldPassword",
-						messageSource.getMessage("user.edit.password.old.incorrect", null, request.getLocale()));
+						messageSource.getMessage("server.user.edit.password.old.incorrect", null, request.getLocale()));
 			} else if (!newPassword.equals(confirmNewPassword)) {
 				errors.put("newPassword",
-						messageSource.getMessage("user.edit.password.new.match", null, request.getLocale()));
+						messageSource.getMessage("server.user.edit.password.match", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", newPassword);
 			}
@@ -259,13 +259,13 @@ public class UIUsersService {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+				errors.put("email", messageSource.getMessage("server.user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 		}
 
 		return errors;

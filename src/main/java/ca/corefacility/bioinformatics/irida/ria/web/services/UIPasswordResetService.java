@@ -56,15 +56,15 @@ public class UIPasswordResetService {
 		if (PasswordResetController.canCreatePasswordReset(principalUser, user)) {
 			try {
 				createNewPasswordReset(user);
-				response = messageSource.getMessage("password.reset.success-message",
+				response = messageSource.getMessage("server.password.reset.success.message",
 						new Object[] { user.getFirstName() }, locale);
 			} catch (final MailSendException e) {
 				logger.error("Failed to send password reset e-mail.");
-				throw new Exception(messageSource.getMessage("password.reset.error-message", null, locale));
+				throw new Exception(messageSource.getMessage("server.password.reset.error.message", null, locale));
 			}
 
 		} else {
-			throw new Exception(messageSource.getMessage("password.reset.error-message", null, locale));
+			throw new Exception(messageSource.getMessage("server.password.reset.error.message", null, locale));
 		}
 
 		return response;

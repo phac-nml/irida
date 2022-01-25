@@ -113,7 +113,7 @@ public class PasswordResetController {
 		User user = passwordReset.getUser();
 
 		if (!password.equals(confirmPassword)) {
-			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+			errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
 		}
 
 		if (errors.isEmpty()) {
@@ -136,7 +136,7 @@ public class PasswordResetController {
 					errors.put(errorKey, violation.getMessage());
 				}
 			} catch (PasswordReusedException ex) {
-				errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+				errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 			}
 		}
 
