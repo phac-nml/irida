@@ -24,7 +24,10 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Content, Sider } = Layout;
 
-const pathRegx = /\/settings\/(?<path>\w+)/;
+// Regex for path where the url has settings in it
+const settingsPathRegx = /\/settings\/(?<path>\w+)/;
+// Regex for path where the url doesn't have settings in it
+const nonSettingsPathRegx = /\/\d+\/(?<path>\w+)/;
 
 export default function AnalysisSettings() {
   const location = useLocation();
@@ -36,9 +39,16 @@ export default function AnalysisSettings() {
     !analysisContext.isError && !analysisContext.isCompleted;
 
   React.useEffect(() => {
-    const found = location.pathname.match(pathRegx);
+    const found =
+      location.pathname.match(settingsPathRegx) ||
+      location.pathname.match(nonSettingsPathRegx);
     const path = found ? found.groups.path : SETTINGS.DETAILS;
-    setCurrent(path);
+
+    if (path === "settings") {
+      setCurrent(SETTINGS.DETAILS);
+    } else {
+      setCurrent(path);
+    }
   }, [location.pathname]);
 
   /*
