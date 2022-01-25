@@ -54,14 +54,14 @@ public class AssemblySampleUpdaterIT {
 	public void testUpdateSuccess() {
 		AnalysisSubmission a = analysisSubmissionRepository.findById(1L).orElse(null);
 		Sample s = sampleRepository.findById(2L).orElse(null);
-		assertEquals( 0, sampleGenomeAssemblyJoinRepository.count(),"Should be no join between sample and assembly");
+		assertEquals(0, sampleGenomeAssemblyJoinRepository.count(), "Should be no join between sample and assembly");
 
 		assemblySampleUpdater.update(Sets.newHashSet(s), a);
 
-		assertEquals( 1, sampleGenomeAssemblyJoinRepository.count(),"Should exist a join between sample and assembly");
+		assertEquals(1, sampleGenomeAssemblyJoinRepository.count(), "Should exist a join between sample and assembly");
 		SampleGenomeAssemblyJoin j = sampleGenomeAssemblyJoinRepository.findAll().iterator().next();
 
-		assertEquals( (Long) 2L, j.getSubject().getId(),"Should have joined sample 2L");
+		assertEquals((Long) 2L, j.getSubject().getId(), "Should have joined sample 2L");
 		assertNotNull(j.getObject().getId(), "Should have joined an assembly");
 	}
 

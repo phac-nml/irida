@@ -208,6 +208,7 @@ public class ProjectServiceImplTest {
 		});
 
 		verifyNoInteractions(psjRepository);
+		verify(sampleRepository, never()).save(s);
 	}
 
 	@Test

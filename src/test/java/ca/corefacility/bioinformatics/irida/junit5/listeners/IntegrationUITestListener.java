@@ -36,7 +36,7 @@ public class IntegrationUITestListener implements TestExecutionListener {
 	 */
 	@Override
 	public void testPlanExecutionFinished(TestPlan testPlan) {
-		logger.debug("Closing ChromDriver for UI tests.");
+		logger.debug("Closing ChromeDriver for UI tests.");
 		stopWebDriver();
 	}
 
