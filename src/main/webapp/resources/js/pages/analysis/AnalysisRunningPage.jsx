@@ -1,4 +1,4 @@
-import { Layout, Menu, PageHeader, Space } from "antd";
+import { Layout, Menu, Space } from "antd";
 import React, { useContext } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { IconLoading } from "../../components/icons/Icons";
@@ -44,10 +44,6 @@ export default function AnalysisRunningPage() {
           backgroundColor: grey1,
         }}
       >
-        <PageHeader
-          title={analysisName}
-          avatar={{ style: { backgroundColor: blue6 }, icon: <IconLoading /> }}
-        />
         <Space
           direction="vertical"
           size="large"
