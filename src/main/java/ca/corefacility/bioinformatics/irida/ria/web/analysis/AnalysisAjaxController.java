@@ -1076,6 +1076,7 @@ public class AnalysisAjaxController {
 	 * Get the updated state and duration of an analysis
 	 *
 	 * @param submissionId The analysis submission id
+	 * @param locale The user's locale
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-progress")
