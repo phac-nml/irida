@@ -26,21 +26,23 @@ export default function UserAccountLayout() {
   const goToAdminUserListPage = () =>
     (window.location.href = setBaseUrl(`admin/users`));
 
-  if (isSuccess) {
-    dispatch(
-      setUserDetails(
-        userDetails.user,
-        userDetails.admin,
-        userDetails.locales,
-        userDetails.allowedRoles,
-        userDetails.canEditUserInfo,
-        userDetails.canEditUserStatus,
-        userDetails.canChangePassword,
-        userDetails.canCreatePasswordReset,
-        userDetails.mailConfigured
-      )
-    );
-  }
+  React.useEffect(() => {
+    if (isSuccess) {
+      dispatch(
+        setUserDetails(
+          userDetails.user,
+          userDetails.admin,
+          userDetails.locales,
+          userDetails.allowedRoles,
+          userDetails.canEditUserInfo,
+          userDetails.canEditUserStatus,
+          userDetails.canChangePassword,
+          userDetails.canCreatePasswordReset,
+          userDetails.mailConfigured
+        )
+      );
+    }
+  }, [isSuccess]);
 
   return (
     <>
