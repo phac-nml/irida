@@ -40,8 +40,8 @@ public class CartPage extends AbstractPage {
 	}
 
 	public int getNavBarSamplesCount() {
-		return Integer.parseInt(driver.findElement(By.className("t-cart-count"))
-				.getAttribute("data-count"));
+		return Integer.parseInt(driver.findElement(By.className("ant-badge-count"))
+				.getAttribute("title"));
 	}
 
 	public int getNumberOfSamplesInCart() {

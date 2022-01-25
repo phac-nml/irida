@@ -1,5 +1,6 @@
 import { Typography } from "antd";
 import React from "react";
+import { useParams } from "react-router-dom";
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
 import { ProjectUserGroupsTable } from "../../../../components/project-user-groups";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -12,13 +13,14 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ProjectUserGroups({ projectId }) {
+export default function ProjectUserGroups() {
+  const { projectId } = useParams();
   return (
     <PagedTableProvider
       url={setBaseUrl(`/ajax/projects/groups?projectId=${projectId}`)}
     >
       <Title level={2}>{i18n("ProjectUserGroups.title")}</Title>
-      <ProjectUserGroupsTable projectId={projectId} />
+      <ProjectUserGroupsTable projectId={projectId}/>
     </PagedTableProvider>
   );
 }

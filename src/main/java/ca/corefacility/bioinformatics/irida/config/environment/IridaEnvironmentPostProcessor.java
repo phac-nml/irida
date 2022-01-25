@@ -67,13 +67,13 @@ public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, 
 		Properties properties = new Properties();
 		for (Map.Entry<String, String> entry : deprecatedPropertiesMap.entrySet()) {
 			if (env.containsProperty(entry.getKey())) {
-				this.logger.error("Translating deprecated property " + entry.getKey() + " to " + entry.getValue());
+				this.logger.warn("Translating deprecated property " + entry.getKey() + " to " + entry.getValue());
 				properties.setProperty(entry.getValue(), env.getProperty(entry.getKey()));
 			}
 		}
 
         if ( properties.size() > 0 ) {
-            this.logger.error("Adding translated deprecated properties as highest priority property source.");
+            this.logger.warn("Adding translated deprecated properties as highest priority property source.");
 		    propertySources.addFirst(new PropertiesPropertySource("deprecatedProperties", properties));
         }
 	}
