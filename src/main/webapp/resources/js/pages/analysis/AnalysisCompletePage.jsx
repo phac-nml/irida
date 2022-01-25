@@ -92,7 +92,7 @@ export default function AnalysisCompletePage() {
     <Space
       direction="vertical"
       size="large"
-      style={{ width: `100%`, margin: SPACE_LG }}
+      style={{ width: `100%`, padding: SPACE_LG }}
     >
       <AnalysisMenu type={type} />
       <Routes>
