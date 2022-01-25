@@ -28,7 +28,12 @@ export default function AnalysisMenu({ type }) {
   const handleMenu = (e) => setCurrent(e.key);
 
   return (
-    <Menu selectedKeys={[current]} mode="horizontal" onClick={handleMenu}>
+    <Menu
+      selectedKeys={[current]}
+      mode="horizontal"
+      onClick={handleMenu}
+      className="t-analysis-menu"
+    >
       {type === "sistr" && (
         <Item key="sistr">
           <Link to={DEFAULT_URL}>{i18n("Analysis.sistr")}</Link>

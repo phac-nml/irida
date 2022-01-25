@@ -7,6 +7,7 @@ import { SPACE_LG } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import AnalysisMenu from "./components/AnalysisMenu";
 import { ANALYSIS } from "./routes";
+import { ContentLoading } from "../../components/loader";
 
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
@@ -45,7 +46,7 @@ const AnalysisShare = React.lazy(() =>
 function AnalysisOutlet() {
   return (
     <AnalysisOutputsProvider>
-      <Suspense fallback={<div>LOADING</div>}>
+      <Suspense fallback={<ContentLoading />}>
         <Outlet />
       </Suspense>
     </AnalysisOutputsProvider>
@@ -125,7 +126,17 @@ export default function AnalysisCompletePage() {
             <Route path="samples" element={<AnalysisSamples />} />
             <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
+            <Route path="*" element={<AnalysisDetails />} />
           </Route>
+          {type === "output" ? (
+            <>
+              <Route path="*" element={<AnalysisOutputFiles />} />
+            </>
+          ) : (
+            <>
+              <Route path="*" element={component} />
+            </>
+          )}
         </Route>
       </Routes>
     </Space>
