@@ -100,6 +100,7 @@ export default function AnalysisCompletePage() {
           {type === "output" ? (
             <>
               <Route index element={<AnalysisOutputFiles />} />
+              <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
               <Route
                 path={ANALYSIS.PROVENANCE}
                 element={<AnalysisProvenance />}
@@ -107,6 +108,7 @@ export default function AnalysisCompletePage() {
             </>
           ) : (
             <>
+              <Route path={`sistr/*`} element={component} />
               <Route index element={component} />
               <Route
                 path={ANALYSIS.PROVENANCE}
