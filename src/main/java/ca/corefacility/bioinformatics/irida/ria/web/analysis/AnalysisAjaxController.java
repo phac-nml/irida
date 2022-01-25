@@ -1103,7 +1103,13 @@ public class AnalysisAjaxController {
 		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration, treeDefault));
 
 	}
-	
+
+	/**
+	 * Private method which gets whether the tree view should be the default view or not
+	 * @param submission The analysis submission
+	 * @param locale The user's locale
+	 * @return if tree view should be displayed by default or not
+	 */
 	private boolean getTreeViewDefault(AnalysisSubmission submission, Locale locale) {
 
 		String viewer = getAnalysisViewer(submission);
@@ -1124,6 +1130,11 @@ public class AnalysisAjaxController {
 		return treeDefault;
 	}
 
+	/**
+	 * Private method which gets the analysis viewer type
+	 * @param submission The analysis submission
+	 * @return the viewer (tree, sistr, biohansel, etc)
+	 */
 	private String getAnalysisViewer(AnalysisSubmission submission) {
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
