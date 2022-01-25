@@ -71,8 +71,7 @@ public class UIPasswordResetService {
 	}
 
 	/**
-	 * Create a new password reset for a given {@link User} and send a reset
-	 * email
+	 * Create a new password reset for a given {@link User} and send a reset password link via email
 	 *
 	 * @param user The user to create the reset for
 	 */
@@ -80,7 +79,7 @@ public class UIPasswordResetService {
 		PasswordReset passwordReset = new PasswordReset(user);
 		passwordResetService.create(passwordReset);
 
-		// email the user their info
+		// send a reset password link to user via email
 		emailController.sendPasswordResetLinkEmail(user, passwordReset);
 	}
 }
