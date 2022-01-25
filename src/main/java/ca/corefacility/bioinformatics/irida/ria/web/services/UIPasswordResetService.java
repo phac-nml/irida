@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -47,8 +46,7 @@ public class UIPasswordResetService {
 	 * @return text to display to the user about the result of creating a password reset.
 	 * @throws Exception if there is an error emailing the password reset.
 	 */
-	public String adminNewPasswordReset(@PathVariable Long userId, Principal principal, Locale locale)
-			throws Exception {
+	public String adminNewPasswordReset(Long userId, Principal principal, Locale locale) throws Exception {
 		User user = userService.read(userId);
 		User principalUser = userService.getUserByUsername(principal.getName());
 
