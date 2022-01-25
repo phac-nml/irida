@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Alert, Button, Form, Input, notification, Typography } from "antd";
+import { Alert, Button, Form, Input, List, notification, Typography } from "antd";
 import { useEditUserDetailsMutation } from "../../../apis/users/users";
 
 /**
@@ -13,6 +13,16 @@ export function UserChangePasswordForm({ userId }) {
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  const passwordRules = [
+    i18n("UserChangePasswordForm.alert.rule2"),
+    i18n("UserChangePasswordForm.alert.rule3"),
+    i18n("UserChangePasswordForm.alert.rule4"),
+    i18n("UserChangePasswordForm.alert.rule5"),
+    i18n("UserChangePasswordForm.alert.rule6"),
+    i18n("UserChangePasswordForm.alert.rule8"),
+    i18n("UserChangePasswordForm.alert.rule9")
+  ];
 
   const onFormFinish = (values) => {
     editUser({ userId: userId, ...values })
@@ -42,16 +52,11 @@ export function UserChangePasswordForm({ userId }) {
         message={i18n("UserChangePasswordForm.alert.title")}
         description={
           <Typography.Paragraph>
-            {i18n("UserChangePasswordForm.alert.description")}
-            <ul>
-              <li>{i18n("UserChangePasswordForm.alert.rule2")}</li>
-              <li>{i18n("UserChangePasswordForm.alert.rule3")}</li>
-              <li>{i18n("UserChangePasswordForm.alert.rule4")}</li>
-              <li>{i18n("UserChangePasswordForm.alert.rule5")}</li>
-              <li>{i18n("UserChangePasswordForm.alert.rule6")}</li>
-              <li>{i18n("UserChangePasswordForm.alert.rule8")}</li>
-              <li>{i18n("UserChangePasswordForm.alert.rule9")}</li>
-            </ul>
+            <List
+              header={i18n("UserChangePasswordForm.alert.description")}
+              dataSource={passwordRules}
+              renderItem={item => <List.Item>{item}</List.Item>}
+            />
           </Typography.Paragraph>
         }
         type="info"
