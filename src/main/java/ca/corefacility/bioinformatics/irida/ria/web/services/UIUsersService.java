@@ -159,14 +159,17 @@ public class UIUsersService {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId          The id of the user to edit (required)
-	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
-	 * @param principal       a reference to the logged in user
-	 * @param request         the request
+	 * @param userId             The id of the user to edit (required)
+	 * @param userEditRequest    a {@link UserEditRequest} containing details about a specific user
+	 * @param oldPassword        The old password of the user for password change
+	 * @param newPassword        The new password of the user for password change
+	 * @param confirmNewPassword The confirmed new password of the user for password change
+	 * @param principal          a reference to the logged in user
+	 * @param request            the request
 	 * @return The name of the user view
 	 */
-	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
-			HttpServletRequest request) {
+	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, String oldPassword,
+			String newPassword, String confirmNewPassword, Principal principal, HttpServletRequest request) {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
@@ -191,11 +194,8 @@ public class UIUsersService {
 			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
 
-		String oldPassword = userEditRequest.getOldPassword();
-		String newPassword = userEditRequest.getNewPassword();
-		String confirmNewPassword = userEditRequest.getConfirmNewPassword();
-		if (!Strings.isNullOrEmpty(passwordEncoder.encode(oldPassword)) || !Strings.isNullOrEmpty(newPassword)
-				|| !Strings.isNullOrEmpty(confirmNewPassword)) {
+		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword) || !Strings.isNullOrEmpty(
+				confirmNewPassword)) {
 			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
 				errors.put("oldPassword",
 						messageSource.getMessage("user.edit.password.old.incorrect", null, request.getLocale()));

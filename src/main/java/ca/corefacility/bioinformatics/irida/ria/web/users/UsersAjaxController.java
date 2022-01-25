@@ -64,17 +64,24 @@ public class UsersAjaxController {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId          The id of the user to edit (required)
-	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
-	 * @param principal       a reference to the logged in user
-	 * @param request         the request
+	 * @param userId             The id of the user to edit (required)
+	 * @param userEditRequest    a {@link UserEditRequest} containing details about a specific user
+	 * @param oldPassword        The old password of the user for password change
+	 * @param newPassword        The new password of the user for password change
+	 * @param confirmNewPassword The confirmed new password of the user for password change
+	 * @param principal          a reference to the logged in user
+	 * @param request            the request
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> updateUser(@PathVariable Long userId,
-			@RequestBody UserEditRequest userEditRequest, Principal principal, HttpServletRequest request) {
+			@RequestBody UserEditRequest userEditRequest, @RequestParam(required = false) String oldPassword,
+			@RequestParam(required = false) String newPassword,
+			@RequestParam(required = false) String confirmNewPassword, Principal principal,
+			HttpServletRequest request) {
 
-		UserDetailsResponse response = UIUsersService.updateUser(userId, userEditRequest, principal, request);
+		UserDetailsResponse response = UIUsersService.updateUser(userId, userEditRequest, oldPassword, newPassword,
+				confirmNewPassword, principal, request);
 
 		if (response.hasErrors())
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
