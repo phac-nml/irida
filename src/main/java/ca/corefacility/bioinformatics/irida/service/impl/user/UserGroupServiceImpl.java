@@ -172,7 +172,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<UserGroup> search(Specification<UserGroup> specification, int page, int size, Direction order,
 			String... sortProperties) {
-		return super.search(specification, page, size, order, sortProperties);
+		return super.search(specification, PageRequest.of(page, size, order, sortProperties));
 	}
 	
 	/**

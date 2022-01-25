@@ -88,7 +88,10 @@
 		<!-- 2) change the primary key on system_role -->
 		<!-- a) drop the id column. -->
 		<dropColumn columnName="id" tableName="system_role" />
-		<!-- b) add a primary key constraint on the name column. -->
+		<!-- b) drop the unique constraint from the name column. -->
+		<dropUniqueConstraint constraintName="UK_3qbj4kdbey8f8wgabcel8i7io"
+							  tableName="system_role" uniqueColumns="name" />
+		<!-- C) add a primary key constraint on the name column. -->
 		<addPrimaryKey columnNames="name" constraintName="PK_SYSTEM_ROLE"
 			tableName="system_role" />
 		<!-- 3) add a new foreign key constraint on the user.system_role column. -->

@@ -34,7 +34,7 @@ public class ProjectHashingServiceTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         service = new ProjectHashingService(projectService, sampleService, objectService, assemblyService);
     }

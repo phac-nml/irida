@@ -4,7 +4,6 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 
@@ -24,9 +23,12 @@ import com.google.common.collect.ImmutableMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link AnalysesListingService} which handles DataTables call for listing Analyses.
@@ -56,8 +58,8 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
-				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						Matchers.any())).thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
+				.listAllSubmissions(eq(searchValue), isNull(), isNull(), isNull(),
+						any())).thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, null);
 
@@ -68,8 +70,8 @@ public class AnalysesListingServiceTest {
 		assertTrue("Should have data value", response.getData() != null);
 
 		verify(analysisSubmissionService)
-				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						Matchers.any());
+				.listAllSubmissions(eq(searchValue), isNull(), isNull(), isNull(),
+						any());
 	}
 
 	@Test
@@ -79,8 +81,8 @@ public class AnalysesListingServiceTest {
 		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, Sort.by(Sort.Direction.ASC, "id"),
 				ImmutableMap.of());
 
-		when(analysisSubmissionService.listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
-				Matchers.any(), Matchers.any()))
+		when(analysisSubmissionService.listSubmissionsForUser(eq(searchValue), isNull(), isNull(), eq(user),
+				any(), any()))
 				.thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, user, null);
@@ -91,8 +93,8 @@ public class AnalysesListingServiceTest {
 		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
 		assertTrue("Should have data value", response.getData() != null);
 
-		verify(analysisSubmissionService).listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
-				Matchers.any(), Matchers.any());
+		verify(analysisSubmissionService).listSubmissionsForUser(eq(searchValue), isNull(), isNull(), eq(user),
+				isNull(), any());
 	}
 
 	@Test
@@ -103,8 +105,8 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
-				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						eq(project), Matchers.any()))
+				.listSubmissionsForProject(eq(searchValue), isNull(), isNull(), isNull(),
+						eq(project), any()))
 				.thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, project);
@@ -116,7 +118,7 @@ public class AnalysesListingServiceTest {
 		assertTrue("Should have data value", response.getData() != null);
 
 		verify(analysisSubmissionService)
-				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						eq(project), Matchers.any());
+				.listSubmissionsForProject(eq(searchValue), isNull(), isNull(), isNull(),
+						eq(project), any());
 	}
 }

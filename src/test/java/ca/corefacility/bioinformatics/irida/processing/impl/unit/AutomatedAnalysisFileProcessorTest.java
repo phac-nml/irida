@@ -41,7 +41,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class AutomatedAnalysisFileProcessorTest {
@@ -74,7 +74,7 @@ public class AutomatedAnalysisFileProcessorTest {
 
 	@Before
 	public void setUp() throws IridaWorkflowNotFoundException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		processor = new AutomatedAnalysisFileProcessor(ssoRepository, psjRepository, submissionRepository,
 				templateRepository, pasRepository, workflowsService, objectRepository, messageSource);
@@ -198,7 +198,7 @@ public class AutomatedAnalysisFileProcessorTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(
 				ImmutableList.of(new ProjectSampleJoin(project, sample, true)));
 
-		verifyZeroInteractions(submissionRepository);
+		verifyNoInteractions(submissionRepository);
 	}
 
 	@Test
