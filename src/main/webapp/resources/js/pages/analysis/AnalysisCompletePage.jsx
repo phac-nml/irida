@@ -11,15 +11,31 @@ import { ANALYSIS } from "./routes";
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
 );
-const AnalysisOutputFiles = React.lazy(() => import("./components/AnalysisOutputFiles"));
-const AnalysisPhylogeneticTree = React.lazy(() => import("./components/AnalysisPhylogeneticTree"));
-const AnalysisProvenance = React.lazy(() => import("./components/AnalysisProvenance"));
+const AnalysisOutputFiles = React.lazy(() =>
+  import("./components/AnalysisOutputFiles")
+);
+const AnalysisPhylogeneticTree = React.lazy(() =>
+  import("./components/AnalysisPhylogeneticTree")
+);
+const AnalysisProvenance = React.lazy(() =>
+  import("./components/AnalysisProvenance")
+);
 const AnalysisSistr = React.lazy(() => import("./components/AnalysisSistr"));
-const AnalysisDelete = React.lazy(() => import("./components/settings/AnalysisDelete"));
-const AnalysisDetails = React.lazy(() => import("./components/settings/AnalysisDetails"));
-const AnalysisSamples = React.lazy(() => import("./components/settings/AnalysisSamples"));
-const AnalysisSettingsContainer = React.lazy(() => import("./components/settings/AnalysisSettingsContainer"));
-const AnalysisShare = React.lazy(() => import("./components/settings/AnalysisShare"));
+const AnalysisDelete = React.lazy(() =>
+  import("./components/settings/AnalysisDelete")
+);
+const AnalysisDetails = React.lazy(() =>
+  import("./components/settings/AnalysisDetails")
+);
+const AnalysisSamples = React.lazy(() =>
+  import("./components/settings/AnalysisSamples")
+);
+const AnalysisSettingsContainer = React.lazy(() =>
+  import("./components/settings/AnalysisSettingsContainer")
+);
+const AnalysisShare = React.lazy(() =>
+  import("./components/settings/AnalysisShare")
+);
 
 /**
  * React component to facilitate the nested routing needed for the complete
