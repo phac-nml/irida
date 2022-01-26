@@ -81,12 +81,16 @@ export default function AnalysisCompletePage() {
   const DEFAULT_URL = setBaseUrl(`/analysis/:id`);
 
   let component;
+  let componentPath;
   if (type === "sistr") {
     component = <AnalysisSistr />;
+    componentPath = ANALYSIS.SISTR;
   } else if (type === "biohansel") {
     component = <AnalysisBioHansel />;
+    componentPath = ANALYSIS.BIOHANSEL;
   } else if (type === "tree") {
     component = <AnalysisPhylogeneticTree />;
+    componentPath = ANALYSIS.TREE;
   }
 
   return (
@@ -109,7 +113,7 @@ export default function AnalysisCompletePage() {
             </>
           ) : (
             <>
-              <Route path={`${ANALYSIS.SISTR}/*`} element={component} />
+              <Route path={componentPath} element={component} />
               <Route index element={component} />
               <Route
                 path={ANALYSIS.PROVENANCE}
@@ -122,21 +126,12 @@ export default function AnalysisCompletePage() {
             path={ANALYSIS.SETTINGS}
             element={<AnalysisSettingsContainer />}
           >
-            <Route index element={<AnalysisDetails />} />
             <Route path="samples" element={<AnalysisSamples />} />
             <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
             <Route path="*" element={<AnalysisDetails />} />
           </Route>
-          {type === "output" ? (
-            <>
-              <Route path="*" element={<AnalysisOutputFiles />} />
-            </>
-          ) : (
-            <>
-              <Route path="*" element={component} />
-            </>
-          )}
+          <Route path="*" element={component} />
         </Route>
       </Routes>
     </Space>
