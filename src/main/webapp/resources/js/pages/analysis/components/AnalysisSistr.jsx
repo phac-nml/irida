@@ -90,15 +90,15 @@ export default function AnalysisSistr({ baseUrl }) {
                   }
                 />
                 <Route
-                  path={"cgmlst"}
+                  path={SISTR.CGMLST}
                   element={<CgMlst sistrResults={sistrResults.result} />}
                 />
                 <Route
-                  path={"mash"}
+                  path={SISTR.MASH}
                   element={<Mash sistrResults={sistrResults.result} />}
                 />
                 <Route
-                  path={"citation"}
+                  path={SISTR.CITATION}
                   element={<Citation sistrResults={sistrResults.result} />}
                 />
               </Routes>
