@@ -84,7 +84,7 @@ export default function AnalysisCompletePage() {
   let componentPath;
   if (type === "sistr") {
     component = <AnalysisSistr />;
-    componentPath = ANALYSIS.SISTR;
+    componentPath = `${ANALYSIS.SISTR}/*`;
   } else if (type === "biohansel") {
     component = <AnalysisBioHansel />;
     componentPath = ANALYSIS.BIOHANSEL;
