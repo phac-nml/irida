@@ -15,6 +15,9 @@ export default function AnalysisMenu({ type }) {
   const location = useLocation();
   const [current, setCurrent] = React.useState("");
   const regex = /analysis\/\d+\/(?<path>\w+)/;
+  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
+  const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
+  const handleMenu = (e) => setCurrent(e.key);
 
   React.useEffect(() => {
     const found = location.pathname.match(regex);
@@ -28,11 +31,7 @@ export default function AnalysisMenu({ type }) {
         setCurrent(type);
       }
     }
-  }, [location.pathname]);
-
-  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-  const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
-  const handleMenu = (e) => setCurrent(e.key);
+  }, [location.pathname, analysisContext.isCompleted]);
 
   return (
     <Menu

@@ -8,7 +8,7 @@
  */
 
 import { Button, Descriptions, Layout, Menu } from "antd";
-import React, { Suspense, useContext, useEffect, useState } from "react";
+import React, { Suspense, useContext } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 
@@ -40,19 +40,32 @@ const { Content, Sider } = Layout;
 export default function AnalysisError() {
   const location = useLocation();
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-  const [jobErrors, setJobErrors] = useState(null);
-  const [currActiveKey, setCurrActiveKey] = useState(1);
+  const [jobErrors, setJobErrors] = React.useState(null);
+  const [currActiveKey, setCurrActiveKey] = React.useState(1);
+  const [keyName, setKeyName] = React.useState("");
 
-  const DEFAULT_URL =
-    setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.ERROR);
-  const pathRegx = new RegExp(/([a-zA-Z\-]+)$/);
+  const DEFAULT_URL = setBaseUrl(
+    `/analysis/${analysisIdentifier}/` + ANALYSIS.ERROR
+  );
+
+  const pathRegex = /\/error\/(?<path>([\w-]+))/;
 
   // Sets the job errors into a local state variable on page load
-  useEffect(() => {
-    getJobErrors(analysisIdentifier).then(data => {
+  React.useEffect(() => {
+    getJobErrors(analysisIdentifier).then((data) => {
       setJobErrors(data);
     });
   }, []);
+
+  // Set the current active key for the error submenu
+  React.useEffect(() => {
+    const found = location.pathname.match(pathRegex);
+    if (found) {
+      setKeyName(found.groups.path);
+    } else {
+      setKeyName("job-error-info");
+    }
+  }, [location.pathname]);
 
   // Sets the current active key for the 'Pass' tabs
   function updateActiveKey(key) {
@@ -63,50 +76,37 @@ export default function AnalysisError() {
     jobErrors.galaxyJobErrors !== null ? (
       <Layout>
         <Sider width={200} style={{ backgroundColor: grey1 }}>
-          <Location>
-            {(props) => {
-              const keyname = props.location.pathname.match(pathRegx);
-              return (
-                <Menu
-                  mode="vertical"
-                  selectedKeys={[keyname ? keyname[1] : ERROR.JOB_ERROR_INFO]}
-                >
-                  <Menu.Item key="job-error-info">
-                    <Link to={`${DEFAULT_URL}/${ERROR.JOB_ERROR_INFO}`}>
-                      {i18n("AnalysisError.galaxyJobInfo")}
-                    </Link>
-                  </Menu.Item>
-                  {jobErrors.galaxyJobErrors[
-                    jobErrors.galaxyJobErrors.length - 1
-                  ].parameters ? (
-                    <Menu.Item key="galaxy-parameters">
-                      <Link to={`${DEFAULT_URL}/${ERROR.GALAXY_PARAMETERS}`}>
-                        {i18n("AnalysisError.galaxyParameters")}
-                      </Link>
-                    </Menu.Item>
-                  ) : null}
-                  {jobErrors.galaxyJobErrors[
-                    jobErrors.galaxyJobErrors.length - 1
-                  ].standardError ? (
-                    <Menu.Item key="standard-error">
-                      <Link to={`${DEFAULT_URL}/${ERROR.STANDARD_ERROR}`}>
-                        {i18n("AnalysisError.standardError")}
-                      </Link>
-                    </Menu.Item>
-                  ) : null}
-                  {jobErrors.galaxyJobErrors[
-                    jobErrors.galaxyJobErrors.length - 1
-                  ].standardOutput ? (
-                    <Menu.Item key="standard-out">
-                      <Link to={`${DEFAULT_URL}/${ERROR.STANDARD_OUT}`}>
-                        {i18n("AnalysisError.standardOutput")}
-                      </Link>
-                    </Menu.Item>
-                  ) : null}
-                </Menu>
-              );
-            }}
-          </Location>
+          <Menu mode="vertical" selectedKeys={[keyName]}>
+            <Menu.Item key="job-error-info">
+              <Link to={`${DEFAULT_URL}/${ERROR.JOB_ERROR_INFO}`}>
+                {i18n("AnalysisError.galaxyJobInfo")}
+              </Link>
+            </Menu.Item>
+            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
+              .parameters ? (
+              <Menu.Item key="galaxy-parameters">
+                <Link to={`${DEFAULT_URL}/${ERROR.GALAXY_PARAMETERS}`}>
+                  {i18n("AnalysisError.galaxyParameters")}
+                </Link>
+              </Menu.Item>
+            ) : null}
+            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
+              .standardError ? (
+              <Menu.Item key="standard-error">
+                <Link to={`${DEFAULT_URL}/${ERROR.STANDARD_ERROR}`}>
+                  {i18n("AnalysisError.standardError")}
+                </Link>
+              </Menu.Item>
+            ) : null}
+            {jobErrors.galaxyJobErrors[jobErrors.galaxyJobErrors.length - 1]
+              .standardOutput ? (
+              <Menu.Item key="standard-out">
+                <Link to={`${DEFAULT_URL}/${ERROR.STANDARD_OUT}`}>
+                  {i18n("AnalysisError.standardOutput")}
+                </Link>
+              </Menu.Item>
+            ) : null}
+          </Menu>
         </Sider>
 
         <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
@@ -151,6 +151,17 @@ export default function AnalysisError() {
                       currActiveKey={currActiveKey}
                       updateActiveKey={updateActiveKey}
                       galaxyJobErrors={jobErrors.galaxyJobErrors}
+                    />
+                  }
+                />
+                <Route
+                  path={"*"}
+                  element={
+                    <GalaxyJobInfoTab
+                      currActiveKey={currActiveKey}
+                      updateActiveKey={updateActiveKey}
+                      galaxyJobErrors={jobErrors.galaxyJobErrors}
+                      galaxyUrl={jobErrors.galaxyUrl}
                     />
                   }
                 />
