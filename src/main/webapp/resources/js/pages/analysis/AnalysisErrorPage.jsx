@@ -21,9 +21,6 @@ const AnalysisSamples = React.lazy(() =>
 const AnalysisSettingsContainer = React.lazy(() =>
   import("./components/settings/AnalysisSettingsContainer")
 );
-const AnalysisShare = React.lazy(() =>
-  import("./components/settings/AnalysisShare")
-);
 
 const { Item } = Menu;
 
@@ -75,9 +72,10 @@ export default function AnalysisErrorPage() {
           >
             <Route index element={<AnalysisDetails />} />
             <Route path="samples" element={<AnalysisSamples />} />
-            <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
+            <Route path="*" element={<AnalysisDetails />} />
           </Route>
+          <Route path={`${DEFAULT_URL}/*`} element={<AnalysisError />} />
         </Routes>
       </Suspense>
     </Space>

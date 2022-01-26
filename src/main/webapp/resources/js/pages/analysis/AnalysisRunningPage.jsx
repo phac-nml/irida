@@ -1,9 +1,8 @@
 import { Layout, Menu, Space } from "antd";
 import React, { useContext } from "react";
 import { Link, Route, Routes } from "react-router-dom";
-import { IconLoading } from "../../components/icons/Icons";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
-import { blue6, grey1 } from "../../styles/colors";
+import { grey1 } from "../../styles/colors";
 import { SPACE_LG } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { AnalysisSteps } from "./common/AnalysisSteps";
@@ -32,8 +31,7 @@ const { Item } = Menu;
  * @constructor
  */
 export default function AnalysisRunningPage() {
-  const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
-  const { analysisName } = analysisContext;
+  const { analysisIdentifier } = useContext(AnalysisContext);
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 
   return (
@@ -64,6 +62,7 @@ export default function AnalysisRunningPage() {
               <Route path="samples" element={<AnalysisSamples />} />
               <Route path="share" element={<AnalysisShare />} />
               <Route path="delete" element={<AnalysisDelete />} />
+              <Route path="*" element={<AnalysisDetails />} />
             </Route>
           </Routes>
         </Space>
