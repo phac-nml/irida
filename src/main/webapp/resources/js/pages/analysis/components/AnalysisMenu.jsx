@@ -42,30 +42,30 @@ export default function AnalysisMenu({ type }) {
     >
       {type === "sistr" && (
         <Item key="sistr">
-          <Link to={DEFAULT_URL}>{i18n("Analysis.sistr")}</Link>
+          <Link to={`${DEFAULT_URL}/${ANALYSIS.SISTR}`}>
+            {i18n("Analysis.sistr")}
+          </Link>
         </Item>
       )}
       {type === "biohansel" && (
         <Item key="biohansel">
-          <Link to={DEFAULT_URL}>{i18n("Analysis.biohansel")}</Link>
+          <Link to={`${DEFAULT_URL}/${ANALYSIS.BIOHANSEL}`}>
+            {i18n("Analysis.biohansel")}
+          </Link>
         </Item>
       )}
       {type === "tree" && analysisContext.treeDefault && (
         <Item key="tree">
-          <Link to={DEFAULT_URL}>{i18n("Analysis.phylogeneticTree")}</Link>
-        </Item>
-      )}
-      {type === "output" ? (
-        <Item key="output">
-          <Link to={DEFAULT_URL}>{i18n("Analysis.outputFiles")}</Link>
-        </Item>
-      ) : (
-        <Item key="output">
-          <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
-            {i18n("Analysis.outputFiles")}
+          <Link to={`${DEFAULT_URL}/${ANALYSIS.TREE}`}>
+            {i18n("Analysis.phylogeneticTree")}
           </Link>
         </Item>
       )}
+      <Item key="output">
+        <Link to={`${DEFAULT_URL}/${ANALYSIS.OUTPUT}`}>
+          {i18n("Analysis.outputFiles")}
+        </Link>
+      </Item>
       <Item key="provenance">
         <Link to={`${DEFAULT_URL}/${ANALYSIS.PROVENANCE}`}>
           {i18n("Analysis.provenance")}
