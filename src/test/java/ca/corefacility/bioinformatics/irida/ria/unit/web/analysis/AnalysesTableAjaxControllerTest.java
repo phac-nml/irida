@@ -51,7 +51,7 @@ public class AnalysesTableAjaxControllerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		/*
 		Set up all mocks here

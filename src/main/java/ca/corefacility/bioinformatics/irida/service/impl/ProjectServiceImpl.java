@@ -869,10 +869,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			private Predicate specificFiltersPredicate(final Root<Project> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
 				final List<Predicate> filterPredicates = new ArrayList<>();
-				if (!StringUtils.isEmpty(projectNameFilter)) {
+				if (StringUtils.hasLength(projectNameFilter)) {
 					filterPredicates.add(cb.like(root.get("name"), "%" + projectNameFilter + "%"));
 				}
-				if (!StringUtils.isEmpty(organismNameFilter)) {
+				if (StringUtils.hasLength(organismNameFilter)) {
 					filterPredicates.add(cb.like(root.get("organism"), "%" + organismNameFilter + "%"));
 				}
 

@@ -2,11 +2,11 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -49,7 +49,7 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		task = new ProjectEventEmailScheduledTaskImpl(userService, eventService, projectService, emailController);
 
@@ -157,7 +157,7 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 		verify(userService).getUsersWithEmailSubscriptions();
 
-		verifyZeroInteractions(eventService);
+		verifyNoInteractions(eventService);
 
 		verify(emailController, times(0)).sendSubscriptionUpdateEmail(any(User.class), any(List.class));
 	}

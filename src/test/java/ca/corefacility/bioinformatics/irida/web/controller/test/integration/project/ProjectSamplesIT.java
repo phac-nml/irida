@@ -16,19 +16,15 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -41,11 +37,11 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
-import static com.jayway.restassured.path.json.JsonPath.from;
+import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -53,8 +49,7 @@ import static org.junit.Assert.*;
  * Integration tests for project samples.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class, IridaApiServicesConfig.class })
+@SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @ActiveProfiles("it")
@@ -376,9 +371,9 @@ public class ProjectSamplesIT {
 
 		final Response r = asAdmin().expect()
 				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when()
 				.given()
 				.urlEncodingEnabled(false)
+				.when()
 				.get(projectSampleUri);
 		final String responseBody = r.getBody()
 				.asString();

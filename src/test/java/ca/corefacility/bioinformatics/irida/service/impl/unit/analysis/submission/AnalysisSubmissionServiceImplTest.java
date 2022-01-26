@@ -81,7 +81,7 @@ public class AnalysisSubmissionServiceImplTest {
 	 */
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository,
 				analysisTemplateRepository, userRepository, referenceFileRepository, sequencingObjectService,
