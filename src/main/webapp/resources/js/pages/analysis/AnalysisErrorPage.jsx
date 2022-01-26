@@ -52,7 +52,9 @@ export default function AnalysisErrorPage() {
       <AnalysisSteps />
       <Menu mode="horizontal" selectedKeys={[current]} onClick={handleMenu}>
         <Item key="error">
-          <Link to={DEFAULT_URL}>{i18n("Analysis.jobError")}</Link>
+          <Link to={`${DEFAULT_URL}/${ANALYSIS.ERROR}`}>
+            {i18n("Analysis.jobError")}
+          </Link>
         </Item>
         <Item key="settings">
           <Link to={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}`}>
@@ -63,6 +65,10 @@ export default function AnalysisErrorPage() {
       <Suspense fallback={<ContentLoading />}>
         <Routes>
           <Route path={DEFAULT_URL} element={<AnalysisError />} />
+          <Route
+            path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
+            element={<AnalysisError />}
+          />
           <Route
             path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}
             element={<AnalysisSettingsContainer />}
