@@ -20,10 +20,13 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 import ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -41,7 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @Tag("IntegrationTest") @Tag("UI")
 @ActiveProfiles("it")
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @DbUnitConfiguration(dataSetLoader = NullReplacementDatasetLoader.class)

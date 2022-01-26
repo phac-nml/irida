@@ -960,6 +960,7 @@
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
 				</exclude.test.listeners>
+				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>
 		<profile>
