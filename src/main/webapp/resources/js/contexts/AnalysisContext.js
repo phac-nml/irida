@@ -92,6 +92,7 @@ function AnalysisProvider(props) {
     getUpdatedDetails(analysisIdentifier)
       .then((res) => {
         updateAnalysisState(res.analysisState, res.previousState);
+        updateTreeDefault(res.treeDefault);
         updateAnalysisDuration(res.duration);
         /*
          * If the analysis has completed or errored we want to clear the interval
@@ -120,6 +121,17 @@ function AnalysisProvider(props) {
         return {
           ...analysisContext,
           duration: duration,
+        };
+      });
+    }
+  }
+
+  function updateTreeDefault(treeDefault) {
+    if (treeDefault !== analysisContext.treeDefault) {
+      setAnalysisContext((analysisContext) => {
+        return {
+          ...analysisContext,
+          treeDefault: treeDefault,
         };
       });
     }

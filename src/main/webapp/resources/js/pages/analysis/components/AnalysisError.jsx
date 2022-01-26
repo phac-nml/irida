@@ -7,20 +7,20 @@
  * required by the component encompassed within
  */
 
-import React, { Suspense, useContext, useEffect, useState } from "react";
 import { Button, Descriptions, Layout, Menu } from "antd";
-import { Link, Location, Router } from "@reach/router";
-import { AnalysisContext } from "../../../contexts/AnalysisContext";
+import React, { Suspense, useContext, useEffect, useState } from "react";
+import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { getJobErrors } from "../../../apis/analysis/analysis";
 
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { SPACE_MD } from "../../../styles/spacing";
-import { ANALYSIS, ERROR } from "../routes";
+import { Monospace } from "../../../components/typography";
+import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { grey1 } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { Monospace } from "../../../components/typography";
+import { ANALYSIS, ERROR } from "../routes";
 
 const GalaxyJobInfoTab = React.lazy(() =>
   import("./jobErrors/GalaxyJobInfoTab")
@@ -38,6 +38,7 @@ const StandardOutputTab = React.lazy(() =>
 const { Content, Sider } = Layout;
 
 export default function AnalysisError() {
+  const location = useLocation();
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const [jobErrors, setJobErrors] = useState(null);
   const [currActiveKey, setCurrActiveKey] = useState(1);
@@ -63,7 +64,7 @@ export default function AnalysisError() {
       <Layout>
         <Sider width={200} style={{ backgroundColor: grey1 }}>
           <Location>
-            {props => {
+            {(props) => {
               const keyname = props.location.pathname.match(pathRegx);
               return (
                 <Menu
@@ -111,34 +112,49 @@ export default function AnalysisError() {
         <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
           <Content>
             <Suspense fallback={<ContentLoading />}>
-              <Router>
-                <GalaxyJobInfoTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  galaxyUrl={jobErrors.galaxyUrl}
-                  path={`${DEFAULT_URL}/${ERROR.JOB_ERROR_INFO}`}
-                  default
+              <Routes>
+                <Route
+                  path={ERROR.JOB_ERROR_INFO}
+                  element={
+                    <GalaxyJobInfoTab
+                      currActiveKey={currActiveKey}
+                      updateActiveKey={updateActiveKey}
+                      galaxyJobErrors={jobErrors.galaxyJobErrors}
+                      galaxyUrl={jobErrors.galaxyUrl}
+                    />
+                  }
                 />
-                <GalaxyParametersTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${DEFAULT_URL}/${ERROR.GALAXY_PARAMETERS}`}
+                <Route
+                  path={ERROR.GALAXY_PARAMETERS}
+                  element={
+                    <GalaxyParametersTab
+                      currActiveKey={currActiveKey}
+                      updateActiveKey={updateActiveKey}
+                      galaxyJobErrors={jobErrors.galaxyJobErrors}
+                    />
+                  }
                 />
-                <StandardErrorTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${DEFAULT_URL}/${ERROR.STANDARD_ERROR}`}
+                <Route
+                  path={ERROR.STANDARD_ERROR}
+                  element={
+                    <StandardErrorTab
+                      currActiveKey={currActiveKey}
+                      updateActiveKey={updateActiveKey}
+                      galaxyJobErrors={jobErrors.galaxyJobErrors}
+                    />
+                  }
                 />
-                <StandardOutputTab
-                  currActiveKey={currActiveKey}
-                  updateActiveKey={updateActiveKey}
-                  galaxyJobErrors={jobErrors.galaxyJobErrors}
-                  path={`${DEFAULT_URL}/${ERROR.STANDARD_OUT}`}
+                <Route
+                  path={ERROR.STANDARD_OUT}
+                  element={
+                    <StandardOutputTab
+                      currActiveKey={currActiveKey}
+                      updateActiveKey={updateActiveKey}
+                      galaxyJobErrors={jobErrors.galaxyJobErrors}
+                    />
+                  }
                 />
-              </Router>
+              </Routes>
             </Suspense>
           </Content>
         </Layout>
@@ -148,9 +164,16 @@ export default function AnalysisError() {
         <div style={{ display: "flex" }}>
           <WarningAlert message={i18n("AnalysisError.noJobInfoAvailable")} />
         </div>
-        { analysisContext.isAdmin && jobErrors.galaxyHistoryId !== null ?
-          <div style={{ display: "flex", marginTop: SPACE_MD }} id="t-galaxy-history-id">
-            <Descriptions title={i18n("AnalysisError.galaxyInformation")} column={1} bordered={true}>
+        {analysisContext.isAdmin && jobErrors.galaxyHistoryId !== null ? (
+          <div
+            style={{ display: "flex", marginTop: SPACE_MD }}
+            id="t-galaxy-history-id"
+          >
+            <Descriptions
+              title={i18n("AnalysisError.galaxyInformation")}
+              column={1}
+              bordered={true}
+            >
               <Descriptions.Item label={i18n("AnalysisError.historyId")}>
                 <Button
                   type="link"
@@ -162,9 +185,8 @@ export default function AnalysisError() {
                 </Button>
               </Descriptions.Item>
             </Descriptions>
-        </div>
-          : null
-        }
+          </div>
+        ) : null}
       </div>
     )
   ) : (

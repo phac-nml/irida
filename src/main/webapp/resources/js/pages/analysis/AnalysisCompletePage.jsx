@@ -7,19 +7,36 @@ import { SPACE_LG } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import AnalysisMenu from "./components/AnalysisMenu";
 import { ANALYSIS } from "./routes";
+import { ContentLoading } from "../../components/loader";
 
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
 );
-const AnalysisOutputFiles = React.lazy(() => import("./components/AnalysisOutputFiles"));
-const AnalysisPhylogeneticTree = React.lazy(() => import("./components/AnalysisPhylogeneticTree"));
-const AnalysisProvenance = React.lazy(() => import("./components/AnalysisProvenance"));
+const AnalysisOutputFiles = React.lazy(() =>
+  import("./components/AnalysisOutputFiles")
+);
+const AnalysisPhylogeneticTree = React.lazy(() =>
+  import("./components/AnalysisPhylogeneticTree")
+);
+const AnalysisProvenance = React.lazy(() =>
+  import("./components/AnalysisProvenance")
+);
 const AnalysisSistr = React.lazy(() => import("./components/AnalysisSistr"));
-const AnalysisDelete = React.lazy(() => import("./components/settings/AnalysisDelete"));
-const AnalysisDetails = React.lazy(() => import("./components/settings/AnalysisDetails"));
-const AnalysisSamples = React.lazy(() => import("./components/settings/AnalysisSamples"));
-const AnalysisSettingsContainer = React.lazy(() => import("./components/settings/AnalysisSettingsContainer"));
-const AnalysisShare = React.lazy(() => import("./components/settings/AnalysisShare"));
+const AnalysisDelete = React.lazy(() =>
+  import("./components/settings/AnalysisDelete")
+);
+const AnalysisDetails = React.lazy(() =>
+  import("./components/settings/AnalysisDetails")
+);
+const AnalysisSamples = React.lazy(() =>
+  import("./components/settings/AnalysisSamples")
+);
+const AnalysisSettingsContainer = React.lazy(() =>
+  import("./components/settings/AnalysisSettingsContainer")
+);
+const AnalysisShare = React.lazy(() =>
+  import("./components/settings/AnalysisShare")
+);
 
 /**
  * React component to facilitate the nested routing needed for the complete
@@ -29,7 +46,7 @@ const AnalysisShare = React.lazy(() => import("./components/settings/AnalysisSha
 function AnalysisOutlet() {
   return (
     <AnalysisOutputsProvider>
-      <Suspense fallback={<div>LOADING</div>}>
+      <Suspense fallback={<ContentLoading />}>
         <Outlet />
       </Suspense>
     </AnalysisOutputsProvider>
@@ -76,7 +93,7 @@ export default function AnalysisCompletePage() {
     <Space
       direction="vertical"
       size="large"
-      style={{ width: `100%`, margin: SPACE_LG }}
+      style={{ width: `100%`, padding: SPACE_LG }}
     >
       <AnalysisMenu type={type} />
       <Routes>
@@ -84,6 +101,7 @@ export default function AnalysisCompletePage() {
           {type === "output" ? (
             <>
               <Route index element={<AnalysisOutputFiles />} />
+              <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
               <Route
                 path={ANALYSIS.PROVENANCE}
                 element={<AnalysisProvenance />}
@@ -91,6 +109,7 @@ export default function AnalysisCompletePage() {
             </>
           ) : (
             <>
+              <Route path={`sistr/*`} element={component} />
               <Route index element={component} />
               <Route
                 path={ANALYSIS.PROVENANCE}
@@ -107,7 +126,17 @@ export default function AnalysisCompletePage() {
             <Route path="samples" element={<AnalysisSamples />} />
             <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
+            <Route path="*" element={<AnalysisDetails />} />
           </Route>
+          {type === "output" ? (
+            <>
+              <Route path="*" element={<AnalysisOutputFiles />} />
+            </>
+          ) : (
+            <>
+              <Route path="*" element={component} />
+            </>
+          )}
         </Route>
       </Routes>
     </Space>

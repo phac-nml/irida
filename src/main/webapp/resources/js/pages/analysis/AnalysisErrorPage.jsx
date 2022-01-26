@@ -21,9 +21,6 @@ const AnalysisSamples = React.lazy(() =>
 const AnalysisSettingsContainer = React.lazy(() =>
   import("./components/settings/AnalysisSettingsContainer")
 );
-const AnalysisShare = React.lazy(() =>
-  import("./components/settings/AnalysisShare")
-);
 
 const { Item } = Menu;
 
@@ -52,7 +49,9 @@ export default function AnalysisErrorPage() {
       <AnalysisSteps />
       <Menu mode="horizontal" selectedKeys={[current]} onClick={handleMenu}>
         <Item key="error">
-          <Link to={DEFAULT_URL}>{i18n("Analysis.jobError")}</Link>
+          <Link to={`${DEFAULT_URL}/${ANALYSIS.ERROR}`}>
+            {i18n("Analysis.jobError")}
+          </Link>
         </Item>
         <Item key="settings">
           <Link to={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}`}>
@@ -64,14 +63,19 @@ export default function AnalysisErrorPage() {
         <Routes>
           <Route path={DEFAULT_URL} element={<AnalysisError />} />
           <Route
+            path={`${DEFAULT_URL}/${ANALYSIS.ERROR}/*`}
+            element={<AnalysisError />}
+          />
+          <Route
             path={`${DEFAULT_URL}/${ANALYSIS.SETTINGS}/`}
             element={<AnalysisSettingsContainer />}
           >
             <Route index element={<AnalysisDetails />} />
             <Route path="samples" element={<AnalysisSamples />} />
-            <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
+            <Route path="*" element={<AnalysisDetails />} />
           </Route>
+          <Route path={`${DEFAULT_URL}/*`} element={<AnalysisError />} />
         </Routes>
       </Suspense>
     </Space>
