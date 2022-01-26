@@ -136,7 +136,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 				page.downloadOutputFileButtonVisible(2));
 
 		// Has no output files
-		page = AnalysisDetailsPage.initPage(driver(), 10L, "");
+		page = AnalysisDetailsPage.initPage(driver(), 10L, "output");
 		assertTrue("Page title should equal", page.compareTabTitle("Output File Preview"));
 		assertEquals("There should be no output files", 0, page.getNumberOfFilesDisplayed());
 		assertEquals("Has a no output files alert", "No outputs available to display", page.getWarningAlertText());
@@ -297,7 +297,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
-		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
+		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
 		assertTrue("Page title should equal", page.compareTabTitle("Details"));
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/samples");
