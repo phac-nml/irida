@@ -1,13 +1,13 @@
 import { Space } from "antd";
 import React, { Suspense, useContext } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
+import { ContentLoading } from "../../components/loader";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../contexts/AnalysisOutputsContext";
 import { SPACE_LG } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import AnalysisMenu from "./components/AnalysisMenu";
 import { ANALYSIS } from "./routes";
-import { ContentLoading } from "../../components/loader";
 
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
@@ -109,7 +109,7 @@ export default function AnalysisCompletePage() {
             </>
           ) : (
             <>
-              <Route path={`sistr/*`} element={component} />
+              <Route path={`${ANALYSIS.SISTR}/*`} element={component} />
               <Route index element={component} />
               <Route
                 path={ANALYSIS.PROVENANCE}
