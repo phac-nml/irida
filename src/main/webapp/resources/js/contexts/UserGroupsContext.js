@@ -5,7 +5,7 @@
 
 import React from "react";
 import { deleteUserGroup } from "../apis/users/groups";
-import { navigate } from "@reach/router";
+import { useNavigate } from "react-router-dom";
 import { notification } from "antd";
 
 const initialContext = {};
