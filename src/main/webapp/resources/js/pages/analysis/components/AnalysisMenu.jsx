@@ -13,15 +13,22 @@ const { Item } = Menu;
  */
 export default function AnalysisMenu({ type }) {
   const location = useLocation();
-  const [current, setCurrent] = React.useState(() => {
-    if (type !== "output") return type;
-    const regex = /analysis\/\d+\/(?<path>\w+)/;
+  const [current, setCurrent] = React.useState("");
+  const regex = /analysis\/\d+\/(?<path>\w+)/;
+
+  React.useEffect(() => {
     const found = location.pathname.match(regex);
+
     if (found) {
-      return found.groups.path;
+      setCurrent(found.groups.path);
+    } else {
+      if (type === "output") {
+        setCurrent("output");
+      } else {
+        setCurrent(type);
+      }
     }
-    return "output";
-  });
+  }, [location.pathname]);
 
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
