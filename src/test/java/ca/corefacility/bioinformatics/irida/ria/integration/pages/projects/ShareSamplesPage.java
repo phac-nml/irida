@@ -26,6 +26,12 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-share-button")
 	private WebElement shareButton;
 
+	@FindBy(className = "t-share-previous")
+	private WebElement previousButton;
+
+	@FindBy(className = "t-share-next")
+	private WebElement nextButton;
+
 	@FindBy(className = "ant-result-success")
 	private WebElement successResult;
 
@@ -77,8 +83,16 @@ public class ShareSamplesPage {
 		return lockedSamples.size();
 	}
 
-	public boolean isShareButtonDisabled() {
+	public boolean isShareButtonEnabled() {
 		return shareButton.isEnabled();
+	}
+
+	public boolean isNextButtonDisabled() {
+		return nextButton.isEnabled();
+	}
+
+	public boolean isPreviousButtonEnabled() {
+		return previousButton.isEnabled();
 	}
 
 	public void submitShareRequest() {

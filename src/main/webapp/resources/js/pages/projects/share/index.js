@@ -5,14 +5,16 @@ import {
   Col,
   PageHeader,
   Row,
+  Skeleton,
   Space,
   Steps,
-  Skeleton,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
-import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
+import {
+  useGetPotentialProjectsToShareToQuery
+} from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -200,8 +202,12 @@ function ShareApp() {
                               {i18n("ShareButton.button")}
                             </Button>
                           ) : (
-                            <Button disabled={nextDisabled} onClick={nextStep}>
-                              Next
+                            <Button
+                              className="t-share-next"
+                              disabled={nextDisabled}
+                              onClick={nextStep}
+                            >
+                              {i18n("ShareLayout.next")}
                             </Button>
                           )}
                         </div>

@@ -21,11 +21,10 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		// SHARING SINGLE SAMPLE
 
 		addOneSample();
-		Assert.assertFalse("Share button should be disabled without a project selected",
-				shareSamplesPage.isShareButtonDisabled());
+		Assert.f
 		shareSamplesPage.searchForProject("project2");
 		Assert.assertTrue("Share button should be enabled after selecting a project",
-				shareSamplesPage.isShareButtonDisabled());
+				shareSamplesPage.isShareButtonEnabled());
 		shareSamplesPage.submitShareRequest();
 		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
 		Assert.assertEquals("Successfully Shared 1 Sample", shareSamplesPage.getSuccessTitle());
@@ -34,7 +33,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 
 		addMultipleSamples();
 		Assert.assertFalse("Share button should be disabled without a project selected",
-				shareSamplesPage.isShareButtonDisabled());
+				shareSamplesPage.isShareButtonEnabled());
 		shareSamplesPage.searchForProject("project2");
 		Assert.assertTrue("Should display a warning that some samples cannot be copied",
 				shareSamplesPage.isSomeSamplesWarningDisplayed());
@@ -48,10 +47,10 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 
 		addOneSample();
 		Assert.assertFalse("Share button should be disabled without a project selected",
-				shareSamplesPage.isShareButtonDisabled());
+				shareSamplesPage.isShareButtonEnabled());
 		shareSamplesPage.searchForProject("project4");
 		Assert.assertTrue("Share button should be enabled after selecting a project",
-				shareSamplesPage.isShareButtonDisabled());
+				shareSamplesPage.isShareButtonEnabled());
 		shareSamplesPage.selectMoveCheckbox();
 		shareSamplesPage.submitShareRequest();
 		Assert.assertTrue("Success result should be displayed", shareSamplesPage.isSuccessResultDisplayed());
@@ -61,10 +60,10 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 
 		addMultipleSamples();
 		Assert.assertFalse("Share button should be disabled without a project selected",
-				shareSamplesPage.isShareButtonDisabled());
+				shareSamplesPage.isShareButtonEnabled());
 		shareSamplesPage.searchForProject("project2");
 		Assert.assertTrue("Share button should be enabled after selecting a project",
-				shareSamplesPage.isShareButtonDisabled());
+				shareSamplesPage.isShareButtonEnabled());
 
 		Assert.assertEquals("Should be 4 samples displayed", 4, shareSamplesPage.getNumberOfSamplesDisplayed());
 
