@@ -1,7 +1,7 @@
 import React from "react";
 
 import { render } from "react-dom";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import FastQC from "./components/FastQC";
 import FastQCCharts from "./components/FastQCCharts";
@@ -18,16 +18,20 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
 function App() {
-  const [path, route] = getRootPath(location.pathname);
+  const location = useLocation();
+  let [path, route] = getRootPath(location.pathname);
+
+  React.useEffect(() => {
+    [path, route] = getRootPath(location.pathname);
+  }, [location.pathname]);
 
   return (
     <Routes>
       <Route path={path} element={<FastQC current={route} />}>
+        <Route index element={<FastQCCharts />} />
         <Route path="overrepresented" element={<OverRepresentedSequences />} />
         <Route path="details" element={<FastQCDetails />} />
-        <Route path="charts" element={<FastQCCharts />} />
-        <Route path="summary" element={<FastQCCharts />} />
-        <Route index element={<FastQCCharts />} />
+        <Route path="*" element={<FastQCCharts />} />
       </Route>
     </Routes>
   );

@@ -63,7 +63,6 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [current, setCurrent] = React.useState(location.pathname);
   const [fromGalaxy, setFromGalaxy] = React.useState(
     () => typeof window.GALAXY !== "undefined"
   );
@@ -75,7 +74,6 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
     }
 
     if (fromGalaxy) {
-      setCurrent("galaxy");
       /*
       If this is within a galaxy session, the user has the opportunity to remove the session
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
@@ -96,9 +94,8 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
       <MenuWrapper>
         <Menu
           mode="horizontal"
-          selectedKeys={[current]}
+          selectedKeys={[location.pathname]}
           style={{ borderBottom: BORDERED_LIGHT }}
-          onClick={(e) => setCurrent(e.key)}
         >
           {fromGalaxy && (
             <Menu.Item key="/cart/galaxy">
