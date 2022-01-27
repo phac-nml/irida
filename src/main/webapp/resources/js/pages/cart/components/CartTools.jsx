@@ -74,7 +74,6 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
     }
 
     if (fromGalaxy) {
-      setCurrent("galaxy");
       /*
       If this is within a galaxy session, the user has the opportunity to remove the session
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
