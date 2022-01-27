@@ -126,6 +126,7 @@ export default function AnalysisCompletePage() {
             path={ANALYSIS.SETTINGS}
             element={<AnalysisSettingsContainer />}
           >
+            <Route index element={<AnalysisDetails />} />
             <Route path="samples" element={<AnalysisSamples />} />
             <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
