@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 
@@ -34,7 +33,6 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 	private final UserRepository userRepository;
 	private final ProjectUserJoinRepository pujRepository;
 	private final UserGroupProjectJoinRepository ugpjRepository;
-	private final UserGroupJoinRepository ugRepository;
 
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
@@ -43,17 +41,14 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 	 * @param userRepository    the user repository.
 	 * @param pujRepository     the project user join repository.
 	 * @param ugpjRepository    the user group/project join repository
-	 * @param ugRepository      The user group repository
 	 */
 	@Autowired
 	public ReadProjectPermission(final ProjectRepository projectRepository, final UserRepository userRepository,
-			final ProjectUserJoinRepository pujRepository, final UserGroupProjectJoinRepository ugpjRepository,
-			final UserGroupJoinRepository ugRepository) {
+			final ProjectUserJoinRepository pujRepository, final UserGroupProjectJoinRepository ugpjRepository) {
 		super(Project.class, Long.class, projectRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.ugpjRepository = ugpjRepository;
-		this.ugRepository = ugRepository;
 	}
 
 	/**

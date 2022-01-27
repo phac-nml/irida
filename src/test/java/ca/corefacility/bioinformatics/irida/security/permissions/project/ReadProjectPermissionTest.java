@@ -12,8 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,9 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
 import com.google.common.collect.ImmutableList;
 
@@ -49,7 +45,6 @@ public class ReadProjectPermissionTest {
 	private ProjectRepository projectRepository;
 	private ProjectUserJoinRepository pujRepository;
 	private UserGroupProjectJoinRepository ugpjRepository;
-	private UserGroupJoinRepository ugRepository;
 
 	@Before
 	public void setUp() {
@@ -57,9 +52,8 @@ public class ReadProjectPermissionTest {
 		projectRepository = mock(ProjectRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
-		ugRepository = mock(UserGroupJoinRepository.class);
 		readProjectPermission = new ReadProjectPermission(projectRepository, userRepository, pujRepository,
-				ugpjRepository, ugRepository);
+				ugpjRepository);
 	}
 
 	@Test
@@ -68,12 +62,11 @@ public class ReadProjectPermissionTest {
 		User u = new User();
 		u.setUsername(username);
 		Project p = new Project();
-		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_USER));
+		ProjectUserJoin projectUser = new ProjectUserJoin(p, u, ProjectRole.PROJECT_USER);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));
-		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
+		when(pujRepository.getProjectJoinForUser(p, u)).thenReturn(projectUser);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -81,7 +74,7 @@ public class ReadProjectPermissionTest {
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);
-		verify(pujRepository).getUsersForProject(p);
+		verify(pujRepository).getProjectJoinForUser(p, u);
 	}
 
 	@Test
@@ -90,13 +83,11 @@ public class ReadProjectPermissionTest {
 		User u = new User();
 		u.setUsername(username);
 		Project p = new Project();
-		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, new User(), ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));
-		when(pujRepository.getUsersForProject(p)).thenReturn(projectUsers);
-		when(ugpjRepository.findGroupsByProject(p)).thenReturn(ImmutableList.of());
+		when(pujRepository.getProjectJoinForUser(p, u)).thenReturn(null);
+		when(ugpjRepository.findGroupsForProjectAndUser(p, u)).thenReturn(ImmutableList.of());
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -104,8 +95,8 @@ public class ReadProjectPermissionTest {
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);
-		verify(pujRepository).getUsersForProject(p);
-		verifyNoInteractions(ugRepository);
+		verify(pujRepository).getProjectJoinForUser(p, u);
+		verify(ugpjRepository).findGroupsForProjectAndUser(p, u);
 	}
 
 	@Test
@@ -129,15 +120,14 @@ public class ReadProjectPermissionTest {
 		u.setUsername(username);
 		final Project p = new Project();
 		final UserGroup g = new UserGroup("The group");
+
 		final List<UserGroupProjectJoin> projectGroups = new ArrayList<>();
 		projectGroups.add(new UserGroupProjectJoin(p, g, ProjectRole.PROJECT_USER));
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(projectRepository.findById(1L)).thenReturn(Optional.of(p));
-		when(pujRepository.getUsersForProject(p)).thenReturn(ImmutableList.of());
-		when(ugpjRepository.findGroupsByProject(p)).thenReturn(projectGroups);
-		when(ugRepository.findUsersInGroup(g))
-				.thenReturn(ImmutableList.of(new UserGroupJoin(u, g, UserGroupJoin.UserGroupRole.GROUP_MEMBER)));
+		when(pujRepository.getProjectJoinForUser(p, u)).thenReturn(null);
+		when(ugpjRepository.findGroupsForProjectAndUser(p, u)).thenReturn(projectGroups);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
@@ -145,6 +135,7 @@ public class ReadProjectPermissionTest {
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);
-		verify(pujRepository).getUsersForProject(p);
+		verify(pujRepository).getProjectJoinForUser(p, u);
+		verify(ugpjRepository).findGroupsForProjectAndUser(p, u);
 	}
 }
