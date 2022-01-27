@@ -16,19 +16,25 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
+
 import io.restassured.response.Response;
 
 /**
@@ -36,14 +42,18 @@ import io.restassured.response.Response;
  * 
  */
 @Tag("IntegrationTest") @Tag("Rest")
-@SpringBootTest
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectIT {
 
 	private static final String PROJECTS = "/api/projects";
+
+	@Autowired
+	private LocalHostUriTemplateHandler uriTemplateHandler;
 
 	/**
 	 * If I try to issue a create request for an object with an invalid field
@@ -75,7 +85,7 @@ public class ProjectIT {
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location, "Project location must not be null");
-		assertTrue(location.startsWith(ITestSystemProperties.BASE_URL + "/api/projects/"));
+		assertTrue(location.startsWith(uriTemplateHandler.getRootUri() + "/api/projects/"));
 		String responseBody = asUser().get(location).asString();
 		assertTrue(r.asString().equals(responseBody), "Result of POST must equal result of GET");
 		String projectUsersLocation = from(responseBody).get("resource.links.find{it.rel=='project/users'}.href");
@@ -117,9 +127,9 @@ public class ProjectIT {
 
 	@Test
 	public void testDeleteProject() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectUri = "/api/projects/5";
 		asUser().expect().body("resource.links.rel", hasItems("collection")).and()
-				.body("resource.links.href", hasItems(ITestSystemProperties.BASE_URL + "/api/projects")).when().delete(projectUri);
+				.body("resource.links.href", hasItems(uriTemplateHandler.getRootUri() + "/api/projects")).when().delete(projectUri);
 	}
 
 	/**
@@ -130,7 +140,7 @@ public class ProjectIT {
 	 */
 	@Test
 	public void verifyExistenceOfProjectWithHEAD() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectUri = "/api/projects/5";
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
 		asUser().given().header("Accept", MediaType.JSON_UTF_8.toString()).expect().statusCode(HttpStatus.OK.value())
 				.when().head(projectUri);

@@ -17,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
@@ -24,18 +27,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils;
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
+
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
@@ -48,10 +52,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration tests for project samples.
  */
 @Tag("IntegrationTest") @Tag("Rest")
-@SpringBootTest
+@ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
-@ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectSamplesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectSamplesIT {
@@ -61,6 +66,8 @@ public class ProjectSamplesIT {
 	SampleService sampleService;
 	@Autowired
 	ProjectService projectService;
+	@Autowired
+	LocalHostUriTemplateHandler uriTemplateHandler;
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
@@ -86,7 +93,7 @@ public class ProjectSamplesIT {
 				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location, "Location should not be null.");
-		assertEquals(ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location,
+		assertEquals(uriTemplateHandler.getRootUri() + "/api/projects/4/samples/1", location,
 				"The project/sample location uses the wrong sample ID.");
 
 		Project project = projectService.read(projectId);
@@ -123,7 +130,7 @@ public class ProjectSamplesIT {
 				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location, "Location should not be null.");
-		assertEquals(ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location,
+		assertEquals(uriTemplateHandler.getRootUri() + "/api/projects/4/samples/1", location,
 				"The project/sample location uses the wrong sample ID.");
 
 		Project project = projectService.read(projectId);
@@ -216,7 +223,7 @@ public class ProjectSamplesIT {
 		sample.put("sequencerSampleId", "sample_1");
 
 		// load a project
-		String projectUri = "/api/projects/1";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/1";
 		// get the uri for creating samples associated with the project.
 		String projectJson = asUser().get(projectUri)
 				.asString();
@@ -234,12 +241,12 @@ public class ProjectSamplesIT {
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue(location.matches("^" + ITestSystemProperties.BASE_URL + "/api/samples/[0-9]+$"));
+		assertTrue(location.matches("^" + uriTemplateHandler.getRootUri() + "/api/samples/[0-9]+$"));
 	}
 
 	@Test
 	public void testDeleteSampleFromProject() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/4";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/4";
 
 		// load the project
 		String projectJson = asUser().get(projectUri)
@@ -278,7 +285,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testUpdateProjectSample() {
-		String projectSampleUri = ITestSystemProperties.BASE_URL + "/api/samples/1";
+		String projectSampleUri = uriTemplateHandler.getRootUri() + "/api/samples/1";
 		Map<String, String> updatedFields = new HashMap<>();
 		String updatedName = "Totally-different-sample-name";
 		updatedFields.put("sampleName", updatedName);
@@ -299,7 +306,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testUpdateProjectSampleCollectionDate() {
-		String projectSampleUri = ITestSystemProperties.BASE_URL + "/api/samples/1";
+		String projectSampleUri = uriTemplateHandler.getRootUri() + "/api/samples/1";
 		Map<String, String> updatedFields = new HashMap<>();
 		String badDate = "x-y-z";
 		updatedFields.put("collectionDate", badDate);
@@ -332,7 +339,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleAsAdmin() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		asAdmin().expect()
@@ -343,7 +350,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleCollectionDate() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		asAdmin().expect()
@@ -354,7 +361,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleCollectionDate2() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/3";
 
 		asAdmin().expect()
@@ -365,7 +372,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleAsAdminWithDoubledUpSlashes() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api//projects/5";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api//projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		final Response r = asAdmin().expect()
@@ -386,7 +393,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleAsSequencer() {
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		asSequencer().expect()
