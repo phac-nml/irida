@@ -80,6 +80,7 @@ render(
           path={setBaseUrl("/projects/:projectId/analyses/*")}
           element={<ProjectAnalyses />}
         >
+          <Route index element={<ProjectAnalysesPage />} />
           <Route path="project-analyses" element={<ProjectAnalysesPage />} />
           <Route
             path="shared-outputs"
@@ -89,6 +90,7 @@ render(
             path="automated-outputs"
             element={<AutomatedSingleSampleAnalysisOutputs />}
           />
+          <Route path="*" element={<ProjectAnalysesPage />} />
         </Route>
       </Routes>
     </Provider>
