@@ -77,7 +77,7 @@
 		<dropForeignKeyConstraint baseTableName="sequence_file_pair_files"
 			constraintName="FK_SEQUENCE_FILE_PAIR_FILES_PAIR" />
 
-		<dropForeignKeyConstraint baseTableName="ncbi_export_biosample_sequence_file_pair "
+		<dropForeignKeyConstraint baseTableName="ncbi_export_biosample_sequence_file_pair"
 			constraintName="FK_NCBI_SUBMISSION_PAIR_FILE_PAIR" />
 
 		<!-- Redefine id for SequenceFilePair so that it doesn't auto increment -->

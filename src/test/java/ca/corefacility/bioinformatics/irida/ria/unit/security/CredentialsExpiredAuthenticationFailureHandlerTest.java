@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.security;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 		AuthenticationException exception = new DisabledException("disabled");
 
 		handler.onAuthenticationFailure(request, response, exception);
-		verifyZeroInteractions(userService);
-		verifyZeroInteractions(resetService);
+		verifyNoInteractions(userService);
+		verifyNoInteractions(resetService);
 	}
 }

@@ -51,6 +51,8 @@ public class LineListControllerTest {
 	@Test
 	public void testGetProjectMetadataTemplateFields() {
 		long projectId = 1L;
+		Project project = new Project("p1");
+		when(projectService.read(anyLong())).thenReturn(project);
 		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
 		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));

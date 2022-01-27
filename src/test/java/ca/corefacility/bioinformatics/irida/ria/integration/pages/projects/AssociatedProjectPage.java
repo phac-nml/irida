@@ -24,7 +24,7 @@ public class AssociatedProjectPage extends AbstractPage {
 	}
 
 	public static AssociatedProjectPage goToPage(WebDriver driver, Long id) {
-		get(driver, "/projects/" + id + "/settings/associated");
+		get(driver, "projects/" + id + "/settings/associated");
 		return PageFactory.initElements(driver, AssociatedProjectPage.class);
 	}
 

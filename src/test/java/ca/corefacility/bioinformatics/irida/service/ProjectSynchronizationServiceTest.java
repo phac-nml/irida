@@ -34,7 +34,7 @@ import com.google.common.collect.Maps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ProjectSynchronizationServiceTest {
@@ -75,7 +75,7 @@ public class ProjectSynchronizationServiceTest {
 
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		syncService = new ProjectSynchronizationService(projectService, sampleService, objectService,
 				metadataTemplateService, assemblyService, projectRemoteService, sampleRemoteService, singleEndRemoteService,
@@ -167,7 +167,7 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(projectService, times(2)).update(any(Project.class));
 		verify(projectRemoteService).getProjectHash(remoteProject);
-		verifyZeroInteractions(sampleRemoteService);
+		verifyNoInteractions(sampleRemoteService);
 		assertNull((remoteProject).getDefaultMetadataTemplate());
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());

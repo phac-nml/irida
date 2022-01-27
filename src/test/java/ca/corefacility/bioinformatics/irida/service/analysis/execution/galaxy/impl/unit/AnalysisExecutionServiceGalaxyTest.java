@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.i
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -127,7 +127,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
 			NoSuchValueException, IridaWorkflowAnalysisTypeException, AnalysisAlreadySetException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		String submissionName = "name";
 		Set<SequencingObject> submissionInputFiles = Sets.newHashSet(new SingleEndSequenceFile(new SequenceFile()));

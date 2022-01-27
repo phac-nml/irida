@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.security.permissions.analysis;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
@@ -80,7 +80,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 	 */
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
 				userRepository, sequencingObjectRepository, seqObjectPermission, pasRepository, readProjectPermission);
@@ -133,7 +133,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, analysisSubmission));
 
 		verify(userRepository).loadUserByUsername(username);
-		verifyZeroInteractions(analysisSubmissionRepository);
+		verifyNoInteractions(analysisSubmissionRepository);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class ReadAnalysisSubmissionPermissionTest {
 		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(userRepository);
+		verifyNoInteractions(userRepository);
 	}
 
 	@Test

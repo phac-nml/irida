@@ -93,9 +93,9 @@ In this case, it's a bit more difficult to find the Galaxy History id. We will h
 If you log into the machine running the IRIDA instance, you can find the database connection details in the `/etc/irida/irida.conf` file. For example:
 
 ```
-jdbc.url=jdbc:mysql://localhost:3306/irida_test
-jdbc.username=test
-jdbc.password=test
+spring.datasource.url=jdbc:mysql://localhost:3306/irida_test
+spring.datasource.username=test
+spring.datasource.password=test
 ```
 
 This tells us the database software is running on the machine `localhost` and we want to use the database named **irida_test**, with username **test** and password **test**.

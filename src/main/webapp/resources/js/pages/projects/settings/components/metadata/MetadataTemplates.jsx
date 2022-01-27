@@ -1,4 +1,3 @@
-import { Link } from "@reach/router";
 import {
   Button,
   Empty,
@@ -10,6 +9,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
@@ -45,19 +45,21 @@ const HoverItem = styled(List.Item)`
 /**
  * Component to display all metadata templates associated with a project.
  *
- * @param projectId
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MetadataTemplates({ projectId }) {
+export default function MetadataTemplates() {
+  const { projectId } = useParams();
+  const baseUrl = setBaseUrl(
+    `/projects/${projectId}/settings/metadata/templates`
+  );
   const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
   const [templates, setTemplates] = React.useState([]);
 
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
 
-  const { data: existingTemplates, isLoading } = useGetTemplatesForProjectQuery(
-    projectId
-  );
+  const { data: existingTemplates, isLoading } =
+    useGetTemplatesForProjectQuery(projectId);
   const [deleteMetadataTemplate] = useDeleteTemplateMutation();
   const [updateDefaultTemplate] = useUpdateDefaultMetadataTemplateMutation();
 
@@ -206,7 +208,7 @@ export default function MetadataTemplates({ projectId }) {
                       <Link
                         className="t-t-name"
                         style={{ color: blue6, display: "block" }}
-                        to={`${item.identifier}`}
+                        to={`${baseUrl}/${item.identifier}`}
                       >
                         {item.name}
                       </Link>

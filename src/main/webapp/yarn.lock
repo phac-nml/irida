@@ -38,13 +38,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons-svg@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "@ant-design/icons-svg@npm:4.1.0"
-  checksum: c875e9692c65afd21d2c072fc4a6469bfe9d0a983a331eacea14c4e5e404ce1c24da1389dfb441f9db99318ac3f39445d5115cca13f7e3fe5c3ba25884058536
-  languageName: node
-  linkType: hard
-
 "@ant-design/icons-svg@npm:^4.2.1":
   version: 4.2.1
   resolution: "@ant-design/icons-svg@npm:4.2.1"
@@ -52,22 +45,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:^4.6.2":
-  version: 4.6.2
-  resolution: "@ant-design/icons@npm:4.6.2"
-  dependencies:
-    "@ant-design/colors": ^6.0.0
-    "@ant-design/icons-svg": ^4.0.0
-    "@babel/runtime": ^7.11.2
-    classnames: ^2.2.6
-    rc-util: ^5.9.4
-  peerDependencies:
-    react: ">=16.0.0"
-  checksum: 970104dff18be13bb05214a048f185adad8adfc897122ac358dcdc56e9cba0f1b154fac4f9535773c8788e1f58bb7906413cbf66845f6d62deb55cca56a64845
-  languageName: node
-  linkType: hard
-
-"@ant-design/icons@npm:^4.6.3":
+"@ant-design/icons@npm:^4.6.3, @ant-design/icons@npm:^4.7.0":
   version: 4.7.0
   resolution: "@ant-design/icons@npm:4.7.0"
   dependencies:
@@ -3144,15 +3122,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"angular-marked@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "angular-marked@npm:1.2.2"
-  dependencies:
-    marked: ^0.3.3
-  checksum: 11088b1ccdb092b55947051fb41be40dd569b67140d2ac7889635ebb01455b48346d9f8ad712bd07ee39936a27949d9e70ceb13d3819f920b58a68862374d36c
-  languageName: node
-  linkType: hard
-
 "angular-ui-bootstrap@npm:^2.5.6":
   version: 2.5.6
   resolution: "angular-ui-bootstrap@npm:2.5.6"
@@ -3543,12 +3512,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.21.1":
-  version: 0.21.1
-  resolution: "axios@npm:0.21.1"
+"axios@npm:^0.21.2":
+  version: 0.21.4
+  resolution: "axios@npm:0.21.4"
   dependencies:
-    follow-redirects: ^1.10.0
-  checksum: c87915fa0b18c15c63350112b6b3563a3e2ae524d7707de0a73d2e065e0d30c5d3da8563037bc29d4cc1b7424b5a350cb7274fa52525c6c04a615fe561c6ab11
+    follow-redirects: ^1.14.0
+  checksum: 44245f24ac971e7458f3120c92f9d66d1fc695e8b97019139de5b0cc65d9b8104647db01e5f46917728edfc0cfd88eb30fc4c55e6053eef4ace76768ce95ff3c
   languageName: node
   linkType: hard
 
@@ -5032,110 +5001,59 @@ __metadata:
   languageName: node
   linkType: hard
 
-"datatables.net-bs@npm:^1.10.15, datatables.net-bs@npm:^1.10.19":
-  version: 1.10.24
-  resolution: "datatables.net-bs@npm:1.10.24"
+"datatables.net-bs@npm:>=1.11.3, datatables.net-bs@npm:^1.11.3":
+  version: 1.11.3
+  resolution: "datatables.net-bs@npm:1.11.3"
   dependencies:
-    datatables.net: 1.10.24
+    datatables.net: ">=1.10.25"
     jquery: ">=1.7"
-  checksum: 6a4e9d78b3099d883d9f4d421cef2d18c38f333ac8d11973dd2bf012f370e0357e24e45c95da2a7c4238e244b8aa902d2abfdf3134440b280dc1d1cb9dca3121
+  checksum: 2cc430428da4cd60e3df95945fea9a2d1df5cacf3d6e1a51c30ee3d6d564aa57e0a5c320aa9fa6322b7ec56a61c36ea595cd45cde058e229c3f054950131d007
   languageName: node
   linkType: hard
 
-"datatables.net-buttons-bs@npm:^1.5.4":
-  version: 1.7.0
-  resolution: "datatables.net-buttons-bs@npm:1.7.0"
+"datatables.net-buttons-bs@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "datatables.net-buttons-bs@npm:2.2.1"
   dependencies:
-    datatables.net-bs: ^1.10.15
-    datatables.net-buttons: 1.7.0
+    datatables.net-bs: ">=1.11.3"
+    datatables.net-buttons: ">=2.0.1"
     jquery: ">=1.7"
-  checksum: 4a54fd15269f6c5f5751027c020e4abd3fbee5a4ec18dfaad79d1b213ee3eeace53ae1d47c7bf3d8cf8b0eb7bfb41ac116d148c00e163d18e1dbdf6e8e44955e
+  checksum: 685fe8cf9f2b4adb861cc8712d57fbefc09bfaf805c628d03594acaa311d2ae73638e427923843fd02bca4d91cb0fde95249cb1aab4e796351ed039c159bb9a9
   languageName: node
   linkType: hard
 
-"datatables.net-buttons@npm:1.7.0, datatables.net-buttons@npm:^1.5.4":
-  version: 1.7.0
-  resolution: "datatables.net-buttons@npm:1.7.0"
+"datatables.net-buttons@npm:>=2.0.1, datatables.net-buttons@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "datatables.net-buttons@npm:2.2.1"
   dependencies:
-    datatables.net: ^1.10.15
+    datatables.net: ">=1.11.3"
     jquery: ">=1.7"
-  checksum: 470f9170edca09542dffe41ff8217f21f9ac3c70eb5f03f2403452c3bb4e9823ddc9784463ad5036ff2d34412736b96091f74133f6674d6c661e640f2c62d8ce
+  checksum: 17696cfa6871c227fcc8de5f9ff9669187dd8888f642d0ff51bf56fcc906223a720b499da90a6d541403a70e615b1e7459ff985b4fe2c4308080c7afc34fef84
   languageName: node
   linkType: hard
 
-"datatables.net-colreorder-bs@npm:^1.5.1":
-  version: 1.5.3
-  resolution: "datatables.net-colreorder-bs@npm:1.5.3"
+"datatables.net-fixedcolumns-bs@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "datatables.net-fixedcolumns-bs@npm:4.0.1"
   dependencies:
-    datatables.net-bs: ^1.10.15
-    datatables.net-colreorder: 1.5.3
+    datatables.net-bs: ">=1.11.3"
+    datatables.net-fixedcolumns: ">=4.0.0"
     jquery: ">=1.7"
-  checksum: a28a5f1bcdabe149ac84ab90d3b821c129e4d9d841294f2258d2f27436790eaa358f79934a2c1b0a781073a07389d312d7818f37f92199be53abdf957a835dd1
+  checksum: ea5f7dc60cc9a9c18ff62fdaf8874bf2b1d3ba392ca6ef4df32245726bc19ee415d4676fe1d993d4d70d30e152041bbd2392f6208f09097418221e8b71ccb33c
   languageName: node
   linkType: hard
 
-"datatables.net-colreorder@npm:1.5.3, datatables.net-colreorder@npm:^1.5.1":
-  version: 1.5.3
-  resolution: "datatables.net-colreorder@npm:1.5.3"
+"datatables.net-fixedcolumns@npm:>=4.0.0, datatables.net-fixedcolumns@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "datatables.net-fixedcolumns@npm:4.0.1"
   dependencies:
-    datatables.net: ^1.10.15
+    datatables.net: ">=1.11.3"
     jquery: ">=1.7"
-  checksum: 5958f8f629d2a1e617f9d48ff04207b493dc310e49547eefd5cebe354f00bbc9e8dade76a886ebd27a7c38d0324e89e29671ad494a900ca3ebb3da1f1e7fce01
+  checksum: d6981a78538b2f49bf90ac8a92f5aded480ead8e98ffceb9726e043556a8de2e1a242c95e23174c0e7a28dada784c3d60c1b5bb9908d91859cfda07e561a678d
   languageName: node
   linkType: hard
 
-"datatables.net-fixedcolumns-bs@npm:^3.2.6":
-  version: 3.3.2
-  resolution: "datatables.net-fixedcolumns-bs@npm:3.3.2"
-  dependencies:
-    datatables.net-bs: ^1.10.15
-    datatables.net-fixedcolumns: 3.3.2
-    jquery: ">=1.7"
-  checksum: 45c07a7eb056fd7ff5fdf796e96fe17dbf4bac6af614e60f0c9365fbbb64ed3cfd00f98dd901e0de249f44cabf3dbd846bb7a49352368e8f91b4210923c59ab5
-  languageName: node
-  linkType: hard
-
-"datatables.net-fixedcolumns@npm:3.3.2, datatables.net-fixedcolumns@npm:^3.2.6":
-  version: 3.3.2
-  resolution: "datatables.net-fixedcolumns@npm:3.3.2"
-  dependencies:
-    datatables.net: ^1.10.15
-    jquery: ">=1.7"
-  checksum: 7225bb51ada84f8b17adc1f46d875db7ab037254277f8285ad5d2a02a2ab2435c3a44b163be7949e7b37c4038a6be8af2387694f2d60a2550ce92f2e3d7f59fc
-  languageName: node
-  linkType: hard
-
-"datatables.net-scroller-bs@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "datatables.net-scroller-bs@npm:1.5.1"
-  dependencies:
-    datatables.net-bs: ^1.10.15
-    datatables.net-scroller: 1.5.1
-    jquery: ">=1.7"
-  checksum: 62340e5a3a7c3c8f701c67083ecf78ab28d6578a56d871637d0cd58e1d57328f662d355f1e98027dec172b4ab479f8de512fe77824baea2e304c18e07291a784
-  languageName: node
-  linkType: hard
-
-"datatables.net-scroller@npm:1.5.1, datatables.net-scroller@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "datatables.net-scroller@npm:1.5.1"
-  dependencies:
-    datatables.net: ^1.10.15
-    jquery: ">=1.7"
-  checksum: 7fa85ed2fa2fa5629dd2604f95907262e5bc0106cc96e4ccd6c7d5574376be8ff9b4cf177dd02072d9142c4adeddff9555dcffb5f0dab3b14c2961505c1322a1
-  languageName: node
-  linkType: hard
-
-"datatables.net@npm:1.10.24, datatables.net@npm:^1.10.15":
-  version: 1.10.24
-  resolution: "datatables.net@npm:1.10.24"
-  dependencies:
-    jquery: ">=1.7"
-  checksum: 7ca575a769aac10684e839aed254433f5a66bb5f116e5e8f7fab671bd6df596b9708ede57ce605003c9ae54bf3c3f70f52b41030a3a634518975519059540a0c
-  languageName: node
-  linkType: hard
-
-"datatables.net@npm:^1.11.3":
+"datatables.net@npm:>=1.10.25, datatables.net@npm:>=1.11.3, datatables.net@npm:^1.11.3":
   version: 1.11.3
   resolution: "datatables.net@npm:1.11.3"
   dependencies:
@@ -6245,13 +6163,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.10.0":
-  version: 1.13.3
-  resolution: "follow-redirects@npm:1.13.3"
+"follow-redirects@npm:^1.14.0":
+  version: 1.14.7
+  resolution: "follow-redirects@npm:1.14.7"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 4b5aaa91a0f938547a083d001a572da4d6b7586b699f330da8794ae2cf8b0d8628bcde794f9b205fbe6c6dcab30272454e723aed8f5540bf47a41fa8c7e36441
+  checksum: f6d03e5e30877431065bca0d1b2e3db93949eb799d368a5c07ea8a4b71205f0349a3f8f0191bf13a07c93885522834dca1dc8e527dc99a772c6911fba24edc5f
   languageName: node
   linkType: hard
 
@@ -7053,7 +6971,7 @@ fsevents@^2.1.2:
   resolution: "irida-ui@workspace:."
   dependencies:
     "@ant-design/charts": ^1.1.1
-    "@ant-design/icons": ^4.6.2
+    "@ant-design/icons": ^4.7.0
     "@antv/color-util": ^2.0.6
     "@antv/matrix-util": ^3.0.4
     "@antv/path-util": ^2.0.9
@@ -7080,12 +6998,11 @@ fsevents@^2.1.2:
     ag-grid-react: ^22.1.1
     angular: 1.8.0
     angular-aside: ^1.3.2
-    angular-marked: ^1.2.2
     angular-ui-bootstrap: ^2.5.6
     angular-ui-router: 1.0.0-alpha.4
     antd: 4.16.13
     autoprefixer: ^10.2.4
-    axios: ^0.21.1
+    axios: ^0.21.2
     babel-loader: ^8.2.2
     babel-plugin-import: ^1.13.3
     bootstrap: 3.4.1
@@ -7096,15 +7013,11 @@ fsevents@^2.1.2:
     css-loader: ^5.0.1
     css-minimizer-webpack-plugin: ^1.2.0
     datatables.net: ^1.11.3
-    datatables.net-bs: ^1.10.19
-    datatables.net-buttons: ^1.5.4
-    datatables.net-buttons-bs: ^1.5.4
-    datatables.net-colreorder: ^1.5.1
-    datatables.net-colreorder-bs: ^1.5.1
-    datatables.net-fixedcolumns: ^3.2.6
-    datatables.net-fixedcolumns-bs: ^3.2.6
-    datatables.net-scroller: ^1.5.1
-    datatables.net-scroller-bs: ^1.5.1
+    datatables.net-bs: ^1.11.3
+    datatables.net-buttons: ^2.2.1
+    datatables.net-buttons-bs: ^2.2.1
+    datatables.net-fixedcolumns: ^4.0.1
+    datatables.net-fixedcolumns-bs: ^4.0.1
     dayjs: ^1.8.27
     eslint: ^7.22.0
     eslint-config-prettier: ^8.1.0
@@ -7117,11 +7030,10 @@ fsevents@^2.1.2:
     jest: ^26.6.3
     jquery: 3.5.1
     jquery-validation: ^1.19.3
-    jszip: ^3.1.3
+    jszip: ^3.7.0
     less: ^4.1.1
     less-loader: ^8.0.0
     lodash: ^4.17.21
-    marked: ^3.0.8
     mini-css-extract-plugin: ^1.3.5
     moment: ^2.24.0
     ng-file-upload: ^12.2.12
@@ -8355,15 +8267,15 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"jszip@npm:^3.1.3":
-  version: 3.6.0
-  resolution: "jszip@npm:3.6.0"
+"jszip@npm:^3.7.0":
+  version: 3.7.1
+  resolution: "jszip@npm:3.7.1"
   dependencies:
     lie: ~3.3.0
     pako: ~1.0.2
     readable-stream: ~2.3.6
     set-immediate-shim: ~1.0.1
-  checksum: dd82d93fa5c6a22e83d3393c86442a58f9e7effad1a3171abcf504901f3d9d6d618fb9a5ac7b0ceeee2abc15a167298101b5ada1e153ab8301bcfd80b3605f07
+  checksum: 67d737a82b294cc102e7451e32d5acbbab29860399be460cae598084327e6f2ea0c9bca2d3dad701da6a75ddf77f34c6a1dd7db0c3d5c0fec5998b7e56d6d59d
   languageName: node
   linkType: hard
 
@@ -8770,24 +8682,6 @@ fsevents@^2.1.2:
   version: 1.0.4
   resolution: "markdown-escapes@npm:1.0.4"
   checksum: 6833a93d72d3f70a500658872312c6fa8015c20cc835a85ae6901fa232683fbc6ed7118ebe920fea7c80039a560f339c026597d96eee0e9de602a36921804997
-  languageName: node
-  linkType: hard
-
-"marked@npm:^0.3.3":
-  version: 0.3.19
-  resolution: "marked@npm:0.3.19"
-  bin:
-    marked: ./bin/marked
-  checksum: 8567a1b82538e714959bbdb66408cfc805c258b94d87f0a0e76e8ca1d2c8fbc22f11f15dcc14b20b4be6e21e9b206c9085563d71c3941ea8dc61cec529d941bc
-  languageName: node
-  linkType: hard
-
-"marked@npm:^3.0.8":
-  version: 3.0.8
-  resolution: "marked@npm:3.0.8"
-  bin:
-    marked: bin/marked
-  checksum: 3cdeaa126bbeca5b1b8d2f91e9728018dcd63b250233f3607009a4d70bb6bd9df8c769f1bc52ce9856d1316c91c9dacb1d94d80696f76d094146b4fab126a4eb
   languageName: node
   linkType: hard
 

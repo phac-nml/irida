@@ -7,8 +7,6 @@
 
 	<changeSet id="sample-sequencingobject" author="tom">
 
-		<validCheckSum>7:dc5edf7e83bce7650a6a12d81048ef8f</validCheckSum>
-		<validCheckSum>7:6f832717697f7095ad53978d328b9317</validCheckSum>
 		<!-- Create the join tables -->
 		<createTable tableName="sample_sequencingobject">
 			<column name="id" type="bigint(20)" autoIncrement="true">
@@ -50,7 +48,7 @@
 			sequencingobject_id, created_date) SELECT DISTINCT ss.sample_id,
 			p.pair_id, MIN(ss.createdDate) FROM sequencefile_sample ss INNER JOIN
 			sequence_file_pair_files p ON p.files_id=ss.sequencefile_id GROUP BY
-			p.pair_id;
+			p.pair_id, ss.sample_id;
 		</sql>
 
 		<!-- Add single files to sample_sequencingobject -->
@@ -80,7 +78,7 @@
 			pf.pair_id=ss.sequencingobject_id INNER
 			JOIN sequencefile_sample_AUD
 			ssa ON ssa.sequencefile_id=pf.files_id
-			GROUP BY ss.id
+			GROUP BY ss.id, ssa.id, ssa.REV
 		</sql>
 
 		<!-- Add single end sample_seqobject_AUD data -->
@@ -97,7 +95,7 @@
 			ON pf.id=ss.sequencingobject_id INNER
 			JOIN sequencefile_sample_AUD ssa
 			ON ssa.sequencefile_id=pf.file_id
-			GROUP BY ss.id
+			GROUP BY ss.id, ssa.id, ssa.REV
 		</sql>
 
 		<!-- Drop sequencefile_sample -->
