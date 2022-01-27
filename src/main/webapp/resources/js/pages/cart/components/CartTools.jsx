@@ -96,7 +96,6 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
           mode="horizontal"
           selectedKeys={[location.pathname]}
           style={{ borderBottom: BORDERED_LIGHT }}
-          onClick={(e) => setCurrent(e.key)}
         >
           {fromGalaxy && (
             <Menu.Item key="/cart/galaxy">
