@@ -59,7 +59,7 @@ public abstract class ModifyProjectPermission extends BasePermission<Project,Lon
 
 		for (Join<Project, User> projectUser : projectUsers) {
 			if (projectUser.getObject().equals(u)) {
-				logger.info("Permission GRANTED for [" + authentication + "] on project [" + p + "]");//todo change to trace
+				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p + "]");
 				// this user is an owner for the project.
 				return true;
 			}
@@ -71,13 +71,12 @@ public abstract class ModifyProjectPermission extends BasePermission<Project,Lon
 		final Collection<UserGroupProjectJoin> ugpjCollection = ugpjRepository.findGroupsForProjectAndUser(p, u);
 		for (final UserGroupProjectJoin group : ugpjCollection) {
 			if (group.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
-				logger.info("Permission GRANTED for [" + authentication + "] on project [" + p
-						+ "] by group membership in [" + group.getLabel() + "]");//todo change to trace
-				return true;
+				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p
+						+ "] by group membership in [" + group.getLabel() + "]");
 			}
 		}
 
-		logger.info("Permission DENIED for [" + authentication + "] on project [" + p + "]");//todo chagne to trace
+		logger.trace("Permission DENIED for [" + authentication + "] on project [" + p + "]");
 		return false;
 	}
 }
