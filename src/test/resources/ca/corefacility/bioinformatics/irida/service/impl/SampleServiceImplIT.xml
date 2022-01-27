@@ -22,6 +22,12 @@
 		projectDescription="description2" remoteURL="somewhere"  />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
 		projectDescription="description3" remoteURL="somewhere"  />
+
+	<project id="6" name="project" projectDescription="project"
+			 createdDate="2013-07-18 14:20:19.0"  />
+	<project id="7" name="project2" projectDescription="project"
+			 createdDate="2013-07-18 14:20:19.0"  />
+
 	<project_user id="1" createdDate="2013-07-18 14:20:19.0"
 				  projectRole="PROJECT_OWNER" project_id="1" user_id="1"
 				  email_subscription="false" metadataRole="LEVEL_4"/>
@@ -42,6 +48,10 @@
 		sampleName="sample4" organism="org3" />
 	<sample id="5" createdDate="2013-05-18 14:20:19.0" description="description5"
 		sampleName="sample5" organism="org3" />
+	<sample id="6" sampleName="sample"
+			createdDate="2013-07-18 14:20:19.0" />
+	<sample id="7" sampleName="sample"
+			createdDate="2013-07-18 14:20:19.0" />
 	<sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
 		sampleName="sample8" organism="org3" />
 	<sample id="9" createdDate="2013-05-18 14:20:19.0" description="description5"
@@ -57,6 +67,10 @@
 		project_id="2" sample_id="4" owner="true" />
 	<project_sample id="5" createdDate="2013-07-18 14:20:19.0"
 		project_id="3" sample_id="5" owner="true" />
+	<project_sample id="6" createdDate="2013-07-18 14:20:19.0"
+					project_id="6" sample_id="6" owner="true" />
+	<project_sample id="7" createdDate="2013-07-18 14:20:19.0"
+					project_id="7" sample_id="7" owner="true" />
 	<project_sample id="8" createdDate="2013-07-18 14:20:19.0"
 		project_id="2" sample_id="8" owner="true" />
 	<project_sample id="9" createdDate="2013-07-18 14:20:19.0"
@@ -218,6 +232,7 @@
 	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
 		sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry" />
 
+
 	<metadata_field id="1" label="field1" type="text" DTYPE="MetadataTemplateField"/>
 	<metadata_field id="2" label="field2" type="text" DTYPE="MetadataTemplateField"/>
 
@@ -225,4 +240,5 @@
 	<metadata_entry id="2" value="entry2" type="text" field_id="2" sample_id="1"/>
 
 	<metadata_restriction id="1" level="LEVEL_4" field_id="2" project_id="1"/>
+
 </dataset>

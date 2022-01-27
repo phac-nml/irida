@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class ReadProjectPermissionTest {
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);
 		verify(pujRepository).getUsersForProject(p);
-		verifyZeroInteractions(ugRepository);
+		verifyNoInteractions(ugRepository);
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class ReadProjectPermissionTest {
 		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
 
 		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(userRepository);
+		verifyNoInteractions(userRepository);
 	}
 
 	@Test

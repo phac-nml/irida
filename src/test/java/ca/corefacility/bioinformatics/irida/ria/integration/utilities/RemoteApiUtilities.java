@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 public class RemoteApiUtilities {
 	protected static final String BASE_URL =
-			System.getProperty("server.base.url", "http://localhost:" + System.getProperty("jetty.port", "8080")) + "/";
+			System.getProperty("server.base.url", "http://localhost:" + System.getProperty("server.port", "8080")) + "/";
 
 	public static void addRemoteApi(WebDriver driver, String clientId, String clientSecret) {
 		CreateRemoteAPIPage page = new CreateRemoteAPIPage(driver);

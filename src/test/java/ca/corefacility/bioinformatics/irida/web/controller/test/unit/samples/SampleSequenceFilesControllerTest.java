@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResou
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -245,7 +245,7 @@ public class SampleSequenceFilesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
@@ -256,7 +256,7 @@ public class SampleSequenceFilesControllerTest {
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService).createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s));
+				ArgumentMatchers.eq(s));
 
 		SequenceFile sfr = responseResource.getResource();
 		assertNotNull("sequence file must not be null", sfr);
@@ -294,7 +294,7 @@ public class SampleSequenceFilesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
@@ -318,7 +318,7 @@ public class SampleSequenceFilesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
@@ -362,7 +362,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
@@ -372,7 +372,7 @@ public class SampleSequenceFilesControllerTest {
 				resource1, mmf2, resource2, response);
 
 		verify(sampleService).read(s.getId());
-		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s));
+		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), ArgumentMatchers.eq(s));
 
 		SequenceFilePair returnVal = (SequenceFilePair) responseResource.getResource();
 		assertNotNull("sequence file pair should not be null", returnVal);
@@ -433,7 +433,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
 	}
 
@@ -459,7 +459,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
@@ -489,7 +489,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 

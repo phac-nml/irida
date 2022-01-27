@@ -48,7 +48,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 	}
 
 	public void removeUserGroups(int row) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, 4);
 		removeButtons.get(row).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-confirm")));
 		WebElement removeConfirm = driver.findElement(By.className("t-remove-confirm"));

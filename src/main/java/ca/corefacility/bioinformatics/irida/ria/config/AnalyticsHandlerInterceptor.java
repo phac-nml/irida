@@ -3,13 +3,13 @@ package ca.corefacility.bioinformatics.irida.ria.config;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
  * Interceptor to add analytics to every page.
  */
-public class AnalyticsHandlerInterceptor extends HandlerInterceptorAdapter {
+public class AnalyticsHandlerInterceptor implements AsyncHandlerInterceptor {
 	private final String analytics;
 
 	public AnalyticsHandlerInterceptor(String analyticsString) {

@@ -1,5 +1,6 @@
 import { Button, Form, notification, Space, Typography } from "antd";
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   getRemoteProjectSyncSettings,
   updateRemoteProjectSyncSettings,
@@ -17,7 +18,8 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ProjectSynchronizationSettings({ projectId }) {
+export default function ProjectSynchronizationSettings() {
+  const { projectId } = useParams();
   const syncNowEnabledStates = [
     "ERROR",
     "SYNCHRONIZED",

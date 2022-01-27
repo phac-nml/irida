@@ -92,6 +92,8 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public void clickConnect() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementToBeClickable(remoteStatusConnect));
 		remoteStatusConnect.click();
 
 	}

@@ -22,7 +22,7 @@ const jsonExtSet = new Set(["json"]);
 const tabExtSet = new Set(["tab", "tsv", "tabular", "csv"]);
 const excelFileExtSet = new Set(["xlsx"]);
 const imageFileExtSet = new Set(["png", "jpeg", "jpg"]);
-const htmlFileExtSet = new Set(["html"]);
+const htmlFileExtSet = new Set(["html", "html-zip"]);
 
 function AnalysisOutputsProvider(props) {
   const [analysisOutputsContext, setAnalysisOutputsContext] = useState(

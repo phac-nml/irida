@@ -62,7 +62,7 @@ import com.google.common.collect.Lists;
  */
 @Controller
 public class ProjectSamplesController {
-	// From configuration.properties
+	// From application.properties
 	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
 	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
 
