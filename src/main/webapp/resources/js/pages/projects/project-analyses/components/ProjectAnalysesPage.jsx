@@ -27,8 +27,8 @@ export default function ProjectAnalysesPage() {
     <PagedTableProvider url={PROJECT_ANALYSES_URL}>
       <Title level={2}>{i18n("ProjectAnalysesPage.title")}</Title>
       <AnalysesTableProvider>
-        <AnalysesTable canManage={project.canManage}/>
+        <AnalysesTable canManage={project.canManage} />
       </AnalysesTableProvider>
     </PagedTableProvider>
   );
-};
+}

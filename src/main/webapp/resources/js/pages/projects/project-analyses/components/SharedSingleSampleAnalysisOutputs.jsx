@@ -18,10 +18,8 @@ const { Title } = Typography;
 
 export default function SharedSingleSampleAnalysisOutputs() {
   const { projectId } = useParams();
-  const {
-    data: sharedSingleSampleAnalysisOutputs = {},
-    isLoading,
-  } = useGetSharedSingleSampleAnalysisOutputsQuery(projectId);
+  const { data: sharedSingleSampleAnalysisOutputs = {}, isLoading } =
+    useGetSharedSingleSampleAnalysisOutputsQuery(projectId);
 
   return (
     <>
@@ -33,4 +31,4 @@ export default function SharedSingleSampleAnalysisOutputs() {
       />
     </>
   );
-};
+}

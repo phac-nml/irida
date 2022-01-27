@@ -16,10 +16,8 @@ const { Title } = Typography;
 
 export default function AutomatedSingleSampleAnalysisOutputs() {
   const { projectId } = useParams();
-  const {
-    data: automatedSingleSampleAnalysisOutputs = {},
-    isLoading,
-  } = useGetAutomatedSingleSampleAnalysisOutputsQuery(projectId);
+  const { data: automatedSingleSampleAnalysisOutputs = {}, isLoading } =
+    useGetAutomatedSingleSampleAnalysisOutputsQuery(projectId);
 
   return (
     <>
