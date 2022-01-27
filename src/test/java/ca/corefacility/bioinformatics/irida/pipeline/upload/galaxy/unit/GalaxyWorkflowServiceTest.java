@@ -52,7 +52,7 @@ public class GalaxyWorkflowServiceTest {
 	 */
 	@Before
 	public void setup() throws URISyntaxException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		
 		galaxyWorkflowService = new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 		

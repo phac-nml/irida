@@ -8,6 +8,7 @@ import {
 import { HelpPopover } from "../../../../../components/popovers";
 import { useTableSelect } from "../../../../../hooks";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
+import { useParams } from "react-router-dom";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -15,7 +16,8 @@ import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
  * @param {number} projectId - Identifier for the current project
  * @returns {JSX.Element|string}
  */
-export default function MetadataFieldsListManager({ projectId }) {
+export default function MetadataFieldsListManager() {
+  const { projectId } = useParams();
   const [restrictions, setRestrictions] = React.useState([]);
   const {
     data: fields,

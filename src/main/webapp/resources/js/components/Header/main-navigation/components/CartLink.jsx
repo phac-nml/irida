@@ -1,10 +1,12 @@
+import { Badge, Button } from "antd";
 import React from "react";
-import { IconShoppingCart } from "../../../icons/Icons";
-import { Badge } from "antd";
+import { getCartCount } from "../../../../apis/cart/cart";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { getCartCount } from "../../../../apis/cart/cart";
+import { IconShoppingCart } from "../../../icons/Icons";
 import { theme } from "../../../../utilities/theme-utilities";
+
+const textColor = theme === "dark" ? "#fff" : "#222";
 
 /**
  * React component to display the cart icon and current counts in the
@@ -36,17 +38,14 @@ export function CartLink() {
   }, []);
 
   return (
-    <a
-      className="t-cart-count"
-      data-count={count}
-      href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
-    >
-      <Badge count={count}>
-        <IconShoppingCart
-          style={theme === "dark" ? { color: "rgba(255, 255, 255, 0.65)" } : {}}
-          data-count={count}
-        />
-      </Badge>
-    </a>
+    <Badge count={count}>
+      <Button
+        type="link"
+        className="t-cart-count"
+        href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
+        icon={<IconShoppingCart data-count={count} />}
+        style={{ color: textColor }}
+      />
+    </Badge>
   );
 }

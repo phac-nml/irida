@@ -1,6 +1,6 @@
-import { navigate } from "@reach/router";
 import { Form, Input, Modal, notification, Typography } from "antd";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   useCreateMetadataTemplateMutation,
   useGetTemplatesForProjectQuery,
@@ -21,6 +21,7 @@ const { Text } = Typography;
  * @constructor
  */
 export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
+  const navigate = useNavigate();
   const [createMetadataTemplate] = useCreateMetadataTemplateMutation();
   const [names, setNames] = React.useState(undefined);
   const [visible, setVisible] = React.useState(false);
@@ -63,7 +64,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         form.resetFields(Object.keys(values));
         setVisible(false);
         refetchTemplates();
-        navigate(`templates/${template.identifier}`);
+        navigate(
+          `/projects/${projectId}/settings/metadata/templates/${template.identifier}`
+        );
       })
       .catch(({ data }) => notification.info({ message: data.error }));
   };

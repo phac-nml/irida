@@ -279,7 +279,7 @@ public class ClientsController extends BaseController {
 								Maps.newHashMap(), Maps.newHashMap(),
 								messageSource.getMessage("client.redirect.required", null, locale),
 								IridaClientDetails.class, readClient, null, null,
-								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null, null)));
+								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null)));
 			} else {
 
 				clientDetailsService.update(readClient);
@@ -385,7 +385,7 @@ public class ClientsController extends BaseController {
 								Maps.newHashMap(), Maps.newHashMap(),
 								messageSource.getMessage("client.redirect.required", null, locale),
 								IridaClientDetails.class, client, null, null,
-								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null, null)));
+								PathImpl.createPathFromString("registeredRedirectUri"), null, null, null)));
 			} else {
 
 				IridaClientDetails create = clientDetailsService.create(client);

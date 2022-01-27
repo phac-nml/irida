@@ -1,28 +1,36 @@
 package ca.corefacility.bioinformatics.irida.config.data;
 
 import liquibase.integration.spring.SpringLiquibase;
-import org.apache.commons.dbcp2.BasicDataSource;
+import liquibase.integration.spring.SpringResourceAccessor;
+
 import org.hibernate.cfg.AvailableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.init.ScriptException;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
  * Configuration for IRIDA's JDBC Datasource
  */
 @Configuration
-public class IridaApiJdbcDataSourceConfig implements DataConfig {
+@EntityScan(basePackages = {
+	"ca.corefacility.bioinformatics.irida.model",
+	"ca.corefacility.bioinformatics.irida.repositories.relational.auditing"
+})
+public class IridaApiJdbcDataSourceConfig {
 
 	@Autowired
 	Environment environment;
@@ -43,17 +51,17 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		}
 
 		@Override
-		protected SpringResourceOpener createResourceOpener() {
-			return new ApplicationContextSpringResourceOpener(getChangeLog());
+		protected SpringResourceAccessor createResourceOpener() {
+			return new ApplicationContextSpringResourceOpener(getResourceLoader());
 		}
 		
 		/**
 		 * Custom SpringResourceOpener that gives access to the application context.
 		 *
 		 */
-		public class ApplicationContextSpringResourceOpener extends SpringResourceOpener {
-			public ApplicationContextSpringResourceOpener(final String parentFile) {
-				super(parentFile);
+		public class ApplicationContextSpringResourceOpener extends SpringResourceAccessor {
+			public ApplicationContextSpringResourceOpener(final ResourceLoader resourceLoader) {
+				super(resourceLoader);
 			}
 			
 			public ApplicationContext getApplicationContext() {
@@ -84,8 +92,9 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		final String importFiles = environment.getProperty(AvailableSettings.HBM2DDL_IMPORT_FILES);
 		final String hbm2ddlAuto = environment.getProperty(AvailableSettings.HBM2DDL_AUTO);
 		Boolean liquibaseShouldRun = environment.getProperty("liquibase.update.database.schema", Boolean.class);
+		Boolean fixLiquibaseChangeSetFilenames = environment.getProperty("fix.liquibase.changeset.filenames", Boolean.class, true);
 
-		if (!StringUtils.isEmpty(importFiles) || !StringUtils.isEmpty(hbm2ddlAuto)) {
+		if (StringUtils.hasLength(importFiles) || StringUtils.hasLength(hbm2ddlAuto)) {
 			logger.debug("Running hibernate -> not importing SQL file or running Liquibase.");
 			if (liquibaseShouldRun) {
 				// log that we're disabling liquibase regardless of what was
@@ -100,60 +109,31 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 			}
 			liquibaseShouldRun = Boolean.FALSE;
 		}
+		
+		if (liquibaseShouldRun && fixLiquibaseChangeSetFilenames) {
+			logger.info("Removing 'classpath:' prefix from FILENAME column in DATABASECHANGELOG table.");
+			fixLiquibaseChangeSetFilenames(dataSource);
+		}
 
 		springLiquibase.setShouldRun(liquibaseShouldRun);
-		springLiquibase.setIgnoreClasspathPrefix(true);
 
 		return springLiquibase;
 	}
 
-	@Bean
-	public DataSource dataSource() {
-		BasicDataSource basicDataSource = new BasicDataSource();
-
-		basicDataSource.setDriverClassName(environment.getProperty("jdbc.driver"));
-		basicDataSource.setUrl(environment.getProperty("jdbc.url"));
-		basicDataSource.setUsername(environment.getProperty("jdbc.username"));
-		basicDataSource.setPassword(environment.getProperty("jdbc.password"));
-		basicDataSource.setInitialSize(environment.getProperty("jdbc.pool.initialSize", Integer.class));
-		basicDataSource.setMaxTotal(environment.getProperty("jdbc.pool.maxActive", Integer.class));
-		basicDataSource.setMaxWaitMillis(environment.getProperty("jdbc.pool.maxWait", Long.class));
-		basicDataSource.setTestOnBorrow(environment.getProperty("jdbc.pool.testOnBorrow", Boolean.class));
-		basicDataSource.setTestOnReturn(environment.getProperty("jdbc.pool.testOnReturn", Boolean.class));
-		basicDataSource.setTestWhileIdle(environment.getProperty("jdbc.pool.testWhileIdle", Boolean.class));
-		basicDataSource.setValidationQuery(environment.getProperty("jdbc.pool.validationQuery"));
-
-		logger.debug("database maxWaitMillis [" + basicDataSource.getMaxWaitMillis() + "]");
-
-		return basicDataSource;
-	}
-
-	@Bean
-	public JpaVendorAdapter jpaVendorAdapter() {
-		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setShowSql(false);
-		adapter.setGenerateDdl(true);
-		adapter.setDatabase(Database.MYSQL);
-		return adapter;
-	}
-
-	@Bean
-	public Properties getJpaProperties() {
-		Properties properties = new Properties();
-		properties.setProperty(AvailableSettings.DIALECT, environment.getProperty(AvailableSettings.DIALECT));
-		properties.setProperty(AvailableSettings.HBM2DDL_AUTO, environment.getProperty(AvailableSettings.HBM2DDL_AUTO));
-
-		// if import_files is empty it tries to load any properties file it can
-		// find. Stopping this here.
-		String importFiles = environment.getProperty(AvailableSettings.HBM2DDL_IMPORT_FILES);
-
-		if (!StringUtils.isEmpty(importFiles)) {
-			properties.setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, importFiles);
-		}
-
-		properties.setProperty("org.hibernate.envers.store_data_at_delete",
-				environment.getProperty("org.hibernate.envers.store_data_at_delete"));
-		properties.setProperty("show_sql", "false");
-		return properties;
+	/**
+	 * Method to execute sql before liquibase initializes DB to strip `classpath:`
+	 * prefix from FILENAME column in DATABASECHANGELOG table. Fixes issue where
+	 * liquibase 3.5.1 was including prefix when run through spring but not via
+	 * command line. (https://liquibase.jira.com/browse/CORE-2766)
+	 * 
+	 * @param dataSource
+	 * @throws ScriptException
+	 */
+	private void fixLiquibaseChangeSetFilenames(DataSource dataSource) throws ScriptException {
+		ResourceLoader resourceLoader = new DefaultResourceLoader();
+		Resource sqlScript = resourceLoader.getResource("classpath:ca/corefacility/bioinformatics/irida/sql/fix-liquibase-changeset-filenames.sql");
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator(sqlScript);
+		populator.setSeparator("^;");
+		DatabasePopulatorUtils.execute(populator, dataSource);
 	}
 }

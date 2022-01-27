@@ -3,11 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletOutputStream;
@@ -18,6 +21,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -41,6 +45,7 @@ public class FileUtilities {
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
 	public static final String CONTENT_TYPE_TEXT = "text/plain";
 	public static final String EXTENSION_ZIP = ".zip";
+	public static final String EXTENSION_HTML_ZIP = ".html.zip";
 	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)$");
 
 	/**
@@ -147,13 +152,8 @@ public class FileUtilities {
 					throw new FileNotFoundException("File '" + file.getFile().toFile().getAbsolutePath() + "' does not exist!");
 				}
 				// 1) Build a folder/file name
-				// building similar filename for each analysis output file as:
-				// resources/js/pages/projects/project-analysis-outputs.js#downloadSelected
-				String outputFilename = file.getFile()
-						.getFileName()
-						.toString();
 				// trying to pack as much useful info into the filename as possible!
-				outputFilename = outputInfo.getSampleName() + "-sampleId-" + outputInfo.getSampleId() + "-analysisSubmissionId-" + outputInfo.getAnalysisSubmissionId() + "-" + outputFilename;
+				String outputFilename = getUniqueFilename(file.getFile(), outputInfo.getSampleName(), outputInfo.getSampleId(), + outputInfo.getAnalysisSubmissionId());
 				// 2) Tell the zip stream that we are starting a new entry in
 				// the archive.
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
@@ -236,20 +236,56 @@ public class FileUtilities {
 	}
 
 	/**
-	 * Get file extension from filename.
+	 * Get file extension from filepath.
 	 * <p>
 	 * Uses simple regex to parse file extension {@code ^.*\.(\w+)$}.
 	 *
-	 * @param filename Filename
+	 * @param filepath The {@link Path} of a file to retrieve ext.
 	 * @return File extension if found; otherwise empty string
 	 */
-	public static String getFileExt(String filename) {
-		Matcher matcher = regexExt.matcher(filename);
+	public static String getFileExt(Path filepath) {
+		Matcher matcher = regexExt.matcher(filepath.getFileName().toString());
 		String ext = "";
 		if (matcher.matches()) {
-			ext = matcher.group(1);
+			ext = matcher.group(1).toLowerCase();
 		}
-		return ext.toLowerCase();
+		if (ext.equals("html")) {
+			try {
+				if (isZippedFile(filepath)) {
+					ext = "html-zip";
+				}
+			} catch (IOException e) {
+				logger.error("Could not find file " + filepath.toString());
+			}
+		}
+		if (ext.equals("zip") && filepath.getFileName().toString().endsWith(EXTENSION_HTML_ZIP)) {
+			ext = "html-zip";
+		}
+
+		return ext;
+	}
+
+	/**
+	 * Get a unique filename for a filePath from an analysis output file.
+	 *
+	 * @param filePath The {@link Path} of the file to generate a unique filename for
+	 * @param sampleName The name of the {@link Sample} associated with the analysis
+	 * @param sampleId The id of the {@link Sample} associated with the analysis
+	 * @param analysisSubmissionId The id of the {@link AnalysisSubmission} that generated the file
+	 * @return Unique filename of the format SAMPLENAME-sampleId-SAMPLEID-analysisSubmissionId-ANALYSISSUBMISSIONID-ORIGFILENAME
+	 */
+	public static String getUniqueFilename(Path filePath, String sampleName, Long sampleId, Long analysisSubmissionId) {
+		String ext = getFileExt(filePath);
+		String filename = filePath.getFileName().toString();
+	
+		String prefix = sampleName + "-sampleId-" + sampleId + "-analysisSubmissionId-" + analysisSubmissionId + "-";
+		filename = prefix + filename;
+		if (ext.equals("html-zip") && !filename.endsWith(EXTENSION_HTML_ZIP)) {
+			filename = filename + ".zip";
+		}
+		logger.debug("File Name: " + filename);
+
+		return filename;
 	}
 
 	/**
@@ -443,5 +479,24 @@ public class FileUtilities {
 		int exp = (int) (Math.log(bytes) / Math.log(unit));
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+
+	/**
+	 * Determine if a file is a zip file.
+	 *
+	 * @param path The {@link Path} to the file to test.
+	 * @return A boolean indicating whether the file is a zip file.
+	 * @throws IOException If an invalid {@link Path} is passed
+	 */
+	public static boolean isZippedFile(final Path path) throws IOException {
+		try (
+			final InputStream in = new FileInputStream(path.toString());
+			final ZipInputStream z = new ZipInputStream(in);
+		) {
+			// If we can read an entry we know that it is a zip
+			return z.getNextEntry() != null;
+		} catch (ZipException ignored) {
+			return false;
+		}
 	}
 }

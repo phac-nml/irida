@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
@@ -110,7 +108,7 @@ public class UserServiceImplTest {
 		when(userRepository.existsById(1L)).thenReturn(true);
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user()));
 		userService.updateFields(1L, properties);
-		verifyZeroInteractions(passwordEncoder);
+		verifyNoInteractions(passwordEncoder);
 	}
 
 	@Test
@@ -137,7 +135,7 @@ public class UserServiceImplTest {
 		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u);
 		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
 
-		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(isNull())).thenReturn(unreadAnnouncements);
 
 		userService.create(u);
 
@@ -153,7 +151,7 @@ public class UserServiceImplTest {
 		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u, two_months_ago);
 		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
 
-		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(isNull())).thenReturn(unreadAnnouncements);
 
 		userService.create(u);
 
