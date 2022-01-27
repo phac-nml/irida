@@ -69,6 +69,10 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
   );
 
   React.useEffect(() => {
+    setCurrent(location.pathname);
+  }, [location.pathname]);
+
+  React.useEffect(() => {
     function removeGalaxy() {
       setFromGalaxy(false);
       navigate(setBaseUrl(`cart/pipelines`));
