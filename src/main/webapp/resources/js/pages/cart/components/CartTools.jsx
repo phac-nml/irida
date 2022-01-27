@@ -63,14 +63,9 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [current, setCurrent] = React.useState(location.pathname);
   const [fromGalaxy, setFromGalaxy] = React.useState(
     () => typeof window.GALAXY !== "undefined"
   );
-
-  React.useEffect(() => {
-    setCurrent(location.pathname);
-  }, [location.pathname]);
 
   React.useEffect(() => {
     function removeGalaxy() {
@@ -100,7 +95,7 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
       <MenuWrapper>
         <Menu
           mode="horizontal"
-          selectedKeys={[current]}
+          selectedKeys={[location.pathname]}
           style={{ borderBottom: BORDERED_LIGHT }}
           onClick={(e) => setCurrent(e.key)}
         >
