@@ -30,9 +30,8 @@ function App() {
       <Route path={path} element={<FastQC current={route} />}>
         <Route path="overrepresented" element={<OverRepresentedSequences />} />
         <Route path="details" element={<FastQCDetails />} />
-        <Route path="charts" element={<FastQCCharts />} />
         <Route path="summary" element={<FastQCCharts />} />
-        <Route index element={<FastQCCharts />} />
+        <Route path="*" element={<FastQCCharts />} />
       </Route>
     </Routes>
   );
