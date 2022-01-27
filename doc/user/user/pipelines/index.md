@@ -187,6 +187,13 @@ If an analysis output file is fairly large like this log file, it will be loaded
 <figcaption>Notice that the `8.0 kB / 212.0 kB (3.8%)` indicates that only 3.8% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>
 
 
+#### Default html preview of analysis output
+
+Analysis output files with file extensions like `.html`, or `.html.zip` can be previewed in the browser as html:
+
+![view-results-html-quast](images/view-results-html-quast-html.png)
+<figcaption>Notice that the file is named `quast.html.zip` which if you downloaded it you will see that it contains multiple html files. We are loading `quast.html.html`, which is the first html file found in the zip that has the same prefix as the original output file zip.</figcaption>
+
 
 ### Viewing the sequencing data submitted for analysis
 

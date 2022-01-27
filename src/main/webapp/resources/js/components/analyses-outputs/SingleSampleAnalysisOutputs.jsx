@@ -156,17 +156,14 @@ export default function SingleSampleAnalysisOutputs({
         sampleName,
         sampleId,
         filePath,
+        filename
       } = currentlySelectedFiles[0];
 
-      // Custom file name
-      const fileName = `${sampleName}-sampleId-${sampleId}-analysisSubmissionId-${analysisSubmissionId}-${getFilename(
-        filePath
-      )}`;
       //Download the selected output file
       downloadIndividualOutputFile(
         analysisSubmissionId,
         analysisOutputFileId,
-        fileName
+        filename
       );
     } else if (currentlySelectedFiles.length > 1) {
       // Remove the workflowDescription from the objects as the server expects objects without it

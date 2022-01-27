@@ -6,6 +6,7 @@ upgrading IRIDA that cannot be automated.
 
 21.09 to 22.01
 --------------
+* This upgrade converted the project from bare Spring to Spring Boot, which deprecated a number of properties relating to database connection and setup. These deprecated properties are mentioned in [/etc/irida/irida.conf](https://phac-nml.github.io/irida-documentation/administrator/web/#core-configuration).
 
 21.09.1 to 21.09.2
 ------------------

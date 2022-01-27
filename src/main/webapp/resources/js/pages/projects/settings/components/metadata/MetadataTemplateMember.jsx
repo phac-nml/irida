@@ -1,4 +1,3 @@
-import { navigate } from "@reach/router";
 import {
   List,
   notification,
@@ -8,6 +7,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
 
@@ -22,7 +22,9 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MetadataTemplateMember({ id, projectId }) {
+export default function MetadataTemplateMember() {
+  const navigate = useNavigate();
+  const { id, projectId } = useParams();
   const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
     projectId
   );
@@ -59,7 +61,7 @@ export default function MetadataTemplateMember({ id, projectId }) {
   }, [id, templates]);
 
   return (
-    <PageHeader title={template.name} onBack={() => navigate("./")}>
+    <PageHeader title={template.name} onBack={() => navigate(-1)}>
       <Skeleton loading={isLoading}>
         <List itemLayout="vertical" size="small">
           <List.Item>

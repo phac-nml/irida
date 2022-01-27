@@ -51,7 +51,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		Assert.assertTrue(driver().getTitle().contains(name));
 
 		// Go to the settings page to make sure things were set properly.
-		driver().get(driver().getCurrentUrl() + "/settings/details");
+		driver().get(driver().getCurrentUrl() + "/settings");
 
 		ProjectDetailsPage detailsPage = ProjectDetailsPage.initElements(driver());
 		Assert.assertEquals(name, detailsPage.getProjectName());

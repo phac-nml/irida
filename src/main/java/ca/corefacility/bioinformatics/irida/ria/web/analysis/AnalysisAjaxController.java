@@ -382,9 +382,7 @@ public class AnalysisAjaxController {
 				TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
 		if (aof != null) {
-			String fileExt = FileUtilities.getFileExt(aof.getFile()
-					.getFileName()
-					.toString());
+			String fileExt = FileUtilities.getFileExt(aof.getFile());
 			ToolExecution tool = aof.getCreatedByTool();
 
 			AnalysisOutputFileInfo info = new AnalysisOutputFileInfo(aof.getId(), submission.getId(), analysis.getId(),
@@ -466,8 +464,7 @@ public class AnalysisAjaxController {
 			contents.setAnalysisId(analysis.getId());
 			contents.setFilename(aofFile.getFileName()
 					.toString());
-			contents.setFileExt(FileUtilities.getFileExt(aofFile.getFileName()
-					.toString()));
+			contents.setFileExt(FileUtilities.getFileExt(aofFile));
 			contents.setFileSizeBytes(aof.getFile()
 					.toFile()
 					.length());
@@ -1235,8 +1232,7 @@ public class AnalysisAjaxController {
 		if (treeOptional.isEmpty()) {
 			//loop through the files looking for with a newick file.  Get the first one
 			treeOptional = analysisOutputFiles.stream()
-					.filter(f -> FileUtilities.getFileExt(f.getFile()
-							.toString())
+					.filter(f -> FileUtilities.getFileExt(f.getFile())
 							.equals(TREE_EXT))
 					.findFirst();
 

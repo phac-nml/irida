@@ -30,10 +30,13 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.springframework.stereotype.Component;
+
 /**
  * Servlet filter that presents a HEAD request as a GET. The application doesn't
  * need to know the difference, as this filter handles all the details.
  */
+@Component
 public class HttpHeadFilter implements Filter {
 
 	@Override

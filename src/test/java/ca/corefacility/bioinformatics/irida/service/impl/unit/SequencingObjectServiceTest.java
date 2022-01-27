@@ -19,7 +19,7 @@ import org.junit.Test;
 import javax.validation.Validator;
 import java.io.IOException;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class SequencingObjectServiceTest {

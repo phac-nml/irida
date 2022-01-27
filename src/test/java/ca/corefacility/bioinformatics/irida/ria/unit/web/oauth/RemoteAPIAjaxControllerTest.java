@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
@@ -123,7 +123,7 @@ public class RemoteAPIAjaxControllerTest {
 		};
 
 		when(remoteAPIService.search(any(), anyInt(), anyInt(), any(Sort.Direction.class),
-				any(String[].class))).thenReturn(remoteAPIPage);
+				any(String.class))).thenReturn(remoteAPIPage);
 		when(remoteAPIService.read(1L)).thenReturn(REMOTE_API_01);
 		when(remoteAPIService.read(2L)).thenReturn(REMOTE_API_02);
 	}
@@ -138,7 +138,7 @@ public class RemoteAPIAjaxControllerTest {
 
 		TableResponse<RemoteAPITableModel> response = controller.getAjaxAPIList(request);
 		verify(remoteAPIService, times(1)).search(any(), anyInt(), anyInt(), any(Sort.Direction.class),
-				any(String[].class));
+				any(String.class));
 		assertEquals("Should have 1 Remote API", 1, response.getDataSource()
 				.size());
 	}

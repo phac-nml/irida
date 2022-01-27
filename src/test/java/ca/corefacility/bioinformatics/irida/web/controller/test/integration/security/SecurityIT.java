@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.security;
 
-import static com.jayway.restassured.RestAssured.expect;
+import static io.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 

@@ -23,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import com.google.common.collect.ImmutableList;
 
 import static org.junit.Assert.assertEquals;
+
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SamplesAjaxControllerTest {
