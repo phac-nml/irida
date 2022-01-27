@@ -38,13 +38,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons-svg@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "@ant-design/icons-svg@npm:4.1.0"
-  checksum: c875e9692c65afd21d2c072fc4a6469bfe9d0a983a331eacea14c4e5e404ce1c24da1389dfb441f9db99318ac3f39445d5115cca13f7e3fe5c3ba25884058536
-  languageName: node
-  linkType: hard
-
 "@ant-design/icons-svg@npm:^4.2.1":
   version: 4.2.1
   resolution: "@ant-design/icons-svg@npm:4.2.1"
@@ -52,22 +45,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:^4.6.2":
-  version: 4.6.2
-  resolution: "@ant-design/icons@npm:4.6.2"
-  dependencies:
-    "@ant-design/colors": ^6.0.0
-    "@ant-design/icons-svg": ^4.0.0
-    "@babel/runtime": ^7.11.2
-    classnames: ^2.2.6
-    rc-util: ^5.9.4
-  peerDependencies:
-    react: ">=16.0.0"
-  checksum: 970104dff18be13bb05214a048f185adad8adfc897122ac358dcdc56e9cba0f1b154fac4f9535773c8788e1f58bb7906413cbf66845f6d62deb55cca56a64845
-  languageName: node
-  linkType: hard
-
-"@ant-design/icons@npm:^4.6.3":
+"@ant-design/icons@npm:^4.6.3, @ant-design/icons@npm:^4.7.0":
   version: 4.7.0
   resolution: "@ant-design/icons@npm:4.7.0"
   dependencies:
@@ -6993,7 +6971,7 @@ fsevents@^2.1.2:
   resolution: "irida-ui@workspace:."
   dependencies:
     "@ant-design/charts": ^1.1.1
-    "@ant-design/icons": ^4.6.2
+    "@ant-design/icons": ^4.7.0
     "@antv/color-util": ^2.0.6
     "@antv/matrix-util": ^3.0.4
     "@antv/path-util": ^2.0.9
