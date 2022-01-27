@@ -14,8 +14,8 @@ import {
 import { ContentLoading } from "../../components/loader";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
 import { blue6, green6, grey1, red6 } from "../../styles/colors";
-import AnalysisCompletePage from "./AnalysisCompletePage";
 
+const AnalysisCompletePage = React.lazy(() => import("./AnalysisCompletePage"));
 const AnalysisRunningPage = React.lazy(() => import("./AnalysisRunningPage"));
 const AnalysisErrorPage = React.lazy(() => import("./AnalysisErrorPage"));
 
