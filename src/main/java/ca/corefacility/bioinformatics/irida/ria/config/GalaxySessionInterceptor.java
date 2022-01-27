@@ -7,14 +7,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 /**
  * Interceptor to determine if the {@link HttpServletRequest} is from a Galaxy Instance.
  * If it is this gets added to the session so that the user is presented with the appropriate
  * information, and cart page.
  */
-public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
+public class GalaxySessionInterceptor implements AsyncHandlerInterceptor {
 	// HTTP session variable name for Galaxy callback variable
 	public static final String GALAXY_CALLBACK_URL = "galaxyCallbackUrl";
 	public static final String GALAXY_CLIENT_ID = "galaxyClientID";
@@ -35,6 +35,6 @@ public class GalaxySessionInterceptor extends HandlerInterceptorAdapter {
 			response.sendRedirect(request.getRequestURI());
 		}
 
-		return super.preHandle(request, response, handler);
+		return true;
 	}
 }

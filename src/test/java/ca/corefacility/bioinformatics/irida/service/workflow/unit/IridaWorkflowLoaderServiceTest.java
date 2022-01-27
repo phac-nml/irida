@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.workflow.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.FileNotFoundException;
@@ -48,7 +48,7 @@ public class IridaWorkflowLoaderServiceTest {
 
 	@Before
 	public void setup() throws IridaWorkflowException, IOException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		AnalysisTypesServiceImpl analysisTypesService = new AnalysisTypesServiceImpl();
 		analysisTypesService.registerDefaultTypes();

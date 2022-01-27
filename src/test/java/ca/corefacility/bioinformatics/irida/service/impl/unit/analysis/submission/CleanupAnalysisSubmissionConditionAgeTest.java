@@ -30,7 +30,7 @@ public class CleanupAnalysisSubmissionConditionAgeTest {
 	 */
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		cleanupAnalysisSubmissionConditionAge = new CleanupAnalysisSubmissionConditionAge(Duration.ofDays(1));
 	}

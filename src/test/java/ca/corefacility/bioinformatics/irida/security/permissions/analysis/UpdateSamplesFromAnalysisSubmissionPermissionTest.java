@@ -59,7 +59,7 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		updateSamplesFromAnalysisSubmissionPermission = new UpdateSamplesFromAnalysisSubmissionPermission(
 				analysisSubmissionRepository, updateSamplePermission, readAnalysisSubmissionPermission,

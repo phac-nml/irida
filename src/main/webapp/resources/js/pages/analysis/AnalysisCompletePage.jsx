@@ -1,6 +1,7 @@
 import { Space } from "antd";
 import React, { Suspense, useContext } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
+import { ContentLoading } from "../../components/loader";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../contexts/AnalysisOutputsContext";
 import { SPACE_LG } from "../../styles/spacing";
@@ -11,15 +12,31 @@ import { ANALYSIS } from "./routes";
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
 );
-const AnalysisOutputFiles = React.lazy(() => import("./components/AnalysisOutputFiles"));
-const AnalysisPhylogeneticTree = React.lazy(() => import("./components/AnalysisPhylogeneticTree"));
-const AnalysisProvenance = React.lazy(() => import("./components/AnalysisProvenance"));
+const AnalysisOutputFiles = React.lazy(() =>
+  import("./components/AnalysisOutputFiles")
+);
+const AnalysisPhylogeneticTree = React.lazy(() =>
+  import("./components/AnalysisPhylogeneticTree")
+);
+const AnalysisProvenance = React.lazy(() =>
+  import("./components/AnalysisProvenance")
+);
 const AnalysisSistr = React.lazy(() => import("./components/AnalysisSistr"));
-const AnalysisDelete = React.lazy(() => import("./components/settings/AnalysisDelete"));
-const AnalysisDetails = React.lazy(() => import("./components/settings/AnalysisDetails"));
-const AnalysisSamples = React.lazy(() => import("./components/settings/AnalysisSamples"));
-const AnalysisSettingsContainer = React.lazy(() => import("./components/settings/AnalysisSettingsContainer"));
-const AnalysisShare = React.lazy(() => import("./components/settings/AnalysisShare"));
+const AnalysisDelete = React.lazy(() =>
+  import("./components/settings/AnalysisDelete")
+);
+const AnalysisDetails = React.lazy(() =>
+  import("./components/settings/AnalysisDetails")
+);
+const AnalysisSamples = React.lazy(() =>
+  import("./components/settings/AnalysisSamples")
+);
+const AnalysisSettingsContainer = React.lazy(() =>
+  import("./components/settings/AnalysisSettingsContainer")
+);
+const AnalysisShare = React.lazy(() =>
+  import("./components/settings/AnalysisShare")
+);
 
 /**
  * React component to facilitate the nested routing needed for the complete
@@ -29,7 +46,7 @@ const AnalysisShare = React.lazy(() => import("./components/settings/AnalysisSha
 function AnalysisOutlet() {
   return (
     <AnalysisOutputsProvider>
-      <Suspense fallback={<div>LOADING</div>}>
+      <Suspense fallback={<ContentLoading />}>
         <Outlet />
       </Suspense>
     </AnalysisOutputsProvider>
@@ -64,19 +81,23 @@ export default function AnalysisCompletePage() {
   const DEFAULT_URL = setBaseUrl(`/analysis/:id`);
 
   let component;
+  let componentPath;
   if (type === "sistr") {
     component = <AnalysisSistr />;
+    componentPath = `${ANALYSIS.SISTR}/*`;
   } else if (type === "biohansel") {
     component = <AnalysisBioHansel />;
+    componentPath = ANALYSIS.BIOHANSEL;
   } else if (type === "tree") {
     component = <AnalysisPhylogeneticTree />;
+    componentPath = ANALYSIS.TREE;
   }
 
   return (
     <Space
       direction="vertical"
       size="large"
-      style={{ width: `100%`, margin: SPACE_LG }}
+      style={{ width: `100%`, padding: SPACE_LG }}
     >
       <AnalysisMenu type={type} />
       <Routes>
@@ -84,6 +105,7 @@ export default function AnalysisCompletePage() {
           {type === "output" ? (
             <>
               <Route index element={<AnalysisOutputFiles />} />
+              <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
               <Route
                 path={ANALYSIS.PROVENANCE}
                 element={<AnalysisProvenance />}
@@ -91,6 +113,7 @@ export default function AnalysisCompletePage() {
             </>
           ) : (
             <>
+              <Route path={componentPath} element={component} />
               <Route index element={component} />
               <Route
                 path={ANALYSIS.PROVENANCE}
@@ -107,7 +130,9 @@ export default function AnalysisCompletePage() {
             <Route path="samples" element={<AnalysisSamples />} />
             <Route path="share" element={<AnalysisShare />} />
             <Route path="delete" element={<AnalysisDelete />} />
+            <Route path="*" element={<AnalysisDetails />} />
           </Route>
+          <Route path="*" element={component} />
         </Route>
       </Routes>
     </Space>

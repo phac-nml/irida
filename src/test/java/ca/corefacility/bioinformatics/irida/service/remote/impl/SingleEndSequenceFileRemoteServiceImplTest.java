@@ -41,7 +41,7 @@ public class SingleEndSequenceFileRemoteServiceImplTest {
 		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles";
 		RemoteAPI api = new RemoteAPI();
 		Sample sample = new Sample();
-		sample.add(new Link(seqFilesHref, SingleEndSequenceFileRemoteServiceImpl.SAMPLE_SEQENCE_FILE_UNPAIRED_REL));
+		sample.add(Link.of(seqFilesHref, SingleEndSequenceFileRemoteServiceImpl.SAMPLE_SEQENCE_FILE_UNPAIRED_REL));
 
 		sample.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 

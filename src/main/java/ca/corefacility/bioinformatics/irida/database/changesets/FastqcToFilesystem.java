@@ -157,7 +157,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 		//first get the count of analysis_fastqc entries we need to do for this chart type
 		String sql = "SELECT count(o.id) FROM analysis_fastqc f INNER JOIN analysis_output_file o ON f.id=o.analysis_id WHERE o.execution_manager_file_id=?";
-		Long entries = jdbcTemplate.queryForObject(sql, new Object[] { chartType + ".png" }, Long.class);
+		Long entries = jdbcTemplate.queryForObject(sql, Long.class, chartType + ".png");
 		logger.info("Going to write " + entries + " entires for chart type " + chartType);
 
 		//doing this in a for loop to batch the entries
@@ -170,7 +170,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 
 			logger.info("Progress: Writing " + chartType + " number " + offset + "/" + entries);
 
-			List<Object[]> updates = jdbcTemplate.query(sql, new Object[] { chartType + ".png" },
+			List<Object[]> updates = jdbcTemplate.query(sql,
 					//this mapper will look at the temp output file entry and write a file to the file system
 					new RowMapper<Object[]>() {
 						@Override
@@ -205,7 +205,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 							//return the file path and chart id
 							return new Object[] { relativeStr, chartId };
 						}
-					});
+					}, chartType + ".png");
 
 			logger.info("Executing update for " + updates.size() + " entries");
 

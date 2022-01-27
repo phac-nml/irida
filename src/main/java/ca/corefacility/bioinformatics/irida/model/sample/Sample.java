@@ -110,8 +110,8 @@ public class Sample extends IridaRepresentationModel
 	 * Date of sampling
 	 */
 	@Temporal(TemporalType.DATE)
-	@JsonSerialize(as=java.sql.Date.class, using = DateJson.DateSerializer.class)
-	@JsonDeserialize(as=java.sql.Date.class, using = DateJson.DateDeserializer.class)
+	@JsonSerialize(using = DateJson.DateSerializer.class)
+	@JsonDeserialize(using = DateJson.DateDeserializer.class)
 	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	private Date collectionDate;
 

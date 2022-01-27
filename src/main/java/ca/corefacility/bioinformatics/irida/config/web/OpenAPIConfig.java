@@ -8,18 +8,11 @@ import io.swagger.v3.oas.annotations.security.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.context.annotation.*;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Configuration for IRIDA REST API documentation.
  */
 @Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = { "org.springdoc" })
-@Import({ org.springdoc.core.SpringDocConfiguration.class, org.springdoc.webmvc.core.SpringDocWebMvcConfiguration.class,
-		org.springdoc.core.SwaggerUiConfigProperties.class, org.springdoc.core.SwaggerUiOAuthProperties.class,
-		org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class })
 @SecurityScheme(name = "oauth2", type = SecuritySchemeType.OAUTH2, flows = @OAuthFlows(authorizationCode = @OAuthFlow(authorizationUrl = "/api/oauth/authorize", tokenUrl = "/api/oauth/token", scopes = {
 		@OAuthScope(name = "read", description = "This is the read scope."),
 		@OAuthScope(name = "write", description = "This is the write scope.") }), password = @OAuthFlow(tokenUrl = "/api/oauth/token")))
@@ -32,5 +25,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 		@Tag(name = "users", description = "Everything about users") }, security = @SecurityRequirement(name = "oauth2", scopes = {
 		"read", "write" }))
 @Profile({ "swagger" })
-public class OpenAPIConfig implements WebMvcConfigurer {
+public class OpenAPIConfig {
 }
