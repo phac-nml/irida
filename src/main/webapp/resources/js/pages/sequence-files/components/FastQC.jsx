@@ -6,7 +6,7 @@
 
 import { Badge, Menu, Skeleton, Space } from "antd";
 import React from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { InfoAlert } from "../../../components/alerts";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { blue6 } from "../../../styles/colors";
@@ -15,11 +15,13 @@ import { SPACE_XS } from "../../../styles/spacing";
 import { FastQCProvider, useFastQCState } from "../fastqc-context";
 
 function FastQCMenu({ current }) {
+  const location = useLocation();
   const [key, setKey] = React.useState(current);
   const { loading, fastQC } = useFastQCState();
 
-  let uri = window.location.pathname;
+  let uri = location.pathname;
   if (uri.endsWith(current)) {
+    // Strip of the current location as it will mess up the links
     uri = uri.replace(`/${current}`, "");
   }
 
