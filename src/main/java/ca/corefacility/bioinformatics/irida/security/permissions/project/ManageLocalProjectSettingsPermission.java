@@ -24,13 +24,12 @@ public class ManageLocalProjectSettingsPermission extends ModifyProjectPermissio
 	 * @param userRepository    the user repository.
 	 * @param pujRepository     the project user join repository.
 	 * @param ugpjRepository    the user group project join repository
-	 * @param ugRepository      the user group join repository
 	 */
 	@Autowired
 	public ManageLocalProjectSettingsPermission(final ProjectRepository projectRepository,
 			final UserRepository userRepository, final ProjectUserJoinRepository pujRepository,
-			final UserGroupProjectJoinRepository ugpjRepository, final UserGroupJoinRepository ugRepository) {
-		super(projectRepository, userRepository, pujRepository, ugpjRepository, ugRepository);
+			final UserGroupProjectJoinRepository ugpjRepository) {
+		super(projectRepository, userRepository, pujRepository, ugpjRepository);
 	}
 
 	@Override

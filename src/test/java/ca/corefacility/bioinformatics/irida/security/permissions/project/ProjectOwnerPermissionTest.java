@@ -42,8 +42,6 @@ public class ProjectOwnerPermissionTest {
 	ProjectUserJoinRepository pujRepository;
 	@Mock
 	UserGroupProjectJoinRepository ugpjRepository;
-	@Mock
-	UserGroupJoinRepository ugRepository;
 
 	Project project = new Project();
 	Long projectId = 1L;
@@ -56,8 +54,7 @@ public class ProjectOwnerPermissionTest {
 		user.setSystemRole(Role.ROLE_USER);
 		user.setUsername("tom");
 
-		permission = new ProjectOwnerPermission(projectRepository, userRepository, pujRepository, ugpjRepository,
-				ugRepository);
+		permission = new ProjectOwnerPermission(projectRepository, userRepository, pujRepository, ugpjRepository);
 
 		when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
 		when(userRepository.loadUserByUsername(user.getUsername())).thenReturn(user);

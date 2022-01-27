@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.security.permissions.project;
 import java.util.Collection;
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,31 +72,27 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 			return true;
 		}
 
+		final User u = userRepository.loadUserByUsername(authentication.getName());
+
 		// if not an administrator, then we need to figure out if the
 		// authenticated user is participating in the project.
-		final User u = userRepository.loadUserByUsername(authentication.getName());
-		final List<Join<Project, User>> projectUsers = pujRepository.getUsersForProject(p);
-
-		for (final Join<Project, User> projectUser : projectUsers) {
-			if (projectUser.getObject().equals(u)) {
-				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p + "]");
-				// this user is participating in the project.
-				return true;
-			}
+		final ProjectUserJoin puj = pujRepository.getProjectJoinForUser(p, u);
+		if (puj != null) {
+			logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p + "]");
+			// this user is participating in the project.
+			return true;
 		}
 
 		// if we've made it this far, then that means that the user isn't
 		// directly added to the project, so check if the user is in any groups
 		// added to the project.
-		final Collection<UserGroupProjectJoin> groups = ugpjRepository.findGroupsByProject(p);
-		for (final UserGroupProjectJoin group : groups) {
-			final Collection<UserGroupJoin> groupMembers = ugRepository.findUsersInGroup(group.getObject());
-			final boolean inGroup = groupMembers.stream().anyMatch(j -> j.getSubject().equals(u));
-			if (inGroup) {
-				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p
-						+ "] by group membership in [" + group.getLabel() + "]");
-				return true;
-			}
+		final Collection<UserGroupProjectJoin> ugpjCollection = ugpjRepository.findGroupsForProjectAndUser(p, u);
+		if (!ugpjCollection.isEmpty()){
+			// get the first group listed for trace logging
+			UserGroupProjectJoin group = ugpjCollection.iterator().next();
+			logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p
+					+ "] by group membership in [" + group.getLabel() + "]");
+			return true;
 		}
 
 		logger.trace("Permission DENIED for [" + authentication + "] on project [" + p + "]");
