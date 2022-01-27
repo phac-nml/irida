@@ -957,7 +957,6 @@
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
-					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
 				</exclude.test.listeners>
 			</properties>
 		</profile>
@@ -968,7 +967,6 @@
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
-					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
 			</properties>
@@ -980,7 +978,6 @@
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
-					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
 			</properties>
