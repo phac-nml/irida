@@ -33,14 +33,6 @@ const MetadataLayout = React.lazy(() =>
   import("./components/metadata/MetadataLayout")
 );
 
-// const MetadataFieldsListManager = React.lazy(() =>
-//   import("./components/metadata/MetadataFieldsListManager")
-// );
-//
-// const MetadataFieldsListMember = React.lazy(() =>
-//   import("./components/metadata/MetadataFieldsListMember")
-// );
-
 const MetadataFields = React.lazy(() =>
   import("./components/metadata/MetadataFields")
 );
