@@ -2,10 +2,8 @@
  * This file loads basic analysis info from the server.
  */
 
+import { notification } from "antd";
 import React, { useEffect, useState } from "react";
-import { showNotification } from "../modules/notifications";
-
-import { useInterval } from "../hooks";
 
 // Functions required by context
 import {
@@ -14,7 +12,8 @@ import {
   updateAnalysis,
 } from "../apis/analysis/analysis";
 
-import { notification } from "antd";
+import { useInterval } from "../hooks";
+import { showNotification } from "../modules/notifications";
 
 /*
  * Since we are using Steps and only want to display
@@ -92,6 +91,7 @@ function AnalysisProvider(props) {
     getUpdatedDetails(analysisIdentifier)
       .then((res) => {
         updateAnalysisState(res.analysisState, res.previousState);
+        updateTreeDefault(res.treeDefault);
         updateAnalysisDuration(res.duration);
         /*
          * If the analysis has completed or errored we want to clear the interval
@@ -120,6 +120,22 @@ function AnalysisProvider(props) {
         return {
           ...analysisContext,
           duration: duration,
+        };
+      });
+    }
+  }
+
+  /**
+   * When a analysis state goes from running to completed this method can
+   * be called to set the default view to be a tree.
+   * @param treeDefault
+   */
+  function updateTreeDefault(treeDefault) {
+    if (treeDefault !== analysisContext.treeDefault) {
+      setAnalysisContext((analysisContext) => {
+        return {
+          ...analysisContext,
+          treeDefault: treeDefault,
         };
       });
     }
