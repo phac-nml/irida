@@ -27,7 +27,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Level 1", page.getFieldRestrictionForRow(0),
 				"Should currently be set to level 1 by default");
 		page.updateFieldRestrictionToLevel(0, 3);
-		assertEquals("Field should now be restricted to level 4", "Level 4", page.getFieldRestrictionForRow(0));
+		assertEquals("Level 4", page.getFieldRestrictionForRow(0), "Field should now be restricted to level 4");
 
 		// TEMPLATES
 		page.gotoMetadataTemplates();
