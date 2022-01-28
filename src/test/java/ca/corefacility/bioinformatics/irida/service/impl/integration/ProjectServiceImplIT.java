@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +27,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.*;
@@ -59,9 +58,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -90,42 +89,46 @@ public class ProjectServiceImplIT {
 	@Qualifier("referenceFileBaseDirectory")
 	private Path referenceFileBaseDirectory;
 
-	@Test(expected = ProjectWithoutOwnerException.class)
+	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testUpdateUserGroupRoleOnProject() throws ProjectWithoutOwnerException {
 		final UserGroup userGroup = userGroupService.read(1L);
 		final Project project = projectService.read(9L);
-		projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER);
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER);
+		});
 	}
 
-	@Test(expected = ProjectWithoutOwnerException.class)
+	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testRemoveUserGroupOnProject() throws ProjectWithoutOwnerException {
 		final UserGroup userGroup = userGroupService.read(1L);
 		final Project project = projectService.read(9L);
-		projectService.removeUserGroupFromProject(project, userGroup);
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			projectService.removeUserGroupFromProject(project, userGroup);
+		});
 	}
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetPagedProjectsForAdminWithGlobalSearch() {
 		final Page<Project> projects = projectService.findAllProjects("proj", 0, 10, Sort.by(Direction.ASC, "id"));
-		assertEquals("Admin should have 9 projects for filter", 9, projects.getNumberOfElements());
+		assertEquals(9, projects.getNumberOfElements(), "Admin should have 9 projects for filter");
 
 		final Page<Project> listeriaProjects = projectService.findAllProjects("lister", 0, 10,
 				Sort.by(Direction.ASC, "id"));
-		assertEquals("Admin should have 9 projects for filter.", 9, listeriaProjects.getNumberOfElements());
+		assertEquals(9, listeriaProjects.getNumberOfElements(), "Admin should have 9 projects for filter.");
 	}
 
 	@Test
 	@WithMockUser(username = "groupuser", roles = "USER")
 	public void testGetPagedProjectsForUserWithGlobalSearch() {
 		final Page<Project> projects = projectService.findProjectsForUser("proj", 0, 10, Sort.by(Direction.ASC, "id"));
-		assertEquals("User should have 3 projects for filter", 3, projects.getNumberOfElements());
+		assertEquals(3, projects.getNumberOfElements(), "User should have 3 projects for filter");
 
 		final Page<Project> listeriaProjects = projectService.findProjectsForUser("lister", 0, 10,
 				Sort.by(Direction.ASC, "id"));
-		assertEquals("User should have 3 projects for filter.", 3, listeriaProjects.getNumberOfElements());
+		assertEquals(3, listeriaProjects.getNumberOfElements(), "User should have 3 projects for filter.");
 	}
 
 	@Test
@@ -133,7 +136,7 @@ public class ProjectServiceImplIT {
 	public void testGetPagedProjectsForUser() {
 		final Page<Project> projects = projectService.findProjectsForUser("", 0, 10, Sort.by(Direction.ASC, "id"));
 
-		assertEquals("User should have 4 projects, two user two group.", 4, projects.getNumberOfElements());
+		assertEquals(4, projects.getNumberOfElements(), "User should have 4 projects, two user two group.");
 	}
 
 	@Test
@@ -142,7 +145,7 @@ public class ProjectServiceImplIT {
 		final Project p = projectService.read(9L);
 		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
 
-		assertEquals("Admin should have 10 unassociated projects.", 10, unassociated.getNumberOfElements());
+		assertEquals(10, unassociated.getNumberOfElements(), "Admin should have 10 unassociated projects.");
 	}
 
 	@Test
@@ -152,10 +155,8 @@ public class ProjectServiceImplIT {
 		final Project unassociatedProject = projectService.read(8L);
 		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
 
-		assertEquals("This user should have three unassociated projects (one group, two user).", 3,
-				unassociated.getNumberOfElements());
-		assertTrue("The unassociated project should be the other project.",
-				unassociated.getContent().contains(unassociatedProject));
+		assertEquals(3, unassociated.getNumberOfElements(), "This user should have three unassociated projects (one group, two user).");
+		assertTrue(unassociated.getContent().contains(unassociatedProject), "The unassociated project should be the other project.");
 	}
 
 	@Test
@@ -169,15 +170,11 @@ public class ProjectServiceImplIT {
 		final Project groupProject2 = projectService.read(9L);
 		final Project userProject2 = projectService.read(10L);
 
-		assertEquals("Should be on 4 projects.", 4, projects.size());
-		assertTrue("Should have user project reference.",
-				projects.stream().anyMatch(p -> p.getSubject().equals(userProject)));
-		assertTrue("Should have group project reference.",
-				projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)));
-		assertTrue("Should have group project reference.",
-				projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)));
-		assertTrue("Should have user project reference.",
-				projects.stream().anyMatch(p -> p.getSubject().equals(userProject2)));
+		assertEquals(4, projects.size(), "Should be on 4 projects.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject)), "Should have user project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)), "Should have group project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)), "Should have group project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject2)), "Should have user project reference.");
 	}
 
 	@Test
@@ -225,21 +222,23 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 		User u = userService.read(1L);
 		Join<Project, User> join = projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
-		assertNotNull("Join was not populated.", join);
-		assertEquals("Join has wrong project.", p, join.getSubject());
-		assertEquals("Join has wrong user.", u, join.getObject());
+		assertNotNull(join, "Join was not populated.");
+		assertEquals(p, join.getSubject(), "Join has wrong project.");
+		assertEquals(u, join.getObject(), "Join has wrong user.");
 
 		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
-		assertEquals("User is not part of project.", p, projects.iterator().next().getSubject());
+		assertEquals(p, projects.iterator().next().getSubject(), "User is not part of project.");
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddUserToProjectTwice() {
 		Project p = projectService.read(1L);
 		User u = userService.read(1L);
 		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
-		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		});
 	}
 
 	@Test
@@ -252,12 +251,12 @@ public class ProjectServiceImplIT {
 		projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
 
 		Collection<Join<Project, User>> usersOnProject = userService.getUsersForProject(p);
-		assertEquals("Wrong number of users on project.", 2, usersOnProject.size());
+		assertEquals(2, usersOnProject.size(), "Wrong number of users on project.");
 		Set<User> users = Sets.newHashSet(u1, u2);
 		for (Join<Project, User> user : usersOnProject) {
-			assertTrue("No such user on project.", users.remove(user.getObject()));
+			assertTrue(users.remove(user.getObject()), "No such user on project.");
 		}
-		assertEquals("Too many users on project", 0, users.size());
+		assertEquals(0, users.size(), "Too many users on project");
 	}
 
 	@Test
@@ -269,16 +268,18 @@ public class ProjectServiceImplIT {
 		projectService.removeUserFromProject(p, u);
 
 		Collection<Join<Project, User>> usersOnProject = userService.getUsersForProject(p);
-		assertTrue("No users should be on the project.", usersOnProject.isEmpty());
+		assertTrue(usersOnProject.isEmpty(), "No users should be on the project.");
 	}
 
-	@Test(expected = ProjectWithoutOwnerException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveUserFromProjectAbandoned() throws ProjectWithoutOwnerException {
 		User u = userService.read(3L);
 		Project p = projectService.read(2L);
 
-		projectService.removeUserFromProject(p, u);
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			projectService.removeUserFromProject(p, u);
+		});
 	}
 
 	@Test
@@ -288,8 +289,8 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
-		assertEquals("User should have 4 projects.", 4, projects.size());
-		assertEquals("User should be on project 2.", Long.valueOf(2L), projects.iterator().next().getSubject().getId());
+		assertEquals(4, projects.size(), "User should have 4 projects.");
+		assertEquals(Long.valueOf(2L), projects.iterator().next().getSubject().getId(), "User should be on project 2.");
 	}
 
 	@Test
@@ -299,24 +300,26 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 
 		Join<Project, Sample> join = projectService.addSampleToProject(p, s, true);
-		assertEquals("Project should equal original project.", p, join.getSubject());
-		assertEquals("Sample should equal orginal sample.", s, join.getObject());
+		assertEquals(p, join.getSubject(), "Project should equal original project.");
+		assertEquals(s, join.getObject(), "Sample should equal orginal sample.");
 
 		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
-		assertTrue("Sample should be part of collection.", samples.contains(join));
+		assertTrue(samples.contains(join), "Sample should be part of collection.");
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddSampleToProjectTwice() {
 		Sample s = sampleService.read(1L);
 		Project p = projectService.read(1L);
 
 		projectService.addSampleToProject(p, s, true);
-		projectService.addSampleToProject(p, s, true);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addSampleToProject(p, s, true);
+		});
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddSampleToProjectWithSameSequencerId() {
 		Sample s = sampleService.read(1L);
@@ -326,7 +329,9 @@ public class ProjectServiceImplIT {
 
 		Sample otherSample = new Sample(s.getSampleName());
 
-		projectService.addSampleToProject(p, otherSample, true);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addSampleToProject(p, otherSample, true);
+		});
 
 		// if 2 exist with the same id, this call will fail
 		Sample sampleBySequencerSampleId = sampleService.getSampleBySampleName(p, otherSample.getSampleName());
@@ -344,8 +349,8 @@ public class ProjectServiceImplIT {
 		projectService.removeSampleFromProject(p3, s);
 
 		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p3);
-		assertTrue("No samples should be assigned to project.", samples.isEmpty());
-		assertFalse("sample should be deleted because it was detached", sampleService.exists(s.getId()));
+		assertTrue(samples.isEmpty(), "No samples should be assigned to project.");
+		assertFalse(sampleService.exists(s.getId()), "sample should be deleted because it was detached");
 	}
 
 	@Test
@@ -358,7 +363,7 @@ public class ProjectServiceImplIT {
 		projectService.removeSamplesFromProject(p, ImmutableList.of(s1, s2));
 
 		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
-		assertTrue("No samples should be assigned to project.", samples.isEmpty());
+		assertTrue(samples.isEmpty(), "No samples should be assigned to project.");
 	}
 
 	@Test
@@ -368,10 +373,12 @@ public class ProjectServiceImplIT {
 		projectService.read(1L);
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user2", roles = "USER")
 	public void testRejectReadProjectAsUserRole() {
-		projectService.read(3L);
+		assertThrows(AccessDeniedException.class, () -> {
+			projectService.read(3L);
+		});
 	}
 
 	@Test
@@ -381,9 +388,9 @@ public class ProjectServiceImplIT {
 		Sample s = s();
 
 		Join<Project, Sample> join = projectService.addSampleToProject(p, s, true);
-		assertNotNull("Join should not be empty.", join);
-		assertEquals("Wrong project in join.", p, join.getSubject());
-		assertEquals("Wrong sample in join.", s, join.getObject());
+		assertNotNull(join, "Join should not be empty.");
+		assertEquals(p, join.getSubject(), "Wrong project in join.");
+		assertEquals(s, join.getObject(), "Wrong sample in join.");
 	}
 
 	@Test
@@ -391,7 +398,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsUser() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 4, projects.size());
+		assertEquals(4, projects.size(), "Wrong number of projects.");
 	}
 
 	@Test
@@ -399,7 +406,7 @@ public class ProjectServiceImplIT {
 	public void testFindAllProjectsAsAdmin() {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
-		assertEquals("Wrong number of projects.", 11, projects.size());
+		assertEquals(11, projects.size(), "Wrong number of projects.");
 	}
 
 	@Test
@@ -476,13 +483,15 @@ public class ProjectServiceImplIT {
 		assertEquals(rp.getObject(), p7);
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testAddExistingRelatedProject() {
 		Project p6 = projectService.read(6L);
 		Project p8 = projectService.read(8L);
 
-		projectService.addRelatedProject(p6, p8);
+		assertThrows(EntityExistsException.class, () -> {
+			projectService.addRelatedProject(p6, p8);
+		});
 	}
 
 	@Test
@@ -511,13 +520,15 @@ public class ProjectServiceImplIT {
 		}
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user2", password = "password1", roles = "USER")
 	public void testAddRelatedProjectNotAllowed() {
 		Project p6 = projectService.read(6L);
-		Project p3 = projectService.read(3L);
+		assertThrows(AccessDeniedException.class, () -> {
+			Project p3 = projectService.read(3L);
 
-		projectService.addRelatedProject(p6, p3);
+			projectService.addRelatedProject(p6, p3);
+		});
 	}
 
 	@Test
@@ -549,16 +560,15 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 
 		Join<Project, ReferenceFile> pr = projectService.addReferenceFileToProject(p, f);
-		assertEquals("Project was set in the join.", p, pr.getSubject());
+		assertEquals(p, pr.getSubject(), "Project was set in the join.");
 
 		// verify that the reference file was persisted beneath the reference
 		// file directory
 		ReferenceFile rf = pr.getObject();
-		assertTrue("reference file should be beneath the base directory for reference files.",
-				rf.getFile().startsWith(referenceFileBaseDirectory));
+		assertTrue(rf.getFile().startsWith(referenceFileBaseDirectory), "reference file should be beneath the base directory for reference files.");
 	}
 
-	@Test(expected = UnsupportedReferenceFileContentError.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddReferenceFileAmbiguouusBasesToProject() throws IOException, URISyntaxException {
 		ReferenceFile f = new ReferenceFile();
@@ -575,7 +585,9 @@ public class ProjectServiceImplIT {
 
 		Project p = projectService.read(1L);
 
-		projectService.addReferenceFileToProject(p, f);
+		assertThrows(UnsupportedReferenceFileContentError.class, () -> {
+			projectService.addReferenceFileToProject(p, f);
+		});
 	}
 
 	@Test
@@ -587,16 +599,18 @@ public class ProjectServiceImplIT {
 		projectService.removeReferenceFileFromProject(p, f);
 
 		Collection<Join<Project, ReferenceFile>> files = referenceFileService.getReferenceFilesForProject(p);
-		assertTrue("No reference files should be assigned to project.", files.isEmpty());
+		assertTrue(files.isEmpty(), "No reference files should be assigned to project.");
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveReferenceFileFromProjectExceptions() {
 		Project p = projectService.read(1L);
-		ReferenceFile f = referenceFileService.read(2L);
+		assertThrows(EntityNotFoundException.class, () -> {
+			ReferenceFile f = referenceFileService.read(2L);
 
-		projectService.removeReferenceFileFromProject(p, f);
+			projectService.removeReferenceFileFromProject(p, f);
+		});
 	}
 
 	@Test
@@ -613,20 +627,16 @@ public class ProjectServiceImplIT {
 
 		// reverse the order so that the latest revision is first in the list.
 		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L).reverse();
-		assertEquals("Should have 2 revisions.", 2, revisions.getContent().size());
+		assertEquals(2, revisions.getContent().size(), "Should have 2 revisions.");
 
 		final Iterator<Revision<Integer, Project>> iterator = revisions.iterator();
 		final Revision<Integer, Project> mostRecent = iterator.next();
-		assertEquals("most recent revision should have project description change.", modifiedDesc,
-				mostRecent.getEntity().getProjectDescription());
-		assertEquals("most recent revision should also have name changed.", modifiedName,
-				mostRecent.getEntity().getName());
+		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(), "most recent revision should have project description change.");
+		assertEquals(modifiedName, mostRecent.getEntity().getName(), "most recent revision should also have name changed.");
 
 		final Revision<Integer, Project> secondRecent = iterator.next();
-		assertEquals("second most recent revision should have modified name.", modifiedName,
-				secondRecent.getEntity().getName());
-		assertNotEquals("second most recent revision should *not* have modified description.", modifiedDesc,
-				secondRecent.getEntity().getProjectDescription());
+		assertEquals(modifiedName, secondRecent.getEntity().getName(), "second most recent revision should have modified name.");
+		assertNotEquals(modifiedDesc, secondRecent.getEntity().getProjectDescription(), "second most recent revision should *not* have modified description.");
 	}
 
 	@Test
@@ -643,13 +653,11 @@ public class ProjectServiceImplIT {
 
 		// reverse the order so that the latest revision is first in the list.
 		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, PageRequest.of(1, 1));
-		assertEquals("Should have 2 revisions.", 1, revisions.getContent().size());
+		assertEquals(1, revisions.getContent().size(), "Should have 2 revisions.");
 
 		final Revision<Integer, Project> mostRecent = revisions.iterator().next();
-		assertEquals("most recent revision should have project description change.", modifiedDesc,
-				mostRecent.getEntity().getProjectDescription());
-		assertEquals("most recent revision should also have name changed.", modifiedName,
-				mostRecent.getEntity().getName());
+		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(), "most recent revision should have project description change.");
+		assertEquals(modifiedName, mostRecent.getEntity().getName(), "most recent revision should also have name changed.");
 	}
 
 	@Test
@@ -662,9 +670,8 @@ public class ProjectServiceImplIT {
 
 		Revisions<Integer, Project> revisions = projectService.findRevisions(1L);
 
-		assertEquals("Deleted entity should match original", revisions.getLatestRevision()
-				.getEntity()
-				.getName(), p.getName());
+		assertEquals(revisions.getLatestRevision().getEntity().getName(), p.getName(),
+				"Deleted entity should match original");
 	}
 
 	@Test
@@ -677,7 +684,7 @@ public class ProjectServiceImplIT {
 
 		Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, PageRequest.of(1, 1));
 
-		assertTrue("There should be at least 1 revision", revisions.getTotalElements() > 0);
+		assertTrue(revisions.getTotalElements() > 0, "There should be at least 1 revision");
 	}
 
 	@Test
@@ -688,7 +695,7 @@ public class ProjectServiceImplIT {
 		Set<Project> projectsForSequencingObjects = projectService
 				.getProjectsForSequencingObjects(ImmutableList.of(read));
 
-		assertEquals("should have found 2 projects", 2, projectsForSequencingObjects.size());
+		assertEquals(2, projectsForSequencingObjects.size(), "should have found 2 projects");
 	}
 
 	@Test
@@ -699,10 +706,10 @@ public class ProjectServiceImplIT {
 		Set<Project> projectsForSequencingObjects = projectService
 				.getProjectsForSequencingObjects(ImmutableList.of(read));
 
-		assertEquals("should have found 1 project", 1, projectsForSequencingObjects.size());
+		assertEquals(1, projectsForSequencingObjects.size(), "should have found 1 project");
 		Project project = projectsForSequencingObjects.iterator().next();
 
-		assertEquals("should have found project 2", Long.valueOf(2), project.getId());
+		assertEquals(Long.valueOf(2), project.getId(), "should have found project 2");
 	}
 
 	@Test
@@ -712,7 +719,7 @@ public class ProjectServiceImplIT {
 
 		List<ProjectAnalysisSubmissionJoin> projects = projectService.getProjectsForAnalysisSubmission(analysis);
 
-		assertEquals("should have found 2 projects", 2, projects.size());
+		assertEquals(2, projects.size(), "should have found 2 projects");
 	}
 
 	@Test
@@ -722,9 +729,9 @@ public class ProjectServiceImplIT {
 
 		List<ProjectAnalysisSubmissionJoin> projects = projectService.getProjectsForAnalysisSubmission(analysis);
 
-		assertEquals("should have found 1 project", 1, projects.size());
+		assertEquals(1, projects.size(), "should have found 1 project");
 		ProjectAnalysisSubmissionJoin project = projects.iterator().next();
-		assertEquals("should have found project 2", Long.valueOf(2), project.getSubject().getId());
+		assertEquals(Long.valueOf(2), project.getSubject().getId(), "should have found project 2");
 	}
 
 	@Test
@@ -741,13 +748,13 @@ public class ProjectServiceImplIT {
 		assertEquals(samples.size(), copiedSamples.size());
 
 		copiedSamples.forEach(j -> {
-			assertTrue("Project should be owner for sample", j.isOwner());
+			assertTrue(j.isOwner(), "Project should be owner for sample");
 		});
 
-		assertNotNull("Samples should still exist in source project",
-				projectSampleJoinRepository.readSampleForProject(source, sample1));
-		assertNotNull("Sample should exist in destination project",
-				projectSampleJoinRepository.readSampleForProject(destination, sample1));
+		assertNotNull(projectSampleJoinRepository.readSampleForProject(source, sample1),
+				"Samples should still exist in source project");
+		assertNotNull(projectSampleJoinRepository.readSampleForProject(destination, sample1),
+				"Sample should exist in destination project");
 	}
 
 	@Test
@@ -764,43 +771,47 @@ public class ProjectServiceImplIT {
 		assertEquals(samples.size(), movedSamples.size());
 
 		movedSamples.forEach(j -> {
-			assertTrue("Project should be owner for sample", j.isOwner());
+			assertTrue(j.isOwner(), "Project should be owner for sample");
 		});
 
-		assertNull("Sample should have been moved from source project",
-				projectSampleJoinRepository.readSampleForProject(source, sample1));
-		assertNotNull("Sample should have been moved to destination project",
-				projectSampleJoinRepository.readSampleForProject(destination, sample1));
+		assertNull(projectSampleJoinRepository.readSampleForProject(source, sample1),
+				"Sample should have been moved from source project");
+		assertNotNull(projectSampleJoinRepository.readSampleForProject(destination, sample1),
+				"Sample should have been moved to destination project");
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testShareSamplesWithOwnerRemoteFail() {
 		Project source = projectService.read(11L);
 		Project destination = projectService.read(10L);
 
-		assertTrue("Source project should be a remote project for the test", source.isRemote());
-		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+		assertTrue(source.isRemote(), "Source project should be a remote project for the test");
+		assertFalse(destination.isRemote(), "Destination project should not be a remote project for the test");
 
 		Sample sample = sampleService.read(3L);
 		Set<Sample> samples = Sets.newHashSet(sample);
 
-		projectService.shareSamples(source, destination, samples, true);
+		assertThrows(AccessDeniedException.class, () -> {
+			projectService.shareSamples(source, destination, samples, true);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testMoveSamplesRemoteFail() {
 		Project source = projectService.read(11L);
 		Project destination = projectService.read(10L);
 
-		assertTrue("Source project should be a remote project for the test", source.isRemote());
-		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+		assertTrue(source.isRemote(), "Source project should be a remote project for the test");
+		assertFalse(destination.isRemote(), "Destination project should not be a remote project for the test");
 
 		Sample sample = sampleService.read(3L);
 		Set<Sample> samples = Sets.newHashSet(sample);
 
-		projectService.moveSamples(source, destination, samples);
+		assertThrows(AccessDeniedException.class, () -> {
+			projectService.moveSamples(source, destination, samples);
+		});
 	}
 
 	@Test
@@ -818,15 +829,15 @@ public class ProjectServiceImplIT {
 		assertEquals(samples.size(), copiedSamples.size());
 
 		copiedSamples.forEach(j -> {
-			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals("Samples should still exist in source project", Sets.newHashSet(1L, 2L),
+		assertEquals(Sets.newHashSet(1L, 2L),
 				projectSampleJoinRepository.getSamplesForProject(source).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()));
-		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
+						.collect(Collectors.toSet()), "Samples should still exist in source project");
+		assertEquals(Sets.newHashSet(1L, 2L),
 				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()));
+						.collect(Collectors.toSet()), "Samples should exist in destination project");
 	}
 
 
@@ -836,8 +847,8 @@ public class ProjectServiceImplIT {
 		Project source = projectService.read(11L);
 		Project destination = projectService.read(10L);
 
-		assertTrue("Source project should be a remote project for the test", source.isRemote());
-		assertFalse("Destination project should not be a remote project for the test", destination.isRemote());
+		assertTrue(source.isRemote(), "Source project should be a remote project for the test");
+		assertFalse(destination.isRemote(), "Destination project should not be a remote project for the test");
 
 		Sample sample = sampleService.read(3L);
 		Set<Sample> samples = Sets.newHashSet(sample);
@@ -847,13 +858,13 @@ public class ProjectServiceImplIT {
 		assertEquals(samples.size(), copiedSamples.size());
 
 		copiedSamples.forEach(j -> {
-			assertFalse("Project should not be owner for sample", j.isOwner());
+			assertFalse(j.isOwner(), "Project should not be owner for sample");
 		});
 
-		assertNotNull("Samples should still exist in source project",
-				projectSampleJoinRepository.readSampleForProject(source, sample));
-		assertNotNull("Sample should exist in destination project",
-				projectSampleJoinRepository.readSampleForProject(destination, sample));
+		assertNotNull(projectSampleJoinRepository.readSampleForProject(source, sample),
+				"Samples should still exist in source project");
+		assertNotNull(projectSampleJoinRepository.readSampleForProject(destination, sample),
+				"Sample should exist in destination project");
 	}
 
 	@Test
@@ -871,15 +882,15 @@ public class ProjectServiceImplIT {
 		assertEquals(samples.size(), copiedSamples.size());
 
 		copiedSamples.forEach(j -> {
-			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals("Samples should still exist in source project", Sets.newHashSet(1L, 2L),
+		assertEquals(Sets.newHashSet(1L, 2L),
 				projectSampleJoinRepository.getSamplesForProject(source).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()));
-		assertEquals("Samples should exist in destination project", Sets.newHashSet(1L, 2L),
+						.collect(Collectors.toSet()), "Samples should still exist in source project");
+		assertEquals(Sets.newHashSet(1L, 2L),
 				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()));
+						.collect(Collectors.toSet()), "Samples should exist in destination project");
 	}
 
 	@Test
@@ -897,20 +908,19 @@ public class ProjectServiceImplIT {
 		assertEquals(samples.size(), movedSamples.size());
 
 		movedSamples.forEach(j -> {
-			assertFalse("Project shouldn't be owner for sample", j.isOwner());
+			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals("Samples should not exist in source project", Long.valueOf(1L),
-				projectSampleJoinRepository.countSamplesForProject(source));
+		assertEquals(Long.valueOf(1L), projectSampleJoinRepository.countSamplesForProject(source), "Samples should not exist in source project");
 
 		List<Join<Project, Sample>> samplesForProject = projectSampleJoinRepository.getSamplesForProject(destination);
-		assertEquals("Should be 1 sample", 1, samplesForProject.size());
+		assertEquals(1, samplesForProject.size(), "Should be 1 sample");
 		ProjectSampleJoin join = (ProjectSampleJoin) samplesForProject.iterator().next();
-		assertFalse("Project should not be owner", join.isOwner());
+		assertFalse(join.isOwner(), "Project should not be owner");
 
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testShareLockedSamplesWithOwnerFail() {
 		Project source = projectService.read(2L);
@@ -920,7 +930,9 @@ public class ProjectServiceImplIT {
 
 		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
 
-		projectService.shareSamples(source, destination, samples, true);
+		assertThrows(AccessDeniedException.class, () -> {
+			projectService.shareSamples(source, destination, samples, true);
+		});
 	}
 
 	private Project p() {

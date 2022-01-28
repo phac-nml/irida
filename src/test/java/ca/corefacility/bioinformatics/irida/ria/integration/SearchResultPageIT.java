@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.SearchResultPage;
@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.SearchResultPa
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for global search
@@ -30,8 +30,8 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 		int sampleCount = page.getSampleCount();
 		int projectCount = page.getProjectCount();
 
-		assertEquals("should be 2 samples", 2, sampleCount);
-		assertEquals("should be no projects", 0, projectCount);
+		assertEquals(2, sampleCount, "should be 2 samples");
+		assertEquals(0, projectCount, "should be no projects");
 
 	}
 
@@ -47,8 +47,8 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 		int sampleCount = page.getSampleCount();
 		int projectCount = page.getProjectCount();
 
-		assertEquals("should be no samples", 0, sampleCount);
-		assertEquals("should be 1 project", 1, projectCount);
+		assertEquals(0, sampleCount, "should be no samples");
+		assertEquals(1, projectCount, "should be 1 project");
 
 		page.globalSearch("ABCD", false);
 		page = SearchResultPage.initPage(driver());
@@ -57,7 +57,7 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 		sampleCount = page.getSampleCount();
 		projectCount = page.getProjectCount();
 
-		assertEquals("should be no samples", 0, sampleCount);
-		assertEquals("should be no projects", 0, projectCount);
+		assertEquals(0, sampleCount, "should be no samples");
+		assertEquals(0, projectCount, "should be no projects");
 	}
 }

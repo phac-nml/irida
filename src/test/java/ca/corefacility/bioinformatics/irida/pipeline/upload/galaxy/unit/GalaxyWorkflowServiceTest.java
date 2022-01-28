@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
@@ -8,8 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -50,7 +51,7 @@ public class GalaxyWorkflowServiceTest {
 	 * Sets up variables for workflow tests.
 	 * @throws URISyntaxException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.openMocks(this);
 		
@@ -81,14 +82,14 @@ public class GalaxyWorkflowServiceTest {
 		workflowInputMap.put("validInputId", validDefinition);
 		details.setInputs(workflowInputMap);
 		
-		assertEquals("validInputId", galaxyWorkflowService.getWorkflowInputId(details, "valid"));
+		assertEquals(galaxyWorkflowService.getWorkflowInputId(details, "valid"), "validInputId");
 	}
 	
 	/**
 	 * Tests failing to find a valid workflow input id from a workflow details.
 	 * @throws WorkflowException 
 	 */
-	@Test(expected=WorkflowException.class)
+	@Test
 	public void testGetWorkflowInputIdInvalid() throws WorkflowException {
 		WorkflowDetails details = new WorkflowDetails();
 		WorkflowInputDefinition validDefinition = new WorkflowInputDefinition();
@@ -98,6 +99,8 @@ public class GalaxyWorkflowServiceTest {
 		workflowInputMap.put("validInputId", validDefinition);
 		details.setInputs(workflowInputMap);
 		
-		galaxyWorkflowService.getWorkflowInputId(details, "invalid");
+		assertThrows(WorkflowException.class, () -> {
+			galaxyWorkflowService.getWorkflowInputId(details, "invalid");
+		});
 	}
 }

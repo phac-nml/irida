@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.analysis;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
@@ -57,7 +57,7 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 
 	private AnalysisSubmission analysisSubmission;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
 
@@ -78,8 +78,8 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 		when(readAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission)).thenReturn(true);
 		when(updateSamplePermission.isAllowed(authentication, samples)).thenReturn(true);
 
-		assertTrue("Permission allowed",
-				updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission));
+		assertTrue(updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission),
+				"Permission allowed");
 	}
 
 	@Test
@@ -87,8 +87,8 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 		when(readAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission)).thenReturn(false);
 		when(updateSamplePermission.isAllowed(authentication, samples)).thenReturn(true);
 
-		assertFalse("Permission denied",
-				updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission));
+		assertFalse(updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission),
+				"Permission denied");
 	}
 
 	@Test
@@ -96,8 +96,8 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 		when(readAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission)).thenReturn(true);
 		when(updateSamplePermission.isAllowed(authentication, samples)).thenReturn(false);
 
-		assertFalse("Permission denied",
-				updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission));
+		assertFalse(updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission),
+				"Permission denied");
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class UpdateSamplesFromAnalysisSubmissionPermissionTest {
 		when(readAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission)).thenReturn(false);
 		when(updateSamplePermission.isAllowed(authentication, samples)).thenReturn(false);
 
-		assertFalse("Permission denied",
-				updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission));
+		assertFalse(updateSamplesFromAnalysisSubmissionPermission.isAllowed(authentication, analysisSubmission),
+				"Permission denied");
 	}
 }

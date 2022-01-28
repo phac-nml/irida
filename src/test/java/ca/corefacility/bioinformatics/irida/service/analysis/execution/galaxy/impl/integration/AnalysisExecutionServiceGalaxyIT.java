@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,10 +22,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ import org.springframework.security.test.context.support.WithSecurityContextTest
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -80,7 +82,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
  * 
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Galaxy") @Tag("Pipeline")
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)
@@ -160,9 +163,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException, IridaWorkflowNotFoundException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -215,7 +218,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws ExecutionException
 	 */
-	@Test(expected=ExecutionManagerException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetWorkflowStatusFail() throws InterruptedException, NoSuchValueException,
 			IridaWorkflowNotFoundException, ExecutionManagerException, IOException, ExecutionException {
@@ -227,7 +230,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 		analysisSubmitted.setRemoteAnalysisId("invalid");
 
-		analysisExecutionService.getWorkflowStatus(analysisSubmitted);
+		assertThrows(ExecutionManagerException.class, () -> {
+			analysisExecutionService.getWorkflowStatus(analysisSubmitted);
+		});
 	}
 
 	/**
@@ -257,8 +262,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
 
-		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
-		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
+		assertNotNull(analysisExecuted.getRemoteAnalysisId(), "remoteAnalysisId is null");
+		assertNotNull(analysisExecuted.getRemoteInputDataId(), "remoteInputDataId is null");
 
 		GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
@@ -271,7 +276,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws Throwable
 	 * 
 	 */
-	@Test(expected = WorkflowException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailRemoteWorkflowId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -288,15 +293,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 
-		try {
-			analysisExecutedFuture.get();
-		} catch (ExecutionException e) {
-			// check to make sure the submission is in the error state
-			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
-			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
+		assertThrows(WorkflowException.class, () -> {
+			try {
+				analysisExecutedFuture.get();
+			} catch (ExecutionException e) {
+				// check to make sure the submission is in the error state
+				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
+				assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
-			throw e.getCause();
-		}
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -305,7 +312,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = NoGalaxyHistoryException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -322,16 +329,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 
-		try {
-			analysisExecutedFuture.get();
-		} catch (ExecutionException e) {
-			// check to make sure the submission is in the error state
-			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
-			logger.debug("Submission on exception=" + savedSubmission.getId());
-			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
+		assertThrows(NoGalaxyHistoryException.class, () -> {
+			try {
+				analysisExecutedFuture.get();
+			} catch (ExecutionException e) {
+				// check to make sure the submission is in the error state
+				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
+				logger.debug("Submission on exception=" + savedSubmission.getId());
+				assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
-			throw e.getCause();
-		}
+				throw e.getCause();
+			}
+		});
 	}
 	
 	/**
@@ -339,7 +348,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = WorkflowException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailInvalidParameterValue() throws Throwable {
 		Map<String, String> parameters = ImmutableMap.of("coverage", "not an integer for coverage");
@@ -355,16 +364,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 
-		try {
-			analysisExecutionFuture.get();
-		} catch (ExecutionException e) {
-			// check to make sure the submission is in the error state
-			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
-			logger.debug("Submission on exception=" + savedSubmission.getId());
-			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
+		assertThrows(WorkflowException.class, () -> {
+			try {
+				analysisExecutionFuture.get();
+			} catch (ExecutionException e) {
+				// check to make sure the submission is in the error state
+				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
+				logger.debug("Submission on exception=" + savedSubmission.getId());
+				assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
-			throw e.getCause();
-		}
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -378,7 +389,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailState() throws NoSuchValueException, ExecutionManagerException, IOException, IridaWorkflowException, InterruptedException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -389,7 +400,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
-		analysisExecutionService.executeAnalysis(analysisSubmitted);
+		assertThrows(IllegalArgumentException.class, () -> {
+			analysisExecutionService.executeAnalysis(analysisSubmitted);
+		});
 	}
 
 	/**
@@ -416,9 +429,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		AnalysisSubmission analysisSaved = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
 		assertEquals(analysisSaved.getId(), analysisSubmitted.getId());
-		assertNotNull("analysisSubmitted is null", analysisSaved);
-		assertNotNull("remoteWorkflowId is null", analysisSaved.getRemoteWorkflowId());
-		assertNotNull("remoteAnalysisId is null", analysisSaved.getRemoteAnalysisId());
+		assertNotNull(analysisSaved, "analysisSubmitted is null");
+		assertNotNull(analysisSaved.getRemoteWorkflowId(), "remoteWorkflowId is null");
+		assertNotNull(analysisSaved.getRemoteAnalysisId(), "remoteAnalysisId is null");
 		assertEquals(AnalysisState.PREPARED, analysisSaved.getAnalysisState());
 	}
 
@@ -428,7 +441,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = IridaWorkflowNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareSubmissionFailInvalidWorkflow() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -436,16 +449,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
-		try {
-			analysisSubmissionFuture.get();
-		} catch (ExecutionException e) {
-			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-					.getAnalysisState());
+		assertThrows(IridaWorkflowNotFoundException.class, () -> {
+			try {
+				analysisSubmissionFuture.get();
+			} catch (ExecutionException e) {
+				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+						.getAnalysisState());
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -454,7 +469,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = WorkflowUploadException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareSubmissionFailInvalidGalaxyWorkflowFile() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -462,16 +477,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
-		try {
-			analysisSubmissionFuture.get();
-		} catch (ExecutionException e) {
-			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-					.getAnalysisState());
+		assertThrows(WorkflowUploadException.class, () -> {
+			try {
+				analysisSubmissionFuture.get();
+			} catch (ExecutionException e) {
+				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+						.getAnalysisState());
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -489,23 +506,23 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 		float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
-		assertEquals("percent complete is incorrect", 11.0f, percentComplete, DELTA);
+		assertEquals(11.0f, percentComplete, DELTA, "percent complete is incorrect");
 
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
-		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
+		assertNotNull(analysisExecuted.getRemoteInputDataId(), "remoteInputDataId is null");
 		String remoteInputDataId = analysisExecuted.getRemoteInputDataId();
 		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
-		assertTrue("percent complete is incorrect", 10.0f <= percentComplete && percentComplete <= 90.0f);
+		assertTrue(10.0f <= percentComplete && percentComplete <= 90.0f, "percent complete is incorrect");
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
-		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
+		assertEquals(90.0f, percentComplete, DELTA, "percent complete is incorrect");
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
-		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
+		assertEquals(90.0f, percentComplete, DELTA, "percent complete is incorrect");
 		
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
@@ -514,37 +531,37 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
-		assertEquals("remoteInputDataId should be unchanged in the completed analysis", remoteInputDataId,
-				analysisSubmissionCompletedDatabase.getRemoteInputDataId());
+		assertEquals(remoteInputDataId, analysisSubmissionCompletedDatabase.getRemoteInputDataId(),
+				"remoteInputDataId should be unchanged in the completed analysis");
 		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
-		assertEquals("percent complete is incorrect", 100.0f, percentComplete, DELTA);
+		assertEquals(100.0f, percentComplete, DELTA, "percent complete is incorrect");
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
-		assertEquals("analysis results in returned submission and from database should be the same",
-				analysisResults.getId(), analysisResultsDatabase.getId());
+		assertEquals(analysisResults.getId(), analysisResultsDatabase.getId(),
+				"analysis results in returned submission and from database should be the same");
 
 		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
-		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsDatabase.getExecutionManagerAnalysisId());
+		assertEquals(analysisId, analysisResultsDatabase.getExecutionManagerAnalysisId(),
+				"id should be set properly for analysis");
 
 		assertEquals(3, analysisResultsDatabase.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY);
 		AnalysisOutputFile snpMatrix = analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY);
 		AnalysisOutputFile snpTable = analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY);
 
-		assertTrue("phylogenetic trees should be equal",
-				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
+		assertTrue(com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()),
+				"phylogenetic trees should be equal");
 		assertEquals(expectedTree.getFileName(), phylogeneticTree.getFile().getFileName());
 
-		assertTrue("snp matrices should be correct",
-				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()));
+		assertTrue(com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()),
+				"snp matrices should be correct");
 		assertEquals(expectedSnpMatrix.getFileName(), snpMatrix.getFile().getFileName());
 
-		assertTrue("snpTable should be correct",
-				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
+		assertTrue(com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()),
+				"snpTable should be correct");
 		assertEquals(expectedSnpTable.getFileName(), snpTable.getFile().getFileName());
 
 		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
@@ -554,8 +571,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsDatabase.getId());
 		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, savedAnalysisFromDatabase.getAnalysisType());
 
-		assertEquals("Analysis from submission and from database should be the same",
-				savedAnalysisFromDatabase.getId(), analysis.getId());
+		assertEquals(savedAnalysisFromDatabase.getId(), analysis.getId(),
+				"Analysis from submission and from database should be the same");
 
 		assertEquals(analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId());
 		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase
@@ -592,96 +609,93 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompletedDatabase.getAnalysisState());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompleted.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
+				"analysis state is not completed");
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState(),
+				"analysis state is not completed");
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
-		assertEquals("analysis results in returned submission and from database should be the same",
-				analysisResults.getId(), analysisResultsDatabase.getId());
+		assertEquals(analysisResults.getId(), analysisResultsDatabase.getId(),
+				"analysis results in returned submission and from database should be the same");
 
 
 		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
-		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsDatabase.getExecutionManagerAnalysisId());
+		assertEquals(analysisId, analysisResultsDatabase.getExecutionManagerAnalysisId(),
+				"id should be set properly for analysis");
 
-		assertEquals("invalid number of output files", 3, analysisResultsDatabase.getAnalysisOutputFiles().size());
+		assertEquals(3, analysisResultsDatabase.getAnalysisOutputFiles().size(), "invalid number of output files");
 		AnalysisOutputFile phylogeneticTree = analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY);
 		AnalysisOutputFile snpMatrix = analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY);
 		AnalysisOutputFile snpTable = analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY);
 
-		assertTrue("phylogenetic trees should be equal",
-				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
-		assertEquals("invalid file name for snp tree", expectedTree.getFileName(), phylogeneticTree.getFile()
-				.getFileName());
-		assertTrue(
+		assertTrue(com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()),
+				"phylogenetic trees should be equal");
+		assertEquals(expectedTree.getFileName(), phylogeneticTree.getFile().getFileName(),
+				"invalid file name for snp tree");
+		assertTrue(phylogeneticTree.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN),
 				"command line (" + phylogeneticTree.getCreatedByTool().getCommandLine()
-						+ ") should match the defined pattern (" + CMD_LINE_PATTERN + ") (phylogenetic tree).",
-				phylogeneticTree.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN));
+						+ ") should match the defined pattern (" + CMD_LINE_PATTERN + ") (phylogenetic tree).");
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
-				"core_pipeline_outputs_paired", phyTreeCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0", "0.1.0",
-				phyTreeCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired", phyTreeCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired v0.1.0");
+		assertEquals("0.1.0", phyTreeCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired v0.1.0");
 		final ToolExecution phyTreeCoreUpload = phyTreeCoreInputs.getPreviousSteps().iterator().next();
-		assertTrue("Second step should be input tool.", phyTreeCoreUpload.isInputTool());
+		assertTrue(phyTreeCoreUpload.isInputTool(), "Second step should be input tool.");
 
-		assertTrue("snp matrices should be correct",
-				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()));
-		assertEquals("invalid file name for snp matrix", expectedSnpMatrix.getFileName(), snpMatrix.getFile()
-				.getFileName());
-		assertTrue(
+		assertTrue(com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()),
+				"snp matrices should be correct");
+		assertEquals(expectedSnpMatrix.getFileName(), snpMatrix.getFile().getFileName(),
+				"invalid file name for snp matrix");
+		assertTrue(snpMatrix.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN),
 				"command line (" + snpMatrix.getCreatedByTool().getCommandLine()
-						+ ") should match the defined pattern (" + CMD_LINE_PATTERN + ") (snp matrix).",
-				snpMatrix.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN));
+						+ ") should match the defined pattern (" + CMD_LINE_PATTERN + ") (snp matrix).");
 		final ToolExecution snpMatrixCoreInputs = snpMatrix.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
-				"core_pipeline_outputs_paired", snpMatrixCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0", "0.1.0",
-				snpMatrixCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired", snpMatrixCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired v0.1.0");
+		assertEquals("0.1.0", snpMatrixCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired v0.1.0");
 		final ToolExecution snpMatrixCoreUpload = snpMatrixCoreInputs.getPreviousSteps().iterator().next();
-		assertTrue("Second step should be input tool.", snpMatrixCoreUpload.isInputTool());
+		assertTrue(snpMatrixCoreUpload.isInputTool(), "Second step should be input tool.");
 
-		assertTrue("snpTable should be correct",
-				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
-		assertEquals("invalid file name for snp table", expectedSnpTable.getFileName(), snpTable.getFile()
-				.getFileName());
-		assertTrue(
+		assertTrue(com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()),
+				"snpTable should be correct");
+		assertEquals(expectedSnpTable.getFileName(), snpTable.getFile().getFileName(),
+				"invalid file name for snp table");
+		assertTrue(snpTable.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN),
 				"command line (" + snpTable.getCreatedByTool().getCommandLine() + ") should match the defined pattern ("
-						+ CMD_LINE_PATTERN + ") (snp table).",
-				snpTable.getCreatedByTool().getCommandLine().matches(CMD_LINE_PATTERN));
+						+ CMD_LINE_PATTERN + ") (snp table).");
 		final ToolExecution snpTableCoreInputs = snpTable.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
-				"core_pipeline_outputs_paired", snpTableCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0", "0.1.0",
-				snpTableCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired", snpTableCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired v0.1.0");
+		assertEquals("0.1.0", snpTableCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired v0.1.0");
 		final ToolExecution snpTableCoreUpload = snpTableCoreInputs.getPreviousSteps().iterator().next();
-		assertTrue("Second step should be input tool.", snpTableCoreUpload.isInputTool());
+		assertTrue(snpTableCoreUpload.isInputTool(), "Second step should be input tool.");
 
 		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
-		assertNotNull("analysis should not be null in submission", analysis);
+		assertNotNull(analysis, "analysis should not be null in submission");
 
 		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsDatabase.getId());
-		assertEquals("saved analysis in submission is not correct class", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				savedAnalysisFromDatabase.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, savedAnalysisFromDatabase.getAnalysisType(),
+				"saved analysis in submission is not correct class");
 
-		assertEquals("Analysis from submission and from database should be the same",
-				savedAnalysisFromDatabase.getId(), analysis.getId());
+		assertEquals(savedAnalysisFromDatabase.getId(), analysis.getId(),
+				"Analysis from submission and from database should be the same");
 
-		assertEquals("analysis results from database and from submission should have correct id",
-				analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId());
-		assertEquals("analysis results from database and from submission should have correct tree output file",
-				analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(TREE_KEY)
-						.getFile());
-		assertEquals("analysis results from database and from submission should have correct matrix output file",
-				analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
-		assertEquals("analysis results from database and from submission should have correct table output file",
-				analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
+		assertEquals(analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId(),
+				"analysis results from database and from submission should have correct id");
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(TREE_KEY)
+						.getFile(),
+				"analysis results from database and from submission should have correct tree output file");
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+				"analysis results from database and from submission should have correct matrix output file");
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+				"analysis results from database and from submission should have correct table output file");
 	}
 	
 	/**
@@ -722,15 +736,15 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisSubmissionCompletedFuture.get();
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
+				"analysis state is not completed");
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				analysisResults.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType(),
+				"analysis results is an invalid class");
 
-		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		assertEquals(3, analysisResults.getAnalysisOutputFiles().size(), "invalid number of output files");
 		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
 		AnalysisOutputFile snpMatrix = analysisResults.getAnalysisOutputFile(MATRIX_KEY);
 		AnalysisOutputFile snpTable = analysisResults.getAnalysisOutputFile(TABLE_KEY);
@@ -738,88 +752,88 @@ public class AnalysisExecutionServiceGalaxyIT {
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
 		String treeContent = new Scanner(phylogeneticTree.getFile().toFile()).useDelimiter("\\Z").next();
-		assertEquals("phylogenetic trees containing the parameters should be equal", validTreeFile, treeContent);
+		assertEquals(validTreeFile, treeContent, "phylogenetic trees containing the parameters should be equal");
 
 		// phy tree
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", phyTreeCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", phyTreeCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, phyTreeCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
+		assertEquals(2, phyTreeCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesPhy = Sets.newHashSet();
 		for (ToolExecution previousStep : phyTreeCorePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesPhy.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesPhy);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesPhy,
+				"uploaded files should have correct types");
 
 		// snp matrix
 		final ToolExecution matrixCoreInputs = snpMatrix.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", matrixCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", matrixCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, matrixCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				matrixCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				matrixCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, matrixCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, matrixCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validCoverageFromProvenance, matrixCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
+		assertEquals(2, matrixCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
 		for (ToolExecution previousStep : matrixCorePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesMatrix.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesMatrix);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesMatrix,
+				"uploaded files should have correct types");
 
 		// snp table
 		final ToolExecution tableCoreInputs = snpTable.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", tableCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", tableCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, tableCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				tableCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				tableCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, tableCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, tableCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validCoverageFromProvenance, tableCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
+		assertEquals(2, tablePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesTable = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesTable.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesTable);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesTable,
+				"uploaded files should have correct types");
 	}
 
 	/**
@@ -856,15 +870,15 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisSubmissionCompletedFuture.get();
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
+				"analysis state is not completed");
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				analysisResults.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType(),
+				"analysis results is an invalid class");
 
-		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		assertEquals(3, analysisResults.getAnalysisOutputFiles().size(), "invalid number of output files");
 		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
 		AnalysisOutputFile snpMatrix = analysisResults.getAnalysisOutputFile(MATRIX_KEY);
 		AnalysisOutputFile snpTable = analysisResults.getAnalysisOutputFile(TABLE_KEY);
@@ -872,88 +886,88 @@ public class AnalysisExecutionServiceGalaxyIT {
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
 		String treeContent = new Scanner(phylogeneticTree.getFile().toFile()).useDelimiter("\\Z").next();
-		assertEquals("phylogenetic trees containing the parameters should be equal", validTreeFile, treeContent);
+		assertEquals(validTreeFile, treeContent, "phylogenetic trees containing the parameters should be equal");
 
 		// phy tree
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", phyTreeCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", phyTreeCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, phyTreeCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
+		assertEquals(2, phyTreeCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesPhy = Sets.newHashSet();
 		for (ToolExecution previousStep : phyTreeCorePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesPhy.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesPhy);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesPhy,
+				"uploaded files should have correct types");
 
 		// snp matrix
 		final ToolExecution matrixCoreInputs = snpMatrix.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", matrixCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", matrixCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, matrixCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				matrixCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				matrixCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, matrixCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, matrixCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validCoverageFromProvenance, matrixCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 		
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
+		assertEquals(2, matrixCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
 		for (ToolExecution previousStep : matrixCorePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesMatrix.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesMatrix);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesMatrix,
+				"uploaded files should have correct types");
 
 		// snp table
 		final ToolExecution tableCoreInputs = snpTable.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", tableCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", tableCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, tableCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				tableCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				tableCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, tableCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, tableCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validCoverageFromProvenance, tableCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 		
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
+		assertEquals(2, tablePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesTable = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesTable.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesTable);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesTable,
+				"uploaded files should have correct types");
 	}
 	
 	/**
@@ -993,15 +1007,15 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisSubmissionCompletedFuture.get();
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
+				"analysis state is not completed");
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				analysisResults.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType(),
+				"analysis results is an invalid class");
 
-		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		assertEquals(3, analysisResults.getAnalysisOutputFiles().size(), "invalid number of output files");
 		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
 		AnalysisOutputFile snpMatrix = analysisResults.getAnalysisOutputFile(MATRIX_KEY);
 		AnalysisOutputFile snpTable = analysisResults.getAnalysisOutputFile(TABLE_KEY);
@@ -1009,88 +1023,88 @@ public class AnalysisExecutionServiceGalaxyIT {
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
 		String treeContent = new Scanner(phylogeneticTree.getFile().toFile()).useDelimiter("\\Z").next();
-		assertEquals("phylogenetic trees containing the parameters should be equal", validTreeFile, treeContent);
+		assertEquals(validTreeFile, treeContent, "phylogenetic trees containing the parameters should be equal");
 
 		// phy tree
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", phyTreeCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", phyTreeCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, phyTreeCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validMaxCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, phyTreeCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validMinCoverageFromProvenance, phyTreeCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validMaxCoverageFromProvenance, phyTreeCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
+		assertEquals(2, phyTreeCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesPhy = Sets.newHashSet();
 		for (ToolExecution previousStep : phyTreeCorePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesPhy.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesPhy);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesPhy,
+				"uploaded files should have correct types");
 
 		// snp matrix
 		final ToolExecution matrixCoreInputs = snpMatrix.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", matrixCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", matrixCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, matrixCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
-				matrixCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validMaxCoverageFromProvenance,
-				matrixCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, matrixCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validMinCoverageFromProvenance, matrixCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validMaxCoverageFromProvenance, matrixCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
+		assertEquals(2, matrixCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
 		for (ToolExecution previousStep : matrixCorePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesMatrix.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesMatrix);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesMatrix,
+				"uploaded files should have correct types");
 
 		// snp table
 		final ToolExecution tableCoreInputs = snpTable.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"0.1.0", tableCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
+		assertEquals("0.1.0", tableCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0");
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 4, tableCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
-				tableCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter coverageMax set incorrectly", validMaxCoverageFromProvenance,
-				tableCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals(4, tableCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validMinCoverageFromProvenance, tableCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validMaxCoverageFromProvenance, tableCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
-		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
+		assertEquals(2, tablePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesTable = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
-			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			assertTrue(previousStep.isInputTool(), "previous steps should be input tools.");
 			uploadedFileTypesTable.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
-		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypesTable);
+		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesTable,
+				"uploaded files should have correct types");
 	}
 	
 	/**
@@ -1132,42 +1146,42 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisSubmissionCompletedFuture.get();
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
+				"analysis state is not completed");
 
 		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
 
-		assertEquals("analysis results is an invalid class", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				analysisResults.getAnalysisType());
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType(),
+				"analysis results is an invalid class");
 
-		assertEquals("invalid number of output files", 3, analysisResults.getAnalysisOutputFiles().size());
+		assertEquals(3, analysisResults.getAnalysisOutputFiles().size(), "invalid number of output files");
 		AnalysisOutputFile phylogeneticTree = analysisResults.getAnalysisOutputFile(TREE_KEY);
 
 		// verify parameters were set properly by checking contents of file
 		@SuppressWarnings("resource")
 		String treeContent = new Scanner(phylogeneticTree.getFile().toFile()).useDelimiter("\\Z").next();
-		assertEquals("phylogenetic trees containing the parameters should be equal", validTreeFile, treeContent);
+		assertEquals(validTreeFile, treeContent, "phylogenetic trees containing the parameters should be equal");
 
 		// phy tree
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_multi_level_parameters", phyTreeCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
-				"0.1.0", phyTreeCoreInputs.getToolVersion());
+		assertEquals("core_pipeline_outputs_paired_with_multi_level_parameters", phyTreeCoreInputs.getToolName(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0");
+		assertEquals("0.1.0", phyTreeCoreInputs.getToolVersion(),
+				"The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0");
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
-		assertEquals("incorrect number of non-file parameters", 6, phyTreeCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
-				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter 'parameter' set incorrectly", validParameterValueFromProvenance,
-				phyTreeCoreParameters.get("conditional.level2.parameter"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
-				phyTreeCoreParameters.get("coverageMax"));
-		assertEquals("parameter conditional_select set incorrectly", "all",
-				phyTreeCoreParameters.get("conditional.conditional_select"));
-		assertEquals("parameter conditional_select set incorrectly", "all2",
-				phyTreeCoreParameters.get("conditional.level2.level2_select"));
+		assertEquals(6, phyTreeCoreParameters.size(), "incorrect number of non-file parameters");
+		assertEquals(validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMin"),
+				"parameter coverageMin set incorrectly");
+		assertEquals(validMidCoverageFromProvenance, phyTreeCoreParameters.get("conditional.coverageMid"),
+				"parameter coverageMid set incorrectly");
+		assertEquals(validParameterValueFromProvenance, phyTreeCoreParameters.get("conditional.level2.parameter"),
+				"parameter 'parameter' set incorrectly");
+		assertEquals(validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMax"),
+				"parameter coverageMax set incorrectly");
+		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
+				"parameter conditional_select set incorrectly");
+		assertEquals("all2", phyTreeCoreParameters.get("conditional.level2.level2_select"),
+				"parameter conditional_select set incorrectly");
 	}
 	
 	/**
@@ -1197,39 +1211,39 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompletedDatabase.getAnalysisState());
-		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
-				analysisSubmissionCompleted.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
+				"analysis state is not completed");
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState(),
+				"analysis state is not completed");
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
-		assertEquals("analysis results in returned submission and from database should be the same",
-				analysisResults.getId(), analysisResultsDatabase.getId());
+		assertEquals(analysisResults.getId(), analysisResultsDatabase.getId(),
+				"analysis results in returned submission and from database should be the same");
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
-		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsDatabase.getExecutionManagerAnalysisId());
+		assertEquals(analysisId, analysisResultsDatabase.getExecutionManagerAnalysisId(),
+				"id should be set properly for analysis");
 
-		assertEquals("invalid number of output files", 3, analysisResultsDatabase.getAnalysisOutputFiles().size());
+		assertEquals(3, analysisResultsDatabase.getAnalysisOutputFiles().size(), "invalid number of output files");
 		AnalysisOutputFile contigs = analysisResultsDatabase.getAnalysisOutputFile("contigs");
 		AnalysisOutputFile annotations = analysisResultsDatabase.getAnalysisOutputFile("annotations-genbank");
 		AnalysisOutputFile prokkaLog = analysisResultsDatabase.getAnalysisOutputFile("annotations-log");
 
-		assertTrue("contigs should be equal",
-				com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()));
-		assertEquals("invalid file name for contigs", expectedContigs.getFileName(), contigs.getFile()
-				.getFileName());
+		assertTrue(com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()),
+				"contigs should be equal");
+		assertEquals(expectedContigs.getFileName(), contigs.getFile().getFileName(),
+				"invalid file name for contigs");
 
-		assertTrue("annotations should be correct",
-				com.google.common.io.Files.equal(expectedAnnotations.toFile(), annotations.getFile().toFile()));
-		assertEquals("invalid file name for annotations", expectedAnnotations.getFileName(), annotations.getFile()
-				.getFileName());
+		assertTrue(com.google.common.io.Files.equal(expectedAnnotations.toFile(), annotations.getFile().toFile()),
+				"annotations should be correct");
+		assertEquals(expectedAnnotations.getFileName(), annotations.getFile().getFileName(),
+				"invalid file name for annotations");
 
-		assertTrue("annotations log should be correct",
-				com.google.common.io.Files.equal(expectedAnnotationsLog.toFile(), prokkaLog.getFile().toFile()));
-		assertEquals("invalid file name for annotations log", expectedAnnotationsLog.getFileName(), prokkaLog.getFile()
-				.getFileName());
+		assertTrue(com.google.common.io.Files.equal(expectedAnnotationsLog.toFile(), prokkaLog.getFile().toFile()),
+				"annotations log should be correct");
+		assertEquals(expectedAnnotationsLog.getFileName(), prokkaLog.getFile().getFileName(),
+				"invalid file name for annotations log");
 	}
 	
 	/**
@@ -1264,25 +1278,25 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
-		assertEquals("analysis results in returned submission and from database should be the same",
-				analysisResults.getId(), analysisResultsDatabase.getId());
+		assertEquals(analysisResults.getId(), analysisResultsDatabase.getId(),
+				"analysis results in returned submission and from database should be the same");
 
 		assertEquals(Analysis.class, analysisResults.getClass());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
-		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResults.getExecutionManagerAnalysisId());
+		assertEquals(analysisId, analysisResults.getExecutionManagerAnalysisId(),
+				"id should be set properly for analysis");
 
 		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
 		AnalysisOutputFile output1 = analysisResultsDatabase.getAnalysisOutputFile("output1");
 		AnalysisOutputFile output2 = analysisResultsDatabase.getAnalysisOutputFile("output2");
 
-		assertTrue("output files 1 should be equal",
-				com.google.common.io.Files.equal(expectedOutputFile1.toFile(), output1.getFile().toFile()));
+		assertTrue(com.google.common.io.Files.equal(expectedOutputFile1.toFile(), output1.getFile().toFile()),
+				"output files 1 should be equal");
 		assertEquals(expectedOutputFile1.getFileName(), output1.getFile().getFileName());
 
-		assertTrue("output files 2 should be equal",
-				com.google.common.io.Files.equal(expectedOutputFile2.toFile(), output2.getFile().toFile()));
+		assertTrue(com.google.common.io.Files.equal(expectedOutputFile2.toFile(), output2.getFile().toFile()),
+				"output files 2 should be equal");
 		assertEquals(expectedOutputFile2.getFileName(), output2.getFile().getFileName());
 
 		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
@@ -1293,8 +1307,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertTrue(savedAnalysisFromDatabase instanceof Analysis);
 		Analysis savedTest = (Analysis) savedAnalysisFromDatabase;
 
-		assertEquals("Analysis from submission and from database should be the same",
-				savedAnalysisFromDatabase.getId(), analysis.getId());
+		assertEquals(savedAnalysisFromDatabase.getId(), analysis.getId(),
+				"Analysis from submission and from database should be the same");
 
 		assertEquals(analysisResults.getId(), savedTest.getId());
 	}
@@ -1303,7 +1317,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * Tests failure to get analysis results due to a missing output file.
 	 * @throws Throwable 
 	 */
-	@Test(expected=GalaxyDatasetNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsFailTestAnalysisMissingOutput() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -1322,16 +1336,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
-		try {
-			analysisSubmissionCompletedFuture.get();
-		} catch (ExecutionException e) {
-			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-					.getAnalysisState());
+		assertThrows(GalaxyDatasetNotFoundException.class, () -> {
+			try {
+				analysisSubmissionCompletedFuture.get();
+			} catch (ExecutionException e) {
+				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+						.getAnalysisState());
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -1340,7 +1356,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -1358,18 +1374,20 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		analysisExecuted.setId(555L);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
-				.transferAnalysisResults(analysisExecuted);
-		try {
-			analysisSubmissionCompletedFuture.get();
-		} catch (ExecutionException e) {
-			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-					.getAnalysisState());
+		assertThrows(EntityNotFoundException.class, () -> {
+			Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+					.transferAnalysisResults(analysisExecuted);
+			try {
+				analysisSubmissionCompletedFuture.get();
+			} catch (ExecutionException e) {
+				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+						.getAnalysisState());
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -1378,7 +1396,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = GalaxyResponseException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -1399,16 +1417,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
-		try {
-			analysisSubmissionCompletedFuture.get();
-		} catch (ExecutionException e) {
-			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-					.getAnalysisState());
+		assertThrows(GalaxyResponseException.class, () -> {
+			try {
+				analysisSubmissionCompletedFuture.get();
+			} catch (ExecutionException e) {
+				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+						.getAnalysisState());
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -1441,17 +1461,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted
 				.getRemoteWorkflowId());
-		assertFalse("Workflow is already deleted", workflowDetails.isDeleted());
+		assertFalse(workflowDetails.isDeleted(), "Workflow is already deleted");
 
 		// Once analysis is complete, attempt to clean up
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
 				.cleanupSubmission(analysisSubmissionCompleted);
 		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
-		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
-				analysisSubmissionCleaned.getAnalysisCleanedState());
+		assertEquals(AnalysisCleanedState.CLEANED, analysisSubmissionCleaned.getAnalysisCleanedState(),
+				"Analysis submission not properly cleaned");
 
 		workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted.getRemoteWorkflowId());
-		assertTrue("Workflow is not deleted", workflowDetails.isDeleted());
+		assertTrue(workflowDetails.isDeleted(), "Workflow is not deleted");
 	}
 
 	/**
@@ -1473,17 +1493,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmitted);
 
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmitted.getRemoteWorkflowId());
-		assertFalse("Workflow is already deleted", workflowDetails.isDeleted());
+		assertFalse(workflowDetails.isDeleted(), "Workflow is already deleted");
 
 		// Once analysis is complete, attempt to clean up
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
 				.cleanupSubmission(analysisSubmitted);
 		AnalysisSubmission analysisSubmissionCleaned = analysisSubmissionCleanedFuture.get();
-		assertEquals("Analysis submission not properly cleaned", AnalysisCleanedState.CLEANED,
-				analysisSubmissionCleaned.getAnalysisCleanedState());
+		assertEquals(AnalysisCleanedState.CLEANED, analysisSubmissionCleaned.getAnalysisCleanedState(),
+				"Analysis submission not properly cleaned");
 
 		workflowDetails = workflowsClient.showWorkflow(analysisSubmitted.getRemoteWorkflowId());
-		assertTrue("Workflow is not deleted", workflowDetails.isDeleted());
+		assertTrue(workflowDetails.isDeleted(), "Workflow is not deleted");
 	}
 
 	/**
@@ -1492,7 +1512,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupCleanedAnalysisError() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -1509,7 +1529,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.cleanupSubmission(analysisSubmitted);
 		AnalysisSubmission cleanedSubmission = analysisSubmissionCleanedFuture.get();
 
-		analysisExecutionService.cleanupSubmission(cleanedSubmission);
+		assertThrows(IllegalArgumentException.class, () -> {
+			analysisExecutionService.cleanupSubmission(cleanedSubmission);
+		});
 	}
 
 	/**
@@ -1518,7 +1540,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = ExecutionManagerException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupCompletedAnalysisFailGalaxy() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -1548,18 +1570,20 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
 				.cleanupSubmission(analysisSubmissionCompleted);
 
-		try {
-			analysisSubmissionCleanedFuture.get();
-			fail("No exception thrown");
-		} catch (ExecutionException e) {
-			assertEquals("The AnalysisState was changed from COMPLETED", AnalysisState.COMPLETED,
-					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
-			assertEquals("The AnalysisCleanedState was not changed to error", AnalysisCleanedState.CLEANING_ERROR,
-					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState());
+		assertThrows(ExecutionManagerException.class, () -> {
+			try {
+				analysisSubmissionCleanedFuture.get();
+				fail("No exception thrown");
+			} catch (ExecutionException e) {
+				assertEquals(AnalysisState.COMPLETED, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState(),
+						"The AnalysisState was changed from COMPLETED");
+				assertEquals(AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState(),
+						"The AnalysisCleanedState was not changed to error");
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -1568,7 +1592,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = ExecutionManagerException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupErrorAnalysisFailGalaxy() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -1585,17 +1609,19 @@ public class AnalysisExecutionServiceGalaxyIT {
 		// Once analysis is complete, attempt to clean up
 		Future<AnalysisSubmission> analysisSubmissionCleanedFuture = analysisExecutionService
 				.cleanupSubmission(analysisSubmitted);
-		try {
-			analysisSubmissionCleanedFuture.get();
-			fail("No exception thrown");
-		} catch (ExecutionException e) {
-			assertEquals("The AnalysisState was changed from ERROR", AnalysisState.ERROR, analysisSubmissionService
-					.read(analysisSubmission.getId()).getAnalysisState());
-			assertEquals("The AnalysisCleanedState was not changed to error", AnalysisCleanedState.CLEANING_ERROR,
-					analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState());
+		assertThrows(ExecutionManagerException.class, () -> {
+			try {
+				analysisSubmissionCleanedFuture.get();
+				fail("No exception thrown");
+			} catch (ExecutionException e) {
+				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState(),
+						"The AnalysisState was changed from ERROR");
+				assertEquals(AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState(),
+						"The AnalysisCleanedState was not changed to error");
 
-			// pull out real exception
-			throw e.getCause();
-		}
+				// pull out real exception
+				throw e.getCause();
+			}
+		});
 	}
 }

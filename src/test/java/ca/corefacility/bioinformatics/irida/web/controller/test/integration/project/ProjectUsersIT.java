@@ -5,22 +5,25 @@ import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -32,17 +35,22 @@ import io.restassured.response.Response;
  * Integration test for project and user.
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@Tag("IntegrationTest") @Tag("Rest")
 @ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectUsersIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectUsersIT {
+
+	@Autowired
+	private LocalHostUriTemplateHandler uriTemplateHandler;
+
 	@Test
 	public void testAddExistingUserToProject() {
 		String username = "tom";
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/1";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/1";
 		Map<String, String> users = new HashMap<>();
 		users.put("userId", username);
 
@@ -67,7 +75,7 @@ public class ProjectUsersIT {
 	@Test
 	public void testRemoveUserFromProject() {
 		String name = "Josh";
-		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/2";
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/2";
 
 		// get the project
 		String projectJson = asUser().get(projectUri).asString();

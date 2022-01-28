@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.project;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,7 +44,7 @@ public class ReadProjectPermissionTest {
 	private ProjectUserJoinRepository pujRepository;
 	private UserGroupProjectJoinRepository ugpjRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userRepository = mock(UserRepository.class);
 		projectRepository = mock(ProjectRepository.class);
@@ -68,7 +68,7 @@ public class ReadProjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readProjectPermission.isAllowed(auth, 1L));
+		assertTrue(readProjectPermission.isAllowed(auth, 1L), "permission was not granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);
@@ -89,7 +89,7 @@ public class ReadProjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", readProjectPermission.isAllowed(auth, 1L));
+		assertFalse(readProjectPermission.isAllowed(auth, 1L), "permission was granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);
@@ -105,7 +105,7 @@ public class ReadProjectPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 		when(projectRepository.findById(1L)).thenReturn(Optional.of(new Project()));
 
-		assertTrue("permission should be granted to admin.", readProjectPermission.isAllowed(auth, 1L));
+		assertTrue(readProjectPermission.isAllowed(auth, 1L), "permission should be granted to admin.");
 
 		// we should fast pass through to permission granted for administrators.
 		verifyNoInteractions(userRepository);
@@ -129,7 +129,7 @@ public class ReadProjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission should be granted by user group.", readProjectPermission.isAllowed(auth, 1L));
+		assertTrue(readProjectPermission.isAllowed(auth, 1L), "permission should be granted by user group.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(projectRepository).findById(1L);

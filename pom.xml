@@ -10,7 +10,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>22.01-SNAPSHOT</version>
+	<version>22.05-SNAPSHOT</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -313,11 +313,6 @@
 
 		<!-- Testing -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -326,15 +321,12 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-test-autoconfigure</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.junit.jupiter</groupId>
-					<artifactId>junit-jupiter</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.mockito</groupId>
-					<artifactId>mockito-junit-jupiter</artifactId>
-				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -583,15 +575,6 @@
 				<version>${maven.failsafe.plugin.version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<properties>
-						<property>
-							<name>listener</name>
-							<!--suppress UnresolvedMavenProperty -->
-							<value>
-								${integration.test.listener}
-							</value>
-						</property>
-					</properties>
 				</configuration>
 				<executions>
 					<execution>
@@ -600,25 +583,14 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
-							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
-								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
-								</excludes> -->
-							<includes>
-								<!--suppress UnresolvedMavenProperty -->
-								<include>${include.tests}</include>
-							</includes>
-							<excludes>
-								<!--suppress UnresolvedMavenProperty -->
-								<exclude>${exclude.tests}</exclude>
-							</excludes>
+							<!--suppress UnresolvedMavenProperty -->
+							<groups>${include.tags}</groups>
 							<!--suppress UnresolvedMavenProperty -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
-								<server.port>${server.port}</server.port>
+								<junit.platform.execution.listeners.deactivate>${exclude.test.listeners}</junit.platform.execution.listeners.deactivate>
 								<spring.profiles.active>test</spring.profiles.active>
 								<irida.db.profile>it</irida.db.profile>
-								<server.base.url>http://localhost:${server.port}</server.base.url>
 							</systemPropertyVariables>
 							<rerunFailingTestsCount>5</rerunFailingTestsCount>
 						</configuration>
@@ -630,14 +602,11 @@
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
-					<properties>
-						<property>
-							<name>listener</name>
-							<value>
-								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.UnitTestListener
-							</value>
-						</property>
-					</properties>
+					<systemPropertyVariables>
+						<junit.platform.execution.listeners.deactivate>
+							ca.corefacility.bioinformatics.irida.junit5.listeners.Integration*
+						</junit.platform.execution.listeners.deactivate>
+					</systemPropertyVariables>
 					<!--suppress UnresolvedMavenProperty -->
 					<argLine>${surefireArgLine}</argLine>
 				</configuration>
@@ -906,7 +875,7 @@
 					<apiDocsUrl>http://localhost:${server.port}/v3/api-docs</apiDocsUrl>
 					<outputFileName>open-api.json</outputFileName>
 					<outputDir>doc/swagger-ui</outputDir>
-					<skip>false</skip>
+					<skip>${tomcat.skip}</skip>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -984,64 +953,65 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
-				<include.tests>**/ria/integration/**/*IT.java</include.tests>
+				<include.tags><![CDATA[IntegrationTest & UI]]></include.tags>
+				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>service_testing</id>
 			<properties>
-				<include.tests>
-					**/service/impl/integration/**/*IT.java,
-					**/service/workflow/integration/**/*IT.java,
-					**/pipeline/results/**/*IT.java,
-					**/repositories/**/*IT.java
-				</include.tests>
-				<exclude.tests>**/*Galaxy*IT.java,
-					**/AnalysisExecutionScheduledTaskImplIT.java,
-					**/AnalysisSubmissionServiceImplIT.java,
-				</exclude.tests>
+				<include.tags><![CDATA[IntegrationTest & Service]]></include.tags>
 				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>rest_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
-				<include.tests>**/web/controller/test/integration/**/*IT.java</include.tests>
+				<include.tags><![CDATA[IntegrationTest & Rest]]></include.tags>
+				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>galaxy_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
-				<include.tests>
-					**/*Galaxy*IT.java,
-					**/AnalysisSubmissionServiceImplIT.java,
-				</include.tests>
-				<exclude.tests>
-					**/AnalysisExecutionServiceGalaxyIT.java,
-				</exclude.tests>
+				<include.tags><![CDATA[IntegrationTest & Galaxy & !Pipeline]]></include.tags>
 				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>galaxy_pipeline_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener</integration.test.listener>
-				<include.tests>
-					**/AnalysisExecutionScheduledTaskImplIT.java,
-					**/AnalysisExecutionServiceGalaxyIT.java,
-					**/SNVPhylAnalysisIT.java,
-				</include.tests>
+				<include.tags><![CDATA[IntegrationTest & Galaxy & Pipeline]]></include.tags>
 				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
+					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 		<profile>
 			<id>all_testing</id>
 			<properties>
-				<integration.test.listener>ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationUITestListener</integration.test.listener>
-				<include.tests>**/*IT.java, **/IT*.java</include.tests>
+				<include.tags>IntegrationTest</include.tags>
+				<tomcat.skip>true</tomcat.skip>
+				<exclude.test.listeners>
+					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+				</exclude.test.listeners>
 			</properties>
 		</profile>
 	</profiles>

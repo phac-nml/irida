@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -19,8 +19,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISequenceFileServi
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class UISequenceFileServiceTest {
@@ -35,7 +35,7 @@ public class UISequenceFileServiceTest {
 	public static final Long OBJECT_ID = 2L;
 	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		analysisService = mock(AnalysisService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
@@ -55,11 +55,11 @@ public class UISequenceFileServiceTest {
 		FastQCDetailsResponse fastQCDetailsResponse= service.getFastQCDetails(OBJECT_ID, FILE_ID);
 		verify(sequencingObjectService, times(1)).read(OBJECT_ID);
 		verify(analysisService, times(1)).getFastQCAnalysisForSequenceFile(seqObject, FILE_ID);
-		assertEquals("Sequence file has correct id", fastQCDetailsResponse.getSequenceFile().getId(), FILE_ID);
-		assertEquals("Sequence file has correct path", fastQCDetailsResponse.getSequenceFile().getFile().toString(), FILE_PATH);
-		assertTrue("Has a sequencing object", seqObject != null);
-		assertTrue("Has a an AnalysisFastQC object", fastQCDetailsResponse.getAnalysisFastQC() != null);
-		assertTrue("Response type is FastQCDetailsResponse", fastQCDetailsResponse.getClass().equals(FastQCDetailsResponse.class));
+		assertEquals(fastQCDetailsResponse.getSequenceFile().getId(), FILE_ID, "Sequence file has correct id");
+		assertEquals(fastQCDetailsResponse.getSequenceFile().getFile().toString(), FILE_PATH, "Sequence file has correct path");
+		assertTrue(seqObject != null, "Has a sequencing object");
+		assertTrue(fastQCDetailsResponse.getAnalysisFastQC() != null, "Has a an AnalysisFastQC object");
+		assertTrue(fastQCDetailsResponse.getClass().equals(FastQCDetailsResponse.class), "Response type is FastQCDetailsResponse");
 	}
 
 	@Test
@@ -67,7 +67,7 @@ public class UISequenceFileServiceTest {
 		FastQCImagesResponse response = service.getFastQCCharts(OBJECT_ID, FILE_ID);
 		verify(sequencingObjectService, times(1)).read(OBJECT_ID);
 		verify(analysisService, times(1)).getFastQCAnalysisForSequenceFile(seqObject, FILE_ID);
-		assertTrue("Response type is FastQCImagesResponse", response.getClass().equals(FastQCImagesResponse.class));
+		assertTrue(response.getClass().equals(FastQCImagesResponse.class), "Response type is FastQCImagesResponse");
 	}
 
 	@Test
@@ -75,6 +75,6 @@ public class UISequenceFileServiceTest {
 		AnalysisFastQC analysisFastQC = service.getOverRepresentedSequences(OBJECT_ID, FILE_ID);
 		verify(sequencingObjectService, times(1)).read(OBJECT_ID);
 		verify(analysisService, times(1)).getFastQCAnalysisForSequenceFile(seqObject, FILE_ID);
-		assertTrue("Has a an AnalysisFastQC object", analysisFastQC != null);
+		assertTrue(analysisFastQC != null, "Has a an AnalysisFastQC object");
 	}
 }

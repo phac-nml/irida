@@ -3,8 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -14,8 +14,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * <p> Integration test to ensure that the Sample Details Page. </p>
@@ -39,7 +39,7 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 			ImmutableMap.of("href", "/samples/" + SAMPLE_ID, "text", "sample1")
 	);
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new SampleFilesPage(driver());
@@ -50,10 +50,10 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		checkTranslations(page, ImmutableList.of("sample"), null);
 
-		assertTrue("Page Title contains the sample label", page.getPageTitle().contains(SAMPLE_LABEL));
-		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
-		assertEquals("Displays the correct number of assemblies", 2, page.getAssemblyFileCount());
-		assertEquals("should be 1 qc entry", 1, page.getQcEntryCount());
+		assertTrue(page.getPageTitle().contains(SAMPLE_LABEL), "Page Title contains the sample label");
+		assertEquals(4, page.getSequenceFileCount(), "Displays the correct number of sequence files");
+		assertEquals(2, page.getAssemblyFileCount(), "Displays the correct number of assemblies");
+		assertEquals(1, page.getQcEntryCount(), "should be 1 qc entry");
 		
 		page.checkBreadCrumbs(BREADCRUMBS);
 	}
@@ -63,9 +63,9 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		
 		page.deleteFirstSequenceFile();
-		assertTrue("Should display a confirmation message that the file was deleted",
-				page.isDeleteConfirmationMessageDisplayed());
-		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
+		assertTrue(page.isDeleteConfirmationMessageDisplayed(),
+				"Should display a confirmation message that the file was deleted");
+		assertEquals(3, page.getSequenceFileCount(), "Displays the correct number of sequence files");
 	}
 
 	@Test
@@ -73,8 +73,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		
 		page.deleteFirstSequenceFilePair();
-		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
-		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
+		assertTrue(page.isDeleteConfirmationMessageDisplayed(), "Should display a confirmation message that the file was deleted");
+		assertEquals(2, page.getSequenceFileCount(), "Displays the correct number of sequence files");
 	}
 	
 	@Test
@@ -82,35 +82,35 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		
 		page.deleteFirstAssemblyFile();
-		assertTrue("Should display a confirmation message that the file was deleted",
-				page.isDeleteConfirmationMessageDisplayed());
-		assertEquals("Displays the correct number of assemblies", 1, page.getAssemblyFileCount());
-		assertEquals("Should not have deleted sequence files (displays correct number of sequence files)", 4, page.getSequenceFileCount());
+		assertTrue(page.isDeleteConfirmationMessageDisplayed(),
+				"Should display a confirmation message that the file was deleted");
+		assertEquals(1, page.getAssemblyFileCount(), "Displays the correct number of assemblies");
+		assertEquals(4, page.getSequenceFileCount(), "Should not have deleted sequence files (displays correct number of sequence files)");
 	}
 
 	@Test
 	public void testSequenceFilesUploads() {
 		page.gotoPage(SAMPLE_ID);
-		assertEquals("Displays the correct number of sequence files", 4, page.getSequenceFileCount());
+		assertEquals(4, page.getSequenceFileCount(), "Displays the correct number of sequence files");
 		page.uploadSequenceFile(FASTQ_FILE);
 		page.gotoPage(SAMPLE_ID);
-		assertEquals("Displays the correct number of sequence files", 5, page.getSequenceFileCount());
+		assertEquals(5, page.getSequenceFileCount(), "Displays the correct number of sequence files");
 		page.gotoPage(SAMPLE_ID);
 		// Test wrong file format
 		page.uploadSequenceFile(FASTA_FILE);
-		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
+		assertTrue(page.isFileTypeWarningDisplayed(), "Should display a warning if the wrong file type is being uploaded.");
 	}
 
 	@Test
 	public void testAssemblyUploads() {
 		page.gotoPage(SAMPLE_ID);
-		assertEquals("Displays the correct number of assemblies displayed", 2, page.getAssemblyFileCount());
+		assertEquals(2, page.getAssemblyFileCount(), "Displays the correct number of assemblies displayed");
 		page.uploadAssemblyFile(FASTA_FILE);
 		page.gotoPage(SAMPLE_ID);
-		assertEquals("Displays the correct number of assemblies displayed", 3, page.getAssemblyFileCount());
+		assertEquals(3, page.getAssemblyFileCount(), "Displays the correct number of assemblies displayed");
 		// Test wrong file format
 		page.uploadAssemblyFile(FASTQ_FILE);
-		assertTrue("Should display a warning if the wrong file type is being uploaded.", page.isFileTypeWarningDisplayed());
+		assertTrue(page.isFileTypeWarningDisplayed(), "Should display a warning if the wrong file type is being uploaded.");
 	}
 	
 	@Test
@@ -119,6 +119,6 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 		page = new SampleFilesPage(driver());
 		page.gotoPage(5L);
-		assertTrue("Page Title contains the sample label", page.getPageTitle().contains("sample5"));
+		assertTrue(page.getPageTitle().contains("sample5"), "Page Title contains the sample label");
 	}
 }

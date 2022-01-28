@@ -1,19 +1,18 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -25,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -46,8 +45,7 @@ public class SampleRepositoryIT {
 		AnalysisSubmission a = analysisSubmissionRepository.findById(10L).orElse(null);
 		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
-		assertEquals("Sample ids are equal", Sets.newHashSet(11L),
-				samples.stream().map(Sample::getId).collect(Collectors.toSet()));
+		assertEquals(Sets.newHashSet(11L), samples.stream().map(Sample::getId).collect(Collectors.toSet()), "Sample ids are equal");
 	}
 
 	@Test
@@ -56,7 +54,6 @@ public class SampleRepositoryIT {
 		AnalysisSubmission a = analysisSubmissionRepository.findById(21L).orElse(null);
 		Set<Sample> samples = sampleRepository.findSamplesForAnalysisSubmission(a);
 
-		assertEquals("Sample ids are equal", Sets.newHashSet(22L, 33L),
-				samples.stream().map(Sample::getId).collect(Collectors.toSet()));
+		assertEquals(Sets.newHashSet(22L, 33L), samples.stream().map(Sample::getId).collect(Collectors.toSet()), "Sample ids are equal");
 	}
 }
