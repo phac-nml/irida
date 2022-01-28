@@ -38,7 +38,7 @@ public class SampleRemoteServiceImplTest {
 	public void testGetSamplesForProject() {
 		String samplesHref = "http://somewhere/projects/5/samples";
 		Project project = new Project();
-		project.add(new Link(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
+		project.add(Link.of(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
 		RemoteAPI api = new RemoteAPI();
 		project.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 

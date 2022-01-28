@@ -730,8 +730,8 @@ public class RESTSampleSequenceFilesController {
 		String reverseLink = reverse.getLink("self")
 				.map(i -> i.getHref()).orElse(null);
 
-		pair.add(new Link(forwardLink, REL_PAIR_FORWARD));
-		pair.add(new Link(reverseLink, REL_PAIR_REVERSE));
+		pair.add(Link.of(forwardLink, REL_PAIR_FORWARD));
+		pair.add(Link.of(reverseLink, REL_PAIR_REVERSE));
 
 		return pair;
 	}

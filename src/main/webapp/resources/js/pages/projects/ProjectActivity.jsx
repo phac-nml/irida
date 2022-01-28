@@ -1,4 +1,3 @@
-import { Router } from "@reach/router";
 import { Button, Col, List, notification, Row, Space, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
@@ -6,21 +5,7 @@ import { getProjectActivities } from "../../apis/activities/activities";
 import { ActivityListItem } from "../../components/activities/ActivityListItem";
 import { BORDERED_LIGHT } from "../../styles/borders";
 import { addKeysToList } from "../../utilities/http-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
-
-/**
- * Layout component solely for the purpose of extracting the project id out of
- * the url.
- * @returns {JSX.Element}
- * @constructor
- */
-function ActivityLayout() {
-  return (
-    <Router>
-      <ProjectActivity path={setBaseUrl("/projects/:projectId/activity")} />
-    </Router>
-  );
-}
+import { getProjectIdFromUrl } from "../../utilities/url-utilities";
 
 /**
  * Component to display project activities
@@ -28,7 +13,10 @@ function ActivityLayout() {
  * @returns {JSX.Element}
  * @constructor
  */
-function ProjectActivity({ projectId }) {
+function ProjectActivity() {
+  // Get the project id from URL
+  const projectId = getProjectIdFromUrl();
+
   /**
    * List of activities to render
    */
@@ -61,7 +49,7 @@ function ProjectActivity({ projectId }) {
       </Typography.Title>
       <Row>
         <Col md={24} lg={12}>
-          <Space direction={"vertical"} style={{ display: "block" }}>
+          <Space direction={"vertical"} style={{ width: `100%` }}>
             <div
               style={{
                 maxHeight: 600,
@@ -98,4 +86,4 @@ function ProjectActivity({ projectId }) {
   );
 }
 
-render(<ActivityLayout />, document.querySelector("#root"));
+render(<ProjectActivity />, document.querySelector("#root"));

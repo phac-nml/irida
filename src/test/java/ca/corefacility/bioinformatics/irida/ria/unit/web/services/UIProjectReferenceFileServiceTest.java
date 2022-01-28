@@ -28,8 +28,8 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class UIProjectReferenceFileServiceTest {

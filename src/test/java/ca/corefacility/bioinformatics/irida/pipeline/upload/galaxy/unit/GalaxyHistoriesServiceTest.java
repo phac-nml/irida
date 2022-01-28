@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
@@ -91,7 +91,7 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Before
 	public void setup() throws URISyntaxException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		
 		when(okayResponse.getStatusInfo()).thenReturn(
 				ClientResponse.Status.OK);

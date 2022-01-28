@@ -177,10 +177,6 @@ public abstract class RESTGenericController<Type extends IridaRepresentationMode
 		Long id = resource.getId();
 		logger.trace("Created resource with ID [" + resource.getId() + "]");
 
-		// In order to obtain a correct created date, the persisted resource is
-		// accessed from the service/database layer.
-		Type readType = crudService.read(id);
-
 		// the location of the new resource is relative to this class (i.e.,
 		// linkTo(getClass())) with the identifier appended.
 		String location = linkTo(getClass()).slash(id)
@@ -190,14 +186,14 @@ public abstract class RESTGenericController<Type extends IridaRepresentationMode
 		// add any custom links for the specific resource type that we're
 		// serving
 		// right now (implemented in the class that extends GenericController).
-		readType.add(constructCustomResourceLinks(resource));
+		resource.add(constructCustomResourceLinks(resource));
 
 		//add a self reference
-		readType.add(linkTo(getClass()).slash(id)
+		resource.add(linkTo(getClass()).slash(id)
 				.withSelfRel());
 
 		// add the resource to the model
-		ResponseResource<Type> responseObject = new ResponseResource<>(readType);
+		ResponseResource<Type> responseObject = new ResponseResource<>(resource);
 
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);

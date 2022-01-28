@@ -23,7 +23,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -43,12 +43,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 /**
  */
 @Configuration
-@EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
@@ -182,7 +181,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
 	/**
 	 * This is to handle any templates (usually just the login page) that are overridden
-	 * by and organization.  The location of these files can be modified within the configuration.properties
+	 * by and organization.  The location of these files can be modified within the application.properties
 	 * file.
 	 *
 	 * @return {@link FileTemplateResolver}
@@ -221,12 +220,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
 		return viewResolver;
-	}
-
-	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		logger.debug("configureDefaultServletHandling");
-		configurer.enable();
 	}
 
 	@Override

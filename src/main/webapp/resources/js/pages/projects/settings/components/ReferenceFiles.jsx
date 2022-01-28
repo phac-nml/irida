@@ -1,5 +1,6 @@
 import { notification, Space, Table, Typography } from "antd";
 import React from "react";
+import { useParams } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import {
   downloadProjectReferenceFile,
@@ -24,7 +25,8 @@ const { Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ReferenceFiles({ projectId }) {
+export default function ReferenceFiles() {
+  const { projectId } = useParams();
   const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
     projectId
   );
