@@ -1,5 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
+import java.util.Locale;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -15,16 +23,10 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import com.google.common.collect.ImmutableList;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 
-import java.util.Locale;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +40,7 @@ public class UISampleServiceTest {
 	private final String SAMPLE_ORGANISM = "Salmonella";
 	private final String SAMPLE_DESCRIPTION ="This is a project about interesting stuff";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		SampleService sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
@@ -68,9 +70,9 @@ public class UISampleServiceTest {
 	public void testGetSampleDetails() {
 		SampleDetails details = service.getSampleDetails(1L);
 		final Sample sample = details.getSample();
-		Assert.assertEquals("Should return the proper samples organism", SAMPLE_ORGANISM, sample.getOrganism());
-		Assert.assertEquals("Should return the proper samples description", SAMPLE_DESCRIPTION, sample.getDescription());
-		Assert.assertEquals("Should return the proper samples identifier", SAMPLE_ID, sample.getId());
+		assertEquals(SAMPLE_ORGANISM, sample.getOrganism(), "Should return the proper samples organism");
+		assertEquals(SAMPLE_DESCRIPTION, sample.getDescription(), "Should return the proper samples description");
+		assertEquals(SAMPLE_ID, sample.getId(), "Should return the proper samples identifier");
 	}
 
 	@Test

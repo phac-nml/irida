@@ -4,8 +4,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class UIAnalysesOutputsServiceTest {
@@ -34,7 +34,7 @@ public class UIAnalysesOutputsServiceTest {
 	private Principal principal;
 	private UIAnalysesOutputsService uiProjectAnalysesService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);
 		workflowsService = mock(IridaWorkflowsService.class);
@@ -63,9 +63,8 @@ public class UIAnalysesOutputsServiceTest {
 		List<ProjectSampleAnalysisOutputInfo> projectSampleAnalysisOutputInfos = uiProjectAnalysesService.getSharedSingleSampleOutputs(
 				PROJECT_ID);
 		verify(analysisSubmissionService, times(1)).getAllAnalysisOutputInfoSharedWithProject(PROJECT_ID);
-		assertTrue("Returns a list of ProjectSampleAnalysisOutputInfo objects",
-				projectSampleAnalysisOutputInfos.getClass()
-						.equals(ArrayList.class));
+		assertTrue(projectSampleAnalysisOutputInfos.getClass().equals(ArrayList.class),
+				"Returns a list of ProjectSampleAnalysisOutputInfo objects");
 	}
 
 	@Test
@@ -73,9 +72,8 @@ public class UIAnalysesOutputsServiceTest {
 		List<ProjectSampleAnalysisOutputInfo> projectSampleAnalysisOutputInfos = uiProjectAnalysesService.getAutomatedSingleSampleOutputs(
 				PROJECT_ID);
 		verify(analysisSubmissionService, times(1)).getAllAutomatedAnalysisOutputInfoForAProject(PROJECT_ID);
-		assertTrue("Returns a list of ProjectSampleAnalysisOutputInfo objects",
-				projectSampleAnalysisOutputInfos.getClass()
-						.equals(ArrayList.class));
+		assertTrue(projectSampleAnalysisOutputInfos.getClass().equals(ArrayList.class),
+				"Returns a list of ProjectSampleAnalysisOutputInfo objects");
 	}
 
 	@Test
@@ -86,9 +84,8 @@ public class UIAnalysesOutputsServiceTest {
 
 		verify(analysisSubmissionService, times(1)).getAllUserAnalysisOutputInfo(
 				userService.getUserByUsername(principal.getName()));
-		assertTrue("Returns a list of ProjectSampleAnalysisOutputInfo objects",
-				userProjectSampleAnalysisOutputInfos.getClass()
-						.equals(ArrayList.class));
+		assertTrue(userProjectSampleAnalysisOutputInfos.getClass().equals(ArrayList.class),
+				"Returns a list of ProjectSampleAnalysisOutputInfo objects");
 	}
 
 }

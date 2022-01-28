@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +28,7 @@ public class ProjectDetailsAjaxControllerTest {
 	private UIMetadataService metadataService;
 	private UIProjectsService service;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		MessageSource messageSource = mock(MessageSource.class);

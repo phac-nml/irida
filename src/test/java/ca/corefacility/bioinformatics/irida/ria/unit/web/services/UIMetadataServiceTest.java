@@ -3,14 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -21,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 
 import com.google.common.collect.ImmutableList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UIMetadataServiceTest {
@@ -34,7 +33,7 @@ public class UIMetadataServiceTest {
 	private MessageSource messageSource;
 	private UIMetadataService service;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		this.projectService = Mockito.mock(ProjectService.class);
 		this.templateService = Mockito.mock(MetadataTemplateService.class);
@@ -64,8 +63,8 @@ public class UIMetadataServiceTest {
 		List<ProjectMetadataTemplate> join = service.getProjectMetadataTemplates(PROJECT_ID);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).getMetadataTemplatesForProject(project);
-		Assert.assertEquals("Should have 1 template", 1, join.size());
-		Assert.assertEquals("Should have the correct template name", TEMPLATE_NAME, join.get(0).getName());
+		assertEquals(1, join.size(), "Should have 1 template");
+		assertEquals(TEMPLATE_NAME, join.get(0).getName(), "Should have the correct template name");
 	}
 
 	@Test
@@ -73,8 +72,8 @@ public class UIMetadataServiceTest {
 		ProjectMetadataTemplate newTemplate = service.createMetadataTemplate(template, PROJECT_ID);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).createMetadataTemplateInProject(template, project);
-		Assert.assertEquals("Should have the same template name", template.getLabel(), newTemplate.getName());
-		Assert.assertEquals("Should have a new identifier", NEW_TEMPLATE_ID, newTemplate.getIdentifier());
+		assertEquals(template.getLabel(), newTemplate.getName(), "Should have the same template name");
+		assertEquals(NEW_TEMPLATE_ID, newTemplate.getIdentifier(), "Should have a new identifier");
 	}
 
 	@Test

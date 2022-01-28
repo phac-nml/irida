@@ -8,14 +8,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.SequencingRun
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import com.google.common.collect.ImmutableSet;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 
 import java.io.IOException;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class SequencingRunControllerTest {
@@ -24,7 +24,7 @@ public class SequencingRunControllerTest {
 	private SequencingRunService sequencingRunService;
 	private SequencingObjectService objectService;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);

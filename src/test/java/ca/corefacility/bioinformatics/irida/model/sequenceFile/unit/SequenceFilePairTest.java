@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -39,7 +40,7 @@ public class SequenceFilePairTest {
 	 * 
 	 * @throws IOException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		Path tempDir = Paths.get("/tmp");
 
@@ -64,8 +65,8 @@ public class SequenceFilePairTest {
 	 */
 	@Test
 	public void testGetForwardSuccess() {
-		assertEquals("forward sequence file not properly identified", sequenceFileForwardGood,
-				sequenceFilePairGood.getForwardSequenceFile());
+		assertEquals(sequenceFileForwardGood, sequenceFilePairGood.getForwardSequenceFile(),
+				"forward sequence file not properly identified");
 	}
 
 	/**
@@ -73,23 +74,27 @@ public class SequenceFilePairTest {
 	 */
 	@Test
 	public void testGetReverseSuccess() {
-		assertEquals("reverse sequence file not properly identified", sequenceFileReverseGood,
-				sequenceFilePairGood.getReverseSequenceFile());
+		assertEquals(sequenceFileReverseGood, sequenceFilePairGood.getReverseSequenceFile(),
+				"reverse sequence file not properly identified");
 	}
 
 	/**
 	 * Tests failing to get the forward file from the pair.
 	 */
-	@Test(expected = NoSuchElementException.class)
+	@Test
 	public void testGetForwardFail() {
-		sequenceFilePairBad.getForwardSequenceFile();
+		assertThrows(NoSuchElementException.class, () -> {
+			sequenceFilePairBad.getForwardSequenceFile();
+		});
 	}
 
 	/**
 	 * Tests failing to get the reverse file from the pair.
 	 */
-	@Test(expected = NoSuchElementException.class)
+	@Test
 	public void testGetReverseFail() {
-		sequenceFilePairBad.getReverseSequenceFile();
+		assertThrows(NoSuchElementException.class, () -> {
+			sequenceFilePairBad.getReverseSequenceFile();
+		});
 	}
 }

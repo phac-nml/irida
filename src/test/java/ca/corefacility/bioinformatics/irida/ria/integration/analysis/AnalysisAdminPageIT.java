@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.components.AnalysesQueue;
@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.Analy
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for the Analysis Listing page when logged in as an administrator.
@@ -21,13 +21,13 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetup() {
 		LoginPage.loginAsAdmin(driver());
 		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver());
-		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
+		assertEquals(10, page.getNumberOfAnalysesDisplayed(), "Should have 10 analyses displayed originally");
 
 		// Test the name filter
 		page.searchForAnalysisByName("My Really Bad Mistake!");
-		assertEquals("Should have 1 Analysis displayed after filtering", 1, page.getNumberOfAnalysesDisplayed());
+		assertEquals(1, page.getNumberOfAnalysesDisplayed(), "Should have 1 Analysis displayed after filtering");
 		page.clearNameFilter();
-		assertEquals("Should have 10 analyses displayed originally", 10, page.getNumberOfAnalysesDisplayed());
+		assertEquals(10, page.getNumberOfAnalysesDisplayed(), "Should have 10 analyses displayed originally");
 
 		/*
 		Test deleting a analysis
@@ -38,16 +38,16 @@ public class AnalysisAdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.deleteAnalysis(9);
 
 		// Still 10 left as there is a total of 13 analyses (10 displayed on each page of table)
-		assertEquals("Should have 10 analyses displayed after deleting one", 10, page.getNumberOfAnalysesDisplayed());
+		assertEquals(10, page.getNumberOfAnalysesDisplayed(), "Should have 10 analyses displayed after deleting one");
 
 		// Check to make sure the analyses queue is being set up properly
 		AnalysesQueue queue = AnalysesQueue.getAnalysesQueue(driver());
-		assertEquals("Should have 5 analyses running", 5, queue.getRunningCounts());
-		assertEquals("Should have 1 analysis queued", 1, queue.getQueueCounts());
+		assertEquals(5, queue.getRunningCounts(), "Should have 5 analyses running");
+		assertEquals(1, queue.getQueueCounts(), "Should have 1 analysis queued");
 
 		// Test filtering on second page to ensure server side filtering
 		page.searchForAnalysisByName("My Fake Submission");
-		assertEquals("Should have 1 Analysis displayed after filtering for item on second page", 1,
-				page.getNumberOfAnalysesDisplayed());
+		assertEquals(1, page.getNumberOfAnalysesDisplayed(),
+				"Should have 1 Analysis displayed after filtering for item on second page");
 	}
 }

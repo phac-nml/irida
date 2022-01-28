@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "@ant-design/charts": "^1.1.1",
-    "@ant-design/icons": "^4.6.2",
+    "@ant-design/icons": "^4.7.0",
     "@antv/color-util": "^2.0.6",
     "@antv/matrix-util": "^3.0.4",
     "@antv/path-util": "^2.0.9",
@@ -27,7 +27,6 @@
     "@fortawesome/fontawesome-free": "^5.13.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
     "@fortawesome/free-solid-svg-icons": "^5.13.1",
-    "@reach/router": "^1.3.3",
     "@react-dnd/invariant": "^2.0.0",
     "@reduxjs/toolkit": "1.6.0",
     "ag-grid-community": "^22.1.1",

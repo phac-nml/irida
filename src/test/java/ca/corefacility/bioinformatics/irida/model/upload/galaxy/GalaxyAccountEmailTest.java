@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -13,8 +13,8 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 /**
@@ -27,7 +27,7 @@ public class GalaxyAccountEmailTest {
 	private Validator validator;
 	private ResourceBundle b;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		b = ResourceBundle.getBundle(MESSAGES_BASENAME);
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();

@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,9 +11,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class RepositoryBackedPermissionTest {
 	private Authentication auth;
 
 	@SuppressWarnings("unchecked")
-	@Before
+	@BeforeEach
 	public void setUp() {
 		crudRepository = mock(CrudRepository.class);
 		repositoryBackedPermission = new PermittablePermission(Permittable.class, Long.class, crudRepository);
@@ -54,10 +54,11 @@ public class RepositoryBackedPermissionTest {
 	/**
 	 * Tests failing to allow permission due to an id not found.
 	 */
-	@Ignore
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testEntityNotFound() {
-		repositoryBackedPermission.isAllowed(auth, 1L);
+		assertThrows(EntityNotFoundException.class, () -> {
+			repositoryBackedPermission.isAllowed(auth, 1L);
+		});
 	}
 
 	/**
@@ -73,10 +74,11 @@ public class RepositoryBackedPermissionTest {
 	/**
 	 * Tests failing to allow permission for collection of single long id.
 	 */
-	@Ignore
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testPermissionSingleCollectionLongFail() {
-		repositoryBackedPermission.isAllowed(auth, Sets.newHashSet(1L));
+		assertThrows(EntityNotFoundException.class, () -> {
+			repositoryBackedPermission.isAllowed(auth, Sets.newHashSet(1L));
+		});
 	}
 
 	/**
@@ -94,12 +96,13 @@ public class RepositoryBackedPermissionTest {
 	 * Tests failing to allow permission for collection of two long ids (one id
 	 * exists, one doesn't).
 	 */
-	@Ignore
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testPermissionTwoCollectionLongFail() {
 		when(crudRepository.findById(1L)).thenReturn(Optional.of(new Permittable(1L)));
 
-		repositoryBackedPermission.isAllowed(auth, Sets.newHashSet(1L, 2L));
+		assertThrows(EntityNotFoundException.class, () -> {
+			repositoryBackedPermission.isAllowed(auth, Sets.newHashSet(1L, 2L));
+		});
 	}
 
 	/**
@@ -185,11 +188,13 @@ public class RepositoryBackedPermissionTest {
 	/**
 	 * Tests throwing an exception for an invalid collection type.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testPermissionCollectionFailInvalidType() {
 		repositoryBackedPermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository);
 
-		repositoryBackedPermission.isAllowed(auth, Sets.newHashSet("invalid"));
+		assertThrows(IllegalArgumentException.class, () -> {
+			repositoryBackedPermission.isAllowed(auth, Sets.newHashSet("invalid"));
+		});
 	}
 
 	/**
@@ -211,7 +216,7 @@ public class RepositoryBackedPermissionTest {
 	 * Tests throwing an exception for a mixed collection type.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testPermissionFailMixedCollectionType() {
 		Permittable permittable1 = new Permittable(1L);
 		repositoryBackedPermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
@@ -220,12 +225,16 @@ public class RepositoryBackedPermissionTest {
 		mixedSet.add(permittable1);
 		mixedSet.add("invalid");
 
-		repositoryBackedPermission.isAllowed(auth, mixedSet);
+		assertThrows(IllegalArgumentException.class, () -> {
+			repositoryBackedPermission.isAllowed(auth, mixedSet);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testBizarreExecution() {
-		repositoryBackedPermission.isAllowed(auth, new Object());
+		assertThrows(IllegalArgumentException.class, () -> {
+			repositoryBackedPermission.isAllowed(auth, new Object());
+		});
 	}
 
 	/**

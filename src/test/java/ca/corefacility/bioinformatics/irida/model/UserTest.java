@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -16,7 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testing the validation for user objects.
@@ -28,7 +28,7 @@ public class UserTest {
 	private Validator validator;
 	private ResourceBundle b;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		b = ResourceBundle.getBundle(MESSAGES_BASENAME);
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();
@@ -164,7 +164,7 @@ public class UserTest {
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
 
-		assertTrue("user is not valid, but must be valid.", constraintViolations.isEmpty());
+		assertTrue(constraintViolations.isEmpty(), "user is not valid, but must be valid.");
 	}
 
 	@Test
@@ -179,10 +179,10 @@ public class UserTest {
 		u.setSystemRole(Role.ROLE_USER);
 
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(u);
-		assertEquals("wrong number of constraint violations.", 1, constraintViolations.size());
+		assertEquals(1, constraintViolations.size(), "wrong number of constraint violations.");
 		ConstraintViolation<User> passwordViolation = constraintViolations.iterator().next();
-		assertTrue("constraint violation is not on password",
-				passwordViolation.getPropertyPath().toString().endsWith("password"));
+		assertTrue(passwordViolation.getPropertyPath().toString().endsWith("password"),
+				"constraint violation is not on password");
 	}
 
 	@Test
@@ -226,13 +226,13 @@ public class UserTest {
 		User u2 = new User("username", "email", "password", "firstName", "lastName", "phoneNumber");
 		// the two users DO NOT share the same created date, and should
 		// therefore be different
-		assertFalse("users should not be equal.", u1.equals(u2));
+		assertFalse(u1.equals(u2), "users should not be equal.");
 
 		u2.setModifiedDate(created);
 		u2.setId(u1.getId());
 		// now the two users share the same identifier, and should therefore be
 		// the same
-		assertTrue("users should be equal.", u1.equals(u2));
+		assertTrue(u1.equals(u2), "users should be equal.");
 	}
 
 	@Test

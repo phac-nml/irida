@@ -1,24 +1,25 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -35,9 +36,11 @@ public class UserRepositoryImplIT {
 		userDetailsService.loadUserByUsername("fbristow");
 	}
 
-	@Test(expected = UsernameNotFoundException.class)
+	@Test
 	public void testFailToLoadUserByUsername() {
-		userDetailsService.loadUserByUsername("this is really terrible.");
+		assertThrows(UsernameNotFoundException.class, () -> {
+			userDetailsService.loadUserByUsername("this is really terrible.");
+		});
 	}
 	
 	@Test
@@ -45,8 +48,10 @@ public class UserRepositoryImplIT {
 		userDetailsService.loadUserByEmail("manager@nowhere.com");
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testFailToLoadUserByEmail() {
-		userDetailsService.loadUserByEmail("this is really terrible.");
+		assertThrows(EntityNotFoundException.class, () -> {
+			userDetailsService.loadUserByEmail("this is really terrible.");
+		});
 	}
 }

@@ -8,8 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,8 +26,9 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class RemoteAPIControllerTest {
@@ -42,7 +43,7 @@ public class RemoteAPIControllerTest {
 
 	private Locale locale;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		messageSource = mock(MessageSource.class);
@@ -113,14 +114,16 @@ public class RemoteAPIControllerTest {
 		verify(remoteAPIService).create(client);
 	}
 
-	@Test(expected = IridaOAuthException.class)
+	@Test
 	public void testConnectToAPI() {
 		Long apiId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.getServiceStatus(client)).thenThrow(new IridaOAuthException("invalid token", client));
-		remoteAPIController.connectToAPI(apiId, model);
+		assertThrows(IridaOAuthException.class, () -> {
+			remoteAPIController.connectToAPI(apiId, model);
+		});
 	}
 
 	@Test

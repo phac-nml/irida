@@ -5,11 +5,14 @@ import org.openqa.selenium.WebDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteApiUtilities {
-	protected static final String BASE_URL =
-			System.getProperty("server.base.url", "http://localhost:" + System.getProperty("server.port", "8080")) + "/";
+	protected static String BASE_URL;
+
+	public static void setBaseUrl(String baseUrl) {
+		BASE_URL = baseUrl;
+	}
 
 	public static void addRemoteApi(WebDriver driver, String clientId, String clientSecret) {
 		CreateRemoteAPIPage page = new CreateRemoteAPIPage(driver);
@@ -24,7 +27,7 @@ public class RemoteApiUtilities {
 		remoteAPIDetailsPage.clickConnect();
 		remoteAPIDetailsPage.clickAuthorize();
 
-		assertTrue("api status should be connected", remoteAPIDetailsPage.isRemoteAPIConnected());
+		assertTrue(remoteAPIDetailsPage.isRemoteAPIConnected(), "api status should be connected");
 	}
 
 	/**
