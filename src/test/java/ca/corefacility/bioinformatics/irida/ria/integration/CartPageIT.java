@@ -43,6 +43,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
+
+		sampleDetailsViewer.clickMetadataTabLink();
 		assertEquals(4, sampleDetailsViewer.getNumberOfMetadataEntries(), "Should have the proper number of metadata entries");
 		assertEquals("AB-1003", sampleDetailsViewer.getValueForMetadataField("symptom"), "Should be able to diplay the proper metadata");
 		sampleDetailsViewer.closeDetails();
