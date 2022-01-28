@@ -101,7 +101,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 */
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
@@ -444,7 +444,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
 		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
-		verifyZeroInteractions(emailController);
+		verifyNoInteractions(emailController);
 	}
 
 	/**

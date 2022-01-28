@@ -43,9 +43,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  */
@@ -149,7 +152,7 @@ public class SamplesControllerTest {
 				.thenReturn(files);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
-		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
+		when(updateSamplePermission.isAllowed(any(), eq(sample))).thenReturn(true);
 
 		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
 
@@ -175,7 +178,7 @@ public class SamplesControllerTest {
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
 				.thenReturn(files);
-		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
+		when(updateSamplePermission.isAllowed(any(), eq(sample))).thenReturn(true);
 
 		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
 
@@ -186,7 +189,7 @@ public class SamplesControllerTest {
 		verify(sampleService).read(sampleId);
 		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
-		verifyZeroInteractions(projectService);
+		verifyNoInteractions(projectService);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -207,7 +210,7 @@ public class SamplesControllerTest {
 
 		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
 				.thenReturn(files);
-		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(false);
+		when(updateSamplePermission.isAllowed(any(), eq(sample))).thenReturn(false);
 
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));

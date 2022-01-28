@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.validators;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,7 +37,7 @@ public class ValidateMethodParametersAspectTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		AnnotatedMethodsClass target = new AnnotatedMethodsClass();
 		AnnotatedInterfaceImpl interfaceProxyTarget = new AnnotatedInterfaceImpl();
 		AspectJProxyFactory proxyFactory = new AspectJProxyFactory(target);
@@ -74,7 +74,7 @@ public class ValidateMethodParametersAspectTest {
 		String first = "first";
 		Set<ConstraintViolation<Object>> violations = new HashSet<>();
 		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Object.class, null,
-				null, first, PathImpl.createRootPath(), null, null, null));
+				null, first, PathImpl.createRootPath(), null, null));
 		when(validator.validate(any())).thenReturn(violations);
 		proxy.testOneValidParameter(first);
 	}

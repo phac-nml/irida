@@ -1,6 +1,7 @@
 import { Empty, Space, Table } from "antd";
 import React from "react";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
+import { useParams } from "react-router-dom";
 
 /**
  * Component for showing metadata fields associated with a project.
@@ -8,7 +9,9 @@ import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadat
  * @param {number} projectId - Identifier for the current project
  * @returns {JSX.Element|string}
  */
-export default function MetadataFieldsListMember({ projectId }) {
+export default function MetadataFieldsListMember() {
+  const { projectId } = useParams();
+
   const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
     projectId
   );

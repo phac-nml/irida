@@ -45,8 +45,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -152,7 +152,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	 */
 	@Before
 	public void setup() throws IOException, UploadException, GalaxyDatasetException {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		sFileA = new SequenceFile(createTempFile("fileA", "fastq"));
 		sFileB = new SequenceFile(createTempFile("fileB", "fastq"));

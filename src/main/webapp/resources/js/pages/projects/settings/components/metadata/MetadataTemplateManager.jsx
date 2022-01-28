@@ -1,4 +1,3 @@
-import { navigate } from "@reach/router";
 import {
   Button,
   List,
@@ -12,6 +11,7 @@ import {
 } from "antd";
 import differenceBy from "lodash/differenceBy";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
 import {
   useGetTemplatesForProjectQuery,
@@ -41,7 +41,9 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element|string}
  * @constructor
  */
-export default function MetadataTemplateManager({ id, projectId }) {
+export default function MetadataTemplateManager() {
+  const navigate = useNavigate();
+  const { id, projectId } = useParams();
   const { data: allFields } = useGetMetadataFieldsForProjectQuery(projectId);
 
   const { data: templates, isFetching } = useGetTemplatesForProjectQuery(
@@ -54,6 +56,13 @@ export default function MetadataTemplateManager({ id, projectId }) {
   const [template, setTemplate] = React.useState({});
   const [fields, setFields] = React.useState();
   const [newFields, setNewFields] = React.useState();
+
+  const metadataRestrictionsTranslationsMap = {
+    LEVEL_1: i18n("metadataRole.LEVEL_1"),
+    LEVEL_2: i18n("metadataRole.LEVEL_2"),
+    LEVEL_3: i18n("metadataRole.LEVEL_3"),
+    LEVEL_4: i18n("metadataRole.LEVEL_4"),
+  };
 
   React.useEffect(() => {
     /*
@@ -205,7 +214,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
   return (
     <PageHeader
       title={<span className="t-t-header-name">{template.name}</span>}
-      onBack={() => navigate("./")}
+      onBack={() => navigate(-1)}
       extra={displayHeaderExtras(template)}
     >
       <Skeleton loading={isFetching}>
@@ -248,7 +257,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
                 </>
               }
             />
-            <Space direction="vertical" style={{ display: "block" }}>
+            <Space direction="vertical" style={{ width: `100%` }}>
               <MetadataAddTemplateField
                 fields={newFields}
                 onAddFields={onAddFields}
@@ -271,12 +280,7 @@ export default function MetadataTemplateManager({ id, projectId }) {
                     dataIndex: "restriction",
                     key: "restriction",
                     render: (text) => {
-                      switch (text) {
-                        case "PROJECT_OWNER":
-                          return i18n("projectRole.PROJECT_OWNER");
-                        default:
-                          return i18n("projectRole.PROJECT_USER");
-                      }
+                      return metadataRestrictionsTranslationsMap[text];
                     },
                   },
                   {

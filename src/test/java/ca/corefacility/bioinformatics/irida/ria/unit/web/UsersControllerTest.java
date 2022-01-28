@@ -36,8 +36,8 @@ import com.google.common.collect.Lists;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -259,7 +259,7 @@ public class UsersControllerTest {
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
-		verifyZeroInteractions(passwordResetService);
+		verifyNoInteractions(passwordResetService);
 		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), eq(null));
 	}
 

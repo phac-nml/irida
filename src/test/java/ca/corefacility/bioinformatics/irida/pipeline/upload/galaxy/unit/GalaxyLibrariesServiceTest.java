@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class GalaxyLibrariesServiceTest {
 	 */
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		setupLibrariesTest();
 	}
 	

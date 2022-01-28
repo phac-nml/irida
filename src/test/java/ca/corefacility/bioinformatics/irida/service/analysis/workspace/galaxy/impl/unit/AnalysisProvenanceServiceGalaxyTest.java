@@ -3,8 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.i
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -101,8 +102,11 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	public void testBuildSingleStepToolExecutionOneParameter() throws ExecutionManagerException {
 		final HistoryContents hc = new HistoryContents();
 		hc.setName(FILENAME);
+		hc.setId("historyid");
 		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
 		hcp.setParameters(ImmutableMap.of("akey", (Object) "avalue"));
+		hcp.setToolId("toolid");
+		hcp.setJobId("jobid");
 		final JobDetails jd = new JobDetails();
 		jd.setCommandLine("");
 		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
@@ -122,7 +126,10 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	public void testBuildSingleStepToolExecutionComplexParameters() throws ExecutionManagerException {
 		final HistoryContents hc = new HistoryContents();
 		hc.setName(FILENAME);
+		hc.setId("historyid");
 		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
+		hcp.setToolId("toolid");
+		hcp.setJobId("jobid");
 		final Map<String, Object> mapWithNullValue = new HashMap<>();
 		mapWithNullValue.put("key", null);
 		final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
@@ -183,7 +190,11 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		hc.setId("historyContentsId");
 		final HistoryContentsProvenance hcpWithPredecessor = new HistoryContentsProvenance();
 		hcpWithPredecessor.setParameters(ImmutableMap.of("akey", (Object) ImmutableMap.of("id", "previousKey")));
+		hcpWithPredecessor.setToolId("toolid");
+		hcpWithPredecessor.setJobId("jobid");
 		final HistoryContentsProvenance hcpWithoutPredecessor = new HistoryContentsProvenance();
+		hcpWithoutPredecessor.setToolId("toolid");
+		hcpWithoutPredecessor.setJobId("jobid");
 		hcpWithoutPredecessor.setParameters(ImmutableMap.of("akey", (Object) "value"));
 		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
 		when(galaxyHistoriesService.showProvenance(any(String.class), eq("historyContentsId"))).thenReturn(
@@ -207,7 +218,10 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	public void testBuildSingleStepToolExecutionListParameters() throws ExecutionManagerException {
 		final HistoryContents hc = new HistoryContents();
 		hc.setName(FILENAME);
+		hc.setId("historyid");
 		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
+		hcp.setToolId("toolid");
+		hcp.setJobId("jobid");
 		hcp.setParameters(ImmutableMap.<String, Object>builder()
 				.put("akey", "[\"avalue\"]")
 				.put("akey2", Lists.newArrayList("avalue2"))
@@ -246,7 +260,10 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	public void testBuildSingleStepToolExecutionStrangeDataStructureDoToString() throws ExecutionManagerException {
 		final HistoryContents hc = new HistoryContents();
 		hc.setName(FILENAME);
+		hc.setId("historyid");
 		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
+		hcp.setToolId("toolid");
+		hcp.setJobId("jobid");
 		hcp.setParameters(ImmutableMap.of("akey", "[[\"avalue\"]]"));
 		final JobDetails jd = new JobDetails();
 		jd.setCommandLine("");
