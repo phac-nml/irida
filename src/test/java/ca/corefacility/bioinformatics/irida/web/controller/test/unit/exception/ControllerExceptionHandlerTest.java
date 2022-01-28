@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.exception;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +17,8 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class ControllerExceptionHandlerTest {
 
     private ControllerExceptionHandler controller;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         controller = new ControllerExceptionHandler();
     }
@@ -63,11 +63,11 @@ public class ControllerExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         //assertEquals("{\"label\":[\"You must provide a label.\"]}", response.getBody());
         Map<String, List<String>> body = response.getBody();
-        assertTrue("The response must contain an error about a missing label.", body.containsKey("label"));
+        assertTrue(body.containsKey("label"), "The response must contain an error about a missing label.");
         List<String> labels = body.get("label");
-        assertEquals("There must only be one error with the label.", 1, labels.size());
+        assertEquals(1, labels.size(), "There must only be one error with the label.");
         String error = labels.get(0);
-        assertEquals("The error must be 'You must provide a label.'", "You must provide a label.", error);
+        assertEquals("You must provide a label.", error, "The error must be 'You must provide a label.'");
     }
 
     @Test

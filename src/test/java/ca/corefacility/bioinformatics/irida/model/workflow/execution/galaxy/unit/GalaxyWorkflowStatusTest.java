@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -29,7 +29,7 @@ public class GalaxyWorkflowStatusTest {
 	/**
 	 * Sets up objects for test.
 	 */
-	@Before
+	@BeforeEach
 	public void setup() {
 	}
 
@@ -44,7 +44,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow did not complete successfully", workflowStatus.completedSuccessfully());
+		assertTrue(workflowStatus.completedSuccessfully(), "Workflow did not complete successfully");
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not still running", workflowStatus.isRunning());
+		assertTrue(workflowStatus.isRunning(), "Workflow is not still running");
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not still running", workflowStatus.isRunning());
+		assertTrue(workflowStatus.isRunning(), "Workflow is not still running");
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 	
 	/**
@@ -177,7 +177,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.errorOccurred(), "Workflow is not in an error state");
 	}
 
 	/**
@@ -207,8 +207,8 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertEquals("workflow status not in correct state", GalaxyWorkflowState.OK, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 1.0f, workflowStatus.getProportionComplete(), DELTA);
+		assertEquals(GalaxyWorkflowState.OK, workflowStatus.getState(), "workflow status not in correct state");
+		assertEquals(1.0f, workflowStatus.getProportionComplete(), DELTA, "percentage complete not correct");
 	}
 
 	/**
@@ -223,8 +223,8 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertEquals("workflow status not in correct state", GalaxyWorkflowState.QUEUED, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getProportionComplete(), DELTA);
+		assertEquals(GalaxyWorkflowState.QUEUED, workflowStatus.getState(), "workflow status not in correct state");
+		assertEquals(0.0f, workflowStatus.getProportionComplete(), DELTA, "percentage complete not correct");
 	}
 
 	/**
@@ -242,8 +242,8 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 0.5f, workflowStatus.getProportionComplete(), DELTA);
+		assertEquals(GalaxyWorkflowState.RUNNING, workflowStatus.getState(), "workflow status not in correct state");
+		assertEquals(0.5f, workflowStatus.getProportionComplete(), DELTA, "percentage complete not correct");
 	}
 
 	/**
@@ -262,54 +262,62 @@ public class GalaxyWorkflowStatusTest {
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
-		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 0.25f, workflowStatus.getProportionComplete(), DELTA);
+		assertEquals(GalaxyWorkflowState.RUNNING, workflowStatus.getState(), "workflow status not in correct state");
+		assertEquals(0.25f, workflowStatus.getProportionComplete(), DELTA, "percentage complete not correct");
 	}
 
 	/**
 	 * Tests failing to build a workflow status due to an unknwon state.
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsUnknownState() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("unknown");
 		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
-		GalaxyWorkflowStatus.builder(historyDetails).build();
+		assertThrows(NullPointerException.class, () -> {
+			GalaxyWorkflowStatus.builder(historyDetails).build();
+		});
 	}
 
 	/**
 	 * Tests building a GalaxyWorkflowStatus object with no history details and
 	 * failing.
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsErrorNoDetails() {
-		GalaxyWorkflowStatus.builder(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			GalaxyWorkflowStatus.builder(null).build();
+		});
 	}
 
 	/**
 	 * Tests building a GalaxyWorkflowStatus object with no history details
 	 * state and failing.
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsErrorNoDetailsState() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
-		GalaxyWorkflowStatus.builder(historyDetails).build();
+		assertThrows(NullPointerException.class, () -> {
+			GalaxyWorkflowStatus.builder(historyDetails).build();
+		});
 	}
 
 	/**
 	 * Tests building a GalaxyWorkflowStatus object with no history details
 	 * state ids map and failing.
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsErrorNoDetailsIdsMap() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("ok");
 		historyDetails.setStateIds(null);
 
-		GalaxyWorkflowStatus.builder(historyDetails).build();
+		assertThrows(NullPointerException.class, () -> {
+			GalaxyWorkflowStatus.builder(historyDetails).build();
+		});
 	}
 
 	/**
@@ -332,7 +340,7 @@ public class GalaxyWorkflowStatusTest {
 	 * Tests failing to build a GalaxyWorkflowStats object with some state
 	 * ids in an unknown state.
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsUnknownStateIdsFail() {
 		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("running",
 				Lists.newArrayList(DATASET_ID));
@@ -342,6 +350,8 @@ public class GalaxyWorkflowStatusTest {
 		historyDetails.setState("running");
 		historyDetails.setStateIds(stateIds);
 
-		GalaxyWorkflowStatus.builder(historyDetails).build();
+		assertThrows(NullPointerException.class, () -> {
+			GalaxyWorkflowStatus.builder(historyDetails).build();
+		});
 	}
 }

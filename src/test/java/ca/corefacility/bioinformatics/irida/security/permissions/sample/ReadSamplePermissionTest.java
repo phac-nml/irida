@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.sample;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 
 /**
  * Tests for {@link ReadSamplePermission}.
@@ -44,7 +43,7 @@ public class ReadSamplePermissionTest {
 	private ProjectSampleJoinRepository psjRepository;
 	private ReadProjectPermission readProjectPermission;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sampleRepository = mock(SampleRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
@@ -70,7 +69,7 @@ public class ReadSamplePermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, 1L));
+		assertTrue(readSamplePermission.isAllowed(auth, 1L), "permission was not granted.");
 
 		verify(sampleRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
@@ -95,7 +94,7 @@ public class ReadSamplePermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", readSamplePermission.isAllowed(auth, s));
+		assertTrue(readSamplePermission.isAllowed(auth, s), "permission was not granted.");
 
 		verify(psjRepository).getProjectForSample(s);
 		// we didn't need to load the domain object for this test.
@@ -120,7 +119,7 @@ public class ReadSamplePermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", readSamplePermission.isAllowed(auth, 1L));
+		assertFalse(readSamplePermission.isAllowed(auth, 1L), "permission was granted.");
 
 		verify(sampleRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
@@ -134,7 +133,7 @@ public class ReadSamplePermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 		when(sampleRepository.findById(1L)).thenReturn(Optional.of(new Sample()));
 
-		assertTrue("permission was not granted to admin.", readSamplePermission.isAllowed(auth, 1L));
+		assertTrue(readSamplePermission.isAllowed(auth, 1L), "permission was not granted to admin.");
 
 		// we should fast pass through to permission granted for administrators.
 		verifyNoInteractions(psjRepository);

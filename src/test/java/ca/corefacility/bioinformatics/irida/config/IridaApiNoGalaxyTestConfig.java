@@ -211,8 +211,6 @@ public class IridaApiNoGalaxyTestConfig {
 			throw new UnsupportedOperationException();
 		}
 
-		//Suppressing deprecation here because we're just implementing the method here
-		@SuppressWarnings("deprecation")
 		@Override
 		public ClientResponse fileUploadRequest(String arg0, String arg1, String arg2, File arg3) {
 			throw new UnsupportedOperationException();

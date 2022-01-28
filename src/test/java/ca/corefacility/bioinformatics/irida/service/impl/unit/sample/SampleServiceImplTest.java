@@ -8,8 +8,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
@@ -43,8 +43,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -70,7 +69,7 @@ public class SampleServiceImplTest {
 	 */
 	private static final double deltaFloatEquality = 0.000001;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sampleRepository = mock(SampleRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
@@ -188,7 +187,7 @@ public class SampleServiceImplTest {
 			verify(psjRepository).getProjectForSample(toMerge[i]);
 			verify(psjRepository).delete(p_s_joins[i]);
 		}
-		assertEquals("The saved sample should be the same as the sample to merge into.", s, saved);
+		assertEquals(s, saved, "The saved sample should be the same as the sample to merge into.");
 	}
 
 	@Test
@@ -267,7 +266,7 @@ public class SampleServiceImplTest {
 		when(analysisRepository.findFastqcAnalysisForSequenceFile(sf1)).thenReturn(analysisFastQC1);
 
 		double coverage = sampleService.estimateCoverageForSample(s1, 500L);
-		assertEquals(2.0, coverage, deltaFloatEquality);
+		assertEquals(coverage, deltaFloatEquality, 2.0);
 	}
 
 	/**
@@ -275,9 +274,11 @@ public class SampleServiceImplTest {
 	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetCoverageForSampleInvalidReferenceLength() throws SequenceFileAnalysisException {
-		sampleService.estimateCoverageForSample(new Sample(), 0L);
+		assertThrows(IllegalArgumentException.class, () -> {
+			sampleService.estimateCoverageForSample(new Sample(), 0L);
+		});
 	}
 
 	/**
@@ -369,7 +370,7 @@ public class SampleServiceImplTest {
 	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected = SequenceFileAnalysisException.class)
+	@Test
 	public void testGetTotalBasesForSampleFailNoFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
@@ -381,7 +382,9 @@ public class SampleServiceImplTest {
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
 
-		sampleService.getTotalBasesForSample(s1);
+		assertThrows(SequenceFileAnalysisException.class, () -> {
+			sampleService.getTotalBasesForSample(s1);
+		});
 	}
 
 	/**
@@ -390,7 +393,7 @@ public class SampleServiceImplTest {
 	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected = SequenceFileAnalysisException.class)
+	@Test
 	public void testGetTotalBasesForSampleFailMultipleFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
@@ -402,7 +405,9 @@ public class SampleServiceImplTest {
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
 
-		sampleService.getTotalBasesForSample(s1);
+		assertThrows(SequenceFileAnalysisException.class, () -> {
+			sampleService.getTotalBasesForSample(s1);
+		});
 	}
 
 	@Test
@@ -428,7 +433,8 @@ public class SampleServiceImplTest {
 
 		sampleService.mergeSampleMetadata(s1, inputMetadata);
 
-		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<Set<MetadataEntry>> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 
@@ -443,18 +449,18 @@ public class SampleServiceImplTest {
 
 		Set<MetadataEntry> savedValues = saveCaptor.getValue();
 
-		assertEquals("should be 2 entries", 2, savedValues.size());
+		assertEquals(2, savedValues.size(), "should be 2 entries");
 
 		Optional<MetadataEntry> optValue = savedValues.stream()
 				.filter(e -> e.getField()
 						.equals(field1))
 				.findAny();
 
-		assertTrue("should find a value with the given field", optValue.isPresent());
+		assertTrue(optValue.isPresent(), "should find a value with the given field");
 
 		MetadataEntry metadataEntry = optValue.get();
 
-		assertEquals("value should have been updated", entry.getValue(), metadataEntry.getValue());
+		assertEquals(entry.getValue(), metadataEntry.getValue(), "value should have been updated");
 	}
 
 	@Test
@@ -485,30 +491,31 @@ public class SampleServiceImplTest {
 
 		sampleService.mergeSampleMetadata(s1, inputMetadata);
 
-		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<Set<MetadataEntry>> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 
 		Set<MetadataEntry> savedValues = saveCaptor.getValue();
 
-		assertEquals("should be 2 entries", 2, savedValues.size());
+		assertEquals(2, savedValues.size(), "should be 2 entries");
 
 		Optional<MetadataEntry> optValue = savedValues.stream()
 				.filter(e -> e.getField()
 						.equals(field1))
 				.findAny();
 
-		assertTrue("should find a value with the given field", optValue.isPresent());
+		assertTrue(optValue.isPresent(), "should find a value with the given field");
 
 		MetadataEntry metadataEntry = optValue.get();
 
-		assertEquals("value should have been updated", entry.getValue(), metadataEntry.getValue());
+		assertEquals(entry.getValue(), metadataEntry.getValue(), "value should have been updated");
 
 		Optional<MetadataEntry> pipelineOpt = savedValues.stream()
 				.filter(e -> e instanceof PipelineProvidedMetadataEntry)
 				.findAny();
 
-		assertTrue("should be no pipeline entries left", pipelineOpt.isEmpty());
+		assertTrue(pipelineOpt.isEmpty(), "should be no pipeline entries left");
 	}
 
 	@Test
@@ -536,7 +543,8 @@ public class SampleServiceImplTest {
 
 		verify(metadataEntryRepository).deleteAll(metadataEntries);
 
-		ArgumentCaptor<Set> saveCaptor = ArgumentCaptor.forClass(Set.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<Set<MetadataEntry>> saveCaptor = ArgumentCaptor.forClass(Set.class);
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 

@@ -8,8 +8,8 @@ import java.util.Locale;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -56,7 +56,7 @@ public class SamplesAjaxControllerTest {
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		SampleService sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
@@ -97,11 +97,11 @@ public class SamplesAjaxControllerTest {
 
 		ResponseEntity<String> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request, Locale.CANADA);
 
-		assertEquals("Response is ok", HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
 				eq(SAMPLE));
-		assertEquals("Should have the correct file name", FILE_02, sequenceFileArgumentCaptor.getValue()
-				.getLabel());
+		assertEquals(FILE_02, sequenceFileArgumentCaptor.getValue().getLabel(),
+				"Should have the correct file name");
 	}
 	@Test
 	public void testUploadSequenceFilePairs(){
@@ -111,15 +111,15 @@ public class SamplesAjaxControllerTest {
 		when(request.getFileNames()).thenReturn(PAIRED_FILE_NAMES.iterator());
 		ArgumentCaptor<SequenceFilePair> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
 		ResponseEntity<String> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request, Locale.CANADA);
-		assertEquals("Response is ok", HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 
 		verify(sequencingObjectService)
 				.createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(), eq(SAMPLE));
 
-		assertEquals("Should have the correct file name", PAIR_01, sequenceFileArgumentCaptor
-				.getValue().getForwardSequenceFile().getLabel());
-		assertEquals("Should have the correct file name", PAIR_02, sequenceFileArgumentCaptor
-				.getValue().getReverseSequenceFile().getLabel());
+		assertEquals(PAIR_01, sequenceFileArgumentCaptor.getValue().getForwardSequenceFile().getLabel(),
+				"Should have the correct file name");
+		assertEquals(PAIR_02, sequenceFileArgumentCaptor.getValue().getReverseSequenceFile().getLabel(),
+				"Should have the correct file name");
 	}
 
 
@@ -133,15 +133,15 @@ public class SamplesAjaxControllerTest {
 		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
 		ResponseEntity<String> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request, Locale.CANADA);
 
-		assertEquals("Response is ok", HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
 				eq(SAMPLE));
 
 		List<SequencingObject> allValues = sequenceFileArgumentCaptor.getAllValues();
 
-		assertEquals("Should have created 1 single end sequence files", 1,
-				allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count());
-		assertEquals("Should have created 1 file pair", 1, allValues.stream()
-				.filter(o -> o instanceof SequenceFilePair).count());
+		assertEquals(1, allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count(),
+				"Should have created 1 single end sequence files");
+		assertEquals(1, allValues.stream().filter(o -> o instanceof SequenceFilePair).count(),
+				"Should have created 1 file pair");
 	}
 }

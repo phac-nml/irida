@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 
 import com.google.common.base.Strings;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Represents the common elements in a page within the application.
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	protected static final String BASE_URL = System.getProperty("server.base.url", "http://localhost:" + System.getProperty("server.port", "8080")) + "/";
+	protected static String BASE_URL;
 	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	protected final int DEFAULT_WAIT = 500;
@@ -47,6 +47,10 @@ public class AbstractPage {
 		return errors.getText();
 	}
 
+	public static void setBaseUrl(String baseUrl) {
+		BASE_URL = baseUrl;
+	}
+
 	protected static void get(WebDriver driver, String relativeUrl) {
 		String url = BASE_URL + relativeUrl;
 		driver.get(url);
@@ -63,10 +67,10 @@ public class AbstractPage {
 	}
 
 	private static void determineError(String error) {
-		assertFalse("A server error occured", error.equals("server"));
-		assertFalse("An oauth error occured", error.equals("oauth"));
-		assertFalse("An access denied error occured", error.equals("access_denied"));
-		assertFalse("An item not found error occured", error.equals("404"));
+		assertFalse(error.equals("server"), "A server error occured");
+		assertFalse(error.equals("oauth"), "An oauth error occured");
+		assertFalse(error.equals("access_denied"), "An access denied error occured");
+		assertFalse(error.equals("404"), "An item not found error occured");
 	}
 
 	public static void logout(WebDriver driver) {
@@ -198,17 +202,17 @@ public class AbstractPage {
 				.findElements(By.tagName("a"));
 		crumbs.remove(0); // Remove the home link.
 
-		assertEquals("Should have the correct number of breadcrumbs", expected.size(), crumbs.size());
+		assertEquals(expected.size(), crumbs.size(), "Should have the correct number of breadcrumbs");
 		for (int i = 0; i < crumbs.size(); i++) {
 			WebElement crumb = crumbs.get(i);
 			String href = crumb.getAttribute("href");
 			String text = crumb.getText();
-			assertTrue("Should have the expected url in the breadcrumb", href.contains(expected.get(i)
-					.get("href")));
-			assertTrue("Should have the expected url in the breadcrumb", href.contains(expected.get(i)
-					.get("href")));
-			assertEquals("Should have the expected text in the breadcrumb", expected.get(i)
-					.get("text"), text);
+			assertTrue(href.contains(expected.get(i).get("href")),
+					"Should have the expected url in the breadcrumb");
+			assertTrue(href.contains(expected.get(i).get("href")),
+					"Should have the expected url in the breadcrumb");
+			assertEquals(expected.get(i).get("text"), text,
+					"Should have the expected text in the breadcrumb");
 		}
 	}
 

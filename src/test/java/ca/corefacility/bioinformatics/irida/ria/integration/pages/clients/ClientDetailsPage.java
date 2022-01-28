@@ -76,7 +76,7 @@ public class ClientDetailsPage extends AbstractPage {
 			deleted = true;
 			// check if the element is in the table
 			for (WebElement ele : findElements) {
-				if (ele.getText().equals(clientId)) {
+				if (ele.getText().equals(clientId.toString())) {
 					deleted = false;
 				}
 			}

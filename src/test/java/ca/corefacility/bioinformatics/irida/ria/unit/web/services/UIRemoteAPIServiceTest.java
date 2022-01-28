@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -19,7 +19,8 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +40,7 @@ public class UIRemoteAPIServiceTest {
 	private final long REMOTE_ID_WITH_REVOKED_TOKEN = 3L;
 
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.remoteAPIService = mock(RemoteAPIService.class);
 		this.tokenService = mock(RemoteAPITokenService.class);
@@ -67,22 +68,26 @@ public class UIRemoteAPIServiceTest {
 	@Test
 	public void testCheckAPITStatusSuccess() {
 		Date expiryDate = service.checkAPIStatus(REMOTE_ID_WITH_TOKEN);
-		assertEquals("A valid token should return the appropriate expiration date.", REMOTE_NON_EXPIRED_DATE, expiryDate);
+		assertEquals(REMOTE_NON_EXPIRED_DATE, expiryDate, "A valid token should return the appropriate expiration date.");
 	}
 
-	@Test(expected = IridaOAuthException.class)
+	@Test
 	public void testCheckAPITStatusError() {
-		service.checkAPIStatus(REMOTE_ID_WITH_EXPIRED_TOKEN);
+		assertThrows(IridaOAuthException.class, () -> {
+			service.checkAPIStatus(REMOTE_ID_WITH_EXPIRED_TOKEN);
+		});
 	}
 
-	@Test(expected = IridaOAuthException.class)
+	@Test
 	public void testRevokedTokensApiStatusError() {
 		RemoteAPI validAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITH_TOKEN);
 		RemoteAPIToken validToken = createFakeRemoteAPIToken(REMOTE_NON_EXPIRED_DATE);
 		when(remoteAPIService.read(REMOTE_ID_WITH_REVOKED_TOKEN)).thenReturn(validAPI);
 		when(tokenService.getToken(validAPI)).thenReturn(validToken);
 		when(projectRemoteService.getServiceStatus(validAPI)).thenReturn(false);
-		service.checkAPIStatus(REMOTE_ID_WITH_REVOKED_TOKEN);
+		assertThrows(IridaOAuthException.class, () -> {
+			service.checkAPIStatus(REMOTE_ID_WITH_REVOKED_TOKEN);
+		});
 	}
 
 	@Test

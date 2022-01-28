@@ -30,7 +30,7 @@ public class CartPage extends AbstractPage {
 	}
 
 	public static CartPage goToCart(WebDriver driver) {
-		get(driver, "/cart/pipelines");
+		get(driver, "cart/pipelines");
 		return initPage(driver);
 	}
 

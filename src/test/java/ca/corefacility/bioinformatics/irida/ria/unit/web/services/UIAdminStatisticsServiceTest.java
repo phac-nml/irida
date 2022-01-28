@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 public class UIAdminStatisticsServiceTest {
 	/*
@@ -33,7 +32,8 @@ public class UIAdminStatisticsServiceTest {
 	private StatisticTimePeriod statisticTimePeriod = StatisticTimePeriod.DAILY;
 	private List<GenericStatModel> genericStatModelList;
 
-	@Before
+	@SuppressWarnings("unchecked")
+	@BeforeEach
 	public void setUp() {
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);
 		projectService = mock(ProjectService.class);

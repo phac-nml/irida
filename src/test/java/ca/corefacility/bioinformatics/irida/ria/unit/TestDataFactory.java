@@ -37,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAna
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Generates test data for unit tests.

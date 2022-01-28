@@ -4,18 +4,18 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UserDetailsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UserDetailsPageIT.xml")
 public class UserDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private UserDetailsPage usersPage;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		usersPage = new UserDetailsPage(driver());
@@ -38,8 +38,8 @@ public class UserDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testGetEditUserButton() {
-		assertTrue("Should see button for user 1", usersPage.canGetEditLink(1L));
-		assertFalse("Should not see button for user 2", usersPage.canGetEditLink(2L));
+		assertTrue(usersPage.canGetEditLink(1L), "Should see button for user 1");
+		assertFalse(usersPage.canGetEditLink(2L), "Should not see button for user 2");
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class UserDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	public void testSubscribeToProject() {
 		usersPage.getCurrentUser();
 		usersPage.subscribeToFirstProject();
-		assertTrue("Should be a success notification that you subscribed", usersPage.checkSuccessNotification());
+		assertTrue(usersPage.checkSuccessNotification(), "Should be a success notification that you subscribed");
 	}
 
 }
