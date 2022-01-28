@@ -589,10 +589,8 @@
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<junit.platform.execution.listeners.deactivate>${exclude.test.listeners}</junit.platform.execution.listeners.deactivate>
-								<server.port>${server.port}</server.port>
 								<spring.profiles.active>test</spring.profiles.active>
 								<irida.db.profile>it</irida.db.profile>
-								<server.base.url>http://localhost:${server.port}</server.base.url>
 							</systemPropertyVariables>
 							<rerunFailingTestsCount>5</rerunFailingTestsCount>
 						</configuration>
@@ -877,7 +875,7 @@
 					<apiDocsUrl>http://localhost:${server.port}/v3/api-docs</apiDocsUrl>
 					<outputFileName>open-api.json</outputFileName>
 					<outputDir>doc/swagger-ui</outputDir>
-					<skip>false</skip>
+					<skip>${tomcat.skip}</skip>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -956,9 +954,9 @@
 			<id>ui_testing</id>
 			<properties>
 				<include.tags><![CDATA[IntegrationTest & UI]]></include.tags>
+				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
-					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
 				</exclude.test.listeners>
 			</properties>
 		</profile>
@@ -966,18 +964,18 @@
 			<id>service_testing</id>
 			<properties>
 				<include.tags><![CDATA[IntegrationTest & Service]]></include.tags>
+				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
-					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
 				</exclude.test.listeners>
-				<tomcat.skip>true</tomcat.skip>
 			</properties>
 		</profile>
 		<profile>
 			<id>rest_testing</id>
 			<properties>
 				<include.tags><![CDATA[IntegrationTest & Rest]]></include.tags>
+				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
 					ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener,
@@ -1010,6 +1008,7 @@
 			<id>all_testing</id>
 			<properties>
 				<include.tags>IntegrationTest</include.tags>
+				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
 				</exclude.test.listeners>
