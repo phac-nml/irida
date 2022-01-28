@@ -11,12 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
@@ -30,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for users.
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")

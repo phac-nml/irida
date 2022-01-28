@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataFileImpor
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class UIMetadataFileImportServiceTest {
@@ -33,7 +33,7 @@ public class UIMetadataFileImportServiceTest {
 	private ProjectService projectService;
 	private SampleService sampleService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.projectService = Mockito.mock(ProjectService.class);
 		this.sampleService = Mockito.mock(SampleService.class);

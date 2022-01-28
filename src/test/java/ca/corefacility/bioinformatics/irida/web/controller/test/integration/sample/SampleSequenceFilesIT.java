@@ -10,9 +10,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,14 +20,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -43,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util
  * Integration tests for working with sequence files and samples.
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
@@ -78,7 +77,7 @@ public class SampleSequenceFilesIT {
 		// check that the location and link headers were created:
 		String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull("location must exist", location);
-		assertTrue("location must be correct", location.matches(unpairedUri + "/[0-9]+/files/[0-9]+"));
+		assertTrue(location.matches(unpairedUri + "/[0-9]+/files/[0-9]+"), "location must be correct");
 		// confirm that the sequence file was added to the sample sequence files
 		// list
 		asUser().expect().body("resource.resources.fileName", hasItem(sequenceFile.getFileName().toString())).and()
@@ -122,7 +121,7 @@ public class SampleSequenceFilesIT {
 
 		String location = r.body().jsonPath().get("resource.links.find{it.rel == 'self'}.href");
 
-		assertTrue("Response body must contain self rel", location.matches(sequenceFilePairUri + "/[0-9]+"));
+		assertTrue(location.matches(sequenceFilePairUri + "/[0-9]+"), "Response body must contain self rel");
 
 		// confirm the resource exist
 		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location);
@@ -160,7 +159,7 @@ public class SampleSequenceFilesIT {
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue("location must be correct", location.matches(unpairedUri + "/[0-9]+/files/[0-9]+"));
+		assertTrue(location.matches(unpairedUri + "/[0-9]+/files/[0-9]+"), "location must be correct");
 
 		// confirm that the sequence file contains the given optional property
 		asAdmin().expect().body("resource.optionalProperty", equalTo(optionalValue)).when().get(location);
