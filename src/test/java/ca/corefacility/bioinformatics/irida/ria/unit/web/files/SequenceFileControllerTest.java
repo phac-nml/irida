@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.files;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,8 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -37,7 +37,7 @@ public class SequenceFileControllerTest {
 	// Services
 	private SequencingObjectService objectService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		objectService = mock(SequencingObjectService.class);
 		controller = new SequenceFileController(objectService);
@@ -58,7 +58,7 @@ public class SequenceFileControllerTest {
 	public void testGetSequenceFilePage() {
 		logger.debug("Testing getSequenceFilePage");
 		String response = controller.getSequenceFilePage(OBJECT_ID, FILE_ID);
-		assertEquals("Should return the correct page", SequenceFileController.FASTQC_PAGE, response);
+		assertEquals(SequenceFileController.FASTQC_PAGE, response, "Should return the correct page");
 	}
 
 	/***********************************************************************************************
@@ -71,15 +71,15 @@ public class SequenceFileControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		controller.downloadSequenceFile(OBJECT_ID, FILE_ID, response);
-		assertTrue("Response should contain a \"Content-Disposition\" header.",
-				response.containsHeader("Content-Disposition"));
-		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_file.fastq\"",
-				response.getHeader("Content-Disposition"));
+		assertTrue(response.containsHeader("Content-Disposition"),
+				"Response should contain a \"Content-Disposition\" header.");
+		assertEquals("attachment; filename=\"test_file.fastq\"", response.getHeader("Content-Disposition"),
+				"Content-Disposition should include the file name");
 
 		Path path = Paths.get(FILE_PATH);
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
-		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
+		assertArrayEquals(origBytes, responseBytes, "Response contents the correct file content");
 	}
 
 }

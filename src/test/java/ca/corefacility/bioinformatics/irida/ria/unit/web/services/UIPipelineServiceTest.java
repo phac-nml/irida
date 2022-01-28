@@ -3,9 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -37,6 +36,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UIPipelineServiceTest {
@@ -59,7 +59,7 @@ public class UIPipelineServiceTest {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private MessageSource messageSource;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IridaWorkflowNotFoundException {
 
 		workflowsService = mock(IridaWorkflowsService.class);
@@ -106,7 +106,6 @@ public class UIPipelineServiceTest {
 
 		Map<Project, List<Sample>> cart = new HashMap<>();
 		projects.forEach(project -> {
-			Sample sample = new Sample("sample-" + project.getId());
 			cart.put(project, ImmutableList.of());
 		});
 		when(cartService.getFullCart()).thenReturn(cart);
@@ -123,8 +122,8 @@ public class UIPipelineServiceTest {
 		verify(analysisSubmissionSampleProcessor, times(1)).hasRegisteredAnalysisSampleUpdater(ANALYSIS_TYPE);
 		verify(messageSource, times(4)).getMessage(any(), any(), any());
 
-		Assert.assertEquals("Should contain the pipeline type (which in this case is the pipeline name)", PIPELINE_NAME,
-				response.getType());
+		assertEquals(PIPELINE_NAME, response.getType(),
+				"Should contain the pipeline type (which in this case is the pipeline name)");
 	}
 
 	@Test
@@ -161,17 +160,17 @@ public class UIPipelineServiceTest {
 
 		// Test for all pipelines
 		List<Pipeline> pipelines = service.getWorkflowTypes(false, Locale.CANADA);
-		Assert.assertEquals("Should have 3 pipelines", 3, pipelines.size());
+		assertEquals(3, pipelines.size(), "Should have 3 pipelines");
 
 		// Test for ones that can be automated
 		pipelines = service.getWorkflowTypes(true, Locale.CANADA);
-		Assert.assertEquals("Should have 2 pipelines that can be automated", 2, pipelines.size());
+		assertEquals(2, pipelines.size(), "Should have 2 pipelines that can be automated");
 	}
 
 	@Test
 	public void getProjectAnalysisTemplatesTest() {
 		List<AnalysisTemplate> templates = service.getProjectAnalysisTemplates(1L, Locale.CANADA);
-		Assert.assertEquals("Should have 1 template", 1, templates.size());
+		assertEquals(1, templates.size(), "Should have 1 template");
 	}
 
 	@Test

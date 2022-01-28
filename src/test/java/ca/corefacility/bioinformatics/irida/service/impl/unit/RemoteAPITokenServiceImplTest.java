@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,8 +10,8 @@ import static org.mockito.Mockito.when;
 import java.util.Date;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -37,7 +38,7 @@ public class RemoteAPITokenServiceImplTest {
 	private OAuthClient oauthClient;
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp(){
 		tokenRepository = mock(RemoteApiTokenRepository.class);
 		userRepo = mock(UserRepository.class);
@@ -73,11 +74,13 @@ public class RemoteAPITokenServiceImplTest {
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
 	
-	@Test(expected=IllegalStateException.class)
+	@Test
 	public void testAddTokenNotLoggedIn() {
 		SecurityContextHolder.clearContext();
-				
-		service.create(remoteAPIToken);
+
+		assertThrows(IllegalStateException.class, () -> {
+			service.create(remoteAPIToken);
+		});
 	}
 
 	@Test
@@ -93,12 +96,14 @@ public class RemoteAPITokenServiceImplTest {
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
 	
-	@Test(expected=EntityNotFoundException.class)
+	@Test
 	public void testGetNotExisting() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
 		when(tokenRepository.readTokenForApiAndUser(remoteAPI, user)).thenReturn(null);
 		
-		service.getToken(remoteAPI);
+		assertThrows(EntityNotFoundException.class, () -> {
+			service.getToken(remoteAPI);
+		});
 	}
 
 

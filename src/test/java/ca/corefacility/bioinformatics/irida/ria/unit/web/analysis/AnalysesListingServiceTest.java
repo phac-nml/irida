@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 
@@ -21,8 +21,8 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -38,7 +38,7 @@ public class AnalysesListingServiceTest {
 
 	private AnalysisSubmissionService analysisSubmissionService;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);
 		IridaWorkflowsService iridaWorkflowsService = mock(IridaWorkflowsService.class);
@@ -63,11 +63,11 @@ public class AnalysesListingServiceTest {
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, null);
 
-		assertEquals("DataTables response should have a draw value of 1", 1, response.getDraw());
-		assertEquals("DataTables response should have a records filtered value of 150", 150,
-				response.getRecordsFiltered());
-		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
-		assertTrue("Should have data value", response.getData() != null);
+		assertEquals(1, response.getDraw(), "DataTables response should have a draw value of 1");
+		assertEquals(150, response.getRecordsFiltered(),
+				"DataTables response should have a records filtered value of 150");
+		assertEquals(150, response.getRecordsTotal(), "DataTables response should have a records total value of 150");
+		assertTrue(response.getData() != null, "Should have data value");
 
 		verify(analysisSubmissionService)
 				.listAllSubmissions(eq(searchValue), isNull(), isNull(), isNull(),
@@ -87,11 +87,11 @@ public class AnalysesListingServiceTest {
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, user, null);
 
-		assertEquals("DataTables response should have a draw value of 1", 1, response.getDraw());
-		assertEquals("DataTables response should have a records filtered value of 150", 150,
-				response.getRecordsFiltered());
-		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
-		assertTrue("Should have data value", response.getData() != null);
+		assertEquals(1, response.getDraw(), "DataTables response should have a draw value of 1");
+		assertEquals(150, response.getRecordsFiltered(),
+				"DataTables response should have a records filtered value of 150");
+		assertEquals(150, response.getRecordsTotal(), "DataTables response should have a records total value of 150");
+		assertTrue(response.getData() != null, "Should have data value");
 
 		verify(analysisSubmissionService).listSubmissionsForUser(eq(searchValue), isNull(), isNull(), eq(user),
 				isNull(), any());
@@ -111,11 +111,11 @@ public class AnalysesListingServiceTest {
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, project);
 
-		assertEquals("DataTables response should have a draw value of 1", 1, response.getDraw());
-		assertEquals("DataTables response should have a records filtered value of 150", 150,
-				response.getRecordsFiltered());
-		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
-		assertTrue("Should have data value", response.getData() != null);
+		assertEquals(1, response.getDraw(), "DataTables response should have a draw value of 1");
+		assertEquals(150, response.getRecordsFiltered(),
+				"DataTables response should have a records filtered value of 150");
+		assertEquals(150, response.getRecordsTotal(), "DataTables response should have a records total value of 150");
+		assertTrue(response.getData() != null, "Should have data value");
 
 		verify(analysisSubmissionService)
 				.listSubmissionsForProject(eq(searchValue), isNull(), isNull(), isNull(),

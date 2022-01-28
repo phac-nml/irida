@@ -70,12 +70,14 @@ Running specific UI tests through [IntelliJ] IDEA
 *Recommended [IntelliJ] Default/Template JUnit VM Options Configuration:* 
 
 ```
--ea 
--Dspring.profiles.active=it 
--Dspring.datasource.url=jdbc:mysql://localhost:3306/irida_integration_test 
--Dirida.it.rootdirectory=/tmp/irida/ 
--Dirida.it.nosandbox=true 
--Dirida.it.headless=false
+-ea
+-Dspring.profiles.active=it
+-Dspring.datasource.url=jdbc:mysql://localhost:3306/irida_integration_test
+-Dirida.it.rootdirectory=/tmp/irida/
+-Dirida.db.profile=it
+-Djunit.platform.execution.listeners.deactivate=ca.corefacility.bioinformatics.irida.junit5.listeners.Unit*
+-Dirida.it.nosandbox=true
+-Dirida.it.headless=true
 -Dwebdriver.chrome.driver=/PATH/TO/chromedriver
 ```
 

@@ -1,25 +1,29 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
-import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
 import static org.hamcrest.Matchers.hasItems;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@Tag("IntegrationTest") @Tag("Rest")
 @ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/RESTProjectAnalysisControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 /**
@@ -32,37 +36,37 @@ public class RESTProjectAnalysisControllerIT {
 
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
-		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then().statusCode(HttpStatus.OK.value())
+		asAdmin().get(ANALYSIS_PROJECT_BASE).then().statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsUser() {
-		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then()
+		asUser().get(ANALYSIS_PROJECT_BASE).then()
 				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisAsOtherUser() {
-		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_PROJECT_BASE).then()
+		asOtherUser().get(ANALYSIS_PROJECT_BASE).then()
 				.statusCode(HttpStatus.FORBIDDEN.value());
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
-		asAdmin().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
+		asAdmin().get(ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
-		asUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
+		asUser().get(ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsOtherUser() {
-		asOtherUser().get(ITestSystemProperties.BASE_URL + ANALYSIS_SISTR_BASE).then()
+		asOtherUser().get(ANALYSIS_SISTR_BASE).then()
 				.statusCode(HttpStatus.FORBIDDEN.value());
 	}
 }

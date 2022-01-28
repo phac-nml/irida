@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.validators;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import ca.corefacility.bioinformatics.irida.validators.annotations.validators.LongitudeValidator;
 
 /**
@@ -15,7 +15,7 @@ public class LongitudeValidatorTest {
 
 	private LongitudeValidator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		validator = new LongitudeValidator();
 	}
@@ -23,78 +23,78 @@ public class LongitudeValidatorTest {
 	@Test
 	public void testOneDigitPrefix() {
 		String coord = "1.340";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testTwoDigitZeroPrefix() {
 		String coord = "01.340";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testTwoDigitNonZeroPrefix() {
 		String coord = "41.340";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testOneDigitNegativePrefix() {
 		String coord = "-1.340";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testTwoDigitNegativeZeroPrefix() {
 		String coord = "-01.340";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testTwoDigitNegativeNonZeroPrefix() {
 		String coord = "-31.340";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 	
 	@Test
 	public void testThreeDigitZeroPrefix() {
 		String coord = "001.394";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 	
 	@Test
 	public void testThreeDigitNonZeroPrefix() {
 		String coord = "011.394";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 	
 	@Test
 	public void testThreeDigitNonZeroPrefix2() {
 		String coord = "111.394";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 	
 	@Test
 	public void testThreeDigitNegativeZeroPrefix() {
 		String coord = "-001.394";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 	
 	@Test
 	public void testThreeDigitNegativeNonZeroPrefix() {
 		String coord = "-111.394";
-		assertTrue(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertTrue(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testOutsideRangePositive() {
 		String coord = "1000";
-		assertFalse(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertFalse(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 
 	@Test
 	public void testOutsideRangeNegative() {
 		String coord = "-1000";
-		assertFalse(String.format("[%s] should be valid.", coord), validator.isValid(coord, null));
+		assertFalse(validator.isValid(coord, null), String.format("[%s] should be valid.", coord));
 	}
 }

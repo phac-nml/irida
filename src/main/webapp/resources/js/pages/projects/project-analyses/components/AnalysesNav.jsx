@@ -1,6 +1,6 @@
-import { Link } from "@reach/router";
 import { Menu } from "antd";
 import React from "react";
+import { Link } from "react-router-dom";
 
 /**
  * Component to handle navigation within the project analyses page

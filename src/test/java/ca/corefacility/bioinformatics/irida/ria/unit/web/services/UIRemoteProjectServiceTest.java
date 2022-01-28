@@ -3,8 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import java.security.Principal;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -17,10 +17,10 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UIRemoteProjectServiceTest {
-	private MessageSource messageSource;
 	private ProjectService projectService;
 	private ProjectRemoteService projectRemoteService;
 	private UserService userService;
@@ -33,9 +33,8 @@ public class UIRemoteProjectServiceTest {
 	private final Long NONEXISTENTPROJECTID = 12L;
 	private RemoteProjectSettingsUpdateRequest remoteProjectSettingsUpdateRequest;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		messageSource = mock(MessageSource.class);
 		projectService = mock(ProjectService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		userService = mock(UserService.class);
@@ -55,18 +54,22 @@ public class UIRemoteProjectServiceTest {
 		when(projectService.read(remoteProject.getId())).thenReturn(remoteProject);
 	}
 
-	@Test(expected = Exception.class)
+	@Test
 	public void testGetRemoteProjectSyncSettingsEntityNotFound() throws Exception {
-		uiRemoteProjectService.getProjectRemoteSettings(NONEXISTENTPROJECTID, LOCALE);
-		verify(projectService, times(1)).read(NONEXISTENTPROJECTID);
+		assertThrows(Exception.class, () -> {
+			uiRemoteProjectService.getProjectRemoteSettings(NONEXISTENTPROJECTID, LOCALE);
+			verify(projectService, times(1)).read(NONEXISTENTPROJECTID);
+		});
 
 	}
 
-	@Test(expected = Exception.class)
+	@Test
 	public void testUpdateRemoteProjectSyncSettingsEntityNotFound() throws Exception {
-		uiRemoteProjectService.updateProjectSyncSettings(NONEXISTENTPROJECTID, remoteProjectSettingsUpdateRequest,
-				principal, LOCALE);
-		verify(projectService, times(1)).read(NONEXISTENTPROJECTID);
+		assertThrows(Exception.class, () -> {
+			uiRemoteProjectService.updateProjectSyncSettings(NONEXISTENTPROJECTID, remoteProjectSettingsUpdateRequest,
+					principal, LOCALE);
+			verify(projectService, times(1)).read(NONEXISTENTPROJECTID);
+		});
 	}
 
 	@Test

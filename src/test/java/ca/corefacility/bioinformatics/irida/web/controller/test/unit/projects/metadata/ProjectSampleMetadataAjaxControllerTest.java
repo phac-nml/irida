@@ -4,8 +4,8 @@ import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,8 +26,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ProjectSampleMetadataAjaxControllerTest {
@@ -46,7 +46,7 @@ public class ProjectSampleMetadataAjaxControllerTest {
 	private final String SAMPLE_NAME = "value2";
 	private final String SAMPLE_NAME_COLUMN = "header2";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		session = mock(HttpSession.class);
 		messageSource = mock(MessageSource.class);
@@ -103,11 +103,11 @@ public class ProjectSampleMetadataAjaxControllerTest {
 				file);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
-		assertEquals("Sample name columns is saved", stored.getRows()
-				.size(), 1);
-		assertEquals("Sample is saved", stored.getHeaders()
-				.size(), 3);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
+		assertEquals(stored.getRows().size(), 1,
+				"Sample name columns is saved");
+		assertEquals(stored.getHeaders().size(), 3,
+				"Sample is saved");
 	}
 
 	@Test
@@ -124,11 +124,12 @@ public class ProjectSampleMetadataAjaxControllerTest {
 				SAMPLE_NAME_COLUMN);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
-		assertEquals("Receive a complete message", ((AjaxSuccessResponse) response.getBody()).getMessage(), "complete");
-		assertEquals("Sample name columns is saved", stored.getSampleNameColumn(), SAMPLE_NAME_COLUMN);
-		assertEquals("Found sample id is saved", (long) stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN)
-				.getFoundSampleId(), (long) sample.getId());
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
+		assertEquals(((AjaxSuccessResponse) response.getBody()).getMessage(), "complete", "Receive a complete message");
+		assertEquals(stored.getSampleNameColumn(), SAMPLE_NAME_COLUMN, "Sample name columns is saved");
+		assertEquals((long) stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN).getFoundSampleId(),
+				(long) sample.getId(),
+				"Found sample id is saved");
 	}
 
 	@Test
@@ -158,9 +159,9 @@ public class ProjectSampleMetadataAjaxControllerTest {
 				sampleNames);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
-		assertTrue("Sample is saved", stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN)
-				.isSaved());
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
+		assertTrue(stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN).isSaved(),
+				"Sample is saved");
 	}
 
 	@Test
@@ -174,7 +175,7 @@ public class ProjectSampleMetadataAjaxControllerTest {
 	public void getProjectSampleMetadataTest() {
 		ResponseEntity<SampleMetadataStorage> response = controller.getProjectSampleMetadata(session, PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 		verify(session, times(1)).getAttribute("pm-" + PROJECT_ID);
 	}
 }

@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSampleMetadataView.xml")
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
@@ -24,7 +24,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	private static final String MIXED_FILE_PATH = "src/test/resources/files/metadata-upload/mixed.xlsx";
 	private static final String INVALID_FILE_PATH = "src/test/resources/files/metadata-upload/invalid.xlsx";
 
-	@Before
+	@BeforeEach
 	public void init() {
 		LoginPage.loginAsManager(driver());
 	}
@@ -34,8 +34,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(GOOD_FILE_PATH);
 		page.selectSampleNameColumn();
-		assertEquals("Has incorrect amount of update sample rows", 5, page.getUpdateCount());
-		assertEquals("Has incorrect amount of new sample rows", 0, page.getNewCount());
+		assertEquals(5, page.getUpdateCount(), "Has incorrect amount of update sample rows");
+		assertEquals(0, page.getNewCount(), "Has incorrect amount of new sample rows");
 
 		/*
 		Check formatting.  A special check for number column formatting has been added in July 2020.
@@ -53,8 +53,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 						.doubleValue())
 				.collect(Collectors.toList());
 		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
-		formattedNumbers.forEach(num -> assertTrue("Found " + num + " that was not formatted properly",
-				values.contains(Double.valueOf(num))));
+		formattedNumbers.forEach(num -> assertTrue(values.contains(Double.valueOf(num)),
+				"Found " + num + " that was not formatted properly"));
 
 	}
 
@@ -63,19 +63,19 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(MIXED_FILE_PATH);
 		page.selectSampleNameColumn();
-		assertEquals("Has incorrect amount of update sample rows", 5, page.getUpdateCount());
-		assertEquals("Has incorrect amount of new sample rows", 2, page.getNewCount());
+		assertEquals(5, page.getUpdateCount(), "Has incorrect amount of update sample rows");
+		assertEquals(2, page.getNewCount(), "Has incorrect amount of new sample rows");
 	}
 
 	@Test
 	public void testSuccessfulUpload() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(GOOD_FILE_PATH);
-		assertEquals("Has incorrect pre-populated sample name header", "NLEP #",
-				page.getValueForSelectedSampleNameColumn());
+		assertEquals("NLEP #", page.getValueForSelectedSampleNameColumn(),
+				"Has incorrect pre-populated sample name header");
 		page.goToReviewPage();
 		page.goToCompletePage();
-		assertTrue("Success message did not display", page.isSuccessDisplayed());
+		assertTrue(page.isSuccessDisplayed(), "Success message did not display");
 
 	}
 
@@ -84,6 +84,6 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(INVALID_FILE_PATH);
 		page.goToReviewPage();
-		assertTrue("Validation message did not display", page.isAlertDisplayed());
+		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
 	}
 }

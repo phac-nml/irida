@@ -9,15 +9,15 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequenceFiles.
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequenceFiles/SequenceFileView.xml")
 @ActiveProfiles("it")
@@ -44,7 +44,7 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 
 	private SequenceFilePages page;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new SequenceFilePages(driver());
@@ -67,19 +67,19 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 		page.goToChartsPage();
 		assertTrue(page.isFastQCLinksVisible());
 		assertFalse(page.isFastQCNoRunWarningDisplayed());
-		assertEquals("Should display three charts", 3, page.getChartCount());
+		assertEquals(3, page.getChartCount(), "Should display three charts");
 	}
 
 	@Test
 	public void testSequenceFileOverrepresentedSequencePage() {
 		logger.debug("Testing the Sequence File FastQC Overrepresented Sequences Page");
 		page.goToOverrepresentedPage();
-		assertEquals("Should display 1 overrepresented sequence", 1, page.getNumberOfOverrepresentedSequences());
-		assertTrue("Should display a sequence", page.getOverrepresentedSequence().matches("^[aAtTgGcC]+$"));
-		assertTrue("Should display the percentage with a percent sign",
-				page.getOverrepresentedSequencePercentage().contains("%"));
-		assertEquals("Should display the count", "1", page.getOverrepresentedSequenceCount());
-		assertEquals("Should display the source", "No Hit", page.getOverrepresentedSequenceSource());
+		assertEquals(1, page.getNumberOfOverrepresentedSequences(), "Should display 1 overrepresented sequence");
+		assertTrue(page.getOverrepresentedSequence().matches("^[aAtTgGcC]+$"), "Should display a sequence");
+		assertTrue(page.getOverrepresentedSequencePercentage().contains("%"),
+				"Should display the percentage with a percent sign");
+		assertEquals("1", page.getOverrepresentedSequenceCount(), "Should display the count");
+		assertEquals("No Hit", page.getOverrepresentedSequenceSource(), "Should display the source");
 	}
 
 	@Test
@@ -94,22 +94,22 @@ public class SequenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testNoFastQCData() {
 		page.goToDetailsPageWithNoData();
-		assertEquals("sequenceFile2", page.getPageTitle());
+		assertEquals(page.getPageTitle(), "sequenceFile2");
 		assertFalse(page.isFastQCLinksVisible());
 		assertTrue(page.isFastQCNoRunWarningDisplayed());
 	}
 
 	private void testPageChrome() {
 		logger.debug("Testing the Sequence File Overrepresented Sequence Page");
-		assertEquals("Has the file name as the page title", FILE_NAME, page.getPageTitle());
-		assertEquals("Display the file id", FILE_ID, page.getFileId());
-		assertEquals("Displays the file created date", FILE_CREATED, page.getFileCreatedDate());
-		assertEquals("Displays the file encoding", FILE_ENCODING, page.getFileEncoding());
-		assertEquals("Display the total sequence count", FILE_TOTAL_SEQUENCE, page.getTotalSequenceCount());
-		assertEquals("Display the total bases count", FILE_TOTAL_BASES, page.getTotalBasesCount());
-		assertEquals("Displays the minLength", FILE_MIN_LENGTH, page.getMinLength());
-		assertEquals("Displays the maxLength", FILE_MAX_LENGTH, page.getMaxLength());
-		assertEquals("Displays the gc content", FILE_GC_CONTENT, page.getGCContent());
+		assertEquals(FILE_NAME, page.getPageTitle(), "Has the file name as the page title");
+		assertEquals(FILE_ID, page.getFileId(), "Display the file id");
+		assertEquals(FILE_CREATED, page.getFileCreatedDate(), "Displays the file created date");
+		assertEquals(FILE_ENCODING, page.getFileEncoding(), "Displays the file encoding");
+		assertEquals(FILE_TOTAL_SEQUENCE, page.getTotalSequenceCount(), "Display the total sequence count");
+		assertEquals(FILE_TOTAL_BASES, page.getTotalBasesCount(), "Display the total bases count");
+		assertEquals(FILE_MIN_LENGTH, page.getMinLength(), "Displays the minLength");
+		assertEquals(FILE_MAX_LENGTH, page.getMaxLength(), "Displays the maxLength");
+		assertEquals(FILE_GC_CONTENT, page.getGCContent(), "Displays the gc content");
 	}
 
 }

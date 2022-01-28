@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -12,8 +12,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiU
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
@@ -43,11 +43,11 @@ public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectProjectInListing(name);
 
 		String url = page.getProjectUrl();
-		assertFalse("URL should not be empty", url.isEmpty());
+		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
 		ProjectDetailsPage projectDetailsPage = ProjectDetailsPage.initElements(driver());
 		String dataProjectName = projectDetailsPage.getProjectName();
-		assertEquals("Should be on the remote project page", dataProjectName, name);
+		assertEquals(dataProjectName, name, "Should be on the remote project page");
 	}
 }

@@ -5,10 +5,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.EditClientPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * IT for the client details page
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class EditClientPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String ORIGINAL_SECRET = "xxxxxxxx";
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 	}

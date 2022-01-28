@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,7 +46,7 @@ public class UIUserGroupsServiceTest {
 	private UserGroupService userGroupService;
 	private UserService userService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userGroupService = mock(UserGroupService.class);
 		userService = mock(UserService.class);
@@ -74,7 +74,7 @@ public class UIUserGroupsServiceTest {
 	public void testGetUserGroups() {
 		TableResponse<UserGroupTableModel> response = service.getUserGroups(TABLE_REQUEST);
 		verify(userGroupService, times(1)).search(any(), any());
-		assertEquals("Should be 3 user groups", Long.valueOf(3), response.getTotal());
+		assertEquals(Long.valueOf(3), response.getTotal(), "Should be 3 user groups");
 	}
 
 	@Test

@@ -5,8 +5,9 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -20,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -32,8 +34,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -73,7 +75,7 @@ public class ProjectSynchronizationServiceTest {
 	Project neverSync;
 	RemoteAPI api;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
 
@@ -237,7 +239,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
-		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), ArgumentMatchers.<Set<MetadataEntry>>any())).thenReturn(sample);
 		when(assemblyRemoteService.getGenomeAssembliesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());
@@ -272,7 +274,7 @@ public class ProjectSynchronizationServiceTest {
 		sample.setRemoteStatus(sampleStatus);
 
 		when(sampleService.create(sample)).thenReturn(sample);
-		when(sampleService.updateSampleMetadata(eq(sample), any(Set.class))).thenReturn(sample);
+		when(sampleService.updateSampleMetadata(eq(sample), ArgumentMatchers.<Set<MetadataEntry>>any())).thenReturn(sample);
 		when(fast5ObjectRemoteService.getFast5FilesForSample(sample)).thenThrow(new LinkNotFoundException("no link"));
 
 		syncService.syncSample(sample, expired, Maps.newHashMap());
@@ -317,7 +319,7 @@ public class ProjectSynchronizationServiceTest {
 		verify(objectService).createSequencingObjectInSample(fast5Object, sample);
 	}
 	
-	@Test(expected = ProjectSynchronizationException.class)
+	@Test
 	public void testSyncFilesError() {
 		Sample sample = new Sample();
 		
@@ -329,6 +331,8 @@ public class ProjectSynchronizationServiceTest {
 		when(pairRemoteService.mirrorSequencingObject(pair)).thenReturn(pair);
 		when(objectService.createSequencingObjectInSample(pair, sample)).thenThrow(new NullPointerException("Bad file"));
 		
-		syncService.syncSequenceFilePair(pair, sample);
+		assertThrows(ProjectSynchronizationException.class, () -> {
+			syncService.syncSequenceFilePair(pair, sample);
+		});
 	}
 }

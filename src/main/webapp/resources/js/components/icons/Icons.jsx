@@ -5,6 +5,7 @@ import {
   BoldOutlined,
   CalendarTwoTone,
   CheckCircleOutlined,
+  CheckOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
@@ -73,7 +74,9 @@ import { blue6 } from "../../styles/colors";
 
 export const IconArrowLeft = ({ ...props }) => <ArrowLeftOutlined {...props} />;
 
-export const IconArrowRight = ({ ...props }) => <ArrowRightOutlined {...props} />;
+export const IconArrowRight = ({ ...props }) => (
+  <ArrowRightOutlined {...props} />
+);
 
 export const IconClock = ({ ...props }) => <ClockCircleOutlined {...props} />;
 
@@ -156,6 +159,8 @@ export const IconBell = ({ ...props }) => <BellOutlined {...props} />;
 export const IconLaunchPipeline = ({ ...props }) => (
   <RocketOutlined {...props} />
 );
+
+export const IconWarning = ({ ...props }) => <WarningOutlined {...props} />;
 
 /*
 Editor Icons
@@ -241,5 +246,7 @@ export const IconSortDescending = ({ ...props }) => (
 export const IconCheckCircle = ({ ...props }) => (
   <CheckCircleOutlined {...props} />
 );
+
+export const IconCheck = ({ ...props }) => <CheckOutlined {...props} />;
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;

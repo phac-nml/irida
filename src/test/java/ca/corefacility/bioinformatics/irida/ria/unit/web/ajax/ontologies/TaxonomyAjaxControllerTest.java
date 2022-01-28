@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.ajax.ontologies;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -21,7 +21,7 @@ public class TaxonomyAjaxControllerTest {
 	private TaxonomyService taxonomyService;
 	private TaxonomyAjaxController controller;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		taxonomyService = mock(TaxonomyService.class);
 		controller = new TaxonomyAjaxController(taxonomyService);
