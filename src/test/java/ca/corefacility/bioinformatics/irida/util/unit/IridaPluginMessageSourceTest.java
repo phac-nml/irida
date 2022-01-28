@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.util.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.StaticMessageSource;
 
@@ -18,7 +19,7 @@ public class IridaPluginMessageSourceTest {
 	private IridaPluginMessageSource iridaMessageSourceSingle;
 	private IridaPluginMessageSource iridaMessageSourceMultiple;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		StaticMessageSource testSource1 = new StaticMessageSource();
 		testSource1.addMessage("key1", Locale.ENGLISH, "message1");
@@ -34,44 +35,50 @@ public class IridaPluginMessageSourceTest {
 	@Test
 	public void testGetMessageSinglePlugin() {
 		String message = iridaMessageSourceSingle.getMessage("key1", null, Locale.ENGLISH);
-		assertEquals("Invalid message", message, "message1");
+		assertEquals(message, "message1", "Invalid message");
 	}
 
 	@Test
 	public void testGetMessageSinglePluginWithDefault() {
 		String message = iridaMessageSourceSingle.getMessage("key2", null, "default", Locale.ENGLISH);
-		assertEquals("Invalid message", message, "default");
+		assertEquals(message, "default", "Invalid message");
 	}
 
-	@Test(expected = NoSuchMessageException.class)
+	@Test
 	public void testGetMessageSinglePluginNoMessage() {
-		iridaMessageSourceSingle.getMessage("key2", null, Locale.ENGLISH);
+		assertThrows(NoSuchMessageException.class, () -> {
+			iridaMessageSourceSingle.getMessage("key2", null, Locale.ENGLISH);
+		});
 	}
 
 	@Test
 	public void testGetMessageMultiplePlugin() {
 		String message1 = iridaMessageSourceMultiple.getMessage("key1", null, Locale.ENGLISH);
 		String message2 = iridaMessageSourceMultiple.getMessage("key2", null, Locale.ENGLISH);
-		assertEquals("Invalid message", message1, "message1");
-		assertEquals("Invalid message", message2, "message2");
+		assertEquals(message1, "message1", "Invalid message");
+		assertEquals(message2, "message2", "Invalid message");
 	}
 
 	@Test
 	public void testGetMessageMultiplePluginWithDefault() {
 		String message1 = iridaMessageSourceMultiple.getMessage("key1", null, Locale.ENGLISH);
 		String message2 = iridaMessageSourceMultiple.getMessage("key3", null, "default", Locale.ENGLISH);
-		assertEquals("Invalid message", message1, "message1");
-		assertEquals("Invalid message", message2, "default");
+		assertEquals(message1, "message1", "Invalid message");
+		assertEquals(message2, "default", "Invalid message");
 	}
 
-	@Test(expected = NoSuchMessageException.class)
+	@Test
 	public void testGetMessageMultiplePluginNoMessage() {
-		iridaMessageSourceMultiple.getMessage("key3", null, Locale.ENGLISH);
+		assertThrows(NoSuchMessageException.class, () -> {
+			iridaMessageSourceMultiple.getMessage("key3", null, Locale.ENGLISH);
+		});
 	}
 
-	@Test(expected = NoSuchMessageException.class)
+	@Test
 	public void testGetMessageMultiplePluginNoMessageLocale() {
-		iridaMessageSourceMultiple.getMessage("key1", null, Locale.FRENCH);
+		assertThrows(NoSuchMessageException.class, () -> {
+			iridaMessageSourceMultiple.getMessage("key1", null, Locale.FRENCH);
+		});
 	}
 
 	@Test
@@ -81,6 +88,6 @@ public class IridaPluginMessageSourceTest {
 		iridaMessageSourceSingle.setParentMessageSource(parentSource);
 
 		String message = iridaMessageSourceSingle.getMessage("key2", null, Locale.ENGLISH);
-		assertEquals("Invalid message", message, "message2");
+		assertEquals(message, "message2", "Invalid message");
 	}
 }

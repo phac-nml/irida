@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -11,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,7 +22,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -87,7 +87,7 @@ public class AnalysisSubmissionRepositoryIT {
 	 * 
 	 * @throws IOException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws IOException {
 		singleEndFile = (SingleEndSequenceFile) objectRepository.findById(2L).orElse(null);
 		sequenceFile = singleEndFile.getFileWithId(1L);
@@ -158,7 +158,7 @@ public class AnalysisSubmissionRepositoryIT {
 		assertEquals(2, submittedAnalyses.size());
 		Set<String> analysisIdsSet = Sets.newHashSet(submittedAnalyses.get(0).getRemoteAnalysisId(), submittedAnalyses
 				.get(1).getRemoteAnalysisId());
-		assertEquals("invalid ids of returned submissions", Sets.newHashSet(analysisId, analysisId2), analysisIdsSet);
+		assertEquals(Sets.newHashSet(analysisId, analysisId2), analysisIdsSet, "invalid ids of returned submissions");
 	}
 
 	/**
@@ -182,8 +182,8 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(
 				AnalysisState.SUBMITTING, AnalysisCleanedState.NOT_CLEANED);
-		assertEquals("Invalid size of returned analyses", 1, submittedAnalyses.size());
-		assertEquals("invalid ids of returned submissions", analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
+		assertEquals(1, submittedAnalyses.size(), "Invalid size of returned analyses");
+		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId(), "invalid ids of returned submissions");
 	}
 
 	/**
@@ -196,10 +196,10 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission2);
 		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(
 				AnalysisState.SUBMITTING, AnalysisCleanedState.NOT_CLEANED);
-		assertEquals("Invalid size of returned analyses", 2, submittedAnalyses.size());
+		assertEquals(2, submittedAnalyses.size(), "Invalid size of returned analyses");
 		Set<String> analysisIdsSet = Sets.newHashSet(submittedAnalyses.get(0).getRemoteAnalysisId(), submittedAnalyses
 				.get(1).getRemoteAnalysisId());
-		assertEquals("invalid ids of returned submissions", Sets.newHashSet(analysisId, analysisId2), analysisIdsSet);
+		assertEquals(Sets.newHashSet(analysisId, analysisId2), analysisIdsSet, "invalid ids of returned submissions");
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(
 				AnalysisState.SUBMITTING, AnalysisCleanedState.CLEANED);
-		assertEquals("Invalid size of returned analyses", 0, submittedAnalyses.size());
+		assertEquals(0, submittedAnalyses.size(), "Invalid size of returned analyses");
 	}
 
 	/**
@@ -263,8 +263,8 @@ public class AnalysisSubmissionRepositoryIT {
 		Set<SequencingObject> inputsSaved = objectRepository
 				.findSequencingObjectsForAnalysisSubmission(savedSubmission);
 
-		assertTrue("should have single end file in collection", inputsSaved.contains(singleEndFile));
-		assertTrue("should have pair file in collection", inputsSaved.contains(sequenceFilePair));
+		assertTrue(inputsSaved.contains(singleEndFile), "should have single end file in collection");
+		assertTrue(inputsSaved.contains(sequenceFilePair), "should have pair file in collection");
 
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
@@ -284,8 +284,8 @@ public class AnalysisSubmissionRepositoryIT {
 		Set<SequencingObject> inputsSaved = objectRepository
 				.findSequencingObjectsForAnalysisSubmission(savedSubmission);
 
-		assertTrue("should have single end file in collection", inputsSaved.contains(singleEndFile));
-		assertTrue("should have pair file in collection", inputsSaved.contains(sequenceFilePair));
+		assertTrue(inputsSaved.contains(singleEndFile), "should have single end file in collection");
+		assertTrue(inputsSaved.contains(sequenceFilePair), "should have pair file in collection");
 
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}
@@ -294,12 +294,14 @@ public class AnalysisSubmissionRepositoryIT {
 	/**
 	 * Tests creating an analysis with no set submitter and failing.
 	 */
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisNoSubmitterFail() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
 				.name("submission paired 1").inputFiles(Sets.newHashSet(sequenceFilePair)).build();
-		analysisSubmissionRepository.save(analysisSubmissionPaired);
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			analysisSubmissionRepository.save(analysisSubmissionPaired);
+		});
 	}
 
 	/**
@@ -311,13 +313,11 @@ public class AnalysisSubmissionRepositoryIT {
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmission);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter1);
-		assertNotNull("submissions should not be null", submissions);
-		assertEquals("there are an invalid number of submissions found", 1, submissions.size());
+		assertNotNull(submissions, "submissions should not be null");
+		assertEquals(1, submissions.size(), "there are an invalid number of submissions found");
 		AnalysisSubmission returnedSubmission = submissions.iterator().next();
-		assertEquals("the id of the submission returned is incorrect", savedSubmission.getId(),
-				returnedSubmission.getId());
-		assertEquals("the submitter of the submission returned is incorrect", savedSubmission.getSubmitter().getId(),
-				submitter1.getId());
+		assertEquals(savedSubmission.getId(), returnedSubmission.getId(), "the id of the submission returned is incorrect");
+		assertEquals(savedSubmission.getSubmitter().getId(), submitter1.getId(), "the submitter of the submission returned is incorrect");
 	}
 
 	/**
@@ -332,7 +332,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission2);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter1);
-		assertEquals("there are an invalid number of submissions found", 2, submissions.size());
+		assertEquals(2, submissions.size(), "there are an invalid number of submissions found");
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter2);
-		assertEquals("there should be no submissions found", 0, submissions.size());
+		assertEquals(0, submissions.size(), "there should be no submissions found");
 	}
 	
 	/**
@@ -357,7 +357,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission2);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile);
-		assertEquals("should have gotten 2 analysis submissions", 2, submissions.size());
+		assertEquals(2, submissions.size(), "should have gotten 2 analysis submissions");
 	}
 	
 	/**
@@ -370,7 +370,7 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission2b);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile);
-		assertEquals("should have gotten 1 analysis submissions", 1, submissions.size());
+		assertEquals(1, submissions.size(), "should have gotten 1 analysis submissions");
 	}
 
 	/**
@@ -383,6 +383,6 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(analysisSubmission2);
 
 		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findByReferenceFile(referenceFile2);
-		assertEquals("should have gotten 0 analysis submissions", 0, submissions.size());
+		assertEquals(0, submissions.size(), "should have gotten 0 analysis submissions");
 	}
 }

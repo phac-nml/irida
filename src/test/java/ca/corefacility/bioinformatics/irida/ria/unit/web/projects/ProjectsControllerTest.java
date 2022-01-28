@@ -3,8 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 import java.util.*;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -56,7 +56,7 @@ public class ProjectsControllerTest {
 	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);

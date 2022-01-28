@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -18,16 +18,16 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
 
 		// FIELDS
-		Assert.assertEquals("Expected to display all metadata fields in the project", 5,
-				page.getNumberOfMetadataFields());
+		assertEquals(5, page.getNumberOfMetadataFields(),
+				"Expected to display all metadata fields in the project");
 
 		// TEST FIELD RESTRICTIONS
-		Assert.assertTrue("Fields restrictions settings should be visible to managers",
-				page.areFieldRestrictionSettingsVisible());
-		Assert.assertEquals("Should currently be set to level 1 by default", "Level 1",
-				page.getFieldRestrictionForRow(0));
+		assertTrue(page.areFieldRestrictionSettingsVisible(),
+				"Fields restrictions settings should be visible to managers");
+		assertEquals("Level 1", page.getFieldRestrictionForRow(0),
+				"Should currently be set to level 1 by default");
 		page.updateFieldRestrictionToLevel(0, 3);
-		Assert.assertEquals("Field should now be restricted to level 4", "Level 4", page.getFieldRestrictionForRow(0));
+		assertEquals("Field should now be restricted to level 4", "Level 4", page.getFieldRestrictionForRow(0));
 
 		// TEMPLATES
 		page.gotoMetadataTemplates();
@@ -36,11 +36,11 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		Check that the All Fields Template is the default template for the project on load as no default
 		template has been set yet for the project
 		 */
-		Assert.assertTrue(page.allFieldsTemplateIsDefault());
+		assertTrue(page.allFieldsTemplateIsDefault());
 
 		int numberOfMetadataTemplates = page.getNumberOfMetadataTemplates();
 		// The All Fields template which is dynamically displayed + the one in the db
-		Assert.assertEquals("Expect to display all metadata templates in the project", 2, numberOfMetadataTemplates);
+		assertEquals(2, numberOfMetadataTemplates, "Expect to display all metadata templates in the project");
 
 		// Test field selection & template creation
 		page.gotoMetadataFields();
@@ -48,16 +48,15 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		page.selectMetadataField("Symptoms");
 		page.selectMetadataField("Exposures");
 		page.createNewTemplate("Special Template", "Long description");
-		Assert.assertTrue("Should be on a template specific page", driver().getCurrentUrl().matches("(.*)/metadata/templates/\\d+"));
+		assertTrue(driver().getCurrentUrl().matches("(.*)/metadata/templates/\\d+"), "Should be on a template specific page");
 		final String newTemplateName = "An awesome name";
-		final String currentName = page.getTemplateName();
 		page.editTemplateName(newTemplateName);
-		Assert.assertEquals("New template name should be set as the template name",newTemplateName, page.getTemplateName());
+		assertEquals(newTemplateName, page.getTemplateName(), "New template name should be set as the template name");
 
 		page.gotoMetadataTemplates();
 
-		Assert.assertEquals("Should be one more template than there was initially", numberOfMetadataTemplates + 1,
-				page.getNumberOfMetadataTemplates());
+		assertEquals(numberOfMetadataTemplates + 1, page.getNumberOfMetadataTemplates(),
+				"Should be one more template than there was initially");
 
 		// Set the first template as the default for the project which is the template created above
 		page.setDefaultTemplate(newTemplateName);
@@ -65,24 +64,24 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		page.removeButtonIsDisabled();
 
 		// The all fields template shouldn't be the default as we set the new template created above as the default
-		Assert.assertFalse(page.allFieldsTemplateIsDefault());
+		assertFalse(page.allFieldsTemplateIsDefault());
 
 		// The current default template
 		page.gotoTemplate(newTemplateName);
-		Assert.assertTrue(page.defaultTemplateTagVisible());
+		assertTrue(page.defaultTemplateTagVisible());
 
 		page.gotoMetadataTemplates();
 
 		// The other previous template which is not the default
 		page.gotoTemplate("Test Template");
 		// Since it's not a default template it should have the Set as Default button visible
-		Assert.assertTrue(page.setDefaultTemplateButtonVisible());
+		assertTrue(page.setDefaultTemplateButtonVisible());
 
 		page.gotoMetadataTemplates();
 
 		page.deleteTemplate("Test Template");
-		Assert.assertEquals("Should be the same number of template as there was initially", numberOfMetadataTemplates,
-				page.getNumberOfMetadataTemplates());
+		assertEquals(numberOfMetadataTemplates, page.getNumberOfMetadataTemplates(),
+				"Should be the same number of template as there was initially");
 
 	}
 
@@ -92,15 +91,15 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
 
 		// TEST FIELD RESTRICTIONS
-		Assert.assertFalse("Fields restrictions settings should not be visible to collaborators", page.areFieldRestrictionSettingsVisible());
+		assertFalse(page.areFieldRestrictionSettingsVisible(), "Fields restrictions settings should not be visible to collaborators");
 
-		Assert.assertFalse("Should not have a create template button", page.isCreateTemplateButtonVisible());
-		Assert.assertEquals("Should be able to see the metadata fields", 5, page.getNumberOfMetadataFields());
+		assertFalse(page.isCreateTemplateButtonVisible(), "Should not have a create template button");
+		assertEquals(5, page.getNumberOfMetadataFields(), "Should be able to see the metadata fields");
 		page.gotoMetadataTemplates();
-		Assert.assertEquals("Should be able to see the metadata templates", 2, page.getNumberOfMetadataTemplates());
-		Assert.assertFalse("Should not be able to delete a template", page.canDeleteTemplate());
+		assertEquals(2, page.getNumberOfMetadataTemplates(), "Should be able to see the metadata templates");
+		assertFalse(page.canDeleteTemplate(), "Should not be able to delete a template");
 
 		page.gotoTemplate("test template");
-		Assert.assertFalse("Should not be able to edit the template name", page.canEditTemplateName());
+		assertFalse(page.canEditTemplateName(), "Should not be able to edit the template name");
 	}
 }

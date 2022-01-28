@@ -1,0 +1,3 @@
+ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener
+ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationTestListener
+ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener

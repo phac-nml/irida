@@ -1075,10 +1075,11 @@ public class AnalysisAjaxController {
 	 * Get the updated state and duration of an analysis
 	 *
 	 * @param submissionId The analysis submission id
+	 * @param locale The user's locale
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-progress")
-	public ResponseEntity<UpdatedAnalysisProgress> getUpdatedProgress(@PathVariable Long submissionId) {
+	public ResponseEntity<UpdatedAnalysisProgress> getUpdatedProgress(@PathVariable Long submissionId, Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
@@ -1096,8 +1097,60 @@ public class AnalysisAjaxController {
 			duration = analysisAudit.getAnalysisRunningTime(submission);
 		}
 
-		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration));
+		boolean treeDefault = getTreeViewDefault(submission, locale);
 
+
+		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration, treeDefault));
+
+	}
+
+	/**
+	 * Private method which gets whether the tree view should be the default view or not
+	 * @param submission The analysis submission
+	 * @param locale The user's locale
+	 * @return if tree view should be displayed by default or not
+	 */
+	private boolean getTreeViewDefault(AnalysisSubmission submission, Locale locale) {
+
+		String viewer = getAnalysisViewer(submission);
+		boolean treeDefault = false;
+
+		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
+			try {
+				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
+
+				if(analysisTreeResponse.getNewick() != null) {
+					treeDefault = true;
+				}
+			} catch (IOException e) {
+				logger.error("Unable to get newick string for submission ", e);
+			}
+		}
+		
+		return treeDefault;
+	}
+
+	/**
+	 * Private method which gets the analysis viewer type
+	 * @param submission The analysis submission
+	 * @return the viewer (tree, sistr, biohansel, etc)
+	 */
+	private String getAnalysisViewer(AnalysisSubmission submission) {
+		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
+
+		// Get the name of the workflow
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
+				.getAnalysisType();
+
+		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
+		String viewer = "";
+		if (viewerForAnalysisType.isPresent()) {
+			viewer = viewerForAnalysisType.get();
+		} else {
+			viewer = "none";
+		}
+
+		return viewer;
 	}
 
 	/**
@@ -1121,13 +1174,7 @@ public class AnalysisAjaxController {
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
 
-		Optional<String> viewerForAnalysisType = analysisTypesService.getViewerForAnalysisType(analysisType);
-		String viewer = "";
-		if (viewerForAnalysisType.isPresent()) {
-			viewer = viewerForAnalysisType.get();
-		} else {
-			viewer = "none";
-		}
+		String viewer = getAnalysisViewer(submission);
 
 		AnalysisState prevState = submission.getAnalysisState();
 		if (submission.getAnalysisState() == AnalysisState.ERROR) {
@@ -1143,19 +1190,7 @@ public class AnalysisAjaxController {
 			duration = analysisAudit.getAnalysisRunningTime(submission);
 		}
 
-		boolean treeDefault = false;
-
-		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
-			try {
-				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
-
-				if(analysisTreeResponse.getNewick() != null) {
-					treeDefault = true;
-				}
-			} catch (IOException e) {
-				logger.error("Unable to get newick string for submission ", e);
-			}
-		}
+		boolean treeDefault = getTreeViewDefault(submission, locale);
 
 		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
 				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,

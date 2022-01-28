@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiU
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * <p>
@@ -50,22 +50,22 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 		page.selectProjectInListing(name);
 
 		String url = page.getProjectUrl();
-		assertFalse("URL should not be empty", url.isEmpty());
+		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.initPage(driver());
-		assertEquals("Should have the correct project name", name, samplesPage.getProjectName());
+		assertEquals(name, samplesPage.getProjectName(), "Should have the correct project name");
 
 		ProjectRemoteSettingsPage remoteSettingsPage = ProjectRemoteSettingsPage.initElements(driver());
 		final Long projectId = remoteSettingsPage.getProjectId();
 		ProjectRemoteSettingsPage.goTo(driver(), projectId);
 
-		assertTrue("Sync Now button should be displayed", remoteSettingsPage.syncNowButtonDisplayed());
+		assertTrue(remoteSettingsPage.syncNowButtonDisplayed(), "Sync Now button should be displayed");
 
 		// Remote project is marked for synchronization so the sync now button should be disabled
-		assertFalse("Sync now button should be enabled", remoteSettingsPage.syncNowButtonEnabled());
+		assertFalse(remoteSettingsPage.syncNowButtonEnabled(), "Sync now button should be enabled");
 
-		assertTrue("Sync frequency select dropdown should be displayed", remoteSettingsPage.syncFrequencySelectDisplayed());
-		assertTrue("Become Sync User button should not be on the page", remoteSettingsPage.syncUserButtonNotDisplayed());
+		assertTrue(remoteSettingsPage.syncFrequencySelectDisplayed(), "Sync frequency select dropdown should be displayed");
+		assertTrue(remoteSettingsPage.syncUserButtonNotDisplayed(), "Become Sync User button should not be on the page");
 	}
 }

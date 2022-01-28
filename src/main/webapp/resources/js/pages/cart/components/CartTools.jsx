@@ -1,6 +1,13 @@
-import { Link, Location, navigate, Router } from "@reach/router";
 import { Button, Menu, Row, Space } from "antd";
 import React, { lazy, Suspense } from "react";
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import styled from "styled-components";
 import { AnalysesQueue } from "../../../components/AnalysesQueue";
 import { IconMenuFold, IconMenuUnfold } from "../../../components/icons/Icons";
@@ -52,8 +59,10 @@ const MenuWrapper = styled.div`
   }
 `;
 
-function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
-  const [current, setCurrent] = React.useState(location.pathname);
+function CartToolsContent({ count, toggleSidebar, collapsed }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [fromGalaxy, setFromGalaxy] = React.useState(
     () => typeof window.GALAXY !== "undefined"
   );
@@ -65,7 +74,6 @@ function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
     }
 
     if (fromGalaxy) {
-      setCurrent("galaxy");
       /*
       If this is within a galaxy session, the user has the opportunity to remove the session
       from IRIDA.  When this happens this listener will ensure that the galaxy tab is removed
@@ -79,14 +87,15 @@ function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
     };
   }, [fromGalaxy]);
 
+  const BASE_URL = setBaseUrl("/cart");
+
   return (
     <ToolsWrapper>
       <MenuWrapper>
         <Menu
           mode="horizontal"
-          selectedKeys={[current]}
+          selectedKeys={[location.pathname]}
           style={{ borderBottom: BORDERED_LIGHT }}
-          onClick={(e) => setCurrent(e.key)}
         >
           {fromGalaxy && (
             <Menu.Item key="/cart/galaxy">
@@ -117,16 +126,23 @@ function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
         </Space>
       </MenuWrapper>
       <ToolsInner>
-        <Router basepath={setBaseUrl("/cart")}>
+        <Routes>
           {fromGalaxy && (
-            <GalaxyComponent key="galaxy" path={setBaseUrl(`galaxy`)} />
+            <Route
+              path={`${BASE_URL}/galaxy`}
+              element={<GalaxyComponent key="galaxy" />}
+            />
           )}
-          <Pipelines
-            key="pipelines"
-            path={setBaseUrl(`pipelines`)}
-            displaySelect={!!count || window.PAGE.automatedProject != null}
+          <Route
+            path={`${BASE_URL}/pipelines`}
+            element={
+              <Pipelines
+                key="pipelines"
+                displaySelect={!!count || window.PAGE.automatedProject != null}
+              />
+            }
           />
-        </Router>
+        </Routes>
       </ToolsInner>
     </ToolsWrapper>
   );
@@ -134,8 +150,8 @@ function CartToolsContent({ count, toggleSidebar, location, collapsed }) {
 
 export default function CartTools({ ...props }) {
   return (
-    <Location>
-      {({ location }) => <CartToolsContent {...props} location={location} />}
-    </Location>
+    <BrowserRouter>
+      <CartToolsContent {...props} />}
+    </BrowserRouter>
   );
 }

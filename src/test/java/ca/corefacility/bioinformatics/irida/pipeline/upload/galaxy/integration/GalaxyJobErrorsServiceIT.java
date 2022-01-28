@@ -8,10 +8,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -19,7 +19,7 @@ import org.springframework.security.test.context.support.WithSecurityContextTest
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -43,13 +43,15 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Integration tests for getting job error info from Galaxy for {@link AnalysisSubmission}s.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Galaxy")
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
@@ -85,9 +87,9 @@ public class GalaxyJobErrorsServiceIT {
 	@Autowired
 	private AnalysisWorkspaceService analysisWorkspaceService;
 
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 		Path sequenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq")
 				.toURI());
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
@@ -133,17 +135,17 @@ public class GalaxyJobErrorsServiceIT {
 
 		List<JobError> errors = galaxyJobErrorsService.createNewJobErrors(submission);
 
-		assertTrue("There should only be one JobError", errors.size() == 1);
+		assertTrue(errors.size() == 1, "There should only be one JobError");
 
 		JobError jobError = errors.get(0);
-		assertTrue("JobError should have some stderr message",
-				jobError.getStandardError() != null && !jobError.getStandardError()
-						.equals(""));
-		assertTrue("JobError should be triggered by 'IndexError: list index out of range'", jobError.getStandardError()
-				.contains("IndexError: list index out of range"));
-		assertTrue("JobError tool ID should be 'Filter1'", jobError.getToolId()
-				.equals("Filter1"));
-		assertTrue("JobError exit code should be '1'", jobError.getExitCode() == 1);
+		assertTrue(jobError.getStandardError() != null && !jobError.getStandardError()
+						.equals(""),
+				"JobError should have some stderr message");
+		assertTrue(jobError.getStandardError().contains("IndexError: list index out of range"),
+				"JobError should be triggered by 'IndexError: list index out of range'");
+		assertTrue(jobError.getToolId().equals("Filter1"), 
+				"JobError tool ID should be 'Filter1'");
+		assertTrue(jobError.getExitCode() == 1, "JobError exit code should be '1'");
 	}
 
 	/**

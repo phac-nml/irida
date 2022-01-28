@@ -11,8 +11,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -43,12 +42,12 @@ import io.restassured.response.Response;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
 import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration tests for project samples.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Rest")
 @SpringBootTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
@@ -75,8 +74,8 @@ public class ProjectSamplesIT {
 				.asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
-		assertTrue("The samples URI should end with /api/projects/4/samples",
-				samplesUri.endsWith("/api/projects/" + projectId + "/samples"));
+		assertTrue(samplesUri.endsWith("/api/projects/" + projectId + "/samples"),
+				"The samples URI should end with /api/projects/4/samples");
 		final Response r = asUser().contentType(ContentType.JSON)
 				.body(samples)
 				.header("Content-Type", "application/idcollection+json")
@@ -86,14 +85,14 @@ public class ProjectSamplesIT {
 				.when()
 				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
-		assertNotNull("Location should not be null.", location);
-		assertEquals("The project/sample location uses the wrong sample ID.",
-				ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location);
+		assertNotNull(location, "Location should not be null.");
+		assertEquals(ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location,
+				"The project/sample location uses the wrong sample ID.");
 
 		Project project = projectService.read(projectId);
 
 		ProjectSampleJoin sampleForProject = sampleService.getSampleForProject(project, sampleId);
-		assertFalse("Project should not be owner of this sample", sampleForProject.isOwner());
+		assertFalse(sampleForProject.isOwner(), "Project should not be owner of this sample");
 	}
 
 	@Test
@@ -108,8 +107,8 @@ public class ProjectSamplesIT {
 				.asString();
 		String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
-		assertTrue("The samples URI should end with /api/projects/4/samples",
-				samplesUri.endsWith("/api/projects/" + projectId + "/samples"));
+		assertTrue(samplesUri.endsWith("/api/projects/" + projectId + "/samples"),
+				"The samples URI should end with /api/projects/4/samples");
 
 		//adding ownership flag
 		samplesUri = samplesUri + "?ownership=true";
@@ -123,14 +122,14 @@ public class ProjectSamplesIT {
 				.when()
 				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
-		assertNotNull("Location should not be null.", location);
-		assertEquals("The project/sample location uses the wrong sample ID.",
-				ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location);
+		assertNotNull(location, "Location should not be null.");
+		assertEquals(ITestSystemProperties.BASE_URL + "/api/projects/4/samples/1", location,
+				"The project/sample location uses the wrong sample ID.");
 
 		Project project = projectService.read(projectId);
 
 		ProjectSampleJoin sampleForProject = sampleService.getSampleForProject(project, sampleId);
-		assertTrue("Project should be owner of this sample", sampleForProject.isOwner());
+		assertTrue(sampleForProject.isOwner(), "Project should be owner of this sample");
 	}
 
 	@Test
@@ -198,8 +197,8 @@ public class ProjectSamplesIT {
 		for (final Future<List<Integer>> f : futures) {
 			try {
 				final List<Integer> responses = f.get();
-				assertTrue("All responses should be created.", responses.stream()
-						.allMatch(r -> r == HttpStatus.CREATED.value()));
+				assertTrue(responses.stream().allMatch(r -> r == HttpStatus.CREATED.value()),
+						"All responses should be created.");
 			} catch (InterruptedException | ExecutionException e) {
 				logger.error("Failed to submit multiple samples simultaneously:", e);
 				fail("Failed to submit multiple samples simultaneously.");

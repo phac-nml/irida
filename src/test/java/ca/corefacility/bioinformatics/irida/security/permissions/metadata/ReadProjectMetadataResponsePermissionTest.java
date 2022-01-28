@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
@@ -29,8 +29,8 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class ReadProjectMetadataResponsePermissionTest {
@@ -50,9 +50,9 @@ public class ReadProjectMetadataResponsePermissionTest {
 	User admin;
 	Project project;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		permission = new ReadProjectMetadataResponsePermission(userRepository, projectUserJoinRepository,
 				userGroupProjectJoinRepository, metadataRestrictionRepository);
@@ -91,7 +91,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(Lists.newArrayList());
 
-		assertTrue("permission should be allowed", permission.isAllowed(authentication, metadataResponse));
+		assertTrue(permission.isAllowed(authentication, metadataResponse), "permission should be allowed");
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4)));
 
-		assertFalse("permission should be denied", permission.isAllowed(authentication, metadataResponse));
+		assertFalse(permission.isAllowed(authentication, metadataResponse), "permission should be denied");
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_1)));
 
-		assertTrue("permission should be allowed", permission.isAllowed(authentication, metadataResponse));
+		assertTrue(permission.isAllowed(authentication, metadataResponse), "permission should be allowed");
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(restriction1, restriction2));
 
-		assertFalse("permission should be denied", permission.isAllowed(authentication, metadataResponse));
+		assertFalse(permission.isAllowed(authentication, metadataResponse), "permission should be denied");
 	}
 
 	@Test
@@ -174,7 +174,7 @@ public class ReadProjectMetadataResponsePermissionTest {
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(new MetadataRestriction(project, field, ProjectMetadataRole.LEVEL_4)));
 
-		assertTrue("permission should be allowed", permission.isAllowed(authentication, metadataResponse));
+		assertTrue(permission.isAllowed(authentication, metadataResponse), "permission should be allowed");
 	}
 
 	@Test
@@ -203,6 +203,6 @@ public class ReadProjectMetadataResponsePermissionTest {
 		when(metadataRestrictionRepository.getRestrictionForProject(project)).thenReturn(
 				Lists.newArrayList(restriction1, restriction2));
 
-		assertFalse("permission should be denied", permission.isAllowed(authentication, metadataResponse));
+		assertFalse(permission.isAllowed(authentication, metadataResponse), "permission should be denied");
 	}
 }

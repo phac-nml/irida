@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -547,8 +547,8 @@ public class DatabaseSetupGalaxyITService {
 	 * @param status
 	 */
 	public void assertValidStatus(GalaxyWorkflowStatus status) {
-		assertNotNull("WorkflowStatus is null", status);
+		assertNotNull(status, "WorkflowStatus is null");
 		float percentComplete = status.getProportionComplete();
-		assertTrue("proportion not in range of 0 to 1", 0.0f <= percentComplete && percentComplete <= 1.0f);
+		assertTrue(0.0f <= percentComplete && percentComplete <= 1.0f, "proportion not in range of 0 to 1");
 	}
 }

@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.util.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 

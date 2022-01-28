@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -16,9 +16,9 @@ import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +45,7 @@ public class PasswordResetControllerTest {
 	private MessageSource messageSource;
 	private PasswordResetController controller;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userService = mock(UserService.class);
 		passwordResetService = mock(PasswordResetService.class);
@@ -55,7 +55,7 @@ public class PasswordResetControllerTest {
 		controller = new PasswordResetController(userService, passwordResetService, emailController, messageSource);
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() {
 		SecurityContextHolder.clearContext();
 	}
@@ -95,8 +95,8 @@ public class PasswordResetControllerTest {
 
 		assertEquals(PasswordResetController.SUCCESS_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
 				sendNewPassword);
-		assertEquals("User should not be logged in after resetting password", username, SecurityContextHolder
-				.getContext().getAuthentication().getName());
+		assertEquals(username, SecurityContextHolder.getContext().getAuthentication().getName(),
+				"User should not be logged in after resetting password");
 
 		verify(passwordResetService).read(resetId);
 		verify(userService).changePassword(user.getId(), password);
