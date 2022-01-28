@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,10 +15,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -27,7 +28,7 @@ import org.springframework.security.test.context.support.WithSecurityContextTest
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -62,7 +63,8 @@ import com.google.common.collect.Sets;
  * 
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Galaxy") @Tag("Pipeline")
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
 		initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
@@ -115,9 +117,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP,
@@ -197,7 +199,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		validateCleanupAnalysis(Sets.newHashSet(analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null)), 0);
 		
 		AnalysisSubmission notCleanedSubmission = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
-		assertEquals("State should not be cleaned", AnalysisCleanedState.NOT_CLEANED, notCleanedSubmission.getAnalysisCleanedState());
+		assertEquals(AnalysisCleanedState.NOT_CLEANED, notCleanedSubmission.getAnalysisCleanedState(), "State should not be cleaned");
 	}
 
 	/**
@@ -259,20 +261,22 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = IridaWorkflowNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailInvalidWorkflow() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId, false);
 
-		try {
-			validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
-		} catch (ExecutionException e) {
-			AnalysisSubmission loadedSubmission = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
-			assertEquals(AnalysisState.ERROR, loadedSubmission.getAnalysisState());
+		assertThrows(IridaWorkflowNotFoundException.class, () -> {
+			try {
+				validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+			} catch (ExecutionException e) {
+				AnalysisSubmission loadedSubmission = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
+				assertEquals(AnalysisState.ERROR, loadedSubmission.getAnalysisState());
 
-			throw e.getCause();
-		}
+				throw e.getCause();
+			}
+		});
 	}
 
 	/**
@@ -360,13 +364,14 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		submissionsFutureSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
 		// Should be in cleaning_error state
-		assertEquals("invalid number of analyses returned", 1, submissionsFutureSet.size());
+		assertEquals(1, submissionsFutureSet.size(), "invalid number of analyses returned");
 		try {
 			returnedSubmission = submissionsFutureSet.iterator().next().get();
 			fail("No exception thrown");
 		} catch (ExecutionException e) {
-			assertEquals("Invalid cleaned state", AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionRepository
-					.findById(returnedSubmission.getId()).orElse(null).getAnalysisCleanedState());
+			assertEquals(AnalysisCleanedState.CLEANING_ERROR,
+					analysisSubmissionRepository.findById(returnedSubmission.getId()).orElse(null).getAnalysisCleanedState(),
+					"Invalid cleaned state");
 		}
 	}
 	
@@ -407,19 +412,19 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
 		List<JobError> jobErrors = jobErrorRepository.findAllByAnalysisSubmission(
 				returnedSubmission);
-		assertTrue("There should only be one JobError",
-				jobErrors.size() == 1);
+		assertTrue(jobErrors.size() == 1,
+				"There should only be one JobError");
 
 		JobError jobError = jobErrors.get(0);
-		assertTrue("JobError should have some stderr message",
-				jobError.getStandardError() != null &&
-						!jobError.getStandardError().equals(""));
-		assertTrue("JobError should be triggered by 'IndexError: list index out of range'",
-				jobError.getStandardError().contains("IndexError: list index out of range"));
-		assertTrue("JobError tool ID should be 'Filter1'",
-				jobError.getToolId().equals("Filter1"));
-		assertTrue("JobError exit code should be '1'",
-				jobError.getExitCode() == 1);
+		assertTrue(jobError.getStandardError() != null &&
+						!jobError.getStandardError().equals(""),
+				"JobError should have some stderr message");
+		assertTrue(jobError.getStandardError().contains("IndexError: list index out of range"),
+				"JobError should be triggered by 'IndexError: list index out of range'");
+		assertTrue(jobError.getToolId().equals("Filter1"),
+				"JobError tool ID should be 'Filter1'");
+		assertTrue(jobError.getExitCode() == 1,
+				"JobError exit code should be '1'");
 	}
 
 	/**
@@ -427,14 +432,16 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	 * 
 	 * @throws Exception
 	 */
-	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFullAnalysisRunFailAuthentication() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		SecurityContextHolder.clearContext();
-		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+		assertThrows(AuthenticationCredentialsNotFoundException.class, () -> {
+			validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+		});
 	}
 	
 	/**
@@ -468,7 +475,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		throws Exception {
 		
 		for (AnalysisSubmission submission : submissions) {
-			assertEquals("Submission was already cleaned", AnalysisCleanedState.NOT_CLEANED, submission.getAnalysisCleanedState());
+			assertEquals(AnalysisCleanedState.NOT_CLEANED, submission.getAnalysisCleanedState(), "Submission was already cleaned");
 		}
 		
 		// CLEANUP SUBMISSIONS
@@ -477,7 +484,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		// wait until finished
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
-			assertEquals("Submission was not cleaned", AnalysisCleanedState.CLEANED, returnedSubmission.getAnalysisCleanedState());
+			assertEquals(AnalysisCleanedState.CLEANED, returnedSubmission.getAnalysisCleanedState(), "Submission was not cleaned");
 		}
 	}
 
@@ -541,7 +548,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 			}
 
 			assertEquals(analysisSubmitter, returnedSubmission.getSubmitter());
-			assertEquals("Submission was cleaned", AnalysisCleanedState.NOT_CLEANED, returnedSubmission.getAnalysisCleanedState());
+			assertEquals(AnalysisCleanedState.NOT_CLEANED, returnedSubmission.getAnalysisCleanedState(), "Submission was cleaned");
 		}
 
 		//POST PROCESSING RESULTS

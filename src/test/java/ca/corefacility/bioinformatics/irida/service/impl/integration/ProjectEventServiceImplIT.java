@@ -1,16 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -42,7 +41,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -155,7 +154,7 @@ public class ProjectEventServiceImplIT {
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, PageRequest.of(0, 10));
 
-		assertEquals("No event should be created", 0, eventsForProject.getTotalElements());
+		assertEquals(0, eventsForProject.getTotalElements(), "No event should be created");
 	}
 
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
@@ -218,7 +217,7 @@ public class ProjectEventServiceImplIT {
 
 		List<ProjectEvent> events = projectEventService.getEventsForUserAfterDate(user, beginning);
 
-		assertEquals("1 event should be returned", 1, events.size());
+		assertEquals(1, events.size(), "1 event should be returned");
 	}
 	
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
@@ -231,6 +230,6 @@ public class ProjectEventServiceImplIT {
 
 		List<ProjectEvent> events = projectEventService.getEventsForUserAfterDate(user, beginning);
 
-		assertTrue("no events should be found", events.isEmpty());
+		assertTrue(events.isEmpty(), "no events should be found");
 	}
 }

@@ -8,24 +8,24 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.List;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@Tag("IntegrationTest") @Tag("Service")
 @SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
@@ -59,12 +59,12 @@ public class MetadataTemplateServiceImplIT {
 		fields.add("serotype");
 
 		for (MetadataTemplateField metadataTemplateField : metadataFieldsForProject) {
-			assertTrue("should contain field", fields.contains(metadataTemplateField.getLabel()));
+			assertTrue(fields.contains(metadataTemplateField.getLabel()), "should contain field");
 
 			fields.remove(metadataTemplateField.getLabel());
 		}
 
-		assertTrue("should have found all fields", fields.isEmpty());
+		assertTrue(fields.isEmpty(), "should have found all fields");
 
 		//check a project with 1 field
 		project = projectService.read(2L);
@@ -73,6 +73,6 @@ public class MetadataTemplateServiceImplIT {
 		assertEquals(1, metadataFieldsForProject.size());
 		MetadataTemplateField field = metadataFieldsForProject.iterator().next();
 
-		assertEquals("firstName", field.getLabel());
+		assertEquals(field.getLabel(), "firstName");
 	}
 }

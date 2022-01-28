@@ -7,8 +7,10 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -22,8 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +48,7 @@ public class SamplesAjaxControllerTest {
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		uiSampleService = mock(UISampleService.class);
 
@@ -81,7 +82,7 @@ public class SamplesAjaxControllerTest {
 
 		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
 
-		assertEquals("Response is ok", HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 	@Test
 	public void testUploadSequenceFilePairs(){
@@ -91,7 +92,7 @@ public class SamplesAjaxControllerTest {
 		when(request.getFileNames()).thenReturn(PAIRED_FILE_NAMES.iterator());
 
 		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
-		assertEquals("Response is ok", HttpStatus.OK, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 
 
@@ -104,7 +105,7 @@ public class SamplesAjaxControllerTest {
 		when(request.getFileNames()).thenReturn(MIXED_FILE_NAMES.iterator());
 
 		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 
-		assertEquals("Response is ok", HttpStatus.OK, responseEntity.getStatusCode());
 	}
 }

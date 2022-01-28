@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.validators;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,8 +17,8 @@ import javax.validation.Validator;
 
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
@@ -35,7 +36,7 @@ public class ValidateMethodParametersAspectTest {
 	@Mock
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 		AnnotatedMethodsClass target = new AnnotatedMethodsClass();
@@ -69,14 +70,16 @@ public class ValidateMethodParametersAspectTest {
 		verify(validator, times(1)).validate(fourth);
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	public void testThrowsConstraintViolations() {
 		String first = "first";
 		Set<ConstraintViolation<Object>> violations = new HashSet<>();
 		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Object.class, null,
 				null, first, PathImpl.createRootPath(), null, null));
 		when(validator.validate(any())).thenReturn(violations);
-		proxy.testOneValidParameter(first);
+		assertThrows(ConstraintViolationException.class, () -> {
+			proxy.testOneValidParameter(first);
+		});
 	}
 
 	@Test

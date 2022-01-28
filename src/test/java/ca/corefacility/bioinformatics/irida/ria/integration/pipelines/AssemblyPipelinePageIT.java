@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testing for launching an assembly pipeline.
@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	protected LaunchPipelinePage page;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() throws IOException {
 		page = LaunchPipelinePage.init(driver());
 		addSamplesToCart();
@@ -42,29 +42,29 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetup() {
 		CartPage cartPage = new CartPage(driver());
 		cartPage.selectAssemblyPipeline();
-		assertEquals("Launch Page should display  the pipeline name", "Assembly and Annotation Pipeline", page.getPipelineName());
-		assertTrue("Launch form should be displayed", page.isLaunchFormDisplayed());
-		assertTrue("Launch details should be displayed", page.isLaunchDetailsDisplayed());
-		assertTrue("Launch parameters should be displayed", page.isLaunchParametersDisplayed());
-		assertTrue("Share with samples should not be displayed", page.isShareWithSamplesDisplayed());
-		assertTrue("Share with projects should be displayed", page.isShareWithProjectsDisplayed());
-		assertFalse("Should be able to select a reference file", page.isReferenceFilesDisplayed());
-		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
-		assertFalse("This pipeline does not need a reference file, so there should be none requested", page.isReferenceFilesRequiredDisplayed());
+		assertEquals("Assembly and Annotation Pipeline", page.getPipelineName(), "Launch Page should display  the pipeline name");
+		assertTrue(page.isLaunchFormDisplayed(), "Launch form should be displayed");
+		assertTrue(page.isLaunchDetailsDisplayed(), "Launch details should be displayed");
+		assertTrue(page.isLaunchParametersDisplayed(), "Launch parameters should be displayed");
+		assertTrue(page.isShareWithSamplesDisplayed(), "Share with samples should not be displayed");
+		assertTrue(page.isShareWithProjectsDisplayed(), "Share with projects should be displayed");
+		assertFalse(page.isReferenceFilesDisplayed(), "Should be able to select a reference file");
+		assertTrue(page.isLaunchFilesDisplayed(), "Should be able to select sample files");
+		assertFalse(page.isReferenceFilesRequiredDisplayed(), "This pipeline does not need a reference file, so there should be none requested");
 
 		// Test email checkbox
-		assertEquals("No Email", page.getEmailValue());
+		assertEquals(page.getEmailValue(), "No Email");
 
 		// Test the name input
 		page.clearName();
-		assertTrue("There should be an error displayed that a name is required", page.isNameErrorDisplayed());
+		assertTrue(page.isNameErrorDisplayed(), "There should be an error displayed that a name is required");
 		page.updateName("TEST_NAME");
-		assertFalse("Name required warning should be cleared", page.isNameErrorDisplayed());
+		assertFalse(page.isNameErrorDisplayed(), "Name required warning should be cleared");
 
 		// Make sure the saved pipeline parameter inputs are set up correctly
 		page.showSavedParameters();
-		assertEquals("Assembly Pipeline should have 20 inputs", 20, page.getNumberOfSavedPipelineParameters());
-		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
+		assertEquals(20, page.getNumberOfSavedPipelineParameters(), "Assembly Pipeline should have 20 inputs");
+		assertFalse(page.isModifiedAlertVisible(), "Should not be displaying modified parameter alert");
 
 		// Test submitting
 		page.submit();

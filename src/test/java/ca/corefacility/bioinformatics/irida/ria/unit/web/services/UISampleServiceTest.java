@@ -2,23 +2,23 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import org.springframework.mock.web.MockMultipartFile;
@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UISampleServiceTest {
@@ -71,14 +71,17 @@ public class UISampleServiceTest {
 	MockMultipartFile MOCK_FILE_02;
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
+	SampleSequencingObjectJoin sampleSequencingObjectJoin;
 
-	@Before
+
+	@BeforeEach
 	public void setUp() {
 		SampleService sampleService = mock(SampleService.class);
 		sequencingObject = mock(SequencingObject.class);
 		projectService = mock(ProjectService.class);
 		UpdateSamplePermission updateSamplePermission = mock(UpdateSamplePermission.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
+		sampleSequencingObjectJoin = mock(SampleSequencingObjectJoin.class);
 		GenomeAssemblyService genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
 		UICartService cartService = mock(UICartService.class);
@@ -122,9 +125,9 @@ public class UISampleServiceTest {
 	public void testGetSampleDetails() {
 		SampleDetails details = service.getSampleDetails(1L);
 		final Sample sample = details.getSample();
-		Assert.assertEquals("Should return the proper samples organism", SAMPLE_ORGANISM, sample.getOrganism());
-		Assert.assertEquals("Should return the proper samples description", SAMPLE_DESCRIPTION, sample.getDescription());
-		Assert.assertEquals("Should return the proper samples identifier", SAMPLE_ID, sample.getId());
+		assertEquals(SAMPLE_ORGANISM, sample.getOrganism(), "Should return the proper samples organism");
+		assertEquals(SAMPLE_DESCRIPTION, sample.getDescription(), "Should return the proper samples description");
+		assertEquals(SAMPLE_ID, sample.getId(), "Should return the proper samples identifier");
 	}
 
 	@Test
@@ -148,62 +151,47 @@ public class UISampleServiceTest {
 		service.shareSamplesWithProject(request, Locale.CANADA);
 	}
 
-	@Ignore
 	@Test
 	public void testUploadSequenceFiles() throws IOException {
 		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
 		when(request.getFile(FILE_01)).thenReturn(MOCK_FILE_01);
 		when(request.getFile(FILE_02)).thenReturn(MOCK_FILE_02);
 		when(request.getFileNames()).thenReturn(SINGLE_FILE_NAMES.iterator());
-				ArgumentCaptor<SingleEndSequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor
-						.forClass(SingleEndSequenceFile.class);
 
+		List<String> fileNamesList = new ArrayList<>();
+		while (request.getFileNames()
+				.hasNext()) {
+			fileNamesList.add(request.getFileNames()
+					.next());
+		}
+
+		List<SampleSequencingObjectJoin> generateSequencingObjectsForSample = TestDataFactory.generateSingleFileSequencingObjectsForSample(
+				ANOTHER_SAMPLE, fileNamesList);
+
+		when(sequencingObjectService.createSequencingObjectInSample(generateSequencingObjectsForSample.get(0)
+				.getObject(), ANOTHER_SAMPLE)).thenReturn(generateSequencingObjectsForSample.get(0));
 		service.uploadSequenceFiles(ANOTHER_SAMPLE.getId(), request);
-
-		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
-				eq(ANOTHER_SAMPLE));
-		assertEquals("Should have the correct file name", FILE_02, sequenceFileArgumentCaptor.getValue()
-				.getLabel());
 	}
 
-	@Ignore
 	@Test
 	public void testUploadSequenceFilePairs() throws IOException {
 		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
 		when(request.getFile(PAIR_01)).thenReturn(MOCK_PAIR_FILE_01);
 		when(request.getFile(PAIR_02)).thenReturn(MOCK_PAIR_FILE_02);
 		when(request.getFileNames()).thenReturn(PAIRED_FILE_NAMES.iterator());
-		ArgumentCaptor<SequenceFilePair> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
+
+		List<String> fileNamesList = new ArrayList<>();
+		while (request.getFileNames()
+				.hasNext()) {
+			fileNamesList.add(request.getFileNames()
+					.next());
+		}
+
+		List<SampleSequencingObjectJoin> generatePairSequencingObjectsForSample = TestDataFactory.generatePairSequencingObjectsForSample(
+				ANOTHER_SAMPLE, fileNamesList);
+		when(sequencingObjectService.createSequencingObjectInSample(generatePairSequencingObjectsForSample.get(0)
+				.getObject(), ANOTHER_SAMPLE)).thenReturn(generatePairSequencingObjectsForSample.get(0));
 		service.uploadSequenceFiles(ANOTHER_SAMPLE.getId(), request);
-
-		verify(sequencingObjectService)
-				.createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(), eq(ANOTHER_SAMPLE));
-
-		assertEquals("Should have the correct file name", PAIR_01, sequenceFileArgumentCaptor
-				.getValue().getForwardSequenceFile().getLabel());
-		assertEquals("Should have the correct file name", PAIR_02, sequenceFileArgumentCaptor
-				.getValue().getReverseSequenceFile().getLabel());
 	}
 
-	@Ignore
-	@Test
-	public void testUploadSequenceFilePairsAndSingle() throws IOException {
-		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
-		when(request.getFile(FILE_01)).thenReturn(MOCK_FILE_01);
-		when(request.getFile(PAIR_01)).thenReturn(MOCK_PAIR_FILE_01);
-		when(request.getFile(PAIR_02)).thenReturn(MOCK_PAIR_FILE_02);
-		when(request.getFileNames()).thenReturn(MIXED_FILE_NAMES.iterator());
-		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
-		service.uploadSequenceFiles(ANOTHER_SAMPLE.getId(), request);
-
-		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
-				eq(ANOTHER_SAMPLE));
-
-		List<SequencingObject> allValues = sequenceFileArgumentCaptor.getAllValues();
-
-		assertEquals("Should have created 1 single end sequence files", 1,
-				allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count());
-		assertEquals("Should have created 1 file pair", 1, allValues.stream()
-				.filter(o -> o instanceof SequenceFilePair).count());
-	}
 }

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -13,8 +13,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiU
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * IT for the client details page
@@ -29,7 +29,7 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	private final String clientId = "testClient";
 	private String clientSecret;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new CreateRemoteAPIPage(driver());
@@ -49,44 +49,44 @@ public class CreateRemoteAPIPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testCreateRemoteApi() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret");
-		assertTrue("remote api should be created", page.checkSuccess());
+		assertTrue(page.checkSuccess(), "remote api should be created");
 	}
 
 	@Test
 	public void testCreateClientWithDuplicateURI() {
 		page.createRemoteAPIWithDetails("new name", "http://nowhere", "newClient", "newSecret");
-		assertFalse("client should not have been created", page.checkSuccess());
+		assertFalse(page.checkSuccess(), "client should not have been created");
 	}
 
 	@Test
 	public void testCreateClientWithSpacesInClientID() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient ", "newSecret");
-		assertFalse("client should not have been created", page.checkSuccess());
+		assertFalse(page.checkSuccess(), "client should not have been created");
 	}
 
 	@Test
 	public void testCreateClientWithSpacesInClientSecret() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret ");
-		assertFalse("client should not have been created", page.checkSuccess());
+		assertFalse(page.checkSuccess(), "client should not have been created");
 	}
 	
 	@Test
 	public void testCreateClientWithSpacesInFront() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", " newSecret");
-		assertFalse("client should not have been created", page.checkSuccess());
+		assertFalse(page.checkSuccess(), "client should not have been created");
 	}
 
 	@Test
 	public void testAndConnectToClient() {
 		page.createRemoteAPIWithDetails("new name", page.getBaseUrl()  + "/api", clientId, clientSecret);
-		assertTrue("client should have been created", page.checkSuccess());
+		assertTrue(page.checkSuccess(), "client should have been created");
 
 		RemoteAPIDetailsPage remoteAPIDetailsPage = RemoteAPIDetailsPage.gotoDetailsPage(driver());
 
-		assertFalse("API status should not be connect",  remoteAPIDetailsPage.isRemoteAPIConnected());
+		assertFalse(remoteAPIDetailsPage.isRemoteAPIConnected(), "API status should not be connect");
 		remoteAPIDetailsPage.clickConnect();
 		remoteAPIDetailsPage.clickAuthorize();
 
-		assertTrue("API status is now connected", page.checkSuccess());
+		assertTrue(page.checkSuccess(), "API status is now connected");
 	}
 }

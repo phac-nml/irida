@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.metadata;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
@@ -28,8 +28,8 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class ReadMetadataEntryPermissionTest {
@@ -58,9 +58,9 @@ public class ReadMetadataEntryPermissionTest {
 	MetadataTemplateField field;
 	MetadataEntry entry;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		permission = new ReadMetadataEntryPermission(metadataEntryRepository, projectSampleJoinRepository,
 				metadataRestrictionRepository, projectUserJoinRepository, userRepository, userGroupProjectJoinRepository);
@@ -102,7 +102,7 @@ public class ReadMetadataEntryPermissionTest {
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
 				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
-		assertTrue("should be allowed to read", permission.isAllowed(authentication, entry));
+		assertTrue(permission.isAllowed(authentication, entry), "should be allowed to read");
 	}
 
 	@Test
@@ -115,7 +115,7 @@ public class ReadMetadataEntryPermissionTest {
 		when(projectSampleJoinRepository.getProjectForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
-		assertFalse("should not be allowed to read", permission.isAllowed(authentication, entry));
+		assertFalse(permission.isAllowed(authentication, entry), "should not be allowed to read");
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class ReadMetadataEntryPermissionTest {
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
 				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
-		assertFalse("should not be allowed read", permission.isAllowed(authentication, entry));
+		assertFalse(permission.isAllowed(authentication, entry), "should not be allowed read");
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class ReadMetadataEntryPermissionTest {
 		when(projectUserJoinRepository.getProjectJoinForUser(project2, manager)).thenReturn(
 				new ProjectUserJoin(project2, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
-		assertTrue("should be allowed to read", permission.isAllowed(authentication, entry));
+		assertTrue(permission.isAllowed(authentication, entry), "should be allowed to read");
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class ReadMetadataEntryPermissionTest {
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
 				new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
-		assertFalse("should not be allowed to read", permission.isAllowed(authentication, entry));
+		assertFalse(permission.isAllowed(authentication, entry), "should not be allowed to read");
 	}
 
 	@Test
@@ -199,7 +199,7 @@ public class ReadMetadataEntryPermissionTest {
 		when(projectUserJoinRepository.getProjectJoinForUser(project, manager)).thenReturn(
 				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
-		assertTrue("should be allowed to read", permission.isAllowed(authentication, entry));
+		assertTrue(permission.isAllowed(authentication, entry), "should be allowed to read");
 	}
 
 }

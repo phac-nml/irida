@@ -9,12 +9,13 @@ import ca.corefacility.bioinformatics.irida.repositories.NcbiExportSubmissionRep
 import ca.corefacility.bioinformatics.irida.service.impl.export.NcbiExportSubmissionServiceImpl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -27,7 +28,7 @@ public class NcbiExportSubmissionServiceTest {
 	NcbiExportSubmissionRepository repository;
 	Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		validator = mock(Validator.class);
 		repository = mock(NcbiExportSubmissionRepository.class);
@@ -65,7 +66,7 @@ public class NcbiExportSubmissionServiceTest {
 		verify(repository).save(submission);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateNoFiles() {
 
 		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(), Sets.newHashSet(),
@@ -73,6 +74,8 @@ public class NcbiExportSubmissionServiceTest {
 		NcbiExportSubmission submission = new NcbiExportSubmission(null, null, "bioProjectId", "organization",
 				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));
 
-		service.create(submission);
+		assertThrows(IllegalArgumentException.class, () -> {
+			service.create(submission);
+		});
 	}
 }

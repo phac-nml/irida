@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -12,7 +12,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * <p> Integration test to ensure that the Projects Page. </p>
@@ -28,37 +28,36 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectsPage page = ProjectsPage.goToProjectsPage(driver(), true);
 		checkTranslations(page, ImmutableList.of("projects"), "Projects\nCreate New Project");
 
-		assertEquals("Should be 8 projects", 8, page.getNumberOfProjects());
+		assertEquals(8, page.getNumberOfProjects(), "Should be 8 projects");
 		List<String> projectNames = page.getProjectsSortListByColumnName();
-		assertFalse("Projects name should not be sorted originally", Ordering.natural()
-				.isOrdered(projectNames));
+		assertFalse(Ordering.natural().isOrdered(projectNames),
+				"Projects name should not be sorted originally");
 		page.sortProjectTableBy();
 		projectNames = page.getProjectsSortListByColumnName();
-		assertTrue("Project names should now be sorted", Ordering.natural()
-				.isOrdered(projectNames));
+		assertTrue(Ordering.natural().isOrdered(projectNames),
+				"Project names should now be sorted");
 
 		page.sortProjectTableBy();
 		projectNames = page.getProjectsSortListByColumnName();
-		assertTrue("Project names should be sorted reverse.", Ordering.natural()
-				.reverse()
-				.isOrdered(projectNames));
+		assertTrue(Ordering.natural().reverse().isOrdered(projectNames),
+				"Project names should be sorted reverse.");
 
 		page.searchTableForProjectName("project EFGH");
-		assertEquals("Should only be 1 project visible", 1, page.getNumberOfProjects());
+		assertEquals(1, page.getNumberOfProjects(), "Should only be 1 project visible");
 
-		assertTrue("There should be a Create New Project button visible", page.createNewButtonVisible());
+		assertTrue(page.createNewButtonVisible(), "There should be a Create New Project button visible");
 	}
 
 	@Test
 	public void testProjectsPageAsUser() {
 		LoginPage.loginAsUser(driver());
 		ProjectsPage page = ProjectsPage.goToProjectsPage(driver(), true);
-		assertEquals("Should be on the error page", driver().getTitle(), "IRIDA Platform - Access Denied");
+		assertEquals(driver().getTitle(), "IRIDA Platform - Access Denied", "Should be on the error page");
 
 		page = ProjectsPage.goToProjectsPage(driver(), false);
 		checkTranslations(page, ImmutableList.of("projects"), "Projects\nCreate New Project");
-		assertEquals("Should be 2 projects on the page", 2, page.getNumberOfProjects());
+		assertEquals(2, page.getNumberOfProjects(), "Should be 2 projects on the page");
 
-		assertTrue("There should be a Create New Project button visible", page.createNewButtonVisible());
+		assertTrue(page.createNewButtonVisible(), "There should be a Create New Project button visible");
 	}
 }

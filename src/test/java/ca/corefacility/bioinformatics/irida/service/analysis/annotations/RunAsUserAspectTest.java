@@ -1,10 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.annotations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.expression.EvaluationException;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,7 +27,7 @@ public class RunAsUserAspectTest {
 
 	static User adminUser;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		aspect = new RunAsUserAspect();
 		annotatedClass = new AnnotatedClass();
@@ -55,7 +56,7 @@ public class RunAsUserAspectTest {
 		String securedUserName = SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getName();
-		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
+		assertEquals(adminUser.getUsername(), securedUserName, "Should be admin user");
 	}
 
 	@Test
@@ -69,25 +70,31 @@ public class RunAsUserAspectTest {
 		String securedUserName = SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getName();
-		assertEquals("Should be admin user", adminUser.getUsername(), securedUserName);
+		assertEquals(adminUser.getUsername(), securedUserName, "Should be admin user");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testOther() {
-		annotatedClass.otherMethod("bleh");
+		assertThrows(IllegalArgumentException.class, () -> {
+			annotatedClass.otherMethod("bleh");
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testBadParamName() {
-		annotatedClass.badParam("bleh");
+		assertThrows(IllegalArgumentException.class, () -> {
+			annotatedClass.badParam("bleh");
+		});
 	}
 
 	/**
 	 * Testing when an exception is thrown on the SpEL from the annotation
 	 */
-	@Test(expected = EvaluationException.class)
+	@Test
 	public void testBadSpel() {
-		annotatedClass.badSpel("bleh");
+		assertThrows(EvaluationException.class, () -> {
+			annotatedClass.badSpel("bleh");
+		});
 	}
 
 	private static class AnnotatedClass {
@@ -100,7 +107,7 @@ public class RunAsUserAspectTest {
 			String submitterName = SecurityContextHolder.getContext()
 					.getAuthentication()
 					.getName();
-			assertEquals("Should be submitting user", submittingUser.getUsername(), submitterName);
+			assertEquals(submittingUser.getUsername(), submitterName, "Should be submitting user");
 		}
 
 		@RunAsUser("#submission")

@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -17,10 +14,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * <p>
@@ -30,34 +25,27 @@ import static org.junit.Assert.*;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
-	private static final ImmutableList<String> COLLABORATORS_NAMES = ImmutableList.of("Mr. Manager", "test User");
-
-	private final List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
-			ImmutableMap.of("href", "/projects", "text", "Projects"),
-			ImmutableMap.of("href", "/projects/1", "text", "project"),
-			ImmutableMap.of("href", "/projects/1/settings", "text", "Settings"));
-
 	@Test
 	public void testCanManagePageSetUp() {
 		LoginPage.loginAsManager(driver());
 		ProjectMembersPage page = ProjectMembersPage.goTo(driver());
-		assertEquals("Check for proper translation in title", "Members", page.getPageHeaderTitle());
-		assertEquals("Should be 2 members in the project", 2, page.getNumberOfMembers());
-		assertTrue("Add Members button should be visible", page.isAddMemberBtnVisible());
+		assertEquals("Members", page.getPageHeaderTitle(), "Check for proper translation in title");
+		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
+		assertTrue(page.isAddMemberBtnVisible(), "Add Members button should be visible");
 
 		// Test remove user from project
 		page.removeUser(1);
 		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
-		assertEquals("Should be 1 member in the project", 1, page.getNumberOfMembers());
+		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Should not be able to remove the manager
 		page.removeManager(0);
 		assertTrue(page.isUpdateMemberErrorNotificationDisplayed());
-		assertEquals("Should be 1 member in the project", 1, page.getNumberOfMembers());
+		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Test Add user to project
 		page.addUserToProject("test");
-		assertEquals("Should be 2 members in the project", 2, page.getNumberOfMembers());
+		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
 
 		// Tye updating the users role
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
@@ -72,7 +60,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	public void testCollaborator() {
 		LoginPage.loginAsUser(driver());
 		ProjectMembersPage page = ProjectMembersPage.goTo(driver());
-		assertFalse("Add Members button should not be visible", page.isAddMemberBtnVisible());
+		assertFalse(page.isAddMemberBtnVisible(), "Add Members button should not be visible");
 	}
 
 	@Test
@@ -101,31 +89,31 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectProjectInListing(name);
 
 		String url = page.getProjectUrl();
-		assertFalse("URL should not be empty", url.isEmpty());
+		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
 		String pathTokens[] = driver().getCurrentUrl().split("/");
 		Long projectId = Long.valueOf(pathTokens[pathTokens.length-1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
-		assertEquals("Should be 1 members in the project", 1, remoteProjectMembersPage.getNumberOfMembers());
+		assertEquals(1, remoteProjectMembersPage.getNumberOfMembers(), "Should be 1 members in the project");
 		remoteProjectMembersPage.addUserToProject("Mr. Manager");
 		remoteProjectMembersPage.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
-		assertEquals("Should be 2 members in the project", 2, remoteProjectMembersPage.getNumberOfMembers());
+		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 
 		LoginPage.loginAsManager(driver());
 
 		ProjectDetailsPage remoteProjectDetailsPage = ProjectDetailsPage.goTo(driver(), projectId);
 		String dataProjectName = remoteProjectDetailsPage.getProjectName();
-		assertEquals("Should be on the remote project", dataProjectName, name);
+		assertEquals(dataProjectName, name, "Should be on the remote project");
 
 		ProjectMembersPage managerRemoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
-		assertTrue("Add member button should be visible", managerRemoteProjectMembersPage.isAddMemberBtnVisible());
+		assertTrue(managerRemoteProjectMembersPage.isAddMemberBtnVisible(), "Add member button should be visible");
 
 		managerRemoteProjectMembersPage.addUserToProject("testUser");
-		assertEquals("Should be 3 members in the project", 3, remoteProjectMembersPage.getNumberOfMembers());
+		assertEquals(3, remoteProjectMembersPage.getNumberOfMembers(), "Should be 3 members in the project");
 		managerRemoteProjectMembersPage.removeUser(0);
-		assertEquals("Should be 2 members in the project", 2, remoteProjectMembersPage.getNumberOfMembers());
+		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 	}
 
 }
