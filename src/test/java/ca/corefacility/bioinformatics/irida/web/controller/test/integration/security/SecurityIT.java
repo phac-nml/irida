@@ -7,12 +7,21 @@ import static org.hamcrest.Matchers.is;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 
 /**
  * General tests relating to security for the REST API.
  * 
  */
 @Tag("IntegrationTest") @Tag("Rest")
+@ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
 public class SecurityIT {
 
 	/**

@@ -14,10 +14,13 @@ import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -30,9 +33,10 @@ import com.google.common.collect.ImmutableMap;
  * 
  */
 @Tag("IntegrationTest") @Tag("Rest")
-@SpringBootTest
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sequencingrun/SequencingRunIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunIT {
