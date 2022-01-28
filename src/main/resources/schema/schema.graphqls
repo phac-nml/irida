@@ -1,0 +1,18 @@
+schema {
+    query: Query
+}
+
+type Query {
+    # The currently authenticated user.
+    viewer : User!
+}
+
+type User {
+    id: ID!
+    createdDate: String!
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    phoneNumber: String!
+}
