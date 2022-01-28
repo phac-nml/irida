@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	protected static String BASE_URL = System.getProperty("server.base.url", "http://localhost:" + System.getProperty("server.port", "8080")) + "/";
+	protected static String BASE_URL;
 	protected static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	protected final int DEFAULT_WAIT = 500;

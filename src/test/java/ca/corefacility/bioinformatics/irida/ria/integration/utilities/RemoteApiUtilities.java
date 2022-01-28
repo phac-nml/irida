@@ -8,8 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.Remo
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteApiUtilities {
-	protected static String BASE_URL =
-			System.getProperty("server.base.url", "http://localhost:" + System.getProperty("server.port", "8080")) + "/";
+	protected static String BASE_URL;
 
 	public static void setBaseUrl(String baseUrl) {
 		BASE_URL = baseUrl;

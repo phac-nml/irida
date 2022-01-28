@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
@@ -16,7 +16,17 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 
-@Configuration
+/**
+ * Configuration to be loaded in IntegrationTest via {@Link Import} annotation.
+ * This waits for the servlet container initialized event and uses
+ * {@Link LocalHostUriTemplateHandler} to retrieve the current URL to the servlet
+ * container and set it up within the specific testing utilities.
+ * 
+ * Also provides a {@Link LocalHostUriTemplateHandler} {@Link Bean} which can be used
+ * in tests to access the servlet containers root uri.
+ * 
+ */
+@TestConfiguration
 @Profile("it")
 public class IridaIntegrationTestUriConfig {
 
