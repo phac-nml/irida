@@ -23,7 +23,6 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		// SHARING SINGLE SAMPLE
 
 		addOneSample();
-		Assert.f
 		shareSamplesPage.searchForProject("project2");
 		Assert.assertTrue("Share button should be enabled after selecting a project",
 				shareSamplesPage.isShareButtonEnabled());
