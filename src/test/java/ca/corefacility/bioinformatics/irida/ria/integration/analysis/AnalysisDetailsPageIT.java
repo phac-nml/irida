@@ -55,7 +55,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testAnalysisDetails() {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 		assertEquals(7, page.getNumberOfListItems(), "There should be 7 labels for analysis details");
 		// Analysis Description doesn't have a value
@@ -94,7 +94,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		analysesPage.clickPagination(2);
 		assertEquals(6, analysesPage.getNumberOfAnalysesDisplayed(), "Should have 6 analyses displayed originally");
 
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "delete");
 		assertTrue(page.compareTabTitle("Delete Analysis"), "Page title should equal");
 		assertTrue(page.deleteButtonExists());
 		page.deleteAnalysis();
@@ -107,14 +107,14 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testEditPriorityVisibility() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 
 		// As this analysis is not in NEW state the
 		// edit priority dropdown should not be visible
 		assertFalse(page.priorityEditVisible(), "priority edit should be visible");
 
-		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/details");
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 		// As this analysis is in NEW state the
 		// edit priority dropdown should be visible
@@ -314,22 +314,22 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	//Analysis which did not complete successfully (ERROR State)
 	public void testTabRoutingAnalysisError() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 7L, "job-error");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 7L, "");
 
 		assertTrue(page.jobErrorAlertVisible(), "No job error information available alert visible");
 
 		// Should not be able to view output files page if analysis errored
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "output");
-		assertFalse(page.comparePageTitle("Output File Preview"), "Page title should not equal");
+		assertFalse(page.menuIncludesItem("Output Files"), "Should not have an output tab");
 
 		// Should not be able to view provenance page if analysis errored
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "provenance");
-		assertFalse(page.comparePageTitle("Provenance"), "Page title should not equal");
+		assertFalse(page.menuIncludesItem("Provenance"), "Should not have a provenance tab");
 
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 
-		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/details");
+		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/samples");
@@ -337,7 +337,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Should not be able to share results if analysis errored
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/share");
-		assertFalse(page.compareTabTitle("Manage Results"), "Page title should not equal");
+		assertFalse(page.menuIncludesItem("Manage Results"), "Should not have a Manage Results tab");
 
 		page = AnalysisDetailsPage.initPage(driver(), 7L, "settings/delete");
 		assertTrue(page.compareTabTitle("Delete Analysis"), "Page title should equal");
@@ -403,7 +403,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.displayToolExecutionParameters();
 		assertEquals(2, page.getGalaxyParametersCount(), "First tool should have 2 parameter");
 
-		page = AnalysisDetailsPage.initPage(driver(), 14L, "settings/details");
+		page = AnalysisDetailsPage.initPage(driver(), 14L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 		assertEquals(7, page.getNumberOfListItems(), "There should be 7 labels for analysis details");
 		// Analysis Description doesn't have a value
@@ -418,7 +418,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings/details");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 		// As this analysis is in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
@@ -426,7 +426,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// should not be visible
 		assertFalse(page.emailPipelineResultStatusSelectVisible(), "email pipeline result status should be visible");
 
-		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings/details");
+		page = AnalysisDetailsPage.initPage(driver(), 8L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 		// As this analysis is not in COMPLETED state the
 		// Receive Email Upon Pipeline Completion section
