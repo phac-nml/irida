@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 @DgsComponent
-public class ViewerDataFetcher {
+public class ViewerDatafetcher {
 
     @Autowired
     private UserService userService;
