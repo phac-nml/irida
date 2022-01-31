@@ -426,6 +426,15 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	/**
 	 * {@inheritDoc}
 	 */
+	@PreAuthorize("hasPermission(#user, 'canUpdateUser')")
+	public void deleteProjectSubscription(User user, Project project) {
+		ProjectSubscription projectSubscription = projectSubscriptionRepository.getSubscription(user, project);
+		projectSubscriptionRepository.delete(projectSubscription);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<Join<Project, User>> searchUsersForProject(final Project project, final String search, final int page,

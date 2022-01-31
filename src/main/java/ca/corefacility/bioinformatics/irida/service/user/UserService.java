@@ -110,10 +110,20 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 * Create a {@link ProjectSubscription} to subscribe a
 	 * {@link User} to a given {@link Project}
 	 *
-	 * @param user    the {@link User} requesting a subscription
+	 * @param user    the {@link User} requesting the subscription
 	 * @param project the {@link Project} to subscribe to
+	 * @return the newly created project subscription
 	 */
 	public ProjectSubscription createProjectSubscription(User user, Project project);
+
+	/**
+	 * Delete a {@link ProjectSubscription} to unsubscribe a
+	 * {@link User} from a given {@link Project}
+	 *
+	 * @param user    the {@link User} requesting the unsubscription
+	 * @param project the {@link Project} to unsubscribe from
+	 */
+	public void deleteProjectSubscription(User user, Project project);
 
 	/**
 	 * Change the password on the {@link User} account. This method may be

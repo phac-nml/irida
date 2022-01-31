@@ -45,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -537,9 +536,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.collect(Collectors.toList());
 
 		//Is there a better way???
-		List<ProjectSubscription> subscriptionList = projectSubscriptionRepository.getSubscriptionsByUser(user);
+		List<Long> projectIdList = projectSubscriptionRepository.getProjectIdsByUser(user);
+		List<UserProjectDetailsModel> output = newList.stream()
+				.map(updm -> {
+					if (projectIdList.contains(updm.getProjectId())) {
+						updm.setEmailSubscribed(true);
+					}
+					return updm;
+				})
+				.collect(Collectors.toList());
 
-		return newList;
+		return output;
 	}
 
 	/**

@@ -43,12 +43,16 @@ public class ProjectEventsAjaxController {
 	 * @return Map success message if the subscription status was updated
 	 */
 	@RequestMapping(value = "/projects/{projectId}/subscribe/{userId}", method = RequestMethod.POST)
-	public ResponseEntity<AjaxResponse> addSubscription(@PathVariable Long userId, @PathVariable Long projectId,
+	public ResponseEntity<AjaxResponse> updateSubscription(@PathVariable Long userId, @PathVariable Long projectId,
 			@RequestParam boolean subscribe, Locale locale) {
 		User user = userService.read(userId);
 		Project project = projectService.read(projectId);
 
-		userService.createProjectSubscription(user, project);
+		if (subscribe) {
+			userService.createProjectSubscription(user, project);
+		} else {
+			userService.deleteProjectSubscription(user, project);
+		}
 
 		String message;
 		if (subscribe) {

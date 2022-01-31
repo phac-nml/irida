@@ -19,8 +19,8 @@ public interface ProjectSubscriptionRepository
 	@Query("FROM ProjectSubscription ps WHERE ps.user=?1 AND ps.project=?2")
 	public ProjectSubscription getSubscription(User user, Project project);
 
-	@Query("FROM ProjectSubscription ps WHERE ps.user=?1")
-	public List<ProjectSubscription> getSubscriptionsByUser(User user);
+	@Query("Select ps.project.id FROM ProjectSubscription ps WHERE ps.user=?1")
+	public List<Long> getProjectIdsByUser(User user);
 
 }
 
