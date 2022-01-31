@@ -48,7 +48,7 @@ public class ProjectEventsAjaxController {
 		User user = userService.read(userId);
 		Project project = projectService.read(projectId);
 
-		userService.updateEmailSubscription(user, project, subscribe);
+		userService.createProjectSubscription(user, project);
 
 		String message;
 		if (subscribe) {

@@ -27,7 +27,7 @@ public class UserProjectDetailsModel implements Comparable<UserProjectDetailsMod
 		if (join != null) {
 			this.isManager = join.getProjectRole()
 					.equals(ProjectRole.PROJECT_OWNER);
-			this.isEmailSubscribed = join.isEmailSubscription();
+			this.isEmailSubscribed = false;
 			this.roleName = join.getProjectRole()
 					.toString();
 			this.groupName = null;

@@ -45,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
@@ -52,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectSubscriptionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.*;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -91,6 +93,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private final ProjectRepository projectRepository;
+	private final ProjectSubscriptionRepository projectSubscriptionRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
@@ -99,7 +102,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
 			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectAnalysisSubmissionJoinRepository pasRepository,
-			SequencingObjectRepository sequencingObjectRepository, Validator validator) {
+			SequencingObjectRepository sequencingObjectRepository,
+			ProjectSubscriptionRepository projectSubscriptionRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -113,6 +117,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.ssoRepository = ssoRepository;
 		this.pasRepository = pasRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
+		this.projectSubscriptionRepository = projectSubscriptionRepository;
 	}
 
 	/**
@@ -530,6 +535,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.map(Optional::get)
 				.sorted(Comparator.comparingLong(UserProjectDetailsModel::getProjectId))
 				.collect(Collectors.toList());
+
+		//Is there a better way???
+		List<ProjectSubscription> subscriptionList = projectSubscriptionRepository.getSubscriptionsByUser(user);
 
 		return newList;
 	}

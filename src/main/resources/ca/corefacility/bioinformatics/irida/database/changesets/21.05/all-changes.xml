@@ -6,4 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="project-default-metadata-template.xml"
              relativeToChangelogFile="true"/>
+    <include file="user-account-project-subscription.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>

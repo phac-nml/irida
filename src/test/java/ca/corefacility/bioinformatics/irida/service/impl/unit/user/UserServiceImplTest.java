@@ -1,20 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.user;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-
 import java.time.Instant;
 import java.util.*;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
-import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
-import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -34,8 +25,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectSubscriptionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.announcement.AnnouncementUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -45,28 +41,34 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
  * Testing the behavior of {@link UserServiceImpl}
- * 
  */
 public class UserServiceImplTest {
 
 	private UserService userService;
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
+	private ProjectSubscriptionRepository projectSubscriptionRepository;
 	private AnnouncementUserJoinRepository announcementUserJoinRepository;
-	private Validator validator;
 	private PasswordEncoder passwordEncoder;
+	private Validator validator;
 
 	@Before
 	public void setUp() {
-		validator = mock(Validator.class);
 		userRepository = mock(UserRepository.class);
-		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
+		projectSubscriptionRepository = mock(ProjectSubscriptionRepository.class);
 		announcementUserJoinRepository = mock(AnnouncementUserJoinRepository.class);
-		userService = new UserServiceImpl(userRepository, announcementUserJoinRepository, pujRepository, passwordEncoder,
-				validator);
+		passwordEncoder = mock(PasswordEncoder.class);
+		validator = mock(Validator.class);
+		userService = new UserServiceImpl(userRepository, pujRepository, projectSubscriptionRepository,
+				announcementUserJoinRepository, passwordEncoder, validator);
 	}
 
 	@Test(expected = EntityNotFoundException.class)
@@ -137,7 +139,8 @@ public class UserServiceImplTest {
 		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u);
 		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
 
-		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(
+				unreadAnnouncements);
 
 		userService.create(u);
 
@@ -148,12 +151,15 @@ public class UserServiceImplTest {
 	public void testReadOldAnnouncements() {
 		User u = user();
 
-		Date two_months_ago = new DateTime().minusMonths(2).toDate();
-		Announcement first_announcement = new Announcement("test 1", "this is a test message", true, u, two_months_ago );
-		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u, two_months_ago);
+		Date two_months_ago = new DateTime().minusMonths(2)
+				.toDate();
+		Announcement first_announcement = new Announcement("test 1", "this is a test message", true, u, two_months_ago);
+		Announcement second_announcement = new Announcement("test 2", "this is also a test message", false, u,
+				two_months_ago);
 		List<Announcement> unreadAnnouncements = Lists.newArrayList(first_announcement, second_announcement);
 
-		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(unreadAnnouncements);
+		when(announcementUserJoinRepository.getAnnouncementsUnreadByUser(any(User.class))).thenReturn(
+				unreadAnnouncements);
 
 		userService.create(u);
 
@@ -312,25 +318,27 @@ public class UserServiceImplTest {
 		userService.loadUserByEmail(email);
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testSearchUser(){
+	public void testSearchUser() {
 		int page = 1;
 		int size = 10;
 		Direction order = Direction.ASC;
 		String sortProperties = "id";
 		String searchString = "tom";
-		
-		
-		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom",
-				"Matthews", "1234"), new User(2L, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
-		
+
+		Page<User> userPage = new PageImpl<>(
+				Lists.newArrayList(new User(1L, "tom", "tom@nowhere.com", "123456798", "Tom", "Matthews", "1234"),
+						new User(2L, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname",
+								"5678")));
+
 		when(userRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(userPage);
-		
-		Page<User> searchUser = userService.search(UserSpecification.searchUser(searchString), page, size, order, sortProperties);
+
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(searchString), page, size, order,
+				sortProperties);
 		assertEquals(userPage, searchUser);
-		
+
 		verify(userRepository).findAll(any(Specification.class), any(Pageable.class));
 	}
 
