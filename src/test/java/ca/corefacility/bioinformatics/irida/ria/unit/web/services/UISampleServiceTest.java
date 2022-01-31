@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,8 +49,10 @@ public class UISampleServiceTest {
 	private UISampleService service;
 	private ProjectService projectService;
 	private SequencingObjectService sequencingObjectService;
+	private GenomeAssemblyService genomeAssemblyService;
 
 	private SequencingObject sequencingObject;
+	private GenomeAssembly genomeAssembly;
 
 	private final User USER_1 = new User("test", "test@nowhere.com", "PW1@3456", "Test", "Tester", "1234567890");
 	private final Sample SAMPLE_1 = new Sample("SAMPLE_01");
@@ -60,25 +66,35 @@ public class UISampleServiceTest {
 	private final String FILE_02 = "test_file_B.fastq";
 	private final String PAIR_01 = "pair_test_R1_001.fastq";
 	private final String PAIR_02 = "pair_test_R2_001.fastq";
+	private final String FAST5_01 = "testfast5file.fast5";
+	private final String ASSEMBLY_01 = "test_file.fasta";
 	private final List<String> SINGLE_FILE_NAMES = ImmutableList.of(FILE_01, FILE_02);
 	private final List<String> PAIRED_FILE_NAMES = ImmutableList.of(PAIR_01, PAIR_02);
-	private final List<String> MIXED_FILE_NAMES = ImmutableList.of(FILE_01, PAIR_01, PAIR_02);
+	private final List<String> FAST5_FILE_NAMES = ImmutableList.of(FAST5_01);
+	private final List<String> ASSEMBLY_FILE_NAMES = ImmutableList.of(ASSEMBLY_01);
+	private final List<String> MIXED_FILE_NAMES = ImmutableList.of(FILE_01, FILE_02, PAIR_01, PAIR_02);
 	MockMultipartFile MOCK_FILE_01;
 	MockMultipartFile MOCK_FILE_02;
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
+	MockMultipartFile MOCK_FAST5_FILE_01;
+	MockMultipartFile MOCK_ASSEMBLY_FILE_01;
+
 	SampleSequencingObjectJoin sampleSequencingObjectJoin;
+	SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin;
 
 
 	@BeforeEach
 	public void setUp() {
 		SampleService sampleService = mock(SampleService.class);
 		sequencingObject = mock(SequencingObject.class);
+		genomeAssembly = mock(GenomeAssembly.class);
 		projectService = mock(ProjectService.class);
 		UpdateSamplePermission updateSamplePermission = mock(UpdateSamplePermission.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		sampleSequencingObjectJoin = mock(SampleSequencingObjectJoin.class);
-		GenomeAssemblyService genomeAssemblyService = mock(GenomeAssemblyService.class);
+		sampleGenomeAssemblyJoin = mock(SampleGenomeAssemblyJoin.class);
+		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		MessageSource messageSource = mock(MessageSource.class);
 		UICartService cartService = mock(UICartService.class);
 		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
@@ -100,10 +116,13 @@ public class UISampleServiceTest {
 		when(sampleService.read(1L)).thenReturn(SAMPLE_1);
 		when(updateSamplePermission.isAllowed(authentication, SAMPLE_1)).thenReturn(true);
 
+
 		MOCK_FILE_01 = createMultiPartFile(FILE_01, "src/test/resources/files/test_file_A.fastq");
 		MOCK_FILE_02 = createMultiPartFile(FILE_02, "src/test/resources/files/test_file_B.fastq");
 		MOCK_PAIR_FILE_01 = createMultiPartFile(PAIR_01, "src/test/resources/files/pairs/pair_test_R1_001.fastq");
 		MOCK_PAIR_FILE_02 = createMultiPartFile(PAIR_02,  "src/test/resources/files/pairs/pair_test_R2_001.fastq");
+		MOCK_FAST5_FILE_01 = createMultiPartFile(FAST5_01,  "src/test/resources/files/testfast5file.fast5");
+		MOCK_ASSEMBLY_FILE_01 = createMultiPartFile(ASSEMBLY_01, "src/test/resources/files/test_file.fasta");
 	}
 
 	private MockMultipartFile createMultiPartFile(String name, String path) {
@@ -148,25 +167,24 @@ public class UISampleServiceTest {
 	}
 
 	@Test
-	public void testUploadSequenceFiles() throws IOException {
+	public void testUploadSingleEndSequenceFiles() throws IOException {
 		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
 		when(request.getFile(FILE_01)).thenReturn(MOCK_FILE_01);
 		when(request.getFile(FILE_02)).thenReturn(MOCK_FILE_02);
 		when(request.getFileNames()).thenReturn(SINGLE_FILE_NAMES.iterator());
 
 		List<String> fileNamesList = new ArrayList<>();
-		while (request.getFileNames()
-				.hasNext()) {
-			fileNamesList.add(request.getFileNames()
-					.next());
-		}
+		fileNamesList.add(FILE_01);
+		fileNamesList.add(FILE_02);
 
-		List<SampleSequencingObjectJoin> generateSequencingObjectsForSample = TestDataFactory.generateSingleFileSequencingObjectsForSample(
-				ANOTHER_SAMPLE, fileNamesList);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
+				any(Sample.class))).thenReturn(sampleSequencingObjectJoin);
 
-		when(sequencingObjectService.createSequencingObjectInSample(generateSequencingObjectsForSample.get(0)
-				.getObject(), ANOTHER_SAMPLE)).thenReturn(generateSequencingObjectsForSample.get(0));
-		service.uploadSequenceFiles(ANOTHER_SAMPLE.getId(), request);
+		when(sampleSequencingObjectJoin.getObject()).thenReturn(sequencingObject);
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = service.uploadSequenceFiles(
+				ANOTHER_SAMPLE.getId(), request);
+
+		assertEquals(2, sampleSequencingObjectFileModels.size(), "Should have uploaded 2 single end sequence files");
 	}
 
 	@Test
@@ -177,17 +195,84 @@ public class UISampleServiceTest {
 		when(request.getFileNames()).thenReturn(PAIRED_FILE_NAMES.iterator());
 
 		List<String> fileNamesList = new ArrayList<>();
-		while (request.getFileNames()
-				.hasNext()) {
-			fileNamesList.add(request.getFileNames()
-					.next());
-		}
+		fileNamesList.add(PAIR_01);
+		fileNamesList.add(PAIR_02);
 
-		List<SampleSequencingObjectJoin> generatePairSequencingObjectsForSample = TestDataFactory.generatePairSequencingObjectsForSample(
-				ANOTHER_SAMPLE, fileNamesList);
-		when(sequencingObjectService.createSequencingObjectInSample(generatePairSequencingObjectsForSample.get(0)
-				.getObject(), ANOTHER_SAMPLE)).thenReturn(generatePairSequencingObjectsForSample.get(0));
-		service.uploadSequenceFiles(ANOTHER_SAMPLE.getId(), request);
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
+				any(Sample.class))).thenReturn(sampleSequencingObjectJoin);
+
+		when(sampleSequencingObjectJoin.getObject()).thenReturn(sequencingObject);
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = service.uploadSequenceFiles(
+				ANOTHER_SAMPLE.getId(), request);
+
+		assertEquals(1, sampleSequencingObjectFileModels.size(), "Should have uploaded 1 sequence file pair");
 	}
 
+	@Test
+	public void testUploadFast5() throws IOException {
+		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
+		when(request.getFile(FAST5_01)).thenReturn(MOCK_FAST5_FILE_01);
+		when(request.getFileNames()).thenReturn(FAST5_FILE_NAMES.iterator());
+
+		List<String> fileNamesList = new ArrayList<>();
+		fileNamesList.add(FAST5_01);
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(Fast5Object.class),
+				any(Sample.class))).thenReturn(sampleSequencingObjectJoin);
+
+		when(sampleSequencingObjectJoin.getObject()).thenReturn(sequencingObject);
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = service.uploadFast5Files(
+				ANOTHER_SAMPLE.getId(), request);
+
+		assertEquals(1, sampleSequencingObjectFileModels.size(), "Should have uploaded 1 fast5 files");
+	}
+
+	@Test
+	public void testUploadAssemblies() throws IOException {
+		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
+		when(request.getFile(ASSEMBLY_01)).thenReturn(MOCK_ASSEMBLY_FILE_01);
+		when(request.getFileNames()).thenReturn(ASSEMBLY_FILE_NAMES.iterator());
+
+		List<String> fileNamesList = new ArrayList<>();
+		fileNamesList.add(ASSEMBLY_01);
+
+		when(genomeAssemblyService.createAssemblyInSample(any(Sample.class), any(GenomeAssembly.class))).thenReturn(
+				sampleGenomeAssemblyJoin);
+
+		when(sampleGenomeAssemblyJoin.getObject()).thenReturn(genomeAssembly);
+		List<SampleGenomeAssemblyFileModel> sampleGenomeAssemblyFileModels = service.uploadAssemblies(
+				ANOTHER_SAMPLE.getId(), request);
+
+		assertEquals(1, sampleGenomeAssemblyFileModels.size(), "Should have uploaded 1 assembly file");
+	}
+
+	@Test
+	public void uploadSingleAndPairedEndFiles() throws IOException {
+		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
+		when(request.getFile(FILE_01)).thenReturn(MOCK_FILE_01);
+		when(request.getFile(FILE_02)).thenReturn(MOCK_FILE_02);
+		when(request.getFile(PAIR_01)).thenReturn(MOCK_PAIR_FILE_01);
+		when(request.getFile(PAIR_02)).thenReturn(MOCK_PAIR_FILE_02);
+		when(request.getFileNames()).thenReturn(MIXED_FILE_NAMES.iterator());
+
+		List<String> fileNamesList = new ArrayList<>();
+		fileNamesList.add(FILE_01);
+		fileNamesList.add(FILE_02);
+		fileNamesList.add(PAIR_01);
+		fileNamesList.add(PAIR_02);
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
+				any(Sample.class))).thenReturn(sampleSequencingObjectJoin);
+
+		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
+				any(Sample.class))).thenReturn(sampleSequencingObjectJoin);
+
+		when(sampleSequencingObjectJoin.getObject()).thenReturn(sequencingObject);
+
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = service.uploadSequenceFiles(
+				ANOTHER_SAMPLE.getId(), request);
+
+		assertEquals(3, sampleSequencingObjectFileModels.size(),
+				"Should have uploaded 2 single end sequence files and 1  sequence file pair");
+	}
 }
