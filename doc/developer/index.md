@@ -12,7 +12,6 @@ Developer documentation
 Setup
 -----
 * [Workstation setup guide](setup/)
-* [Building VMs with packer](packer/)
 
 Tool Development
 ----------------

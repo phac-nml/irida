@@ -3,6 +3,7 @@ Changes
 
 22.01 to 22.05
 --------------
+* [Developer]: Removed IRIDA virtual appliance build scripts and references in documentation.
 
 21.09 to 22.01
 --------------
