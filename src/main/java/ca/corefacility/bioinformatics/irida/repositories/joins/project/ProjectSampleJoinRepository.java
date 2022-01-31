@@ -17,7 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * 
  * 
  */
-public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long>, JpaSpecificationExecutor<ProjectSampleJoin> {
+public interface ProjectSampleJoinRepository
+		extends PagingAndSortingRepository<ProjectSampleJoin, Long>, JpaSpecificationExecutor<ProjectSampleJoin> {
 	/**
 	 * Get a collection of the {@link Project}s related to a {@link Sample}
 	 * 
@@ -28,6 +29,16 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	 */
 	@Query("select j from ProjectSampleJoin j where j.sample = ?1")
 	public List<Join<Project, Sample>> getProjectForSample(Sample sample);
+
+	/**
+	 * Get a list of the {@link Project} ids that are in the given sample
+	 *
+	 * @param sample
+	 *            the {@link Sample} to check
+	 * @return a List of the project Ids
+	 */
+	@Query("SELECT j.project.id FROM ProjectSampleJoin j where j.sample=?1")
+	public List<Long> getProjectIdsForSample(Sample sample);
 
 	/**
 	 * Get a specific {@link ProjectSampleJoin} for a {@link Project} and
@@ -55,8 +66,11 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 
 	/**
 	 * Get {@link Sample} in a {@link Project} given a list of Sample ids.
-	 * @param project {@link Project} to get samples for.
-	 * @param sampleIds {@link Sample} ids
+	 * 
+	 * @param project
+	 *            {@link Project} to get samples for.
+	 * @param sampleIds
+	 *            {@link Sample} ids
 	 * @return List of {@link Sample}
 	 */
 	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1 and j.sample.id in ?2")
@@ -84,9 +98,11 @@ public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<
 	public Long countSamplesForProject(Project project);
 
 	/**
-	 * Get a list of the {@link Sample} ids that are not owned by the given project
+	 * Get a list of the {@link Sample} ids that are not owned by the given
+	 * project
 	 *
-	 * @param project the {@link Project} to check
+	 * @param project
+	 *            the {@link Project} to check
 	 * @return a List of the sample IDs that are locked
 	 */
 	@Query("SELECT j.sample.id FROM ProjectSampleJoin j where j.owner=false AND j.project=?1")

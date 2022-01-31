@@ -15,7 +15,6 @@ type Project {
     modifiedDate: String
     projectDescription: String
     remoteUrl: String
-    users: [User!]
     samples: [Sample!]
     organism: String
     genomeSize: Int

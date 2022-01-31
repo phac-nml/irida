@@ -312,6 +312,11 @@ public class IridaApiServicesConfig {
 		return taskExecutor;
 	}
 
+	@Bean(name = "graphqlTaskExecutor")
+	public Executor graphqlTaskExecutor() {
+		return new DelegatingSecurityContextExecutorService(Executors.newFixedThreadPool(2));
+	}
+
 	@Bean
 	public Validator validator() {
 		ResourceBundleMessageSource validatorMessageSource = new ResourceBundleMessageSource();

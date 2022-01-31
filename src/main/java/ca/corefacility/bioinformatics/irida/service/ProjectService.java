@@ -31,34 +31,38 @@ import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.Generic
 public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
-	 * Add the specified {@link User} to the {@link Project} with a {@link Role} . If the {@link User} is a manager for
-	 * the {@link Project}, then the {@link User} should be added to the {@link Project} with the 'ROLE_MANAGER' {@link
-	 * Role}.
+	 * Add the specified {@link User} to the {@link Project} with a {@link Role}
+	 * . If the {@link User} is a manager for the {@link Project}, then the
+	 * {@link User} should be added to the {@link Project} with the
+	 * 'ROLE_MANAGER' {@link Role}.
 	 *
 	 * @param project
-	 * 		the {@link Project} to add the user to.
+	 *            the {@link Project} to add the user to.
 	 * @param user
-	 * 		the user to add to the {@link Project}.
+	 *            the user to add to the {@link Project}.
 	 * @param role
-	 * 		the role that the user plays on the {@link Project}.
+	 *            the role that the user plays on the {@link Project}.
 	 *
-	 * @return a reference to the relationship resource created between the two entities.
+	 * @return a reference to the relationship resource created between the two
+	 *         entities.
 	 */
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
-	
+
 	/**
-	 * Add the specified {@link UserGroup} to the {@link Project} with a {@link Role} . If the {@link UserGroup} is a manager for
-	 * the {@link Project}, then the {@link UserGroup} should be added to the {@link Project} with the 'ROLE_MANAGER' {@link
-	 * Role}.
+	 * Add the specified {@link UserGroup} to the {@link Project} with a
+	 * {@link Role} . If the {@link UserGroup} is a manager for the
+	 * {@link Project}, then the {@link UserGroup} should be added to the
+	 * {@link Project} with the 'ROLE_MANAGER' {@link Role}.
 	 *
 	 * @param project
-	 * 		the {@link Project} to add the user to.
+	 *            the {@link Project} to add the user to.
 	 * @param userGroup
-	 * 		the user group to add to the {@link Project}.
+	 *            the user group to add to the {@link Project}.
 	 * @param role
-	 * 		the role that the user plays on the {@link Project}.
+	 *            the role that the user plays on the {@link Project}.
 	 *
-	 * @return a reference to the relationship resource created between the two entities.
+	 * @return a reference to the relationship resource created between the two
+	 *         entities.
 	 */
 	public Join<Project, UserGroup> addUserGroupToProject(Project project, UserGroup userGroup, ProjectRole role);
 
@@ -66,15 +70,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Remove the specified {@link User} from the {@link Project}.
 	 *
 	 * @param project
-	 * 		the {@link Project} to remove the {@link User} from.
+	 *            the {@link Project} to remove the {@link User} from.
 	 * @param user
-	 * 		the {@link User} to be removed from the {@link Project}.
+	 *            the {@link User} to be removed from the {@link Project}.
 	 *
 	 * @throws ProjectWithoutOwnerException
-	 * 		if removing this user would leave the project without an owner
+	 *             if removing this user would leave the project without an
+	 *             owner
 	 */
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
-	
+
 	/**
 	 * Remove the specified {@link UserGroup} from the {@link Project}.
 	 *
@@ -92,19 +97,19 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Update a {@link User}'s {@link ProjectRole} on a {@link Project}
 	 *
 	 * @param project
-	 * 		The project to update
+	 *            The project to update
 	 * @param user
-	 * 		The user to update
+	 *            The user to update
 	 * @param projectRole
-	 * 		The role to set
+	 *            The role to set
 	 *
 	 * @return The newly updated role object
 	 * @throws ProjectWithoutOwnerException
-	 * 		If the role change would leave the project without an owner
+	 *             If the role change would leave the project without an owner
 	 */
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException;
-	
+
 	/**
 	 * Update a {@link UserGroup}'s {@link ProjectRole} on a {@link Project}
 	 *
@@ -127,24 +132,33 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.
 	 *
-	 * @param project the {@link Project} to add the {@link Sample} to.
-	 * @param sample  the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
-	 *                service will persist the {@link Sample}.
-	 * @param owner   Whether the project will have modification access for this sample
-	 * @return a reference to the relationship resource created between the two entities.
+	 * @param project
+	 *            the {@link Project} to add the {@link Sample} to.
+	 * @param sample
+	 *            the {@link Sample} to add to the {@link Project}. If the
+	 *            {@link Sample} has not previously been persisted, the service
+	 *            will persist the {@link Sample}.
+	 * @param owner
+	 *            Whether the project will have modification access for this
+	 *            sample
+	 * @return a reference to the relationship resource created between the two
+	 *         entities.
 	 */
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
 
 	/**
 	 * Move a {@link Sample} from one {@link Project} to another
 	 *
-	 * @param source      the source {@link Project}
-	 * @param destination Destination {@link Project}
-	 * @param sample      The sample to move
+	 * @param source
+	 *            the source {@link Project}
+	 * @param destination
+	 *            Destination {@link Project}
+	 * @param sample
+	 *            The sample to move
 	 * @return Newly created {@link ProjectSampleJoin}
 	 */
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample);
-	
+
 	/**
 	 * Share a list of {@link Sample}s between two {@link Project}s.
 	 * 
@@ -161,7 +175,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public List<ProjectSampleJoin> shareSamples(Project source, Project destination, Collection<Sample> samples,
 			boolean giveOwner);
-	
+
 	/**
 	 * Move a list of {@link Sample}s between 2 {@link Project}
 	 * 
@@ -170,23 +184,23 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param destination
 	 *            the {@link Project} being moved to
 	 * @param samples
-	 *            a collection of {@link Sample}s
-	 *            {@link Project}
+	 *            a collection of {@link Sample}s {@link Project}
 	 * @return a list of new {@link ProjectSampleJoin}
 	 */
 	public List<ProjectSampleJoin> moveSamples(Project source, Project destination, Collection<Sample> samples);
 
 	/**
-	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the
-	 * system because {@link Sample}s cannot exist outside of a {@link Project}.
+	 * Remove the specified {@link Sample} from the {@link Project}. The
+	 * {@link Sample} will also be deleted from the system because
+	 * {@link Sample}s cannot exist outside of a {@link Project}.
 	 *
 	 * @param project
-	 * 		the {@link Project} to remove the {@link Sample} from.
+	 *            the {@link Project} to remove the {@link Sample} from.
 	 * @param sample
-	 * 		the {@link Sample} to remove.
+	 *            the {@link Sample} to remove.
 	 */
 	public void removeSampleFromProject(Project project, Sample sample);
-	
+
 	/**
 	 * Remove a collection of {@link Sample}s from a {@link Project}
 	 * 
@@ -201,21 +215,22 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Get all {@link Project}s associated with a particular {@link User}.
 	 *
 	 * @param user
-	 * 		the user to get projects for.
+	 *            the user to get projects for.
 	 *
 	 * @return the projects associated with the user.
 	 */
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
 	/**
-	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
+	 * Check if a {@link User} has a given {@link ProjectRole} on a
+	 * {@link Project}
 	 *
 	 * @param user
-	 * 		The user to test
+	 *            The user to test
 	 * @param project
-	 * 		The project to test
+	 *            The project to test
 	 * @param projectRole
-	 * 		The project role to test
+	 *            The project role to test
 	 *
 	 * @return true/false whether the user has the given role
 	 */
@@ -225,9 +240,9 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Add a related {@link Project} to the given {@link Project}
 	 *
 	 * @param subject
-	 * 		The parent project
+	 *            The parent project
 	 * @param relatedProject
-	 * 		The project to be added to the parent
+	 *            The project to be added to the parent
 	 *
 	 * @return a {@link RelatedProjectJoin} describing the relationship
 	 */
@@ -237,17 +252,18 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Get all {@link RelatedProjectJoin}s for a given {@link Project}
 	 *
 	 * @param project
-	 * 		The parent project
+	 *            The parent project
 	 *
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 
 	/**
-	 * Get all {@link RelatedProjectJoin}s where the given Project is the relatedProject property.
+	 * Get all {@link RelatedProjectJoin}s where the given Project is the
+	 * relatedProject property.
 	 *
 	 * @param project
-	 * 		The child project
+	 *            The child project
 	 *
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
@@ -257,17 +273,18 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Remove a {@link RelatedProjectJoin}
 	 *
 	 * @param relatedProject
-	 * 		The {@link RelatedProjectJoin} to remove
+	 *            The {@link RelatedProjectJoin} to remove
 	 */
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
 
 	/**
-	 * Remove a {@link RelatedProjectJoin} for the given project and related project
+	 * Remove a {@link RelatedProjectJoin} for the given project and related
+	 * project
 	 *
 	 * @param subject
-	 * 		the owning project
+	 *            the owning project
 	 * @param relatedProject
-	 * 		The related project
+	 *            The related project
 	 */
 	public void removeRelatedProject(Project subject, Project relatedProject);
 
@@ -275,21 +292,31 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Get the projects that a given sample is on
 	 *
 	 * @param sample
-	 * 		The sample to get projects for
+	 *            The sample to get projects for
 	 *
 	 * @return All the projects a sample exists in
 	 */
 	public List<Join<Project, Sample>> getProjectsForSample(Sample sample);
 
 	/**
+	 * Get list of {@link Project} ids for a given {@link Sample}.
+	 * 
+	 * @param sample
+	 *            the {@link Sample} to get project ids for.
+	 * @return A list of project ids.
+	 */
+	public List<Long> getProjectIdsForSample(Sample sample);
+
+	/**
 	 * Add a {@link ReferenceFile} to a {@link Project}.
 	 *
 	 * @param project
-	 * 		the {@link Project} to add the {@link ReferenceFile} to.
+	 *            the {@link Project} to add the {@link ReferenceFile} to.
 	 * @param referenceFile
-	 * 		the {@link ReferenceFile}.
+	 *            the {@link ReferenceFile}.
 	 *
-	 * @return a {@link Join} representing the relationship between the {@link Project} and {@link ReferenceFile}.
+	 * @return a {@link Join} representing the relationship between the
+	 *         {@link Project} and {@link ReferenceFile}.
 	 */
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile);
 
@@ -302,7 +329,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link ReferenceFile} to remove.
 	 */
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);
-	
+
 	/**
 	 * Get a page of projects eligible to be marked as associated projects for
 	 * the specified project.
@@ -329,13 +356,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * criteria
 	 *
 	 * @param search
-	 * 		{@link String} generic string to search terms for
+	 *            {@link String} generic string to search terms for
 	 * @param page
-	 * 		{@link Integer} current page viewed.
+	 *            {@link Integer} current page viewed.
 	 * @param count
-	 * 		{@link Integer} length of current page.
+	 *            {@link Integer} length of current page.
 	 * @param sort
-	 * 		{@link Sort} Current table sort properties.
+	 *            {@link Sort} Current table sort properties.
 	 *
 	 * @return {@link Page} of {@link Project}
 	 */
@@ -347,13 +374,13 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * criteria.
 	 *
 	 * @param searchValue
-	 * 		{@link String} generic string to search terms for
+	 *            {@link String} generic string to search terms for
 	 * @param currentPage
-	 * 		{@link Integer} current page viewed.
+	 *            {@link Integer} current page viewed.
 	 * @param length
-	 * 		{@link Integer} length of current page.
+	 *            {@link Integer} length of current page.
 	 * @param sort
-	 * 		{@link Sort} Current table sort properties.
+	 *            {@link Sort} Current table sort properties.
 	 *
 	 * @return {@link Page} of {@link Project}
 	 */
@@ -368,14 +395,14 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link Project}
 	 */
 	public List<Project> getProjectsWithRemoteSyncStatus(SyncStatus syncStatus);
-	
+
 	/**
 	 * Get a list of all {@link Project}s from remote sites
 	 * 
 	 * @return a list of {@link Project}
 	 */
 	public List<Project> getRemoteProjects();
-	
+
 	/**
 	 * Get a Set of all {@link Project}s referred to by a collection of
 	 * {@link SequencingObject}s
@@ -385,7 +412,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a set of {@link Project}
 	 */
 	public Set<Project> getProjectsForSequencingObjects(Collection<? extends SequencingObject> sequences);
-	
+
 	/**
 	 * Get all {@link Project}s a given {@link AnalysisSubmission} is shared
 	 * with
@@ -408,21 +435,27 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return a list of {@link Project}s
 	 */
 	public List<Project> getProjectsUsedInAnalysisSubmission(AnalysisSubmission submission);
-	
+
 	/**
 	 * Update select {@link Project} settings
-	 * @param project the project to update
-	 * @param updates a map of fields to update
+	 * 
+	 * @param project
+	 *            the project to update
+	 * @param updates
+	 *            a map of fields to update
 	 * @return the updated {@link Project}
 	 */
-	public Project updateProjectSettings(Project project, Map<String,Object> updates);
+	public Project updateProjectSettings(Project project, Map<String, Object> updates);
 
 	/**
 	 * Create a {@link Project} with the given {@link Sample}s contained
 	 *
-	 * @param project   the {@link Project} to create
-	 * @param sampleIds IDs of the {@link Sample}s
-	 * @param owner     whether to lock {@link Sample} modification from new project
+	 * @param project
+	 *            the {@link Project} to create
+	 * @param sampleIds
+	 *            IDs of the {@link Sample}s
+	 * @param owner
+	 *            whether to lock {@link Sample} modification from new project
 	 * @return the created {@link Project}
 	 */
 	public Project createProjectWithSamples(Project project, List<Long> sampleIds, boolean owner);
@@ -430,17 +463,20 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Get count of projects created in the time period
 	 *
-	 * @param createdDate the minimum date for projects created
+	 * @param createdDate
+	 *            the minimum date for projects created
 	 * @return An {@link Long} count of projects created
 	 */
 	public Long getProjectsCreated(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of projects created in the past n time period
-	 * and grouped by the format provided.
+	 * Get list of {@link GenericStatModel} of projects created in the past n
+	 * time period and grouped by the format provided.
 	 *
-	 * @param createdDate the minimum date for projects created
-	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @param createdDate
+	 *            the minimum date for projects created
+	 * @param statisticTimePeriod
+	 *            the enum containing format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getProjectsCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);

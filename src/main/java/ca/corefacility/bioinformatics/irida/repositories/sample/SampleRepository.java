@@ -28,12 +28,22 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	 * Get the {@link Sample}s associated with a {@link Project}
 	 *
 	 * @param project
-	 *            The {@link Project} 
+	 *            The {@link Project}
 	 * @return the list of associated {@link Sample}s
 	 */
 	@EntityGraph(value = "sampleOnly", type = EntityGraphType.FETCH)
 	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1")
 	public List<Sample> getSamplesForProjectShallow(Project project);
+
+	/**
+	 * Get a list of {@link Sample} ids associated with a {@link Project}.
+	 * 
+	 * @param project
+	 *            the {@link Project}
+	 * @return the list of sample ids
+	 */
+	@Query("select j.sample.id from ProjectSampleJoin j where j.project = ?1")
+	public List<Long> getSampleIdsForProject(Project project);
 
 	/**
 	 * Get a {@link Sample} with the given string sample identifier from a
@@ -82,18 +92,21 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	/**
 	 * Get a count of all {@link Sample}s created within time period
 	 *
-	 * @param createdDate the minimum created date for samples
+	 * @param createdDate
+	 *            the minimum created date for samples
 	 * @return a count of {@link Sample}s
 	 */
 	@Query("select count(s.id) from Sample s where s.createdDate >= ?1")
 	public Long countSamplesCreatedInTimePeriod(Date createdDate);
 
 	/**
-	 * Get a list of {@link GenericStatModel}s for samples created in the past n time period
-	 * and grouped by the format provided.
+	 * Get a list of {@link GenericStatModel}s for samples created in the past n
+	 * time period and grouped by the format provided.
 	 *
-	 * @param createdDate The minimum created date for samples
-	 * @param groupByFormat the format for which to group the results by
+	 * @param createdDate
+	 *            The minimum created date for samples
+	 * @param groupByFormat
+	 *            the format for which to group the results by
 	 * @return A list of {@link GenericStatModel}s
 	 */
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, ?2), count(s.id))"

@@ -40,7 +40,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link Project} to get the {@link Sample} for.
 	 * @param identifier
 	 *            the identifier of the {@link Sample}
-	 * @return the {@link ProjectSampleJoin} describing the relationship between projet and sample
+	 * @return the {@link ProjectSampleJoin} describing the relationship between
+	 *         projet and sample
 	 * @throws EntityNotFoundException
 	 *             if no relationship exists between {@link Sample} and
 	 *             {@link Project}.
@@ -48,48 +49,61 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public ProjectSampleJoin getSampleForProject(Project project, Long identifier) throws EntityNotFoundException;
 
 	/**
-	 * Set the given set of {@link MetadataEntry} on the given {@link Sample} and save it to the database
+	 * Set the given set of {@link MetadataEntry} on the given {@link Sample}
+	 * and save it to the database
 	 *
-	 * @param sample        the {@link Sample} to save metadata for
-	 * @param metadataToSet the metadata to save to the sample
+	 * @param sample
+	 *            the {@link Sample} to save metadata for
+	 * @param metadataToSet
+	 *            the metadata to save to the sample
 	 * @return the updated {@link Sample}
 	 */
 	public Sample updateSampleMetadata(Sample sample, Set<MetadataEntry> metadataToSet);
 
 	/**
-	 * Merge the given set of {@link MetadataEntry} into the given {@link Sample}.  This will replace existing metadata
-	 * that matches and add the new data to the sample.
+	 * Merge the given set of {@link MetadataEntry} into the given
+	 * {@link Sample}. This will replace existing metadata that matches and add
+	 * the new data to the sample.
 	 *
-	 * @param sample        the sample to update
-	 * @param metadataToAdd the metadata to add
+	 * @param sample
+	 *            the sample to update
+	 * @param metadataToAdd
+	 *            the metadata to add
 	 * @return the updated Sample
 	 */
 	public Sample mergeSampleMetadata(Sample sample, Set<MetadataEntry> metadataToAdd);
 
 	/**
-	 * Get the {@link MetadataEntry} set associated with the given {@link Sample}
+	 * Get the {@link MetadataEntry} set associated with the given
+	 * {@link Sample}
 	 *
-	 * @param sample the {@link Sample} to get metadata for
+	 * @param sample
+	 *            the {@link Sample} to get metadata for
 	 * @return the metadata associated with the given sample
 	 */
 	public Set<MetadataEntry> getMetadataForSample(Sample sample);
 
 	/**
-	 * Get a list of {@link Sample} ids that are locked in this project.  This method exists as a faster way of determining ownership than getting the full {@link ProjectSampleJoin}
+	 * Get a list of {@link Sample} ids that are locked in this project. This
+	 * method exists as a faster way of determining ownership than getting the
+	 * full {@link ProjectSampleJoin}
 	 *
-	 * @param project the {@link Project} to check
+	 * @param project
+	 *            the {@link Project} to check
 	 * @return a List of locked sample IDs.
 	 */
 	public List<Long> getLockedSamplesInProject(Project project);
 
 	/**
-	 * Get the metadata collections for an entire project.  This will return a Map of {@link Sample} ID with a Set of the {@link MetadataEntry}s
+	 * Get the metadata collections for an entire project. This will return a
+	 * Map of {@link Sample} ID with a Set of the {@link MetadataEntry}s
 	 *
-	 * @param project the {@link Project} to get metadata for
+	 * @param project
+	 *            the {@link Project} to get metadata for
 	 * @return a map of metadata
 	 */
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
-	
+
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
 	 * 
@@ -110,22 +124,35 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
 
 	/**
-	 * Get a shallow listing of the {@link Sample}s in a {@link Project}.  Note: This method will not return any
-	 * metadata or associated objects.
+	 * Get a shallow listing of the {@link Sample}s in a {@link Project}. Note:
+	 * This method will not return any metadata or associated objects.
 	 *
-	 * @param project The {@link Project} to get samples for
+	 * @param project
+	 *            The {@link Project} to get samples for
 	 * @return a List of {@link Sample}
 	 */
 	public List<Sample> getSamplesForProjectShallow(Project project);
 
 	/**
+	 * Get a {@link List} of {@link Sample} ids in a {@link Project}.
+	 * 
+	 * @param project
+	 *            The {@link Project} to get sample ids for.
+	 * @return a List of {@link Sample} ids.
+	 */
+	public List<Long> getSampleIdsForProject(Project project);
+
+	/**
 	 * Get a list of {@link Sample} in a {@link Project} given some Sample ids.
-	 * @param project {@link Project} to get samples for.
-	 * @param sampleIds List of {@link Sample} ids.
+	 * 
+	 * @param project
+	 *            {@link Project} to get samples for.
+	 * @param sampleIds
+	 *            List of {@link Sample} ids.
 	 * @return List of Samples from a {@link Project}.
 	 */
 	List<Sample> getSamplesInProject(Project project, List<Long> sampleIds);
-		
+
 	/**
 	 * Get a list of the organism fields stored for all {@link Sample}s in a
 	 * {@link Project}
@@ -135,7 +162,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a list of sample organisms
 	 */
 	public List<String> getSampleOrganismsForProject(Project project);
-	
+
 	/**
 	 * Get the number of {@link Sample}s for a given {@link Project}. This
 	 * method will be faster than getSamplesForProjects
@@ -177,7 +204,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return A {@link Sample} with the given ID
 	 */
 	public Sample getSampleBySampleName(Project project, String sampleName);
-	
+
 	/**
 	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will
 	 * delete the {@link SampleSequencingObjectJoin} object
@@ -219,9 +246,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             If there was an error getting FastQC analyses for a sequence
 	 *             file.
 	 */
-	public Long getTotalBasesForSample(Sample sample)
-			throws SequenceFileAnalysisException;
-
+	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException;
 
 	/**
 	 * Given the length of a reference file, estimate the total coverage for
@@ -237,12 +262,12 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             If there was an error getting FastQC analyses for a sequence
 	 *             file.
 	 */
-	public Double estimateCoverageForSample(Sample sample,
-			long referenceFileLength) throws SequenceFileAnalysisException;
-	
+	public Double estimateCoverageForSample(Sample sample, long referenceFileLength)
+			throws SequenceFileAnalysisException;
+
 	/**
-	 * Given a {@link ReferenceFile}, estimate the total coverage for
-	 * this sample.
+	 * Given a {@link ReferenceFile}, estimate the total coverage for this
+	 * sample.
 	 * 
 	 * @param sample
 	 *            The sample to estimate coverage for.
@@ -254,38 +279,42 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             If there was an error getting FastQC analyses for a sequence
 	 *             file.
 	 */
-	public Double estimateCoverageForSample(Sample sample,
-			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
+	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
+			throws SequenceFileAnalysisException;
 
 	/**
-	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.
+	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or
+	 * more projects based on filtering criteria.
 	 *
 	 * @param projects
-	 * 		{@link List} of {@link Project} the {@link Sample}s must be found within.
+	 *            {@link List} of {@link Project} the {@link Sample}s must be
+	 *            found within.
 	 * @param sampleNames
-	 * 		{@link List} of {@link String} of Sample names to search
+	 *            {@link List} of {@link String} of Sample names to search
 	 * @param sampleName
-	 * 	    {@link String} exact name of a specific {@link Sample}
+	 *            {@link String} exact name of a specific {@link Sample}
 	 * @param searchTerm
-	 * 		{@link String} search term to search for.
+	 *            {@link String} search term to search for.
 	 * @param organism
-	 * 		{@link String} organism ter to search for.
+	 *            {@link String} organism ter to search for.
 	 * @param minDate
-	 * 		{@link Date} minimum date the sample was modified.
+	 *            {@link Date} minimum date the sample was modified.
 	 * @param maxDate
-	 * 		{@link Date} maximum date the sample was modified.
+	 *            {@link Date} maximum date the sample was modified.
 	 * @param currentPage
-	 * 		{@link Integer} the current page the table is on.
+	 *            {@link Integer} the current page the table is on.
 	 * @param pageSize
-	 * 		{@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
+	 *            {@link Integer} the number of {@link ProjectSampleJoin} in the
+	 *            {@link Page}.
 	 * @param sort
-	 * 		{@link Sort} chained sort definitions to sort page by.
+	 *            {@link Sort} chained sort definitions to sort page by.
 	 *
-	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and sorted.
+	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and
+	 *         sorted.
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm, String organism,
-			Date minDate, Date maxDate, int currentPage, int pageSize, Sort sort);
+			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
+			int pageSize, Sort sort);
 
 	/**
 	 * Get a list of all {@link Sample}s associated with a given
@@ -296,7 +325,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a Collection of {@link Sample}
 	 */
 	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission);
-	
+
 	/**
 	 * Find all the {@link QCEntry} associated with {@link SequencingObject}s in
 	 * a given {@link Sample}
@@ -343,17 +372,20 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	/**
 	 * Get count of samples created in the time period
 	 *
-	 * @param createdDate the minimum date for samples created
+	 * @param createdDate
+	 *            the minimum date for samples created
 	 * @return An {@link Long} count of samples created
 	 */
 	public Long getSamplesCreated(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past n time period
-	 * grouped by the format provided.
+	 * Get list of {@link GenericStatModel} of samples created in the past n
+	 * time period grouped by the format provided.
 	 *
-	 * @param createdDate the minimum date for samples created
-	 * @param statisticTimePeriod the enum containing format for which to group the results by
+	 * @param createdDate
+	 *            the minimum date for samples created
+	 * @param statisticTimePeriod
+	 *            the enum containing format for which to group the results by
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
