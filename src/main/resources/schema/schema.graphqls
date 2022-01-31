@@ -7,6 +7,43 @@ type Query {
     viewer : User!
 }
 
+# A project contains samples.
+type Project {
+    id: ID!
+    name: String!
+    createdDate: String!
+    modifiedDate: String
+    projectDescription: String
+    remoteUrl: String
+    users: [User!]
+    samples: [Sample!]
+    organism: String
+    genomeSize: Int
+    minimumCoverage: Int
+    maximumCoverage: Int
+    syncFrequency: String
+}
+
+# A sample contains metadata and sequence files.
+type Sample {
+    id: ID!
+    createdDate: String!
+    modifiedDate: String!
+    sampleName: String!
+    description: String
+    organism: String
+    isolate: String
+    strain: String
+    collectedBy: String
+    collectionDate: String
+    geographicLocationName: String
+    isolationSource: String
+    latitude: String
+    longitude: String
+    projects: [Project!]
+}
+
+# A user is an individuals's account on IRIDA that owns or is a member of projects and can make new content.
 type User {
     id: ID!
     createdDate: String!
@@ -15,4 +52,6 @@ type User {
     firstName: String!
     lastName: String!
     phoneNumber: String!
+    # A list of projects that the user is a member of.
+    projects: [Project!]
 }
