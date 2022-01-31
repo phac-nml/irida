@@ -18,20 +18,20 @@ import ca.corefacility.bioinformatics.irida.graphql.datafetchers.ViewerDatafetch
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-@SpringBootTest(classes = {DgsAutoConfiguration.class, ViewerDatafetcher.class})
+@SpringBootTest(classes = { DgsAutoConfiguration.class, ViewerDatafetcher.class })
 public class ViewerDatafetcherTest {
-    
-    @Autowired
-    private DgsQueryExecutor dgsQueryExecutor;
 
-    @MockBean
-    private UserService userService;
+	@Autowired
+	private DgsQueryExecutor dgsQueryExecutor;
 
-    @Test
-    public void viewer() {
+	@MockBean
+	private UserService userService;
+
+	@Test
+	public void viewer() {
 		String username = "jdoe";
 		User u = new User();
-        u.setId(1L);
+		u.setId(1L);
 		u.setUsername(username);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken(u, null);
@@ -39,8 +39,8 @@ public class ViewerDatafetcherTest {
 
 		when(userService.getUserByUsername(username)).thenReturn(u);
 
-        String queriedUsername = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { viewer { id username }}", "data.viewer.username");
-        assertEquals(username, queriedUsername);
-    }
+		String queriedUsername = dgsQueryExecutor.executeAndExtractJsonPath(" { viewer { id username }}",
+				"data.viewer.username");
+		assertEquals(username, queriedUsername);
+	}
 }
