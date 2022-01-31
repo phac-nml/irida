@@ -93,6 +93,7 @@ export function ShareMetadata() {
       title: i18n("ShareMetadata.field"),
       key: "label",
       dataIndex: "label",
+      render: (label, field) => <span className="t-field-label">{label}</span>,
     },
     {
       title: i18n("ShareMetadata.current"),
@@ -135,10 +136,16 @@ export function ShareMetadata() {
       width: 100,
       render(restriction, item) {
         if (targetExistingFields === undefined || item.target) return undefined;
-        return <Tag>{i18n("ShareMadata.newField")}</Tag>;
+        return <Tag>{i18n("ShareMetadata.newField")}</Tag>;
       },
     },
   ];
 
-  return <Table columns={columns} dataSource={metadataRestrictions} />;
+  return (
+    <Table
+      className="t-meta-table"
+      columns={columns}
+      dataSource={metadataRestrictions}
+    />
+  );
 }

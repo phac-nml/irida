@@ -192,13 +192,18 @@ function ShareApp() {
                           }}
                         >
                           <Button
+                            className="t-share-previous"
                             disabled={prevDisabled}
                             onClick={previousStep}
                           >
                             {i18n("ShareLayout.previous")}
                           </Button>
                           {step === steps.length - 1 ? (
-                            <Button onClick={submit} type="primary">
+                            <Button
+                              className="t-share-button"
+                              onClick={submit}
+                              type="primary"
+                            >
                               {i18n("ShareButton.button")}
                             </Button>
                           ) : (

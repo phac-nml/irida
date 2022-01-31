@@ -62,6 +62,9 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-success-title")
 	private WebElement successTitle;
 
+	@FindBy(className = "t-field-label")
+	private List<WebElement> metadataFieldLabels;
+
 	public static ShareSamplesPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ShareSamplesPage.class);
 	}
@@ -87,8 +90,12 @@ public class ShareSamplesPage {
 		return shareButton.isEnabled();
 	}
 
-	public boolean isNextButtonDisabled() {
+	public boolean isNextButtonEnabled() {
 		return nextButton.isEnabled();
+	}
+
+	public void gotToNextStep() {
+		nextButton.click();
 	}
 
 	public boolean isPreviousButtonEnabled() {
@@ -132,10 +139,14 @@ public class ShareSamplesPage {
 	}
 
 	public boolean isSomeSamplesWarningDisplayed() {
-        return someSamplesWarning.isDisplayed();
-    }
+		return someSamplesWarning.isDisplayed();
+	}
 
 	public String getSuccessTitle() {
 		return successTitle.getText();
+	}
+
+	public int getNumberOfSharedMetadataEntries() {
+		return metadataFieldLabels.size();
 	}
 }
