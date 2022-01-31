@@ -7,6 +7,10 @@ type Query {
     viewer : User!
 }
 
+type Mutation {
+	createProject(input: ProjectInput) : Project
+}
+
 # A project contains samples.
 type Project {
     id: ID!
@@ -21,6 +25,12 @@ type Project {
     minimumCoverage: Int
     maximumCoverage: Int
     syncFrequency: String
+}
+
+input ProjectInput {
+	name: String!
+	projectDescription: String
+	organism: String
 }
 
 # A sample contains metadata and sequence files.
@@ -42,7 +52,7 @@ type Sample {
     projects: [Project!]
 }
 
-# A user is an individuals's account on IRIDA that owns or is a member of projects and can make new content.
+# A user is an individuals account on IRIDA that owns or is a member of projects and can make new content.
 type User {
     id: ID!
     createdDate: String!
