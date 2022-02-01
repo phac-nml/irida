@@ -60,7 +60,9 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 				"Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project4");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Share button should be enabled after selecting a project");
+		shareSamplesPage.gotToNextStep();
 		shareSamplesPage.selectMoveCheckbox();
+		shareSamplesPage.gotToNextStep();
 		shareSamplesPage.submitShareRequest();
 		assertTrue(shareSamplesPage.isSuccessResultDisplayed(), "Success result should be displayed");
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Moved 1 Sample");
@@ -73,7 +75,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		shareSamplesPage.searchForProject("project2");
 		shareSamplesPage.gotToNextStep();
 		assertEquals(4, shareSamplesPage.getNumberOfSamplesDisplayed(), "Should be 4 samples displayed");
-
+		shareSamplesPage.gotToNextStep();
 		shareSamplesPage.submitShareRequest();
 		assertTrue(shareSamplesPage.isSuccessResultDisplayed(), "Success result should be displayed");
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Shared Samples");
