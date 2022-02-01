@@ -1,4 +1,4 @@
-package ca.corefacility.graphql.datafetchers;
+package ca.corefacility.bioinformatics.irida.graphql.datafetchers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -14,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import ca.corefacility.bioinformatics.irida.graphql.datafetchers.ViewerDatafetcher;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
