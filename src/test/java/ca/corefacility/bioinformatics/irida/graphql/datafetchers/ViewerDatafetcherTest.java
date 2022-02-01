@@ -27,7 +27,7 @@ public class ViewerDatafetcherTest {
 	private UserService userService;
 
 	@Test
-	public void viewer() {
+	public void testViewer() {
 		String username = "jdoe";
 		User u = new User();
 		u.setId(1L);
