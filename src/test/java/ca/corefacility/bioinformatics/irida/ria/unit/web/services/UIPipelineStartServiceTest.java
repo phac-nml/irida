@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineStartService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -46,7 +45,6 @@ public class UIPipelineStartServiceTest {
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionService submissionService;
 	private ProjectService projectService;
-	private UICartService cartService;
 	private WorkflowNamedParametersService namedParametersService;
 	private MessageSource messageSource;
 
@@ -56,12 +54,11 @@ public class UIPipelineStartServiceTest {
 		sequencingObjectService = Mockito.mock(SequencingObjectService.class);
 		submissionService = Mockito.mock(AnalysisSubmissionService.class);
 		projectService = Mockito.mock(ProjectService.class);
-		cartService = Mockito.mock(UICartService.class);
 		namedParametersService = Mockito.mock(WorkflowNamedParametersService.class);
 		messageSource = Mockito.mock(MessageSource.class);
 
 		service = new UIPipelineStartService(workflowsService, sequencingObjectService, submissionService,
-				projectService, cartService, namedParametersService, messageSource);
+				projectService, namedParametersService, messageSource);
 
 		IridaWorkflowDescription description = mock(IridaWorkflowDescription.class);
 		when(description.getAnalysisType()).thenReturn(ANALYSIS_TYPE);
@@ -105,22 +102,19 @@ public class UIPipelineStartServiceTest {
 		};
 
 		Collection<AnalysisSubmission> submissions = ImmutableList.of(AnalysisSubmission.builder(WORKFLOW_ID)
-				.name("Wonder Woman")
-				.inputFiles(ImmutableSet.of(sequencingObject))
-				.build());
+				.name("Wonder Woman").inputFiles(ImmutableSet.of(sequencingObject)).build());
 		when(submissionService.createSingleSampleSubmission(workflow, request.getReference(), ImmutableList.of(),
 				ImmutableList.of(), request.getParameters(), null, request.getName(), request.getDescription(),
-				projects, request.isUpdateSamples(), request.sendEmailOnCompletion(),
-				request.sendEmailOnError())).thenReturn(submissions);
+				projects, request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError()))
+						.thenReturn(submissions);
 
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("FOOBAR");
 		when(submissionService.createSingleSampleSubmissionTemplate(workflow, null, request.getParameters(), null,
 				request.getName(), "FOOBAR", request.getDescription(), project, request.isUpdateSamples(),
-				request.sendEmailOnCompletion(), request.sendEmailOnError()))
-				.thenReturn(template);
+				request.sendEmailOnCompletion(), request.sendEmailOnError())).thenReturn(template);
 
 		/*
-		Test launching a pipeline
+		 * Test launching a pipeline
 		 */
 		service.start(WORKFLOW_ID, request, Locale.CANADA);
 		verify(workflowsService, timeout(1)).getIridaWorkflow(WORKFLOW_ID);
@@ -131,13 +125,13 @@ public class UIPipelineStartServiceTest {
 				request.sendEmailOnCompletion(), request.sendEmailOnError());
 
 		/*
-		Test automated pipelines
+		 * Test automated pipelines
 		 */
 		request.setAutomatedProjectId(PROJECT_ID);
 		service.start(WORKFLOW_ID, request, Locale.CANADA);
 		verify(projectService, times(1)).read(1L);
-		verify(submissionService, times(1)).createSingleSampleSubmissionTemplate(workflow, null, request.getParameters(), null,
-				request.getName(), "FOOBAR", request.getDescription(), project, request.isUpdateSamples(),
-				request.sendEmailOnCompletion(), request.sendEmailOnError());
+		verify(submissionService, times(1)).createSingleSampleSubmissionTemplate(workflow, null,
+				request.getParameters(), null, request.getName(), "FOOBAR", request.getDescription(), project,
+				request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
 	}
 }

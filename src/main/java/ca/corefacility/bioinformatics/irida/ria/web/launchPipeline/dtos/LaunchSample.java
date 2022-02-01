@@ -14,7 +14,7 @@ public class LaunchSample {
 	private final Project project;
 
 	/*
-	This is for the type of files that are allowed in the pipeline.
+	 * This is for the type of files that are allowed in the pipeline.
 	 */
 	private List<SequencingObject> files;
 
@@ -47,7 +47,7 @@ public class LaunchSample {
 	/**
 	 * Pair down a project to exactly what is needed in the UI.
 	 */
-	private static class Project {
+	static class Project {
 		private final Long id;
 		private final String label;
 

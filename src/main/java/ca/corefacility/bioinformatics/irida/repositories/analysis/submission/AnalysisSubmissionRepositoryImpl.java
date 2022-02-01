@@ -23,7 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampl
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 /**
- * Implementation of {@link AnalysisSubmissionRepositoryCustom} with methods using native SQL queries to get {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info for {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.user.User}
+ * Implementation of {@link AnalysisSubmissionRepositoryCustom} with methods
+ * using native SQL queries to get
+ * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile}
+ * info for {@link ca.corefacility.bioinformatics.irida.model.project.Project}
+ * and {@link ca.corefacility.bioinformatics.irida.model.user.User}
  */
 @Repository
 public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepositoryCustom {
@@ -34,7 +38,8 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 	private PSAOIRowMapper psaoiRowMapper;
 
 	@Autowired
-	public AnalysisSubmissionRepositoryImpl(DataSource dataSource, @Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
+	public AnalysisSubmissionRepositoryImpl(DataSource dataSource,
+			@Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
 		this.dataSource = dataSource;
 		psaoiRowMapper = new PSAOIRowMapper(outputFileBaseDirectory);
 	}
@@ -43,7 +48,6 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId,
 			Set<UUID> workflowIds) {
 		// @formatter:off
@@ -79,9 +83,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		// need to explicitly convert UUIDs to String
-		final List<String> workflowUUIDStrings = workflowIds.stream()
-				.map(UUID::toString)
-				.collect(Collectors.toList());
+		final List<String> workflowUUIDStrings = workflowIds.stream().map(UUID::toString).collect(Collectors.toList());
 		parameters.addValue("projectId", projectId);
 		parameters.addValue("workflowIds", workflowUUIDStrings);
 		logger.trace("Getting all shared analysis output file info for project id=" + projectId);
@@ -95,7 +97,6 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
 			Set<UUID> workflowIds) {
 		// @formatter:off
@@ -131,9 +132,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("projectId", projectId);
-		final List<String> workflowUUIDStrings = workflowIds.stream()
-				.map(UUID::toString)
-				.collect(Collectors.toList());
+		final List<String> workflowUUIDStrings = workflowIds.stream().map(UUID::toString).collect(Collectors.toList());
 		parameters.addValue("workflowIds", workflowUUIDStrings);
 		logger.trace("Getting all automated analysis output file info for project id=" + projectId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
@@ -146,7 +145,6 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Long userId) {
 		// @formatter:off
 		String query =
@@ -184,7 +182,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 	class PSAOIRowMapper extends BeanPropertyRowMapper<ProjectSampleAnalysisOutputInfo> {
 
 		private Path outputFileBaseDirectory;
-		
+
 		public PSAOIRowMapper(Path outputFileBaseDirectory) {
 			super(ProjectSampleAnalysisOutputInfo.class);
 			this.outputFileBaseDirectory = outputFileBaseDirectory;
@@ -193,12 +191,13 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		@Override
 		public ProjectSampleAnalysisOutputInfo mapRow(ResultSet rs, int rowNumber) throws SQLException {
 			ProjectSampleAnalysisOutputInfo object = super.mapRow(rs, rowNumber);
-			
+
 			Path absPath = outputFileBaseDirectory.resolve(object.getFilePath());
-			object.setFilename(FileUtilities.getUniqueFilename(absPath, object.getSampleName(), object.getSampleId(), object.getAnalysisSubmissionId()));
+			object.setFilename(FileUtilities.getUniqueFilename(absPath, object.getSampleName(), object.getSampleId(),
+					object.getAnalysisSubmissionId()));
 
 			return object;
 		}
-		
+
 	}
 }
