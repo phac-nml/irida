@@ -73,6 +73,7 @@ public abstract class ModifyProjectPermission extends BasePermission<Project,Lon
 			if (group.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
 				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p
 						+ "] by group membership in [" + group.getLabel() + "]");
+				return true;
 			}
 		}
 
