@@ -3,19 +3,24 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples;
 import java.io.IOException;
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.HandlerMapping;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -24,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
+import com.google.common.collect.Lists;
 
 /**
  * Controller for asynchronous requests for a {@link Sample}
@@ -207,7 +213,7 @@ public class SamplesAjaxController {
 	 */
 	@GetMapping("/{id}/updated-sequencing-objects")
 	public ResponseEntity<SampleFiles> getUpdatedSequencingObjects(@PathVariable Long id,
-			@RequestParam(value = "sequencingObjectIds[]") List<Long> sequencingObjectIds,
+			@RequestParam(value = "sequencingObjectIds") List<Long> sequencingObjectIds,
 			@RequestParam(required = false) Long projectId) {
 		return ResponseEntity.ok(uiSampleService.getUpdatedSequencingObjects(id, sequencingObjectIds, projectId));
 	}
@@ -277,5 +283,27 @@ public class SamplesAjaxController {
 		}
 	}
 
+	/**
+	 * Concatenate a collection of {@link SequencingObject}s
+	 *
+	 * @param sampleId          the id of the {@link Sample} to concatenate in
+	 * @param sequenceObjectIds the {@link SequencingObject} ids
+	 * @param newFileName         base of the new filename to create
+	 * @param removeOriginals   boolean whether to remove the original files
+
+	 * @return {@link ResponseEntity} with the new concatenated sequencing object
+	 */
+	@PostMapping(value = "/{sampleId}/files/concatenate")
+	public ResponseEntity<List<SampleSequencingObjectFileModel>> concatenateSequenceFiles(@PathVariable Long sampleId,
+			@RequestParam(name = "sequencingObjectIds") Set<Long> sequenceObjectIds, @RequestParam(name = "newFileName") String newFileName,
+			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals) {
+		try {
+			return ResponseEntity.ok(
+					uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName, removeOriginals));
+		} catch (ConcatenateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(null);
+		}
+	}
 
 }

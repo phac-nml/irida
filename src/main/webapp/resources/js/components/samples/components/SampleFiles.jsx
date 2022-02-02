@@ -1,7 +1,8 @@
 import React from "react";
-import { Empty, notification, Space } from "antd";
+import { Button, Empty, notification, Space } from "antd";
 import { IconLoading } from "../../icons/Icons";
 import { WarningAlert } from "../../alerts";
+import { SampleFileConcatenate } from "./SampleFileContenate";
 
 import { DragUpload } from "../../files/DragUpload";
 import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
@@ -32,7 +33,9 @@ export function SampleFiles() {
   const { sample, projectId, modifiable } = useSelector(
     (state) => state.sampleReducer
   );
-  const { files, loading } = useSelector((state) => state.sampleFilesReducer);
+  const { files, loading, concatenateSelected } = useSelector(
+    (state) => state.sampleFilesReducer
+  );
   const dispatch = useDispatch();
 
   const [seqFileProgress, setSeqFileProgress] = React.useState(0);
@@ -268,6 +271,11 @@ export function SampleFiles() {
           options={sampleFileUploadOptions}
         />
       ) : null}
+      {concatenateSelected?.length >= 2 && (
+        <SampleFileConcatenate>
+          <Button>Concatenate</Button>
+        </SampleFileConcatenate>
+      )}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
         <div>
           <div>

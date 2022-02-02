@@ -48,6 +48,27 @@ export const addToFast5Files = createAction(
   })
 );
 
+export const addToConcatenateSelected = createAction(
+  `sampleFiles/addToConcatenateSelected`,
+  ({ seqObject }) => ({
+    payload: { seqObject },
+  })
+);
+
+export const removeFromConcatenateSelected = createAction(
+  `sampleFiles/removeFromConcatenateSelected`,
+  ({ seqObject }) => ({
+    payload: { seqObject },
+  })
+);
+
+export const resetConcatenateSelected = createAction(
+  `sampleFiles/resetConcatenateSelected`,
+  ({ resetSelected }) => ({
+    payload: { resetSelected },
+  })
+);
+
 export const fetchUpdatedSeqObjectsDelay = 30000; // 30 seconds
 
 /**
@@ -57,6 +78,7 @@ const initialState = (() => {
   return {
     files: {},
     loading: true,
+    concatenateSelected: [],
   };
 })();
 
@@ -225,6 +247,23 @@ const sampleFilesSlice = createSlice({
           }
         }
       }
+    });
+
+    builder.addCase(addToConcatenateSelected, (state, action) => {
+      state.concatenateSelected = [
+        ...state.concatenateSelected,
+        action.payload.seqObject,
+      ];
+    });
+
+    builder.addCase(removeFromConcatenateSelected, (state, action) => {
+      state.concatenateSelected = state.concatenateSelected.filter(
+        (seqObj) => seqObj.identifier !== action.payload.seqObject.identifier
+      );
+    });
+
+    builder.addCase(resetConcatenateSelected, (state, action) => {
+      state.concatenateSelected = action.payload.resetSelected;
     });
   },
 });

@@ -1,8 +1,14 @@
 import React from "react";
 import { CalendarDate } from "../CalendarDate";
-import { Button, Popconfirm } from "antd";
+import { Button, Checkbox, Popconfirm } from "antd";
 import { IconRemove } from "../icons/Icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SPACE_XS } from "../../styles/spacing";
+import {
+  addToConcatenateSelected,
+  removeFromConcatenateSelected,
+} from "../samples/sampleFilesSlice";
+
 /**
  * React component to display paired end file details
  *
@@ -18,8 +24,18 @@ export function SequenceFileHeader({
   fileObjectId,
   type,
   removeSampleFiles = () => {},
+  displayCheckbox,
 }) {
   const { modifiable } = useSelector((state) => state.sampleReducer);
+  const dispatch = useDispatch();
+
+  const updateSelected = (e, file) => {
+    if (e.target.checked) {
+      dispatch(addToConcatenateSelected({ seqObject: file }));
+    } else {
+      dispatch(removeFromConcatenateSelected({ seqObject: file }));
+    }
+  };
 
   return (
     <div
@@ -29,7 +45,15 @@ export function SequenceFileHeader({
         width: `100%`,
       }}
     >
-      <CalendarDate date={file.createdDate} />
+      <div>
+        {modifiable && displayCheckbox ? (
+          <Checkbox
+            style={{ marginRight: SPACE_XS }}
+            onChange={(e) => updateSelected(e, file)}
+          />
+        ) : null}
+        <CalendarDate date={file.createdDate} />
+      </div>
       {modifiable ? (
         <Popconfirm
           placement="left"

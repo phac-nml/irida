@@ -23,6 +23,7 @@ export function PairedFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
+  displayCheckbox,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -61,6 +62,7 @@ export function PairedFileRenderer({
           fileObjectId={pair.fileInfo.identifier}
           type={pair.fileType}
           removeSampleFiles={removeSampleFiles}
+          displayCheckbox={displayCheckbox}
         />
       }
       layout={`vertical`}

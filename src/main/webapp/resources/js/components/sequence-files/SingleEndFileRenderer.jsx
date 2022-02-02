@@ -27,6 +27,7 @@ export function SingleEndFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
+  displayCheckbox,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -41,6 +42,7 @@ export function SingleEndFileRenderer({
             removeSampleFiles={removeSampleFiles}
             fileObjectId={file.fileInfo.identifier}
             type={file.fileType}
+            displayCheckbox={displayCheckbox}
           />
         </List.Item>,
         <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>

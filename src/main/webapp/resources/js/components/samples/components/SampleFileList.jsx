@@ -185,6 +185,7 @@ export function SampleFileList() {
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
               qcEntryTranslations={qcEntryTranslations}
+              displayCheckbox={files.singles?.length >= 2}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -199,6 +200,7 @@ export function SampleFileList() {
                 removeSampleFiles={removeSampleFiles}
                 getProcessingState={getProcessingStateTag}
                 qcEntryTranslations={qcEntryTranslations}
+                displayCheckbox={files.paired?.length >= 2}
               />
             ))}
           </SequenceFileTypeRenderer>
@@ -212,6 +214,7 @@ export function SampleFileList() {
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
               qcEntryTranslations={qcEntryTranslations}
+              displayCheckbox={false}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -224,6 +227,7 @@ export function SampleFileList() {
               downloadAssemblyFile={downloadAssemblyFile}
               removeSampleFiles={removeSampleFiles}
               qcEntryTranslations={qcEntryTranslations}
+              displayCheckbox={false}
             />
           </SequenceFileTypeRenderer>
         )}
