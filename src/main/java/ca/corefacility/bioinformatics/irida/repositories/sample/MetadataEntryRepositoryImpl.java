@@ -52,7 +52,7 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		List<MetadataTemplateField> fields;
 		if (!fieldIds.isEmpty()) {
 			// next load the full fields
-			String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
+			String queryString = "SELECT f from MetadataTemplateField f WHERE f.id IN :fields";
 			TypedQuery<MetadataTemplateField> nativeQuery = entityManager.createQuery(queryString,
 					MetadataTemplateField.class);
 			nativeQuery.setParameter("fields", fieldIds);
