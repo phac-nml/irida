@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
  * @function remove files from sample function
  * @function get file processing state function
  * @param qcEntryTranslationKeys Translation keys for qc entries
+ * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @returns {JSX.Element}
  * @constructor
  */
@@ -23,7 +24,7 @@ export function PairedFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
-  displayCheckbox,
+  displayConcatenationCheckbox,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -62,7 +63,7 @@ export function PairedFileRenderer({
           fileObjectId={pair.fileInfo.identifier}
           type={pair.fileType}
           removeSampleFiles={removeSampleFiles}
-          displayCheckbox={displayCheckbox}
+          displayConcatenationCheckbox={displayConcatenationCheckbox}
         />
       }
       layout={`vertical`}

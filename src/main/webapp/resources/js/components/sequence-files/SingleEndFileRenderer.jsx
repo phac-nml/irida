@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
  * @function remove files from sample function
  * @function get file processing state function
  * @param qcEntryTranslationKeys
+ * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @returns {JSX.Element}
  * @constructor
  */
@@ -27,7 +28,7 @@ export function SingleEndFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
-  displayCheckbox,
+  displayConcatenationCheckbox,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -42,7 +43,7 @@ export function SingleEndFileRenderer({
             removeSampleFiles={removeSampleFiles}
             fileObjectId={file.fileInfo.identifier}
             type={file.fileType}
-            displayCheckbox={displayCheckbox}
+            displayConcatenationCheckbox={displayConcatenationCheckbox}
           />
         </List.Item>,
         <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>

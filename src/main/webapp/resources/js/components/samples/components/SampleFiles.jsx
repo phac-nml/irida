@@ -271,11 +271,11 @@ export function SampleFiles() {
           options={sampleFileUploadOptions}
         />
       ) : null}
-      {concatenateSelected?.length >= 2 && (
+      {concatenateSelected?.length >= 2 && modifiable ? (
         <SampleFileConcatenate>
-          <Button>Concatenate</Button>
+          <Button>{i18n("SampleFiles.concatenate")}</Button>
         </SampleFileConcatenate>
-      )}
+      ) : null}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
         <div>
           <div>

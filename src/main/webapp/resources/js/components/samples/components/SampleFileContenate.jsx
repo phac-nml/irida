@@ -1,10 +1,11 @@
 import {
+  Avatar,
   Form,
   Input,
   List,
   Modal,
   notification,
-  Select,
+  Radio,
   Space,
   Typography,
 } from "antd";
@@ -15,7 +16,10 @@ import { useConcatenateSequencingObjectsMutation } from "../../../apis/samples/s
 import {
   addToSequenceFiles,
   removeFileObjectFromSample,
+  resetConcatenateSelected,
 } from "../sampleFilesSlice";
+import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
+
 const { Title } = Typography;
 
 /**
@@ -51,12 +55,11 @@ export function SampleFileConcatenate({ children }) {
         newFileName: values.new_file_name,
         removeOriginals: values.remove_original_files,
       })
-        .then((response) => {
-          let message = "Successfully concatenated files";
+        .then(({ data }) => {
+          let message = i18n("SampleFilesConcatenate.concatenationSuccess");
 
           if (values.remove_original_files) {
-            message =
-              "Successfully concatenated files and removed the originals.";
+            message = i18n("SampleFilesConcatenate.concatenationRemoveSuccess");
             sequencingObjectIds.map((seqObjId) => {
               dispatch(
                 removeFileObjectFromSample({
@@ -66,66 +69,133 @@ export function SampleFileConcatenate({ children }) {
               );
             });
           }
-          // clear selected items. Might need to move concatenateSelected array to sampleSlice from sampleFileSlice
 
-          dispatch(addToSequenceFiles({ sequenceFiles: response.data }));
+          dispatch(resetConcatenateSelected({}));
+          dispatch(addToSequenceFiles({ sequenceFiles: data }));
           notification.success({ message });
           form.resetFields();
           setVisible(false);
         })
         .catch((error) => {
           notification.error({
-            message: "There was an error concatenating the files",
+            message: error,
           });
         });
     });
   };
 
+  /*
+   Check if files selected for concatenation
+   are of the same type or not
+   */
+  const validateFileTypes = () => {
+    const numFilesSelected = concatenateSelected.length;
+    let pairedCount = 0;
+    let singleEndCount = 0;
+
+    concatenateSelected.map((selected) => {
+      if (selected.files !== undefined) {
+        pairedCount++;
+      } else if (selected.sequenceFile !== undefined) {
+        singleEndCount++;
+      }
+    });
+
+    if (pairedCount === numFilesSelected) return true;
+    if (singleEndCount === numFilesSelected) return true;
+    return false;
+  };
+
   return (
     <>
       {React.cloneElement(children, {
-        onClick: () => setVisible(true),
+        onClick: () => {
+          let fileTypesValid = validateFileTypes();
+          if (fileTypesValid) {
+            setVisible(true);
+          } else {
+            notification.warning({
+              message: i18n("SampleFilesConcatenate.mixedFileTypesWarning"),
+              duration: 10,
+            });
+            dispatch(resetConcatenateSelected({}));
+          }
+        },
       })}
       {visible ? (
         <Modal
           className="t-concatenate-confirm"
-          onCancel={() => setVisible(false)}
+          onCancel={() => {
+            dispatch(resetConcatenateSelected({}));
+            setVisible(false);
+          }}
           visible={visible}
           onOk={concatenateFiles}
-          okText="Cocatenate"
-          cancelText="Cancel"
+          okText={i18n("SampleFilesConcatenate.okText")}
+          cancelText={i18n("SampleFilesConcatenate.cancelText")}
         >
-          <Space size="small" direction="vertical" style={{ width: `100%` }}>
-            <Title level={4}>
-              Concatenate the following sequencing objects
-            </Title>
+          <Space size="large" direction="vertical" style={{ width: `100%` }}>
+            <Title level={4}>{i18n("SampleFilesConcatenate.title")}</Title>
 
             <List
               bordered
               layout={`vertical`}
               dataSource={concatenateSelected}
               renderItem={(seqObject) => {
-                return (
-                  <List.Item
-                    key={`seqObject-${seqObject.identifier}`}
-                    style={{ width: `100%` }}
-                  >
-                    <List.Item.Meta title={seqObject.label} />
-                  </List.Item>
-                );
+                if (seqObject.files !== undefined) {
+                  return (
+                    <>
+                      <List.Item
+                        key={`seqObject-${seqObject.forwardSequenceFile.identifier}`}
+                        style={{ width: `100%` }}
+                      >
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar size={`small`} icon={<IconArrowRight />} />
+                          }
+                          title={seqObject.forwardSequenceFile.label}
+                        />
+                      </List.Item>
+                      <List.Item
+                        key={`seqObject-${seqObject.reverseSequenceFile.identifier}`}
+                        style={{ width: `100%` }}
+                      >
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar size={`small`} icon={<IconArrowLeft />} />
+                          }
+                          title={seqObject.reverseSequenceFile.label}
+                        />
+                      </List.Item>
+                    </>
+                  );
+                } else {
+                  return (
+                    <List.Item
+                      key={`seqObject-${seqObject.identifier}`}
+                      style={{ width: `100%` }}
+                    >
+                      <List.Item.Meta
+                        avatar={<Avatar size={`small`} icon={<IconFile />} />}
+                        title={seqObject.label}
+                      />
+                    </List.Item>
+                  );
+                }
               }}
             />
 
             <Form layout="vertical" form={form}>
               <Form.Item
+                key="new-file-name"
                 name="new_file_name"
-                label="New file name:"
+                label={i18n("SampleFilesConcatenate.newFileName")}
                 rules={[
                   {
                     required: true,
                     message: (
                       <div className="t-new-file-name-required">
-                        A file name must be provided
+                        {i18n("SampleFilesConcatenate.nameValidationError")}
                       </div>
                     ),
                   },
@@ -133,28 +203,25 @@ export function SampleFileConcatenate({ children }) {
               >
                 <Input />
               </Form.Item>
+
               <Form.Item
+                key="remove-original-files"
                 name="remove_original_files"
-                label="Would you like to remove the original files?"
+                label={i18n("SampleFilesConcatenate.removeOriginalFiles")}
                 initialValue={false}
               >
-                <Select style={{ width: "100%" }}>
-                  <Select.Option
-                    className={`t-remove-originals`}
-                    value={true}
-                    key={"t-remove-originals-true"}
+                <Radio.Group optionType="button" buttonStyle="solid">
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    Remove Originals
-                  </Select.Option>
-                  <Select.Option
-                    className={`t-keep-originals`}
-                    value={false}
-                    key={"t-remove-originals-false"}
-                  >
-                    Keep Originals
-                  </Select.Option>
-                  ))}
-                </Select>
+                    <Radio.Button value={false}>
+                      {i18n("SampleFilesConcatenate.keepOriginals")}
+                    </Radio.Button>
+                    <Radio.Button value={true}>
+                      {i18n("SampleFilesConcatenate.removeOriginals")}
+                    </Radio.Button>
+                  </div>
+                </Radio.Group>
               </Form.Item>
             </Form>
           </Space>

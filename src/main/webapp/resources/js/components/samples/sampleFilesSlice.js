@@ -64,8 +64,8 @@ export const removeFromConcatenateSelected = createAction(
 
 export const resetConcatenateSelected = createAction(
   `sampleFiles/resetConcatenateSelected`,
-  ({ resetSelected }) => ({
-    payload: { resetSelected },
+  () => ({
+    payload: {},
   })
 );
 
@@ -263,7 +263,7 @@ const sampleFilesSlice = createSlice({
     });
 
     builder.addCase(resetConcatenateSelected, (state, action) => {
-      state.concatenateSelected = action.payload.resetSelected;
+      state.concatenateSelected = [];
     });
   },
 });

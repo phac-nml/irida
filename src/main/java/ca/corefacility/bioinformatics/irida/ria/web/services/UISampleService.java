@@ -838,8 +838,8 @@ public class UISampleService {
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
-	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds, String filename,
-			boolean removeOriginals) throws ConcatenateException {
+	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
+			String filename, boolean removeOriginals) throws ConcatenateException {
 		Sample sample = sampleService.read(sampleId);
 		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
@@ -850,15 +850,23 @@ public class UISampleService {
 			SequencingObject sequencingObject = concatenatedSequencingObjects.getObject();
 			String firstFileSize;
 			String secondFileSize = null;
-			if(sequencingObject.getFiles().size() == 1) {
-				firstFileSize = sequencingObject.getFiles().stream().findFirst().get().getFileSize();
+			if (sequencingObject.getFiles()
+					.size() == 1) {
+				firstFileSize = sequencingObject.getFiles()
+						.stream()
+						.findFirst()
+						.get()
+						.getFileSize();
 			} else {
-				SequenceFilePair s = (SequenceFilePair)sequencingObject;
-				firstFileSize = s.getForwardSequenceFile().getFileSize();
-				secondFileSize = s.getReverseSequenceFile().getFileSize();
+				SequenceFilePair s = (SequenceFilePair) sequencingObject;
+				firstFileSize = s.getForwardSequenceFile()
+						.getFileSize();
+				secondFileSize = s.getReverseSequenceFile()
+						.getFileSize();
 			}
-			sampleSequencingObjectFileModels.add(new SampleSequencingObjectFileModel(
-					sequencingObject, firstFileSize, secondFileSize, sequencingObject.getQcEntries()));
+			sampleSequencingObjectFileModels.add(
+					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
+							sequencingObject.getQcEntries()));
 			return sampleSequencingObjectFileModels;
 		} catch (ConcatenateException ex) {
 			throw new ConcatenateException(ex.getMessage());

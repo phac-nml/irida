@@ -288,18 +288,18 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId          the id of the {@link Sample} to concatenate in
 	 * @param sequenceObjectIds the {@link SequencingObject} ids
-	 * @param newFileName         base of the new filename to create
+	 * @param newFileName       base of the new filename to create
 	 * @param removeOriginals   boolean whether to remove the original files
-
 	 * @return {@link ResponseEntity} with the new concatenated sequencing object
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
 	public ResponseEntity<List<SampleSequencingObjectFileModel>> concatenateSequenceFiles(@PathVariable Long sampleId,
-			@RequestParam(name = "sequencingObjectIds") Set<Long> sequenceObjectIds, @RequestParam(name = "newFileName") String newFileName,
+			@RequestParam(name = "sequencingObjectIds") Set<Long> sequenceObjectIds,
+			@RequestParam(name = "newFileName") String newFileName,
 			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals) {
 		try {
-			return ResponseEntity.ok(
-					uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName, removeOriginals));
+			return ResponseEntity.ok(uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName,
+					removeOriginals));
 		} catch (ConcatenateException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(null);

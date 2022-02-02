@@ -174,7 +174,7 @@ export function SampleFileList() {
   };
 
   return (
-    <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+    <div style={{ maxHeight: "500px", overflowY: "auto" }}>
       <Space size="large" direction="vertical" style={{ width: `100%` }}>
         {files.singles && (
           <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
@@ -185,7 +185,7 @@ export function SampleFileList() {
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
               qcEntryTranslations={qcEntryTranslations}
-              displayCheckbox={files.singles?.length >= 2}
+              displayConcatenationCheckbox={files.singles?.length >= 2}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -200,7 +200,7 @@ export function SampleFileList() {
                 removeSampleFiles={removeSampleFiles}
                 getProcessingState={getProcessingStateTag}
                 qcEntryTranslations={qcEntryTranslations}
-                displayCheckbox={files.paired?.length >= 2}
+                displayConcatenationCheckbox={files.paired?.length >= 2}
               />
             ))}
           </SequenceFileTypeRenderer>
@@ -214,7 +214,7 @@ export function SampleFileList() {
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
               qcEntryTranslations={qcEntryTranslations}
-              displayCheckbox={false}
+              displayConcatenationCheckbox={false}
             />
           </SequenceFileTypeRenderer>
         )}
@@ -227,7 +227,7 @@ export function SampleFileList() {
               downloadAssemblyFile={downloadAssemblyFile}
               removeSampleFiles={removeSampleFiles}
               qcEntryTranslations={qcEntryTranslations}
-              displayCheckbox={false}
+              displayConcatenationCheckbox={false}
             />
           </SequenceFileTypeRenderer>
         )}

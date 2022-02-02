@@ -16,6 +16,7 @@ import {
  * @param fileObjectId The sequencingobject or genomeassembly identifier
  * @param type The type of file object (sequencingobject or genomeassembly)
  * @function remove files from sample function
+ * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @returns {JSX.Element}
  * @constructor
  */
@@ -24,9 +25,12 @@ export function SequenceFileHeader({
   fileObjectId,
   type,
   removeSampleFiles = () => {},
-  displayCheckbox,
+  displayConcatenationCheckbox,
 }) {
   const { modifiable } = useSelector((state) => state.sampleReducer);
+  const { concatenateSelected } = useSelector(
+    (state) => state.sampleFilesReducer
+  );
   const dispatch = useDispatch();
 
   const updateSelected = (e, file) => {
@@ -46,10 +50,14 @@ export function SequenceFileHeader({
       }}
     >
       <div>
-        {modifiable && displayCheckbox ? (
+        {modifiable && displayConcatenationCheckbox ? (
           <Checkbox
             style={{ marginRight: SPACE_XS }}
             onChange={(e) => updateSelected(e, file)}
+            checked={
+              concatenateSelected.filter((e) => e.identifier === fileObjectId)
+                .length > 0
+            }
           />
         ) : null}
         <CalendarDate date={file.createdDate} />
