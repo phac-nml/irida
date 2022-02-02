@@ -1331,7 +1331,7 @@ public class AnalysisAjaxController {
 	/**
 	 * UI Model to return Sequence files with its accompanying sample.
 	 */
-	private class SampleSequencingObject implements Comparable<SampleSequencingObject> {
+	class SampleSequencingObject implements Comparable<SampleSequencingObject> {
 		private Sample sample;
 		private SequencingObject sequencingObject;
 
