@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
@@ -36,6 +37,22 @@ public class ProjectsDatafetcherTest {
 
 		assertTrue(createProjectResult.getErrors().isEmpty());
 		verify(projectService, times(1)).create(any(Project.class));
+	}
+
+	@Test
+	public void testCreateProjectWithProjectDescription() {
+		// return the passed Project object back from create
+		when(projectService.create(any(Project.class))).thenAnswer(invocation -> {
+			Project project = invocation.getArgument(0);
+			project.setId(1L);
+			return project;
+		});
+
+		String projectDescription = dgsQueryExecutor.executeAndExtractJsonPath(
+				"mutation { createProject(input: { name: \"myproject\", projectDescription: \"mydescription\" }) { id name projectDescription } }",
+				"data.createProject.projectDescription");
+
+		assertEquals("mydescription", projectDescription);
 	}
 
 	@Test
