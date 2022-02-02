@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
@@ -21,8 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestri
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -30,15 +27,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -836,6 +828,7 @@ public class UISampleService {
 	 * @param filename        base of the new filename to create
 	 * @param removeOriginals boolean whether to remove the original files
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
+	 * @throws {@link ConcatenateException} if there was an error concatenating the files
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
 	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
