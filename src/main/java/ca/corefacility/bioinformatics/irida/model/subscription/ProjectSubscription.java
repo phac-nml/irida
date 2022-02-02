@@ -7,7 +7,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
@@ -15,20 +17,22 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * Class for storing email subscriptions to {@link Project}s for {@link User}s .
  */
 @Entity
-@Table(name = "project_subscription")
+@Table(name = "project_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id",
+		"project_id" }, name = "UK_PROJECT_SUBSCRIPTION_PROJECT_USER"))
 @Audited
-public class ProjectSubscription {
+@EntityListeners(AuditingEntityListener.class)
+public class ProjectSubscription implements IridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_SUBSCRIPTION_USER"))
 	@NotNull
 	User user;
 
 	@ManyToOne
-	@JoinColumn(name = "project_id", nullable = false)
+	@JoinColumn(name = "project_id", nullable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_SUBSCRIPTION_PROJECT"))
 	@NotNull
 	Project project;
 
@@ -51,6 +55,16 @@ public class ProjectSubscription {
 		this.project = project;
 		this.createdDate = new Date();
 		this.emailSubscription = emailSubscription;
+	}
+
+	@Override
+	public Long getId() {
+		return null;
+	}
+
+	@Override
+	public String getLabel() {
+		return "Project Subscription " + id;
 	}
 
 	public User getUser() {
@@ -77,8 +91,9 @@ public class ProjectSubscription {
 		this.emailSubscription = emailSubscription;
 	}
 
+	@Override
 	public Date getCreatedDate() {
-		return createdDate;
+		return null;
 	}
 
 	public void setCreatedDate(Date createdDate) {

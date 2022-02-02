@@ -5,6 +5,11 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
 import { useGetUserProjectDetailsQuery } from "../../../apis/users/users";
 import { useUpdateEmailSubscriptionMutation } from "../../../apis/projects/project-events";
+import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
+import {
+  PagedTable,
+  PagedTableContext,
+} from "../../../components/ant.design/PagedTable";
 
 /**
  * React component to display the user projects page.
@@ -13,7 +18,6 @@ import { useUpdateEmailSubscriptionMutation } from "../../../apis/projects/proje
  */
 export default function UserProjectsPage() {
   const { userId } = useParams();
-  const { data, isSuccess } = useGetUserProjectDetailsQuery(userId);
   const [updateEmailSubscription] = useUpdateEmailSubscriptionMutation();
   const columns = [
     {
@@ -53,8 +57,6 @@ export default function UserProjectsPage() {
     },
   ];
 
-  console.log(data);
-
   function updateProjectSubscription(checked, record) {
     console.log(
       "projectId = " +
@@ -77,18 +79,12 @@ export default function UserProjectsPage() {
       });
   };
 
-  if (isSuccess) {
-    return (
-      <Space direction="vertical">
-        <Typography.Title level={4}>Projects</Typography.Title>
-        <Table
-          dataSource={data.projects}
-          columns={columns}
-          rowKey={(row) => row.rowKey}
-        />
-      </Space>
-    );
-  } else {
-    return null;
-  }
+  return (
+    <Space direction="vertical">
+      <Typography.Title level={4}>Projects</Typography.Title>
+      <PagedTableProvider url={setBaseUrl("/ajax/users/1/projects/list")}>
+        <PagedTable columns={columns} />
+      </PagedTableProvider>
+    </Space>
+  );
 }

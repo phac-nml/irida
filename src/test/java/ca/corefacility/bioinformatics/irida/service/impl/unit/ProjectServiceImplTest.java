@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,9 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
@@ -51,11 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.*;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -64,7 +50,15 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+
 /**
+ *
  */
 public class ProjectServiceImplTest {
 	private ProjectService projectService;
@@ -111,7 +105,8 @@ public class ProjectServiceImplTest {
 		u.setUsername(username);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken(u, null);
-		SecurityContextHolder.getContext().setAuthentication(auth);
+		SecurityContextHolder.getContext()
+				.setAuthentication(auth);
 
 		when(projectRepository.save(p)).thenReturn(p);
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -120,7 +115,8 @@ public class ProjectServiceImplTest {
 
 		verify(projectRepository).save(p);
 		verify(userRepository).loadUserByUsername(username);
-		SecurityContextHolder.getContext().setAuthentication(null);
+		SecurityContextHolder.getContext()
+				.setAuthentication(null);
 	}
 
 	@Test
@@ -195,8 +191,9 @@ public class ProjectServiceImplTest {
 		Sample s = new Sample();
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
-		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null,
-				null, null, null, null, null));
+		violations.add(
+				ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null, null, null,
+						null, null, null));
 
 		when(validator.validate(s)).thenReturn(violations);
 
@@ -246,7 +243,8 @@ public class ProjectServiceImplTest {
 
 		when(pujRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
 
-		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
+		assertTrue("User has ownership of project.",
+				projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
 	}
 
 	@Test
@@ -311,9 +309,9 @@ public class ProjectServiceImplTest {
 		User user2 = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
 		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
-		@SuppressWarnings("unchecked")
-		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
-				ProjectRole.PROJECT_OWNER), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER));
+		@SuppressWarnings("unchecked") List<Join<Project, User>> owners = Lists.newArrayList(
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER),
+				new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER));
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.save(oldJoin)).thenReturn(oldJoin);
@@ -347,9 +345,8 @@ public class ProjectServiceImplTest {
 		User user = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
 		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
-		@SuppressWarnings("unchecked")
-		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
-				ProjectRole.PROJECT_OWNER));
+		@SuppressWarnings("unchecked") List<Join<Project, User>> owners = Lists.newArrayList(
+				new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
@@ -361,8 +358,8 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testGetProjectsForSample() {
 		Sample sample = new Sample("my sample");
-		@SuppressWarnings("unchecked")
-		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample, true),
+		@SuppressWarnings("unchecked") List<Join<Project, Sample>> projects = Lists.newArrayList(
+				new ProjectSampleJoin(new Project("p1"), sample, true),
 				new ProjectSampleJoin(new Project("p2"), sample, true));
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(projects);
@@ -419,16 +416,15 @@ public class ProjectServiceImplTest {
 		Project project = new Project();
 
 		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
-		
+
 		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0), true);
 		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1), true);
-		
+
 		when(psjRepository.readSampleForProject(project, samples.get(0))).thenReturn(psj0);
 		when(psjRepository.readSampleForProject(project, samples.get(1))).thenReturn(psj1);
 
 		projectService.removeSamplesFromProject(project, samples);
 
-		
 		verify(psjRepository).delete(psj0);
 		verify(psjRepository).delete(psj1);
 	}
@@ -449,7 +445,7 @@ public class ProjectServiceImplTest {
 		verifyZeroInteractions(sampleRepository);
 
 	}
-	
+
 	@Test
 	public void testGetProjectsForUser() {
 		final User u = new User();
@@ -466,7 +462,11 @@ public class ProjectServiceImplTest {
 		final List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
 		assertEquals("User should be in 2 projects.", 2, projects.size());
-		assertTrue("Should have found user project join.", projects.stream().anyMatch(p -> p.getSubject().equals(p1)));
-		assertTrue("Should have found group project join.", projects.stream().anyMatch(p -> p.getSubject().equals(p2)));
+		assertTrue("Should have found user project join.", projects.stream()
+				.anyMatch(p -> p.getSubject()
+						.equals(p1)));
+		assertTrue("Should have found group project join.", projects.stream()
+				.anyMatch(p -> p.getSubject()
+						.equals(p2)));
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
@@ -82,14 +83,15 @@ public class UsersAjaxController {
 	}
 
 	/**
-	 * Get the projects associated with a user
+	 * Get the project subscriptions associated with a user
 	 *
-	 * @param userId - the id for the user to show project details for
-	 * @return a {@link TableResponse} containing the list of projects associated with a users.
+	 * @param userId - the id for the user to show project subscriptions for
+	 * @return a {@link TableResponse} containing the list of project subscriptions associated with a users.
 	 */
 	@RequestMapping("/{userId}/projects/list")
-	public ResponseEntity<UserProjectDetailsResponse> getUserProjects(@PathVariable("userId") Long userId) {
-		return ResponseEntity.ok(UIUsersService.getUserProjects(userId));
+	public ResponseEntity<TableResponse<UserProjectDetailsModel>> getUserProjects(@PathVariable("userId") Long userId,
+			@RequestBody TableRequest request) {
+		return ResponseEntity.ok(UIUsersService.getUserProjects(userId, request));
 	}
 
 	/**
@@ -106,5 +108,4 @@ public class UsersAjaxController {
 			Principal principal) {
 		return ResponseEntity.ok(UIUsersService.getUser(userId, mailFailure, principal));
 	}
-
 }
