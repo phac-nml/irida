@@ -26,8 +26,12 @@ function FastQCMenu({ current }) {
   }
 
   return (
-    <Menu mode="horizontal" selectedKeys={[key]} className="t-fastQC-nav"
-          onClick={e => setKey(e.key)}>
+    <Menu
+      mode="horizontal"
+      selectedKeys={[key]}
+      className="t-fastQC-nav"
+      onClick={(e) => setKey(e.key)}
+    >
       <Menu.Item key="charts">
         <Link to={`${uri}/charts`}>{i18n("FastQC.charts")}</Link>
       </Menu.Item>
@@ -50,7 +54,15 @@ function FastQCMenu({ current }) {
 }
 
 function FastQCContent({ children, current, uri }) {
-  const { loading, fastQC, file = {} } = useFastQCState();
+  const { loading, fastQC, file = {}, processingState } = useFastQCState();
+
+  const processingStateTranslations = {
+    UNPROCESSED: i18n("FastQC.sequencingobject.unprocessed"),
+    QUEUED: i18n("FastQC.sequencingobject.queued"),
+    PROCESSING: i18n("FastQC.sequencingobject.processing"),
+    ERROR: i18n("FastQC.sequencingobject.error"),
+    FINISHED: i18n("FastQC.sequencingobject.finished"),
+  };
 
   return (
     <Skeleton loading={loading} active>
@@ -63,7 +75,7 @@ function FastQCContent({ children, current, uri }) {
         ) : (
           <div>
             <InfoAlert
-              message={i18n("FastQC.noResults")}
+              message={processingStateTranslations[processingState]}
               style={{ marginBottom: SPACE_XS }}
               className="t-fastQC-no-run"
             />

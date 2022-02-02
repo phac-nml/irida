@@ -1,25 +1,36 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -28,10 +39,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -422,24 +429,126 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project);
-		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project);
-		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample);
+		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project, null);
+		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project, null);
+		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample, project, null);
 		List<SampleGenomeAssemblyFileModel> genomeAssemblies = getGenomeAssembliesForSample(sample);
 
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
 
 	/**
+	 * Get updated sample sequencing objects for given sequencing object ids
+	 *
+	 * @param sampleId            Identifier for a sample
+	 * @param sequencingObjectIds Identifiers for updated sequencing objects to get
+	 * @param projectId           Identifier for the project the sample belongs to
+	 * @return list of {@link SampleFiles} objects
+	 */
+	public SampleFiles getUpdatedSequencingObjects(Long sampleId, List<Long> sequencingObjectIds, Long projectId) {
+		Sample sample = sampleService.read(sampleId);
+
+		Project project = null;
+		if (projectId != null) {
+			project = projectService.read(projectId);
+		}
+
+		/*
+		Only get updated sequencing object info for the provided sequencing object ids
+		 */
+		List<SampleSequencingObjectFileModel> filePairs = getPairedSequenceFilesForSample(sample, project,
+				sequencingObjectIds);
+		List<SampleSequencingObjectFileModel> singles = getSingleEndSequenceFilesForSample(sample, project,
+				sequencingObjectIds);
+		List<SampleSequencingObjectFileModel> fast5 = getFast5FilesForSample(sample, project, sequencingObjectIds);
+
+		/*
+		 We set assemblies to null as they don't have any file processing that was run on the files
+		 so we don't require any updated info for these files
+		 */
+		return new SampleFiles(singles, filePairs, fast5, null);
+	}
+
+	/**
+	 * Remove a sequencing object linked to a {@link Sample}
+	 *
+	 * @param sampleId           Identifier for a sample
+	 * @param sequencingObjectId Identifier for the sequencingObject
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return {@link String} explaining to the user the results of the delete.
+	 */
+	public String deleteSequencingObjectFromSample(Long sampleId, Long sequencingObjectId, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
+
+		try {
+			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
+			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
+					locale);
+		} catch (Exception e) {
+			return messageSource.getMessage("samples.files.remove.error", new Object[] { sequencingObject.getLabel() },
+					locale);
+		}
+	}
+
+	/**
+	 * Remove a genome assembly linked to a {@link Sample}
+	 *
+	 * @param sampleId         Identifier for a sample
+	 * @param genomeAssemblyId Identifier for the GenomeAssembly
+	 * @param locale           {@link Locale} for the currently logged in user
+	 * @return {@link String} explaining to the user the results of the delete.
+	 */
+	public String deleteGenomeAssemblyFromSample(Long sampleId, Long genomeAssemblyId, Locale locale) {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
+
+		try {
+			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
+			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {},
+					locale);
+		} catch (Exception e) {
+			return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssembly.getLabel() }, locale);
+		}
+	}
+
+	/**
+	 * Download a GenomeAssembly file
+	 *
+	 * @param sampleId         Identifier for a sample
+	 * @param genomeAssemblyId Identifier for the genome assembly
+	 * @param response         {@link HttpServletResponse}
+	 * @throws IOException if the file cannot be read
+	 */
+	public void downloadAssembly(Long sampleId, Long genomeAssemblyId, HttpServletResponse response)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
+
+		Path path = genomeAssembly.getFile();
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
+	}
+
+	/**
 	 * Get a list of paired end sequence files for a sample
 	 *
-	 * @param sample  the {@link Sample} to get the files for.
-	 * @param project the {@link Project} the sample belongs to
+	 * @param sample              the {@link Sample} to get the files for.
+	 * @param project             the {@link Project} the sample belongs to
+	 * @param sequencingObjectIds The ids of the sequencing objects to return
 	 * @return list of paired end sequence files
 	 */
-	public List<SampleSequencingObjectFileModel> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
+	public List<SampleSequencingObjectFileModel> getPairedSequenceFilesForSample(Sample sample, Project project,
+			List<Long> sequencingObjectIds) {
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectIds == null ?
+				sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class) :
+				sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class)
+						.stream()
+						.filter(j -> sequencingObjectIds.contains(j.getObject()
+								.getId()))
+						.collect(Collectors.toList());
 		// add project to qc entries and filter any unavailable entries
 		List<SampleSequencingObjectFileModel> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -451,7 +560,7 @@ public class UISampleService {
 			String secondFileSize = sfp.getReverseSequenceFile()
 					.getFileSize();
 
-			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize));
+			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize,  obj.getQcEntries()));
 		}
 
 		return filePairs;
@@ -460,13 +569,20 @@ public class UISampleService {
 	/**
 	 * Get a list of single end sequence files for a sample
 	 *
-	 * @param sample  the {@link Sample} to get the files for.
-	 * @param project the {@link Project} the sample belongs to
+	 * @param sample              the {@link Sample} to get the files for.
+	 * @param project             the {@link Project} the sample belongs to
+	 * @param sequencingObjectIds The ids of the sequencing objects to return
 	 * @return list of single end sequence files
 	 */
-	public List<SampleSequencingObjectFileModel> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+	public List<SampleSequencingObjectFileModel> getSingleEndSequenceFilesForSample(Sample sample, Project project,
+			List<Long> sequencingObjectIds) {
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectIds == null ?
+				sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class) :
+				sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class)
+						.stream()
+						.filter(j -> sequencingObjectIds.contains(j.getObject()
+								.getId()))
+						.collect(Collectors.toList());
 
 		List<SampleSequencingObjectFileModel> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -475,7 +591,7 @@ public class UISampleService {
 			SingleEndSequenceFile sf = (SingleEndSequenceFile) obj;
 			String fileSize = sf.getSequenceFile()
 					.getFileSize();
-			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
+			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null,  obj.getQcEntries()));
 		}
 
 		return singles;
@@ -484,20 +600,29 @@ public class UISampleService {
 	/**
 	 * Get a list of fast5 sequence files for a sample
 	 *
-	 * @param sample the {@link Sample} to get the files for.
+	 * @param sample              the {@link Sample} to get the files for.
+	 * @param project             the {@link Project} the sample belongs to
+	 * @param sequencingObjectIds The ids of the sequencing objects to return
 	 * @return list of fast5 sequence files
 	 */
-	public List<SampleSequencingObjectFileModel> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
+	public List<SampleSequencingObjectFileModel> getFast5FilesForSample(Sample sample, Project project,
+			List<Long> sequencingObjectIds) {
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectIds == null ?
+				sequencingObjectService.getSequencesForSampleOfType(sample, Fast5Object.class) :
+				sequencingObjectService.getSequencesForSampleOfType(sample, Fast5Object.class)
+						.stream()
+						.filter(j -> sequencingObjectIds.contains(j.getObject()
+								.getId()))
+						.collect(Collectors.toList());
 
 		List<SampleSequencingObjectFileModel> fast5Files = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : fast5FileJoins) {
 			SequencingObject obj = join.getObject();
+			enhanceQcEntries(obj, project);
 			Fast5Object f5 = (Fast5Object) obj;
 			String fileSize = f5.getFile()
 					.getFileSize();
-			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null));
+			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null,  obj.getQcEntries()));
 		}
 		return fast5Files;
 	}
@@ -588,6 +713,111 @@ public class UISampleService {
 	}
 
 	/**
+	 * Upload {@link SequenceFile}'s to a sample
+	 *
+	 * @param sampleId The {@link Sample} id to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @return list of {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	public List<SampleSequencingObjectFileModel> uploadSequenceFiles(Long sampleId, MultipartHttpServletRequest request)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
+
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		SamplePairer samplePairer = new SamplePairer(files);
+		final Map<String, List<MultipartFile>> pairedFiles = samplePairer.getPairedFiles(files);
+		final List<MultipartFile> singleFiles = samplePairer.getSingleFiles(files);
+
+		try {
+			for (String key : pairedFiles.keySet()) {
+				List<MultipartFile> list = pairedFiles.get(key);
+				sampleSequencingObjectFileModels.add(createSequenceFilePairsInSample(list, sample));
+			}
+
+			for (MultipartFile file : singleFiles) {
+				sampleSequencingObjectFileModels.add(createSequenceFileInSample(file, sample));
+			}
+
+			return sampleSequencingObjectFileModels;
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Upload {@link Fast5Object}'s to a sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @return list {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	public List<SampleSequencingObjectFileModel> uploadFast5Files(Long sampleId, MultipartHttpServletRequest request) throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		try {
+			for (MultipartFile file : files) {
+				sampleSequencingObjectFileModels.add(createFast5FileInSample(file, sample));
+			}
+			return sampleSequencingObjectFileModels;
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Upload {@link GenomeAssembly}'s to a sample
+	 *
+	 * @param sampleId the ID of the sample to upload to
+	 * @param request  The current request which contains {@link MultipartFile}
+	 * @return list {@link SampleGenomeAssemblyFileModel} containing the newly created genome assemblies
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	public List<SampleGenomeAssemblyFileModel> uploadAssemblies(Long sampleId, MultipartHttpServletRequest request)
+			throws IOException {
+		Sample sample = sampleService.read(sampleId);
+		Iterator<String> fileNames = request.getFileNames();
+		List<MultipartFile> files = new ArrayList<>();
+		List<SampleGenomeAssemblyFileModel> sampleGenomeAssemblyFileModels = new ArrayList<>();
+		while (fileNames.hasNext()) {
+			files.add(request.getFile(fileNames.next()));
+		}
+
+		try {
+			for (MultipartFile file : files) {
+				Path temp = Files.createTempDirectory(null);
+				Path target = temp.resolve(file.getOriginalFilename());
+				file.transferTo(target.toFile());
+				UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
+
+				GenomeAssembly genomeAssembly = genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly)
+						.getObject();
+
+				sampleGenomeAssemblyFileModels.add(
+						new SampleGenomeAssemblyFileModel(genomeAssembly, uploadedAssembly.getFileSize()));
+
+			}
+			return sampleGenomeAssemblyFileModels;
+		} catch (IOException e) {
+			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
 	 * Get {@link MetadataRestriction} for metadata field
 	 *
 	 * @param projectId               Identifier for {@link Project}
@@ -605,5 +835,70 @@ public class UISampleService {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
+	 * to a {@link Sample}
+	 *
+	 * @param pair   {@link List} of {@link MultipartFile}
+	 * @param sample {@link Sample} to add the pair to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SampleSequencingObjectFileModel createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample)
+			throws IOException {
+		SequenceFile firstFile = createSequenceFile(pair.get(0));
+		SequenceFile secondFile = createSequenceFile(pair.get(1));
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile),
+				sample).getObject();
+		return new SampleSequencingObjectFileModel(
+				sequencingObject, firstFile.getFileSize(), secondFile.getFileSize(), sequencingObject.getQcEntries());
+	}
+
+	/**
+	 * Create a {@link SequenceFile} and add it to a {@link Sample}
+	 *
+	 * @param file   {@link MultipartFile}
+	 * @param sample {@link Sample} to add the file to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SampleSequencingObjectFileModel createSequenceFileInSample(MultipartFile file, Sample sample)
+			throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample)
+				.getObject();
+		return new SampleSequencingObjectFileModel(
+				sequencingObject, sequenceFile.getFileSize(), null, sequencingObject.getQcEntries());
+	}
+
+	/**
+	 * Create a {@link Fast5Object} and add it to a {@link Sample}
+	 *
+	 * @param file   {@link MultipartFile}
+	 * @param sample {@link Sample} to add the file to.
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SampleSequencingObjectFileModel createFast5FileInSample(MultipartFile file, Sample sample)
+			throws IOException {
+		SequenceFile sequenceFile = createSequenceFile(file);
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample)
+				.getObject();
+		return new SampleSequencingObjectFileModel(
+				sequencingObject, sequenceFile.getFileSize(), null, sequencingObject.getQcEntries());
+	}
+
+	/**
+	 * Private method to move the sequence file into the correct directory and
+	 * create the {@link SequenceFile} object.
+	 *
+	 * @param file {@link MultipartFile} sequence file uploaded.
+	 * @return {@link SequenceFile}
+	 * @throws IOException Exception thrown if there is an error handling the file.
+	 */
+	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+		file.transferTo(target.toFile());
+		return new SequenceFile(target);
 	}
 }

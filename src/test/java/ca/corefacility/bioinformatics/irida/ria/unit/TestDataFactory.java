@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -129,16 +130,34 @@ public class TestDataFactory {
 		return user;
 	}
 
-	public static List<SampleSequencingObjectJoin> generateSequencingObjectsForSample(Sample sample) {
+	public static List<SampleSequencingObjectJoin> generateSingleFileSequencingObjectsForSample(Sample sample, List<String> fileNames) {
 		List<SampleSequencingObjectJoin> join = new ArrayList<>();
-		for (long i = 0; i < 5; i++) {
-			Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
+		for (int i = 0; i < fileNames.size(); i++) {
+			Path path = Paths.get(fileNames.get(i));
 			SequenceFile file = new SequenceFile(path);
-			file.setId(i);
+			file.setId((long)i+1);
 			SingleEndSequenceFile obj = new SingleEndSequenceFile(file);
-			obj.setId(i);
+			obj.setId((long)i+1);
 			join.add(new SampleSequencingObjectJoin(sample, obj));
 		}
+		return join;
+	}
+
+	public static List<SampleSequencingObjectJoin> generatePairSequencingObjectsForSample(Sample sample, List<String> filePairNames) {
+		List<SampleSequencingObjectJoin> join = new ArrayList<>();
+
+		Path path1 = Paths.get(filePairNames.get(0));
+		Path path2 = Paths.get(filePairNames.get(1));
+		SequenceFile file = new SequenceFile(path1);
+		SequenceFile file2 = new SequenceFile(path2);
+
+		file.setId(1L);
+		file.setId(2L);
+
+		SequenceFilePair sequenceFilePair = new SequenceFilePair(file, file2);
+		sequenceFilePair.setId(1L);
+
+		join.add(new SampleSequencingObjectJoin(sample, sequenceFilePair));
 		return join;
 	}
 

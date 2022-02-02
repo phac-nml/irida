@@ -1,31 +1,47 @@
 import React from "react";
-import { Avatar, Button, List } from "antd";
+import { Avatar, Button, List, Space, Tag } from "antd";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { IconDownloadFile, IconFile, IconRemove } from "../icons/Icons";
+import { IconDownloadFile, IconFile } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
+import { useSelector } from "react-redux";
 
 /**
  * React component to display single end file details
  *
  * @param {array} files
- * @param sampleId
  * @param fastqcResults
+ * @function download assembly file function
+ * @function download sequence file function
+ * @function remove files from sample function
+ * @function get file processing state function
+ * @param qcEntryTranslationKeys
  * @returns {JSX.Element}
  * @constructor
  */
 export function SingleEndFileRenderer({
   files,
-  sampleId,
   fastqcResults = true,
+  downloadAssemblyFile = () => {},
+  downloadSequenceFile = () => {},
+  removeSampleFiles = () => {},
+  getProcessingState = () => {},
+  qcEntryTranslations,
 }) {
+  const { sample } = useSelector((state) => state.sampleReducer);
+
   return (
     <List
       bordered
       dataSource={files}
       renderItem={(file) => [
-        <List.Item>
-          <SequenceFileHeader file={file.fileInfo} />
+        <List.Item key={`file-header-${file.id}`}>
+          <SequenceFileHeader
+            file={file.fileInfo}
+            removeSampleFiles={removeSampleFiles}
+            fileObjectId={file.fileInfo.identifier}
+            type={file.fileType}
+          />
         </List.Item>,
         <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>
           <List.Item.Meta
@@ -37,10 +53,10 @@ export function SingleEndFileRenderer({
                     href={
                       file.fileInfo.sequenceFile
                         ? setBaseUrl(
-                            `samples/${sampleId}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.sequenceFile.identifier}`
+                            `samples/${sample.identifier}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.sequenceFile.identifier}`
                           )
                         : setBaseUrl(
-                            `samples/${sampleId}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.file.identifier}`
+                            `samples/${sample.identifier}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.file.identifier}`
                           )
                     }
                     target="_blank"
@@ -51,21 +67,51 @@ export function SingleEndFileRenderer({
                   <span>{file.fileInfo.label}</span>
                 )}
 
-                <span>
+                <Space direction="horizontal" size="small">
+                  {file.fileType === "assembly"
+                    ? null
+                    : getProcessingState(file.fileInfo.processingState)}
                   <span style={{ marginRight: SPACE_XS }}>
                     {file.firstFileSize}
                   </span>
                   <Button
-                    style={{ marginRight: SPACE_XS }}
                     shape="circle"
                     icon={<IconDownloadFile />}
+                    onClick={() =>
+                      file.fileType === "assembly"
+                        ? downloadAssemblyFile({
+                            sampleId: sample.identifier,
+                            genomeAssemblyId: file.fileInfo.identifier,
+                          })
+                        : downloadSequenceFile({
+                            sequencingObjectId: file.fileInfo.identifier,
+                            sequenceFileId: file.fileInfo.sequenceFile
+                              ? file.fileInfo.sequenceFile.identifier
+                              : file.fileInfo.file.identifier,
+                          })
+                    }
                   />
-                  <Button shape="circle" icon={<IconRemove />} />
-                </span>
+                </Space>
               </div>
             }
           />
         </List.Item>,
+        file.fileType === "sequencingObject" && file.qcEntries !== null ? (
+          <List.Item key={`file-${file.id}-qc-entry`} style={{ width: `100%` }}>
+            <List.Item.Meta
+              title={file.qcEntries.map((entry) => {
+                return (
+                  <Tag
+                    key={`file-${file.id}-qc-entry-status`}
+                    color={entry.status === "POSITIVE" ? "green" : "red"}
+                  >
+                    {qcEntryTranslations[entry.type] + entry.message}
+                  </Tag>
+                );
+              })}
+            />
+          </List.Item>
+        ) : null,
       ]}
     />
   );

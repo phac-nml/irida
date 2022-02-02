@@ -1,9 +1,24 @@
 import React from "react";
-import { Avatar, Button, List } from "antd";
+import { Avatar, Button, List, Space } from "antd";
 import { SPACE_XS } from "../../styles/spacing";
-import { IconDownloadFile, IconRemove } from "../icons/Icons";
+import { IconDownloadFile } from "../icons/Icons";
 
-export function SequenceFileDetailsRenderer({ file }) {
+/**
+ * React component to display paired end file details
+ *
+ * @param file The file to display details for
+ * @param fileObjectId The sequencingobject identifier
+ * @function download sequence file function
+ * @function get file processing state function
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export function SequenceFileDetailsRenderer({
+  file,
+  fileObjectId,
+  downloadSequenceFile = () => {},
+  getProcessingState = () => {},
+}) {
   return (
     <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>
       <List.Item.Meta
@@ -13,15 +28,20 @@ export function SequenceFileDetailsRenderer({ file }) {
             <a href={file.fastqcLink} target="_blank">
               {file.label}
             </a>
-            <span>
+            <Space direction="horizontal" size="small">
+              {getProcessingState(file.processingState)}
               <span style={{ marginRight: SPACE_XS }}>{file.filesize}</span>
               <Button
-                style={{ marginRight: SPACE_XS }}
                 shape="circle"
                 icon={<IconDownloadFile />}
+                onClick={() => {
+                  downloadSequenceFile({
+                    sequencingObjectId: fileObjectId,
+                    sequenceFileId: file.id,
+                  });
+                }}
               />
-              <Button shape="circle" icon={<IconRemove />} />
-            </span>
+            </Space>
           </div>
         }
       />
