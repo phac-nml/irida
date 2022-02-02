@@ -20,6 +20,9 @@ export const removeFileObjectFromSample = createAction(
   })
 );
 
+/**
+ * Action to get updated sequencing objects
+ */
 export const updatedSequencingObjects = createAction(
   `sampleFiles/updatedSequencingObjects`,
   ({ updatedSeqObjects }) => ({
@@ -27,6 +30,9 @@ export const updatedSequencingObjects = createAction(
   })
 );
 
+/**
+ * Action to add sequence files to sample
+ */
 export const addToSequenceFiles = createAction(
   `sampleFiles/addToSequenceFiles`,
   ({ sequenceFiles }) => ({
@@ -34,6 +40,9 @@ export const addToSequenceFiles = createAction(
   })
 );
 
+/**
+ * Action to add assembly files to sample
+ */
 export const addToAssemblyFiles = createAction(
   `sampleFiles/addToAssemblyFiles`,
   ({ assemblies }) => ({
@@ -41,6 +50,9 @@ export const addToAssemblyFiles = createAction(
   })
 );
 
+/**
+ * Action to add fast5 files to sample
+ */
 export const addToFast5Files = createAction(
   `sampleFiles/addToFast5Files`,
   ({ fast5 }) => ({
@@ -48,6 +60,9 @@ export const addToFast5Files = createAction(
   })
 );
 
+/**
+ * Action to add sequencingobject to concatenation selected list
+ */
 export const addToConcatenateSelected = createAction(
   `sampleFiles/addToConcatenateSelected`,
   ({ seqObject }) => ({
@@ -55,6 +70,9 @@ export const addToConcatenateSelected = createAction(
   })
 );
 
+/**
+ * Action to remove sequencingobject from concatenation selected list
+ */
 export const removeFromConcatenateSelected = createAction(
   `sampleFiles/removeFromConcatenateSelected`,
   ({ seqObject }) => ({
@@ -62,6 +80,9 @@ export const removeFromConcatenateSelected = createAction(
   })
 );
 
+/**
+ * Action to reset concatenation selected list to an empty array
+ */
 export const resetConcatenateSelected = createAction(
   `sampleFiles/resetConcatenateSelected`,
   () => ({
@@ -262,7 +283,7 @@ const sampleFilesSlice = createSlice({
       );
     });
 
-    builder.addCase(resetConcatenateSelected, (state, action) => {
+    builder.addCase(resetConcatenateSelected, (state) => {
       state.concatenateSelected = [];
     });
   },
