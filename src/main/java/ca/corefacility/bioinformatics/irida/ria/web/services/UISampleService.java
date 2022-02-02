@@ -828,7 +828,7 @@ public class UISampleService {
 	 * @param filename        base of the new filename to create
 	 * @param removeOriginals boolean whether to remove the original files
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
-	 * @throws {@link ConcatenateException} if there was an error concatenating the files
+	 * @throws ConcatenateException if there was an error concatenating the files
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
 	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
