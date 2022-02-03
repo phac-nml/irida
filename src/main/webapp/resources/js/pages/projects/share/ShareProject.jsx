@@ -1,7 +1,6 @@
 import { Select, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import { setProject } from "./shareSlice";
 
 /**
