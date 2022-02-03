@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
@@ -41,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -50,6 +54,7 @@ public class UISampleServiceTest {
 	private ProjectService projectService;
 	private SequencingObjectService sequencingObjectService;
 	private GenomeAssemblyService genomeAssemblyService;
+	private SampleService sampleService;
 
 	private SequencingObject sequencingObject;
 	private GenomeAssembly genomeAssembly;
@@ -86,7 +91,7 @@ public class UISampleServiceTest {
 
 	@BeforeEach
 	public void setUp() {
-		SampleService sampleService = mock(SampleService.class);
+		sampleService = mock(SampleService.class);
 		sequencingObject = mock(SequencingObject.class);
 		genomeAssembly = mock(GenomeAssembly.class);
 		projectService = mock(ProjectService.class);
@@ -247,7 +252,7 @@ public class UISampleServiceTest {
 	}
 
 	@Test
-	public void uploadSingleAndPairedEndFiles() throws IOException {
+	public void testUploadSingleAndPairedEndFiles() throws IOException {
 		MultipartHttpServletRequest request = mock(MultipartHttpServletRequest.class);
 		when(request.getFile(FILE_01)).thenReturn(MOCK_FILE_01);
 		when(request.getFile(FILE_02)).thenReturn(MOCK_FILE_02);
@@ -274,5 +279,43 @@ public class UISampleServiceTest {
 
 		assertEquals(3, sampleSequencingObjectFileModels.size(),
 				"Should have uploaded 2 single end sequence files and 1  sequence file pair");
+	}
+
+	@Test
+	public void testConcatenateFiles() throws ConcatenateException {
+		List<SampleSequencingObjectJoin> sequencingObjectJoins = TestDataFactory.generateSingleFileSequencingObjectsForSample(
+				SAMPLE_1, Lists.newArrayList(FILE_01, FILE_02));
+
+		SampleSequencingObjectJoin expectedConcatenatedFile = TestDataFactory.generateSingleFileSequencingObjectsForSample(SAMPLE_1,
+				Lists.newArrayList("test_file_AB.fastq"))
+				.get(0);
+
+		List<SequencingObject> sequencingObjectList = sequencingObjectJoins.stream()
+				.map(s -> s.getObject())
+				.collect(Collectors.toList());
+		Set<Long> sequencingObjectsIdList = sequencingObjectList.stream()
+				.map(s -> s.getId())
+				.collect(Collectors.toSet());
+
+		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
+		when(sequencingObjectService.readMultiple(sequencingObjectsIdList)).thenReturn(sequencingObjectList);
+		when(sequencingObjectService.concatenateSequences(eq(Lists.newArrayList(sequencingObjectList)), eq("test_file_AB"),
+				eq(SAMPLE_1), eq(false))).thenReturn(
+				new SampleSequencingObjectJoin(SAMPLE_1, expectedConcatenatedFile.getObject()));
+		when(sampleSequencingObjectJoin.getObject()).thenReturn(expectedConcatenatedFile.getObject());
+
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = service.concatenateSequenceFiles(
+				SAMPLE_1.getId(), sequencingObjectsIdList, "test_file_AB", false);
+
+		assertEquals(1, sampleSequencingObjectFileModels.size(), "Should have concatenated 2 single end files into 1");
+
+		assertEquals(expectedConcatenatedFile.getObject()
+				.getFiles()
+				.stream()
+				.findFirst()
+				.get()
+				.getLabel(), sampleSequencingObjectFileModels.get(0)
+				.getFileInfo()
+				.getLabel(), "The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");
 	}
 }
