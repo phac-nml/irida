@@ -155,7 +155,7 @@ function ShareApp() {
               title={i18n("ShareSamples.title")}
               onBack={goToPrevious}
             >
-              {projects && projects.length === 0 ? (
+              {projects?.length === 0 ? (
                 <Alert
                   message={i18n("ShareSamples.no-project.message")}
                   description={i18n("ShareSamples.no-project.description")}
