@@ -117,7 +117,8 @@ export function SingleEndFileRenderer({
                     key={`file-${file.id}-qc-entry-status`}
                     color={entry.status === "POSITIVE" ? "green" : "red"}
                   >
-                    {qcEntryTranslations[entry.type] + entry.message}
+                    {qcEntryTranslations[entry.type]}{" "}
+                    {entry.message ? entry.message : ""}
                   </Tag>
                 );
               })}
