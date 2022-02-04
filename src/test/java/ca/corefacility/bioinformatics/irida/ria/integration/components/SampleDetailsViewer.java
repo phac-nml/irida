@@ -58,10 +58,22 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-concatenate-confirm")
 	private List<WebElement> concatenateConfirmBtn;
 
+	@FindBy(className = "t-download-file-btn")
+	private List<WebElement> downloadFileBtns;
+
+	@FindBy(className = "t-file-label")
+	private List<WebElement> fileLabels;
+
+	@FindBy(id="t-remove-originals-true")
+	private WebElement removeOriginalRadioButton;
+
+	@FindBy(className = "t-remove-file-confirm-btn")
+	private List<WebElement> confirmBtns;
 
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
 	}
+	private String concatenatedFileName = "NewConcatenatedFile";
 
 	public static SampleDetailsViewer getSampleDetails(WebDriver driver) {
 		return PageFactory.initElements(driver, SampleDetailsViewer.class);
@@ -161,14 +173,80 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public void  enterFileName() {
-		concatenateModal.findElement(By.id("t-concat-new-file-name")).sendKeys("NewConcatenatedFile");
+		concatenateModal.findElement(By.id("t-concat-new-file-name")).sendKeys(concatenatedFileName);
+	}
+
+	public void  enterFileName(String filename) {
+		concatenateModal.findElement(By.id("t-concat-new-file-name")).sendKeys(filename);
 	}
 
 	public void clickConcatenateConfirmBtn() {
 		concatenateConfirmBtn.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
-//		waitForTime(1000);
+		waitForTime(500);
+	}
+
+	public int downloadFileButtonsVisible() {
+		if(downloadFileBtns != null) {
+			return downloadFileBtns.size();
+		}
+		return 0;
+	}
+
+	public boolean correctFileNamesDisplayedAdmin(List<String> existingFileNames) {
+		boolean correctNames = true;
+
+		for (WebElement fileLabel : fileLabels) {
+			String text = fileLabel.getAttribute("innerHTML");
+			if (!existingFileNames.contains(text) ) {
+				if(!text
+						.equals(concatenatedFileName + ".fastq")){
+					correctNames = false;
+				}
+			}
+		}
+		return correctNames;
+	}
+
+	public boolean correctFileNamesDisplayedAdmin(List<String> existingFileNames, String nameOfConcatenatedFile) {
+		boolean correctNames = true;
+
+		for (WebElement fileLabel : fileLabels) {
+			String text = fileLabel.getAttribute("innerHTML");
+			if (!existingFileNames.contains(text) ) {
+				if(!text
+						.equals(nameOfConcatenatedFile + ".fastq")){
+					correctNames = false;
+				}
+			}
+		}
+		return correctNames;
+	}
+
+	public boolean correctFileNamesDisplayedUser(List<String> existingFileNames) {
+		boolean correctNames = true;
+
+		for (WebElement fileLabel : fileLabels) {
+			String text = fileLabel.getAttribute("innerHTML");
+			if (!existingFileNames.contains(text)) {
+				correctNames = false;
+			}
+		}
+		return correctNames;
+	}
+
+	public void clickRemoveOriginalsRadioButton() {
+		concatenateModal.findElement(By.className("t-remove-originals-true")).click();
+		waitForTime(500);
+	}
+
+	public void removeFile(int index) {
+		removeFileBtns.get(index).click();
+		waitForTime(500);
+		confirmBtns.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}
 
 }

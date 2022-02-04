@@ -67,23 +67,28 @@ export function SingleEndFileRenderer({
                           )
                     }
                     target="_blank"
+                    className="t-file-label"
                   >
                     {file.fileInfo.label}
                   </a>
                 ) : (
-                  <span>{file.fileInfo.label}</span>
+                  <span className="t-file-label">{file.fileInfo.label}</span>
                 )}
 
                 <Space direction="horizontal" size="small">
                   {file.fileType === "assembly"
                     ? null
                     : getProcessingState(file.fileInfo.processingState)}
-                  <span style={{ marginRight: SPACE_XS }}>
+                  <span
+                    style={{ marginRight: SPACE_XS }}
+                    className="t-file-size"
+                  >
                     {file.firstFileSize}
                   </span>
                   <Button
                     shape="circle"
                     icon={<IconDownloadFile />}
+                    className="t-download-file-btn"
                     onClick={() =>
                       file.fileType === "assembly"
                         ? downloadAssemblyFile({

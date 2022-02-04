@@ -79,6 +79,8 @@ export function SequenceFileHeader({
               type,
             })
           }
+          okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+          cancelButtonProps={{ className: "t-remove-file-confirm-cancel-btn" }}
         >
           <Button
             shape="circle"

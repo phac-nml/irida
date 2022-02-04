@@ -150,7 +150,7 @@ export function SampleFileConcatenate({ children }) {
                       <List.Item
                         key={`seqObject-${seqObject.forwardSequenceFile.identifier}`}
                         style={{ width: `100%` }}
-                        className="pair-forward-sequence-file"
+                        className="t-pair-forward-sequence-file"
                       >
                         <List.Item.Meta
                           avatar={
@@ -219,10 +219,16 @@ export function SampleFileConcatenate({ children }) {
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Radio.Button value={false} id="t-remove-originals-false">
+                    <Radio.Button
+                      value={false}
+                      className="t-remove-originals-false"
+                    >
                       {i18n("SampleFilesConcatenate.keepOriginals")}
                     </Radio.Button>
-                    <Radio.Button value={true} id="t-remove-originals-true">
+                    <Radio.Button
+                      value={true}
+                      className="t-remove-originals-true"
+                    >
                       {i18n("SampleFilesConcatenate.removeOriginals")}
                     </Radio.Button>
                   </div>
