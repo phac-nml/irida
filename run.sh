@@ -3,6 +3,7 @@ export MIN_JS=false
 
 COMMANDS=()
 ADD_DB=false
+PROFILE=dev
 
 while [ $# -ne 0 ];
   do
@@ -14,6 +15,9 @@ while [ $# -ne 0 ];
     elif [ "$1" = "--no-yarn" ];
     then
       COMMANDS+=("-Dskip.yarn")
+      elif [ "$1" = "--prod" ];
+      then
+        PROFILE="prod"
     fi
     shift
 done
@@ -23,4 +27,4 @@ if [ "$ADD_DB" = false ]; then
 fi
 
 ADD="$(printf "%s " "${COMMANDS[@]}" )"
-mvn clean spring-boot:run -Dspring-boot.run.profile=dev $ADD
+mvn clean spring-boot:run -Dspring-boot.run.profile=${PROFILE} $ADD
