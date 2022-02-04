@@ -82,8 +82,8 @@ export default function UserProjectsPage() {
   return (
     <Space direction="vertical">
       <Typography.Title level={4}>Projects</Typography.Title>
-      <PagedTableProvider url={setBaseUrl("/ajax/users/1/projects/list")}>
-        <PagedTable columns={columns} />
+      <PagedTableProvider url={setBaseUrl(`/ajax/users/${userId}/projects/list`)} column="project.id" order="ascend">
+        <PagedTable columns={columns} search={false} />
       </PagedTableProvider>
     </Space>
   );

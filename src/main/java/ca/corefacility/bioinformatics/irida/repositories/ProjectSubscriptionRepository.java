@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -19,6 +20,6 @@ public interface ProjectSubscriptionRepository extends IridaJpaRepository<Projec
 	 * @param page the page request
 	 * @return a page of {@link ProjectSubscription}.
 	 */
-	@Query("from ProjectSubscription ps where ps.user = ?1")
-	public Page<ProjectSubscription> findAllProjectSubscriptionsByUser(User user, Pageable page);
+	@Query("from ProjectSubscription ps where ps.user = :user")
+	public Page<ProjectSubscription> findAllProjectSubscriptionsByUser(@Param("user") User user, Pageable page);
 }

@@ -59,7 +59,7 @@ public class ProjectSubscription implements IridaThing {
 
 	@Override
 	public Long getId() {
-		return null;
+		return id;
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class ProjectSubscription implements IridaThing {
 
 	@Override
 	public Date getCreatedDate() {
-		return null;
+		return createdDate;
 	}
 
 	public void setCreatedDate(Date createdDate) {

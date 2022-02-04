@@ -132,8 +132,8 @@ function PagedTableProvider({
       payload: {
         pageSize,
         current,
-        order,
-        column: field,
+        order: order || state.order,
+        column: field || state.column,
         filters: pickBy(filters)
       }
     });
