@@ -1,13 +1,26 @@
 #!/bin/bash
 export MIN_JS=false
 
-ADD=""
+COMMANDS=()
+ADD_DB=false
 
-if [ "$1" = "--create-db" ]; then
-   ADD="--hbm.dev.auto=create"
-   echo "Dropping then Creating/Recreating database schema"
-else
+while [ $# -ne 0 ];
+  do
+    if [ "$1" = "--create-db" ];
+    then
+       COMMANDS+=("-Dspring-boot.run.arguments=\"--hbm.dev.auto=create\"")
+       ADD_DB=true
+       echo "Dropping then Creating/Recreating database schema"
+    elif [ "$1" = "--no-yarn" ];
+    then
+      COMMANDS+=("-Dskip.yarn")
+    fi
+    shift
+done
+
+if [ "$ADD_DB" = false ]; then
    echo "Updating database schema without dropping"
-  fi
+fi
 
-mvn clean spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev ${ADD}"
+ADD="$(printf "%s " "${COMMANDS[@]}" )"
+mvn clean spring-boot:run -Dspring-boot.run.profile=dev $ADD
