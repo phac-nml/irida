@@ -33,7 +33,7 @@ export function SequenceFileHeader({
   );
   const dispatch = useDispatch();
 
-  const updateSelected = (e, file) => {
+  const updateSelected = (e) => {
     if (e.target.checked) {
       dispatch(addToConcatenateSelected({ seqObject: file }));
     } else {
@@ -53,11 +53,12 @@ export function SequenceFileHeader({
         {modifiable && displayConcatenationCheckbox ? (
           <Checkbox
             style={{ marginRight: SPACE_XS }}
-            onChange={(e) => updateSelected(e, file)}
+            onChange={updateSelected}
             checked={
               concatenateSelected.filter((e) => e.identifier === fileObjectId)
                 .length > 0
             }
+            className="t-concatenation-checkbox"
           />
         ) : null}
         <CalendarDate date={file.createdDate} />
@@ -79,7 +80,11 @@ export function SequenceFileHeader({
             })
           }
         >
-          <Button shape="circle" icon={<IconRemove />} />
+          <Button
+            shape="circle"
+            icon={<IconRemove />}
+            className="t-remove-file-btn"
+          />
         </Popconfirm>
       ) : null}
     </div>

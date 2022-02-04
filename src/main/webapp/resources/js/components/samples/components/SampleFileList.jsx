@@ -168,7 +168,9 @@ export function SampleFileList() {
     }
     return (
       <Tooltip placement="top" title={fileProcessTranslations[processingState]}>
-        <Tag color={tagColor}>{icon}</Tag>
+        <Tag color={tagColor} className="t-file-processing-status">
+          {icon}
+        </Tag>
       </Tooltip>
     );
   };

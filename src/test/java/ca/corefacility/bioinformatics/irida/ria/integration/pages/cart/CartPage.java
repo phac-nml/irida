@@ -68,6 +68,8 @@ public class CartPage extends AbstractPage {
 
 	public void removeSampleFromCart(int index) {
 		WebElement sample = cartSamples.get(index);
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-sample")));
 		sample.findElement(By.className("t-remove-sample"))
 				.click();
 		waitForTime(500);
@@ -75,6 +77,8 @@ public class CartPage extends AbstractPage {
 
 	public void removeProjectFromCart() {
 		WebElement sample = cartSamples.get(0);
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-project")));
 		sample.findElement(By.className("t-remove-project"))
 				.click();
 		waitForTime(500);

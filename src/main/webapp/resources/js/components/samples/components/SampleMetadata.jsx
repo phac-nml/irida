@@ -120,7 +120,10 @@ export function SampleMetadata() {
       {isModifiable && (
         <MetadataRolesProvider>
           <AddNewMetadata>
-            <Button icon={<IconPlusCircle />}>
+            <Button
+              icon={<IconPlusCircle />}
+              className="t-add-new-metadata-btn"
+            >
               {i18n("SampleMetadata.addNewMetadata")}
             </Button>
           </AddNewMetadata>

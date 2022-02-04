@@ -124,7 +124,7 @@ export function SampleFileConcatenate({ children }) {
       })}
       {visible ? (
         <Modal
-          className="t-concatenate-confirm"
+          className="t-concatenate-confirm-modal"
           onCancel={() => {
             dispatch(resetConcatenateSelected({}));
             setVisible(false);
@@ -133,6 +133,8 @@ export function SampleFileConcatenate({ children }) {
           onOk={concatenateFiles}
           okText={i18n("SampleFilesConcatenate.okText")}
           cancelText={i18n("SampleFilesConcatenate.cancelText")}
+          okButtonProps={{ className: "t-concatenate-confirm" }}
+          cancelButtonProps={{ className: "t-concatenate-cancel" }}
         >
           <Space size="large" direction="vertical" style={{ width: `100%` }}>
             <Title level={4}>{i18n("SampleFilesConcatenate.title")}</Title>
@@ -148,6 +150,7 @@ export function SampleFileConcatenate({ children }) {
                       <List.Item
                         key={`seqObject-${seqObject.forwardSequenceFile.identifier}`}
                         style={{ width: `100%` }}
+                        className="pair-forward-sequence-file"
                       >
                         <List.Item.Meta
                           avatar={
@@ -159,6 +162,7 @@ export function SampleFileConcatenate({ children }) {
                       <List.Item
                         key={`seqObject-${seqObject.reverseSequenceFile.identifier}`}
                         style={{ width: `100%` }}
+                        className="t-pair-reverse-sequence-file"
                       >
                         <List.Item.Meta
                           avatar={
@@ -174,6 +178,7 @@ export function SampleFileConcatenate({ children }) {
                     <List.Item
                       key={`seqObject-${seqObject.identifier}`}
                       style={{ width: `100%` }}
+                      className="t-single-end-file"
                     >
                       <List.Item.Meta
                         avatar={<Avatar size={`small`} icon={<IconFile />} />}
@@ -201,7 +206,7 @@ export function SampleFileConcatenate({ children }) {
                   },
                 ]}
               >
-                <Input />
+                <Input id="t-concat-new-file-name" />
               </Form.Item>
 
               <Form.Item
@@ -214,10 +219,10 @@ export function SampleFileConcatenate({ children }) {
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Radio.Button value={false}>
+                    <Radio.Button value={false} id="t-remove-originals-false">
                       {i18n("SampleFilesConcatenate.keepOriginals")}
                     </Radio.Button>
-                    <Radio.Button value={true}>
+                    <Radio.Button value={true} id="t-remove-originals-true">
                       {i18n("SampleFilesConcatenate.removeOriginals")}
                     </Radio.Button>
                   </div>

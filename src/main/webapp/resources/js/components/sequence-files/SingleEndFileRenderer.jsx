@@ -46,7 +46,11 @@ export function SingleEndFileRenderer({
             displayConcatenationCheckbox={displayConcatenationCheckbox}
           />
         </List.Item>,
-        <List.Item key={`file-${file.id}`} style={{ width: `100%` }}>
+        <List.Item
+          key={`file-${file.id}`}
+          style={{ width: `100%` }}
+          className="t-file-details"
+        >
           <List.Item.Meta
             avatar={<Avatar size={`small`} icon={<IconFile />} />}
             title={

@@ -273,7 +273,9 @@ export function SampleFiles() {
       ) : null}
       {concatenateSelected?.length >= 2 && modifiable ? (
         <SampleFileConcatenate>
-          <Button>{i18n("SampleFiles.concatenate")}</Button>
+          <Button className="t-concatenate-btn">
+            {i18n("SampleFiles.concatenate")}
+          </Button>
         </SampleFileConcatenate>
       ) : null}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
