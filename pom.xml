@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.3</version>
-		<relativePath/>
+		<relativePath />
 	</parent>
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
@@ -953,7 +952,9 @@
 		<profile>
 			<id>ui_testing</id>
 			<properties>
-				<include.tags><![CDATA[IntegrationTest & UI]]></include.tags>
+				<include.tags>
+					<![CDATA[IntegrationTest & UI]]>
+				</include.tags>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
@@ -963,7 +964,9 @@
 		<profile>
 			<id>service_testing</id>
 			<properties>
-				<include.tags><![CDATA[IntegrationTest & Service]]></include.tags>
+				<include.tags>
+					<![CDATA[IntegrationTest & Service]]>
+				</include.tags>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
@@ -974,7 +977,9 @@
 		<profile>
 			<id>rest_testing</id>
 			<properties>
-				<include.tags><![CDATA[IntegrationTest & Rest]]></include.tags>
+				<include.tags>
+					<![CDATA[IntegrationTest & Rest]]>
+				</include.tags>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
@@ -985,7 +990,9 @@
 		<profile>
 			<id>galaxy_testing</id>
 			<properties>
-				<include.tags><![CDATA[IntegrationTest & Galaxy & !Pipeline]]></include.tags>
+				<include.tags>
+					<![CDATA[IntegrationTest & Galaxy & !Pipeline]]>
+				</include.tags>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
@@ -996,7 +1003,9 @@
 		<profile>
 			<id>galaxy_pipeline_testing</id>
 			<properties>
-				<include.tags><![CDATA[IntegrationTest & Galaxy & Pipeline]]></include.tags>
+				<include.tags>
+					<![CDATA[IntegrationTest & Galaxy & Pipeline]]>
+				</include.tags>
 				<tomcat.skip>true</tomcat.skip>
 				<exclude.test.listeners>
 					ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener,
