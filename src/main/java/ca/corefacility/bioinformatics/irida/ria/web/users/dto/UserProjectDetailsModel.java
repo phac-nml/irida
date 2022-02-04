@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
 import java.util.Date;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
@@ -25,9 +26,11 @@ public class UserProjectDetailsModel extends TableModel {
 				.getId();
 		this.projectName = projectSubscription.getProject()
 				.getName();
-		this.isManager = false; //TODO
+		this.isManager = projectSubscription.getRole()
+				.equals(ProjectRole.PROJECT_OWNER);
 		this.isEmailSubscribed = projectSubscription.isEmailSubscription();
-		this.roleName = null; //TODO
+		this.roleName = projectSubscription.getRole()
+				.toString();
 		this.createdDate = projectSubscription.getCreatedDate();
 	}
 

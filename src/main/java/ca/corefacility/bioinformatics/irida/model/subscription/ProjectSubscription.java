@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
@@ -29,16 +30,21 @@ public class ProjectSubscription implements IridaThing {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_SUBSCRIPTION_USER"))
 	@NotNull
-	User user;
+	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "project_id", nullable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_SUBSCRIPTION_PROJECT"))
 	@NotNull
-	Project project;
+	private Project project;
 
 	@NotNull
 	@Column(name = "email_subscription")
-	boolean emailSubscription;
+	private boolean emailSubscription;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "project_role")
+	private ProjectRole role;
 
 	@CreatedDate
 	@NotNull
@@ -49,12 +55,13 @@ public class ProjectSubscription implements IridaThing {
 	public ProjectSubscription() {
 	}
 
-	public ProjectSubscription(User user, Project project, boolean emailSubscription) {
+	public ProjectSubscription(User user, Project project, ProjectRole role, boolean emailSubscription) {
 		super();
 		this.user = user;
 		this.project = project;
-		this.createdDate = new Date();
+		this.role = role;
 		this.emailSubscription = emailSubscription;
+		this.createdDate = new Date();
 	}
 
 	@Override
@@ -81,6 +88,14 @@ public class ProjectSubscription implements IridaThing {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public ProjectRole getRole() {
+		return role;
+	}
+
+	public void setRole(ProjectRole role) {
+		this.role = role;
 	}
 
 	public boolean isEmailSubscription() {
