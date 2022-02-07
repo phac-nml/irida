@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import ca.corefacility.bioinformatics.irida.IridaApplication;
-import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 
@@ -26,8 +25,8 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemCo
 @Tag("IntegrationTest")
 @Tag("Rest")
 @ActiveProfiles("it")
-@SpringBootTest(classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class,
-		IridaApiNoGalaxyTestConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class,
+		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(IridaIntegrationTestUriConfig.class)
 public @interface RestIntegrationTest {
 }
