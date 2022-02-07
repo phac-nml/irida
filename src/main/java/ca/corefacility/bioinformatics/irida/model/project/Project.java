@@ -145,6 +145,7 @@ public class Project extends IridaRepresentationModel
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<NcbiExportSubmission> ncbiSubmissions;
 
+	@NotAudited
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectSubscription> projectSubscriptions;
 	//End of cascade deletion properties

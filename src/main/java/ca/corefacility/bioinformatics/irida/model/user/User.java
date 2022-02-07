@@ -114,6 +114,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<AnnouncementUserJoin> announcements;
 
+	@NotAudited
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectSubscription> projectSubscriptions;
 
