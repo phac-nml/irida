@@ -6,7 +6,9 @@ import {
   IconWarningOutlined,
 } from "../../../components/icons/Icons";
 import { blue6, red6 } from "../../../styles/colors";
-import { getColourForRestriction } from "../../../utilities/restriction-utilities";
+import {
+  getColourForRestriction
+} from "../../../utilities/restriction-utilities";
 import { updateMetadataRestriction } from "./shareSlice";
 
 /**
@@ -60,7 +62,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
             {getRestrictionLabel(field.restriction)}
           </Tag>
           <Popover
-            title={i18n("TargetMetadataRestriction.higher")}
+            title={i18n("TargetMetadataRestriction.title")}
             placement="right"
             content={i18n("TargetMetadataRestriction.target-project-setting")}
           >
@@ -91,7 +93,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
 
   return (
     <Tooltip
-      title={i18n("TargetMetadataRestriction.lower")}
+      title={i18n("TargetMetadataRestriction.title")}
       placement="right"
       visible={tooltipVisible}
     >

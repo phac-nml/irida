@@ -645,7 +645,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.equals(Role.ROLE_ADMIN)) {
 			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
 		} else {
-			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
+			return projectRepository.findManageableProjectsByName(searchName, p, loggedIn, pr);
 		}
 	}
 

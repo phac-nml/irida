@@ -1,44 +1,27 @@
 import { Select, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetPotentialProjectsToShareToQuery
-} from "../../../apis/projects/projects";
 import { setProject } from "./shareSlice";
 
 /**
  * React component for selecting the project to share a sample with.
+ * @param {list} projects - list of projects that the user is a manager on
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareProject() {
+export function ShareProject({ projects }) {
   const dispatch = useDispatch();
-  const { currentProject } = useSelector((state) => state.shareReducer);
-  const [options, setOptions] = React.useState([]);
+  const { targetProject } = useSelector((state) => state.shareReducer);
+  const [options, setOptions] = React.useState(() => formatOptions(projects));
 
-  /*
-  This fetches a list of the projects that the user has access to.
-   */
-  const {
-    data: projects = [],
-    isLoading: projectLoading,
-  } = useGetPotentialProjectsToShareToQuery(currentProject, {
-    skip: !currentProject,
-  });
-
-  const formatOptions = (values) => {
+  function formatOptions(values) {
     if (!values) return [];
     return values.map((project) => ({
       label: project.name,
       value: project.identifier,
     }));
-  };
+  }
 
-  React.useEffect(() => {
-    if (!projectLoading) {
-      setOptions(formatOptions(projects));
-    }
-  }, [projects, projectLoading]);
   React.useEffect(() => {
     setOptions(
       projects.map((project) => ({
@@ -72,12 +55,12 @@ export function ShareProject() {
         showSearch
         size="large"
         style={{ width: `100%` }}
-        loading={projectLoading}
         options={options}
         className="t-share-project"
         filterOption={false}
         onSearch={handleSearch}
         onChange={onChange}
+        defaultValue={targetProject ? targetProject.identifier : null}
       />
     </Space>
   );

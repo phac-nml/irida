@@ -1,7 +1,20 @@
-import { Button, Card, Col, PageHeader, Row, Space, Steps } from "antd";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  PageHeader,
+  Row,
+  Skeleton,
+  Space,
+  Steps,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
+import {
+  useGetPotentialProjectsToShareToQuery
+} from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -53,6 +66,11 @@ function ShareApp() {
     }
   );
 
+  const { data: projects, isLoading: projectsLoading } =
+    useGetPotentialProjectsToShareToQuery(currentProject, {
+      skip: !currentProject,
+    });
+
   const filtered = originalSamples.filter(
     (sample) => !existingIds.includes(sample.id)
   );
@@ -60,7 +78,7 @@ function ShareApp() {
   const steps = [
     {
       title: i18n("ShareLayout.project"),
-      component: <ShareProject />,
+      component: <ShareProject projects={projects} />,
     },
     {
       title: i18n("ShareLayout.samples"),
@@ -130,61 +148,82 @@ function ShareApp() {
   return (
     <Row>
       <Col xl={{ span: 18, offset: 3 }} xs={24}>
-        <Card>
-          <PageHeader
-            ghost={false}
-            title={i18n("ShareSamples.title")}
-            onBack={goToPrevious}
-          >
-            <Row>
-              <Col span={6}>
-                <Steps
-                  direction="vertical"
-                  current={step}
-                  style={{ height: 400 }}
-                >
-                  {steps.map((step) => (
-                    <Steps.Step key={step.title} title={step.title} />
-                  ))}
-                </Steps>
-              </Col>
-              <Col span={18}>
-                {finished ? (
-                  <ShareSuccess
-                    currentProject={currentProject}
-                    samples={filtered}
-                    removed={remove}
-                    project={targetProject}
-                  />
-                ) : (
-                  <Space direction="vertical" style={{ width: `100%` }}>
-                    {steps[step].component}
-                    {error}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
+        <Skeleton loading={projectsLoading} active>
+          <Card>
+            <PageHeader
+              ghost={false}
+              title={i18n("ShareSamples.title")}
+              onBack={goToPrevious}
+            >
+              {projects?.length === 0 ? (
+                <Alert
+                  message={i18n("ShareSamples.no-project.message")}
+                  description={i18n("ShareSamples.no-project.description")}
+                />
+              ) : (
+                <Row>
+                  <Col span={6}>
+                    <Steps
+                      direction="vertical"
+                      current={step}
+                      style={{ height: 400 }}
                     >
-                      <Button disabled={prevDisabled} onClick={previousStep}>
-                        {i18n("ShareLayout.previous")}
-                      </Button>
-                      {step === steps.length - 1 ? (
-                        <Button onClick={submit} type="primary">
-                          {i18n("ShareButton.button")}
-                        </Button>
-                      ) : (
-                        <Button disabled={nextDisabled} onClick={nextStep}>
-                          Next
-                        </Button>
-                      )}
-                    </div>
-                  </Space>
-                )}
-              </Col>
-            </Row>
-          </PageHeader>
-        </Card>
+                      {steps.map((step) => (
+                        <Steps.Step key={step.title} title={step.title} />
+                      ))}
+                    </Steps>
+                  </Col>
+                  <Col span={18}>
+                    {finished ? (
+                      <ShareSuccess
+                        currentProject={currentProject}
+                        samples={filtered}
+                        removed={remove}
+                        project={targetProject}
+                      />
+                    ) : (
+                      <Space direction="vertical" style={{ width: `100%` }}>
+                        {steps[step].component}
+                        {error}
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Button
+                            className="t-share-previous"
+                            disabled={prevDisabled}
+                            onClick={previousStep}
+                          >
+                            {i18n("ShareLayout.previous")}
+                          </Button>
+                          {step === steps.length - 1 ? (
+                            <Button
+                              className="t-share-button"
+                              onClick={submit}
+                              type="primary"
+                            >
+                              {i18n("ShareButton.button")}
+                            </Button>
+                          ) : (
+                            <Button
+                              className="t-share-next"
+                              disabled={nextDisabled}
+                              onClick={nextStep}
+                            >
+                              {i18n("ShareLayout.next")}
+                            </Button>
+                          )}
+                        </div>
+                      </Space>
+                    )}
+                  </Col>
+                </Row>
+              )}
+            </PageHeader>
+          </Card>
+        </Skeleton>
       </Col>
     </Row>
   );
