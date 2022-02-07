@@ -6,9 +6,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
@@ -54,7 +54,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  * 
  *
  */
-@Configuration
+@TestConfiguration
 @EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
 @Conditional(NonWindowsPlatformCondition.class)
 public class AnalysisExecutionServiceTestConfig {

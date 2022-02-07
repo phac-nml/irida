@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
@@ -21,7 +21,7 @@ import com.github.jmchilton.blend4j.galaxy.*;
 /**
  * Test configuration for Galaxy execution services.
  */
-@Configuration
+@TestConfiguration
 @Conditional(NonWindowsPlatformCondition.class)
 public class GalaxyExecutionTestConfig {
 

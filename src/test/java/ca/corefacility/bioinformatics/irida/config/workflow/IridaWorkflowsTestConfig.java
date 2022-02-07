@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.google.common.collect.Sets;
 
@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  * 
  *
  */
-@Configuration
+@TestConfiguration
 public class IridaWorkflowsTestConfig {
 
 	@Autowired
