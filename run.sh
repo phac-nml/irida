@@ -27,4 +27,4 @@ if [ "$ADD_DB" = false ]; then
 fi
 
 ADD="$(printf "%s " "${COMMANDS[@]}" )"
-mvn clean spring-boot:run -Dspring-boot.run.profile=${PROFILE} $ADD
+mvn clean spring-boot:run -Dspring-boot.run.profiles=${PROFILE} $ADD
