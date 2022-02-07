@@ -18,7 +18,7 @@ public interface ProjectSubscriptionService extends CRUDService<Long, ProjectSub
 	 * @param page the current page of results.
 	 * @param size the number of results on the page.
 	 * @param sort the sort properties.
-	 * @return{@link Page} of {@link ProjectSubscription}s.
+	 * @return {@link Page} of {@link ProjectSubscription}s.
 	 */
 	public Page<ProjectSubscription> getProjectSubscriptionsForUser(User user, int page, int size, Sort sort);
 }

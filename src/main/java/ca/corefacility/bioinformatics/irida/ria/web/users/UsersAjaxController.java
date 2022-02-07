@@ -85,7 +85,8 @@ public class UsersAjaxController {
 	/**
 	 * Get the project subscriptions associated with a user
 	 *
-	 * @param userId - the id for the user to show project subscriptions for
+	 * @param userId       - the id for the user to show project subscriptions for
+	 * @param tableRequest - details about the current page of the table requested
 	 * @return a {@link TableResponse} containing the list of project subscriptions associated with a users.
 	 */
 	@RequestMapping("/{userId}/projects/list")

@@ -261,7 +261,8 @@ public class UIUsersService {
 	/**
 	 * Get all the project subscriptions associated with a user
 	 *
-	 * @param userId - the id for the user to show project subscriptions for
+	 * @param userId       - the id for the user to show project subscriptions for
+	 * @param tableRequest - details about the current page of the table requested
 	 * @return user project subscriptions for a specific user
 	 */
 	public TableResponse<UserProjectDetailsModel> getUserProjects(Long userId, TableRequest tableRequest) {
