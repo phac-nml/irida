@@ -15,9 +15,9 @@ while [ $# -ne 0 ];
     elif [ "$1" = "--no-yarn" ];
     then
       COMMANDS+=("-Dskip.yarn")
-      elif [ "$1" = "--prod" ];
-      then
-        PROFILE="prod"
+    elif [ "$1" = "--prod" ];
+    then
+      PROFILE="prod"
     fi
     shift
 done
