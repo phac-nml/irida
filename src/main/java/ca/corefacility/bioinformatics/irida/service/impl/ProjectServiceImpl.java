@@ -49,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscripti
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
@@ -240,7 +241,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
 			//TODO: I dunno if I like this...
-			projectSubscriptionRepository.save(new ProjectSubscription(user, project, role, false));
+			ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
+					user, project);
+			if (projectSubscription == null) {
+				projectSubscriptionRepository.save(new ProjectSubscription(user, project, role, false));
+			}
 			return join;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException(
@@ -261,9 +266,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
 		//TODO: I dunno if I like this...
-		ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
-				user, project);
-		projectSubscriptionRepository.delete(projectSubscription);
+		Collection<UserGroupProjectJoin> userGroupProjects = ugpjRepository.findByProjectAndUser(project, user);
+		if (userGroupProjects.isEmpty()) {
+			ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
+					user, project);
+			projectSubscriptionRepository.delete(projectSubscription);
+		}
 		pujRepository.delete(projectJoinForUser);
 	}
 
@@ -275,6 +283,20 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@LaunchesProjectEvent(UserGroupRemovedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
+		//TODO: I dunno if I like this...
+		Set<UserGroupJoin> userGroupJoins = userGroup.getUsers();
+		for (UserGroupJoin userGroupJoin : userGroupJoins) {
+			User user = userGroupJoin.getSubject();
+			ProjectUserJoin userProject = pujRepository.getProjectJoinForUser(project, user);
+			if (userProject == null) {
+				Collection<UserGroupProjectJoin> userGroupProjects = ugpjRepository.findByProjectAndUser(project, user);
+				if (userGroupProjects.size() == 1) {
+					ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
+							user, project);
+					projectSubscriptionRepository.delete(projectSubscription);
+				}
+			}
+		}
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (!allowRoleChange(project, j.getProjectRole())) {
 			throw new ProjectWithoutOwnerException(
@@ -686,6 +708,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup,
 			final ProjectRole role) {
+		//TODO: I dunno if I like this...
+		Set<UserGroupJoin> userGroupJoins = userGroup.getUsers();
+		for (UserGroupJoin userGroupJoin : userGroupJoins) {
+			User user = userGroupJoin.getSubject();
+			ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
+					user, project);
+			if (projectSubscription == null) {
+				projectSubscriptionRepository.save(new ProjectSubscription(user, project, role, false));
+			} //else update role???
+		}
 		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
 	}
 

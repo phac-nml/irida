@@ -59,7 +59,7 @@ public class UserGroup implements MutableIridaThing {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "userGroup")
 	private Set<UserGroupProjectJoin> userGroupProjects;
-	
+
 	@Column(name = "description")
 	@Lob
 	private String description;
@@ -71,7 +71,7 @@ public class UserGroup implements MutableIridaThing {
 		this.id = null;
 		this.createdDate = new Date();
 	}
-	
+
 	public UserGroup(final String name) {
 		this();
 		this.name = name;
@@ -151,10 +151,14 @@ public class UserGroup implements MutableIridaThing {
 		this.modifiedDate = modifiedDate;
 	}
 
+	public Set<UserGroupJoin> getUsers() {
+		return users;
+	}
+
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	public void setDescription(final String description) {
 		this.description = description;
 	}
