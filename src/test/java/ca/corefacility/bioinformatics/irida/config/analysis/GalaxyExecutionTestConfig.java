@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 
@@ -22,7 +22,6 @@ import com.github.jmchilton.blend4j.galaxy.*;
  * Test configuration for Galaxy execution services.
  */
 @Configuration
-@Profile("test")
 @Conditional(NonWindowsPlatformCondition.class)
 public class GalaxyExecutionTestConfig {
 
@@ -60,7 +59,7 @@ public class GalaxyExecutionTestConfig {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
 		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 	}
-	
+
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
@@ -71,11 +70,17 @@ public class GalaxyExecutionTestConfig {
 
 	@Lazy
 	@Bean
+	public GalaxyToolDataService galaxyToolDataService() {
+		ToolDataClient toolDataClient = localGalaxy.getGalaxyInstanceAdmin().getToolDataClient();
+
+		return new GalaxyToolDataService(toolDataClient);
+	}
+
+	@Lazy
+	@Bean
 	public GalaxyJobErrorsService galaxyJobErrorsService() {
 		GalaxyInstance galaxyInstance = localGalaxy.getGalaxyInstanceAdmin();
-		return new GalaxyJobErrorsService(
-				galaxyInstance.getHistoriesClient(),
-				galaxyInstance.getToolsClient(),
+		return new GalaxyJobErrorsService(galaxyInstance.getHistoriesClient(), galaxyInstance.getToolsClient(),
 				galaxyInstance.getJobsClient());
 	}
 }
