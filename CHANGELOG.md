@@ -3,7 +3,7 @@ Changes
 
 22.01 to 22.05
 --------------
-* [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
+* [Developer]: Added arguments `--no-yarn` to skip the yarn and `--prod` to run in the production profile in `run.sh`
 
 21.09 to 22.01
 --------------
