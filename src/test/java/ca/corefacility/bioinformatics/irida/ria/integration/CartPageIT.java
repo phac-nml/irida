@@ -68,7 +68,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
-//		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertFalse(sampleDetailsViewer.addNewMetadataButtonVisible());
@@ -128,7 +128,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
-		//		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());

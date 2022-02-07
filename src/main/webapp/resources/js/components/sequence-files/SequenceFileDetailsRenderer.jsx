@@ -30,9 +30,7 @@ export function SequenceFileDetailsRenderer({
             </a>
             <Space direction="horizontal" size="small">
               {getProcessingState(file.processingState)}
-              <span style={{ marginRight: SPACE_XS }} className="t-file-size">
-                {file.filesize}
-              </span>
+              <span className="t-file-size">{file.filesize}</span>
               <Button
                 shape="circle"
                 icon={<IconDownloadFile />}

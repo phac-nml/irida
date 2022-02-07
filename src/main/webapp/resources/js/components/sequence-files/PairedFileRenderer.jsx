@@ -24,7 +24,7 @@ export function PairedFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
-  displayConcatenationCheckbox,
+  displayConcatenationCheckbox = false,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -78,7 +78,7 @@ export function PairedFileRenderer({
               downloadSequenceFile={downloadSequenceFile}
               getProcessingState={getProcessingState}
             />
-            {pair.qcEntries !== null && !file.forwardFile ? (
+            {pair.qcEntries?.length && !file.forwardFile ? (
               <List.Item
                 key={`file-${file.id}-qc-entry`}
                 style={{ width: `100%` }}

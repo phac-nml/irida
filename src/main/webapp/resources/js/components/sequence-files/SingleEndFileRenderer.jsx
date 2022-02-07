@@ -3,7 +3,6 @@ import { Avatar, Button, List, Space, Tag } from "antd";
 import { SequenceFileHeader } from "./SequenceFileHeader";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile, IconFile } from "../icons/Icons";
-import { SPACE_XS } from "../../styles/spacing";
 import { useSelector } from "react-redux";
 
 /**
@@ -28,9 +27,29 @@ export function SingleEndFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
-  displayConcatenationCheckbox,
+  displayConcatenationCheckbox = false,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
+
+  /*
+  Function to download the sequence file or genome assembly
+  depending on the file type
+   */
+  const downloadFile = (file) => {
+    if (file.fileType === "assembly") {
+      downloadAssemblyFile({
+        sampleId: sample.identifier,
+        genomeAssemblyId: file.fileInfo.identifier,
+      });
+    } else {
+      downloadSequenceFile({
+        sequencingObjectId: file.fileInfo.identifier,
+        sequenceFileId: file.fileInfo.sequenceFile
+          ? file.fileInfo.sequenceFile.identifier
+          : file.fileInfo.file.identifier,
+      });
+    }
+  };
 
   return (
     <List
@@ -79,36 +98,19 @@ export function SingleEndFileRenderer({
                   {file.fileType === "assembly"
                     ? null
                     : getProcessingState(file.fileInfo.processingState)}
-                  <span
-                    style={{ marginRight: SPACE_XS }}
-                    className="t-file-size"
-                  >
-                    {file.firstFileSize}
-                  </span>
+                  <span className="t-file-size">{file.firstFileSize}</span>
                   <Button
                     shape="circle"
                     icon={<IconDownloadFile />}
                     className="t-download-file-btn"
-                    onClick={() =>
-                      file.fileType === "assembly"
-                        ? downloadAssemblyFile({
-                            sampleId: sample.identifier,
-                            genomeAssemblyId: file.fileInfo.identifier,
-                          })
-                        : downloadSequenceFile({
-                            sequencingObjectId: file.fileInfo.identifier,
-                            sequenceFileId: file.fileInfo.sequenceFile
-                              ? file.fileInfo.sequenceFile.identifier
-                              : file.fileInfo.file.identifier,
-                          })
-                    }
+                    onClick={() => downloadFile(file)}
                   />
                 </Space>
               </div>
             }
           />
         </List.Item>,
-        file.fileType === "sequencingObject" && file.qcEntries !== null ? (
+        file.fileType === "sequencingObject" && file.qcEntries?.length ? (
           <List.Item key={`file-${file.id}-qc-entry`} style={{ width: `100%` }}>
             <List.Item.Meta
               title={file.qcEntries.map((entry) => {

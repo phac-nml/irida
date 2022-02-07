@@ -219,7 +219,6 @@ export function SampleFileList() {
             removeSampleFiles={removeSampleFiles}
             getProcessingState={getProcessingStateTag}
             qcEntryTranslations={qcEntryTranslations}
-            displayConcatenationCheckbox={false}
           />
         </SequenceFileTypeRenderer>
       )}
@@ -232,7 +231,6 @@ export function SampleFileList() {
             downloadAssemblyFile={downloadAssemblyFile}
             removeSampleFiles={removeSampleFiles}
             qcEntryTranslations={qcEntryTranslations}
-            displayConcatenationCheckbox={false}
           />
         </SequenceFileTypeRenderer>
       )}
