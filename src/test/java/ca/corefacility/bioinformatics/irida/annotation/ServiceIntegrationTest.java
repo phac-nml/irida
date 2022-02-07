@@ -18,6 +18,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.IridaApplication;
+import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,8 +29,8 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemCo
 @Tag("IntegrationTest")
 @Tag("Service")
 @ActiveProfiles("it")
-@SpringBootTest(classes = { IridaApplication.class,
-		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class,
+		IridaApiNoGalaxyTestConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 public @interface ServiceIntegrationTest {
