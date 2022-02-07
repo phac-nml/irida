@@ -264,19 +264,26 @@ export function SampleFiles() {
   ) : (
     <Space size="large" direction="vertical" style={{ width: `100%` }}>
       {modifiable ? (
-        <DragUpload
-          className="t-upload-sample-files"
-          uploadText={i18n("SampleFiles.uploadText")}
-          uploadHint={i18n("SampleFiles.uploadHint")}
-          options={sampleFileUploadOptions}
-        />
-      ) : null}
-      {concatenateSelected?.length >= 2 && modifiable ? (
-        <SampleFileConcatenate>
-          <Button className="t-concatenate-btn">
-            {i18n("SampleFiles.concatenate")}
-          </Button>
-        </SampleFileConcatenate>
+        <>
+          <div>
+            <DragUpload
+              className="t-upload-sample-files"
+              uploadText={i18n("SampleFiles.uploadText")}
+              uploadHint={i18n("SampleFiles.uploadHint")}
+              options={sampleFileUploadOptions}
+            />
+          </div>
+          <div>
+            <SampleFileConcatenate>
+              <Button
+                className="t-concatenate-btn"
+                disabled={concatenateSelected?.length < 2}
+              >
+                {i18n("SampleFiles.concatenate")}
+              </Button>
+            </SampleFileConcatenate>
+          </div>
+        </>
       ) : null}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
         <div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { CalendarDate } from "../CalendarDate";
-import { Button, Checkbox, Popconfirm } from "antd";
+import { Button, Checkbox, Popconfirm, Tooltip } from "antd";
 import { IconRemove } from "../icons/Icons";
 import { useDispatch, useSelector } from "react-redux";
 import { SPACE_XS } from "../../styles/spacing";
@@ -8,6 +8,7 @@ import {
   addToConcatenateSelected,
   removeFromConcatenateSelected,
 } from "../samples/sampleFilesSlice";
+import { primaryColour } from "../../utilities/theme-utilities";
 
 /**
  * React component to display sequencing object/ genome assembly header
@@ -56,15 +57,21 @@ export function SequenceFileHeaderOwner({
     >
       <div>
         {displayConcatenationCheckbox ? (
-          <Checkbox
-            style={{ marginRight: SPACE_XS }}
-            onChange={updateSelected}
-            checked={
-              concatenateSelected.filter((e) => e.identifier === fileObjectId)
-                .length > 0
-            }
-            className="t-concatenation-checkbox"
-          />
+          <Tooltip
+            title={i18n("SampleFilesConcatenate.checkboxDescription")}
+            color={primaryColour}
+            placement="right"
+          >
+            <Checkbox
+              style={{ marginRight: SPACE_XS }}
+              onChange={updateSelected}
+              checked={
+                concatenateSelected.filter((e) => e.identifier === fileObjectId)
+                  .length > 0
+              }
+              className="t-concatenation-checkbox"
+            />
+          </Tooltip>
         ) : null}
         <CalendarDate date={file.createdDate} />
       </div>
