@@ -32,7 +32,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * Class to translate automated SISTR analyses into metadata entries for associated samples.
+ * Class to translate automated SISTR analyses into metadata entries for
+ * associated samples.
  */
 public class AutomatedSISTRUpdate implements CustomSqlChange {
 	private static final Logger logger = LoggerFactory.getLogger(AutomatedSISTRUpdate.class);
@@ -88,33 +89,33 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 			jdbcTemplate.update(new PreparedStatementCreator() {
 				@Override
 				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement statement = con
-							.prepareStatement("INSERT INTO metadata_field (label, type) VALUES (?, 'text')",
-									Statement.RETURN_GENERATED_KEYS);
+					PreparedStatement statement = con.prepareStatement(
+							"INSERT INTO metadata_field (label, type) VALUES (?, 'text')",
+							Statement.RETURN_GENERATED_KEYS);
 					statement.setString(1, e.getValue());
 					return statement;
 				}
 			}, holder);
 
-			//save the metadata header ids
+			// save the metadata header ids
 			metadataHeaderIds.put(e.getKey(), holder.getKey().longValue());
 		});
 
-		//get all the automated sistr results
-		List<SISTRFileResult> sistrFileResults = jdbcTemplate
-				.query("select a.id, o.sample_id, of.file_path from sequencing_object s INNER JOIN analysis_submission a ON s.sistr_typing=a.id INNER JOIN sample_sequencingobject o ON o.sequencingobject_id=s.id INNER JOIN analysis_output_file_map f ON f.analysis_id=a.analysis_id INNER JOIN analysis_output_file of ON f.analysisOutputFilesMap_id=of.id WHERE f.analysis_output_file_key='sistr-predictions'",
-						new RowMapper<SISTRFileResult>() {
-							@Override
-							public SISTRFileResult mapRow(ResultSet rs, int rowNum) throws SQLException {
-								SISTRFileResult sistrFileResult = new SISTRFileResult();
-								sistrFileResult.submissionId = rs.getLong(1);
-								sistrFileResult.sampleId = rs.getLong(2);
-								sistrFileResult.filePath = Paths.get(rs.getString(3));
-								return sistrFileResult;
-							}
-						});
+		// get all the automated sistr results
+		List<SISTRFileResult> sistrFileResults = jdbcTemplate.query(
+				"select a.id, o.sample_id, of.file_path from sequencing_object s INNER JOIN analysis_submission a ON s.sistr_typing=a.id INNER JOIN sample_sequencingobject o ON o.sequencingobject_id=s.id INNER JOIN analysis_output_file_map f ON f.analysis_id=a.analysis_id INNER JOIN analysis_output_file of ON f.analysisOutputFilesMap_id=of.id WHERE f.analysis_output_file_key='sistr-predictions'",
+				new RowMapper<SISTRFileResult>() {
+					@Override
+					public SISTRFileResult mapRow(ResultSet rs, int rowNum) throws SQLException {
+						SISTRFileResult sistrFileResult = new SISTRFileResult();
+						sistrFileResult.submissionId = rs.getLong(1);
+						sistrFileResult.sampleId = rs.getLong(2);
+						sistrFileResult.filePath = Paths.get(rs.getString(3));
+						return sistrFileResult;
+					}
+				});
 
-		//for each sistr result get the metadata
+		// for each sistr result get the metadata
 		for (SISTRFileResult sistrFileResult : sistrFileResults) {
 			Path filePath = outputFileDirectory.resolve(sistrFileResult.filePath);
 
@@ -124,21 +125,22 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 			} else {
 
 				try {
-					//Read the JSON file from SISTR output
-					@SuppressWarnings("resouce")
+					// Read the JSON file from SISTR output
+					@SuppressWarnings("resource")
 					String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile())))
 							.useDelimiter("\\Z").next();
 
 					// map the results into a Map
 					ObjectMapper mapper = new ObjectMapper();
-					List<Map<String, Object>> sistrResults = mapper
-							.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+					List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
+							new TypeReference<List<Map<String, Object>>>() {
 							});
 
 					if (sistrResults.size() > 0) {
 						Map<String, Object> result = sistrResults.get(0);
 
-						//loop through each of the requested fields and save the entries
+						// loop through each of the requested fields and save
+						// the entries
 						SISTR_FIELDS.entrySet().forEach(e -> {
 							if (result.containsKey(e.getKey()) && result.get(e.getKey()) != null) {
 								String value = result.get(e.getKey()).toString();
@@ -157,23 +159,24 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 									}
 								}, holder);
 
-								//save the new entry id
+								// save the new entry id
 								long entryId = holder.getKey().longValue();
 
-								//insert the pipeline_metadata_entry
-								jdbcTemplate
-										.update("INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)",
-												entryId, sistrFileResult.submissionId);
+								// insert the pipeline_metadata_entry
+								jdbcTemplate.update(
+										"INSERT INTO pipeline_metadata_entry (id, submission_id) VALUES (?,?)", entryId,
+										sistrFileResult.submissionId);
 
-								//remove existing entries for this metadata key and sample
-								jdbcTemplate
-										.update("DELETE FROM sample_metadata_entry WHERE sample_id=? AND metadata_KEY=?",
-												sistrFileResult.sampleId, metadataHeaderIds.get(e.getKey()));
+								// remove existing entries for this metadata key
+								// and sample
+								jdbcTemplate.update(
+										"DELETE FROM sample_metadata_entry WHERE sample_id=? AND metadata_KEY=?",
+										sistrFileResult.sampleId, metadataHeaderIds.get(e.getKey()));
 
-								//associate with the sample
-								jdbcTemplate
-										.update("INSERT INTO sample_metadata_entry (sample_id, metadata_id, metadata_KEY) VALUES (?, ?,?)",
-												sistrFileResult.sampleId, entryId, metadataHeaderIds.get(e.getKey()));
+								// associate with the sample
+								jdbcTemplate.update(
+										"INSERT INTO sample_metadata_entry (sample_id, metadata_id, metadata_KEY) VALUES (?, ?,?)",
+										sistrFileResult.sampleId, entryId, metadataHeaderIds.get(e.getKey()));
 							}
 						});
 
@@ -212,7 +215,8 @@ public class AutomatedSISTRUpdate implements CustomSqlChange {
 	}
 
 	/**
-	 * Private class to store results of a query for submission, sample, and file path relationships
+	 * Private class to store results of a query for submission, sample, and
+	 * file path relationships
 	 */
 	private class SISTRFileResult {
 		Long submissionId;
