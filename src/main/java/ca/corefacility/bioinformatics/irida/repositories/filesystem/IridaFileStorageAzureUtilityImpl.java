@@ -18,9 +18,6 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -32,7 +29,7 @@ import com.azure.storage.blob.models.*;
 import com.azure.storage.blob.specialized.BlobInputStream;
 
 /**
- * Component implementation of file utilities for azure storage
+ * Implementation of file utilities for azure storage
  */
 
 public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility {
