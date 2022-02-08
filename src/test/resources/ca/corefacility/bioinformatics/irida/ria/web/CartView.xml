@@ -164,4 +164,25 @@
     <metadata_entry id="18" value="bloody stool" type="text" sample_id="19" field_id="3"/>
     <metadata_entry id="19" value="AB-1003" type="text" sample_id="19" field_id="4"/>
 
+    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/test_file.fastq" />
+    <sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/test_file_1.fastq" />
+    <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/test_file_2.fastq" />
+
+    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="2" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="3" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequence_file_single_end id="1" file_id="1" />
+    <sequence_file_single_end id="2" file_id="2" />
+    <sequence_file_single_end id="3" file_id="3" />
+
+    <sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="1" />
+    <sample_sequencingobject id="2" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="2" />
+    <sample_sequencingobject id="3" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="3" />
+
 </dataset>

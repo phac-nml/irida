@@ -1,15 +1,19 @@
 import React from "react";
 import { CalendarDate } from "../CalendarDate";
-import { Button, Popconfirm } from "antd";
-import { IconRemove } from "../icons/Icons";
 import { useSelector } from "react-redux";
+
+import { SequenceFileHeaderOwner } from "./SequenceFileHeaderOwner";
+
 /**
- * React component to display paired end file details
+ * React component to display sequencing object/genome assembly header
+ * depending on if user is sample owner (or has ability to modify sample)
+ * or not
  *
  * @param file The file to display the header for
  * @param fileObjectId The sequencingobject or genomeassembly identifier
  * @param type The type of file object (sequencingobject or genomeassembly)
  * @function remove files from sample function
+ * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @returns {JSX.Element}
  * @constructor
  */
@@ -18,6 +22,7 @@ export function SequenceFileHeader({
   fileObjectId,
   type,
   removeSampleFiles = () => {},
+  displayConcatenationCheckbox = false,
 }) {
   const { modifiable } = useSelector((state) => state.sampleReducer);
 
@@ -29,27 +34,17 @@ export function SequenceFileHeader({
         width: `100%`,
       }}
     >
-      <CalendarDate date={file.createdDate} />
       {modifiable ? (
-        <Popconfirm
-          placement="left"
-          title={
-            type === "assembly"
-              ? i18n("SampleFiles.deleteGenomeAssembly")
-              : i18n("SampleFiles.deleteSequencingObject")
-          }
-          okText={i18n("SampleFiles.okText")}
-          cancelText={i18n("SampleFiles.cancelText")}
-          onConfirm={() =>
-            removeSampleFiles({
-              fileObjectId,
-              type,
-            })
-          }
-        >
-          <Button shape="circle" icon={<IconRemove />} />
-        </Popconfirm>
-      ) : null}
+        <SequenceFileHeaderOwner
+          file={file}
+          fileObjectId={fileObjectId}
+          removeSampleFiles={removeSampleFiles}
+          type={type}
+          displayConcatenationCheckbox={displayConcatenationCheckbox}
+        />
+      ) : (
+        <CalendarDate date={file.createdDate} />
+      )}
     </div>
   );
 }

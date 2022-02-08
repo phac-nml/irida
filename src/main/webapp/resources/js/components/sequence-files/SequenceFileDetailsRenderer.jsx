@@ -25,15 +25,16 @@ export function SequenceFileDetailsRenderer({
         avatar={<Avatar size={`small`} icon={file.icon} />}
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <a href={file.fastqcLink} target="_blank">
+            <a href={file.fastqcLink} target="_blank" className="t-file-label">
               {file.label}
             </a>
             <Space direction="horizontal" size="small">
               {getProcessingState(file.processingState)}
-              <span style={{ marginRight: SPACE_XS }}>{file.filesize}</span>
+              <span className="t-file-size">{file.filesize}</span>
               <Button
                 shape="circle"
                 icon={<IconDownloadFile />}
+                className="t-download-file-btn"
                 onClick={() => {
                   downloadSequenceFile({
                     sequencingObjectId: fileObjectId,

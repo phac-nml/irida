@@ -168,66 +168,72 @@ export function SampleFileList() {
     }
     return (
       <Tooltip placement="top" title={fileProcessTranslations[processingState]}>
-        <Tag color={tagColor}>{icon}</Tag>
+        <Tag color={tagColor} className="t-file-processing-status">
+          {icon}
+        </Tag>
       </Tooltip>
     );
   };
 
   return (
-    <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-      <Space size="large" direction="vertical" style={{ width: `100%` }}>
-        {files.singles && (
-          <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-            <SingleEndFileRenderer
-              files={files.singles}
+    <Space
+      size="large"
+      direction="vertical"
+      style={{ maxHeight: "500px", overflowY: "auto", width: `100%` }}
+    >
+      {files.singles && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
+          <SingleEndFileRenderer
+            files={files.singles}
+            sampleId={sample.identifier}
+            downloadSequenceFile={downloadSequenceFile}
+            removeSampleFiles={removeSampleFiles}
+            getProcessingState={getProcessingStateTag}
+            qcEntryTranslations={qcEntryTranslations}
+            displayConcatenationCheckbox={files.singles?.length >= 2}
+          />
+        </SequenceFileTypeRenderer>
+      )}
+      {files.paired && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
+          {files.paired.map((pair) => (
+            <PairedFileRenderer
+              key={`pair-${pair.identifier}`}
+              pair={pair}
               sampleId={sample.identifier}
               downloadSequenceFile={downloadSequenceFile}
               removeSampleFiles={removeSampleFiles}
               getProcessingState={getProcessingStateTag}
               qcEntryTranslations={qcEntryTranslations}
+              displayConcatenationCheckbox={files.paired?.length >= 2}
             />
-          </SequenceFileTypeRenderer>
-        )}
-        {files.paired && (
-          <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
-            {files.paired.map((pair) => (
-              <PairedFileRenderer
-                key={`pair-${pair.identifier}`}
-                pair={pair}
-                sampleId={sample.identifier}
-                downloadSequenceFile={downloadSequenceFile}
-                removeSampleFiles={removeSampleFiles}
-                getProcessingState={getProcessingStateTag}
-                qcEntryTranslations={qcEntryTranslations}
-              />
-            ))}
-          </SequenceFileTypeRenderer>
-        )}
-        {files.fast5 && (
-          <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-            <SingleEndFileRenderer
-              files={files.fast5}
-              sampleId={sample.identifier}
-              downloadSequenceFile={downloadSequenceFile}
-              removeSampleFiles={removeSampleFiles}
-              getProcessingState={getProcessingStateTag}
-              qcEntryTranslations={qcEntryTranslations}
-            />
-          </SequenceFileTypeRenderer>
-        )}
-        {files.assemblies && (
-          <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-            <SingleEndFileRenderer
-              files={files.assemblies}
-              fastqcResults={false}
-              sampleId={sample.identifier}
-              downloadAssemblyFile={downloadAssemblyFile}
-              removeSampleFiles={removeSampleFiles}
-              qcEntryTranslations={qcEntryTranslations}
-            />
-          </SequenceFileTypeRenderer>
-        )}
-      </Space>
-    </div>
+          ))}
+        </SequenceFileTypeRenderer>
+      )}
+      {files.fast5 && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
+          <SingleEndFileRenderer
+            files={files.fast5}
+            sampleId={sample.identifier}
+            downloadSequenceFile={downloadSequenceFile}
+            removeSampleFiles={removeSampleFiles}
+            getProcessingState={getProcessingStateTag}
+            qcEntryTranslations={qcEntryTranslations}
+          />
+        </SequenceFileTypeRenderer>
+      )}
+      {files.assemblies && (
+        <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
+          <SingleEndFileRenderer
+            files={files.assemblies}
+            fastqcResults={false}
+            sampleId={sample.identifier}
+            downloadAssemblyFile={downloadAssemblyFile}
+            removeSampleFiles={removeSampleFiles}
+            qcEntryTranslations={qcEntryTranslations}
+          />
+        </SequenceFileTypeRenderer>
+      )}
+    </Space>
   );
 }

@@ -20,6 +20,9 @@ export const removeFileObjectFromSample = createAction(
   })
 );
 
+/**
+ * Action to get updated sequencing objects
+ */
 export const updatedSequencingObjects = createAction(
   `sampleFiles/updatedSequencingObjects`,
   ({ updatedSeqObjects }) => ({
@@ -27,6 +30,9 @@ export const updatedSequencingObjects = createAction(
   })
 );
 
+/**
+ * Action to add sequence files to sample
+ */
 export const addToSequenceFiles = createAction(
   `sampleFiles/addToSequenceFiles`,
   ({ sequenceFiles }) => ({
@@ -34,6 +40,9 @@ export const addToSequenceFiles = createAction(
   })
 );
 
+/**
+ * Action to add assembly files to sample
+ */
 export const addToAssemblyFiles = createAction(
   `sampleFiles/addToAssemblyFiles`,
   ({ assemblies }) => ({
@@ -41,10 +50,43 @@ export const addToAssemblyFiles = createAction(
   })
 );
 
+/**
+ * Action to add fast5 files to sample
+ */
 export const addToFast5Files = createAction(
   `sampleFiles/addToFast5Files`,
   ({ fast5 }) => ({
     payload: { fast5 },
+  })
+);
+
+/**
+ * Action to add sequencingobject to concatenation selected list
+ */
+export const addToConcatenateSelected = createAction(
+  `sampleFiles/addToConcatenateSelected`,
+  ({ seqObject }) => ({
+    payload: { seqObject },
+  })
+);
+
+/**
+ * Action to remove sequencingobject from concatenation selected list
+ */
+export const removeFromConcatenateSelected = createAction(
+  `sampleFiles/removeFromConcatenateSelected`,
+  ({ seqObject }) => ({
+    payload: { seqObject },
+  })
+);
+
+/**
+ * Action to reset concatenation selected list to an empty array
+ */
+export const resetConcatenateSelected = createAction(
+  `sampleFiles/resetConcatenateSelected`,
+  () => ({
+    payload: {},
   })
 );
 
@@ -57,6 +99,7 @@ const initialState = (() => {
   return {
     files: {},
     loading: true,
+    concatenateSelected: [],
   };
 })();
 
@@ -225,6 +268,23 @@ const sampleFilesSlice = createSlice({
           }
         }
       }
+    });
+
+    builder.addCase(addToConcatenateSelected, (state, action) => {
+      state.concatenateSelected = [
+        ...state.concatenateSelected,
+        action.payload.seqObject,
+      ];
+    });
+
+    builder.addCase(removeFromConcatenateSelected, (state, action) => {
+      state.concatenateSelected = state.concatenateSelected.filter(
+        (seqObj) => seqObj.identifier !== action.payload.seqObject.identifier
+      );
+    });
+
+    builder.addCase(resetConcatenateSelected, (state) => {
+      state.concatenateSelected = [];
     });
   },
 });

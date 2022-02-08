@@ -86,6 +86,17 @@ export const sampleApi = createApi({
         method: "DELETE",
       }),
     }),
+    concatenateSequencingObjects: build.mutation({
+      query: ({
+        sampleId,
+        sequencingObjectIds,
+        newFileName,
+        removeOriginals,
+      }) => ({
+        url: `/${sampleId}/files/concatenate?sequencingObjectIds=${sequencingObjectIds}&newFileName=${newFileName}&removeOriginals=${removeOriginals}`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -96,6 +107,7 @@ export const {
   useRemoveSampleMetadataMutation,
   useUpdateSampleMetadataMutation,
   useRemoveSampleFilesMutation,
+  useConcatenateSequencingObjectsMutation,
 } = sampleApi;
 
 /**
@@ -122,7 +134,7 @@ export const fetchMetadataForSample = async ({ sampleId, projectId }) => {
  */
 export async function fetchSampleFiles({ sampleId, projectId }) {
   try {
-    const response = await axios(
+    const response = await axios.get(
       `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
     );
     return response.data;
@@ -144,9 +156,9 @@ export async function fetchUpdatedSequencingObjects({
   sequencingObjectIds,
 }) {
   try {
-    const response = await axios(
-      `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds[]=${sequencingObjectIds}${
-        projectId && `&projectId=${projectId}`
+    const response = await axios.get(
+      `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds=${sequencingObjectIds}&projectId=${
+        projectId ? projectId : ""
       }`
     );
     return response.data;

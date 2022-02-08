@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
@@ -10,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SamplesAjaxControllerTest {
@@ -47,6 +46,7 @@ public class SamplesAjaxControllerTest {
 	MockMultipartFile MOCK_FILE_02;
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
+	private final Set<Long> sequencingObjectIds = Set.<Long>of(1L, 2L, 3L);
 
 	@BeforeEach
 	public void setUp() {
@@ -107,5 +107,11 @@ public class SamplesAjaxControllerTest {
 		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 
+	}
+
+	@Test
+	public void testConcatenateFiles() {
+		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.concatenateSequenceFiles(SAMPLE.getId(), sequencingObjectIds, "newFile", false );
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 }

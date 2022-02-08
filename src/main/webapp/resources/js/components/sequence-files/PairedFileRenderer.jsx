@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
  * @function remove files from sample function
  * @function get file processing state function
  * @param qcEntryTranslationKeys Translation keys for qc entries
+ * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @returns {JSX.Element}
  * @constructor
  */
@@ -23,6 +24,7 @@ export function PairedFileRenderer({
   removeSampleFiles = () => {},
   getProcessingState = () => {},
   qcEntryTranslations,
+  displayConcatenationCheckbox = false,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -61,6 +63,7 @@ export function PairedFileRenderer({
           fileObjectId={pair.fileInfo.identifier}
           type={pair.fileType}
           removeSampleFiles={removeSampleFiles}
+          displayConcatenationCheckbox={displayConcatenationCheckbox}
         />
       }
       layout={`vertical`}
@@ -75,7 +78,7 @@ export function PairedFileRenderer({
               downloadSequenceFile={downloadSequenceFile}
               getProcessingState={getProcessingState}
             />
-            {pair.qcEntries !== null && !file.forwardFile ? (
+            {pair.qcEntries?.length && !file.forwardFile ? (
               <List.Item
                 key={`file-${file.id}-qc-entry`}
                 style={{ width: `100%` }}
@@ -87,7 +90,8 @@ export function PairedFileRenderer({
                         key={`file-${file.id}-qc-entry-status`}
                         color={entry.status === "POSITIVE" ? "green" : "red"}
                       >
-                        {qcEntryTranslations[entry.type] + entry.message}
+                        {qcEntryTranslations[entry.type]}{" "}
+                        {entry.message ? entry.message : ""}
                       </Tag>
                     );
                   })}

@@ -26,7 +26,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.IridaApplication;
 import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 import ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -42,9 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Common functionality to all UI integration tests.
  */
-@Tag("IntegrationTest") @Tag("UI")
+@Tag("IntegrationTest")
+@Tag("UI")
 @ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class },webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")

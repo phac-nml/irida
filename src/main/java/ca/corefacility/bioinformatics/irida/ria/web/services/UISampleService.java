@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -29,6 +30,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -48,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * UI Service for samples
@@ -814,6 +817,52 @@ public class UISampleService {
 			return sampleGenomeAssemblyFileModels;
 		} catch (IOException e) {
 			throw new IOException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Concatenate a collection of {@link SequencingObject}s
+	 *
+	 * @param sampleId        the id of the {@link Sample} to concatenate in
+	 * @param objectIds       the {@link SequencingObject} ids
+	 * @param filename        base of the new filename to create
+	 * @param removeOriginals boolean whether to remove the original files
+	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
+	 * @throws ConcatenateException if there was an error concatenating the files
+	 */
+	@PostMapping(value = "/{sampleId}/files/concatenate")
+	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
+			String filename, boolean removeOriginals) throws ConcatenateException {
+		Sample sample = sampleService.read(sampleId);
+		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
+		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
+
+		try {
+			SampleSequencingObjectJoin concatenatedSequencingObjects = sequencingObjectService.concatenateSequences(
+					Lists.newArrayList(readMultiple), filename, sample, removeOriginals);
+			SequencingObject sequencingObject = concatenatedSequencingObjects.getObject();
+			String firstFileSize;
+			String secondFileSize = null;
+			if (sequencingObject.getFiles()
+					.size() == 1) {
+				firstFileSize = sequencingObject.getFiles()
+						.stream()
+						.findFirst()
+						.get()
+						.getFileSize();
+			} else {
+				SequenceFilePair s = (SequenceFilePair) sequencingObject;
+				firstFileSize = s.getForwardSequenceFile()
+						.getFileSize();
+				secondFileSize = s.getReverseSequenceFile()
+						.getFileSize();
+			}
+			sampleSequencingObjectFileModels.add(
+					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
+							sequencingObject.getQcEntries()));
+			return sampleSequencingObjectFileModels;
+		} catch (ConcatenateException ex) {
+			throw new ConcatenateException(ex.getMessage());
 		}
 	}
 
