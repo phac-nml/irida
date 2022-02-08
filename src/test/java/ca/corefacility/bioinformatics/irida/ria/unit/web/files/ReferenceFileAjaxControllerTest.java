@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceF
 
 import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class ReferenceFileAjaxControllerTest {
@@ -40,7 +40,7 @@ public class ReferenceFileAjaxControllerTest {
 
 	private List<MultipartFile> mockMultipartFiles;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		uiProjectReferenceFileService = mock(UIProjectReferenceFileService.class);
 
@@ -56,18 +56,18 @@ public class ReferenceFileAjaxControllerTest {
 	@Test
 	public void testCreateNewReferenceFile() throws UnsupportedReferenceFileContentError, IOException {
 		ResponseEntity<AjaxResponse> response = controller.addReferenceFileToProject(FILE_ID, mockMultipartFiles, Locale.ENGLISH);
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 	}
 
 	@Test
 	public void testDeleteReferenceFile() {
 		ResponseEntity<AjaxResponse> response = controller.deleteReferenceFile(FILE_ID, PROJECT_ID, Locale.ENGLISH);
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 	}
 
 	@Test
 	public void testGetReferenceFiles() {
 		ResponseEntity<List<UIReferenceFile>> response = controller.getReferenceFilesForProject(PROJECT_ID);
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 	}
 }

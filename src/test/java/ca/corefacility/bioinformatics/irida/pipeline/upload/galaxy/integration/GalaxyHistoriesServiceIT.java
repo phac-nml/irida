@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,15 +13,17 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -67,8 +69,10 @@ import com.sun.jersey.api.client.ClientResponse;
  * Tests for building Galaxy histories.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class})
+@Tag("IntegrationTest") @Tag("Galaxy")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
+		initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -111,7 +115,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws CreateLibraryException 
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException, CreateLibraryException, ExecutionManagerObjectNotFoundException {
 		setupDataFiles();
 		
@@ -254,7 +258,7 @@ public class GalaxyHistoriesServiceIT {
 	 * Tests out failure to construct a collection of datasets.
 	 * @throws ExecutionManagerException 
 	 */
-	@Test(expected=ExecutionManagerException.class)
+	@Test
 	public void testConstructCollectionFail() throws ExecutionManagerException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
@@ -278,7 +282,9 @@ public class GalaxyHistoriesServiceIT {
 		elementInvalid.setName(datasetInvalid.getName());
 		description.addDatasetElement(elementInvalid);
 		
-		galaxyHistory.constructCollection(description, history);
+		assertThrows(ExecutionManagerException.class, () -> {
+			galaxyHistory.constructCollection(description, history);
+		});
 	}
 	
 	/**
@@ -303,10 +309,12 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws UploadException 
 	 * @throws GalaxyDatasetException 
 	 */
-	@Test(expected=IllegalStateException.class)
+	@Test
 	public void testInvalidFileToHistory() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
-		galaxyHistory.fileToHistory(dataFileInvalid, FILE_TYPE, history);
+		assertThrows(IllegalStateException.class, () -> {
+			galaxyHistory.fileToHistory(dataFileInvalid, FILE_TYPE, history);
+		});
 	}
 	
 	/**
@@ -314,10 +322,12 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws UploadException 
 	 * @throws GalaxyDatasetException 
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testFileToHistoryInvalidType() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
-		galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, history);
+		assertThrows(NullPointerException.class, () -> {
+			galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, history);
+		});
 	}
 	
 	/**
@@ -342,20 +352,18 @@ public class GalaxyHistoriesServiceIT {
 		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
 				.getHistoriesClient().showDataset(history.getId(), datasetId1);
 		assertNotNull(actualDataset1);
-		assertEquals("Invalid data type extension", actualDataset1.getDataTypeExt(),
-				InputFileType.FASTQ_SANGER.toString());
+		assertEquals(actualDataset1.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
+				"Invalid data type extension");
 
 		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
 				.getHistoriesClient().showDataset(history.getId(), datasetId2);
 		assertNotNull(actualDataset2);
-		assertEquals("Invalid data type extension", actualDataset2.getDataTypeExt(),
-				InputFileType.FASTQ_SANGER.toString());
+		assertEquals(actualDataset2.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(), "Invalid data type extension");
 		
 		Dataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin()
 				.getHistoriesClient().showDataset(history.getId(), datasetIdCompressed);
 		assertNotNull(actualDatasetCompressed);
-		assertEquals("Invalid data type extension", actualDatasetCompressed.getDataTypeExt(),
-				InputFileType.FASTQ_SANGER_GZ.toString());
+		assertEquals(actualDatasetCompressed.getDataTypeExt(), InputFileType.FASTQ_SANGER_GZ.toString(), "Invalid data type extension");
 	}
 	
 	/**
@@ -391,14 +399,16 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadException.class)
+	@Test
 	public void testFilesToLibraryToHistoryFailNoLibrary()
 			throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
-		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
-				history, library, DataStorage.LOCAL);
+		assertThrows(UploadException.class, () -> {
+			galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
+					history, library, DataStorage.LOCAL);
+		});
 	}
 	
 	/**
@@ -407,14 +417,16 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadException.class)
+	@Test
 	public void testFilesToLibraryToHistoryFailNoHistory()
 			throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		history.setId("invalid");
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
-		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
-				history, library, DataStorage.LOCAL);
+		assertThrows(UploadException.class, () -> {
+			galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
+					history, library, DataStorage.LOCAL);
+		});
 	}
 	
 	/**
@@ -432,9 +444,11 @@ public class GalaxyHistoriesServiceIT {
 	 * Tests failing to find a history by an id.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
-	@Test(expected=NoGalaxyHistoryException.class)
+	@Test
 	public void testFindByIdFail() throws ExecutionManagerObjectNotFoundException {
-		galaxyHistory.findById("invalid");
+		assertThrows(NoGalaxyHistoryException.class, () -> {
+			galaxyHistory.findById("invalid");
+		});
 	}
 	
 	/**
@@ -472,10 +486,10 @@ public class GalaxyHistoriesServiceIT {
 		Path datasetPath = Files.createTempFile("data", "fastq"); 
 				
 		galaxyHistory.downloadDatasetTo(history.getId(), dataset.getId(), datasetPath);
-		assertEquals("file lengths should be equals", 
-				Files.size(dataFile), Files.size(datasetPath));
-		assertTrue("uploaded and downloaded dataset should be equal",
-				com.google.common.io.Files.equal(dataFile.toFile(), datasetPath.toFile()));
+		assertEquals(Files.size(dataFile), Files.size(datasetPath), 
+				"file lengths should be equals");
+		assertTrue(com.google.common.io.Files.equal(dataFile.toFile(), datasetPath.toFile()),
+				"uploaded and downloaded dataset should be equal");
 	}
 	
 	/**
@@ -485,8 +499,8 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws ExecutionManagerException 
 	 * @throws TimeoutException 
 	 */
-	@Test(expected=ExecutionManagerDownloadException.class)
-	@Ignore("Ignored because if inconsistent behaviour between Galaxy revisions.")
+	@Test
+	@Disabled("Disabled because of inconsistent behaviour between Galaxy revisions.")
 	public void testDownloadDatasetFailHistoryId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
@@ -497,7 +511,9 @@ public class GalaxyHistoriesServiceIT {
 		
 		Path datasetPath = Files.createTempFile("data", "fastq");
 		
-		galaxyHistory.downloadDatasetTo(invalidHistoryId, dataset.getId(), datasetPath);
+		assertThrows(ExecutionManagerDownloadException.class, () -> {
+			galaxyHistory.downloadDatasetTo(invalidHistoryId, dataset.getId(), datasetPath);
+		});
 	}
 
 	/**
@@ -507,7 +523,7 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws ExecutionManagerException
 	 * @throws TimeoutException
 	 */
-	@Test(expected=ExecutionManagerDownloadException.class)
+	@Test
 	public void testDownloadDatasetFailDatasetId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
@@ -518,7 +534,9 @@ public class GalaxyHistoriesServiceIT {
 
 		Path datasetPath = Files.createTempFile("data", "fastq");
 
-		galaxyHistory.downloadDatasetTo(history.getId(), invalidDatasetId, datasetPath);
+		assertThrows(ExecutionManagerDownloadException.class, () -> {
+			galaxyHistory.downloadDatasetTo(history.getId(), invalidDatasetId, datasetPath);
+		});
 	}
 
 	/**
@@ -534,7 +552,7 @@ public class GalaxyHistoriesServiceIT {
 		String datasetName = dataset.getName();
 		
 		Dataset actualDataset = galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
-		assertEquals("actual output dataset id should equal dataset created id", dataset.getId(), actualDataset.getId());
+		assertEquals(dataset.getId(), actualDataset.getId(), "actual output dataset id should equal dataset created id");
 	}
 	
 	/**
@@ -560,7 +578,7 @@ public class GalaxyHistoriesServiceIT {
 		historiesClient.createDatasetCollection(history.getId(), collectionDescription);
 		
 		Dataset actualDataset = galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
-		assertEquals("actual output dataset id should equal dataset created id", dataset.getId(), actualDataset.getId());
+		assertEquals(dataset.getId(), actualDataset.getId(), "actual output dataset id should equal dataset created id");
 	}
 	
 	/**
@@ -568,14 +586,16 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws UploadException 
 	 * @throws GalaxyDatasetException 
 	 */
-	@Test(expected=GalaxyDatasetNotFoundException.class)
+	@Test
 	public void testGetDatasetForFileInHistoryFail() throws UploadException, GalaxyDatasetException {
 		
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
 		String datasetName = dataset.getName() + "invalid";
 		
-		galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
+		assertThrows(GalaxyDatasetNotFoundException.class, () -> {
+			galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
+		});
 	}
 	
 	/**
@@ -583,25 +603,29 @@ public class GalaxyHistoriesServiceIT {
 	 * @throws UploadException 
 	 * @throws GalaxyDatasetException 
 	 */
-	@Test(expected=GalaxyDatasetException.class)
+	@Test
 	public void testGetDatasetForFileInHistoryFailMultipleDatasets() throws UploadException, GalaxyDatasetException {
 		
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
-		galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
-		String datasetName = dataset1.getName();
+		assertThrows(GalaxyDatasetException.class, () -> {
+			galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+			String datasetName = dataset1.getName();
 		
-		galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
+			galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
+		});
 	}
 	
 	/**
 	 * Tests moving a library dataset to a history fail.
 	 */
-	@Test(expected=GalaxyResponseException.class)
+	@Test
 	public void testLibraryDatasetToHistoryFail() {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
-		galaxyHistory.libraryDatasetToHistory("fake", history);
+		assertThrows(GalaxyResponseException.class, () -> {
+			galaxyHistory.libraryDatasetToHistory("fake", history);
+		});
 	}
 	
 	/**
@@ -618,8 +642,8 @@ public class GalaxyHistoriesServiceIT {
 		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
 		
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(history.getId());
-		assertEquals("state is invalid", GalaxyWorkflowState.OK, status.getState());
-		assertEquals("proportion complete is invalid", 1.0f, status.getProportionComplete(), DELTA);
+		assertEquals(GalaxyWorkflowState.OK, status.getState(), "state is invalid");
+		assertEquals(1.0f, status.getProportionComplete(), DELTA, "proportion complete is invalid");
 	}
 	
 	/**
@@ -629,18 +653,20 @@ public class GalaxyHistoriesServiceIT {
 	@Test
 	public void testDeleteHistorySuccess() throws ExecutionManagerException {
 		History history = galaxyHistory.newHistoryForWorkflow();
-		assertNotNull("History contents should not be null", galaxyHistory.showHistoryContents(history.getId()));
+		assertNotNull(galaxyHistory.showHistoryContents(history.getId()), "History contents should not be null");
 		
 		HistoryDeleteResponse deleteResponse = galaxyHistory.deleteHistory(history.getId());
-		assertTrue("History is not deleted", deleteResponse.getDeleted());
+		assertTrue(deleteResponse.getDeleted(), "History is not deleted");
 	}
 	
 	/**
 	 * Tests deleting a history from Galaxy and failing.
 	 * @throws ExecutionManagerException 
 	 */
-	@Test(expected=DeleteGalaxyObjectFailedException.class)
+	@Test
 	public void testDeleteHistoryFail() throws ExecutionManagerException {
-		galaxyHistory.deleteHistory("invalid");
+		assertThrows(DeleteGalaxyObjectFailedException.class, () -> {
+			galaxyHistory.deleteHistory("invalid");
+		});
 	}
 }

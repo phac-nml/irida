@@ -23,7 +23,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -43,12 +43,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 /**
  */
 @Configuration
-@EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
@@ -95,8 +94,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
 				for (Path entry : stream) {
 					List<String> lines = Files.readAllLines(entry);
-					analytics.append(Joiner.on("\n")
-							.join(lines));
+					analytics.append(Joiner.on("\n").join(lines));
 					analytics.append("\n");
 				}
 			} catch (DirectoryIteratorException ex) {
@@ -125,7 +123,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Bean
-	@Scope(value= WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+	@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public Cart cart() {
 		return new Cart();
 	}
@@ -135,13 +133,10 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		logger.debug("Configuring Resource Handlers");
 		// CSS: default location "/static/styles" during development and
 		// production.
-		registry.addResourceHandler("/resources/**")
-				.addResourceLocations("/resources/");
-		registry.addResourceHandler("/dist/**")
-				.addResourceLocations("/dist/");
-		//serve static resources for customizing pages from /etc/irida/static
-		registry.addResourceHandler("/static/**")
-				.addResourceLocations("file:/etc/irida/static/");
+		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+		registry.addResourceHandler("/dist/**").addResourceLocations("/dist/");
+		// serve static resources for customizing pages from /etc/irida/static
+		registry.addResourceHandler("/static/**").addResourceLocations("file:/etc/irida/static/");
 	}
 
 	@Override
@@ -155,12 +150,13 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	/**
-	 * Default template resolver for IRIDA.  Templates can be overridden using the external template
-	 * resolver below.  This will look for templates in `/src/main/webapp/pages/*`
+	 * Default template resolver for IRIDA. Templates can be overridden using
+	 * the external template resolver below. This will look for templates in
+	 * `/src/main/webapp/pages/*`
 	 *
 	 * @return {@link SpringResourceTemplateResolver}
 	 */
-	private ITemplateResolver internalTemplateResolver(){
+	private ITemplateResolver internalTemplateResolver() {
 		SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
 		resolver.setApplicationContext(this.applicationContext);
 		resolver.setPrefix(INTERNAL_TEMPLATE_PREFIX);
@@ -180,9 +176,9 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	/**
-	 * This is to handle any templates (usually just the login page) that are overridden
-	 * by and organization.  The location of these files can be modified within the configuration.properties
-	 * file.
+	 * This is to handle any templates (usually just the login page) that are
+	 * overridden by and organization. The location of these files can be
+	 * modified within the application.properties file.
 	 *
 	 * @return {@link FileTemplateResolver}
 	 */
@@ -205,7 +201,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Bean
-	public SpringTemplateEngine templateEngine(){
+	public SpringTemplateEngine templateEngine() {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
 		templateEngine.addTemplateResolver(externalTemplateResolver());
 		templateEngine.addTemplateResolver(internalTemplateResolver());
@@ -215,17 +211,11 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Bean
-	public ThymeleafViewResolver viewResolver(){
+	public ThymeleafViewResolver viewResolver() {
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
 		return viewResolver;
-	}
-
-	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		logger.debug("configureDefaultServletHandling");
-		configurer.enable();
 	}
 
 	@Override
@@ -240,7 +230,8 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+	@Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new DataTablesRequestResolver());
 	}
 
@@ -251,7 +242,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
-		dialects.add(new WebpackerDialect(env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))));
+		dialects.add(new WebpackerDialect(!env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))));
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());

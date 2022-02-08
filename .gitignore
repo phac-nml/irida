@@ -1,5 +1,6 @@
 target/
 .idea/*
+.vscode/*
 .classpath
 .project
 .settings
@@ -14,6 +15,7 @@ node_modules
 doc/_site
 *.swp
 /.idea/
+/.vscode/
 src/main/webapp/node
 /src/main/webapp/dist
 /src/main/webapp/pages/templates/i18n/*.html

@@ -13,7 +13,6 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
@@ -24,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkR
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -32,9 +30,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
 /**
- * Component implementation of file utitlities for aws storage
+ * Implementation of file utilities for aws storage
  */
-@Component
+
 public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAwsUtilityImpl.class);
 
@@ -47,7 +45,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
 		this.s3 = AmazonS3ClientBuilder.standard()
-				.withRegion(Regions.fromName(bucketRegion))
+				.withRegion(bucketRegion)
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
 				.build();
 		this.bucketName = bucketName;

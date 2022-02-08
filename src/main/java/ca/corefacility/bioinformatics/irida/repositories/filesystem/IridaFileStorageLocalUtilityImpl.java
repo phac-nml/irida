@@ -15,20 +15,18 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 /**
- * Component implementation of file utitlities for local storage
+ * Implementation of file utilities for local storage
  */
-@Component
+
 public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility {
 	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageLocalUtilityImpl.class);
 	private final StorageType storageType = StorageType.LOCAL;
@@ -128,7 +126,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try {
 			return Files.newInputStream(file, StandardOpenOption.READ);
 		} catch (IOException e) {
-			throw new FileProcessorException("could not read file", e);
+			throw new StorageException("Couldn't get file input stream", e);
 		}
 	}
 

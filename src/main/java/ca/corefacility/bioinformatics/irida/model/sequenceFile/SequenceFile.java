@@ -20,7 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -42,7 +42,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners({ AuditingEntityListener.class, RelativePathTranslatorListener.class })
-public class SequenceFile extends IridaResourceSupport
+public class SequenceFile extends IridaRepresentationModel
 		implements MutableIridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile,
 		RemoteSynchronizable {
 

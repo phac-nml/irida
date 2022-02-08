@@ -10,13 +10,13 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 
 import com.google.common.collect.Sets;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link SequencingObjectConcatenatorFactory}
@@ -25,7 +25,7 @@ public class SequencingObjectConcatenatorFactoryTest {
 
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		iridaFileStorageUtility = mock(IridaFileStorageLocalUtilityImpl.class);
 	}
@@ -45,9 +45,11 @@ public class SequencingObjectConcatenatorFactoryTest {
 		assertTrue(concatenator instanceof SequenceFilePairConcatenator);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetConcatenatorError() {
-		SequencingObjectConcatenatorFactory.getConcatenator(SequencingObject.class, iridaFileStorageUtility);
+		assertThrows(IllegalArgumentException.class, () -> {
+			SequencingObjectConcatenatorFactory.getConcatenator(SequencingObject.class, iridaFileStorageUtility);
+		});
 	}
 
 	@Test
@@ -64,9 +66,11 @@ public class SequencingObjectConcatenatorFactoryTest {
 		assertTrue(concatenator instanceof SequenceFilePairConcatenator);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetConcatenatorMixedError() {
 		Set<SequencingObject> fileSet = Sets.newHashSet(new SequenceFilePair(), new SingleEndSequenceFile(null));
-		SequencingObjectConcatenatorFactory.getConcatenator(fileSet, iridaFileStorageUtility);
+		assertThrows(IllegalArgumentException.class, () -> {
+			SequencingObjectConcatenatorFactory.getConcatenator(fileSet, iridaFileStorageUtility);
+		});
 	}
 }

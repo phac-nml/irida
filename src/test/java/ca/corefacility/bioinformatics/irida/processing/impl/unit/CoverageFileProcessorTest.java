@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.google.common.collect.Sets;
@@ -31,7 +31,7 @@ public class CoverageFileProcessorTest {
 	private QCEntryRepository qcEntryRepository;
 	private AnalysisRepository analysisRepository;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		qcEntryRepository = mock(QCEntryRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
@@ -62,8 +62,8 @@ public class CoverageFileProcessorTest {
 		CoverageQCEntry qc = qcCaptor.getValue();
 		qc.addProjectSettings(p);
 
-		assertEquals("should show 3 times coverage", 3, qc.getCoverage());
-		assertEquals("should be positive coverage", QCEntryStatus.POSITIVE, qc.getStatus());
+		assertEquals(3, qc.getCoverage(), "should show 3 times coverage");
+		assertEquals(QCEntryStatus.POSITIVE, qc.getStatus(), "should be positive coverage");
 	}
 
 	@Test
@@ -89,8 +89,8 @@ public class CoverageFileProcessorTest {
 		CoverageQCEntry qc = qcCaptor.getValue();
 		qc.addProjectSettings(p);
 
-		assertEquals("should show 3 times coverage", 3, qc.getCoverage());
-		assertEquals("should be bad coverage", QCEntryStatus.NEGATIVE, qc.getStatus());
+		assertEquals(3, qc.getCoverage(), "should show 3 times coverage");
+		assertEquals(QCEntryStatus.NEGATIVE, qc.getStatus(), "should be bad coverage");
 	}
 
 	@Test
@@ -119,8 +119,8 @@ public class CoverageFileProcessorTest {
 		CoverageQCEntry qc = qcCaptor.getValue();
 		qc.addProjectSettings(p);
 
-		assertEquals("should show 3 times coverage", 3, qc.getCoverage());
-		assertEquals("should be positive coverage", QCEntryStatus.POSITIVE, qc.getStatus());
+		assertEquals(3, qc.getCoverage(), "should show 3 times coverage");
+		assertEquals(QCEntryStatus.POSITIVE, qc.getStatus(), "should be positive coverage");
 	}
 
 }

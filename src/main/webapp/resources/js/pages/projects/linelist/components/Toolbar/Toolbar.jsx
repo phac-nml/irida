@@ -1,21 +1,23 @@
-import React, { Component, Suspense } from "react";
-import { connect } from "react-redux";
+import { Button, Form, Input, Popover, Space } from "antd";
 
 import PropTypes from "prop-types";
-import { actions as entryActions } from "../../reducers/entries";
-import { ExportDropDown } from "../Export/ExportDropdown";
-import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
-import { Button, Form, Input, Popover } from "antd";
+import React, { Component, Suspense } from "react";
+import { connect } from "react-redux";
 import {
   IconCloudUpload,
   IconQuestion,
 } from "../../../../../components/icons/Icons";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { actions as entryActions } from "../../reducers/entries";
+import { AddSamplesToCartButton } from "../AddToCartButton/AddSamplesToCart";
+import { ExportDropDown } from "../Export/ExportDropdown";
+import { ShareSampleButton } from "../ShareSampleButton";
 
 const LineListTour = React.lazy(() => import("../Tour/LineListTour"));
 
 const { Search } = Input;
 
-const { urls } = window.PAGE;
+const { project } = window.PAGE;
 
 export class ToolbarComponent extends Component {
   state = { tourOpen: false, showTourPopover: false };
@@ -54,32 +56,29 @@ export class ToolbarComponent extends Component {
   render() {
     return (
       <div className="toolbar">
-        <div className="toolbar-group">
-          <Form layout="inline">
-            <Form.Item>
-              <ExportDropDown
-                csv={this.props.exportCSV}
-                excel={this.props.exportXLSX}
-              />
-            </Form.Item>
-            <Form.Item>
-              <AddSamplesToCartButton
-                selectedCount={this.props.selectedCount}
-                addSamplesToCart={this.props.addSamplesToCart}
-              />
-            </Form.Item>
-          </Form>
-        </div>
+        <Space>
+          <ExportDropDown
+            csv={this.props.exportCSV}
+            excel={this.props.exportXLSX}
+          />
+          {window.project.canManage && <ShareSampleButton />}
+          <AddSamplesToCartButton
+            selectedCount={this.props.selectedCount}
+            addSamplesToCart={this.props.addSamplesToCart}
+          />
+        </Space>
         <div className="toolbar-group">
           <Form layout="inline">
             {window.project.canManage ? (
               <Form.Item>
                 <Button
                   className="t-import-metadata-btn"
-                  href={urls.import}
+                  href={setBaseUrl(
+                    `projects/${project.identifier}/sample-metadata/upload/file`
+                  )}
                   tour="tour-import"
+                  icon={<IconCloudUpload />}
                 >
-                  <IconCloudUpload />
                   {i18n("linelist.importBtn.text")}
                 </Button>
               </Form.Item>

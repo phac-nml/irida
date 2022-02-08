@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Assoc
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
@@ -18,22 +18,22 @@ public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	public void hasTheCorrectAssociatedProjects() {
 		LoginPage.loginAsManager(driver());
 		AssociatedProjectPage page = AssociatedProjectPage.goToPage(driver(), PROJECT_ID);
-		assertEquals("Should display all the available projects", 6, page.getNumberOfTotalProjectsDisplayed());
-		assertEquals("Has the correct number of associated projects", 2, page.getNumberOfAssociatedProject());
+		assertEquals(6, page.getNumberOfTotalProjectsDisplayed(), "Should display all the available projects");
+		assertEquals(2, page.getNumberOfAssociatedProject(), "Has the correct number of associated projects");
 
 		// Test associating another project
 		page.toggleProjectAssociation(2);
-		assertEquals("There should now be another associated project", 3, page.getNumberOfAssociatedProject());
+		assertEquals(3, page.getNumberOfAssociatedProject(), "There should now be another associated project");
 		// Make sure it is associated even after page refresh
 		driver().navigate().refresh();
-		assertEquals("There should still be 3 projects selected", 3, page.getNumberOfAssociatedProject());
+		assertEquals(3, page.getNumberOfAssociatedProject(), "There should still be 3 projects selected");
 
 		// Test un-associating a project
 		page.toggleProjectAssociation(0);
-		assertEquals("There should now be one less associated project", 2, page.getNumberOfAssociatedProject());
+		assertEquals(2, page.getNumberOfAssociatedProject(), "There should now be one less associated project");
 		// Make sure it is associated even after page refresh
 		driver().navigate().refresh();
-		assertEquals("There should still be 2 projects selected", 2, page.getNumberOfAssociatedProject());
+		assertEquals(2, page.getNumberOfAssociatedProject(), "There should still be 2 projects selected");
 
 
 	}

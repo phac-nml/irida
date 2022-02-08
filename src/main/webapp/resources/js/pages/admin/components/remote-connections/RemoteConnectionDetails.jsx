@@ -1,26 +1,28 @@
-import React, { useEffect, useState } from "react";
 import { Button, Popconfirm, Space, Tabs, Typography } from "antd";
-import { RemoteApiStatus } from "./RemoteApiStatus";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteRemoteApi,
   getConnectionDetails,
 } from "../../../../apis/remote-api/remote-api";
+import { WarningAlert } from "../../../../components/alerts";
 import { BasicList } from "../../../../components/lists";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { WarningAlert } from "../../../../components/alerts";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { navigate } from "@reach/router";
+import { RemoteApiStatus } from "./RemoteApiStatus";
 
 const { Title } = Typography;
 
-export default function RemoteConnectionDetails({ remoteId }) {
+export default function RemoteConnectionDetails() {
+  const navigate = useNavigate();
+  const params = useParams();
   const [details, setDetails] = useState({});
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    getConnectionDetails({ id: remoteId }).then(setDetails);
-  }, [remoteId]);
+    getConnectionDetails({ id: params.remoteId }).then(setDetails);
+  }, [params.remoteId]);
 
   const dataSource = [
     {
@@ -47,7 +49,7 @@ export default function RemoteConnectionDetails({ remoteId }) {
 
   const removeConnection = () => {
     setDeleting(true);
-    deleteRemoteApi({ id: remoteId }).then(returnToList);
+    deleteRemoteApi({ id: params.remoteId }).then(returnToList);
   };
 
   const returnToList = () => navigate(setBaseUrl(`admin/remote_api`));
@@ -56,7 +58,9 @@ export default function RemoteConnectionDetails({ remoteId }) {
     <PageWrapper
       title={<span className="t-remote-name">{details.name}</span>}
       onBack={returnToList}
-      headerExtras={<RemoteApiStatus key="status" api={{ id: remoteId }} />}
+      headerExtras={
+        <RemoteApiStatus key="status" api={{ id: params.remoteId }} />
+      }
     >
       <Tabs tabPosition="left">
         <Tabs.TabPane

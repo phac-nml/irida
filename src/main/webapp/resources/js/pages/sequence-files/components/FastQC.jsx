@@ -4,22 +4,30 @@
  * FastQCCharts component.
  */
 
+import { Badge, Menu, Skeleton, Space } from "antd";
 import React from "react";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
+import { InfoAlert } from "../../../components/alerts";
 import { PageWrapper } from "../../../components/page/PageWrapper";
-import { Link } from "@reach/router";
-import { Badge, Menu, Space } from "antd";
-import { ContentLoading } from "../../../components/loader";
+import { blue6 } from "../../../styles/colors";
 
 import { SPACE_XS } from "../../../styles/spacing";
-import { InfoAlert } from "../../../components/alerts";
-import { blue6 } from "../../../styles/colors";
 import { FastQCProvider, useFastQCState } from "../fastqc-context";
 
-function FastQCMenu({ route, uri }) {
+function FastQCMenu({ current }) {
+  const location = useLocation();
+  const [key, setKey] = React.useState(current);
   const { loading, fastQC } = useFastQCState();
 
+  let uri = location.pathname;
+  if (uri.endsWith(current)) {
+    // Strip of the current location as it will mess up the links
+    uri = uri.replace(`/${current}`, "");
+  }
+
   return (
-    <Menu mode="horizontal" selectedKeys={[route]} className="t-fastQC-nav">
+    <Menu mode="horizontal" selectedKeys={[key]} className="t-fastQC-nav"
+          onClick={e => setKey(e.key)}>
       <Menu.Item key="charts">
         <Link to={`${uri}/charts`}>{i18n("FastQC.charts")}</Link>
       </Menu.Item>
@@ -41,42 +49,37 @@ function FastQCMenu({ route, uri }) {
   );
 }
 
-function FastQCContent({ children, route, uri }) {
-  const { loading, fastQC, file } = useFastQCState();
+function FastQCContent({ children, current, uri }) {
+  const { loading, fastQC, file = {} } = useFastQCState();
 
-  return loading ? (
-    <ContentLoading />
-  ) : (
-    <PageWrapper title={file.fileName}>
-      {fastQC ? (
-        <Space direction="vertical" style={{ width: `100%` }}>
-          <FastQCMenu route={route} uri={uri} />
-          {children}
-        </Space>
-      ) : (
-        <div>
-          <InfoAlert
-            message={i18n("FastQC.noResults")}
-            style={{ marginBottom: SPACE_XS }}
-            className="t-fastQC-no-run"
-          />
-        </div>
-      )}
-    </PageWrapper>
+  return (
+    <Skeleton loading={loading} active>
+      <PageWrapper title={file.fileName}>
+        {fastQC ? (
+          <Space direction="vertical" style={{ width: `100%` }}>
+            <FastQCMenu current={current} uri={uri} />
+            {children}
+          </Space>
+        ) : (
+          <div>
+            <InfoAlert
+              message={i18n("FastQC.noResults")}
+              style={{ marginBottom: SPACE_XS }}
+              className="t-fastQC-no-run"
+            />
+          </div>
+        )}
+      </PageWrapper>
+    </Skeleton>
   );
 }
 
-export default function FastQC({
-  sequenceObjectId,
-  fileId,
-  children,
-  route,
-  uri,
-}) {
+export default function FastQC({ current }) {
+  const { sequenceObjectId, fileId } = useParams();
   return (
     <FastQCProvider sequenceObjectId={sequenceObjectId} fileId={fileId}>
-      <FastQCContent route={route} uri={uri}>
-        {children}
+      <FastQCContent current={current}>
+        <Outlet />
       </FastQCContent>
     </FastQCProvider>
   );

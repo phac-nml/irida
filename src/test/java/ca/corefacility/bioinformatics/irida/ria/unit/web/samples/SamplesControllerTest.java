@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -46,10 +46,13 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  */
@@ -67,7 +70,7 @@ public class SamplesControllerTest {
 	private MessageSource messageSource;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
@@ -96,8 +99,8 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
 		String result = controller.getSampleSpecificPage(model, sample.getId());
-		assertEquals("Returns the correct page name", "samples/sample", result);
-		assertTrue("Model contains the sample", model.containsAttribute("sample"));
+		assertEquals("samples/sample", result, "Returns the correct page name");
+		assertTrue(model.containsAttribute("sample"), "Model contains the sample");
 	}
 
 	@Test
@@ -106,9 +109,9 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
 		String result = controller.getEditSampleSpecificPage(model, sample.getId());
-		assertEquals("Returns the correct page name", "samples/sample_edit", result);
-		assertTrue("Model contains the sample", model.containsAttribute("sample"));
-		assertTrue("Model should ALWAYS have an error attribute", model.containsAttribute("errors"));
+		assertEquals("samples/sample_edit", result, "Returns the correct page name");
+		assertTrue(model.containsAttribute("sample"), "Model contains the sample");
+		assertTrue(model.containsAttribute("errors"), "Model should ALWAYS have an error attribute");
 	}
 
 	@Test
@@ -129,18 +132,17 @@ public class SamplesControllerTest {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
 				"/projects/5/samples/" + sample.getId() + "/edit");
 		String result = controller.updateSample(model, sample.getId(), null, null, update, request);
-		assertTrue("Returns the correct redirect", result.contains(sample.getId() + "/details"));
-		assertTrue("Should be a redirect response.", result.startsWith("redirect:"));
-		assertFalse("Redirect should **not** contain the context path.", result.contains(contextPath));
-		assertTrue("Model should be populated with updated attributes",
-				model.containsAttribute(SamplesController.ORGANISM));
-		assertTrue("Model should be populated with updated attributes",
-				model.containsAttribute(SamplesController.GEOGRAPHIC_LOCATION_NAME));
-		assertFalse("Model should not be populated with non-updated attributes",
-				model.containsAttribute(SamplesController.LATITUDE));
+		assertTrue(result.contains(sample.getId() + "/details"), "Returns the correct redirect");
+		assertTrue(result.startsWith("redirect:"), "Should be a redirect response.");
+		assertFalse(result.contains(contextPath), "Redirect should **not** contain the context path.");
+		assertTrue(model.containsAttribute(SamplesController.ORGANISM),
+				"Model should be populated with updated attributes");
+		assertTrue(model.containsAttribute(SamplesController.GEOGRAPHIC_LOCATION_NAME),
+				"Model should be populated with updated attributes");
+		assertFalse(model.containsAttribute(SamplesController.LATITUDE),
+				"Model should not be populated with non-updated attributes");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -158,7 +160,7 @@ public class SamplesControllerTest {
 				.thenReturn(files);
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
-		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
+		when(updateSamplePermission.isAllowed(any(), eq(sample))).thenReturn(true);
 
 		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
 
@@ -184,7 +186,7 @@ public class SamplesControllerTest {
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
 				.thenReturn(files);
-		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(true);
+		when(updateSamplePermission.isAllowed(any(), eq(sample))).thenReturn(true);
 
 		String sampleFiles = controller.getSampleFilesWithoutProject(model, sampleId);
 
@@ -195,10 +197,9 @@ public class SamplesControllerTest {
 		verify(sampleService).read(sampleId);
 		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 		verify(sequencingObjectService).getSequencesForSampleOfType(sample, SequenceFilePair.class);
-		verifyZeroInteractions(projectService);
+		verifyNoInteractions(projectService);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -216,7 +217,7 @@ public class SamplesControllerTest {
 
 		when(sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class))
 				.thenReturn(files);
-		when(updateSamplePermission.isAllowed(any(Authentication.class), eq(sample))).thenReturn(false);
+		when(updateSamplePermission.isAllowed(any(), eq(sample))).thenReturn(false);
 
 		when(projectService.getProjectsForSample(sample)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));

@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.announcements;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.AnnouncementsController;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -17,7 +17,7 @@ public class AnnouncementsControllerTest {
 
     private AnnouncementsController announcementsController;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         announcementsController = new AnnouncementsController();
     }
@@ -25,7 +25,7 @@ public class AnnouncementsControllerTest {
 	@Test
     public void testGetAnnouncementsAsUser() {
         String page = announcementsController.getAnnouncementsPage();
-        assertTrue("Unexpected page returned", ANNOUNCEMENT_LIST.equals(page));
+        assertTrue(ANNOUNCEMENT_LIST.equals(page), "Unexpected page returned");
     }
 
 }

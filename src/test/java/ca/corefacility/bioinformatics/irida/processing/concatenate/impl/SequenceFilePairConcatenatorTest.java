@@ -8,15 +8,15 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SequenceFilePairConcatenatorTest {
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -26,7 +26,7 @@ public class SequenceFilePairConcatenatorTest {
 	private SequenceFilePairConcatenator concat;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
@@ -55,14 +55,14 @@ public class SequenceFilePairConcatenatorTest {
 		SequenceFile forward = concatenateFiles.getForwardSequenceFile();
 		SequenceFile reverse = concatenateFiles.getReverseSequenceFile();
 
-		assertTrue("file exists", Files.exists(forward.getFile()));
-		assertTrue("file exists", Files.exists(reverse.getFile()));
+		assertTrue(Files.exists(forward.getFile()), "file exists");
+		assertTrue(Files.exists(reverse.getFile()), "file exists");
 
 		long newFileSize = forward.getFile()
 				.toFile()
 				.length();
 
-		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
+		assertEquals(originalLength * 2, newFileSize, "new file should be 2x size of originals");
 
 	}
 

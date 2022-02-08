@@ -17,7 +17,7 @@ This is a quick tutorial on how to use IRIDA to analyze data with the [*Salmonel
 Initial Data
 ============
 
-The data for this tutorial comes from <https://irida.corefacility.ca/downloads/data/irida-sample-data.zip>. It is assumed the sequence files in `miseq-run-salmonella/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with samples that appear as follows:
+The data for this tutorial comes from <https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip>. It is assumed the sequence files in `miseq-run-salmonella/` have been uploaded into appropriate samples as described in the [Web Upload Tutorial][]. Before starting this tutorial you should have a project with samples that appear as follows:
 
 ![sistr-samples]
 

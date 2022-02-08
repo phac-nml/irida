@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -59,7 +60,7 @@ public class ChecksumFileProcessor implements FileProcessor {
 				logger.trace("Checksum generated for file " + file.getId() + ": " + shaDigest);
 				file.setUploadSha256(shaDigest);
 				fileRepository.saveMetadata(file);
-			} catch (IOException e) {
+			} catch (IOException | StorageException e) {
 				throw new FileProcessorException("could not calculate checksum", e);
 			}
 

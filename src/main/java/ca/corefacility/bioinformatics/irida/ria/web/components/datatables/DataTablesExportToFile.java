@@ -21,30 +21,45 @@ public class DataTablesExportToFile {
 
 	/**
 	 * Write data within datatable to an excel formatted file.
-	 * @param type {@link DataTablesExportTypes} type of file to create (either excel or csv)
-	 * @param response {@link HttpServletResponse}
-	 * @param filename {@link String} name of the file to download.
-	 * @param models Data to download in the table
-	 * @param headers for the table
-	 * @throws IOException thrown if file cannot be written
+	 * 
+	 * @param type
+	 *            {@link DataTablesExportTypes} type of file to create (either
+	 *            excel or csv)
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @param filename
+	 *            {@link String} name of the file to download.
+	 * @param models
+	 *            Data to download in the table
+	 * @param headers
+	 *            for the table
+	 * @throws IOException
+	 *             thrown if file cannot be written
 	 */
-	public static void writeFile(DataTablesExportTypes type, HttpServletResponse response, String filename, List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
-		if(type.equals(DataTablesExportTypes.excel)) {
+	public static void writeFile(DataTablesExportTypes type, HttpServletResponse response, String filename,
+			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
+		if (type.equals(DataTablesExportTypes.excel)) {
 			writeToExcel(response, filename, models, headers);
-		} else if(type.equals(DataTablesExportTypes.csv)) {
+		} else if (type.equals(DataTablesExportTypes.csv)) {
 			writeToCSV(response, filename, models, headers);
 		} else {
-			throw new  IllegalArgumentException("Trying to export and unknown table format: " + type);
+			throw new IllegalArgumentException("Trying to export and unknown table format: " + type);
 		}
 	}
 
 	/**
 	 * Write data within datatable to an excel formatted file.
-	 * @param response {@link HttpServletResponse}
-	 * @param filename {@link String} name of the file to download.
-	 * @param models Data to download in the table
-	 * @param headers for the table
-	 * @throws IOException thrown if file cannot be written
+	 * 
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @param filename
+	 *            {@link String} name of the file to download.
+	 * @param models
+	 *            Data to download in the table
+	 * @param headers
+	 *            for the table
+	 * @throws IOException
+	 *             thrown if file cannot be written
 	 */
 	private static void writeToExcel(HttpServletResponse response, String filename,
 			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
@@ -71,26 +86,32 @@ public class DataTablesExportToFile {
 		}
 
 		response.setContentType("application/vnd.ms-excel");
-		response.setHeader("Content-disposition",
-				"attachment; filename=" + filename + ".xlsx");
+		response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
 		workbook.write(response.getOutputStream());
+
+		workbook.close();
 	}
 
 	/**
 	 * Write data within datatable to a csv formatted file.
-	 * @param response {@link HttpServletResponse}
-	 * @param filename {@link String} name of the file to download.
-	 * @param models Data to download in the table
-	 * @param headers for the table
-	 * @throws IOException thrown if file cannot be written
+	 * 
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @param filename
+	 *            {@link String} name of the file to download.
+	 * @param models
+	 *            Data to download in the table
+	 * @param headers
+	 *            for the table
+	 * @throws IOException
+	 *             thrown if file cannot be written
 	 */
-	private static void writeToCSV(HttpServletResponse response, String filename, List<? extends DataTablesExportable> models,
-			List<String> headers) throws IOException {
+	private static void writeToCSV(HttpServletResponse response, String filename,
+			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
 		List<String[]> results = new ArrayList<>();
 		results.add(headers.toArray(new String[0]));
 		for (DataTablesExportable model : models) {
-			results.add(model.getExportableTableRow()
-					.toArray(new String[0]));
+			results.add(model.getExportableTableRow().toArray(new String[0]));
 		}
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".csv\"");

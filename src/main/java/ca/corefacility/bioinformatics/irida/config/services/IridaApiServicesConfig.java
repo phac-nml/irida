@@ -316,7 +316,7 @@ public class IridaApiServicesConfig {
 	/**
 	 * Used to configure both the IridaFileStorageUtility implementation
 	 * as well as set the implementation in the IridaFiles static class
-	 * which uses the this implementation.
+	 * which uses this implementation.
 	 *
 	 * @param storageType The {@link StorageType}
 	 * @return A new {@link IridaFileStorageUtility} implementation.
@@ -370,7 +370,6 @@ public class IridaApiServicesConfig {
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
 	}
-
 
 	@Bean
 	public Validator validator() {

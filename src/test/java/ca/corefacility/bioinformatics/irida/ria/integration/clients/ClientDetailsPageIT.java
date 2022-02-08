@@ -4,10 +4,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * IT for the client details page
@@ -20,7 +20,7 @@ public class ClientDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	Long id = 1L;
 	String clientId = "testClient";
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new ClientDetailsPage(driver());

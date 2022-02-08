@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.sample;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -14,19 +14,17 @@ import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -35,21 +33,15 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -59,9 +51,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * Integration tests for the sample service.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
+@Tag("IntegrationTest") @Tag("Service")
+@SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
@@ -78,11 +69,7 @@ public class SampleServiceImplIT {
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
 	@Autowired
-	private Path outputFileBaseDirectory;
-	@Autowired
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
-	@Autowired
-	private SampleRepository sampleRepository;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -96,7 +83,7 @@ public class SampleServiceImplIT {
 		String sampleName = "sampleName";
 		s.setSampleName(sampleName);
 		Sample saved = sampleService.create(s);
-		assertEquals("Wrong name was saved.", sampleName, saved.getSampleName());
+		assertEquals(sampleName, saved.getSampleName(), "Wrong name was saved.");
 	}
 
 	/**
@@ -110,36 +97,34 @@ public class SampleServiceImplIT {
 		Sample sample3 = sampleService.read(3L);
 		Project p = projectService.read(1L);
 
-		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
+		assertEquals(Lists.newArrayList(1L),
 				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()));
-		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
+						.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
+		assertEquals(Lists.newArrayList(2L),
 				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()));
-		assertTrue("Sample 3 should have no genome assemblies before",
-				sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty());
+						.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
+		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty(), "Sample 3 should have no genome assemblies before");
 
-		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
-				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+		assertNotNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L),
+				"Join between sample 2 and genome assembly 2 should exist");
 
 		Sample merged = sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sample2, sample3));
 
-		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
+		assertEquals(mergeInto, merged, "Merged sample should be same as mergeInto.");
 
 		// merged samples should be deleted
 		assertSampleNotFound(2L);
 		assertSampleNotFound(3L);
 
-		assertNull("Join between sample 2 and genome assembly 2 should not exist",
-				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
+		assertNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L),
+				"Join between sample 2 and genome assembly 2 should not exist");
 
 		// the merged sample should have 3 sequence files
-		assertEquals("Merged sample should have 3 sequence files", 3,
-				objectService.getSequencingObjectsForSample(merged).size());
+		assertEquals(3, objectService.getSequencingObjectsForSample(merged).size(), "Merged sample should have 3 sequence files");
 
-		assertEquals("Sample 1 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
+		assertEquals(Lists.newArrayList(1L, 2L),
 				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()));
+						.collect(Collectors.toList()), "Sample 1 should only have genome assemblies 1 and 2");
 	}
 
 	/**
@@ -153,68 +138,69 @@ public class SampleServiceImplIT {
 		Sample sample2 = sampleService.read(2L);
 		Project p = projectService.read(1L);
 
-		assertEquals("Sample 1 should only have genome assembly 1", Lists.newArrayList(1L),
+		assertEquals(Lists.newArrayList(1L),
 				sampleGenomeAssemblyJoinRepository.findBySample(sample1).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()));
-		assertEquals("Sample 2 should only have genome assembly 2", Lists.newArrayList(2L),
+						.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
+		assertEquals(Lists.newArrayList(2L),
 				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()));
-		assertTrue("Sample 3 should have no genome assemblies before",
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty());
+						.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
+		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty(), "Sample 3 should have no genome assemblies before");
 
-		assertNotNull("Join between sample 2 and genome assembly 2 should exist",
-				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
-		assertNotNull("Join between sample 1 and genome assembly 1 should exist",
-				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L));
+		assertNotNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L),
+				"Join between sample 2 and genome assembly 2 should exist");
+		assertNotNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L),
+				"Join between sample 1 and genome assembly 1 should exist");
 
 		Sample merged = sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sample1, sample2));
 
-		assertEquals("Merged sample should be same as mergeInto.", mergeInto, merged);
+		assertEquals(mergeInto, merged, "Merged sample should be same as mergeInto.");
 
 		// merged samples should be deleted
 		assertSampleNotFound(1L);
 		assertSampleNotFound(2L);
 
-		assertNull("Join between sample 2 and genome assembly 2 should not exist",
-				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L));
-		assertNull("Join between sample 1 and genome assembly 1 should not exist",
-				sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L));
+		assertNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L),
+				"Join between sample 2 and genome assembly 2 should not exist");
+		assertNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(1L, 1L),
+				"Join between sample 1 and genome assembly 1 should not exist");
 
 		// the merged sample should have 3 sequence files
-		assertEquals("Merged sample should have 3 sequence files", 3,
-				objectService.getSequencingObjectsForSample(merged).size());
+		assertEquals(3, objectService.getSequencingObjectsForSample(merged).size(), "Merged sample should have 3 sequence files");
 
-		assertEquals("Sample 3 should only have genome assemblies 1 and 2", Lists.newArrayList(1L, 2L),
+		assertEquals(Lists.newArrayList(1L, 2L),
 				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()));
+						.collect(Collectors.toList()), "Sample 3 should only have genome assemblies 1 and 2");
 	}
 
 	/**
 	 * Sample merging should be rejected when samples are attempted to be joined
 	 * where they do not share the same project.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testMergeSampleReject() {
 		Sample mergeInto = sampleService.read(1L);
 		Project p = projectService.read(1L);
-		sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sampleService.read(4L)));
+		assertThrows(IllegalArgumentException.class, () -> {
+			sampleService.mergeSamples(p, mergeInto, Lists.newArrayList(sampleService.read(4L)));
+		});
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT_duplicateSampleIds.xml")
 	public void testGetSampleByExternalIdDuplicates() {
 		Project p = projectService.read(7L);
 		Sample s = sampleService.getSampleBySampleName(p, "sample");
-		assertEquals("Should have retrieved sample with ID 1L.", Long.valueOf(7L), s.getId());
+		assertEquals(Long.valueOf(7L), s.getId(), "Should have retrieved sample with ID 1L.");
 	}
 
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testgetSampleByExternalNotFound() {
 		Project p = projectService.read(1L);
-		sampleService.getSampleBySampleName(p, "garbage");
+		assertThrows(EntityNotFoundException.class, () -> {
+			sampleService.getSampleBySampleName(p, "garbage");
+		});
 	}
 
 	@Test
@@ -224,8 +210,8 @@ public class SampleServiceImplIT {
 		Project p = projectService.read(3L);
 		Sample s = sampleService.getSampleBySampleName(p, externalId);
 
-		assertNotNull("Sample was not populated.", s);
-		assertEquals("Wrong external id.", externalId, s.getSampleName());
+		assertNotNull(s, "Sample was not populated.");
+		assertEquals(externalId, s.getSampleName(), "Wrong external id.");
 	}
 
 	@Test
@@ -234,8 +220,8 @@ public class SampleServiceImplIT {
 		Long sampleID = 1L;
 		Sample s = sampleService.read(sampleID);
 
-		assertNotNull("Sample was not populated.", s);
-		assertEquals("Wrong external id.", sampleID, s.getId());
+		assertNotNull(s, "Sample was not populated.");
+		assertEquals(sampleID, s.getId(), "Wrong external id.");
 	}
 
 	@Test
@@ -246,8 +232,8 @@ public class SampleServiceImplIT {
 		Project p = projectService.read(projectID);
 		Sample s = sampleService.getSampleForProject(p, sampleID).getObject();
 
-		assertNotNull("Sample was not populated.", s);
-		assertEquals("Wrong external id.", sampleID, s.getId());
+		assertNotNull(s, "Sample was not populated.");
+		assertEquals(sampleID, s.getId(), "Wrong external id.");
 	}
 
 	@Test
@@ -256,28 +242,32 @@ public class SampleServiceImplIT {
 		Long sampleID = 2L;
 		Sample s = sampleService.read(sampleID);
 
-		assertNotNull("Sample was not populated.", s);
-		assertEquals("Wrong external id.", sampleID, s.getId());
+		assertNotNull(s, "Sample was not populated.");
+		assertEquals(sampleID, s.getId(), "Wrong external id.");
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateWithInvalidLatLong() {
 		Sample s = sampleService.read(2L);
 		s.setLatitude("not a geographic latitude");
 		s.setLongitude("not a geographic longitude");
 
-		sampleService.update(s);
+		assertThrows(ConstraintViolationException.class, () -> {
+			sampleService.update(s);
+		});
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testUpdateWithInvalidRangeLatLong() {
 		Sample s = sampleService.read(2L);
 		s.setLatitude("-1000.00");
 		s.setLongitude("1000.00");
 
-		sampleService.update(s);
+		assertThrows(ConstraintViolationException.class, () -> {
+			sampleService.update(s);
+		});
 	}
 
 	@Test
@@ -292,8 +282,8 @@ public class SampleServiceImplIT {
 		s.setLongitude(longitude);
 
 		s = sampleService.update(s);
-		assertEquals("Wrong latitude was stored.", latitude, s.getLatitude());
-		assertEquals("Wrong longitude was stored.", longitude, s.getLongitude());
+		assertEquals(latitude, s.getLatitude(), "Wrong latitude was stored.");
+		assertEquals(longitude, s.getLongitude(), "Wrong longitude was stored.");
 	}
 
 	@Test
@@ -346,13 +336,15 @@ public class SampleServiceImplIT {
 	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testGetBasesForSampleInvalidUser() throws SequenceFileAnalysisException {
 		Sample s = new Sample();
 		s.setId(1L);
 
-		sampleService.getTotalBasesForSample(s);
+		assertThrows(AccessDeniedException.class, () -> {
+			sampleService.getTotalBasesForSample(s);
+		});
 	}
 
 	/**
@@ -360,13 +352,15 @@ public class SampleServiceImplIT {
 	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testEstimateCoverageForSampleInvalidUser() throws SequenceFileAnalysisException {
 		Sample s = new Sample();
 		s.setId(1L);
 
-		sampleService.estimateCoverageForSample(s, 500L);
+		assertThrows(AccessDeniedException.class, () -> {
+			sampleService.estimateCoverageForSample(s, 500L);
+		});
 	}
 
 	/**
@@ -407,13 +401,15 @@ public class SampleServiceImplIT {
 	 * 
 	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected = SequenceFileAnalysisException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testEstimateCoverageForSampleNoFastQC() throws SequenceFileAnalysisException {
 		Long sampleID = 2L;
 		Sample s = sampleService.read(sampleID);
 
-		sampleService.estimateCoverageForSample(s, 500);
+		assertThrows(SequenceFileAnalysisException.class, () -> {
+			sampleService.estimateCoverageForSample(s, 500);
+		});
 	}
 	
 	@Test
@@ -421,7 +417,7 @@ public class SampleServiceImplIT {
 	public void testGetSampleOrganismForProject(){
 		Project p = projectService.read(1L);
 		List<String> organisms = sampleService.getSampleOrganismsForProject(p);
-		assertEquals("should be 2 organisms", 2, organisms.size());
+		assertEquals(2, organisms.size(), "should be 2 organisms");
 	}
 
 	@Test
@@ -430,12 +426,12 @@ public class SampleServiceImplIT {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 		
-		assertEquals("should be 2 samples", 2, samples.size());
+		assertEquals(2, samples.size(), "should be 2 samples");
 		
 		Set<Long> ids = Sets.newHashSet(8L, 9L);
 		samples.forEach(s -> ids.remove(s.getId()));
 		
-		assertTrue("all sample ids should be found", ids.isEmpty());
+		assertTrue(ids.isEmpty(), "all sample ids should be found");
 	}
 	
 	@Test
@@ -444,15 +440,17 @@ public class SampleServiceImplIT {
 		Sample s = sampleService.read(1L);
 		List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(s);
 
-		assertEquals("should be 1 qc entry", 1L, qcEntriesForSample.size());
+		assertEquals(1L, qcEntriesForSample.size(), "should be 1 qc entry");
 	}
 	
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testGetQCEntiresForSampleNotAllowed() {
 		Sample s = new Sample();
 		s.setId(1L);
-		sampleService.getQCEntriesForSample(s);
+		assertThrows(AccessDeniedException.class, () -> {
+			sampleService.getQCEntriesForSample(s);
+		});
 	}
 	
 	private void assertSampleNotFound(Long id) {

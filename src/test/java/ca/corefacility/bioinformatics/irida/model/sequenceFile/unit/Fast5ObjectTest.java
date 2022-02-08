@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class ensuring fast5 files get created with their correct type
@@ -23,7 +23,7 @@ public class Fast5ObjectTest {
 	private static final String FILE_CONTENTS = "DATA CONTENTS";
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);

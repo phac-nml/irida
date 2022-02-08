@@ -8,13 +8,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AssociatedProjectPage extends AbstractPage {
-	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectPage.class);
 
 	@FindBy(className = "t-selection")
 	List<WebElement> selectionSwitches;
@@ -24,7 +21,7 @@ public class AssociatedProjectPage extends AbstractPage {
 	}
 
 	public static AssociatedProjectPage goToPage(WebDriver driver, Long id) {
-		get(driver, "/projects/" + id + "/settings/associated");
+		get(driver, "projects/" + id + "/settings/associated");
 		return PageFactory.initElements(driver, AssociatedProjectPage.class);
 	}
 

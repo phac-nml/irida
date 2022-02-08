@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -31,9 +31,9 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class UIProjectReferenceFileServiceTest {
@@ -52,7 +52,7 @@ public class UIProjectReferenceFileServiceTest {
 
 	private UIProjectReferenceFileService uiProjectReferenceFileService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
@@ -110,15 +110,15 @@ public class UIProjectReferenceFileServiceTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		uiProjectReferenceFileService.downloadReferenceFile(FILE_ID, response);
-		assertTrue("Response should contain a \"Content-Disposition\" header.",
-				response.containsHeader("Content-Disposition"));
-		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_file.fasta\"",
-				response.getHeader("Content-Disposition"));
+		assertTrue(response.containsHeader("Content-Disposition"),
+				"Response should contain a \"Content-Disposition\" header.");
+		assertEquals("attachment; filename=\"test_file.fasta\"", response.getHeader("Content-Disposition"),
+				"Content-Disposition should include the file name");
 
 		Path path = Paths.get(FILE_PATH);
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
-		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
+		assertArrayEquals(origBytes, responseBytes, "Response contents the correct file content");
 	}
 
 	@Test

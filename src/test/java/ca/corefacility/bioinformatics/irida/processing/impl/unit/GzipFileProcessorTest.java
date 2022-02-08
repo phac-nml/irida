@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,8 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -40,7 +41,7 @@ public class GzipFileProcessorTest {
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
@@ -48,7 +49,7 @@ public class GzipFileProcessorTest {
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
-	@Test(expected = FileProcessorException.class)
+	@Test
 	public void testExceptionBehaviours() throws IOException {
 		final SequenceFile sf = constructSequenceFile();
 
@@ -62,7 +63,9 @@ public class GzipFileProcessorTest {
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		when(sequenceFileRepository.save(any(SequenceFile.class))).thenThrow(new RuntimeException());
-		fileProcessor.process(so);
+		assertThrows(FileProcessorException.class, () -> {
+			fileProcessor.process(so);
+		});
 	}
 
 	@Test
@@ -84,7 +87,7 @@ public class GzipFileProcessorTest {
 
 		verify(sequenceFileRepository, times(1)).save(any(SequenceFile.class));
 
-		assertFalse("The original file should have been deleted.", Files.exists(compressed));
+		assertFalse(Files.exists(compressed), "The original file should have been deleted.");
 	}
 
 	@Test
@@ -133,10 +136,10 @@ public class GzipFileProcessorTest {
 
 		verify(sequenceFileRepository).save(sf);
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
-		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
-				uncompressedFileContents);
+		assertEquals(FILE_CONTENTS, uncompressedFileContents,
+				"uncompressed file and file in database should be the same.");
 		Files.delete(uncompressed);
-		assertTrue("Original compressed file should not have been deleted.", Files.exists(compressed));
+		assertTrue(Files.exists(compressed), "Original compressed file should not have been deleted.");
 		Files.delete(compressed);
 	}
 
@@ -169,8 +172,8 @@ public class GzipFileProcessorTest {
 		SequenceFile modified = argument.getValue();
 
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
-		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
-				uncompressedFileContents);
+		assertEquals(FILE_CONTENTS, uncompressedFileContents,
+				"uncompressed file and file in database should be the same.");
 		Files.delete(uncompressed);
 		if (Files.exists(compressed)) {
 			Files.delete(compressed);

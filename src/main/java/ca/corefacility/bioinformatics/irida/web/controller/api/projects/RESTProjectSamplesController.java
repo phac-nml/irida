@@ -40,8 +40,8 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 import com.google.common.net.HttpHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Controller for managing relationships between {@link Project} and

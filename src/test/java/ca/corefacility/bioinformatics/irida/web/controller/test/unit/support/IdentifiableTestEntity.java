@@ -2,13 +2,13 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.support;
 
 import java.util.Date;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
  * 
  */
-public class IdentifiableTestEntity extends IridaResourceSupport implements IridaThing, Comparable<IdentifiableTestEntity> {
+public class IdentifiableTestEntity extends IridaRepresentationModel implements IridaThing, Comparable<IdentifiableTestEntity> {
 	Long id;
 
 	private Date createdDate;

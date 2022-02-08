@@ -9,10 +9,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 public class CartSampleModel {
 	private final Long id;
 	private final String label;
+	private boolean owner;
 
-	public CartSampleModel(Sample sample) {
+	public CartSampleModel(Sample sample, boolean owner) {
 		this.id = sample.getId();
 		this.label = sample.getLabel();
+		this.owner = owner;
 	}
 
 	public Long getId() {
@@ -21,5 +23,9 @@ public class CartSampleModel {
 
 	public String getLabel() {
 		return label;
+	}
+
+	public boolean isOwner() {
+		return owner;
 	}
 }

@@ -2,10 +2,12 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,17 +20,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -66,8 +69,10 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for managing workflows in Galaxy.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class})
+@Tag("IntegrationTest") @Tag("Galaxy")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
+		initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -126,9 +131,9 @@ public class GalaxyWorkflowsIT {
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 		dataFile1 = Paths.get(GalaxyWorkflowsIT.class.getResource(
 				"testData1.fastq").toURI());
 		dataFile2 = Paths.get(GalaxyWorkflowsIT.class.getResource(
@@ -311,9 +316,11 @@ public class GalaxyWorkflowsIT {
 	 * @throws IOException 
 	 * @throws WorkflowUploadException 
 	 */
-	@Test(expected=WorkflowUploadException.class)
+	@Test
 	public void testUploadWorkflowFail() throws WorkflowUploadException, IOException {
-		galaxyWorkflowService.uploadGalaxyWorkflow(invalidWorkflowPath);
+		assertThrows(WorkflowUploadException.class, () -> {
+			galaxyWorkflowService.uploadGalaxyWorkflow(invalidWorkflowPath);
+		});
 	}
 	
 	/**
@@ -545,8 +552,8 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertEquals("final workflow state is invalid", GalaxyWorkflowState.OK, workflowStatus.getState());
-		assertTrue("final workflow state is invalid", workflowStatus.completedSuccessfully());
+		assertEquals(GalaxyWorkflowState.OK, workflowStatus.getState(), "final workflow state is invalid");
+		assertTrue(workflowStatus.completedSuccessfully(), "final workflow state is invalid");
 	}
 	
 	/**
@@ -568,8 +575,8 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
-		assertTrue("final workflow state is invalid", workflowStatus.errorOccurred());
+		assertEquals(GalaxyWorkflowState.ERROR, workflowStatus.getState(), "final workflow state is invalid");
+		assertTrue(workflowStatus.errorOccurred(), "final workflow state is invalid");
 	}
 	
 	/**
@@ -591,21 +598,21 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status, should be in error
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		assertEquals(GalaxyWorkflowState.ERROR, workflowStatus.getState(), "final workflow state is invalid");
 		
 		// run a sleep workflow to keep busy
 		runSingleFileTabularWorkflowSleepTool(history, dataFile2, SLEEP_TIME_SECONDS);
 				
 		// check status.  I'm assuming the tasks launched above are not complete.
 		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertTrue("workflow should still be running", workflowStatus.isRunning());
-		assertTrue("an error should have occured even while running", workflowStatus.errorOccurred());
+		assertTrue(workflowStatus.isRunning(), "workflow should still be running");
+		assertTrue(workflowStatus.errorOccurred(), "an error should have occured even while running");
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
 		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertEquals("workflow state should be in error after completion", GalaxyWorkflowState.ERROR, workflowStatus.getState());
-		assertTrue("workflow is not in error state", workflowStatus.errorOccurred());
+		assertEquals(GalaxyWorkflowState.ERROR, workflowStatus.getState(), "workflow state should be in error after completion");
+		assertTrue(workflowStatus.errorOccurred(), "workflow is not in error state");
 	}
 
 	private Dataset fileToHistory(Path path, String fileType, String historyId) throws GalaxyDatasetException {		
@@ -633,18 +640,18 @@ public class GalaxyWorkflowsIT {
 		Map<String, ToolParameter> toolParameters = ImmutableMap.of(toolId, new ToolParameter("pattern", "^#"));
 		WorkflowInvocationOutputs workflowOutput = runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel,
 				toolParameters);
-		assertNotNull("workflowOutput should not be null", workflowOutput);
-		assertNotNull("workflowOutput history id should not be null", workflowOutput.getHistoryId());
+		assertNotNull(workflowOutput, "workflowOutput should not be null");
+		assertNotNull(workflowOutput.getHistoryId(), "workflowOutput history id should not be null");
 
 		// history should exist
 		HistoryDetails historyDetails = historiesClient.showHistory(workflowOutput.getHistoryId());
-		assertNotNull("historyDetails for the history for the workflow should not be null", historyDetails);
+		assertNotNull(historyDetails, "historyDetails for the history for the workflow should not be null");
 
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		float proportionComplete = workflowStatus.getProportionComplete();
-		assertTrue("the workflow proportion complete should be between 0 and 1", 0.0f <= proportionComplete
-				&& proportionComplete <= 1.0f);
+		assertTrue(0.0f <= proportionComplete && proportionComplete <= 1.0f,
+				"the workflow proportion complete should be between 0 and 1");
 	}
 	
 	/**
@@ -663,43 +670,51 @@ public class GalaxyWorkflowsIT {
 	 * 
 	 * @throws WorkflowException
 	 */
-	@Test(expected = WorkflowException.class)
+	@Test
 	public void testGetWorkflowDetailsFail() throws WorkflowException {
 		String workflowId = localGalaxy.getInvalidWorkflowId();
-		assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
+		assertThrows(WorkflowException.class, () -> {
+			assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
+		});
 	}
 	
 	/**
 	 * Tests attempting to run a workflow with an invalid input name.
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected=WorkflowException.class)
+	@Test
 	public void testInvalidWorkflowInput() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String invalidWorkflowLabel = localGalaxy.getInvalidWorkflowLabel();
-		runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, invalidWorkflowLabel);
+		assertThrows(WorkflowException.class, () -> {
+			runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, invalidWorkflowLabel);
+		});
 	}
 	
 	/**
 	 * Tests attempting to run a workflow with an invalid input file.
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testInvalidWorkflowInputFile() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		runSingleFileWorkflow(dataFileNotExists, FILE_TYPE, workflowId, workflowInputLabel);
+		assertThrows(IllegalArgumentException.class, () -> {
+			runSingleFileWorkflow(dataFileNotExists, FILE_TYPE, workflowId, workflowInputLabel);
+		});
 	}
 	
 	/**
 	 * Tests attempting to run a workflow with an invalid input file type.
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected=NullPointerException.class)
+	@Test
 	public void testInvalidWorkflowInputFileType() throws ExecutionManagerException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		runSingleFileWorkflow(dataFile1, INVALID_FILE_TYPE, workflowId, workflowInputLabel);
+		assertThrows(NullPointerException.class, () -> {
+			runSingleFileWorkflow(dataFile1, INVALID_FILE_TYPE, workflowId, workflowInputLabel);
+		});
 	}
 	
 	/**
@@ -728,8 +743,10 @@ public class GalaxyWorkflowsIT {
 	 * 
 	 * @throws DeleteGalaxyObjectFailedException
 	 */
-	@Test(expected = DeleteGalaxyObjectFailedException.class)
+	@Test
 	public void testDeleteWorkflowFail() throws DeleteGalaxyObjectFailedException {
-		galaxyWorkflowService.deleteWorkflow("invalid");
+		assertThrows(DeleteGalaxyObjectFailedException.class, () -> {
+			galaxyWorkflowService.deleteWorkflow("invalid");
+		});
 	}
 }

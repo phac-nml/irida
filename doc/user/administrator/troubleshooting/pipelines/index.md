@@ -93,9 +93,9 @@ In this case, it's a bit more difficult to find the Galaxy History id. We will h
 If you log into the machine running the IRIDA instance, you can find the database connection details in the `/etc/irida/irida.conf` file. For example:
 
 ```
-jdbc.url=jdbc:mysql://localhost:3306/irida_test
-jdbc.username=test
-jdbc.password=test
+spring.datasource.url=jdbc:mysql://localhost:3306/irida_test
+spring.datasource.username=test
+spring.datasource.password=test
 ```
 
 This tells us the database software is running on the machine `localhost` and we want to use the database named **irida_test**, with username **test** and password **test**.
@@ -933,7 +933,7 @@ Prioritizing jobs on a cluster and adjusting Galaxy job queues are beyond the sc
 [section-3]: #3-viewing-the-galaxy-history-used-by-the-irida-analysis-pipeline
 [section-4.2]: #42-galaxy-job-working-directories
 [section-6.3.2]: #632-clusterslurm-job-info
-[irida-sample-data]: https://irida.corefacility.ca/downloads/data/irida-sample-data.zip
+[irida-sample-data]: https://sairidapublic.blob.core.windows.net/downloads/data/irida-sample-data.zip
 [snvphyl-pipeline-default.png]: ../images/snvphyl-pipeline-default.png
 [snvphyl-pipeline-default-error.png]: ../images/snvphyl-pipeline-default-error.png
 [snvphyl-pipeline-default-history.png]: ../images/snvphyl-pipeline-default-history.png

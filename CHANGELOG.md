@@ -1,10 +1,28 @@
 Changes
 =======
 
+22.01 to 22.05
+--------------
+* [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
+* [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
+
 21.09 to 22.01
 --------------
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [All]: Updated some dependency packages to latest versions to remove any `Critical|High` issues as reported by Grype <https://github.com/anchore/grype>. (21.09.2)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
+* [Developer]: Updated `antd` to version 4.16.13
+* [Developer/UI]: Refreshed the metadata uploader.
+* [Developer/UI]: Updated to the latest release of `react-router-dom` v6.0.2.
+* [UI]: Refactored share/move samples between projects to use a separate page.
+* [UI]: Added capability to share/move samples between projects from the line list page.
+* [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
+* [Developer]: Updated to use Yarn v3 and updated browserlist to v4.19.17.
+* [Developer]: Added parsing of CHROMEWEBDRIVER in ./run-tests.sh to detect and use chromedriver provided by github actions ubuntu20.04 image.
+* [UI/Workflow]: Added in support for displaying html files found inside of zipped html output files.
+* [Developer]: Converted the project from bare Spring to Spring Boot 2.6.3, which involved upgrading a number of
+  dependencies.
+* [Developer]: Update to `react-router` v6 from `@reach-router`.
 
 21.05 to 21.09
 --------------

@@ -16,7 +16,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -46,11 +46,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * 
  */
 @Entity
+@NamedEntityGraph(name = "sampleOnly")
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Sample extends IridaResourceSupport
+public class Sample extends IridaRepresentationModel
 		implements MutableIridaThing, Comparable<Sample>, RemoteSynchronizable {
 
 	@Id
@@ -109,8 +110,8 @@ public class Sample extends IridaResourceSupport
 	 * Date of sampling
 	 */
 	@Temporal(TemporalType.DATE)
-	@JsonSerialize(as=java.sql.Date.class, using = DateJson.DateSerializer.class)
-	@JsonDeserialize(as=java.sql.Date.class, using = DateJson.DateDeserializer.class)
+	@JsonSerialize(using = DateJson.DateSerializer.class)
+	@JsonDeserialize(using = DateJson.DateDeserializer.class)
 	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	private Date collectionDate;
 

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -8,14 +8,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -46,8 +48,10 @@ import com.google.common.collect.Sets;
  * Tests for dealing with Galaxy Libraries.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class})
+@Tag("IntegrationTest") @Tag("Galaxy")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
+		initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -85,7 +89,7 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws URISyntaxException 
 	 * @throws IOException 
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
@@ -143,13 +147,15 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadException.class)
+	@Test
 	public void testFileToLibraryFailure()
 			throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFileToLibraryFailure");
 		library.setId("invalid");
-		galaxyLibrariesService.fileToLibrary(dataFile,
-				FILE_TYPE, library, DataStorage.LOCAL);
+		assertThrows(UploadException.class, () -> {
+			galaxyLibrariesService.fileToLibrary(dataFile,
+					FILE_TYPE, library, DataStorage.LOCAL);
+		});
 	}
 	
 	/**
@@ -172,20 +178,17 @@ public class GalaxyLibrariesServiceIT {
 		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
 				.showDataset(library.getId(), datasetId1);
 		assertNotNull(actualDataset1);
-		assertEquals("Invalid data type extension", actualDataset1.getDataTypeExt(),
-				InputFileType.FASTQ_SANGER.toString());
+		assertEquals(actualDataset1.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(), "Invalid data type extension");
 
 		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
 				.showDataset(library.getId(), datasetId2);
 		assertNotNull(actualDataset2);
-		assertEquals("Invalid data type extension", actualDataset2.getDataTypeExt(),
-				InputFileType.FASTQ_SANGER.toString());
+		assertEquals(actualDataset2.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(), "Invalid data type extension");
 
 		LibraryDataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
 				.showDataset(library.getId(), datasetIdCompressed);
 		assertNotNull(actualDatasetCompressed);
-		assertEquals("Invalid data type extension", actualDatasetCompressed.getDataTypeExt(),
-				InputFileType.FASTQ_SANGER_GZ.toString());
+		assertEquals(actualDatasetCompressed.getDataTypeExt(), InputFileType.FASTQ_SANGER_GZ.toString(), "Invalid data type extension");
 	}
 	
 	/**
@@ -194,13 +197,15 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadException.class)
+	@Test
 	public void testFilesToLibraryWaitFail()
 			throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
-		galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
-				library, DataStorage.LOCAL);
+		assertThrows(UploadException.class, () -> {
+			galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
+					library, DataStorage.LOCAL);
+		});
 	}
 
 	/**
@@ -209,13 +214,15 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadTimeoutException.class)
+	@Test
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1);
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,
-				DataStorage.LOCAL);
+		assertThrows(UploadTimeoutException.class, () -> {
+			galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,
+					DataStorage.LOCAL);
+		});
 	}
 	
 
@@ -225,11 +232,13 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
-	@Test(expected = UploadErrorException.class)
+	@Test
 	public void testFilesToLibraryWaitFailDatasetError() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailDatasetError");
-		galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), library,
-				DataStorage.LOCAL);
+		assertThrows(UploadErrorException.class, () -> {
+			galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFileFail, dataFile2), library,
+					DataStorage.LOCAL);
+		});
 	}
 	
 	/**
@@ -243,7 +252,7 @@ public class GalaxyLibrariesServiceIT {
 		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
 				library, DataStorage.LOCAL);
 		String datasetId = datasetsMap.get(dataFile);
-		assertNotNull("Dataset not uploaded correctly", librariesClient.showDataset(library.getId(), datasetId));
+		assertNotNull(librariesClient.showDataset(library.getId(), datasetId), "Dataset not uploaded correctly");
 
 		// Note: I cannot do much more to test deleting a library beyond making
 		// sure no exception is thrown.
@@ -258,8 +267,10 @@ public class GalaxyLibrariesServiceIT {
 	 * 
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected = DeleteGalaxyObjectFailedException.class)
+	@Test
 	public void testDeleteLibraryFail() throws ExecutionManagerException {
-		galaxyLibrariesService.deleteLibrary("invalid");
+		assertThrows(DeleteGalaxyObjectFailedException.class, () -> {
+			galaxyLibrariesService.deleteLibrary("invalid");
+		});
 	}
 }

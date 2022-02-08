@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -31,7 +30,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 
 import com.google.common.collect.ImmutableList;
 
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 public class UIActivitiesServiceTest {
 	private UIActivitiesService service;
@@ -39,7 +39,7 @@ public class UIActivitiesServiceTest {
 	private final Sample sample = new Sample("SAMPLE_1");
 	private final Project project = new Project("PROJECT_1");
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		ProjectService projectService = Mockito.mock(ProjectService.class);
 		ProjectEventService eventService = Mockito.mock(ProjectEventService.class);
@@ -59,11 +59,11 @@ public class UIActivitiesServiceTest {
 	@Test
 	public void testGetActivitiesForProject() {
 		PagedListResponse response = service.geActivitiesForProject(1l, 0, Locale.ENGLISH);
-		Assert.assertEquals("Should have 4 events", 4, response.getTotal());
-		Assert.assertEquals("First should be a project_sample_added event", "project_sample_added", ((Activity)response.getContent().get(0)).getType());
-		Assert.assertEquals("Second should be a project_user_role_updated event", "project_user_role_updated", ((Activity)response.getContent().get(1)).getType());
-		Assert.assertEquals("Third should be a project_user_removed event", "project_user_removed", ((Activity)response.getContent().get(2)).getType());
-		Assert.assertEquals("Forth should be a project_user_group_added event", "project_user_group_added", ((Activity)response.getContent().get(3)).getType());
+		assertEquals(4, response.getTotal(), "Should have 4 events");
+		assertEquals("project_sample_added", ((Activity)response.getContent().get(0)).getType(), "First should be a project_sample_added event");
+		assertEquals("project_user_role_updated", ((Activity)response.getContent().get(1)).getType(), "Second should be a project_user_role_updated event");
+		assertEquals("project_user_removed", ((Activity)response.getContent().get(2)).getType(), "Third should be a project_user_removed event");
+		assertEquals("project_user_group_added", ((Activity)response.getContent().get(3)).getType(), "Forth should be a project_user_group_added event");
 	}
 
 	private Page<ProjectEvent> createMockProjectEvents() {

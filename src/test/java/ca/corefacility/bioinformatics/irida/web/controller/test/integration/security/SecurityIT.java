@@ -1,18 +1,27 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.security;
 
-import static com.jayway.restassured.RestAssured.expect;
+import static io.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import org.apache.http.HttpStatus;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.jayway.restassured.http.ContentType;
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 
 /**
  * General tests relating to security for the REST API.
- * 
+ *
  */
+@Tag("IntegrationTest") @Tag("Rest")
+@ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
 public class SecurityIT {
 
 	/**
@@ -21,7 +30,7 @@ public class SecurityIT {
 	 */
 	@Test
 	public void testAccessWithoutAuthentication() {
-		expect().contentType(ContentType.JSON).body("error", is("invalid_request")).and()
+		expect().body("error", is("invalid_request")).and()
 				.body("error_description", containsString("No client credentials were provided"))
 				.statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
 	}

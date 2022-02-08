@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,14 +11,16 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -42,7 +44,7 @@ public class GenericControllerTest {
 	private Map<String, Object> updatedFields;
 	private Long identifier;
 
-	@Before
+	@BeforeEach
 	@SuppressWarnings("unchecked")
 	public void setUp() {
 		crudService = mock(CRUDService.class);
@@ -75,18 +77,19 @@ public class GenericControllerTest {
 		ResponseResource<IdentifiableTestEntity> responseObject = controller.create(entity,
 				new MockHttpServletResponse());
 		IdentifiableTestEntity testResource = responseObject.getResource();
-		assertNotNull("Resource should not be null", testResource);
-		assertTrue("Resource from model should be equivalent to resource added to model", testResource.equals(entity));
-		assertTrue("Model should contain a self-reference", testResource.getLink(Link.REL_SELF)
-				.getHref()
-				.endsWith(identifier.toString()));
+		assertNotNull(testResource, "Resource should not be null");
+		assertTrue(testResource.equals(entity), "Resource from model should be equivalent to resource added to model");
+		assertTrue(testResource.getLink(IanaLinkRelations.SELF.value())
+				.map(i -> i.getHref()).orElse(null)
+				.endsWith(identifier.toString()),
+				"Model should contain a self-reference");
 	}
 
 	@Test
 	public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
 		ResponseResource<RootResource> responseObject = controller.delete(2L);
 		RootResource rootResource = responseObject.getResource();
-		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION);
+		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION).map(i -> i).orElse(null);
 		assertNotNull(l);
 		assertEquals("http://localhost/api/generic", l.getHref());
 	}
@@ -116,8 +119,8 @@ public class GenericControllerTest {
 		}
 
 		IdentifiableTestEntity resource = responseObject.getResource();
-		assertTrue(resource.getLink(Link.REL_SELF)
-				.getHref()
+		assertTrue(resource.getLink(IanaLinkRelations.SELF.value())
+				.map(i -> i.getHref()).orElse(null)
 				.endsWith(identifier.toString()));
 	}
 
@@ -137,7 +140,7 @@ public class GenericControllerTest {
 		when(crudService.updateFields(identifier, updatedFields)).thenReturn(entity);
 		ResponseResource<RootResource> responseObject = controller.update(identifier, updatedFields);
 		RootResource r = responseObject.getResource();
-		assertNotNull(r.getLink(Link.REL_SELF));
+		assertNotNull(r.getLink(IanaLinkRelations.SELF.value()));
 		assertNotNull(r.getLink(RESTGenericController.REL_COLLECTION));
 	}
 
