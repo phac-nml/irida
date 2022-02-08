@@ -14,36 +14,34 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.hateoas.Link;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class, IridaApiServicesConfig.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@Tag("IntegrationTest") @Tag("Rest")
 @ActiveProfiles("it")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Import(IridaIntegrationTestUriConfig.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/analysis/RESTAnalysisSubmissionControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 /**
@@ -95,7 +93,7 @@ public class RESTAnalysisSubmissionControllerIT {
 	public void testReadSubmission() {
 		asAdmin().expect().body("resource.name", equalTo("another analysis")).and()
 				.body("resource.analysisState", equalTo(AnalysisState.COMPLETED.toString()))
-				.body("resource.links.rel", hasItems(Link.REL_SELF, RESTAnalysisSubmissionController.ANALYSIS_REL))
+				.body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.ANALYSIS_REL))
 				.when().get(ANALYSIS_BASE + "/1");
 	}
 
@@ -113,7 +111,7 @@ public class RESTAnalysisSubmissionControllerIT {
 				.body("resource.executionManagerAnalysisId", equalTo("XYZABC"))
 				.and()
 				.body("resource.links.rel",
-						hasItems(Link.REL_SELF, RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
+						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
 				.get(ANALYSIS_BASE + "/1/analysis");
 	}
 
@@ -133,7 +131,7 @@ public class RESTAnalysisSubmissionControllerIT {
 		}
 		
 		asAdmin().expect().body("resource.executionManagerFileId", equalTo("123-456-789")).and()
-				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(Link.REL_SELF))
+				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value()))
 				.when().get(ANALYSIS_BASE + "/1/analysis/file/1");
 
 		// get the tree file

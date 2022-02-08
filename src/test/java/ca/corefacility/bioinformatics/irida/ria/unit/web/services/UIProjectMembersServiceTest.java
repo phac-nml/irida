@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +30,9 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFac
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UIProjectMembersServiceTest {
@@ -51,13 +50,11 @@ public class UIProjectMembersServiceTest {
 			new ProjectUserJoin(PROJECT, USER_2, ProjectRole.PROJECT_USER));
 	private final Locale LOCALE = Locale.CANADA;
 
-	@Rule
-	public ExpectedException noManagerException = ExpectedException.none();
 	private UIProjectMembersService service;
 	private ProjectService projectService;
 	private UserService userService;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws ProjectWithoutOwnerException {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
@@ -92,7 +89,7 @@ public class UIProjectMembersServiceTest {
 		assertEquals(Long.valueOf(2L), response.getTotal());
 		assertNotNull(response.getDataSource());
 		List<ProjectMemberTableModel> members = response.getDataSource();
-		assertEquals("Should have 2 members", 2, members.size());
+		assertEquals(2, members.size(), "Should have 2 members");
 	}
 
 	@Test
@@ -101,9 +98,11 @@ public class UIProjectMembersServiceTest {
 		verify(projectService, times(1)).removeUserFromProject(PROJECT, USER_2);
 	}
 
-	@Test(expected = ProjectWithoutOwnerException.class)
+	@Test
 	public void testRemoveLastManagerFromProject() throws UIProjectWithoutOwnerException {
-		service.removeUserFromProject(PROJECT_ID, USER_3.getId(), LOCALE);
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			service.removeUserFromProject(PROJECT_ID, USER_3.getId(), LOCALE);
+		});
 	}
 
 	@Test
@@ -112,9 +111,11 @@ public class UIProjectMembersServiceTest {
 		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER);
 	}
 
-	@Test(expected = ProjectWithoutOwnerException.class)
+	@Test
 	public void testUpdateUserRoleOnProjectNoManager() throws UIProjectWithoutOwnerException {
-		service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
+		});
 	}
 
 	@Test

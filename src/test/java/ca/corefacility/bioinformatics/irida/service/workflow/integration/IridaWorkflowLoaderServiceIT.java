@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,20 +17,16 @@ import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
@@ -53,9 +49,8 @@ import com.google.common.collect.Sets;
  * 
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
+@Tag("IntegrationTest") @Tag("Service")
+@SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
@@ -94,7 +89,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathWithParametersWithDynamicSourceNotRequired;
 	private Path workflowDirectoryPathWithParametersMultipleDynamicSources;
 
-	@Before
+	@BeforeEach
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
 		workflowSingleXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0/irida_workflow.xml")
 				.toURI());
@@ -209,7 +204,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionSingle();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowSingleXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 	
 	/**
@@ -223,7 +218,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionPaired();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowPairedXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 	
 	/**
@@ -237,7 +232,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionSinglePaired();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowSinglePairedXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 	
 	/**
@@ -251,7 +246,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionNotRequiresSingleSample();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowNotRequiresSingleSampleXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 	
 	/**
@@ -265,7 +260,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionRequiresSingleSample();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowRequiresSingleSampleXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 	
 	/**
@@ -279,7 +274,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionRequiresSingleSampleUnset();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowRequiresSingleSampleUnsetXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 	
 	/**
@@ -293,7 +288,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionRequiresSingleSampleInvalid();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowInvalidRequiresSingleSampleXmlPath);
 
-		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription, "irida workflow description is invalid");
 	}
 
 	/**
@@ -308,7 +303,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowSingleXmlPath,
 				workflowStructurePath);
 
-		assertEquals("irida workflow is invalid", iridaWorkflowFromFile, iridaWorkflow);
+		assertEquals(iridaWorkflowFromFile, iridaWorkflow, "irida workflow is invalid");
 	}
 
 	/**
@@ -322,7 +317,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowStructure iridaWorkflowStructureFromFile = workflowLoaderService
 				.loadWorkflowStructure(workflowStructurePath);
 
-		assertEquals("irida workflow structure invalid", iridaWorkflowStructure, iridaWorkflowStructureFromFile);
+		assertEquals(iridaWorkflowStructure, iridaWorkflowStructureFromFile, "irida workflow structure invalid");
 	}
 
 	/**
@@ -333,7 +328,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowVersionDirectoryPath);
 
-		assertEquals("irida workflow is invalid", buildTestWorkflowSingle(), iridaWorkflowFromFile);
+		assertEquals(buildTestWorkflowSingle(), iridaWorkflowFromFile, "irida workflow is invalid");
 	}
 
 	/**
@@ -355,11 +350,11 @@ public class IridaWorkflowLoaderServiceIT {
 			workflowVersionsSet.add(workflow.getWorkflowDescription().getVersion());
 		}
 
-		assertEquals("irida workflow names are invalid", Sets.newHashSet("TestWorkflow"), workflowNamesSet);
+		assertEquals(Sets.newHashSet("TestWorkflow"), workflowNamesSet, "irida workflow names are invalid");
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
 				"1.0-paired", "1.0-single-paired", "1.0-requires-single-sample", "1.0-requires-single-sample-unset",
 				"1.0-not-requires-single-sample", "1.0-invalid-requires-single-sample", "1.0-paired-end-single-sample");
-		assertEquals("irida workflow versions are invalid", validVersionNumbers, workflowVersionsSet);
+		assertEquals(validVersionNumbers, workflowVersionsSet, "irida workflow versions are invalid");
 	}
 
 	/**
@@ -372,9 +367,9 @@ public class IridaWorkflowLoaderServiceIT {
 	public void testLoadWorkflowNoParameters() throws IridaWorkflowLoadException, IOException {
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathNoParameters);
-		assertFalse("workflow loaded with no parameters", iridaWorkflowFromFile.getWorkflowDescription()
-				.acceptsParameters());
-		assertNull("parameters should be null", iridaWorkflowFromFile.getWorkflowDescription().getParameters());
+		assertFalse(iridaWorkflowFromFile.getWorkflowDescription()
+				.acceptsParameters(), "workflow loaded with no parameters");
+		assertNull(iridaWorkflowFromFile.getWorkflowDescription().getParameters(), "parameters should be null");
 	}
 
 	/**
@@ -387,16 +382,16 @@ public class IridaWorkflowLoaderServiceIT {
 	public void testLoadWorkflowWithParameters() throws IridaWorkflowLoadException, IOException {
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParameters);
-		assertTrue("workflow loaded with no parameters", iridaWorkflowFromFile.getWorkflowDescription()
-				.acceptsParameters());
+		assertTrue(iridaWorkflowFromFile.getWorkflowDescription()
+				.acceptsParameters(), "workflow loaded with no parameters");
 		List<IridaWorkflowParameter> parameters = iridaWorkflowFromFile.getWorkflowDescription().getParameters();
-		assertNotNull("parameters should not be null", parameters);
-		assertEquals("parameters does not have the correct size", 1, parameters.size());
+		assertNotNull(parameters, "parameters should not be null");
+		assertEquals(1, parameters.size(), "parameters does not have the correct size");
 		IridaWorkflowParameter parameter = parameters.get(0);
-		assertEquals("parameter does not have the correct name", "test-parameter", parameter.getName());
-		assertEquals("default value is not correct", "1", parameter.getDefaultValue());
-		assertEquals("parameter does not have correct number of tool parameters", 1, parameter.getToolParameters()
-				.size());
+		assertEquals("test-parameter", parameter.getName(), "parameter does not have the correct name");
+		assertEquals("1", parameter.getDefaultValue(), "default value is not correct");
+		assertEquals(1, parameter.getToolParameters().size(),
+				"parameter does not have correct number of tool parameters");
 	}
 
 	/**
@@ -405,10 +400,12 @@ public class IridaWorkflowLoaderServiceIT {
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
-	@Test(expected=IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadWorkflowWithParametersNoDefaultValueNotRequiredFail() throws IridaWorkflowLoadException, IOException {
-		workflowLoaderService
-				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultNotRequired);
+		assertThrows(IridaWorkflowLoadException.class, () -> {
+			workflowLoaderService
+					.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultNotRequired);
+		});
 	}
 
 	/**
@@ -422,8 +419,8 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflow iridaWorkflow = workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefaultIsRequired);
 		IridaWorkflowParameter parameter = iridaWorkflow.getWorkflowDescription().getParameters().get(0);
-		assertNull("defaultValue should be null if none provided", parameter.getDefaultValue());
-		assertTrue("parameter should be required", parameter.isRequired());
+		assertNull(parameter.getDefaultValue(), "defaultValue should be null if none provided");
+		assertTrue(parameter.isRequired(), "parameter should be required");
 	}
 
 	/**
@@ -432,10 +429,12 @@ public class IridaWorkflowLoaderServiceIT {
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
-	@Test(expected=IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadWorkflowWithParametersWithDefaultValueIsRequiredFail() throws IridaWorkflowLoadException, IOException {
-		workflowLoaderService
-				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersWithDefaultIsRequired);
+		assertThrows(IridaWorkflowLoadException.class, () -> {
+			workflowLoaderService
+					.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersWithDefaultIsRequired);
+		});
 	}
 
 	/**
@@ -444,10 +443,12 @@ public class IridaWorkflowLoaderServiceIT {
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
-	@Test(expected=IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadWorkflowWithParametersWithDynamicSourceNotRequiredFail() throws IridaWorkflowLoadException, IOException {
-		workflowLoaderService
-				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersWithDynamicSourceNotRequired);
+		assertThrows(IridaWorkflowLoadException.class, () -> {
+			workflowLoaderService
+					.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersWithDynamicSourceNotRequired);
+		});
 	}
 
 	/**
@@ -456,19 +457,23 @@ public class IridaWorkflowLoaderServiceIT {
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
-	@Test(expected=IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadWorkflowWithParametersMultipleDynamicSourcesFail() throws IridaWorkflowLoadException, IOException {
-		workflowLoaderService
-				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersMultipleDynamicSources);
+		assertThrows(IridaWorkflowLoadException.class, () -> {
+			workflowLoaderService
+					.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersMultipleDynamicSources);
+		});
 	}
 
 	/**
 	 * Tests failure to load up all implementations of a workflow from a
 	 * directory.
 	 */
-	@Test(expected=FileNotFoundException.class)
+	@Test
 	public void testLoadAllWorkflowImplementationsFail() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoDefinition);
+		assertThrows(FileNotFoundException.class, () -> {
+			workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoDefinition);
+		});
 	}
 
 	/**
@@ -477,9 +482,11 @@ public class IridaWorkflowLoaderServiceIT {
 	 * 
 	 * @throws IridaWorkflowLoadException
 	 */
-	@Test(expected = FileNotFoundException.class)
+	@Test
 	public void testLoadWorkflowsFromDirectoryFailNoDefinition() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoDefinition);
+		assertThrows(FileNotFoundException.class, () -> {
+			workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoDefinition);
+		});
 	}
 
 	/**
@@ -487,9 +494,11 @@ public class IridaWorkflowLoaderServiceIT {
 	 * 
 	 * @throws IridaWorkflowLoadException
 	 */
-	@Test(expected = FileNotFoundException.class)
+	@Test
 	public void testLoadWorkflowsFromDirectoryFailNoStructure() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoStructure);
+		assertThrows(FileNotFoundException.class, () -> {
+			workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoStructure);
+		});
 	}
 
 	/**
@@ -497,9 +506,11 @@ public class IridaWorkflowLoaderServiceIT {
 	 * 
 	 * @throws IridaWorkflowLoadException
 	 */
-	@Test(expected = IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadWorkflowsFromDirectoryFailNoId() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoId);
+		assertThrows(IridaWorkflowLoadException.class, () -> {
+			workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoId);
+		});
 	}
 	
 	/**
@@ -507,8 +518,10 @@ public class IridaWorkflowLoaderServiceIT {
 	 * 
 	 * @throws IridaWorkflowLoadException
 	 */
-	@Test(expected = IridaWorkflowLoadException.class)
+	@Test
 	public void testLoadIridaWorkflowFromDirectoryFailInvalidType() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadIridaWorkflowFromDirectory(workflowDirectoryPathInvalidType);
+		assertThrows(IridaWorkflowLoadException.class, () -> {
+			workflowLoaderService.loadIridaWorkflowFromDirectory(workflowDirectoryPathInvalidType);
+		});
 	}
 }

@@ -2,16 +2,16 @@
  * This file renders the FastQC charts component.
  */
 
-import React, { useEffect, useState } from "react";
 import { Col, Layout, Row, Typography } from "antd";
-import { SPACE_MD } from "../../../styles/spacing";
-import { grey1, grey4 } from "../../../styles/colors";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { getFastQCImages } from "../../../apis/files/sequence-files";
-import { ContentLoading } from "../../../components/loader";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import styled from "styled-components";
-import { useParams } from "@reach/router";
+import { getFastQCImages } from "../../../apis/files/sequence-files";
+import { ContentLoading } from "../../../components/loader";
+import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { grey1, grey4 } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 
 const StyledImage = styled.img`
   height: 100%;

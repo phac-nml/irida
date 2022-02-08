@@ -25,7 +25,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping("/sequencingRuns")
-@PreAuthorize("hasAnyRole('ROLE_ADMIN, ROLE_TECHNICIAN')")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')")
 public class SequencingRunController {
 
 	public static final String LIST_VIEW = "sequencingRuns/list";

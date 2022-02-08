@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.json;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.util.Date;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -18,12 +19,11 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 public class DateJson {
 
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	/**
 	 * Custom JSON serializer to format date as YYYY-MM-DD.
 	 */
 	public static class DateSerializer extends StdSerializer<Date> {
-
-		private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
 		private static final long serialVersionUID = 5016991815188473911L;
 
@@ -56,7 +56,11 @@ public class DateJson {
 		 */
 		@Override
 		public Date deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-			return Date.valueOf(p.getText());
+			try {
+				return DATE_FORMAT.parse(p.getText());
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

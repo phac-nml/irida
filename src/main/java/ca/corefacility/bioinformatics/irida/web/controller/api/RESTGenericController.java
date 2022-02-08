@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
@@ -34,7 +34,7 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 @RequestMapping("/api/generic")
-public abstract class RESTGenericController<Type extends IridaResourceSupport & IridaThing & Comparable<Type>> {
+public abstract class RESTGenericController<Type extends IridaRepresentationModel & IridaThing & Comparable<Type>> {
 
 	/**
 	 * name of the objects used to render the view classes.
@@ -177,10 +177,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		Long id = resource.getId();
 		logger.trace("Created resource with ID [" + resource.getId() + "]");
 
-		// In order to obtain a correct created date, the persisted resource is
-		// accessed from the service/database layer.
-		Type readType = crudService.read(id);
-
 		// the location of the new resource is relative to this class (i.e.,
 		// linkTo(getClass())) with the identifier appended.
 		String location = linkTo(getClass()).slash(id)
@@ -190,14 +186,14 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// add any custom links for the specific resource type that we're
 		// serving
 		// right now (implemented in the class that extends GenericController).
-		readType.add(constructCustomResourceLinks(resource));
+		resource.add(constructCustomResourceLinks(resource));
 
 		//add a self reference
-		readType.add(linkTo(getClass()).slash(id)
+		resource.add(linkTo(getClass()).slash(id)
 				.withSelfRel());
 
 		// add the resource to the model
-		ResponseResource<Type> responseObject = new ResponseResource<>(readType);
+		ResponseResource<Type> responseObject = new ResponseResource<>(resource);
 
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);

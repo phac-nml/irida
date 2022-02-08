@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -9,8 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -29,7 +30,7 @@ public class ChecksumFileProcessorTest {
 	private static final String CHECKSUM = "aeaa0755dc44b393ffe12f02e9bd42b0169b12ca9c15708085db6a4ac9110ee0";
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
@@ -50,16 +51,18 @@ public class ChecksumFileProcessorTest {
 
 		SequenceFile file = fileCaptor.getValue();
 
-		assertEquals("checksums should be equal", CHECKSUM, file.getUploadSha256());
+		assertEquals(CHECKSUM, file.getUploadSha256(), "checksums should be equal");
 	}
 
-	@Test(expected = FileProcessorException.class)
+	@Test
 	public void testFileNotExists() throws IOException {
 		final SequenceFile sf = new SequenceFile(Paths.get("/reallyfakefile"));
 
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		fileProcessor.process(so);
+		assertThrows(FileProcessorException.class, () -> {
+			fileProcessor.process(so);
+		});
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {

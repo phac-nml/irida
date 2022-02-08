@@ -15,7 +15,7 @@ The IRIDA platform currently consists of three, separate components:
 2. Galaxy, and
 3. Command-line clients.
 
-The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR` file at <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>.
+The IRIDA Web interfaces are intended to be deployed in a Servlet container, supporting Servlet 3.0 or higher. You can download IRIDA as a pre-packaged `WAR` file at <https://github.com/phac-nml/irida/releases>.
 
 Prerequisites
 =============
@@ -81,9 +81,9 @@ The main configuration parameters you will need to change are:
   * `file.processing.queue.capacity=512` - The maximum number of file processing jobs that can be queued.
   * `file.processing.process=true` - Whether to run the file processors on the current machine.  This can be set to false if you're running multiple IRIDA servers and want to improve UI performance on a machine.
 2. **Database connection information:**
-  * `jdbc.url=jdbc:mysql://localhost:3306/irida_test`
-  * `jdbc.username=test`
-  * `jdbc.password=test`
+  * `spring.datasource.url=jdbc:mysql://localhost:3306/irida_test`
+  * `spring.datasource.username=test`
+  * `spring.datasource.password=test`
 3. **Galaxy connection information for executing pipelines:**
   * `galaxy.execution.url=http://localhost/`
   * `galaxy.execution.apiKey=xxxx`
@@ -139,7 +139,7 @@ Deploy the `WAR` File
 ---------------------
 Once you have adjusted the configuration files to your environment, you can deploy the `WAR` file to your servlet container.
 
-You can download the `WAR` file from: <https://irida.corefacility.ca/downloads/webapp/irida-latest.war>
+You can download the `WAR` file from: <https://github.com/phac-nml/irida/releases>
 
 Tomcat's deployment directory is typically some variation of `/var/lib/tomcat/webapps/`. Deploying the `WAR` file in Tomcat is as simple as moving the `WAR` file you downloaded into that directory.
 

@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,9 +15,9 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepositoryImpl;
@@ -35,7 +35,7 @@ public class SequenceFileRepositoryImplTest {
 	private EntityManager entityManager;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
 		entityManager = mock(EntityManager.class);
@@ -43,7 +43,7 @@ public class SequenceFileRepositoryImplTest {
 		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory, iridaFileStorageUtility);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 		Files.walkFileTree(baseDirectory, new RecursiveDeleteVisitor());
 	}
@@ -149,10 +149,10 @@ public class SequenceFileRepositoryImplTest {
 		assertEquals(updatedFile.getFileName(), oldFile.getFileName());
 		// the contents of the file should be different:
 		try (Scanner sc = new Scanner(baseDirectory.resolve(updatedFile))) {
-			assertEquals("The updated text is not correct.", updatedText, sc.nextLine());
+			assertEquals(updatedText, sc.nextLine(), "The updated text is not correct.");
 		}
 		try (Scanner sc = new Scanner(baseDirectory.resolve(originalFile))) {
-			assertEquals("The original file was not preserved.", originalText, sc.nextLine());
+			assertEquals(originalText, sc.nextLine(), "The original file was not preserved.");
 		}
 	}
 

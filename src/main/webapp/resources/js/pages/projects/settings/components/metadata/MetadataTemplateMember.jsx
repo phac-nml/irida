@@ -1,4 +1,3 @@
-import { navigate } from "@reach/router";
 import {
   List,
   notification,
@@ -8,6 +7,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetTemplatesForProjectQuery } from "../../../../../apis/metadata/metadata-templates";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
 
@@ -22,10 +22,11 @@ const { Paragraph, Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MetadataTemplateMember({ id, projectId }) {
-  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
-    projectId
-  );
+export default function MetadataTemplateMember() {
+  const navigate = useNavigate();
+  const { id, projectId } = useParams();
+  const { data: templates, isLoading } =
+    useGetTemplatesForProjectQuery(projectId);
   const [template, setTemplate] = React.useState({});
 
   React.useEffect(() => {
@@ -36,7 +37,9 @@ export default function MetadataTemplateMember({ id, projectId }) {
     create one.
      */
     if (!isLoading) {
-      const found = templates.find((template) => template.identifier === id);
+      const found = templates.find(
+        (template) => Number(template.identifier) === Number(id)
+      );
 
       if (found) {
         setTemplate(found);

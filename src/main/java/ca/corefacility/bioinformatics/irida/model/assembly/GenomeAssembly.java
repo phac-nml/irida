@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedDate;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name = "genome_assembly")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class GenomeAssembly extends IridaResourceSupport
+public abstract class GenomeAssembly extends IridaRepresentationModel
 		implements IridaThing, IridaSequenceFile, VersionedFileFields<Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssembly.class);

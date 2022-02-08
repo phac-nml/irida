@@ -2,17 +2,32 @@
  * @file AnnouncementsSubMenu is the announcements drop down in the main navigation bar.
  */
 
-import React from "react";
 import { Badge, Dropdown, Menu, Space, Typography } from "antd";
-import { IconBell } from "../../../icons/Icons";
+import React from "react";
+import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
+import { BORDERED_LIGHT } from "../../../../styles/borders";
+import { fromNow } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { LinkButton } from "../../../Buttons/LinkButton";
+import { IconBell } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
-import { fromNow } from "../../../../utilities/date-utilities";
-import { BORDERED_LIGHT } from "../../../../styles/borders";
-import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
+import { theme } from "../../../../utilities/theme-utilities";
+import { grey6 } from "../../../../styles/colors";
+import styled from "styled-components";
 
 const { Text } = Typography;
+
+const textColor = theme === "dark" ? `${grey6}` : "#222";
+const hoverColor = theme === "dark" ? "#fff" : "#222";
+const iconColor = theme === "dark" ? "#fff" : "#222";
+
+const TextStyle = styled(Text)`
+  color: ${textColor} !important;
+
+  :hover {
+    color: ${hoverColor} !important;
+  }
+`;
 
 /**
  * React component to display the bell icon and new announcement count badge
@@ -34,10 +49,10 @@ export function AnnouncementsSubMenu() {
   }
 
   const aMenu = (
-    <Menu className="t-announcements-submenu">
+    <Menu className="t-announcements-submenu" theme={theme}>
       {announcements.length == 0 ? (
         <Menu.Item
-          key={"announcement_none"}
+          key="announcement_none"
           style={{ width: 400, borderBottom: BORDERED_LIGHT }}
           disabled={true}
         >
@@ -55,13 +70,13 @@ export function AnnouncementsSubMenu() {
                 <Space size="large">
                   <PriorityFlag hasPriority={item.priority} />
                   <span>
-                    <Text strong ellipsis style={{ width: 310 }}>
+                    <TextStyle strong ellipsis style={{ width: 310 }}>
                       {item.title}
-                    </Text>
+                    </TextStyle>
                     <br />
-                    <Text type="secondary" style={{ fontSize: `.8em` }}>
+                    <TextStyle type="secondary" style={{ fontSize: `.8em` }}>
                       {fromNow({ date: item.createdDate })}
-                    </Text>
+                    </TextStyle>
                   </span>
                 </Space>
               }
@@ -89,7 +104,7 @@ export function AnnouncementsSubMenu() {
           className="t-announcements-badge"
           count={announcements && announcements.filter((a) => !a.read).length}
         >
-          <IconBell />
+          <IconBell style={{ color: iconColor }} />
         </Badge>
       </span>
     </Dropdown>

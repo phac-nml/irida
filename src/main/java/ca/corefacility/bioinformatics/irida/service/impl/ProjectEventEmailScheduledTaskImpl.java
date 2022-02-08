@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.support.CronSequenceGenerator;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -97,12 +99,12 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 	 */
 	public static Date getPriorDateFromCronString(String cron) {
 		// find the number of milliseconds in the configured time
-		long timeInMillis = Calendar.getInstance().getTimeInMillis();
-		CronSequenceGenerator gen = new CronSequenceGenerator(cron);
-		long futureTime = gen.next(new Date()).getTime();
-		long difference = futureTime - timeInMillis;
+		LocalDateTime currentTime = LocalDateTime.now();
+		CronExpression cronExp = CronExpression.parse(cron);
+		LocalDateTime futureTime = cronExp.next(currentTime);
+		long difference = ChronoUnit.MILLIS.between(currentTime, futureTime);
 
-		return new Date(timeInMillis - difference);
+		return Date.from(currentTime.minus(difference, ChronoUnit.MILLIS).atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	/**

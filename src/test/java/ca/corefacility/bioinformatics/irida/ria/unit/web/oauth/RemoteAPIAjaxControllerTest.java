@@ -7,8 +7,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,9 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
@@ -34,7 +34,7 @@ public class RemoteAPIAjaxControllerTest {
 	private final RemoteAPI REMOTE_API_02 = new RemoteAPI("Washington", "http://washington.nowhere", "", "washington",
 			"654321");
 
-	@Before
+	@BeforeEach
 	public void init() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		uiRemoteAPIService = mock(UIRemoteAPIService.class);
@@ -123,7 +123,7 @@ public class RemoteAPIAjaxControllerTest {
 		};
 
 		when(remoteAPIService.search(any(), anyInt(), anyInt(), any(Sort.Direction.class),
-				any(String[].class))).thenReturn(remoteAPIPage);
+				any(String.class))).thenReturn(remoteAPIPage);
 		when(remoteAPIService.read(1L)).thenReturn(REMOTE_API_01);
 		when(remoteAPIService.read(2L)).thenReturn(REMOTE_API_02);
 	}
@@ -138,8 +138,7 @@ public class RemoteAPIAjaxControllerTest {
 
 		TableResponse<RemoteAPITableModel> response = controller.getAjaxAPIList(request);
 		verify(remoteAPIService, times(1)).search(any(), anyInt(), anyInt(), any(Sort.Direction.class),
-				any(String[].class));
-		assertEquals("Should have 1 Remote API", 1, response.getDataSource()
-				.size());
+				any(String.class));
+		assertEquals(1, response.getDataSource().size(), "Should have 1 Remote API");
 	}
 }

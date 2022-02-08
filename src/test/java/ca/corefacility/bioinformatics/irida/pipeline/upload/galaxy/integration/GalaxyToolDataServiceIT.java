@@ -8,26 +8,31 @@ import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.sun.jersey.api.client.ClientHandlerException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for accessing Galaxy Tool Data Tables.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class})
+@Tag("IntegrationTest") @Tag("Galaxy")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
+        initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
@@ -46,7 +51,7 @@ public class GalaxyToolDataServiceIT {
     /**
      * Sets up for tool data table tests.
      */
-    @Before
+    @BeforeEach
     public void setup() {
         galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
         ToolDataClient toolDataClient = galaxyInstanceAdmin.getToolDataClient();
@@ -70,8 +75,10 @@ public class GalaxyToolDataServiceIT {
      * Tests failing to find a Galaxy Tool Data Table.
      * @throws GalaxyToolDataTableException
      */
-    @Test(expected=ClientHandlerException.class)
+    @Test
     public void testGetToolDataInvalid() throws GalaxyToolDataTableException {
-        galaxyToolDataService.getToolDataTable(INVALID_TOOL_DATA_TABLE_ID);
+        assertThrows(ClientHandlerException.class, () -> {
+            galaxyToolDataService.getToolDataTable(INVALID_TOOL_DATA_TABLE_ID);
+        });
     }
 }

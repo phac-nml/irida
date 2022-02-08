@@ -45,9 +45,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Executes FastQC on a {@link SequenceFile} and stores the report in the database. This is a terrible, ugly, hacky
- * class because most of the internal statistics computed by FastQC are <code>private</code> fields, so we reflect on
- * those fields and make them <code>public</code> to get the values.
+ * Executes FastQC on a {@link SequenceFile} and stores the report in the
+ * database. This is a terrible, ugly, hacky class because most of the internal
+ * statistics computed by FastQC are <code>private</code> fields, so we reflect
+ * on those fields and make them <code>public</code> to get the values.
  */
 @Component
 public class FastqcFileProcessor implements FileProcessor {
@@ -63,10 +64,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	/**
 	 * Create a new {@link FastqcFileProcessor}
 	 *
-	 * @param messageSource          the message source for i18n (used to add an internationalized description for the
-	 *                               analysis).
-	 * @param sequenceFileRepository Repository for storing sequence files
-	 * @param outputFileRepository   Repository for storing analysis output files
+	 * @param messageSource           the message source for i18n (used to add an internationalized description for the
+	 *                                analysis).
+	 * @param sequenceFileRepository  Repository for storing sequence files
+	 * @param outputFileRepository    Repository for storing analysis output files
 	 * @param iridaFileStorageUtility The irida file storage service
 	 */
 	@Autowired
@@ -89,12 +90,15 @@ public class FastqcFileProcessor implements FileProcessor {
 	/**
 	 * Process a single {@link SequenceFile}
 	 *
-	 * @param sequenceFile file to process
-	 * @throws FileProcessorException if an error occurs while processing
+	 * @param sequenceFile
+	 *            file to process
+	 * @throws FileProcessorException
+	 *             if an error occurs while processing
 	 */
 	private void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
+
 				.fastqcVersion(FastQCApplication.VERSION)
 				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
 				.description(messageSource.getMessage("fastqc.file.processor.analysis.description",
@@ -126,6 +130,7 @@ public class FastqcFileProcessor implements FileProcessor {
 					for (QCModule module : moduleList) {
 						module.processSequence(sequence);
 					}
+
 				}
 
 				logger.debug("Finished FastQC analysis modules.");
@@ -142,7 +147,8 @@ public class FastqcFileProcessor implements FileProcessor {
 
 				AnalysisFastQC analysisFastQC = analysis.build();
 
-				sequenceFile.setFastQCAnalysis(analysis.build());
+				sequenceFile.setFastQCAnalysis(analysisFastQC);
+
 
 				sequenceFileRepository.saveMetadata(sequenceFile);
 			} catch (Exception e) {
@@ -170,13 +176,14 @@ public class FastqcFileProcessor implements FileProcessor {
 	/**
 	 * Handle writing the {@link BasicStats} to the database.
 	 *
-	 * @param stats    the {@link BasicStats} computed by fastqc.
-	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
+	 * @param stats
+	 *            the {@link BasicStats} computed by fastqc.
+	 * @param analysis
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
 	private void handleBasicStats(BasicStats stats, AnalysisFastQCBuilder analysis) {
 		analysis.fileType(stats.getFileType());
-		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar())
-				.name());
+		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
 		analysis.minLength(stats.getMinLength());
 		analysis.maxLength(stats.getMaxLength());
 		analysis.totalSequences((int) stats.getActualCount());
@@ -190,8 +197,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * Handle writing the {@link PerBaseQualityScores} to the database and
 	 * the generated fastqc image to the tempDirectory
 	 *
-	 * @param scores   the {@link PerBaseQualityScores} computed by fastqc.
-	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
+	 * @param scores
+	 *            the {@link PerBaseQualityScores} computed by fastqc.
+	 * @param analysis
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
 	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQCBuilder analysis,
 			Path tempDirectory) throws IOException {
@@ -208,8 +217,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * Handle writing the {@link PerSequenceQualityScores} to the database and
 	 * the generated fastqc image to the tempDirectory
 	 *
-	 * @param scores   the {@link PerSequenceQualityScores} computed by fastqc.
-	 * @param analysis the {@link AnalysisFastQCBuilder} to update.
+	 * @param scores
+	 *            the {@link PerSequenceQualityScores} computed by fastqc.
+	 * @param analysis
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
 	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQCBuilder analysis,
 			Path tempDirectory) throws IOException {
@@ -226,8 +237,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * Handle writing the {@link DuplicationLevel} to the database and
 	 * the generated fastqc image to the tempDirectory
 	 *
-	 * @param duplicationLevel the {@link DuplicationLevel} calculated by fastqc.
-	 * @param analysis         the {@link AnalysisFastQCBuilder} to update.
+	 * @param duplicationLevel
+	 *            the {@link DuplicationLevel} calculated by fastqc.
+	 * @param analysis
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
 	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQCBuilder analysis,
 			Path tempDirectory) throws IOException {
@@ -243,8 +256,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	/**
 	 * Handle getting over represented sequences from fastqc.
 	 *
-	 * @param seqs overrepresented sequences.
-	 * @return a collection of {@link OverrepresentedSequence} corresponding to the FastQC {@link OverRepresentedSeqs}.
+	 * @param seqs
+	 *            overrepresented sequences.
+	 * @return a collection of {@link OverrepresentedSequence} corresponding to
+	 *         the FastQC {@link OverRepresentedSeqs}.
 	 */
 	private Set<OverrepresentedSequence> handleOverRepresentedSequences(OverRepresentedSeqs seqs) {
 
@@ -272,8 +287,8 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(imageBuffer, "PNG", filePath.toFile());
 
-		AnalysisOutputFile analysisOutputFile = outputFileRepository.save(
-				new AnalysisOutputFile(filePath, null, fileName, null));
+		AnalysisOutputFile analysisOutputFile = outputFileRepository
+				.save(new AnalysisOutputFile(filePath, null, fileName, null));
 
 		return analysisOutputFile;
 	}
@@ -288,11 +303,12 @@ public class FastqcFileProcessor implements FileProcessor {
 
 	@Override
 	public boolean shouldProcessFile(SequencingObject sequencingObject) {
-		//we don't want to run the processor for zipped or unknown fast5 files.  It will just fail and create a qc entry even though it did what it was supposed to
+		// we don't want to run the processor for zipped or unknown fast5 files.
+		// It will just fail and create a qc entry even though it did what it
+		// was supposed to
 		if (sequencingObject instanceof Fast5Object) {
 			Fast5Object fast5 = (Fast5Object) sequencingObject;
-			if (!fast5.getFast5Type()
-					.equals(Fast5Object.Fast5Type.SINGLE)) {
+			if (!fast5.getFast5Type().equals(Fast5Object.Fast5Type.SINGLE)) {
 				return false;
 			}
 		}

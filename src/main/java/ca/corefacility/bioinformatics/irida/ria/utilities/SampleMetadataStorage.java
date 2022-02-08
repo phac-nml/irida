@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Used to store information relating to sample metadata during upload.
@@ -9,44 +11,14 @@ import java.util.Map;
 public class SampleMetadataStorage {
 	private String sampleNameColumn;
 	private List<String> headers;
-	private List<Map<String, String>> rows;
-	private List<Map<String, String>> found;
-	private List<Map<String, String>> missing;
+	private List<SampleMetadataStorageRow> rows;
 
 	public void setSampleNameColumn(String sampleColumnName) {
 		this.sampleNameColumn = sampleColumnName;
 	}
 
-	/**
-	 * Save the given headers
-	 * @param headers the headers to save
-	 */
-	public void saveHeaders(List<String> headers) {
+	public void setHeaders(List<String> headers) {
 		this.headers = headers;
-	}
-
-	/**
-	 * Save the given rows
-	 * @param rows the rows to save
-	 */
-	public void saveRows(List<Map<String, String>> rows) {
-		this.rows = rows;
-	}
-
-	/**
-	 * Save the found values
-	 * @param found the found values
-	 */
-	public void saveFound(List<Map<String, String>> found) {
-		this.found = found;
-	}
-
-	/**
-	 * Save the missing values
-	 * @param missing the missing values
-	 */
-	public void saveMissing(List<Map<String, String>> missing) {
-		this.missing = missing;
 	}
 
 	public String getSampleNameColumn() {
@@ -57,16 +29,34 @@ public class SampleMetadataStorage {
 		return headers;
 	}
 
-	public List<Map<String, String>> getRows() {
+	public List<SampleMetadataStorageRow> getRows() {
 		return rows;
 	}
 
-	public List<Map<String, String>> getFound() {
-		return found;
+	/**
+	 * Returns the row from storage given the sample name and column name
+	 *
+	 * @param sampleName       the name of the sample
+	 * @param sampleNameColumn the header name of the sample column
+	 * @return the value associated with the key
+	 */
+	public SampleMetadataStorageRow getRow(String sampleName, String sampleNameColumn) {
+		return rows.stream()
+				.filter(row -> sampleName.equals(row.getEntryValue(sampleNameColumn)))
+				.findFirst()
+				.orElse(null);
 	}
 
-	public List<Map<String, String>> getMissing() {
-		return missing;
+	public List<SampleMetadataStorageRow> getFoundRows() {
+		return rows == null ?
+				Collections.emptyList() :
+				rows.stream()
+						.filter((r) -> r != null && r.getFoundSampleId() != null)
+						.collect(Collectors.toList());
+	}
+
+	public void setRows(List<SampleMetadataStorageRow> rows) {
+		this.rows = rows;
 	}
 
 	/**
@@ -75,4 +65,16 @@ public class SampleMetadataStorage {
 	public void removeRows() {
 		this.rows = null;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		SampleMetadataStorage that = (SampleMetadataStorage) o;
+		return Objects.equals(sampleNameColumn, that.sampleNameColumn) && Objects.equals(headers, that.headers)
+				&& Objects.equals(rows, that.rows);
+	}
+
 }

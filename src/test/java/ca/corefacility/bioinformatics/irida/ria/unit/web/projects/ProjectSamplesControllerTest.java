@@ -1,10 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,8 +18,8 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -68,7 +72,7 @@ public class ProjectSamplesControllerTest {
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
@@ -209,7 +213,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(PROJECT_ID)).thenReturn(project1);
 		when(sampleService.read(anyLong())).thenReturn(sample);
 		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList, Locale.US);
-		assertTrue("Result contains the word success", result.containsKey("result"));
+		assertTrue(result.containsKey("result"), "Result contains the word success");
 		verify(projectService).removeSampleFromProject(project1, sample);
 	}
 
@@ -240,8 +244,8 @@ public class ProjectSamplesControllerTest {
 		// Ensure that the rename was not requested
 		ArgumentCaptor<Sample> captor = ArgumentCaptor.forClass(Sample.class);
 		verify(sampleService, times(1)).update(captor.capture());
-		assertEquals("Sample name should be set", newName,captor.getValue().getSampleName());
-		assertEquals("Result is success", result.get("result"), "success");
+		assertEquals(newName,captor.getValue().getSampleName(), "Sample name should be set");
+		assertEquals(result.get("result"), "success", "Result is success");
 	}
 
 @Test
@@ -305,7 +309,7 @@ public class ProjectSamplesControllerTest {
 		));
 
 		when(sampleService
-				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), any(String.class), any(String.class), any(Date.class), any(Date.class),
+				.getFilteredSamplesForProjects(any(List.class), any(List.class), any(String.class), isNull(), any(String.class), isNull(), isNull(),
 						any(Integer.class), any(Integer.class), any(
 								Sort.class)))
 				.thenReturn(TestDataFactory.getPageOfProjectSampleJoin());
@@ -314,9 +318,9 @@ public class ProjectSamplesControllerTest {
 		DataTablesResponse response = controller
 				.getProjectSamples(1L, params, ImmutableList.of(), ImmutableList.of(), new UISampleFilter(), Locale.US);
 		List<DataTablesResponseModel> data = response.getData();
-		assertEquals("Has the correct number of samples", 1, data.size());
+		assertEquals(1, data.size(), "Has the correct number of samples");
 		DTProjectSamples sampleData = (DTProjectSamples) data.get(0);
-		assertEquals("Has the correct sample", "Joined Sample", sampleData.getSampleName());
+		assertEquals("Joined Sample", sampleData.getSampleName(), "Has the correct sample");
 
 	}
 
@@ -342,15 +346,15 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
 		verify(sequencingObjectService).getSequencingObjectsForSample(sample);
 
-		assertTrue("Response should contain a \"Content-Disposition\" header.",
-				response.containsHeader("Content-Disposition"));
-		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
-				response.getHeader("Content-Disposition"));
+		assertTrue(response.containsHeader("Content-Disposition"),
+				"Response should contain a \"Content-Disposition\" header.");
+		assertEquals("attachment; filename=\"test_project.zip\"", response.getHeader("Content-Disposition"),
+				"Content-Disposition should include the file name");
 
 		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
 			ZipEntry nextEntry = zipStream.getNextEntry();
 			String fileName = nextEntry.getName();
-			assertTrue("incorrect file in zip stream: " + file.getFileName(), fileName.endsWith(file.getFileName()));
+			assertTrue(fileName.endsWith(file.getFileName()), "incorrect file in zip stream: " + file.getFileName());
 		}
 	}
 
@@ -378,10 +382,10 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService).readMultiple(ImmutableList.of(sample.getId()));
 		verify(sequencingObjectService).getSequencingObjectsForSample(sample);
 
-		assertTrue("Response should contain a \"Content-Disposition\" header.",
-				response.containsHeader("Content-Disposition"));
-		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
-				response.getHeader("Content-Disposition"));
+		assertTrue(response.containsHeader("Content-Disposition"),
+				"Response should contain a \"Content-Disposition\" header.");
+		assertEquals("attachment; filename=\"test_project.zip\"", response.getHeader("Content-Disposition"),
+				"Content-Disposition should include the file name");
 
 		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
 			Set<String> names = new HashSet<>();
@@ -392,7 +396,7 @@ public class ProjectSamplesControllerTest {
 				nextEntry = zipStream.getNextEntry();
 			}
 
-			assertEquals("should be 3 unique filenames", 3, names.size());
+			assertEquals(3, names.size(), "should be 3 unique filenames");
 		}
 
 	}

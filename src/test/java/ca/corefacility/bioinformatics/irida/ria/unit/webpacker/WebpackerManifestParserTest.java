@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.webpacker;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WebpackParserException;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.util.WebpackEntry;
@@ -27,25 +30,29 @@ public class WebpackerManifestParserTest {
 		Path path = Paths.get(FILE_PATH);
 		WebpackerManifestParser parser = new WebpackerManifestParser(true);
 		Map<String, WebpackEntry> entries = parser.parseWebpackManifestFile(path.toFile());
-		Assert.assertEquals("Should be 7 entries in the manifest file", NUM_ENTRIES, entries.keySet()
-				.size());
+		assertEquals(NUM_ENTRIES, entries.keySet().size(),
+				"Should be 7 entries in the manifest file");
 		entries.forEach((name, files) -> {
-			Assert.assertTrue("Every entry should have a JavaScript file", files.getJavascript()
-					.size() > 0);
+			assertTrue(files.getJavascript().size() > 0,
+					"Every entry should have a JavaScript file");
 		});
 	}
 
-	@Test(expected = WebpackParserException.class)
+	@Test
 	public void TestParseBadWebpackManifestFile() {
 		Path path = Paths.get(BAD_ASSETS_FILE_PATH);
 		WebpackerManifestParser parser = new WebpackerManifestParser(true);
-		Map<String, WebpackEntry> entries = parser.parseWebpackManifestFile(path.toFile());
+		assertThrows(WebpackParserException.class, () -> {
+			parser.parseWebpackManifestFile(path.toFile());
+		});
 	}
 
-	@Test(expected = WebpackParserException.class)
+	@Test
 	public void TestNoJavaScriptFilesInEntry() {
 		Path path = Paths.get(BAD_JAVASCRIPT_FILE_PATH);
 		WebpackerManifestParser parser = new WebpackerManifestParser(true);
-		Map<String, WebpackEntry> entries = parser.parseWebpackManifestFile(path.toFile());
+		assertThrows(WebpackParserException.class, () -> {
+			parser.parseWebpackManifestFile(path.toFile());
+		});
 	}
 }

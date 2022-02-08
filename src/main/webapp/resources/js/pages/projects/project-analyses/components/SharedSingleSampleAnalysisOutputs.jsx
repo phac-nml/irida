@@ -1,5 +1,6 @@
-import React from "react";
 import { Typography } from "antd";
+import React from "react";
+import { useParams } from "react-router-dom";
 
 import { useGetSharedSingleSampleAnalysisOutputsQuery } from "../../../../apis/analyses/analyses";
 
@@ -15,11 +16,10 @@ const { Title } = Typography;
  * @constructor
  */
 
-export default function SharedSingleSampleAnalysisOutputs({ projectId }) {
-  const {
-    data: sharedSingleSampleAnalysisOutputs = {},
-    isLoading,
-  } = useGetSharedSingleSampleAnalysisOutputsQuery(projectId);
+export default function SharedSingleSampleAnalysisOutputs() {
+  const { projectId } = useParams();
+  const { data: sharedSingleSampleAnalysisOutputs = {}, isLoading } =
+    useGetSharedSingleSampleAnalysisOutputsQuery(projectId);
 
   return (
     <>

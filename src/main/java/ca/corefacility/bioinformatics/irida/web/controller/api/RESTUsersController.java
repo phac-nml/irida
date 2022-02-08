@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -157,7 +157,7 @@ public class RESTUsersController extends RESTGenericController<User> {
 		// get all of the projects that this user belongs to
 		ResourceCollection<Project> resources = new ResourceCollection<>();
 		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
-		ControllerLinkBuilder linkBuilder = linkTo(RESTProjectsController.class);
+		WebMvcLinkBuilder linkBuilder = linkTo(RESTProjectsController.class);
 
 		// add the project and a self-rel link to the project representation
 		for (Join<Project, User> join : projects) {

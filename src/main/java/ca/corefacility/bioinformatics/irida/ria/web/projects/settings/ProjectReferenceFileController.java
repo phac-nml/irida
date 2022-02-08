@@ -34,9 +34,12 @@ public class ProjectReferenceFileController {
 	/**
 	 * Get the reference files page for a project
 	 *
-	 * @param model     model for the view
-	 * @param principal currently logged in user
-	 * @param projectId id of the project to get files for
+	 * @param model
+	 *            model for the view
+	 * @param principal
+	 *            currently logged in user
+	 * @param projectId
+	 *            id of the project to get files for
 	 * @return name of the reference files view
 	 */
 	@RequestMapping(value = "/{projectId}/settings/referenceFiles", method = RequestMethod.GET)

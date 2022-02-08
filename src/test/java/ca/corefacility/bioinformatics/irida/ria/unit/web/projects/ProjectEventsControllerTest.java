@@ -4,8 +4,8 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,10 +24,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +39,7 @@ public class ProjectEventsControllerTest {
 
 	private ProjectEventsController controller;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		eventService = mock(ProjectEventService.class);
 		projectService = mock(ProjectService.class);
@@ -102,7 +102,6 @@ public class ProjectEventsControllerTest {
 	public void testUnknownEvent() {
 		Long projectId = 1L;
 		Project project = new Project();
-		ExtendedModelMap model = new ExtendedModelMap();
 		ProjectEvent event = new ProjectEvent() {
 
 			@Override

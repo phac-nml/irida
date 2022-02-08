@@ -43,7 +43,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public static ProjectMetadataPage goTo(WebDriver driver) {
-		get(driver, "/projects/1/settings/metadata/fields");
+		get(driver, "projects/1/settings/metadata/fields");
 		return PageFactory.initElements(driver, ProjectMetadataPage.class);
 	}
 
@@ -166,10 +166,17 @@ public class ProjectMetadataPage extends AbstractPage {
 		return defaultTag.size() == 1;
 	}
 
-	public void setDefaultTemplate() {
-		WebElement newDefaultTemplate = metadataTemplateRow.get(0);
-		WebElement setDefaultTemplate = newDefaultTemplate.findElement(By.className("t-t-set-default-button"));
-		setDefaultTemplate.click();
+	public void setDefaultTemplate(String name) {
+		WebElement templateRow = null;
+		for (WebElement row : metadataTemplateRow) {
+			String text = row.findElement(By.className("t-t-name")).getText();
+			if (text.equalsIgnoreCase(name)) {
+				templateRow = row;
+				break;
+			}
+		}
+		WebElement setDefaultTemplateBtn = templateRow.findElement(By.className("t-t-set-default-button"));
+		setDefaultTemplateBtn.click();
 	}
 
 	public boolean removeButtonIsDisabled() {

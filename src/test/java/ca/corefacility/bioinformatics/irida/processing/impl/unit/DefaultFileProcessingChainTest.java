@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.google.common.collect.Sets;
@@ -45,7 +45,7 @@ public class DefaultFileProcessingChainTest {
 	private SequencingObject seqObject;
 	private Long objectId = 1L;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.objectRepository = mock(SequencingObjectRepository.class);
 		this.qcRepository = mock(QCEntryRepository.class);
@@ -55,13 +55,15 @@ public class DefaultFileProcessingChainTest {
 		when(objectRepository.findById(objectId)).thenReturn(Optional.of(seqObject));
 	}
 
-	@Test(expected = FileProcessorTimeoutException.class)
+	@Test
 	public void testExceedsTimeout() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageUtility);
 		fileProcessingChain.setTimeout(1);
 		fileProcessingChain.setSleepDuration(0);
 
-		fileProcessingChain.launchChain(objectId);
+		assertThrows(FileProcessorTimeoutException.class, () -> {
+			fileProcessingChain.launchChain(objectId);
+		});
 	}
 
 	@Test
@@ -81,12 +83,12 @@ public class DefaultFileProcessingChainTest {
 		List<Exception> exceptions = fileProcessingChain.launchChain(1L);
 		// exceptions should be ignored in this test
 
-		assertEquals("exactly one exception should have been ignored.", 1, exceptions.size());
-		assertTrue("ignored exception should be of type FileProcessorException.",
-				exceptions.iterator().next() instanceof FileProcessorException);
+		assertEquals(1, exceptions.size(), "exactly one exception should have been ignored.");
+		assertTrue(exceptions.iterator().next() instanceof FileProcessorException,
+				"ignored exception should be of type FileProcessorException.");
 	}
 
-	@Test(expected = FileProcessorException.class)
+	@Test
 	public void testFastFailProcessorChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageUtility,
 				new FailingFileProcessor());
@@ -94,18 +96,21 @@ public class DefaultFileProcessingChainTest {
 
 		fileProcessingChain.setFastFail(true);
 
-		fileProcessingChain.launchChain(1L);
-		fail("should not proceed when encountering exception and fastFail is enabled.");
+		assertThrows(FileProcessorException.class, () -> {
+				fileProcessingChain.launchChain(1L);
+		}, "should not proceed when encountering exception and fastFail is enabled.");
 	}
 
-	@Test(expected = FileProcessorException.class)
+	@Test
 	public void testFailOnProcessorChain() throws FileProcessorTimeoutException {
 		FileProcessingChain fileProcessingChain = new DefaultFileProcessingChain(objectRepository, qcRepository, iridaFileStorageUtility,
 				new FailingFileProcessorNoContinue());
 
 		when(objectRepository.existsById(objectId)).thenReturn(true);
 
-		fileProcessingChain.launchChain(1L);
+		assertThrows(FileProcessorException.class, () -> {
+			fileProcessingChain.launchChain(1L);
+		});
 	}
 
 	@Test
@@ -120,14 +125,14 @@ public class DefaultFileProcessingChainTest {
 		} catch (FileProcessorException e) {
 			exceptionCaught = true;
 		}
-		assertTrue("File process should have thrown exception", exceptionCaught);
+		assertTrue(exceptionCaught, "File process should have thrown exception");
 
 		ArgumentCaptor<QCEntry> captor = ArgumentCaptor.forClass(QCEntry.class);
 		verify(qcRepository).save(captor.capture());
 
 		QCEntry qcEntry = captor.getValue();
 
-		assertEquals("should have saved qc entry for sample", seqObject, qcEntry.getSequencingObject());
+		assertEquals(seqObject, qcEntry.getSequencingObject(), "should have saved qc entry for sample");
 
 	}
 

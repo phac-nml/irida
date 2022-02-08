@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Response class for grouping {@link MetadataEntry}s for response in the REST API
  */
-public class SampleMetadataResponse extends IridaResourceSupport {
+public class SampleMetadataResponse extends IridaRepresentationModel {
 	Map<MetadataTemplateField, MetadataEntry> metadata;
 
 	public SampleMetadataResponse(Set<MetadataEntry> metadataEntrySet) {

@@ -41,7 +41,7 @@ public class JobDetailsCommandLineTransfer {
 		final JobsClient jobsClient = gi.getJobsClient();
 
 		final DriverManagerDataSource dataSource = new DriverManagerDataSource(JDBC_URL, JDBC_USER, JDBC_PASS);
-		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
 		final JdbcTemplate template = new JdbcTemplate(dataSource);
 		template.query("select id, execution_manager_identifier from tool_execution",

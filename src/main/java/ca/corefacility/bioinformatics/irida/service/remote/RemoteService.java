@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.remote;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
  * @param <Type>
  *            The type of object this repository will store
  */
-public interface RemoteService<Type extends IridaResourceSupport & IridaThing> {
+public interface RemoteService<Type extends IridaRepresentationModel & IridaThing> {
 
 	/**
 	 * Read an individual resource

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.user;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,9 +15,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,10 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -44,8 +43,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -56,9 +53,8 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpeci
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
+@Tag("IntegrationTest") @Tag("Service")
+@SpringBootTest
 @ActiveProfiles("it")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
@@ -75,36 +71,44 @@ public class UserServiceImplIT {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testEditAdministratorAsManagerFail() {
-		// managers should *not* be able to edit administrator accounts.
-		userService.updateFields(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
+		assertThrows(AccessDeniedException.class, () -> {
+			// managers should *not* be able to edit administrator accounts.
+			userService.updateFields(3L, ImmutableMap.of("enabled", (Object) Boolean.FALSE));
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testChangeSelfToAdministrator() {
-		// I should not be able to elevate myself to administrator.
-		userService.updateFields(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
+		assertThrows(AccessDeniedException.class, () -> {
+			// I should not be able to elevate myself to administrator.
+			userService.updateFields(2L, ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN));
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateManagerAsManagerFail() {
 		User u = new User();
 		u.setSystemRole(Role.ROLE_MANAGER);
 
-		userService.create(u);
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.create(u);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateAdministratorAsManagerFail() {
 		User u = new User();
 		u.setSystemRole(Role.ROLE_ADMIN);
 
-		userService.create(u);
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.create(u);
+		});
 	}
 
 	@Test
@@ -115,10 +119,12 @@ public class UserServiceImplIT {
 		userService.create(u);
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testCreateUserAsUserFail() {
-		userService.create(new User());
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.create(new User());
+		});
 	}
 
 	@Test
@@ -135,38 +141,47 @@ public class UserServiceImplIT {
 		asAnonymous().userService.loadUserByUsername("fbristow");
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void testGetUsersForProjectUnauthenticated() {
-
-		asAnonymous().userService.getUsersForProject(null);
+		assertThrows(AccessDeniedException.class, () -> {
+			asAnonymous().userService.getUsersForProject(null);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateToAdministratorAsManagerFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN);
-		userService.updateFields(1L, properties);
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.updateFields(1L, properties);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdateToManagerAsManagerFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_MANAGER);
-		userService.updateFields(1L, properties);
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.updateFields(1L, properties);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateToAdminAsUserFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_ADMIN);
-		userService.updateFields(1L, properties);
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.updateFields(1L, properties);
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateToManagerAsUserFail() {
 		Map<String, Object> properties = ImmutableMap.of("systemRole", (Object) Role.ROLE_MANAGER);
-		userService.updateFields(1L, properties);
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.updateFields(1L, properties);
+		});
 	}
 
 	@Test
@@ -175,7 +190,7 @@ public class UserServiceImplIT {
 		String updatedPhoneNumber = "123-4567";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
 		User updated = userService.updateFields(1L, properties);
-		assertEquals("Phone number should be updated.", updatedPhoneNumber, updated.getPhoneNumber());
+		assertEquals(updatedPhoneNumber, updated.getPhoneNumber(), "Phone number should be updated.");
 	}
 
 	@Test
@@ -184,13 +199,15 @@ public class UserServiceImplIT {
 		String updatedPhoneNumber = "456-7890";
 		Map<String, Object> properties = ImmutableMap.of("phoneNumber", (Object) updatedPhoneNumber);
 		User updated = userService.updateFields(1L, properties);
-		assertEquals("Phone number should be updated.", updatedPhoneNumber, updated.getPhoneNumber());
+		assertEquals(updatedPhoneNumber, updated.getPhoneNumber(), "Phone number should be updated.");
 	}
 
-	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	@Test
 	public void testUpdatePasswordWithoutLoginDetails() {
 		SecurityContextHolder.clearContext();
-		userService.changePassword(1L, "any password");
+		assertThrows(AuthenticationCredentialsNotFoundException.class, () -> {
+			userService.changePassword(1L, "any password");
+		});
 	}
 
 	@Test
@@ -198,15 +215,17 @@ public class UserServiceImplIT {
 	public void testUpdatePasswordWithCompleteLoginDetails() {
 		String updatedPassword = "NewPassword1!";
 		User updated = userService.changePassword(1L, updatedPassword);
-		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
-		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
+		assertNotEquals(updated.getPassword(), updatedPassword, "Password in user object should be encoded.");
+		assertTrue(passwordEncoder.matches(updatedPassword, updated.getPassword()), "Password is encoded correctly.");
 	}
 
-	@Test(expected = PasswordReusedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdatePasswordWithExistingPassword() {
 		String updatedPassword = "Password1";
-		User updated = userService.changePassword(1L, updatedPassword);
+		assertThrows(PasswordReusedException.class, () -> {
+			userService.changePassword(1L, updatedPassword);
+		});
 	}
 
 	@Test
@@ -226,32 +245,38 @@ public class UserServiceImplIT {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		String updatedPassword = "NewPassword1!";
 		User updated = userService.changePassword(1L, updatedPassword);
-		assertNotEquals("Password in user object should be encoded.", updated.getPassword(), updatedPassword);
-		assertTrue("User should not have expired credentials anymore.", updated.isCredentialsNonExpired());
-		assertTrue("Password is encoded correctly.", passwordEncoder.matches(updatedPassword, updated.getPassword()));
+		assertNotEquals(updated.getPassword(), updatedPassword, "Password in user object should be encoded.");
+		assertTrue(updated.isCredentialsNonExpired(), "User should not have expired credentials anymore.");
+		assertTrue(passwordEncoder.matches(updatedPassword, updated.getPassword()), "Password is encoded correctly.");
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void testUpdatePasswordWithAnonymousUser() {
 		SecurityContextHolder.getContext().setAuthentication(
 				new AnonymousAuthenticationToken("key", "anonymouse", ImmutableList.of(Role.ROLE_SEQUENCER)));
-		userService.changePassword(1L, "NewPassword1!");
+		assertThrows(AccessDeniedException.class, () -> {
+			userService.changePassword(1L, "NewPassword1!");
+		});
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateDuplicateEmail() {
 		User u = new User("user", "manager@nowhere.com", "Password1!", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
-		userService.create(u);
+		assertThrows(EntityExistsException.class, () -> {
+			userService.create(u);
+		});
 	}
 
-	@Test(expected = EntityExistsException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateDuplicateUsername() {
 		User u = new User("fbristow", "distinct@nowhere.com", "Password1!", "User", "User", "7029");
 		u.setSystemRole(Role.ROLE_USER);
-		userService.create(u);
+		assertThrows(EntityExistsException.class, () -> {
+			userService.create(u);
+		});
 	}
 
 	@Test
@@ -259,23 +284,25 @@ public class UserServiceImplIT {
 	public void testGetUserByUsername() {
 		String username = "fbristow";
 		User u = userService.getUserByUsername(username);
-		assertEquals("Username is wrong.", username, u.getUsername());
+		assertEquals(username, u.getUsername(), "Username is wrong.");
 	}
 
-	@Test(expected = UsernameNotFoundException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testGetUserByInvalidUsername() {
 		String username = "random garbage";
-		userService.getUserByUsername(username);
+		assertThrows(UsernameNotFoundException.class, () -> {
+			userService.getUserByUsername(username);
+		});
 	}
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUsersWithEmailSubscriptions() {
 		List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
-		assertEquals("Should be 1 user", 1, usersWithEmailSubscriptions.size());
+		assertEquals(1, usersWithEmailSubscriptions.size(), "Should be 1 user");
 		User user = usersWithEmailSubscriptions.iterator().next();
-		assertEquals("should be fbristow", "fbristow", user.getUsername());
+		assertEquals("fbristow", user.getUsername(), "should be fbristow");
 	}
 
 	@Test
@@ -287,12 +314,13 @@ public class UserServiceImplIT {
 		assertEquals(email, loadUserByEmail.getEmail());
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testLoadUserByEmailNotFound() {
 		String email = "bademail@nowhere.com";
 
-		asAnonymous().userService.loadUserByEmail(email);
-
+		assertThrows(EntityNotFoundException.class, () -> {
+			asAnonymous().userService.loadUserByEmail(email);
+		});
 	}
 
 	@Test
@@ -300,10 +328,10 @@ public class UserServiceImplIT {
 	public void testGetUsersForProject() {
 		Project p = projectService.read(1L);
 		Collection<Join<Project, User>> projectUsers = userService.getUsersForProject(p);
-		assertEquals("Wrong number of users.", 1, projectUsers.size());
+		assertEquals(1, projectUsers.size(), "Wrong number of users.");
 		Join<Project, User> projectUser = projectUsers.iterator().next();
-		assertEquals("Wrong project.", p, projectUser.getSubject());
-		assertEquals("Wrong user.", "fbristow", projectUser.getObject().getUsername());
+		assertEquals(p, projectUser.getSubject(), "Wrong project.");
+		assertEquals("fbristow", projectUser.getObject().getUsername(), "Wrong user.");
 	}
 
 	@Test
@@ -311,9 +339,9 @@ public class UserServiceImplIT {
 	public void testGetUsersAvailableForProject() {
 		Project p = projectService.read(1L);
 		List<User> usersAvailableForProject = userService.getUsersAvailableForProject(p, "");
-		assertEquals("Wrong number of users.", 2, usersAvailableForProject.size());
+		assertEquals(2, usersAvailableForProject.size(), "Wrong number of users.");
 		User availableUser = usersAvailableForProject.iterator().next();
-		assertEquals("Wrong user.", "differentUser", availableUser.getUsername());
+		assertEquals("differentUser", availableUser.getUsername(), "Wrong user.");
 	}
 
 	@Test
@@ -338,14 +366,16 @@ public class UserServiceImplIT {
 		}
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testUpdatePasswordBadPassword() {
 		String password = "arguablynotagoodpassword";
-		userService.changePassword(1L, password);
+		assertThrows(ConstraintViolationException.class, () -> {
+			userService.changePassword(1L, password);
+		});
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	@WithMockUser(username = "fbristow", roles = "MANAGER")
 	public void testCreateBadPassword() {
 		User u = new User();
@@ -357,7 +387,9 @@ public class UserServiceImplIT {
 		u.setPhoneNumber("7029");
 		u.setSystemRole(Role.ROLE_USER);
 
-		userService.create(u);
+		assertThrows(ConstraintViolationException.class, () -> {
+			userService.create(u);
+		});
 	}
 	
 	@Test

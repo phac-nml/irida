@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -13,8 +13,8 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
@@ -29,7 +29,7 @@ public class GalaxyProjectNameTest {
 	private Validator validator;
 	private ResourceBundle b;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		b = ResourceBundle.getBundle(MESSAGES_BASENAME);
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();
@@ -93,7 +93,7 @@ public class GalaxyProjectNameTest {
 		for (char c : blocklist) {
 			GalaxyProjectName p = new GalaxyProjectName("Abc123 _-.'" + c);
 			Set<ConstraintViolation<GalaxyProjectName>> violations = validator.validate(p);
-			assertEquals("Wrong number of violations.", 1, violations.size());
+			assertEquals(1, violations.size(), "Wrong number of violations.");
 		}
 	}
 }

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
@@ -19,11 +20,14 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+
+import org.apache.jena.atlas.io.IO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -115,7 +119,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 				} else {
 					throw new PostProcessingException("SISTR results for file are not correctly formatted");
 				}
-			} catch (IOException e) {
+			} catch (StorageException | IOException e) {
 				throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 			}
 		} catch (IridaWorkflowNotFoundException e) {

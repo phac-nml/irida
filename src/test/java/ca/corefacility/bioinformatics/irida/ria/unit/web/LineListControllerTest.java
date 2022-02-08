@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -32,25 +31,25 @@ public class LineListControllerTest {
 	private ProjectService projectService;
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
-	private UpdateSamplePermission updateSamplePermission;
 	private ProjectOwnerPermission ownerPermission;
 	private MessageSource messageSource;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
-		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
 		ownerPermission = mock(ProjectOwnerPermission.class);
 		lineListController = new LineListController(projectService, sampleService, metadataTemplateService,
-				updateSamplePermission, ownerPermission, messageSource);
+				ownerPermission, messageSource);
 	}
 
 	@Test
 	public void testGetProjectMetadataTemplateFields() {
 		long projectId = 1L;
+		Project project = new Project("p1");
+		when(projectService.read(anyLong())).thenReturn(project);
 		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
 		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));
@@ -75,8 +74,8 @@ public class LineListControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(sampleService.getMetadataForProject(project)).thenReturn(metadata);
 		when(sampleService.getSamplesForProjectShallow(project)).thenReturn(Lists.newArrayList(s1, s2));
-		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController.getProjectSamplesMetadataEntries(
-				projectId);
+		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController
+				.getProjectSamplesMetadataEntries(projectId);
 
 		assertEquals(2, projectSamplesMetadataEntries.size());
 
