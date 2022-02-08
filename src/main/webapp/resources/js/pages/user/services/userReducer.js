@@ -3,13 +3,24 @@ import { createReducer, createAction } from "@reduxjs/toolkit";
 const initialState = {};
 
 /*
-Redux action for user account details.
+Redux action for setting user account details.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
 export const setUserDetails = createAction(
   `rootReducers/setUserDetails`,
   (user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, mailConfigured) => ({
     payload: { user, admin, locales, allowedRoles, canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, mailConfigured },
+  })
+);
+
+/*
+Redux action for updating user account details.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updateUserDetails = createAction(
+  `rootReducers/updateUserDetails`,
+  (user) => ({
+    payload: { user },
   })
 );
 
@@ -28,5 +39,9 @@ export const userReducer = createReducer(initialState, (builder) => {
     state.canChangePassword = action.payload.canChangePassword;
     state.canCreatePasswordReset = action.payload.canCreatePasswordReset;
     state.mailConfigured = action.payload.mailConfigured;
+  });
+
+  builder.addCase(updateUserDetails, (state, action) => {
+    state.user = action.payload.user;
   });
 });

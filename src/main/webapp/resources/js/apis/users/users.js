@@ -27,9 +27,19 @@ export const usersApi = createApi({
     Edit user details.
     */
     editUserDetails: build.mutation({
-      query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, oldPassword, newPassword, confirmNewPassword, enabled }) => ({
+      query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, enabled }) => ({
         url: `/${userId}/edit`,
         body: { firstName, lastName, email, phoneNumber, systemRole: role, locale, enabled },
+        method: "POST",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+    /*
+    Change user password.
+    */
+    changeUserPassword: build.mutation({
+      query: ({ userId, oldPassword, newPassword, confirmNewPassword }) => ({
+        url: `/${userId}/changePassword`,
         params: { oldPassword, newPassword, confirmNewPassword },
         method: "POST",
       }),
@@ -51,6 +61,7 @@ export const usersApi = createApi({
 export const {
   useGetUserDetailsQuery,
   useEditUserDetailsMutation,
+  useChangeUserPasswordMutation,
   useSetUsersDisabledStatusMutation
 } = usersApi;
 

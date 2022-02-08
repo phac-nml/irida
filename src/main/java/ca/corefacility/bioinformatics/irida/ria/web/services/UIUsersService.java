@@ -159,17 +159,14 @@ public class UIUsersService {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId             The id of the user to edit (required)
-	 * @param userEditRequest    a {@link UserEditRequest} containing details about a specific user
-	 * @param oldPassword        The old password of the user for password change
-	 * @param newPassword        The new password of the user for password change
-	 * @param confirmNewPassword The confirmed new password of the user for password change
-	 * @param principal          a reference to the logged in user
-	 * @param request            the request
+	 * @param userId          The id of the user to edit (required)
+	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
+	 * @param principal       a reference to the logged in user
+	 * @param request         the request
 	 * @return The name of the user view
 	 */
-	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, String oldPassword,
-			String newPassword, String confirmNewPassword, Principal principal, HttpServletRequest request) {
+	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
+			HttpServletRequest request) {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
@@ -194,6 +191,53 @@ public class UIUsersService {
 			updatedValues.put("locale", userEditRequest.getUserLocale());
 		}
 
+		if (RoleUtilities.isAdmin(principalUser)) {
+			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
+				updatedValues.put("enabled", userEditRequest.getEnabled());
+			}
+
+			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
+				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
+
+				updatedValues.put("systemRole", newRole);
+			}
+		}
+
+		if (errors.isEmpty()) {
+			try {
+				User user = userService.updateFields(userId, updatedValues);
+
+				// If the user is updating their account make sure you update it in the session variable
+				if (user != null && principal.getName()
+						.equals(user.getUsername())) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
+				}
+			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
+				errors = handleCreateUpdateException(ex, request.getLocale());
+			}
+		}
+
+		return new UserDetailsResponse(errors);
+	}
+
+	/**
+	 * Change the password of a user
+	 *
+	 * @param userId             The id of the user to edit (required)
+	 * @param oldPassword        The old password of the user for password change
+	 * @param newPassword        The new password of the user for password change
+	 * @param confirmNewPassword The confirmed new password of the user for password change
+	 * @param principal          a reference to the logged in user
+	 * @param request            the request
+	 * @return The name of the user view
+	 */
+	public UserDetailsResponse changeUserPassword(Long userId, String oldPassword, String newPassword,
+			String confirmNewPassword, Principal principal, HttpServletRequest request) {
+		User principalUser = userService.getUserByUsername(principal.getName());
+		Map<String, Object> updatedValues = new HashMap<>();
+		Map<String, String> errors = new HashMap<>();
+
 		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword) || !Strings.isNullOrEmpty(
 				confirmNewPassword)) {
 			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
@@ -204,18 +248,6 @@ public class UIUsersService {
 						messageSource.getMessage("server.user.edit.password.match", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", newPassword);
-			}
-		}
-
-		if (RoleUtilities.isAdmin(principalUser)) {
-			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
-				updatedValues.put("enabled", userEditRequest.getEnabled());
-			}
-
-			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
-				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
-
-				updatedValues.put("systemRole", newRole);
 			}
 		}
 

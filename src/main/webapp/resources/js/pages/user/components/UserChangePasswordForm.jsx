@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, Button, Form, Input, List, notification, Typography } from "antd";
-import { useEditUserDetailsMutation } from "../../../apis/users/users";
+import { useChangeUserPasswordMutation } from "../../../apis/users/users";
 
 /**
  * React component to display the user change password form.
@@ -10,7 +10,7 @@ import { useEditUserDetailsMutation } from "../../../apis/users/users";
  * @constructor
  */
 export function UserChangePasswordForm({ userId }) {
-  const [editUser] = useEditUserDetailsMutation();
+  const [changeUserPassword] = useChangeUserPasswordMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ export function UserChangePasswordForm({ userId }) {
   ];
 
   const onFormFinish = (values) => {
-    editUser({ userId: userId, ...values })
+    changeUserPassword({ userId: userId, ...values })
       .unwrap()
       .then((payload) => {
         notification.success({

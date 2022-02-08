@@ -1,5 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   Button,
@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { useEditUserDetailsMutation } from "../../../apis/users/users";
+import { updateUserDetails } from "../services/userReducer";
 
 /**
  * React component to display the user details page.
@@ -21,6 +22,7 @@ import { useEditUserDetailsMutation } from "../../../apis/users/users";
  */
 export default function UserDetailsPage() {
   const { userId } = useParams();
+  const dispatch = useDispatch();
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
   const {
@@ -36,6 +38,7 @@ export default function UserDetailsPage() {
     editUser({ userId: userId, ...values })
       .unwrap()
       .then((payload) => {
+        dispatch(updateUserDetails({...user, ...values}));
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
         });
