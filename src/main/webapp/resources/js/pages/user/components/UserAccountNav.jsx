@@ -8,13 +8,18 @@ import { Menu } from "antd";
  * @constructor
  */
 export default function UserAccountNav() {
-  const lastElement = useLocation().pathname.split("/").pop();
-  const defaultSelectedKey = lastElement.match("details|projects|security")
-    ? lastElement
-    : "details";
+  const location = useLocation();
+  const [selectedKeys, setSelectedKey] = React.useState("details");
+
+  React.useEffect(() => {
+    const lastElement = location.pathname.split("/").pop();
+    if (lastElement.match("details|projects|security")) {
+      setSelectedKey(lastElement);
+    }
+  }, [location]);
 
   return (
-    <Menu mode="inline" defaultSelectedKeys={[defaultSelectedKey]}>
+    <Menu mode="inline" selectedKeys={[selectedKeys]}>
       <Menu.Item key="details">
         <Link to="details">{i18n("UserAccountNav.menu.details")}</Link>
       </Menu.Item>

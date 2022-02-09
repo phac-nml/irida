@@ -5,10 +5,18 @@ import { Provider } from "react-redux";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ContentLoading } from "../../components/loader";
 import store from "./store";
-const UserAccountLayout = React.lazy(() => import("./components/UserAccountLayout"));
-const UserDetailsPage = React.lazy(() => import("./components/UserDetailsPage"));
-const UserProjectsPage = React.lazy(() => import("./components/UserProjectsPage"));
-const UserSecurityPage = React.lazy(() => import("./components/UserSecurityPage"));
+const UserAccountLayout = React.lazy(() =>
+  import("./components/UserAccountLayout")
+);
+const UserDetailsPage = React.lazy(() =>
+  import("./components/UserDetailsPage")
+);
+const UserProjectsPage = React.lazy(() =>
+  import("./components/UserProjectsPage")
+);
+const UserSecurityPage = React.lazy(() =>
+  import("./components/UserSecurityPage")
+);
 
 /**
  * React component that displays the user pages.

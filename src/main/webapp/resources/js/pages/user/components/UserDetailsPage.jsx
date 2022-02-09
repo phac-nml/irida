@@ -38,7 +38,7 @@ export default function UserDetailsPage() {
     editUser({ userId: userId, ...values })
       .unwrap()
       .then((payload) => {
-        dispatch(updateUserDetails({...user, ...values}));
+        dispatch(updateUserDetails({ ...user, ...values }));
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
         });

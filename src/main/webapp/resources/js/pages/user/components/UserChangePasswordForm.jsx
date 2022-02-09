@@ -1,6 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Alert, Button, Form, Input, List, notification, Typography } from "antd";
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  List,
+  notification,
+  Typography,
+} from "antd";
 import { useChangeUserPasswordMutation } from "../../../apis/users/users";
 
 /**
@@ -21,7 +29,7 @@ export function UserChangePasswordForm({ userId }) {
     i18n("UserChangePasswordForm.alert.rule5"),
     i18n("UserChangePasswordForm.alert.rule6"),
     i18n("UserChangePasswordForm.alert.rule8"),
-    i18n("UserChangePasswordForm.alert.rule9")
+    i18n("UserChangePasswordForm.alert.rule9"),
   ];
 
   const onFormFinish = (values) => {
@@ -55,7 +63,7 @@ export function UserChangePasswordForm({ userId }) {
             <List
               header={i18n("UserChangePasswordForm.alert.description")}
               dataSource={passwordRules}
-              renderItem={item => <List.Item>{item}</List.Item>}
+              renderItem={(item) => <List.Item>{item}</List.Item>}
             />
           </Typography.Paragraph>
         }
