@@ -97,9 +97,8 @@ public class UsersAjaxController {
 	 */
 	@RequestMapping(value = "/{userId}/changePassword", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long userId,
-			@RequestParam(required = false) String oldPassword, @RequestParam(required = false) String newPassword,
-			@RequestParam(required = false) String confirmNewPassword, Principal principal,
-			HttpServletRequest request) {
+			@RequestParam String oldPassword, @RequestParam String newPassword, @RequestParam String confirmNewPassword,
+			Principal principal, HttpServletRequest request) {
 
 		UserDetailsResponse response = UIUsersService.changeUserPassword(userId, oldPassword, newPassword,
 				confirmNewPassword, principal, request);
