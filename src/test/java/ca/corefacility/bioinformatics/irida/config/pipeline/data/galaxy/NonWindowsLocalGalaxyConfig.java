@@ -61,7 +61,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		logger.debug("Setting URL for test Galaxy: " + galaxyURL);
 		logger.debug("Setting invalid URL for test Galaxy: " + galaxyInvalidURL);
 		logger.debug("Setting invalid URL2 for test Galaxy: " + galaxyInvalidURL2);
-		
+
 		localGalaxy.setGalaxyURL(galaxyURL);
 		localGalaxy.setInvalidGalaxyURL(galaxyInvalidURL);
 		localGalaxy.setTestGalaxyURL(galaxyInvalidURL2);

@@ -9,19 +9,12 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadErrorException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -46,76 +39,70 @@ import com.google.common.collect.Sets;
  * Tests for dealing with Galaxy Libraries.
  *
  */
-@Tag("IntegrationTest") @Tag("Galaxy")
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
-		initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		DbUnitTestExecutionListener.class })
+@GalaxyIntegrationTest
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class GalaxyLibrariesServiceIT {
-	
+
 	@Autowired
 	private LocalGalaxy localGalaxy;
-	
+
 	private GalaxyLibrariesService galaxyLibrariesService;
-	
+
 	private Path dataFile;
 	private Path dataFile2;
 	private Path dataFileCompressed;
 	private Path dataFileFail;
-	
+
 	private GalaxyInstance galaxyInstanceAdmin;
 	private LibrariesClient librariesClient;
-	
+
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
-	
+
 	/**
 	 * Timeout in seconds to stop polling a Galaxy library.
 	 */
 	private static final int LIBRARY_TIMEOUT = 5 * 60;
-	
+
 	/**
-	 * Polling time in seconds to poll a Galaxy library to check if
-	 * datasets have been properly uploaded.
+	 * Polling time in seconds to poll a Galaxy library to check if datasets
+	 * have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
-	
+
 	/**
 	 * Sets up variables for tests
-	 * @throws URISyntaxException 
-	 * @throws IOException 
+	 * 
+	 * @throws URISyntaxException
+	 * @throws IOException
 	 */
 	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		
+
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
-		
-		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
-				"testData1.fastq").toURI());
-		
-		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
-				"testData2.fastq").toURI());
-		
-		dataFileCompressed = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
-				"testData5.fastq.gz").toURI());
-		
-		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource(
-				"fail.fastq.gz").toURI());
+
+		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource("testData1.fastq").toURI());
+
+		dataFile2 = Paths.get(GalaxyLibrariesServiceIT.class.getResource("testData2.fastq").toURI());
+
+		dataFileCompressed = Paths.get(GalaxyLibrariesServiceIT.class.getResource("testData5.fastq.gz").toURI());
+
+		dataFileFail = Paths.get(GalaxyLibrariesServiceIT.class.getResource("fail.fastq.gz").toURI());
 	}
-	
+
 	/**
 	 * Builds a library with the given name.
-	 * @param name  The name of the new library.
-	 * @return  A library with the given name.
+	 * 
+	 * @param name
+	 *            The name of the new library.
+	 * @return A library with the given name.
 	 * @throws CreateLibraryException
 	 */
 	private Library buildEmptyLibrary(String name) throws CreateLibraryException {
 		return galaxyLibrariesService.buildEmptyLibrary(new GalaxyProjectName(name));
 	}
-	
+
 	/**
 	 * Tests successful upload of a file to a Galaxy Library.
 	 * 
@@ -123,20 +110,18 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws GalaxyDatasetException
 	 */
 	@Test
-	public void testFileToLibrarySuccess()
-			throws UploadException, GalaxyDatasetException {
+	public void testFileToLibrarySuccess() throws UploadException, GalaxyDatasetException {
 		String filename = dataFile.toFile().getName();
 		Library library = buildEmptyLibrary("testFileToLibrarySuccess");
-		String datasetId = galaxyLibrariesService.fileToLibrary(dataFile,
-				FILE_TYPE, library, DataStorage.LOCAL);
+		String datasetId = galaxyLibrariesService.fileToLibrary(dataFile, FILE_TYPE, library, DataStorage.LOCAL);
 		assertNotNull(datasetId);
-		LibraryDataset actualDataset = localGalaxy.getGalaxyInstanceAdmin()
-				.getLibrariesClient().showDataset(library.getId(), datasetId);
+		LibraryDataset actualDataset = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.showDataset(library.getId(), datasetId);
 		assertNotNull(actualDataset);
 		assertEquals(filename, actualDataset.getName());
 		assertEquals(Long.toString(dataFile.toFile().length()), actualDataset.getFileSize());
 	}
-	
+
 	/**
 	 * Tests failure to upload of a file to a Galaxy Library.
 	 * 
@@ -144,16 +129,14 @@ public class GalaxyLibrariesServiceIT {
 	 * @throws GalaxyDatasetException
 	 */
 	@Test
-	public void testFileToLibraryFailure()
-			throws UploadException, GalaxyDatasetException {
+	public void testFileToLibraryFailure() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFileToLibraryFailure");
 		library.setId("invalid");
 		assertThrows(UploadException.class, () -> {
-			galaxyLibrariesService.fileToLibrary(dataFile,
-					FILE_TYPE, library, DataStorage.LOCAL);
+			galaxyLibrariesService.fileToLibrary(dataFile, FILE_TYPE, library, DataStorage.LOCAL);
 		});
 	}
-	
+
 	/**
 	 * Tests successful upload of a list of files to a Galaxy Library.
 	 * 
@@ -174,33 +157,35 @@ public class GalaxyLibrariesServiceIT {
 		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
 				.showDataset(library.getId(), datasetId1);
 		assertNotNull(actualDataset1);
-		assertEquals(actualDataset1.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(), "Invalid data type extension");
+		assertEquals(actualDataset1.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
+				"Invalid data type extension");
 
 		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
 				.showDataset(library.getId(), datasetId2);
 		assertNotNull(actualDataset2);
-		assertEquals(actualDataset2.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(), "Invalid data type extension");
+		assertEquals(actualDataset2.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
+				"Invalid data type extension");
 
 		LibraryDataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
 				.showDataset(library.getId(), datasetIdCompressed);
 		assertNotNull(actualDatasetCompressed);
-		assertEquals(actualDatasetCompressed.getDataTypeExt(), InputFileType.FASTQ_SANGER_GZ.toString(), "Invalid data type extension");
+		assertEquals(actualDatasetCompressed.getDataTypeExt(), InputFileType.FASTQ_SANGER_GZ.toString(),
+				"Invalid data type extension");
 	}
-	
+
 	/**
-	 * Tests failure to upload a list of files to a Galaxy history through a Library.
+	 * Tests failure to upload a list of files to a Galaxy history through a
+	 * Library.
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
 	 */
 	@Test
-	public void testFilesToLibraryWaitFail()
-			throws UploadException, GalaxyDatasetException {
+	public void testFilesToLibraryWaitFail() throws UploadException, GalaxyDatasetException {
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
 		assertThrows(UploadException.class, () -> {
-			galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
-					library, DataStorage.LOCAL);
+			galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile), library, DataStorage.LOCAL);
 		});
 	}
 
@@ -216,14 +201,13 @@ public class GalaxyLibrariesServiceIT {
 
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
 		assertThrows(UploadTimeoutException.class, () -> {
-			galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,
-					DataStorage.LOCAL);
+			galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library, DataStorage.LOCAL);
 		});
 	}
-	
 
 	/**
-	 * Tests failure to upload to a library due to an error with the dataset upload.
+	 * Tests failure to upload to a library due to an error with the dataset
+	 * upload.
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
@@ -236,7 +220,7 @@ public class GalaxyLibrariesServiceIT {
 					DataStorage.LOCAL);
 		});
 	}
-	
+
 	/**
 	 * Tests successfully deleting a data library.
 	 * 
@@ -245,8 +229,8 @@ public class GalaxyLibrariesServiceIT {
 	@Test
 	public void testDeleteLibrarySuccess() throws ExecutionManagerException {
 		Library library = buildEmptyLibrary("testDeleteLibrarySuccess");
-		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile),
-				library, DataStorage.LOCAL);
+		Map<Path, String> datasetsMap = galaxyLibrariesService.filesToLibraryWait(ImmutableSet.of(dataFile), library,
+				DataStorage.LOCAL);
 		String datasetId = datasetsMap.get(dataFile);
 		assertNotNull(librariesClient.showDataset(library.getId(), datasetId), "Dataset not uploaded correctly");
 

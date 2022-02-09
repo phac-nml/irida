@@ -96,7 +96,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public int getNumberOfTableColumnsVisible() {
-		return headerText.size() - 1;  // -1 for sample name column
+		return headerText.size() - 1; // -1 for sample name column
 	}
 
 	public void toggleMetadataField(int field) {
@@ -111,8 +111,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		templateSelectToggle.click();
 		waitForElementsVisible(By.className("ant-select-dropdown"));
 		for (WebElement option : templateOptions) {
-			if (option.getText()
-					.equals(template)) {
+			if (option.getText().equals(template)) {
 				option.click();
 			}
 		}
@@ -124,8 +123,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.elementToBeClickable(By.className("ant-select-item-option-content")));
 		for (WebElement option : templateOptions) {
-			if (option.getText()
-					.equals(template)) {
+			if (option.getText().equals(template)) {
 				option.click();
 			}
 		}
@@ -142,17 +140,17 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public String getCellContents(int rowIndex, String columnName) {
-		// Need to get the seconds WebElement because the first will be the sample name row.
-		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
-				.get(1);
+		// Need to get the seconds WebElement because the first will be the
+		// sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']")).get(1);
 		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
 		return cell.getText();
 	}
 
 	public void editCellContents(int rowIndex, String columnName, String newValue) {
-		// Need to get the seconds WebElement because the first will be the sample name row.
-		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']"))
-				.get(1);
+		// Need to get the seconds WebElement because the first will be the
+		// sample name row.
+		WebElement row = driver.findElements(By.cssSelector("*[row-index='" + rowIndex + "']")).get(1);
 		WebElement cell = row.findElement(By.cssSelector("*[col-id='" + columnName + "']"));
 		cell.click();
 		cell.sendKeys(newValue);
@@ -170,8 +168,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void clearTableFilter() {
-		tableFilterInput.sendKeys(Keys.chord(Keys.CONTROL, "a"), "");
-		tableFilterInput.sendKeys(Keys.BACK_SPACE);
+		tableFilterInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		waitForTime(500);
 	}
 
@@ -196,13 +193,11 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public boolean isImportMetadataBtnVisible() {
-		return driver.findElements(By.className("t-import-metadata-btn"))
-				.size() > 0;
+		return driver.findElements(By.className("t-import-metadata-btn")).size() > 0;
 	}
 
 	public boolean isShareButtonVisible() {
-		return driver.findElements(By.className("t-share-btn"))
-				.size() > 0;
+		return driver.findElements(By.className("t-share-btn")).size() > 0;
 	}
 
 	public boolean isShareButtonEnabled() {
@@ -210,8 +205,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	}
 
 	public void selectRow(int row) {
-		rowSelectCheckboxes.get(row)
-				.click();
+		rowSelectCheckboxes.get(row).click();
 	}
 
 	public void shareSelectedSamples() {

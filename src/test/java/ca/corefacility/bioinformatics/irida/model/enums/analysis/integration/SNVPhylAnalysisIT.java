@@ -25,19 +25,13 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -47,7 +41,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -75,20 +69,16 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
  * 
  *
  */
-@Tag("IntegrationTest") @Tag("Galaxy") @Tag("Pipeline")
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
-		initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles("test")
+@Tag("Pipeline")
+@GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SNVPhylAnalysisIT {
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(SNVPhylAnalysisIT.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(SNVPhylAnalysisIT.class);
+
 	private static final String MATRIX_KEY = "matrix";
 	private static final String TREE_KEY = "tree";
 	private static final String TABLE_KEY = "table";
@@ -96,7 +86,7 @@ public class SNVPhylAnalysisIT {
 	private static final String QUALITY_KEY = "mapping-quality";
 	private static final String STATS_KEY = "filter-stats";
 	private static final String ALIGN_KEY = "alignment";
-	
+
 	@Autowired
 	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
 
@@ -112,7 +102,7 @@ public class SNVPhylAnalysisIT {
 	@Autowired
 	@Qualifier("rootTempDirectory")
 	private Path rootTempDirectory;
-	
+
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
 
@@ -127,7 +117,7 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private AnalysisWorkspaceService analysisWorkspaceService;
-	
+
 	@Autowired
 	private GzipFileProcessor gzipFileProcessor;
 
@@ -140,7 +130,7 @@ public class SNVPhylAnalysisIT {
 	private Path sequenceFilePathC1;
 	private Path sequenceFilePathC2;
 	private Path referenceFilePath;
-	
+
 	private List<Path> sequenceFilePathsA1List;
 	private List<Path> sequenceFilePathsA2List;
 	private List<Path> sequenceFilePathsB1List;
@@ -153,13 +143,13 @@ public class SNVPhylAnalysisIT {
 	private Path vcf2core1;
 	private Path filterStats1;
 	private Path snvAlign1;
-	
+
 	private Path outputSnvTable2;
 	private Path outputSnvMatrix2;
 	private Path vcf2core2;
 	private Path filterStats2;
 	private Path snvAlign2;
-	
+
 	private Path outputSnvTable3;
 	private Path outputSnvMatrix3;
 	private Path vcf2core3;
@@ -182,20 +172,20 @@ public class SNVPhylAnalysisIT {
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "snvphylTest");
 
-		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
-		Path sequenceFilePathRealA2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
-		Path sequenceFilePathRealB1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_1.fastq.gz").toURI());
-		Path sequenceFilePathRealB2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/b_2.fastq.gz").toURI());
-		Path sequenceFilePathRealC1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
-		Path sequenceFilePathRealC2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/fastq/c_2.fastq").toURI());
-		Path referenceFilePathReal = Paths.get(SNVPhylAnalysisIT.class.getResource(
-				"SNVPhyl/test1/input/reference.fasta").toURI());
+		Path sequenceFilePathRealA1 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
+		Path sequenceFilePathRealA2 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
+		Path sequenceFilePathRealB1 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/b_1.fastq.gz").toURI());
+		Path sequenceFilePathRealB2 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/b_2.fastq.gz").toURI());
+		Path sequenceFilePathRealC1 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
+		Path sequenceFilePathRealC2 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/c_2.fastq").toURI());
+		Path referenceFilePathReal = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/reference.fasta").toURI());
 
 		sequenceFilePathA1 = tempDir.resolve("a_R1_001.fastq");
 		Files.copy(sequenceFilePathRealA1, sequenceFilePathA1, StandardCopyOption.REPLACE_EXISTING);
@@ -231,23 +221,26 @@ public class SNVPhylAnalysisIT {
 		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
 		outputSnvTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvTable.tsv").toURI());
-		outputSnvMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvMatrix.tsv").toURI());
+		outputSnvMatrix1 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvMatrix.tsv").toURI());
 		vcf2core1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/vcf2core.tsv").toURI());
 		filterStats1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/filterStats.txt").toURI());
 		snvAlign1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snvAlignment.phy").toURI());
-		
+
 		outputSnvTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvTable.tsv").toURI());
-		outputSnvMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvMatrix.tsv").toURI());
+		outputSnvMatrix2 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvMatrix.tsv").toURI());
 		vcf2core2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/vcf2core.tsv").toURI());
 		filterStats2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/filterStats.txt").toURI());
 		snvAlign2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snvAlignment.phy").toURI());
-		
+
 		outputSnvTable3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvTable.tsv").toURI());
-		outputSnvMatrix3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvMatrix.tsv").toURI());
+		outputSnvMatrix3 = Paths
+				.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvMatrix.tsv").toURI());
 		vcf2core3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/vcf2core.tsv").toURI());
 		filterStats3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/filterStats.txt").toURI());
 		snvAlign3 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output3/snvAlignment.phy").toURI());
-		
+
 		gzipFileProcessor.setDisableFileProcessor(false);
 	}
 
@@ -268,17 +261,17 @@ public class SNVPhylAnalysisIT {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.transferAnalysesResults());
 	}
-	
+
 	private void waitForFilesToSettle(SequenceFilePair... filePairs) throws InterruptedException {
 		// wait for the files to be moved into the right place, then get the
 		// records from the database again so that we get the right path.
 		Set<SequenceFile> files = null;
-		
+
 		do {
 			Thread.sleep(500);
-			files = Arrays.stream(filePairs).map(p -> sequencingObjectService.read(p.getId()))
-					.map(p -> p.getFiles()).flatMap(l -> l.stream()).collect(Collectors.toSet());
-		} while(!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
+			files = Arrays.stream(filePairs).map(p -> sequencingObjectService.read(p.getId())).map(p -> p.getFiles())
+					.flatMap(l -> l.stream()).collect(Collectors.toSet());
+		} while (!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
 	}
 
 	/**
@@ -290,22 +283,22 @@ public class SNVPhylAnalysisIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
 		gzipFileProcessor.setDisableFileProcessor(true);
-		
-		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
-				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
-		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
-				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
-		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
-				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
-		
-		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
+
+		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+
+		Map<String, String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "3", "enable-density-filter", "true");
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
-				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
-				parameters, snvPhylWorkflow.getWorkflowIdentifier());
-		
+				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath, parameters,
+				snvPhylWorkflow.getWorkflowIdentifier());
+
 		completeSubmittedAnalyses(submission.getId());
 
 		submission = analysisSubmissionRepository.findById(submission.getId()).orElse(null);
@@ -317,56 +310,62 @@ public class SNVPhylAnalysisIT {
 
 		assertEquals(8, analysisPhylogenomics.getAnalysisOutputFiles().size(),
 				"the phylogenomics pipeline should have 8 output files.");
-		
+
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()).useDelimiter("\\Z")
-				.next();
-		assertTrue(com.google.common.io.Files.equal(outputSnvMatrix1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
-						.getFile().toFile()),
+		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(outputSnvMatrix1.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()),
 				"snpMatrix should be the same but is \"" + matrixContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(outputSnvTable1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile()
-						.toFile()),
+		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(outputSnvTable1.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()),
 				"snpTable should be the same but is \"" + snpTableContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(vcf2core1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile()
-						.toFile()),
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(vcf2core1.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()),
 				"vcf2core should be the same but is \"" + vcf2coreContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
-		// only check size of mapping quality file due to samples output in random order
+
+		// only check size of mapping quality file due to samples output in
+		// random order
 		assertTrue(Files.size(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getFile()) > 0,
 				"the mapping quality file should not be empty.");
-		
+
 		@SuppressWarnings("resource")
-		String filterStatsContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(filterStats1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile()
-						.toFile()),
+		String filterStatsContent = new Scanner(
+				analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(filterStats1.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()),
 				"filterStats should be the same but is \"" + filterStatsContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(snvAlign1.toFile(), analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile()
-						.toFile()),
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(snvAlign1.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()),
 				"snvAlign should be the same but is \"" + snvAlignContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue(Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0,
@@ -376,8 +375,8 @@ public class SNVPhylAnalysisIT {
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY)
-				.getCreatedByTool());
+		final List<ToolExecution> toolsToVisit = Lists
+				.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getCreatedByTool());
 		assertFalse(toolsToVisit.isEmpty(), "file should have tool provenance attached.");
 
 		boolean foundReadsInputTool = false;
@@ -395,54 +394,55 @@ public class SNVPhylAnalysisIT {
 				logger.debug("Input tool has " + params);
 
 				foundReferenceInputTool |= params.containsKey("files.NAME")
-						&& params.get("files.NAME").contains("reference")
-						&& params.get("file_type").contains("fasta");
+						&& params.get("files.NAME").contains("reference") && params.get("file_type").contains("fasta");
 				foundReadsInputTool |= params.get("file_type").contains("fastq");
 			}
 		}
 
 		assertTrue(foundReadsInputTool && foundReferenceInputTool,
 				"Should have found both reads and reference input tools.");
-		
-		// At the end, verify that these sequence files did get automatically uncompressed
+
+		// At the end, verify that these sequence files did get automatically
+		// uncompressed
 		assertEquals(2, sequenceFilePairA.getFiles().size(), "Should have 2 pairs of files");
 		for (SequenceFile file : sequenceFilePairA.getFiles()) {
 			assertFalse(file.getFile().toString().endsWith(".gz"), "Sequence files were compressed");
 		}
-		
-		// At the end, verify that the sequence files did not get automatically decompressed.
+
+		// At the end, verify that the sequence files did not get automatically
+		// decompressed.
 		assertEquals(2, sequenceFilePairB.getFiles().size(), "Should have 2 pairs of files");
 		for (SequenceFile file : sequenceFilePairB.getFiles()) {
 			assertTrue(file.getFile().toString().endsWith(".gz"), "Sequence files were uncompressed");
 		}
 	}
-	
+
 	/**
-	 * Tests out successfully executing the SNVPhyl pipeline and passing a higher value for fraction of reads to call a SNP.
+	 * Tests out successfully executing the SNVPhyl pipeline and passing a
+	 * higher value for fraction of reads to call a SNP.
 	 * 
 	 * @throws Exception
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccessHigherSNVReadProportion() throws Exception {
-		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
-				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
-		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
-				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
-		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
-				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
-		
+		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
-		Map<String, String> parameters = ImmutableMap.<String, String> builder()
-				.put("snv-abundance-ratio", "0.90").put("minimum-read-coverage", "2")
-				.put("minimum-percent-coverage", "75").put("minimum-mean-mapping-quality", "20")
-				.put("filter-density-threshold", "3").put("filter-density-window-size", "30")
-				.put("enable-density-filter", "false").build();
-		
+		Map<String, String> parameters = ImmutableMap.<String, String> builder().put("snv-abundance-ratio", "0.90")
+				.put("minimum-read-coverage", "2").put("minimum-percent-coverage", "75")
+				.put("minimum-mean-mapping-quality", "20").put("filter-density-threshold", "3")
+				.put("filter-density-window-size", "30").put("enable-density-filter", "false").build();
+
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
-				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
-				parameters, snvPhylWorkflow.getWorkflowIdentifier());
+				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath, parameters,
+				snvPhylWorkflow.getWorkflowIdentifier());
 
 		completeSubmittedAnalyses(submission.getId());
 
@@ -455,56 +455,62 @@ public class SNVPhylAnalysisIT {
 
 		assertEquals(8, analysisPhylogenomics.getAnalysisOutputFiles().size(),
 				"the phylogenomics pipeline should have 8 output files.");
-		
+
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()).useDelimiter("\\Z")
-				.next();
-		assertTrue(com.google.common.io.Files.equal(outputSnvMatrix2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
-						.getFile().toFile()),
+		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(outputSnvMatrix2.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()),
 				"snpMatrix should be the same but is \"" + matrixContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(outputSnvTable2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile()
-						.toFile()),
+		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(outputSnvTable2.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()),
 				"snpTable should be the same but is \"" + snpTableContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(vcf2core2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile()
-						.toFile()),
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(vcf2core2.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()),
 				"vcf2core should be the same but is \"" + vcf2coreContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
-		// only check size of mapping quality file due to samples output in random order
+
+		// only check size of mapping quality file due to samples output in
+		// random order
 		assertTrue(Files.size(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getFile()) > 0,
 				"the mapping quality file should not be empty.");
-		
+
 		@SuppressWarnings("resource")
-		String filterStatsContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(filterStats2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile()
-						.toFile()),
+		String filterStatsContent = new Scanner(
+				analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(filterStats2.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()),
 				"filterStats should be the same but is \"" + filterStatsContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(snvAlign2.toFile(), analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile()
-						.toFile()),
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(snvAlign2.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()),
 				"snvAlign should be the same but is \"" + snvAlignContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue(Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0,
@@ -514,8 +520,8 @@ public class SNVPhylAnalysisIT {
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY)
-				.getCreatedByTool());
+		List<ToolExecution> toolsToVisit = Lists
+				.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getCreatedByTool());
 		assertFalse(toolsToVisit.isEmpty(), "file should have tool provenance attached.");
 
 		String minVcf2AlignCov = null;
@@ -525,7 +531,7 @@ public class SNVPhylAnalysisIT {
 		String filterDensityThreshold = null;
 		String filterDensityWindowSize = null;
 		String enableFilterDensity = null;
-		
+
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
 		// one where you upload the reads.
@@ -543,24 +549,23 @@ public class SNVPhylAnalysisIT {
 				break;
 			}
 		}
-		
+
 		// try to follow the mapping quality provenance all the way back to the
 		// upload tools
-		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY)
-				.getCreatedByTool());
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getCreatedByTool());
 		assertFalse(toolsToVisit.isEmpty(), "file should have tool provenance attached.");
-		
+
 		while (!toolsToVisit.isEmpty()) {
 			final ToolExecution ex = toolsToVisit.remove(0);
 			toolsToVisit.addAll(ex.getPreviousSteps());
-			
+
 			if (ex.getToolName().contains("Verify Mapping Quality")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minimumPercentCoverage = params.get("minmap");
 				minimumDepthVerify = params.get("mindepth");
 			}
 		}
-		
+
 		assertEquals("\"2\"", minVcf2AlignCov, "incorrect minimum vcf 2 align coverage");
 		assertEquals("\"0.90\"", altAlleleFraction, "incorrect alternative allele fraction");
 		assertEquals("\"2\"", minimumDepthVerify, "incorrect minimum depth for verify map");
@@ -569,28 +574,29 @@ public class SNVPhylAnalysisIT {
 		assertEquals("\"30\"", filterDensityWindowSize, "incorrect filter density window size");
 		assertEquals("\"false\"", enableFilterDensity, "incorrect value for use_density_filter");
 	}
-	
+
 	/**
-	 * Tests out successfully executing the SNVPhyl pipeline and passing a lower value for SNV density threshold to filter out SNVs.
+	 * Tests out successfully executing the SNVPhyl pipeline and passing a lower
+	 * value for SNV density threshold to filter out SNVs.
 	 * 
 	 * @throws Exception
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccessRemoveSNVDensity() throws Exception {
-		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
-				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
-		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
-				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
-		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
-				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		Map<String,String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
+		Map<String, String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "4", "enable-density-filter", "true");
-		
+
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
-				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
-				parameters, snvPhylWorkflow.getWorkflowIdentifier());
+				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath, parameters,
+				snvPhylWorkflow.getWorkflowIdentifier());
 
 		completeSubmittedAnalyses(submission.getId());
 
@@ -603,56 +609,62 @@ public class SNVPhylAnalysisIT {
 
 		assertEquals(8, analysisPhylogenomics.getAnalysisOutputFiles().size(),
 				"the phylogenomics pipeline should have 8 output files.");
-		
+
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()).useDelimiter("\\Z")
-				.next();
-		assertTrue(com.google.common.io.Files.equal(outputSnvMatrix3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY)
-						.getFile().toFile()),
+		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(outputSnvMatrix3.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()),
 				"snpMatrix should be the same but is \"" + matrixContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(outputSnvTable3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile()
-						.toFile()),
+		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(outputSnvTable3.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()),
 				"snpTable should be the same but is \"" + snpTableContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(vcf2core3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile()
-						.toFile()),
+		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(vcf2core3.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()),
 				"vcf2core should be the same but is \"" + vcf2coreContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
-		// only check size of mapping quality file due to samples output in random order
+
+		// only check size of mapping quality file due to samples output in
+		// random order
 		assertTrue(Files.size(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getFile()) > 0,
 				"the mapping quality file should not be empty.");
-		
+
 		@SuppressWarnings("resource")
-		String filterStatsContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(filterStats3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile()
-						.toFile()),
+		String filterStatsContent = new Scanner(
+				analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()).useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(filterStats3.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getFile().toFile()),
 				"filterStats should be the same but is \"" + filterStatsContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(STATS_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		@SuppressWarnings("resource")
-		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()).useDelimiter(
-				"\\Z").next();
-		assertTrue(com.google.common.io.Files.equal(snvAlign3.toFile(), analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile()
-						.toFile()),
+		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile())
+				.useDelimiter("\\Z").next();
+		assertTrue(
+				com.google.common.io.Files.equal(snvAlign3.toFile(),
+						analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()),
 				"snvAlign should be the same but is \"" + snvAlignContent + "\"");
 		assertNotNull(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getCreatedByTool(),
 				"file should have tool provenance attached.");
-		
+
 		// only test to make sure the files have a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
 		assertTrue(Files.size(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getFile()) > 0,
@@ -662,8 +674,8 @@ public class SNVPhylAnalysisIT {
 
 		// try to follow the phylogenomics provenance all the way back to the
 		// upload tools
-		List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY)
-				.getCreatedByTool());
+		List<ToolExecution> toolsToVisit = Lists
+				.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(TREE_KEY).getCreatedByTool());
 		assertFalse(toolsToVisit.isEmpty(), "file should have tool provenance attached.");
 
 		String minVcf2AlignCov = null;
@@ -673,7 +685,7 @@ public class SNVPhylAnalysisIT {
 		String filterDensityThreshold = null;
 		String filterDensityWindowSize = null;
 		String enableFilterDensity = null;
-		
+
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
 		// one where you upload the reads.
@@ -691,24 +703,23 @@ public class SNVPhylAnalysisIT {
 				break;
 			}
 		}
-		
+
 		// try to follow the mapping quality provenance all the way back to the
 		// upload tools
-		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY)
-				.getCreatedByTool());
+		toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getAnalysisOutputFile(QUALITY_KEY).getCreatedByTool());
 		assertFalse(toolsToVisit.isEmpty(), "file should have tool provenance attached.");
-		
+
 		while (!toolsToVisit.isEmpty()) {
 			final ToolExecution ex = toolsToVisit.remove(0);
 			toolsToVisit.addAll(ex.getPreviousSteps());
-			
+
 			if (ex.getToolName().contains("Verify Mapping Quality")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
 				minimumPercentCoverage = params.get("minmap");
 				minimumDepthVerify = params.get("mindepth");
 			}
 		}
-		
+
 		assertEquals("\"2\"", minVcf2AlignCov, "incorrect minimum vcf 2 align coverage");
 		assertEquals("\"0.75\"", altAlleleFraction, "incorrect alternative allele fraction");
 		assertEquals("\"2\"", minimumDepthVerify, "incorrect minimum depth for verify map");
