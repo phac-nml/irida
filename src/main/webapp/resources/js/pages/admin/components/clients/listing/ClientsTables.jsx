@@ -1,6 +1,9 @@
-import { Button, Popconfirm, Tag } from "antd";
+import { Button, Popconfirm, Space, Tag, Typography } from "antd";
 import React, { useContext } from "react";
-import { revokeClientTokens } from "../../../../../apis/clients/clients";
+import {
+  deleteClient,
+  revokeClientTokens,
+} from "../../../../../apis/clients/clients";
 import {
   PagedTable,
   PagedTableContext,
@@ -8,7 +11,6 @@ import {
 import {
   dateColumnFormat
 } from "../../../../../components/ant.design/table-renderers";
-import { IconStop } from "../../../../../components/icons/Icons";
 
 /**
  * Table for displaying a list of clients.
@@ -18,6 +20,10 @@ import { IconStop } from "../../../../../components/icons/Icons";
 export function ClientsTable() {
   const { updateTable } = useContext(PagedTableContext);
 
+  const removeAndUpdate = async (id) => {
+    await deleteClient(id);
+    updateTable();
+  };
   const columns = [
     {
       title: i18n("ClientsTable.column.id"),
@@ -30,12 +36,19 @@ export function ClientsTable() {
       dataIndex: ["details", "clientId"],
       ellipsis: true,
       sorter: true,
+      render(name) {
+        return <Typography.Text copyable>{name}</Typography.Text>;
+      },
+    },
+    {
+      ...dateColumnFormat(),
+      title: i18n("ClientsTable.column.created"),
+      dataIndex: ["details", "createdDate"],
     },
     {
       title: i18n("ClientsTable.column.grants"),
       dataIndex: ["details", "authorizedGrantTypes"],
       render(grants) {
-        console.log(grants);
         const colors = {
           password: "purple",
           authorization_code: "volcano",
@@ -51,16 +64,45 @@ export function ClientsTable() {
           </div>
         );
       },
+      width: 250,
     },
     {
-      ...dateColumnFormat(),
-      title: i18n("ClientsTable.column.created"),
-      dataIndex: ["details", "createdDate"],
+      title: i18n("ClientsTable.column.scope"),
+      dataIndex: ["details", "scope"],
+      render(scopes) {
+        console.log(scopes);
+        const colors = {
+          read: "cyan",
+          write: "geekblue",
+        };
+        return (
+          <div>
+            {scopes.map((g) => (
+              <Tag color={colors[g] || ""} key={g}>
+                {g}
+              </Tag>
+            ))}
+          </div>
+        );
+      },
+      width: 150,
+    },
+    {
+      title: i18n("ClientsTable.column.secret"),
+      dataIndex: ["details", "clientSecret"],
+      render(secret) {
+        return secret ? (
+          <Typography.Text copyable>{secret}</Typography.Text>
+        ) : (
+          ""
+        );
+      },
     },
     {
       title: i18n("ClientsTable.column.activeTokens"),
       dataIndex: "tokens",
       align: "right",
+      width: 50,
     },
     {
       key: "action",
@@ -70,17 +112,30 @@ export function ClientsTable() {
       render(text, record) {
         const disabled = !record.tokens;
         return (
-          <Popconfirm
-            disabled={disabled}
-            title={i18n("client.revoke.confirm", record.details.clientId)}
-            placement={"topRight"}
-            onConfirm={() => revokeTokens(record.details.identifier)}
-          >
-            <Button disabled={disabled}>
-              <IconStop />
-              {i18n("client.details.token.revoke")}
+          <Space>
+            <Popconfirm
+              disabled={disabled}
+              title={i18n("client.revoke.confirm", record.details.clientId)}
+              placement={"topRight"}
+              onConfirm={() => revokeTokens(record.details.identifier)}
+            >
+              <Button type="link" disabled={disabled} size="small">
+                {i18n("client.details.token.revoke")}
+              </Button>
+            </Popconfirm>
+            <Button type="link" size="small">
+              Edit
             </Button>
-          </Popconfirm>
+            <Popconfirm
+              title={i18n("ClientsTable.column.remove-confirm")}
+              placement="topRight"
+              onConfirm={() => removeAndUpdate(record.details.identifier)}
+            >
+              <Button type="link" size="small">
+                {i18n("ClientsTable.column.remove")}
+              </Button>
+            </Popconfirm>
+          </Space>
         );
       },
     },
