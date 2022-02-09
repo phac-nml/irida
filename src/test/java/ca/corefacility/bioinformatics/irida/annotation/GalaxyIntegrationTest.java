@@ -17,6 +17,11 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 
+/**
+ * Annotation that is to be specified on Galaxy integration tests. Simplifies
+ * the configuration of tests by automatically adding a number of necessary
+ * annotations.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

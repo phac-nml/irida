@@ -20,6 +20,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.IridaApplication;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 
+/**
+ * Annotation that is to be specified on Service layer integration tests.
+ * Simplifies the configuration of tests by automatically adding a number of
+ * necessary annotations.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

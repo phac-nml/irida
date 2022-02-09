@@ -17,6 +17,11 @@ import ca.corefacility.bioinformatics.irida.IridaApplication;
 import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 
+/**
+ * Annotation that is to be specified on REST integration tests. Simplifies the
+ * configuration of tests by automatically adding a number of necessary
+ * annotations.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
