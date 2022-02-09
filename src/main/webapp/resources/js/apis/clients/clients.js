@@ -29,3 +29,14 @@ export async function validateClientId(clientId) {
 export async function createClient(details) {
   return axios.post(`${BASE_URL}`, details).then(({ data }) => data);
 }
+
+/**
+ * Delete a client
+ * @param {number} id - client id
+ * @returns {Promise<*>}
+ */
+export async function deleteClient(id) {
+  return axios.delete(BASE_URL, {
+    params: { id },
+  });
+}
