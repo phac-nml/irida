@@ -68,8 +68,9 @@ export function ShareMetadata() {
             newField.restriction,
             newField.target
           );
+
           newField.restriction =
-            newField.difference < 0 ? newField.target : newField.current;
+            newField.difference < 0 ? newField.current : newField.target;
         }
         return newField;
       });
