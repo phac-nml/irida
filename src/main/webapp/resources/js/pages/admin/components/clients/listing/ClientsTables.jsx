@@ -1,12 +1,13 @@
+import { Button, Popconfirm, Tag } from "antd";
 import React, { useContext } from "react";
+import { revokeClientTokens } from "../../../../../apis/clients/clients";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../../components/ant.design/PagedTable";
-import { Button, Popconfirm, Tag } from "antd";
-import { setBaseUrl } from "../../../../../utilities/url-utilities";
-import { dateColumnFormat } from "../../../../../components/ant.design/table-renderers";
-import { revokeClientTokens } from "../../../../../apis/clients/clients";
+import {
+  dateColumnFormat
+} from "../../../../../components/ant.design/table-renderers";
 import { IconStop } from "../../../../../components/icons/Icons";
 
 /**
@@ -21,26 +22,20 @@ export function ClientsTable() {
     {
       title: i18n("ClientsTable.column.id"),
       width: 80,
-      dataIndex: "id",
+      dataIndex: ["details", "identifier"],
       sorter: true,
     },
     {
       title: i18n("ClientsTable.column.clientId"),
-      dataIndex: "name",
+      dataIndex: ["details", "clientId"],
       ellipsis: true,
       sorter: true,
-      render(text, item) {
-        return (
-          <a className="t-client-name" href={setBaseUrl(`/clients/${item.id}`)}>
-            {text}
-          </a>
-        );
-      },
     },
     {
       title: i18n("ClientsTable.column.grants"),
-      dataIndex: "grants",
+      dataIndex: ["details", "authorizedGrantTypes"],
       render(grants) {
+        console.log(grants);
         const colors = {
           password: "purple",
           authorization_code: "volcano",
@@ -60,7 +55,7 @@ export function ClientsTable() {
     {
       ...dateColumnFormat(),
       title: i18n("ClientsTable.column.created"),
-      dataIndex: "createdDate",
+      dataIndex: ["details", "createdDate"],
     },
     {
       title: i18n("ClientsTable.column.activeTokens"),
@@ -77,9 +72,9 @@ export function ClientsTable() {
         return (
           <Popconfirm
             disabled={disabled}
-            title={i18n("client.revoke.confirm", record.name)}
+            title={i18n("client.revoke.confirm", record.details.clientId)}
             placement={"topRight"}
-            onConfirm={() => revokeTokens(record.id)}
+            onConfirm={() => revokeTokens(record.details.identifier)}
           >
             <Button disabled={disabled}>
               <IconStop />
