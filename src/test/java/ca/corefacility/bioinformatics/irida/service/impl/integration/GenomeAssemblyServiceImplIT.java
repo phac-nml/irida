@@ -3,17 +3,12 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 import java.nio.file.Path;
 import java.util.Collection;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
@@ -22,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
@@ -30,11 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class GenomeAssemblyServiceImplIT {
@@ -53,8 +43,7 @@ public class GenomeAssemblyServiceImplIT {
 		Collection<SampleGenomeAssemblyJoin> joins = genomeAssemblyService.getAssembliesForSample(s);
 		assertEquals(1, joins.size(), "should have same size for assemblies");
 
-		SampleGenomeAssemblyJoin join = joins.iterator()
-				.next();
+		SampleGenomeAssemblyJoin join = joins.iterator().next();
 		assertEquals(s.getId(), join.getSubject().getId(), "Should be same sample");
 		assertEquals(Long.valueOf(1), join.getObject().getId(), "Should be same assembly");
 	}

@@ -16,10 +16,8 @@ import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,17 +30,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -53,11 +47,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpeci
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/user/UserServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserServiceImplIT {
@@ -295,7 +285,7 @@ public class UserServiceImplIT {
 			userService.getUserByUsername(username);
 		});
 	}
-	
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUsersWithEmailSubscriptions() {
@@ -391,20 +381,22 @@ public class UserServiceImplIT {
 			userService.create(u);
 		});
 	}
-	
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testSearchUser(){
+	public void testSearchUser() {
 		String search = "Mr";
-		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
-		assertEquals(3,searchUser.getContent().size());
-		for(User u : searchUser){
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(search),
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
+		assertEquals(3, searchUser.getContent().size());
+		for (User u : searchUser) {
 			assertTrue(u.getFirstName().contains("Mr"));
 		}
-		
+
 		search = "User";
-		searchUser = userService.search(UserSpecification.searchUser(search), PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
-		assertEquals(2,searchUser.getContent().size());
+		searchUser = userService.search(UserSpecification.searchUser(search),
+				PageRequest.of(0, 10, Sort.by(Direction.ASC, "id")));
+		assertEquals(2, searchUser.getContent().size());
 	}
 
 	@Test

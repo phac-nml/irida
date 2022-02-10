@@ -14,19 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -40,10 +35,7 @@ import io.restassured.response.Response;
  * Integration tests for projects.
  * 
  */
-@Tag("IntegrationTest") @Tag("Rest")
-@ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(IridaIntegrationTestUriConfig.class)
+@RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -62,7 +54,8 @@ public class ProjectIT {
 	public void testCreateProjectBadFieldName() {
 		Response r = asUser().body("{ \"projectName\": \"some stupid project\" }").expect().response()
 				.statusCode(HttpStatus.BAD_REQUEST.value()).when().post(PROJECTS);
-		assertTrue(r.getBody().asString().contains("You must provide a project name."), "body should contain 'You must provide a project name.'");
+		assertTrue(r.getBody().asString().contains("You must provide a project name."),
+				"body should contain 'You must provide a project name.'");
 	}
 
 	/**
@@ -79,7 +72,7 @@ public class ProjectIT {
 	public void testCreateProject() {
 		Map<String, String> project = new HashMap<>();
 		project.put("name", "new project");
-		
+
 		Response r = asUser().and().body(project).expect().response().statusCode(HttpStatus.CREATED.value()).when()
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
@@ -95,7 +88,8 @@ public class ProjectIT {
 	@Test
 	public void testGetProject() {
 		asUser().expect().body("resource.name", equalTo("project22")).and()
-				.body("resource.links.rel", hasItems("self", "project/users", "project/samples")).when().get(PROJECTS + "/5");
+				.body("resource.links.rel", hasItems("self", "project/users", "project/samples")).when()
+				.get(PROJECTS + "/5");
 	}
 
 	@Test
@@ -107,7 +101,7 @@ public class ProjectIT {
 		asUser().body(project).expect().statusCode(HttpStatus.OK.value()).when().patch(location);
 		asUser().expect().body("resource.name", equalTo(updatedName)).when().get(location);
 	}
-	
+
 	@Test
 	public void testUpdateProjectNameWithoutPrivileges() {
 		Map<String, String> project = new HashMap<>();
@@ -128,7 +122,8 @@ public class ProjectIT {
 	public void testDeleteProject() {
 		String projectUri = "/api/projects/5";
 		asUser().expect().body("resource.links.rel", hasItems("collection")).and()
-				.body("resource.links.href", hasItems(uriTemplateHandler.getRootUri() + "/api/projects")).when().delete(projectUri);
+				.body("resource.links.href", hasItems(uriTemplateHandler.getRootUri() + "/api/projects")).when()
+				.delete(projectUri);
 	}
 
 	/**
@@ -144,9 +139,10 @@ public class ProjectIT {
 		asUser().given().header("Accept", MediaType.JSON_UTF_8.toString()).expect().statusCode(HttpStatus.OK.value())
 				.when().head(projectUri);
 	}
-	
+
 	@Test
 	public void testListProjectsAsSequencer() {
-		asSequencer().expect().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel", hasItems("self")).when().get(PROJECTS);
+		asSequencer().expect().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel", hasItems("self"))
+				.when().get(PROJECTS);
 	}
 }

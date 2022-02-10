@@ -6,11 +6,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
 import org.springframework.security.core.Authentication;
@@ -56,8 +55,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  * 
  *
  */
-@Configuration
-@Profile("test")
+@TestConfiguration
 @EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
 @Conditional(NonWindowsPlatformCondition.class)
 public class AnalysisExecutionServiceTestConfig {
@@ -82,32 +80,31 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-	
+
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
-	
+
 	@Autowired
 	private GalaxyHistoriesService galaxyHistoriesService;
-	
+
 	@Autowired
 	private GalaxyLibrariesService galaxyLibrariesService;
-		
+
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
 
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
-	
+
 	@Autowired
-	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleService;
-	
+	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
+
 	@Autowired
 	private SampleRepository sampleRepository;
 
 	@Autowired
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	
 	@Bean
 	public AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor() {
 		List<AnalysisSampleUpdater> analysisSampleUpdaters = Lists.newLinkedList();
@@ -126,14 +123,15 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleService);
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService,
+				analysisSubmissionSampleProcessor);
 	}
-	
+
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
-		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService,
-				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService, galaxyWorkflowService,
+				galaxyHistoriesService, galaxyLibrariesService);
 	}
 
 	@Lazy
@@ -164,7 +162,6 @@ public class AnalysisExecutionServiceTestConfig {
 	 * 
 	 * @return A new Executor for analysis tasks.
 	 */
-	@Profile({"test", "it"})
 	@Bean
 	public Executor analysisTaskExecutor() {
 		ScheduledExecutorService delegateExecutor = Executors.newSingleThreadScheduledExecutor();

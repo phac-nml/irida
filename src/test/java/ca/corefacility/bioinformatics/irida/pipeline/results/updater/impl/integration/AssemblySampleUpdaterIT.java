@@ -2,21 +2,15 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.integ
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -28,11 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 /**
  * Tests updating samples with assemblies.
  */
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/pipeline/results/impl/AssemblySampleUpdaterIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AssemblySampleUpdaterIT {
