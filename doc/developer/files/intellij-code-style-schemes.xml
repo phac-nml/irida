@@ -48,6 +48,7 @@
     <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
     <option name="TERNARY_OPERATION_WRAP" value="5" />
     <option name="ARRAY_INITIALIZER_WRAP" value="1" />
+    <option name="WRAP_COMMENTS" value="true" />
     <option name="PARAMETER_ANNOTATION_WRAP" value="5" />
     <option name="ENUM_CONSTANTS_WRAP" value="2" />
     <indentOptions>

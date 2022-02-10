@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUser
 
 /**
  * A user object.
- *
  */
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -129,21 +128,14 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	}
 
 	/**
-	 * Construct an instance of {@link User} with all properties (except
-	 * identifier) set.
+	 * Construct an instance of {@link User} with all properties (except identifier) set.
 	 *
-	 * @param username
-	 *            the username for this {@link User}.
-	 * @param email
-	 *            the e-mail for this {@link User}.
-	 * @param password
-	 *            the password for this {@link User}.
-	 * @param firstName
-	 *            the first name of this {@link User}.
-	 * @param lastName
-	 *            the last name of this {@link User}.
-	 * @param phoneNumber
-	 *            the phone number of this {@link User}.
+	 * @param username    the username for this {@link User}.
+	 * @param email       the e-mail for this {@link User}.
+	 * @param password    the password for this {@link User}.
+	 * @param firstName   the first name of this {@link User}.
+	 * @param lastName    the last name of this {@link User}.
+	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
 		this();
@@ -158,20 +150,13 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	/**
 	 * Construct an instance of {@link User} with all properties set.
 	 *
-	 * @param id
-	 *            the identifier for this {@link User}.
-	 * @param username
-	 *            the username for this {@link User}.
-	 * @param email
-	 *            the e-mail for this {@link User}.
-	 * @param password
-	 *            the password for this {@link User}.
-	 * @param firstName
-	 *            the first name of this {@link User}.
-	 * @param lastName
-	 *            the last name of this {@link User}.
-	 * @param phoneNumber
-	 *            the phone number of this {@link User}.
+	 * @param id          the identifier for this {@link User}.
+	 * @param username    the username for this {@link User}.
+	 * @param email       the e-mail for this {@link User}.
+	 * @param password    the password for this {@link User}.
+	 * @param firstName   the first name of this {@link User}.
+	 * @param lastName    the last name of this {@link User}.
+	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(Long id, String username, String email, String password, String firstName, String lastName,
 			String phoneNumber) {
@@ -227,8 +212,9 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(User.class).add("username", username).add("email", email)
-				.add("firstName", firstName).add("lastName", lastName).add("phoneNumber", phoneNumber).toString();
+		return com.google.common.base.MoreObjects.toStringHelper(User.class).add("username", username)
+				.add("email", email).add("firstName", firstName).add("lastName", lastName)
+				.add("phoneNumber", phoneNumber).toString();
 	}
 
 	@Override
