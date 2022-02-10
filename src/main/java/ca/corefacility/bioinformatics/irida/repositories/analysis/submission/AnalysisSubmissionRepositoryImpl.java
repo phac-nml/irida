@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
+import java.nio.file.Path;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -10,15 +13,21 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 /**
- * Implementation of {@link AnalysisSubmissionRepositoryCustom} with methods using native SQL queries to get {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile} info for {@link ca.corefacility.bioinformatics.irida.model.project.Project} and {@link ca.corefacility.bioinformatics.irida.model.user.User}
+ * Implementation of {@link AnalysisSubmissionRepositoryCustom} with methods
+ * using native SQL queries to get
+ * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile}
+ * info for {@link ca.corefacility.bioinformatics.irida.model.project.Project}
+ * and {@link ca.corefacility.bioinformatics.irida.model.user.User}
  */
 @Repository
 public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepositoryCustom {
@@ -26,16 +35,19 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 
 	private DataSource dataSource;
 
+	private PSAOIRowMapper psaoiRowMapper;
+
 	@Autowired
-	public AnalysisSubmissionRepositoryImpl(DataSource dataSource) {
+	public AnalysisSubmissionRepositoryImpl(DataSource dataSource,
+			@Qualifier("outputFileBaseDirectory") Path outputFileBaseDirectory) {
 		this.dataSource = dataSource;
+		psaoiRowMapper = new PSAOIRowMapper(outputFileBaseDirectory);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId,
 			Set<UUID> workflowIds) {
 		// @formatter:off
@@ -71,21 +83,20 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		// need to explicitly convert UUIDs to String
-		final List<String> workflowUUIDStrings = workflowIds.stream()
-				.map(UUID::toString)
-				.collect(Collectors.toList());
+		final List<String> workflowUUIDStrings = workflowIds.stream().map(UUID::toString).collect(Collectors.toList());
 		parameters.addValue("projectId", projectId);
 		parameters.addValue("workflowIds", workflowUUIDStrings);
 		logger.trace("Getting all shared analysis output file info for project id=" + projectId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
-		return tmpl.query(query, parameters, new BeanPropertyRowMapper(ProjectSampleAnalysisOutputInfo.class));
+		List<ProjectSampleAnalysisOutputInfo> analysisOutputs = tmpl.query(query, parameters, psaoiRowMapper);
+
+		return analysisOutputs;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId,
 			Set<UUID> workflowIds) {
 		// @formatter:off
@@ -121,20 +132,19 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("projectId", projectId);
-		final List<String> workflowUUIDStrings = workflowIds.stream()
-				.map(UUID::toString)
-				.collect(Collectors.toList());
+		final List<String> workflowUUIDStrings = workflowIds.stream().map(UUID::toString).collect(Collectors.toList());
 		parameters.addValue("workflowIds", workflowUUIDStrings);
 		logger.trace("Getting all automated analysis output file info for project id=" + projectId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
-		return tmpl.query(query, parameters, new BeanPropertyRowMapper(ProjectSampleAnalysisOutputInfo.class));
+		List<ProjectSampleAnalysisOutputInfo> analysisOutputs = tmpl.query(query, parameters, psaoiRowMapper);
+
+		return analysisOutputs;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(Long userId) {
 		// @formatter:off
 		String query =
@@ -164,6 +174,30 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		parameters.addValue("userId", userId);
 		logger.trace("Getting all automated analysis output file info for user id=" + userId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
-		return tmpl.query(query, parameters, new BeanPropertyRowMapper(ProjectSampleAnalysisOutputInfo.class));
+		List<ProjectSampleAnalysisOutputInfo> analysisOutputs = tmpl.query(query, parameters, psaoiRowMapper);
+
+		return analysisOutputs;
+	}
+
+	class PSAOIRowMapper extends BeanPropertyRowMapper<ProjectSampleAnalysisOutputInfo> {
+
+		private Path outputFileBaseDirectory;
+
+		public PSAOIRowMapper(Path outputFileBaseDirectory) {
+			super(ProjectSampleAnalysisOutputInfo.class);
+			this.outputFileBaseDirectory = outputFileBaseDirectory;
+		}
+
+		@Override
+		public ProjectSampleAnalysisOutputInfo mapRow(ResultSet rs, int rowNumber) throws SQLException {
+			ProjectSampleAnalysisOutputInfo object = super.mapRow(rs, rowNumber);
+
+			Path absPath = outputFileBaseDirectory.resolve(object.getFilePath());
+			object.setFilename(FileUtilities.getUniqueFilename(absPath, object.getSampleName(), object.getSampleId(),
+					object.getAnalysisSubmissionId()));
+
+			return object;
+		}
+
 	}
 }

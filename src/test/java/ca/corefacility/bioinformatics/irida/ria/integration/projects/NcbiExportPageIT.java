@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -21,7 +21,7 @@ public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 
 	private NcbiExportPage page;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		LoginPage.loginAsAdmin(driver());
 	}
@@ -31,8 +31,8 @@ public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L, 4L));
 
 		List<String> sampleNames = page.getSampleNames();
-		assertEquals("should be 2 samples to submit", 2, sampleNames.size());
-		assertEquals("should be 1 disabled sample", 1, page.countDisabledSamples());
+		assertEquals(2, sampleNames.size(), "should be 2 samples to submit");
+		assertEquals(1, page.countDisabledSamples(), "should be 1 disabled sample");
 	}
 
 	@Test
@@ -46,18 +46,18 @@ public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 
 		ExportDetailsPage exportPage = ExportDetailsPage.initPage(driver());
 
-		assertEquals("submission should be created with new status", ExportUploadState.NEW.toString(),
-				exportPage.getUploadStatus());
+		assertEquals(ExportUploadState.NEW.toString(), exportPage.getUploadStatus(),
+				"submission should be created with new status");
 	}
 
 	@Test
 	public void testRemoveSubmission() {
 		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L));
 
-		assertEquals("should be 2 samples", 2, page.getSampleNames().size());
+		assertEquals(2, page.getSampleNames().size(), "should be 2 samples");
 
 		page.removeFirstSample();
 
-		assertEquals("should be 1 sample after removal", 1, page.getSampleNames().size());
+		assertEquals(1, page.getSampleNames().size(), "should be 1 sample after removal");
 	}
 }

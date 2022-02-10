@@ -2,9 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import java.util.Base64;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +18,10 @@ import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -34,7 +34,7 @@ public class PasswordResetControllerTest {
 	private MessageSource messageSource;
 	private PasswordResetController controller;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userService = mock(UserService.class);
 		passwordResetService = mock(PasswordResetService.class);
@@ -44,7 +44,7 @@ public class PasswordResetControllerTest {
 		controller = new PasswordResetController(userService, passwordResetService, emailController, messageSource);
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() {
 		SecurityContextHolder.clearContext();
 	}
@@ -150,6 +150,6 @@ public class PasswordResetControllerTest {
 		assertTrue(model.containsKey("emailError"));
 
 		verify(userService).loadUserByEmail(email);
-		verifyZeroInteractions(emailController);
+		verifyNoInteractions(emailController);
 	}
 }

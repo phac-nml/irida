@@ -8,8 +8,8 @@ import java.util.function.Function;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,9 +25,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsServ
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class AnnouncementsAjaxControllerTest {
@@ -51,7 +51,7 @@ public class AnnouncementsAjaxControllerTest {
 	private final AnnouncementUserJoin ANNOUNCEMENT_READ_01 = new AnnouncementUserJoin(ANNOUNCEMENT_01, ANNOUNCEMENT_USER_01);
 	private final AnnouncementUserJoin ANNOUNCEMENT_READ_02 = new AnnouncementUserJoin(ANNOUNCEMENT_01, ANNOUNCEMENT_USER_02);
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		announcementService = mock(AnnouncementService.class);
 		userService = mock(UserService.class);
@@ -244,21 +244,21 @@ public class AnnouncementsAjaxControllerTest {
 		request.setPageSize(10);
 
 		TableResponse<AnnouncementTableModel> response = controller.getAnnouncementsAdmin(request);
-		assertEquals("Should have the correct number of total entries", 103L, response.getTotal(), 0);
-		assertEquals("Should have 2 announcements", 2, response.getDataSource()
-				.size());
+		assertEquals(103L, response.getTotal(), 0, "Should have the correct number of total entries");
+		assertEquals(2, response.getDataSource().size(),
+				"Should have 2 announcements");
 
 		AnnouncementTableModel announcement_1 = response.getDataSource()
 				.get(0);
-		assertEquals("The announcement have the expected text", ANNOUNCEMENT_TEXT_01, announcement_1.getMessage());
-		assertEquals("Should have the correct user data", ANNOUNCEMENT_USER_01, announcement_1.getUser());
+		assertEquals(ANNOUNCEMENT_TEXT_01, announcement_1.getMessage(), "The announcement have the expected text");
+		assertEquals(ANNOUNCEMENT_USER_01, announcement_1.getUser(), "Should have the correct user data");
 
 		AnnouncementTableModel announcement_2 = response.getDataSource()
 				.get(1);
-		assertEquals("The second announcement should have the correct text", ANNOUNCEMENT_TEXT_02,
-				announcement_2.getMessage());
-		assertEquals("The second announcement should have the correct user", ANNOUNCEMENT_USER_02,
-				announcement_2.getUser());
+		assertEquals(ANNOUNCEMENT_TEXT_02, announcement_2.getMessage(),
+				"The second announcement should have the correct text");
+		assertEquals(ANNOUNCEMENT_USER_02, announcement_2.getUser(),
+				"The second announcement should have the correct user");
 	}
 
 	@Test
@@ -326,15 +326,15 @@ public class AnnouncementsAjaxControllerTest {
 		request.setPageSize(10);
 
 		TableResponse<AnnouncementUserTableModel> response = controller.getUserAnnouncementInfoTable(1L, request);
-		assertEquals("Should have the correct number of total entries", 6L, response.getTotal(), 0);
-		assertEquals("Should have 2 announcement users", 2, response.getDataSource().size());
+		assertEquals(6L, response.getTotal(), 0, "Should have the correct number of total entries");
+		assertEquals(2, response.getDataSource().size(), "Should have 2 announcement users");
 
 		AnnouncementUserTableModel announcement_user_1 = response.getDataSource().get(0);
-		assertEquals("Should have the correct user data", ANNOUNCEMENT_USER_01, announcement_user_1.getUser());
-		assertEquals("The user have the expected read date", ANNOUNCEMENT_READ_01.getCreatedDate(), announcement_user_1.getDateRead());
+		assertEquals(ANNOUNCEMENT_USER_01, announcement_user_1.getUser(), "Should have the correct user data");
+		assertEquals(ANNOUNCEMENT_READ_01.getCreatedDate(), announcement_user_1.getDateRead(), "The user have the expected read date");
 
 		AnnouncementUserTableModel announcement_user_2 = response.getDataSource().get(1);
-		assertEquals("The second announcement should have the correct user", ANNOUNCEMENT_USER_02, announcement_user_2.getUser());
-		assertEquals("The user have the expected read date", ANNOUNCEMENT_READ_02.getCreatedDate(), announcement_user_2.getDateRead());
+		assertEquals(ANNOUNCEMENT_USER_02, announcement_user_2.getUser(), "The second announcement should have the correct user");
+		assertEquals(ANNOUNCEMENT_READ_02.getCreatedDate(), announcement_user_2.getDateRead(), "The user have the expected read date");
 	}
 }

@@ -1,5 +1,6 @@
 import { Alert, Button, Checkbox, notification, Space, Typography } from "antd";
 import React from "react";
+import { useParams } from "react-router-dom";
 import { deleteProject } from "../../../../apis/projects/project";
 
 /**
@@ -8,7 +9,8 @@ import { deleteProject } from "../../../../apis/projects/project";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function DeleteProject({ projectId }) {
+export default function DeleteProject() {
+  const { projectId } = useParams();
   const [disabled, setDisabled] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
 

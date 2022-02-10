@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -14,8 +14,8 @@ import java.util.Iterator;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class FastqcFileProcessorTest {
 			+ SEQUENCE + "\n+\n?????????";
 	private static final String FASTA_FILE_CONTENTS = ">test read\n" + SEQUENCE;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
@@ -55,7 +55,7 @@ public class FastqcFileProcessorTest {
 		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository);
 	}
 
-	@Test(expected = FileProcessorException.class)
+	@Test
 	public void testHandleFastaFile() throws IOException {
 		// fastqc fails to handle fasta files (there's no quality scores,
 		// dummy), but that's A-OK.
@@ -66,7 +66,9 @@ public class FastqcFileProcessorTest {
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
-		fileProcessor.process(so);
+		assertThrows(FileProcessorException.class, () -> {
+			fileProcessor.process(so);
+		});
 	}
 
 	@Test
@@ -75,13 +77,13 @@ public class FastqcFileProcessorTest {
 		Fast5Object obj = new Fast5Object(new SequenceFile(null));
 
 		obj.setFast5Type(Fast5Object.Fast5Type.SINGLE);
-		assertTrue("should want to process single fast5 file)", fileProcessor.shouldProcessFile(obj));
+		assertTrue(fileProcessor.shouldProcessFile(obj), "should want to process single fast5 file)");
 
 		obj.setFast5Type(Fast5Object.Fast5Type.ZIPPED);
-		assertFalse("should not want to process zipped fast5 file)", fileProcessor.shouldProcessFile(obj));
+		assertFalse(fileProcessor.shouldProcessFile(obj), "should not want to process zipped fast5 file)");
 
 		obj.setFast5Type(Fast5Object.Fast5Type.UNKNOWN);
-		assertFalse("should not want to process unknown fast5 file)", fileProcessor.shouldProcessFile(obj));
+		assertFalse(fileProcessor.shouldProcessFile(obj), "should not want to process unknown fast5 file)");
 	}
 
 	@Test
@@ -108,30 +110,30 @@ public class FastqcFileProcessorTest {
 		final Field fastqcAnalysis = ReflectionUtils.findField(SequenceFile.class, "fastqcAnalysis");
 		ReflectionUtils.makeAccessible(fastqcAnalysis);
 		AnalysisFastQC updated = (AnalysisFastQC) fastqcAnalysis.get(updatedFile);
-		assertEquals("GC Content was not set correctly.", Short.valueOf((short) 50), updated.getGcContent());
-		assertEquals("Filtered sequences was not 0.", Integer.valueOf(0), updated.getFilteredSequences());
-		assertEquals("File type was not correct.", "Conventional base calls", updated.getFileType());
-		assertEquals("Max length was not correct.", Integer.valueOf(SEQUENCE.length()), updated.getMaxLength());
-		assertEquals("Min length was not correct.", Integer.valueOf(SEQUENCE.length()), updated.getMinLength());
-		assertEquals("Total sequences was not correct.", Integer.valueOf(2), updated.getTotalSequences());
-		assertEquals("Encoding was not correct.", "Sanger / Illumina 1.9", updated.getEncoding());
-		assertEquals("Total number of bases was not correct.", Long.valueOf(SEQUENCE.length() * 2),
-				updated.getTotalBases());
+		assertEquals(Short.valueOf((short) 50), updated.getGcContent(), "GC Content was not set correctly.");
+		assertEquals(Integer.valueOf(0), updated.getFilteredSequences(), "Filtered sequences was not 0.");
+		assertEquals("Conventional base calls", updated.getFileType(), "File type was not correct.");
+		assertEquals(Integer.valueOf(SEQUENCE.length()), updated.getMaxLength(), "Max length was not correct.");
+		assertEquals(Integer.valueOf(SEQUENCE.length()), updated.getMinLength(), "Min length was not correct.");
+		assertEquals(Integer.valueOf(2), updated.getTotalSequences(), "Total sequences was not correct.");
+		assertEquals("Sanger / Illumina 1.9", updated.getEncoding(), "Encoding was not correct.");
+		assertEquals(Long.valueOf(SEQUENCE.length() * 2), updated.getTotalBases(),
+				"Total number of bases was not correct.");
 
 		verify(outputFileRepository,times(3)).save(any(AnalysisOutputFile.class));
 
-		assertNotNull("Per-base quality score chart was not created.", updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"));
+		assertNotNull(updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"), "Per-base quality score chart was not created.");
 
-		assertNotNull("Per-sequence quality score chart was not created.", updated.getAnalysisOutputFileNames().contains("perSequenceQualityScoreChart"));
+		assertNotNull(updated.getAnalysisOutputFileNames().contains("perSequenceQualityScoreChart"), "Per-sequence quality score chart was not created.");
 
-		assertNotNull("Duplication level chart was not created.", updated.getAnalysisOutputFileNames().contains("duplicationLevelChart"));
+		assertNotNull(updated.getAnalysisOutputFileNames().contains("duplicationLevelChart"), "Duplication level chart was not created.");
 
 		Iterator<OverrepresentedSequence> ovrs = updated.getOverrepresentedSequences().iterator();
-		assertTrue("No overrepresented sequences added to analysis.", ovrs.hasNext());
+		assertTrue(ovrs.hasNext(), "No overrepresented sequences added to analysis.");
 		OverrepresentedSequence overrepresentedSequence = updated.getOverrepresentedSequences().iterator().next();
-		assertEquals("Sequence was not the correct sequence.", SEQUENCE, overrepresentedSequence.getSequence());
-		assertEquals("The count was not correct.", 2, overrepresentedSequence.getOverrepresentedSequenceCount());
-		assertEquals("The percent was not correct.", BigDecimal.valueOf(100.), overrepresentedSequence.getPercentage());
+		assertEquals(SEQUENCE, overrepresentedSequence.getSequence(), "Sequence was not the correct sequence.");
+		assertEquals(2, overrepresentedSequence.getOverrepresentedSequenceCount(), "The count was not correct.");
+		assertEquals(BigDecimal.valueOf(100.), overrepresentedSequence.getPercentage(), "The percent was not correct.");
 
 	}
 

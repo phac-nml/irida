@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -47,6 +49,7 @@ public abstract class SequencingObject extends IridaRepresentationModel implemen
 	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
+	@JsonIgnoreProperties({"hibernateLazyInitializer"})
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequencingObject")
 	private SampleSequencingObjectJoin sample;
 

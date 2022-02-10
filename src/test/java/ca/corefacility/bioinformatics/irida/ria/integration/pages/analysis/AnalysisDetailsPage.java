@@ -104,6 +104,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className="t-citation")
 	private WebElement citation;
 
+	@FindBy(className = "ant-menu-title-content")
+	private List<WebElement> menuItems;
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -221,10 +224,11 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean compareTabTitle(String pageTitle) {
-		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
-				.size();
 
-		return titleFound > 0;
+		waitForElementsVisible(By.cssSelector("span[title='"+ pageTitle+"']"));
+		boolean titleFound = rootDiv.findElement(By.cssSelector("span[title='"+ pageTitle+"']")).isDisplayed();
+
+		return titleFound;
 	}
 
 	/**
@@ -449,6 +453,15 @@ public class AnalysisDetailsPage extends AbstractPage {
 	public boolean priorityEditVisible() {
 		return !driver.findElements(By.className("t-priority-edit"))
 				.isEmpty();
+	}
+
+	public boolean menuIncludesItem(String menuItem) {
+		for(WebElement element : menuItems) {
+			if(element.getText().equals(menuItem)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

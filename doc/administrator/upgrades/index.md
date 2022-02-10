@@ -278,7 +278,7 @@ Error: The last packet successfully received from the server was 38,881,098 mill
 If you encounter this error, you can increase the database `wait_timeout` value by modifying the database connection string in `/etc/irida/irida.conf` by appending `?sessionVariables=wait_timeout=57600` like below:
 
 ```
-jdbc.url=jdbc:mysql://localhost:3306/irida_prod_test?sessionVariables=wait_timeout=57600
+spring.datasource.url=jdbc:mysql://localhost:3306/irida_prod_test?sessionVariables=wait_timeout=57600
 ```
 
 Modify `57600` to some appropriate timeout value (in seconds). Once you've made this modification, you will have to go through the instructions above on recovering from an error before restarting the upgrade. Once the upgrade is complete, you can remove this variable from the connection string and restart IRIDA to reset to the default database timeout value.

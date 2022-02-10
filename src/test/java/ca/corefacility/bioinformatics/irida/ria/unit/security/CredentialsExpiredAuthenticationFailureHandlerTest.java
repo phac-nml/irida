@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -13,8 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -31,7 +31,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 	private PasswordResetService resetService;
 	private UserService userService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		resetService = mock(PasswordResetService.class);
 		userService = mock(UserService.class);
@@ -76,7 +76,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 		AuthenticationException exception = new DisabledException("disabled");
 
 		handler.onAuthenticationFailure(request, response, exception);
-		verifyZeroInteractions(userService);
-		verifyZeroInteractions(resetService);
+		verifyNoInteractions(userService);
+		verifyNoInteractions(resetService);
 	}
 }

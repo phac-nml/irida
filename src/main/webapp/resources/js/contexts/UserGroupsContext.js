@@ -3,16 +3,17 @@
  * required for displaying user groups pages
  */
 
-import React from "react";
-import { deleteUserGroup } from "../apis/users/groups";
-import { navigate } from "@reach/router";
 import { notification } from "antd";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { deleteUserGroup } from "../apis/users/groups";
 
 const initialContext = {};
 
 const UserGroupsContext = React.createContext(initialContext);
 
 function UserGroupsProvider(props) {
+  const navigate = useNavigate();
   /*
    * Deletes User Group and shows confirmation notification.
    */
