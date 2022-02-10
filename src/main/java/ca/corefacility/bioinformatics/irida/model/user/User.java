@@ -212,9 +212,13 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(User.class).add("username", username)
-				.add("email", email).add("firstName", firstName).add("lastName", lastName)
-				.add("phoneNumber", phoneNumber).toString();
+		return com.google.common.base.MoreObjects.toStringHelper(User.class)
+				.add("username", username)
+				.add("email", email)
+				.add("firstName", firstName)
+				.add("lastName", lastName)
+				.add("phoneNumber", phoneNumber)
+				.toString();
 	}
 
 	@Override
