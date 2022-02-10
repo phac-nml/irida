@@ -13,13 +13,13 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
-@Configuration
+@TestConfiguration
 @Profile({ "test", "it" })
 public class IridaApiTestFilesystemConfig {
 
@@ -40,7 +40,8 @@ public class IridaApiTestFilesystemConfig {
 	}
 
 	/**
-	 * Path to root of temporary directory where tests will copy files for use in Galaxy
+	 * Path to root of temporary directory where tests will copy files for use
+	 * in Galaxy
 	 */
 	@Bean(name = "rootTempDirectory")
 	public Path rootTempDirectory() {

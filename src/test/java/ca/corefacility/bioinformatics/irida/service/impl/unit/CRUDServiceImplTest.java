@@ -1,10 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,9 +18,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,7 +49,7 @@ public class CRUDServiceImplTest {
 	private IridaJpaRepository<IdentifiableTestEntity, Long> crudRepository;
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	@SuppressWarnings("unchecked")
 	public void setUp() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -71,22 +71,26 @@ public class CRUDServiceImplTest {
 		}
 	}
 	
-	@Test(expected=EntityExistsException.class)
+	@Test
 	public void testCreateEntityExists(){
 		IdentifiableTestEntity i = new IdentifiableTestEntity();
 		i.setId(1L);
 		
 		when(crudRepository.existsById(1L)).thenReturn(true);
-		crudService.create(i);
+		assertThrows(EntityExistsException.class, () -> {
+			crudService.create(i);
+		});
 	}
 	
-	@Test(expected=EntityNotFoundException.class)
+	@Test
 	public void testUpdateNotExists(){
 		IdentifiableTestEntity i = new IdentifiableTestEntity();
 		i.setId(1L);
 		
 		when(crudRepository.existsById(1L)).thenReturn(false);
-		crudService.update(i);
+		assertThrows(EntityNotFoundException.class, () -> {
+			crudService.update(i);
+		});
 	}
 
 	@Test
@@ -140,14 +144,15 @@ public class CRUDServiceImplTest {
 		verify(crudRepository).save(ent2);
 	}
 
-	@Ignore
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testUpdateMissingEntity() {
 		Long id = 1L;
 		Map<String, Object> updatedProperties = new HashMap<>();
 		when(crudRepository.existsById(id)).thenReturn(Boolean.FALSE);
 
-		crudService.updateFields(id, updatedProperties);
+		assertThrows(EntityNotFoundException.class, () -> {
+			crudService.updateFields(id, updatedProperties);
+		});
 	}
 
 	@Test
@@ -257,22 +262,24 @@ public class CRUDServiceImplTest {
 		}
 	}
 
-	@Ignore
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testInvalidDelete() {
 		Long id = 1L;
 		when(crudRepository.existsById(id)).thenReturn(Boolean.FALSE);
 
-		crudService.delete(id);
+		assertThrows(EntityNotFoundException.class, () -> {
+			crudService.delete(id);
+		});
 	}
 
-	@Ignore
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testGetMissingEntity() {
 		Long id = 1L;
-		when(crudRepository.findById(id)).thenReturn(Optional.of(null));
+		when(crudRepository.findById(id)).thenReturn(Optional.empty());
 
-		crudService.read(id);
+		assertThrows(EntityNotFoundException.class, () -> {
+			crudService.read(id);
+		});
 	}
 
 	@Test

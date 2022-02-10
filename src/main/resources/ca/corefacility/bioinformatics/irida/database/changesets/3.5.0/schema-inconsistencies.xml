@@ -75,8 +75,6 @@
 		<dropUniqueConstraint tableName="sequence_file_properties" constraintName="UK_SEQUENCE_FILE_PROPERTY_KEY" />
 		<dropForeignKeyConstraint baseTableName="sequence_file_properties" constraintName="FK_SEQUENCE_FILE_PROPERTIES"/>
 		
-		<dropUniqueConstraint tableName="system_role" constraintName="UK_SYSTEM_ROLE_NAME"/>
-		
 		<dropForeignKeyConstraint baseTableName="client_details_auto_approvable_scope" constraintName="FK_CLIENT_DETAILS_AUTO_APPROVABLE_SCOPE" />
 		<dropPrimaryKey tableName="client_details_auto_approvable_scope"/>
 		<dropNotNullConstraint tableName="client_details_auto_approvable_scope" columnName="auto_approvable_scope" columnDataType="varchar(255)"/>

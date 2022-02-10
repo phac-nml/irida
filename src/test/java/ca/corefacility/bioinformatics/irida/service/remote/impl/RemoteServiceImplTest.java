@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -19,7 +20,7 @@ public class RemoteServiceImplTest {
 	RemoteAPIRepository apiRepo;
 
 	@SuppressWarnings("unchecked")
-	@Before
+	@BeforeEach
 	public void setUp() {
 		repository = mock(RemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
@@ -63,11 +64,13 @@ public class RemoteServiceImplTest {
 		verify(repository).read(uri, remoteAPI);
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testReadWithoutApiNotExists() {
 		String uri = "http://resource";
 
-		service.read(uri);
+		assertThrows(EntityNotFoundException.class, () -> {
+			service.read(uri);
+		});
 		when(apiRepo.getRemoteAPIForUrl(uri)).thenReturn(null);
 	}
 

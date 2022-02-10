@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,8 +13,8 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 
@@ -21,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
@@ -36,7 +36,7 @@ public class OAuthTokenRestTemplateTest {
 	private RemoteAPI remoteAPI;
 	private URI serviceURI;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws URISyntaxException {
 		tokenService = mock(RemoteAPITokenService.class);
 		serviceURI = new URI("http://uri");
@@ -60,19 +60,23 @@ public class OAuthTokenRestTemplateTest {
 		assertTrue(list.contains("Bearer " + tokenString));
 	}
 
-	@Test(expected = IridaOAuthException.class)
+	@Test
 	public void testCreateRequestExpiredToken() throws URISyntaxException, IOException {
 		String tokenString = "token111111";
 		RemoteAPIToken token = new RemoteAPIToken(tokenString, remoteAPI, new Date(System.currentTimeMillis() - 10000));
 		when(tokenService.getToken(remoteAPI)).thenReturn(token);
 
-		restTemplate.createRequest(serviceURI, HttpMethod.GET);
+		assertThrows(IridaOAuthException.class, () -> {
+			restTemplate.createRequest(serviceURI, HttpMethod.GET);
+		});
 	}
 
-	@Test(expected = IridaOAuthException.class)
+	@Test
 	public void testCreateRequestNoToken() throws URISyntaxException, IOException {
 		when(tokenService.getToken(remoteAPI)).thenThrow(new EntityNotFoundException("no token for this service"));
 
-		restTemplate.createRequest(serviceURI, HttpMethod.GET);
+		assertThrows(IridaOAuthException.class, () -> {
+			restTemplate.createRequest(serviceURI, HttpMethod.GET);
+		});
 	}
 }

@@ -4,11 +4,11 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * IT for the client details page
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 public class CreateClientPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateClientPage page;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new CreateClientPage(driver());
@@ -45,7 +45,7 @@ public class CreateClientPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testCreateClientWithSpace() {
 		page.createClientWithDetails("newClient ", "password", null, true, false);
-		assertFalse("should have failed due to space", page.checkSuccess());
+		assertFalse(page.checkSuccess(), "should have failed due to space");
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class CreateClientPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testCreateAuthCodeClientWithoutRedirect() {
 		page.createClientWithDetails("newClient", "authorization_code", null, true, false);
-		assertFalse("should have failed due to no redirect URI", page.checkSuccess());
+		assertFalse(page.checkSuccess(), "should have failed due to no redirect URI");
 	}
 
 }

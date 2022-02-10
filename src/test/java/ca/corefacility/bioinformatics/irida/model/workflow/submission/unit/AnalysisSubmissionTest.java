@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -37,30 +37,33 @@ public class AnalysisSubmissionTest {
 	public void testBuildWithNamedParameters() {
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
 				.withNamedParameters(namedParameters).inputFiles(Sets.newHashSet(singleEndFile)).build();
-		assertEquals("analysis submission should have a reference to the specified named parameters.", inputParameters,
-				submission.getInputParameters());
+		assertEquals(inputParameters, submission.getInputParameters(),
+				"analysis submission should have a reference to the specified named parameters.");
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void testBuildWithNamedParametersThenOthers() {
 		// disallow adding or changing input parameters after we've elected to
 		// use named parameters.
-		AnalysisSubmission.builder(workflowId).withNamedParameters(namedParameters)
-				.inputFiles(Sets.newHashSet(singleEndFile)).inputParameter("something", "crazy");
+		assertThrows(UnsupportedOperationException.class, () -> {
+			AnalysisSubmission.builder(workflowId).withNamedParameters(namedParameters)
+					.inputFiles(Sets.newHashSet(singleEndFile)).inputParameter("something", "crazy");
+		});
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void testBuildWithNamedParametersThenOthersMap() {
-		AnalysisSubmission.builder(workflowId).withNamedParameters(namedParameters)
-				.inputFiles(Sets.newHashSet(singleEndFile)).inputParameters(inputParameters);
+		assertThrows(UnsupportedOperationException.class, () -> {
+			AnalysisSubmission.builder(workflowId).withNamedParameters(namedParameters)
+					.inputFiles(Sets.newHashSet(singleEndFile)).inputParameters(inputParameters);
+		});
 	}
 
 	@Test
 	public void testBuildSuccess() {
-		assertNotNull(
-				"analysis submission is null",
-				AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
-						.inputFiles(Sets.newHashSet(singleEndFile)).inputParameters(inputParameters).build());
+		assertNotNull(AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
+						.inputFiles(Sets.newHashSet(singleEndFile)).inputParameters(inputParameters).build(),
+				"analysis submission is null");
 	}
 
 	@Test
@@ -68,66 +71,88 @@ public class AnalysisSubmissionTest {
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("name")
 				.referenceFile(referenceFile).inputFiles(Sets.newHashSet(singleEndFile))
 				.inputParameter("name", "value").inputParameter("name2", "value2").build();
-		assertEquals("input parameter \"name\" not correct", "value", submission.getInputParameters().get("name"));
-		assertEquals("input parameter \"name2\" not correct", "value2", submission.getInputParameters().get("name2"));
+		assertEquals("value", submission.getInputParameters().get("name"), "input parameter \"name\" not correct");
+		assertEquals("value2", submission.getInputParameters().get("name2"), "input parameter \"name2\" not correct");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testIndividualInputParameterDuplicateFail() {
-		AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
-				.inputFiles(Sets.newHashSet(singleEndFile)).inputParameter("name", "value")
-				.inputParameter("name", "value2").build();
+		assertThrows(IllegalArgumentException.class, () -> {
+			AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
+					.inputFiles(Sets.newHashSet(singleEndFile)).inputParameter("name", "value")
+					.inputParameter("name", "value2").build();
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNullinputFilesSingle() {
-		AnalysisSubmission.builder(workflowId).inputFiles(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			AnalysisSubmission.builder(workflowId).inputFiles(null).build();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testEmptyinputFilesSingle() {
-		AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet()).build();
+		assertThrows(IllegalArgumentException.class, () -> {
+			AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet()).build();
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNullinputFilesPaired() {
-		AnalysisSubmission.builder(workflowId).inputFiles(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			AnalysisSubmission.builder(workflowId).inputFiles(null).build();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testEmptyinputFilesPaired() {
-		AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet()).build();
+		assertThrows(IllegalArgumentException.class, () -> {
+			AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet()).build();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNoInputFiles() {
-		AnalysisSubmission.builder(workflowId).build();
+		assertThrows(IllegalArgumentException.class, () -> {
+			AnalysisSubmission.builder(workflowId).build();
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNullReferenceFile() {
-		AnalysisSubmission.builder(workflowId).referenceFile(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			AnalysisSubmission.builder(workflowId).referenceFile(null).build();
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNullWorkflowId() {
-		AnalysisSubmission.builder(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			AnalysisSubmission.builder(null).build();
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNullName() {
-		AnalysisSubmission.builder(workflowId).name(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			AnalysisSubmission.builder(workflowId).name(null).build();
+		});
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNullInputParameters() {
-		AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet(singleEndFile))
-				.inputParameters(null).build();
+		assertThrows(NullPointerException.class, () -> {
+			AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet(singleEndFile))
+					.inputParameters(null).build();
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testEmptyInputParameters() {
-		AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet(singleEndFile))
-				.inputParameters(ImmutableMap.of()).build();
+		assertThrows(IllegalArgumentException.class, () -> {
+			AnalysisSubmission.builder(workflowId).inputFiles(Sets.newHashSet(singleEndFile))
+					.inputParameters(ImmutableMap.of()).build();
+		});
 	}
 }

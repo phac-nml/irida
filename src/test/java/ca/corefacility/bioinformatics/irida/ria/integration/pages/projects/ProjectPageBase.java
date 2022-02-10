@@ -13,11 +13,18 @@ public class ProjectPageBase extends AbstractPage {
 	@FindBy(css = ".ant-menu li.ant-menu-item-selected a")
 	private WebElement activePageTab;
 
+	@FindBy(className = "t-project-name")
+	private WebElement projectName;
+
 	public ProjectPageBase(WebDriver driver) {
 		super(driver);
 	}
 
 	public String getActivePage() {
 		return activePageTab.getText();
+	}
+
+	public String getProjectName() {
+		return projectName.getText();
 	}
 }

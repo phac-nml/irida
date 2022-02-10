@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -30,9 +28,9 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -54,20 +52,18 @@ public class ProjectsControllerTest {
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
-	private UpdateSamplePermission updateSamplePermission;
 	private MessageSource messageSource;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		updateSamplePermission = mock(UpdateSamplePermission.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService,
-				updateSamplePermission, messageSource);
+				messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -82,12 +78,9 @@ public class ProjectsControllerTest {
 
 	@Test
 	public void testGetSpecificProjectPage() {
-		Model model = new ExtendedModelMap();
-		Long projectId = 1L;
-		Principal principal = () -> USER_NAME;
 		List<Join<Project, User>> projects = getProjectsForUser();
-		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER)).thenReturn(
-				getUsersForProjectByRole());
+		when(userService.getUsersForProjectByRole(getProject(), ProjectRole.PROJECT_OWNER))
+				.thenReturn(getUsersForProjectByRole());
 		when(projectService.getProjectsForUser(user)).thenReturn(projects);
 		when(projectService.getRelatedProjects(getProject())).thenReturn(getRelatedProjectJoin(projects));
 	}

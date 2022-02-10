@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -18,21 +18,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
@@ -45,351 +36,366 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 /**
  * Integration tests for testing out Announcements
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-        IridaApiJdbcDataSourceConfig.class })
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-        WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/AnnouncementServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 
 public class AnnouncementServiceImplIT {
 
-    @Autowired
-    private AnnouncementService announcementService;
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private AnnouncementService announcementService;
+	@Autowired
+	private UserService userService;
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testCreateAnnouncementAsAdmin() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        Announcement an = new Announcement("This is a message title", "This is a message", false, user);
-        try {
-            announcementService.create(an);
-        } catch (AccessDeniedException e) {
-            fail("Admin should be able to create a new announcement.");
-        } catch (Exception e) {
-            fail("Failed for unknown reason, stack trace follows: ");
-            e.printStackTrace();
-        }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testCreateAnnouncementAsAdmin() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		Announcement an = new Announcement("This is a message title", "This is a message", false, user);
+		try {
+			announcementService.create(an);
+		} catch (AccessDeniedException e) {
+			fail("Admin should be able to create a new announcement.");
+		} catch (Exception e) {
+			fail("Failed for unknown reason, stack trace follows: ");
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    @Test(expected = AccessDeniedException.class)
-    @WithMockUser(username = "user", roles = "USER")
-    public void testCreateAnnouncementNotAdmin() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        announcementService.create(new Announcement("This is a message title", "This is a message", false, user));
-    }
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testCreateAnnouncementNotAdmin() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testDeleteAnnouncementAsAdminSuccess() {
-        try {
-            announcementService.delete(1L);
-        } catch (EntityNotFoundException e) {
-            fail("Admin trying to delete announcement that doesn't exist.");
-        }
-    }
+		assertThrows(AccessDeniedException.class, () -> {
+			announcementService.create(new Announcement("This is a message title", "This is a message", false, user));
+		});
+	}
 
-    @Test(expected = AccessDeniedException.class)
-    @WithMockUser(username = "user", roles = "USER")
-    public void testDeleteAnnouncementAsUserFail() {
-        announcementService.delete(1L);
-    }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testDeleteAnnouncementAsAdminSuccess() {
+		try {
+			announcementService.delete(1L);
+		} catch (EntityNotFoundException e) {
+			fail("Admin trying to delete announcement that doesn't exist.");
+		}
+	}
 
-    @Test (expected = EntityNotFoundException.class)
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testDeleteAnnouncementNotExists() {
-        announcementService.delete(100L);
-    }
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testDeleteAnnouncementAsUserFail() {
+		assertThrows(AccessDeniedException.class, () -> {
+			announcementService.delete(1L);
+		});
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testUpdateAnnouncementAsAdminSuccess() {
-        Announcement announcement = announcementService.read(1L);
-        final String newMessage = "A new message";
-        announcement.setMessage(newMessage);
-        announcement = announcementService.update(announcement);
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testDeleteAnnouncementNotExists() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			announcementService.delete(100L);
+		});
+	}
 
-        assertEquals("Message content doesn't match", newMessage, announcement.getMessage());
-    }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testUpdateAnnouncementAsAdminSuccess() {
+		Announcement announcement = announcementService.read(1L);
+		final String newMessage = "A new message";
+		announcement.setMessage(newMessage);
+		announcement = announcementService.update(announcement);
 
-    @Test(expected = AccessDeniedException.class)
-    @WithMockUser(username = "user", roles = "USER")
-    public void testUpdateAnnouncementAsUserFail() {
-        final Announcement a = announcementService.read(1L);
-        announcementService.update(a);
-    }
+		assertEquals(newMessage, announcement.getMessage(), "Message content doesn't match");
+	}
 
-    @Test (expected = InvalidDataAccessApiUsageException.class)
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testUpdateAnnouncementNotExists() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        final Announcement a = new Announcement("Doesn't exist", "Doesn't exist", false, user);
-        announcementService.update(a);
-    }
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testUpdateAnnouncementAsUserFail() {
+		final Announcement a = announcementService.read(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			announcementService.update(a);
+		});
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testGetSingleAnnouncementById() {
-        Announcement a = announcementService.read(3L);
-        Long idExpected = 3L;
-        String messageExpected = "You cannot have your cake and eat it too.";
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testUpdateAnnouncementNotExists() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		final Announcement a = new Announcement("Doesn't exist", "Doesn't exist", false, user);
+		assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+			announcementService.update(a);
+		});
+	}
 
-        assertEquals("IDs for announcement doesn't match", idExpected, a.getId());
-        assertEquals("Announcement message content doesn't match expected", messageExpected, a.getMessage());
-    }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetSingleAnnouncementById() {
+		Announcement a = announcementService.read(3L);
+		Long idExpected = 3L;
+		String messageExpected = "You cannot have your cake and eat it too.";
 
-    @Test(expected = EntityNotFoundException.class)
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testGetAnnouncementNotExist() {
-        announcementService.read(800L);
-    }
+		assertEquals(idExpected, a.getId(), "IDs for announcement doesn't match");
+		assertEquals(messageExpected, a.getMessage(), "Announcement message content doesn't match expected");
+	}
 
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    public void testSearchReturnsExistingAnnouncement() {
-        String searchString = "Downtime";
-        Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetAnnouncementNotExist() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			announcementService.read(800L);
+		});
+	}
+
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testSearchReturnsExistingAnnouncement() {
+		String searchString = "Downtime";
+		Page<Announcement> searchAnnouncement = announcementService.search(
+				AnnouncementSpecification.searchAnnouncement(searchString),
 				PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")));
-		assertEquals("Unexpected number of announcements returned", 2, searchAnnouncement.getContent().size());
-        for(Announcement a : searchAnnouncement) {
-            assertTrue(a.getMessage().contains(searchString));
-        }
-    }
+		assertEquals(2, searchAnnouncement.getContent().size(), "Unexpected number of announcements returned");
+		for (Announcement a : searchAnnouncement) {
+			assertTrue(a.getMessage().contains(searchString));
+		}
+	}
 
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    public void testSearchReturnsNoResults() {
-        String searchString = "ThisShouldn'tMatchAnything!!";
-        Page<Announcement> searchAnnouncement = announcementService.search(AnnouncementSpecification.searchAnnouncement(searchString),
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testSearchReturnsNoResults() {
+		String searchString = "ThisShouldn'tMatchAnything!!";
+		Page<Announcement> searchAnnouncement = announcementService.search(
+				AnnouncementSpecification.searchAnnouncement(searchString),
 				PageRequest.of(1, 10, Sort.by(Sort.Direction.ASC, "id")));
-		assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
-    }
+		assertEquals(0, searchAnnouncement.getContent().size(), "Unexpected number of announcements returned");
+	}
 
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    public void testSearchNullSearchString() {
-		Page<Announcement> searchAnnouncement = announcementService
-				.search(AnnouncementSpecification.searchAnnouncement(null),
-						PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")));
-		assertEquals("Unexpected number of announcements returned", 0, searchAnnouncement.getContent().size());
-    }
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testSearchNullSearchString() {
+		Page<Announcement> searchAnnouncement = announcementService.search(
+				AnnouncementSpecification.searchAnnouncement(null),
+				PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id")));
+		assertEquals(0, searchAnnouncement.getContent().size(), "Unexpected number of announcements returned");
+	}
 
-    @Test
-    @WithMockUser(username = "user3", roles = "USER")
-    public void testUserMarkAnnouncementAsReadSuccess() {
-        final Announcement a = announcementService.read(2L);
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        try {
-            announcementService.markAnnouncementAsReadByUser(a, user);
-        } catch (AccessDeniedException e) {
-            fail("User should be able able to mark announcement as read.");
-        } catch (EntityExistsException e) {
-            fail("Failed for unknown reason, stack trace follows:");
-            e.printStackTrace();
-        }
+	@Test
+	@WithMockUser(username = "user3", roles = "USER")
+	public void testUserMarkAnnouncementAsReadSuccess() {
+		final Announcement a = announcementService.read(2L);
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		try {
+			announcementService.markAnnouncementAsReadByUser(a, user);
+		} catch (AccessDeniedException e) {
+			fail("User should be able able to mark announcement as read.");
+		} catch (EntityExistsException e) {
+			fail("Failed for unknown reason, stack trace follows:");
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    @Test (expected = EntityExistsException.class)
-    @WithMockUser(username = "user", roles = "USER")
-    public void testUserMarkAnnouncementAsReadFailed() {
-        final Announcement a = announcementService.read(1L);
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        announcementService.markAnnouncementAsReadByUser(a, user);
-    }
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testUserMarkAnnouncementAsReadFailed() {
+		final Announcement a = announcementService.read(1L);
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		assertThrows(EntityExistsException.class, () -> {
+			announcementService.markAnnouncementAsReadByUser(a, user);
+		});
+	}
 
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    public void testMarkAnnouncementAsUnreadSuccess() {
-        final Announcement a = announcementService.read(1L);
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        announcementService.markAnnouncementAsUnreadByUser(a, user);
-    }
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testMarkAnnouncementAsUnreadSuccess() {
+		final Announcement a = announcementService.read(1L);
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		announcementService.markAnnouncementAsUnreadByUser(a, user);
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testMarkAnnouncementAsUnreadForOtherUser() {
-        final Announcement a1 = announcementService.read(1L);
-        final Announcement a2 = announcementService.read(2L);
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testMarkAnnouncementAsUnreadForOtherUser() {
+		final Announcement a1 = announcementService.read(1L);
+		final Announcement a2 = announcementService.read(2L);
 
-        final User user = userService.getUserByUsername("user");
+		final User user = userService.getUserByUsername("user");
 
-        //for checking whether announcements or users have been incorrectly deleted from the database
+		// for checking whether announcements or users have been incorrectly
+		// deleted from the database
 
-        final int numUsersBefore = Lists.newArrayList(userService.findAll()).size();
-        final int numAnnsBefore = announcementService.getAllAnnouncements().size();
+		final int numUsersBefore = Lists.newArrayList(userService.findAll()).size();
+		final int numAnnsBefore = announcementService.getAllAnnouncements().size();
 
-        announcementService.markAnnouncementAsUnreadByUser(a1, user);
-        announcementService.markAnnouncementAsUnreadByUser(a2, user);
+		announcementService.markAnnouncementAsUnreadByUser(a1, user);
+		announcementService.markAnnouncementAsUnreadByUser(a2, user);
 
-        final int numUsersAfter = Lists.newArrayList(userService.findAll()).size();
-        final int numAnnsAfter = announcementService.getAllAnnouncements().size();
+		final int numUsersAfter = Lists.newArrayList(userService.findAll()).size();
+		final int numAnnsAfter = announcementService.getAllAnnouncements().size();
 
-        assertEquals("User was incorrectly modified/deleted", numUsersBefore, numUsersAfter);
-        assertEquals("Announcement was incorrectly modified/deleted", numAnnsBefore, numAnnsAfter);
+		assertEquals(numUsersBefore, numUsersAfter, "User was incorrectly modified/deleted");
+		assertEquals(numAnnsBefore, numAnnsAfter, "Announcement was incorrectly modified/deleted");
 
-    }
+	}
 
-    @Test (expected = EntityNotFoundException.class)
-    @WithMockUser(username = "user3", roles = "USER")
-    public void testMarkAnnouncementAsUnreadFailed() {
-        final Announcement a = announcementService.read(1L);
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        announcementService.markAnnouncementAsUnreadByUser(a, user);
-    }
+	@Test
+	@WithMockUser(username = "user3", roles = "USER")
+	public void testMarkAnnouncementAsUnreadFailed() {
+		final Announcement a = announcementService.read(1L);
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		assertThrows(EntityNotFoundException.class, () -> {
+			announcementService.markAnnouncementAsUnreadByUser(a, user);
+		});
+	}
 
-    @Test
-    @WithMockUser (username = "admin", roles = "ADMIN")
-    public void testGetReadUsersForAnnouncement() {
-        List<AnnouncementUserJoin> list = announcementService.getReadUsersForAnnouncement(announcementService.read(1L));
-        assertEquals("Number of read users was unexpected", 4, list.size());
-    }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetReadUsersForAnnouncement() {
+		List<AnnouncementUserJoin> list = announcementService.getReadUsersForAnnouncement(announcementService.read(1L));
+		assertEquals(4, list.size(), "Number of read users was unexpected");
+	}
 
-    @Test
-    @WithMockUser (username = "admin", roles = "ADMIN")
-    public void testGetUnreadUsersForAnnouncement() {
-        List<User> list = announcementService.getUnreadUsersForAnnouncement(announcementService.read(1L));
-        assertEquals("Number of unread users was unexpected", 2, list.size());
-    }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUnreadUsersForAnnouncement() {
+		List<User> list = announcementService.getUnreadUsersForAnnouncement(announcementService.read(1L));
+		assertEquals(2, list.size(), "Number of unread users was unexpected");
+	}
 
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    public void testAnnouncementsForUser() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testAnnouncementsForUser() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
 
-        List<AnnouncementUserReadDetails> list = announcementService.getAnnouncementsForUser(user);
-        assertEquals("Number of read and unread announcements doesn't match expected value", 6, list.size());
+		List<AnnouncementUserReadDetails> list = announcementService.getAnnouncementsForUser(user);
+		assertEquals(6, list.size(), "Number of read and unread announcements doesn't match expected value");
 
-        Long readListCount = list.stream().filter(a -> a.isRead()).count();
-        assertEquals("Number of unread announcements doesn't match expected value", 5L, (long) readListCount);
-    }
+		Long readListCount = list.stream().filter(a -> a.isRead()).count();
+		assertEquals(5L, (long) readListCount, "Number of unread announcements doesn't match expected value");
+	}
 
-    @Test
-    @WithMockUser(username = "user", roles = "USER")
-    public void testGetReadAnnouncementsForUser() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        List<AnnouncementUserJoin> readList = announcementService.getReadAnnouncementsForUser(user);
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testGetReadAnnouncementsForUser() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		List<AnnouncementUserJoin> readList = announcementService.getReadAnnouncementsForUser(user);
 
-        assertEquals("Number of read announcements doesn't match expected value", 5, readList.size());
-    }
+		assertEquals(5, readList.size(), "Number of read announcements doesn't match expected value");
+	}
 
-    @Test
-    @WithMockUser(username = "user3", roles = "USER")
-    public void testGetUnreadAnnouncementsForUser() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user);
+	@Test
+	@WithMockUser(username = "user3", roles = "USER")
+	public void testGetUnreadAnnouncementsForUser() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		List<Announcement> announcementList = announcementService.getUnreadAnnouncementsForUser(user);
 
-        assertEquals("Number of unread announcements doesn't match expected value", 6, announcementList.size());
+		assertEquals(6, announcementList.size(), "Number of unread announcements doesn't match expected value");
 
-        Announcement ann = announcementService.read(6L);
-        announcementService.markAnnouncementAsReadByUser(ann, user);
-        announcementList = announcementService.getUnreadAnnouncementsForUser(user);
+		Announcement ann = announcementService.read(6L);
+		announcementService.markAnnouncementAsReadByUser(ann, user);
+		announcementList = announcementService.getUnreadAnnouncementsForUser(user);
 
-        assertEquals("Number of unread announcements doesn't match expected value", 5, announcementList.size());
-    }
+		assertEquals(5, announcementList.size(), "Number of unread announcements doesn't match expected value");
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testGetAllAnnouncements() {
-        List<Announcement> announcementList = announcementService.getAllAnnouncements();
-        assertEquals("Unexpected total number of announcements, ", 6, announcementList.size());
-    }
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetAllAnnouncements() {
+		List<Announcement> announcementList = announcementService.getAllAnnouncements();
+		assertEquals(6, announcementList.size(), "Unexpected total number of announcements, ");
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testGetAnnouncementsCreatedByAdmin() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final User user = userService.getUserByUsername(auth.getName());
-        List<Announcement> announcements = announcementService.getAnnouncementsCreatedByUser(user);
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetAnnouncementsCreatedByAdmin() {
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		final User user = userService.getUserByUsername(auth.getName());
+		List<Announcement> announcements = announcementService.getAnnouncementsCreatedByUser(user);
 
-        for (Announcement a: announcements) {
-            assertEquals("Announcement was not created by the selected user", user, a.getUser());
-        }
+		for (Announcement a : announcements) {
+			assertEquals(user, a.getUser(), "Announcement was not created by the selected user");
+		}
 
-        int beforeSize = announcements.size();
+		int beforeSize = announcements.size();
 
-        announcementService.create(new Announcement("First message", "The newest announcement", false, user));
-        announcementService.create(new Announcement("Second message", "No, this is the newest one!", false, user));
+		announcementService.create(new Announcement("First message", "The newest announcement", false, user));
+		announcementService.create(new Announcement("Second message", "No, this is the newest one!", false, user));
 
-        assertEquals("Number of announcements doesn't match", beforeSize + 2,
-                announcementService.getAnnouncementsCreatedByUser(user).size());
+		assertEquals(beforeSize + 2, announcementService.getAnnouncementsCreatedByUser(user).size(),
+				"Number of announcements doesn't match");
 
-        announcementService.delete(1L);
+		announcementService.delete(1L);
 
-        assertEquals("Number of announcements doesn't match", beforeSize + 1,
-                announcementService.getAnnouncementsCreatedByUser(user).size());
+		assertEquals(beforeSize + 1, announcementService.getAnnouncementsCreatedByUser(user).size(),
+				"Number of announcements doesn't match");
 
-        announcementService.create(new Announcement("Third message", "Someone else made me do it!", false,
-                userService.getUserByUsername("admin2")));
+		announcementService.create(new Announcement("Third message", "Someone else made me do it!", false,
+				userService.getUserByUsername("admin2")));
 
-        announcements = announcementService.getAnnouncementsCreatedByUser(user);
+		announcements = announcementService.getAnnouncementsCreatedByUser(user);
 
-        for (Announcement a: announcements) {
-            assertEquals("Announcement was not created by the selected user", user, a.getUser());
-        }
-    }
+		for (Announcement a : announcements) {
+			assertEquals(user, a.getUser(), "Announcement was not created by the selected user");
+		}
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testGetReadCountsForSingleAnnouncements() {
-        Long count1 = announcementService.countReadsForOneAnnouncement(announcementService.read(1L));
-        Long count2 = announcementService.countReadsForOneAnnouncement(announcementService.read(2L));
-        Long count3 = announcementService.countReadsForOneAnnouncement(announcementService.read(3L));
-        Long count4 = announcementService.countReadsForOneAnnouncement(announcementService.read(4L));
-        Long count5 = announcementService.countReadsForOneAnnouncement(announcementService.read(5L));
-        Long count6 = announcementService.countReadsForOneAnnouncement(announcementService.read(6L));
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetReadCountsForSingleAnnouncements() {
+		Long count1 = announcementService.countReadsForOneAnnouncement(announcementService.read(1L));
+		Long count2 = announcementService.countReadsForOneAnnouncement(announcementService.read(2L));
+		Long count3 = announcementService.countReadsForOneAnnouncement(announcementService.read(3L));
+		Long count4 = announcementService.countReadsForOneAnnouncement(announcementService.read(4L));
+		Long count5 = announcementService.countReadsForOneAnnouncement(announcementService.read(5L));
+		Long count6 = announcementService.countReadsForOneAnnouncement(announcementService.read(6L));
 
-        assertEquals("Number of reads for announcement doesn't match", 4L, (long) count1);
-        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count2);
-        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count3);
-        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count4);
-        assertEquals("Number of reads for announcement doesn't match", 1L, (long) count5);
-        assertEquals("Number of reads for announcement doesn't match", 0, (long) count6);
+		assertEquals(4L, (long) count1, "Number of reads for announcement doesn't match");
+		assertEquals(1L, (long) count2, "Number of reads for announcement doesn't match");
+		assertEquals(1L, (long) count3, "Number of reads for announcement doesn't match");
+		assertEquals(1L, (long) count4, "Number of reads for announcement doesn't match");
+		assertEquals(1L, (long) count5, "Number of reads for announcement doesn't match");
+		assertEquals(0, (long) count6, "Number of reads for announcement doesn't match");
 
-        announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(1L));
-        announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(2L));
-        announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(3L));
+		announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(1L));
+		announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(2L));
+		announcementService.markAnnouncementAsReadByUser(announcementService.read(6L), userService.read(3L));
 
-        Long newCount = announcementService.countReadsForOneAnnouncement(announcementService.read(6L));
+		Long newCount = announcementService.countReadsForOneAnnouncement(announcementService.read(6L));
 
-        assertEquals("Number of reads for announcement doesn't match", 3L, (long) newCount);
-    }
+		assertEquals(3L, (long) newCount, "Number of reads for announcement doesn't match");
+	}
 
-    @Test
-    @WithMockUser(username = "admin", roles = "ADMIN")
-    public void testCountReadUsersForAnnouncements() {
-        Map<Announcement, Long> counts = announcementService.countReadsForAllAnnouncements();
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testCountReadUsersForAnnouncements() {
+		Map<Announcement, Long> counts = announcementService.countReadsForAllAnnouncements();
 
-        Set<Announcement> announcements = counts.keySet();
+		Set<Announcement> announcements = counts.keySet();
 
-        String failMessage = "Announcement count doesn't match";
+		String failMessage = "Announcement count doesn't match";
 
-        for (Announcement a: announcements) {
-            Long id = a.getId();
-            if (id == 1) {
-                assertEquals(failMessage, Long.valueOf(4), counts.get(a));
-            } else if (id >= 2 && id <= 5) {
-                assertEquals(failMessage, Long.valueOf(1), counts.get(a));
-            } else if (id == 6) {
-                assertEquals(failMessage, Long.valueOf(0), counts.get(a));
-            } else {
-                fail("Error in counting, this announcement shouldn't be counted");
-            }
-        }
-    }
+		for (Announcement a : announcements) {
+			Long id = a.getId();
+			if (id == 1) {
+				assertEquals(Long.valueOf(4), counts.get(a), failMessage);
+			} else if (id >= 2 && id <= 5) {
+				assertEquals(Long.valueOf(1), counts.get(a), failMessage);
+			} else if (id == 6) {
+				assertEquals(Long.valueOf(0), counts.get(a), failMessage);
+			} else {
+				fail("Error in counting, this announcement shouldn't be counted");
+			}
+		}
+	}
 }

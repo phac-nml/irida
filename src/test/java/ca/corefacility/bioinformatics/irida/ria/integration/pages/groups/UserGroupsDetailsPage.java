@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -62,7 +61,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		wait.until(ExpectedConditions.elementToBeClickable(editNameBtn));
 		editNameBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(editNameInput));
-		editNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		editNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		editNameInput.sendKeys(name);
 		editNameInput.sendKeys(Keys.ENTER);
 		wait.until(ExpectedConditions.textToBePresentInElement(groupName, name));

@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,9 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -64,7 +65,7 @@ public class SampleSequenceFilesControllerTest {
 	private AnalysisService analysisService;
 	private SequencingRun sequencingRun;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		miseqRunService = mock(SequencingRunService.class);
@@ -216,7 +217,7 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull(qc.getLink(RESTSampleSequenceFilesController.REL_QC_SEQFILE));
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	public void testCantGetSequenceFileForOtherSample() {
 		Sample s = TestDataFactory.constructSample();
 
@@ -227,7 +228,9 @@ public class SampleSequenceFilesControllerTest {
 		when(sequencingObjectService.readSequencingObjectForSample(s, objectId)).thenThrow(
 				new EntityNotFoundException("not in sample"));
 
-		controller.readSequenceFileForSequencingObject(s.getId(), "unpaired", objectId, fileId);
+		assertThrows(EntityNotFoundException.class, () -> {
+			controller.readSequenceFileForSequencingObject(s.getId(), "unpaired", objectId, fileId);
+		});
 	}
 
 	@Test
@@ -245,7 +248,7 @@ public class SampleSequenceFilesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
@@ -256,34 +259,33 @@ public class SampleSequenceFilesControllerTest {
 		verify(sampleService).read(s.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequencingObjectService).createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s));
+				ArgumentMatchers.eq(s));
 
 		SequenceFile sfr = responseResource.getResource();
-		assertNotNull("sequence file must not be null", sfr);
+		assertNotNull(sfr, "sequence file must not be null");
 
-		assertEquals("response must have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
+		assertEquals(HttpStatus.CREATED.value(), response.getStatus(), "response must have CREATED status");
 		Link self = sfr.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES).map(i -> i).orElse(null);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/unpaired/" + so.getIdentifier() + "/files/" + sf.getId();
-		assertNotNull("self reference must exist", self);
-		assertEquals("self reference must be correct", sequenceFileLocation, self.getHref());
-		assertNotNull("sequence files link must exist", sampleSequenceFiles);
-		assertEquals("sequence files location must be correct", sampleLocation + "/sequenceFiles",
-				sampleSequenceFiles.getHref());
-		assertNotNull("sample link must exist", sample);
-		assertEquals("sample location must be correct", sampleLocation, sample.getHref());
+		assertNotNull(self, "self reference must exist");
+		assertEquals(sequenceFileLocation, self.getHref(), "self reference must be correct");
+		assertNotNull(sampleSequenceFiles, "sequence files link must exist");
+		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref(),
+				"sequence files location must be correct");
+		assertNotNull(sample, "sample link must exist");
+		assertEquals(sampleLocation, sample.getHref(), "sample location must be correct");
 
 		Files.delete(f);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddNewSequenceFileToSampleCompletedRun() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
 		SequenceFileResource resource = new SequenceFileResource();
@@ -294,20 +296,21 @@ public class SampleSequenceFilesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.COMPLETE);
 
-		controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+		assertThrows(IllegalArgumentException.class, () -> {
+			controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddNewSequenceFileToSampleErrorRun() throws IOException {
 		Sample s = TestDataFactory.constructSample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
-		SequenceFile sf = so.getSequenceFile();
 		SampleSequencingObjectJoin sso = new SampleSequencingObjectJoin(s, so);
 
 		SequenceFileResource resource = new SequenceFileResource();
@@ -318,13 +321,15 @@ public class SampleSequenceFilesControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequencingObjectService.createSequencingObjectInSample(any(SingleEndSequenceFile.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 		when(sequencingObjectService.read(so.getId())).thenReturn(so);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.ERROR);
 
-		controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+		assertThrows(IllegalArgumentException.class, () -> {
+			controller.addNewSequenceFileToSample(s.getId(), mmf, resource, response);
+		});
 	}
 
 	@Test
@@ -362,7 +367,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
@@ -372,10 +377,10 @@ public class SampleSequenceFilesControllerTest {
 				resource1, mmf2, resource2, response);
 
 		verify(sampleService).read(s.getId());
-		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), Matchers.eq(s));
+		verify(sequencingObjectService).createSequencingObjectInSample(any(SequenceFilePair.class), ArgumentMatchers.eq(s));
 
 		SequenceFilePair returnVal = (SequenceFilePair) responseResource.getResource();
-		assertNotNull("sequence file pair should not be null", returnVal);
+		assertNotNull(returnVal, "sequence file pair should not be null");
 
 		Link selfCollection = returnVal.getLink(IanaLinkRelations.SELF.value()).map(i -> i).orElse(null);
 		Link sampleRC = returnVal.getLink(RESTSampleSequenceFilesController.REL_SAMPLE).map(i -> i).orElse(null);
@@ -383,10 +388,10 @@ public class SampleSequenceFilesControllerTest {
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
 		String pairLocation = sampleLocation + "/pairs/" + pair.getId();
-		assertEquals("Pair location should be correct", pairLocation, selfCollection.getHref());
-		assertEquals("Sample location should be correct", sampleLocation, sampleRC.getHref());
-		assertEquals("Sequence file location should be correct", sampleLocation + "/sequenceFiles",
-				sampleSequenceFiles.getHref());
+		assertEquals(pairLocation, selfCollection.getHref(), "Pair location should be correct");
+		assertEquals(sampleLocation, sampleRC.getHref(), "Sample location should be correct");
+		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref(),
+				"Sequence file location should be correct");
 
 		String sequenceFileLocation1 = pairLocation + "/files/" + sf1.getId();
 		String sequenceFileLocation2 = pairLocation + "/files/" + sf2.getId();
@@ -394,7 +399,7 @@ public class SampleSequenceFilesControllerTest {
 		String[] sequenceFileLocs = new String[] { sequenceFileLocation1, sequenceFileLocation2 };
 		String locationHeader = response.getHeader(HttpHeaders.LOCATION);
 
-		assertEquals("The location header should have the self rel", pairLocation, locationHeader);
+		assertEquals(pairLocation, locationHeader, "The location header should have the self rel");
 
 		Iterator<SequenceFile> filesIterator = returnVal.getFiles()
 				.iterator();
@@ -403,15 +408,15 @@ public class SampleSequenceFilesControllerTest {
 			SequenceFile returnedFile = filesIterator.next();
 			Link self = returnedFile.getLink(IanaLinkRelations.SELF.value()).map(l -> l).orElse(null);
 
-			assertNotNull("Self link should not be null", self);
-			assertEquals("Self reference should be correct", sequenceFileLocs[i], self.getHref());
+			assertNotNull(self, "Self link should not be null");
+			assertEquals(sequenceFileLocs[i], self.getHref(), "Self reference should be correct");
 		}
-		assertEquals("HTTP status must be CREATED", HttpStatus.CREATED.value(), response.getStatus());
+		assertEquals(HttpStatus.CREATED.value(), response.getStatus(), "HTTP status must be CREATED");
 		Files.delete(f1);
 		Files.delete(f2);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddNewSequenceFilePairToSampleMismatchedRunIDs() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
@@ -433,11 +438,13 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
-		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
+		assertThrows(IllegalArgumentException.class, () -> {
+			controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddNewSequenceFilePairToSampleCompletedRun() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
@@ -459,15 +466,17 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.COMPLETE);
-		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+		assertThrows(IllegalArgumentException.class, () -> {
+			controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testAddNewSequenceFilePairToSampleErrorRun() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
@@ -489,12 +498,14 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(new ProjectSampleJoin(p, s, true));
 
 		when(sequencingObjectService.createSequencingObjectInSample(any(SequenceFilePair.class),
-				Matchers.eq(s))).thenReturn(sso);
+				ArgumentMatchers.eq(s))).thenReturn(sso);
 
 		when(miseqRunService.read(any(long.class))).thenReturn(sequencingRun);
 
 		when(sequencingRun.getUploadStatus()).thenReturn(SequencingRunUploadStatus.ERROR);
-		controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+		assertThrows(IllegalArgumentException.class, () -> {
+			controller.addNewSequenceFilePairToSample(s.getId(), mmf1, resource1, mmf2, resource2, response);
+		});
 	}
 
 }
