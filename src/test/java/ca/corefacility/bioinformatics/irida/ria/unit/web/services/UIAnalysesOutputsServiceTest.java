@@ -82,13 +82,9 @@ public class UIAnalysesOutputsServiceTest {
 
 	@Test
 	public void getUserSingleAnalysisOutputs() {
-		User user = userService.getUserByUsername(principal.getName());
-		Authentication auth = new UsernamePasswordAuthenticationToken(user, null);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-
 		List<ProjectSampleAnalysisOutputInfo> userProjectSampleAnalysisOutputInfos = uiProjectAnalysesService.getUserSingleSampleOutputs();
 
-		verify(userService, times(2)).getUserByUsername(principal.getName());
+		verify(userService, times(1)).getUserByUsername(principal.getName());
 
 		verify(analysisSubmissionService, times(1)).getAllUserAnalysisOutputInfo(
 				userService.getUserByUsername(principal.getName()));
