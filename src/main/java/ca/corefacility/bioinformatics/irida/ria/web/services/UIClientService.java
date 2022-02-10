@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateUpdateClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
@@ -31,6 +31,11 @@ import com.google.common.collect.Sets;
 @Component
 public class UIClientService {
     private final IridaClientDetailsService clientDetailsService;
+
+    private final String AUTO_APPROVE = "auto";
+    private final String SCOPE_READ = "read";
+    private final String SCOPE_WRITE = "write";
+    private final String GRANT_TYPE_AUTH_CODE = "authorization_code";
 
     public UIClientService(IridaClientDetailsService clientDetailsService) {
         this.clientDetailsService = clientDetailsService;
@@ -84,11 +89,8 @@ public class UIClientService {
      * @throws EntityExistsException        thrown if the client id already is used.
      * @throws ConstraintViolationException thrown if the client id violates any of its constraints
      */
-    public Long createClient(CreateClientRequest request) throws EntityExistsException, ConstraintViolationException {
-        final String AUTO_APPROVE = "auto";
-        final String SCOPE_READ = "read";
-        final String SCOPE_WRITE = "write";
-        final String GRANT_TYPE_AUTH_CODE = "authorization_code";
+    public Long createClient(CreateUpdateClientDetails request)
+            throws EntityExistsException, ConstraintViolationException {
 
         IridaClientDetails client = new IridaClientDetails();
         client.setClientSecret(RandomStringUtils.randomAlphanumeric(42));
@@ -135,6 +137,10 @@ public class UIClientService {
 
         client = clientDetailsService.create(client);
         return client.getId();
+    }
+
+    public void editClient(CreateUpdateClientDetails request) {
+        IridaClientDetails client = clientDetailsService.read(request.getId());
     }
 
     /**
