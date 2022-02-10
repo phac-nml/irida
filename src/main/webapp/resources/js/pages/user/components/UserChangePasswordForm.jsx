@@ -28,8 +28,6 @@ export function UserChangePasswordForm({ userId }) {
     i18n("UserChangePasswordForm.alert.rule4"),
     i18n("UserChangePasswordForm.alert.rule5"),
     i18n("UserChangePasswordForm.alert.rule6"),
-    i18n("UserChangePasswordForm.alert.rule8"),
-    i18n("UserChangePasswordForm.alert.rule9"),
   ];
 
   const onFormFinish = (values) => {
