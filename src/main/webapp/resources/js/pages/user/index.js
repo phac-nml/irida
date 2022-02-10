@@ -30,7 +30,7 @@ render(
         <Routes>
           <Route path="/:userId" element={<UserAccountLayout />}>
             <Route index element={<UserDetailsPage />} />
-            <Route path="details" element={<UserDetailsPage />} />
+            <Route path="*" element={<UserDetailsPage />} />
             <Route path="projects" element={<UserProjectsPage />} />
             <Route path="security" element={<UserSecurityPage />} />
           </Route>
