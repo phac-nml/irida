@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -20,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 /**
@@ -237,7 +237,14 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try {
 			final RandomAccessFile randomAccessFile = new RandomAccessFile(file.toFile(), "r");
 			randomAccessFile.seek(seek);
-			return new FileChunkResponse(FileUtilities.readChunk(randomAccessFile, seek, chunk), randomAccessFile.getFilePointer());
+			String chunkResponse = "";
+			byte[] bytes = new byte[Math.toIntExact(chunk)];
+			final int bytesRead = randomAccessFile.read(bytes);
+			if (bytesRead > -1) {
+				chunkResponse = new String(bytes, 0, bytesRead, Charset.defaultCharset());
+			}
+
+			return new FileChunkResponse(chunkResponse, randomAccessFile.getFilePointer());
 		} catch (IOException e ) {
 			logger.error("Could not read output file ", e);
 		}

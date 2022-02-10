@@ -700,8 +700,7 @@ public class AnalysisAjaxController {
 			Path path = null;
 			if (analysis.getAnalysisOutputFile(sistrFileKey) != null) {
 				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
-
-				try(InputStream inputStream = iridaFileStorageUtility.getFileInputStream(path)) {
+				try(InputStream inputStream = analysis.getAnalysisOutputFile(sistrFileKey).getFileInputStream()) {
 					String json = new Scanner(inputStream).useDelimiter("\\Z")
 							.next();
 					// verify file is proper json file and map to a SistrResult list
