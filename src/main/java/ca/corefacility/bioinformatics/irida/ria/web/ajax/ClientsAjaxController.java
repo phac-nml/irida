@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateUpdateClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIClientService;
 
@@ -85,7 +86,7 @@ public class ClientsAjaxController {
 	 */
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<AjaxResponse> createClient(@RequestBody CreateClientRequest request, Locale locale) {
+	public ResponseEntity<AjaxResponse> createClient(@RequestBody CreateUpdateClientDetails request, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(service.createClient(request)));
 		} catch (Exception exception) {
@@ -93,6 +94,12 @@ public class ClientsAjaxController {
 					.body(new AjaxErrorResponse(messageSource.getMessage("server.AddClientForm.error",
 							new Object[] { request.getClientId() }, locale)));
 		}
+	}
+
+	@PutMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<AjaxResponse> updateClient(@RequestBody CreateUpdateClientDetails request) {
+		return ResponseEntity.ok(new AjaxSuccessResponse("YAY"));
 	}
 
 	@DeleteMapping

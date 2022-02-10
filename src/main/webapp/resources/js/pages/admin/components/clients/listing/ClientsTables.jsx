@@ -11,6 +11,7 @@ import {
 import {
   dateColumnFormat
 } from "../../../../../components/ant.design/table-renderers";
+import { AddClientModal } from "../add/AddClientModal";
 
 /**
  * Table for displaying a list of clients.
@@ -123,9 +124,11 @@ export function ClientsTable() {
                 {i18n("client.details.token.revoke")}
               </Button>
             </Popconfirm>
-            <Button type="link" size="small">
-              Edit
-            </Button>
+            <AddClientModal existing={record.details}>
+              <Button type="link" size="small">
+                {i18n("ClientsTable.edit")}
+              </Button>
+            </AddClientModal>
             <Popconfirm
               title={i18n("ClientsTable.column.remove-confirm")}
               placement="topRight"
