@@ -59,8 +59,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 * <p>
 	 * Create a bio_hansel {@link MetadataTemplate} for each {@link Project} of the {@link Sample} if one doesn't exist.
 	 *
-	 * @param samples  The sample to update (collection should only have one {@link Sample} object).
-	 * @param analysis Use the results from this {@link AnalysisSubmission} to update the {@link Sample} metadata.
+	 * @param  samples                 The sample to update (collection should only have one {@link Sample} object).
+	 * @param  analysis                Use the results from this {@link AnalysisSubmission} to update the {@link Sample}
+	 *                                 metadata.
 	 * @throws PostProcessingException if the updater could not complete its processing
 	 */
 	@Override
@@ -69,18 +70,16 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 			throw new PostProcessingException(
 					"Expected one sample; got '" + samples.size() + "' for analysis [id=" + analysis.getId() + "]");
 		}
-		final Sample sample = samples.iterator()
-				.next();
+		final Sample sample = samples.iterator().next();
 
-		AnalysisOutputFile aof = analysis.getAnalysis()
-				.getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
+		AnalysisOutputFile aof = analysis.getAnalysis().getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
 
 		Path filePath = aof.getFile();
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 		try {
-			@SuppressWarnings("resource") String jsonText = new Scanner(
-					new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
+			@SuppressWarnings("resource")
+			String jsonText = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
 					.next();
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> maps = mapper.readValue(jsonText, new TypeReference<List<Map<String, Object>>>() {
@@ -94,14 +93,13 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
 					if ((result.containsKey(key)) && (result.get(key) != null)) {
-						String value = result.get(key)
-								.toString();
+						String value = result.get(key).toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
 						stringEntries.put(formattedField, metadataEntry);
 					} else {
-						logger.warn("bio_hansel output file '" + filePath.toFile()
-								.getAbsolutePath() + "' does not contain expected key '" + key
+						logger.warn("bio_hansel output file '" + filePath.toFile().getAbsolutePath()
+								+ "' does not contain expected key '" + key
 								+ "'. Please check the format of this file!");
 					}
 				});
@@ -135,9 +133,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 * For example, `bio_hansel/heidelberg/v0.5.0`, so that metadata fields from different analyses of bio_hansel will
 	 * not clash, e.g. `bio_hansel/heidelberg/v0.5.0/Subtype` vs `bio_hansel/enteritidis/v0.7.0/Subtype`.
 	 *
-	 * @param scheme bio_hansel scheme name.
-	 * @param version bio_hansel scheme version.
-	 * @return Base bio_hansel metadata field namespace prefix.
+	 * @param  scheme  bio_hansel scheme name.
+	 * @param  version bio_hansel scheme version.
+	 * @return         Base bio_hansel metadata field namespace prefix.
 	 */
 	private String getBaseNamespace(String scheme, String version) {
 		return String.format(TMPL_NAME_FMT, scheme, version);
@@ -146,9 +144,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	/**
 	 * Given a base bio_hansel metadata field namespace, get the namespaced metadata field name.
 	 *
-	 * @param baseNamespace The base bio_hansel metadata field namespace, e.g. `bio_hansel/enteritidis/v0.7.0`
-	 * @param field Metadata field, e.g. `Subtype`.
-	 * @return Namespaced metadata field, e.g. `bio_hansel/enteritidis/v0.7.0/Subtype`.
+	 * @param  baseNamespace The base bio_hansel metadata field namespace, e.g. `bio_hansel/enteritidis/v0.7.0`
+	 * @param  field         Metadata field, e.g. `Subtype`.
+	 * @return               Namespaced metadata field, e.g. `bio_hansel/enteritidis/v0.7.0/Subtype`.
 	 */
 	private String getNamespacedField(String baseNamespace, String field) {
 		return baseNamespace + "/" + field;
