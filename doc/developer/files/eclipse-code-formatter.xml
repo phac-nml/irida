@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<profiles version="12">
-<profile kind="CodeFormatterProfile" name="IRIDA" version="12">
+<profiles version="21">
+<profile kind="CodeFormatterProfile" name="IRIDA" version="21">
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_ellipsis" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_enum_declarations" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_annotation_declaration" value="insert"/>
@@ -9,7 +9,8 @@
 <setting id="org.eclipse.jdt.core.formatter.comment.new_lines_at_block_boundaries" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_constructor_declaration_parameters" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_for_parameter" value="do not insert"/>
-<setting id="org.eclipse.jdt.core.formatter.comment.align_tags_names_descriptions" value="true"/>
+<setting id="org.eclipse.jdt.core.formatter.comment.align_tags_names_descriptions" value="false"/>
+<setting id="org.eclipse.jdt.core.formatter.comment.align_tags_descriptions_grouped" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_package" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_between_empty_parens_in_enum_constant" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.blank_lines_after_imports" value="1"/>
@@ -292,6 +293,8 @@
 <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_annotation" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_switch" value="insert"/>
-<setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation" value="80"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation" value="81"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_qualified_allocation_expression" value="16"/>
+<setting id="org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_record_declaration" value="16"/>
 </profile>
 </profiles>
