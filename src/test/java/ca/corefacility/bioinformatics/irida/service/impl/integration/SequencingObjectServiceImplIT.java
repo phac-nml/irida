@@ -21,24 +21,17 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -46,6 +39,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -72,11 +66,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequenceFileServiceImplIT.xml")
 @DatabaseTearDown(value = "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml", type = DatabaseOperation.DELETE_ALL)
 public class SequencingObjectServiceImplIT {
@@ -311,7 +301,9 @@ public class SequencingObjectServiceImplIT {
 
 		// confirm that the file structure is correct
 		Path idDirectory = baseDirectory.resolve(Paths.get(sf.getId().toString()));
-		assertTrue(Files.exists(idDirectory.resolve(Paths.get(sf.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))),
+		assertTrue(
+				Files.exists(idDirectory.resolve(
+						Paths.get(sf.getFileRevisionNumber().toString(), sequenceFile.getFileName().toString()))),
 				"Revision directory doesn't exist.");
 		// no other files or directories should be beneath the ID directory
 		int fileCount = 0;
@@ -358,8 +350,8 @@ public class SequencingObjectServiceImplIT {
 				Thread.sleep(1000);
 			}
 		} while (sf.getFileRevisionNumber() < expectedRevisionNumber);
-		
-		//one more sleep to make sure everything's settled
+
+		// one more sleep to make sure everything's settled
 		Thread.sleep(1000);
 
 		assertEquals(expectedRevisionNumber, sf.getFileRevisionNumber(), "Wrong version number after processing.");
@@ -471,7 +463,8 @@ public class SequencingObjectServiceImplIT {
 	}
 
 	/**
-	 * Tests to make sure we get a properly constructed map of samples to sequencing objects.
+	 * Tests to make sure we get a properly constructed map of samples to
+	 * sequencing objects.
 	 */
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
@@ -482,7 +475,8 @@ public class SequencingObjectServiceImplIT {
 		Sample sa1 = sampleService.read(1L);
 		Sample sa2 = sampleService.read(2L);
 
-		Map<Sample, SequencingObject> sampleMap = objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
+		Map<Sample, SequencingObject> sampleMap = objectService
+				.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1, s2));
 		assertEquals(2, sampleMap.size(), "Incorrect number of results returned in sample map");
 		assertEquals(s2.getId(), sampleMap.get(sa1).getId(), "Incorrect sequencing object mapped to sample");
 		assertEquals(s1.getId(), sampleMap.get(sa2).getId(), "Incorrect sequencing object mapped to sample");
@@ -500,7 +494,7 @@ public class SequencingObjectServiceImplIT {
 		sampleRepository.deleteById(1L);
 
 		assertThrows(EntityNotFoundException.class, () -> {
-			objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s2));
+			objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1, s2));
 		});
 	}
 
@@ -514,7 +508,7 @@ public class SequencingObjectServiceImplIT {
 		SequencingObject s4 = objectService.read(4L);
 
 		assertThrows(DuplicateSampleException.class, () -> {
-			objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1,s4));
+			objectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(s1, s4));
 		});
 	}
 
@@ -570,7 +564,7 @@ public class SequencingObjectServiceImplIT {
 		assertEquals(originalLength * 2, newFileSize, "new file should be 2x size of originals");
 	}
 
-	private SequenceFile createSequenceFile(String name) throws IOException{
+	private SequenceFile createSequenceFile(String name) throws IOException {
 		Path sequenceFile = Files.createTempFile(name, ".fastq");
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
 
