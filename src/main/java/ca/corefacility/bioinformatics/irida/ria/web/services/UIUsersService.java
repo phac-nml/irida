@@ -224,28 +224,23 @@ public class UIUsersService {
 	/**
 	 * Change the password of a user
 	 *
-	 * @param userId             The id of the user to edit (required)
-	 * @param oldPassword        The old password of the user for password change
-	 * @param newPassword        The new password of the user for password change
-	 * @param confirmNewPassword The confirmed new password of the user for password change
-	 * @param principal          a reference to the logged in user
-	 * @param request            the request
+	 * @param userId      The id of the user to edit (required)
+	 * @param oldPassword The old password of the user for password change
+	 * @param newPassword The new password of the user for password change
+	 * @param principal   a reference to the logged in user
+	 * @param request     the request
 	 * @return The name of the user view
 	 */
 	public UserDetailsResponse changeUserPassword(Long userId, String oldPassword, String newPassword,
-			String confirmNewPassword, Principal principal, HttpServletRequest request) {
+			Principal principal, HttpServletRequest request) {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
 
-		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword) || !Strings.isNullOrEmpty(
-				confirmNewPassword)) {
+		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword)) {
 			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
 				errors.put("oldPassword",
 						messageSource.getMessage("server.user.edit.password.old.incorrect", null, request.getLocale()));
-			} else if (!newPassword.equals(confirmNewPassword)) {
-				errors.put("newPassword",
-						messageSource.getMessage("server.user.edit.password.match", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", newPassword);
 			}

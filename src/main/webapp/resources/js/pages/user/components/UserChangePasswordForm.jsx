@@ -115,30 +115,6 @@ export function UserChangePasswordForm({ userId }) {
         >
           <Input.Password />
         </Form.Item>
-        <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.confirmNewPassword")}
-          name="confirmNewPassword"
-          dependencies={["newPassword"]}
-          rules={[
-            {
-              required: true,
-              message: i18n("UserChangePasswordForm.alert.rule1"),
-            },
-            ({ getFieldValue }) => ({
-              validator(rule, value) {
-                if (getFieldValue("newPassword") !== value) {
-                  return Promise.reject(
-                    i18n("UserChangePasswordForm.alert.rule7")
-                  );
-                } else {
-                  return Promise.resolve();
-                }
-              },
-            }),
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
             {i18n("UserChangePasswordForm.form.button.submit")}

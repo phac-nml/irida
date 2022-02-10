@@ -38,9 +38,9 @@ export const usersApi = createApi({
     Change user password.
     */
     changeUserPassword: build.mutation({
-      query: ({ userId, oldPassword, newPassword, confirmNewPassword }) => ({
+      query: ({ userId, oldPassword, newPassword }) => ({
         url: `/${userId}/changePassword`,
-        params: { oldPassword, newPassword, confirmNewPassword },
+        params: { oldPassword, newPassword },
         method: "POST",
       }),
       invalidatesTags: ["Users"],
