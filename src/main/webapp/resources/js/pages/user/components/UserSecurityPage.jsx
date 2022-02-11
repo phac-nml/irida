@@ -1,9 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Alert, Space, Typography } from "antd";
+import { Alert, Typography } from "antd";
 import { UserChangePasswordForm } from "./UserChangePasswordForm";
 import { UserResetPasswordLink } from "./UserResetPasswordLink";
+import { SPACE_SM } from "../../../styles/spacing";
 
 /**
  * React component to display the user security page.
@@ -16,12 +17,13 @@ export default function UserSecurityPage() {
     useSelector((state) => state.userReducer);
 
   return (
-    <Space direction="vertical">
+    <>
       <Typography.Title level={4}>
         {i18n("UserSecurityPage.title")}
       </Typography.Title>
       {canCreatePasswordReset && !mailConfigured && (
         <Alert
+          style={{ marginBottom: SPACE_SM }}
           message={i18n("UserSecurityPage.alert.title")}
           description={
             <Typography.Paragraph>
@@ -40,6 +42,6 @@ export default function UserSecurityPage() {
           lastName={user.lastName}
         />
       )}
-    </Space>
+    </>
   );
 }

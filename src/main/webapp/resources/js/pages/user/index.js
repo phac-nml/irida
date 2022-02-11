@@ -25,8 +25,8 @@ const UserSecurityPage = React.lazy(() =>
  */
 render(
   <Provider store={store}>
-    <React.Suspense fallback={<ContentLoading />}>
-      <BrowserRouter basename={setBaseUrl("/users")}>
+    <BrowserRouter basename={setBaseUrl("/users")}>
+      <React.Suspense fallback={<ContentLoading />}>
         <Routes>
           <Route path="/:userId" element={<UserAccountLayout />}>
             <Route index element={<UserDetailsPage />} />
@@ -35,8 +35,8 @@ render(
             <Route path="security" element={<UserSecurityPage />} />
           </Route>
         </Routes>
-      </BrowserRouter>
-    </React.Suspense>
+      </React.Suspense>
+    </BrowserRouter>
   </Provider>,
   document.querySelector("#user-account-root")
 );

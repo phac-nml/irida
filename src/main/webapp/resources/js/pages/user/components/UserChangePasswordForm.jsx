@@ -10,6 +10,7 @@ import {
   Typography,
 } from "antd";
 import { useChangeUserPasswordMutation } from "../../../apis/users/users";
+import { SPACE_SM } from "../../../styles/spacing";
 
 /**
  * React component to display the user change password form.
@@ -55,6 +56,7 @@ export function UserChangePasswordForm({ userId }) {
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
       <Alert
+        style={{ marginBottom: SPACE_SM }}
         message={i18n("UserChangePasswordForm.alert.title")}
         description={
           <Typography.Paragraph>

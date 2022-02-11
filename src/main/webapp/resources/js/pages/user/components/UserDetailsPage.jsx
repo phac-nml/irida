@@ -56,7 +56,7 @@ export default function UserDetailsPage() {
   };
 
   return (
-    <Space direction="vertical">
+    <>
       <Typography.Title level={4}>
         {i18n("UserDetailsPage.title")}
       </Typography.Title>
@@ -161,30 +161,32 @@ export default function UserDetailsPage() {
           </Button>
         </Form.Item>
       </Form>
-      <Typography.Text type="secondary">
-        {user.createdDate
-          ? i18n(
-              "UserDetailsPage.createdDate",
-              formatDate({ date: user.createdDate })
-            )
-          : ""}
-      </Typography.Text>
-      <Typography.Text type="secondary">
-        {user.modifiedDate
-          ? i18n(
-              "UserDetailsPage.modifiedDate",
-              formatDate({ date: user.modifiedDate })
-            )
-          : ""}
-      </Typography.Text>
-      <Typography.Text type="secondary">
-        {user.lastLogin
-          ? i18n(
-              "UserDetailsPage.lastLogin",
-              formatDate({ date: user.lastLogin })
-            )
-          : ""}
-      </Typography.Text>
-    </Space>
+      <Space direction="vertical">
+        <Typography.Text type="secondary">
+          {user.createdDate
+            ? i18n(
+                "UserDetailsPage.createdDate",
+                formatDate({ date: user.createdDate })
+              )
+            : ""}
+        </Typography.Text>
+        <Typography.Text type="secondary">
+          {user.modifiedDate
+            ? i18n(
+                "UserDetailsPage.modifiedDate",
+                formatDate({ date: user.modifiedDate })
+              )
+            : ""}
+        </Typography.Text>
+        <Typography.Text type="secondary">
+          {user.lastLogin
+            ? i18n(
+                "UserDetailsPage.lastLogin",
+                formatDate({ date: user.lastLogin })
+              )
+            : ""}
+        </Typography.Text>
+      </Space>
+    </>
   );
 }

@@ -50,15 +50,21 @@ export default function UserAccountLayout() {
         <ContentLoading message={i18n("UserAccountLayout.loading.message")} />
       ) : (
         <PageWrapper
-          title={userDetails.user.username}
+          title={
+            userDetails.admin
+              ? i18n("UserAccountLayout.page.title", userDetails.user.username)
+              : userDetails.user.username
+          }
           onBack={userDetails.admin ? goToAdminUserListPage : undefined}
         >
           <Row>
-            <Col span={5}>
+            <Col span={3}>
               <UserAccountNav />
             </Col>
-            <Col offset={1} span={18}>
-              <Outlet />
+            <Col offset={1} span={6}>
+              <React.Suspense fallback={<ContentLoading />}>
+                <Outlet />
+              </React.Suspense>
             </Col>
           </Row>
         </PageWrapper>
