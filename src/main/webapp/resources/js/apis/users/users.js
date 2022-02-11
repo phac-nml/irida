@@ -35,6 +35,17 @@ export const usersApi = createApi({
       invalidatesTags: ["Users"],
     }),
     /*
+    Change user password.
+    */
+    changeUserPassword: build.mutation({
+      query: ({ userId, oldPassword, newPassword }) => ({
+        url: `/${userId}/changePassword`,
+        params: { oldPassword, newPassword },
+        method: "POST",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+    /*
     Update the disabled status of a user by user id.
     */
     setUsersDisabledStatus: build.mutation({
@@ -50,6 +61,7 @@ export const usersApi = createApi({
 export const {
   useGetUserDetailsQuery,
   useEditUserDetailsMutation,
+  useChangeUserPasswordMutation,
   useSetUsersDisabledStatusMutation
 } = usersApi;
 

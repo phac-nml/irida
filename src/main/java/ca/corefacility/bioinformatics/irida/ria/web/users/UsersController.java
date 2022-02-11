@@ -176,7 +176,7 @@ public class UsersController {
 		// check validity of password
 		if (!user.getPassword()
 				.equals(confirmPassword)) {
-			errors.put("password", messageSource.getMessage("user.edit.password.match", null, locale));
+			errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
 		}
 
 		// Check if there are any errors for the user creation
@@ -284,13 +284,13 @@ public class UsersController {
 			logger.debug(divx.getMessage());
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+				errors.put("email", messageSource.getMessage("server.user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 		}
 
 		return errors;

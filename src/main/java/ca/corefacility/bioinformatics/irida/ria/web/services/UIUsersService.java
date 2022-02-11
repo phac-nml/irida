@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
@@ -49,19 +50,22 @@ public class UIUsersService {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final EmailController emailController;
-	private final MessageSource messageSource;
 	private final List<Locale> locales;
+	private final MessageSource messageSource;
+	private final PasswordEncoder passwordEncoder;
 
 	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
 	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
-			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource) {
+			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource,
+			PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.emailController = emailController;
 		this.locales = locales.getLocales();
 		this.messageSource = messageSource;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	/**
@@ -130,6 +134,7 @@ public class UIUsersService {
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
+		boolean canChangePassword = canChangePassword(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
 		List<UserDetailsLocale> localeNames = new ArrayList<>();
@@ -148,7 +153,7 @@ public class UIUsersService {
 				.getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canCreatePasswordReset, localeNames, roleNames);
+				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, localeNames, roleNames);
 	}
 
 	/**
@@ -217,6 +222,49 @@ public class UIUsersService {
 	}
 
 	/**
+	 * Change the password of a user
+	 *
+	 * @param userId      The id of the user to edit (required)
+	 * @param oldPassword The old password of the user for password change
+	 * @param newPassword The new password of the user for password change
+	 * @param principal   a reference to the logged in user
+	 * @param request     the request
+	 * @return The name of the user view
+	 */
+	public UserDetailsResponse changeUserPassword(Long userId, String oldPassword, String newPassword,
+			Principal principal, HttpServletRequest request) {
+		User principalUser = userService.getUserByUsername(principal.getName());
+		Map<String, Object> updatedValues = new HashMap<>();
+		Map<String, String> errors = new HashMap<>();
+
+		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword)) {
+			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
+				errors.put("oldPassword",
+						messageSource.getMessage("server.user.edit.password.old.incorrect", null, request.getLocale()));
+			} else {
+				updatedValues.put("password", newPassword);
+			}
+		}
+
+		if (errors.isEmpty()) {
+			try {
+				User user = userService.updateFields(userId, updatedValues);
+
+				// If the user is updating their account make sure you update it in the session variable
+				if (user != null && principal.getName()
+						.equals(user.getUsername())) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
+				}
+			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
+				errors = handleCreateUpdateException(ex, request.getLocale());
+			}
+		}
+
+		return new UserDetailsResponse(errors);
+	}
+
+	/**
 	 * Handle exceptions for the create and update pages
 	 *
 	 * @param ex     an exception to handle
@@ -238,13 +286,13 @@ public class UIUsersService {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			if (divx.getMessage()
 					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
-				errors.put("email", messageSource.getMessage("user.edit.emailConflict", null, locale));
+				errors.put("email", messageSource.getMessage("server.user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("user.edit.passwordReused", null, locale));
+			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 		}
 
 		return errors;
@@ -278,6 +326,19 @@ public class UIUsersService {
 		boolean usersEqual = user.equals(principalUser);
 
 		return !(principalAdmin && usersEqual);
+	}
+
+	/**
+	 * Check if the logged in user is allowed to change their password.
+	 *
+	 * @param principalUser - the currently logged in principal
+	 * @param user          - the user to edit
+	 * @return boolean if the principal can change their password
+	 */
+	private boolean canChangePassword(User principalUser, User user) {
+		boolean usersEqual = user.equals(principalUser);
+
+		return usersEqual;
 	}
 
 }
