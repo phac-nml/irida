@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateUpdateClientDetails;
@@ -88,7 +87,7 @@ public class ClientsAjaxController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<AjaxResponse> createClient(@RequestBody CreateUpdateClientDetails request, Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(service.createClient(request)));
+			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(service.createOrUpdateClient(request)));
 		} catch (Exception exception) {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(new AjaxErrorResponse(messageSource.getMessage("server.AddClientForm.error",
@@ -98,13 +97,25 @@ public class ClientsAjaxController {
 
 	@PutMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<AjaxResponse> updateClient(@RequestBody CreateUpdateClientDetails request) {
-		return ResponseEntity.ok(new AjaxSuccessResponse("YAY"));
+	public ResponseEntity<AjaxResponse> updateClient(@RequestBody CreateUpdateClientDetails request, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(service.createOrUpdateClient(request)));
+		} catch (Exception exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(new AjaxErrorResponse(messageSource.getMessage("server.AddClientForm.error",
+							new Object[] { request.getClientId() }, locale)));
+		}
 	}
 
 	@DeleteMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteClient(@RequestParam Long id) {
 		service.deleteClient(id);
+	}
+
+	@PutMapping("/secret")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void regenerateClientSecret(@RequestParam Long id) {
+		service.regenerateClientSecret(id);
 	}
 }

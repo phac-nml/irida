@@ -1,4 +1,4 @@
-import { Form, Input, message, Modal, Radio, Typography } from "antd";
+import { Form, Input, message, Modal, Radio, Space, Typography } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { validateClientId } from "../../../../../apis/clients/clients";
 import { PagedTableContext } from "../../../../../components/ant.design/PagedTable";
@@ -38,6 +38,34 @@ export function AddClientModal({ children, onComplete, existing = null }) {
   const [form] = Form.useForm();
 
   const radioStyle = { display: "block", lineHeight: `35px` };
+
+  if (existing !== null) {
+    let [read, write] = existing.scope;
+    if (existing.autoApprovableScopes.includes("read")) {
+      read = "auto";
+    }
+    if (existing.autoApprovableScopes.includes("write")) {
+      write = "auto";
+    }
+
+    const refreshToken = existing.authorizedGrantTypes.includes("refresh_token")
+      ? existing.refreshTokenValiditySeconds
+      : 0;
+
+    const grantType = existing.authorizedGrantTypes.includes("password")
+      ? "password"
+      : "authorization_code";
+
+    existing = {
+      clientId: existing.clientId,
+      tokenValidity: existing.accessTokenValiditySeconds,
+      grantType,
+      redirectURI: existing.redirectUri,
+      refreshToken,
+      read,
+      write,
+    };
+  }
 
   /**
    * Action to take when the form is submitted
@@ -144,7 +172,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
                 </>
               </Radio>
               <Radio style={radioStyle} value="authorization_code">
-                <>
+                <Space>
                   {i18n("AddClientForm.grant.authorizationCode")}
                   <HelpPopover
                     width={400}
@@ -159,9 +187,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
                       </section>
                     }
                   />
-                </>
 
-                {grantType === "authorization_code" ? (
                   <Item
                     name="redirectURI"
                     style={{
@@ -185,7 +211,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
                       )}
                     />
                   </Item>
-                ) : null}
+                </Space>
               </Radio>
             </Radio.Group>
           </Item>

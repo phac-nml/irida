@@ -37,6 +37,10 @@ export async function createClient(details) {
  */
 export async function deleteClient(id) {
   return axios.delete(BASE_URL, {
-    params: { id },
+    params: {id},
   });
+}
+
+export async function regenerateClientSecret(id) {
+  return axios.put(`${BASE_URL}/secret?id=${id}`)
 }
