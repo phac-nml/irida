@@ -89,12 +89,20 @@ public class UIClientService {
      * @throws EntityExistsException        thrown if the client id already is used.
      * @throws ConstraintViolationException thrown if the client id violates any of its constraints
      */
-    public Long createClient(CreateUpdateClientDetails request)
+    public Long createOrUpdateClient(CreateUpdateClientDetails request)
             throws EntityExistsException, ConstraintViolationException {
 
-        IridaClientDetails client = new IridaClientDetails();
-        client.setClientSecret(RandomStringUtils.randomAlphanumeric(42));
-        client.setClientId(request.getClientId());
+        IridaClientDetails client;
+        if (request.getId() != null) {
+            // Existing client
+            client = clientDetailsService.read(request.getId());
+        } else {
+            // New client, so need to set up a few things that cannot be mutated in an existing one
+            client = new IridaClientDetails();
+            client.setClientSecret(generateClientSecret());
+            client.setClientId(request.getClientId());
+        }
+
         client.setAccessTokenValiditySeconds(request.getTokenValidity());
 
         // Let's set up the scopes for this client
@@ -139,10 +147,6 @@ public class UIClientService {
         return client.getId();
     }
 
-    public void editClient(CreateUpdateClientDetails request) {
-        IridaClientDetails client = clientDetailsService.read(request.getId());
-    }
-
     /**
      * Delete a client
      *
@@ -150,5 +154,16 @@ public class UIClientService {
      */
     public void deleteClient(Long id) {
         clientDetailsService.delete(id);
+    }
+
+    public void regenerateClientSecret(Long id) {
+        IridaClientDetails details = clientDetailsService.read(id);
+        String secret = generateClientSecret();
+        details.setClientSecret(secret);
+        clientDetailsService.update(details);
+    }
+
+    private String generateClientSecret() {
+        return RandomStringUtils.randomAlphanumeric(42);
     }
 }

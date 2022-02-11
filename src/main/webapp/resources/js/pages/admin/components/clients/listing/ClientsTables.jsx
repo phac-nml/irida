@@ -1,7 +1,9 @@
-import { Button, Popconfirm, Space, Tag, Typography } from "antd";
+import { Button, Popconfirm, Space, Tag, Tooltip, Typography } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
 import {
   deleteClient,
+  regenerateClientSecret,
   revokeClientTokens,
 } from "../../../../../apis/clients/clients";
 import {
@@ -19,12 +21,18 @@ import { AddClientModal } from "../add/AddClientModal";
  * @constructor
  */
 export function ClientsTable() {
-  const { updateTable } = useContext(PagedTableContext);
+  const {updateTable} = useContext(PagedTableContext);
 
   const removeAndUpdate = async (id) => {
     await deleteClient(id);
     updateTable();
   };
+
+  async function regenerateSecret(id) {
+    await regenerateClientSecret(id);
+    updateTable();
+  }
+
   const columns = [
     {
       title: i18n("ClientsTable.column.id"),
@@ -39,6 +47,27 @@ export function ClientsTable() {
       sorter: true,
       render(name) {
         return <Typography.Text copyable>{name}</Typography.Text>;
+      },
+    },
+    {
+      title: i18n("ClientsTable.column.secret"),
+      dataIndex: ["details", "clientSecret"],
+      render(secret, client) {
+        return secret ? (
+          <Space size="small">
+            <Typography.Text copyable>{secret}</Typography.Text>
+            <Tooltip placement="right" title={"Regenerate Secret"}>
+              <Button
+                shape="round"
+                onClick={() => regenerateSecret(client.details.identifier)}
+                size="small"
+                icon={<ReloadOutlined/>}
+              />
+            </Tooltip>
+          </Space>
+        ) : (
+          ""
+        );
       },
     },
     {
@@ -71,7 +100,6 @@ export function ClientsTable() {
       title: i18n("ClientsTable.column.scope"),
       dataIndex: ["details", "scope"],
       render(scopes) {
-        console.log(scopes);
         const colors = {
           read: "cyan",
           write: "geekblue",
@@ -87,17 +115,6 @@ export function ClientsTable() {
         );
       },
       width: 150,
-    },
-    {
-      title: i18n("ClientsTable.column.secret"),
-      dataIndex: ["details", "clientSecret"],
-      render(secret) {
-        return secret ? (
-          <Typography.Text copyable>{secret}</Typography.Text>
-        ) : (
-          ""
-        );
-      },
     },
     {
       title: i18n("ClientsTable.column.activeTokens"),
