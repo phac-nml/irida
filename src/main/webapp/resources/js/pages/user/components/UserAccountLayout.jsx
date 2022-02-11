@@ -58,10 +58,10 @@ export default function UserAccountLayout() {
           onBack={userDetails.admin ? goToAdminUserListPage : undefined}
         >
           <Row>
-            <Col span={3}>
+            <Col span={4}>
               <UserAccountNav />
             </Col>
-            <Col offset={1} span={6}>
+            <Col offset={1} span={8}>
               <React.Suspense fallback={<ContentLoading />}>
                 <Outlet />
               </React.Suspense>
