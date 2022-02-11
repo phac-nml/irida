@@ -21,7 +21,7 @@ import { AddClientModal } from "../add/AddClientModal";
  * @constructor
  */
 export function ClientsTable() {
-  const {updateTable} = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
 
   const removeAndUpdate = async (id) => {
     await deleteClient(id);
@@ -61,7 +61,7 @@ export function ClientsTable() {
                 shape="round"
                 onClick={() => regenerateSecret(client.details.identifier)}
                 size="small"
-                icon={<ReloadOutlined/>}
+                icon={<ReloadOutlined />}
               />
             </Tooltip>
           </Space>
