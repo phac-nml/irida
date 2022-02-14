@@ -10,15 +10,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Interceptor Adaptor to add the user to the {@link Model} each server call.  Also ensures {@link Role#ROLE_SEQUENCER} users cannot do anything in the UI.
  */
-public class UserSecurityInterceptor extends HandlerInterceptorAdapter {
+public class UserSecurityInterceptor implements AsyncHandlerInterceptor {
 	public static final String CURRENT_USER_DETAILS = "CURRENT_USER_DETAILS";
 
 	/**

@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.ria.web.LoginController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -19,7 +19,7 @@ public class LoginControllerTest {
 	private LoginController controller;
 	private EmailController emailController;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.emailController = mock(EmailController.class);
 		controller = new LoginController(emailController);

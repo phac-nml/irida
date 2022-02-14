@@ -1,10 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,19 +23,13 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -53,7 +49,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -94,9 +90,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  *
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
-@ActiveProfiles("test")
+@GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
@@ -139,8 +133,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private static final int LIBRARY_TIMEOUT = 5 * 60;
 
 	/**
-	 * Polling time in seconds to poll a Galaxy library to check if
-	 * datasets have been properly uploaded.
+	 * Polling time in seconds to poll a Galaxy library to check if datasets
+	 * have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
 
@@ -160,10 +154,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private Set<SequencingObject> singleFileSet;
 
 	private static final UUID validWorkflowIdSingle = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
-	private static final UUID validWorkflowIdSingleSingleSample = UUID.fromString("a9692a52-5bc6-4da2-a89d-d880bb35bfe4");
+	private static final UUID validWorkflowIdSingleSingleSample = UUID
+			.fromString("a9692a52-5bc6-4da2-a89d-d880bb35bfe4");
 	private static final UUID validWorkflowIdPaired = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
-	private static final UUID validWorkflowIdPairedSingleSample = UUID.fromString("fc93b50d-c9dd-4000-98fc-4a70d46ddd36");
-	private static final UUID validWorkflowIdPairedWithParameters = UUID.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
+	private static final UUID validWorkflowIdPairedSingleSample = UUID
+			.fromString("fc93b50d-c9dd-4000-98fc-4a70d46ddd36");
+	private static final UUID validWorkflowIdPairedWithParameters = UUID
+			.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
 	private static final UUID validWorkflowIdSinglePaired = UUID.fromString("d92e9918-1e3d-4dea-b2b9-089f1256ac1b");
 	private static final UUID phylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 
@@ -191,14 +188,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowLoadException
 	 */
-	@Before
+	@BeforeEach
 	public void setup() throws URISyntaxException, IOException, IridaWorkflowLoadException {
-		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
+		assumeFalse(WindowsPlatformCondition.isWindows());
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
-		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
-				.toURI());
+		Path referenceFilePathReal = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta").toURI());
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "workspaceServiceGalaxyTest");
 
@@ -227,7 +224,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient,
+				LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 
 		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 
@@ -252,12 +250,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
-				.name("Name")
-				.inputFiles(singleFileSet)
-				.build();
-		assertNotNull("preparing an analysis workspace should not return null",
-				analysisWorkspaceService.prepareAnalysisWorkspace(submission));
+		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle).name("Name")
+				.inputFiles(singleFileSet).build();
+		assertNotNull(analysisWorkspaceService.prepareAnalysisWorkspace(submission),
+				"preparing an analysis workspace should not return null");
 	}
 
 	/**
@@ -266,14 +262,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
-				.name("Name")
-				.inputFiles(singleFileSet)
-				.build();
+		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle).name("Name")
+				.inputFiles(singleFileSet).build();
 		submission.setRemoteAnalysisId("1");
-		analysisWorkspaceService.prepareAnalysisWorkspace(submission);
+		assertThrows(IllegalArgumentException.class, () -> {
+			analysisWorkspaceService.prepareAnalysisWorkspace(submission);
+		});
 	}
 
 	/**
@@ -287,8 +283,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSingleSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSingleSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
@@ -308,44 +304,46 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals("the response history id should match the input history id", createdHistory.getId(),
-				preparedWorkflow.getRemoteAnalysisId());
-		assertNotNull("the returned workflow inputs should not be null", preparedWorkflow.getWorkflowInputs());
-		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
+		assertNotNull(preparedWorkflow.getWorkflowInputs(), "the returned workflow inputs should not be null");
+		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct library is created
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
-		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
+		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream()
+				.collect(Collectors.groupingBy(LibraryContent::getName));
 
-		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
+		assertFalse(libraryContentsMap.isEmpty(), "the returned library should exist in Galaxy");
 		String sequenceFileALibraryName = "/" + sequenceFilePathA.getFileName().toString();
-		assertEquals("the returned library does not contain the correct number of elements", 2,
-				libraryContentsMap.size());
-		assertTrue("the returned library does not contain a root folder", libraryContentsMap.containsKey("/"));
-		assertTrue("the returned library does not contain the correct sequence file",
-				libraryContentsMap.containsKey(sequenceFileALibraryName));
-		assertEquals("the returned library does not contain the correct sequence file", 1,
-				libraryContentsMap.get(sequenceFileALibraryName).size());
+		assertEquals(2, libraryContentsMap.size(),
+				"the returned library does not contain the correct number of elements");
+		assertTrue(libraryContentsMap.containsKey("/"), "the returned library does not contain a root folder");
+		assertTrue(libraryContentsMap.containsKey(sequenceFileALibraryName),
+				"the returned library does not contain the correct sequence file");
+		assertEquals(1, libraryContentsMap.get(sequenceFileALibraryName).size(),
+				"the returned library does not contain the correct sequence file");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals("the created history should contain 3 entries", 3, historyContents.size());
+		assertEquals(3, historyContents.size(), "the created history should contain 3 entries");
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue("the created history should contain the file " + sequenceFilePathA.toFile().getName(),
-				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue("the created history should contain the file " + referenceFilePath.toFile().getName(),
-				contentsMap.containsKey(referenceFilePath.toFile().getName()));
-		assertTrue("the created history should contain the collection with name " + INPUTS_SINGLE_NAME,
-				contentsMap.containsKey(INPUTS_SINGLE_NAME));
+		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()),
+				"the created history should contain the file " + sequenceFilePathA.toFile().getName());
+		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()),
+				"the created history should contain the file " + referenceFilePath.toFile().getName());
+		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME),
+				"the created history should contain the collection with name " + INPUTS_SINGLE_NAME);
 
 		// make sure workflow inputs contains correct information
 		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
-		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
+		assertEquals(2, workflowInputsMap.size(), "the created workflow inputs has an invalid number of elements");
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
-		return historyContents.stream().collect(Collectors.toMap(HistoryContents::getName, historyContent->historyContent));
+		return historyContents.stream()
+				.collect(Collectors.toMap(HistoryContents::getName, historyContent -> historyContent));
 	}
 
 	/**
@@ -357,10 +355,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException
 	 */
-	@Test(expected = DuplicateSampleException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSingleFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSingleFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleFail");
@@ -373,15 +371,17 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
-		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(
-				1L, sequenceFilePathA, sequenceFilePath2A);
+		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(1L,
+				sequenceFilePathA, sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				Sets.newHashSet(sequenceFiles), referenceFilePath, validWorkflowIdSingle);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
-		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertThrows(DuplicateSampleException.class, () -> {
+			analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		});
 	}
 
 	/**
@@ -395,8 +395,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesPairSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesPairSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
@@ -416,48 +416,49 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals("the response history id should match the input history id", createdHistory.getId(),
-				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
-		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
+		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct library is created
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
-		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
+		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream()
+				.collect(Collectors.groupingBy(LibraryContent::getName));
 
-		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
+		assertFalse(libraryContentsMap.isEmpty(), "the returned library should exist in Galaxy");
 		String sequenceFile1ALibraryName = "/" + sequenceFilePathA.getFileName().toString();
 		String sequenceFile2ALibraryName = "/" + sequenceFilePath2A.getFileName().toString();
-		assertEquals("the returned library does not contain the correct number of elements", 3,
-				libraryContentsMap.size());
-		assertTrue("the returned library does not contain a root folder", libraryContentsMap.containsKey("/"));
-		assertTrue("the returned library does not contain the correct sequence file",
-				libraryContentsMap.containsKey(sequenceFile1ALibraryName));
-		assertEquals("the returned library does not contain the correct sequence file", 1,
-				libraryContentsMap.get(sequenceFile1ALibraryName).size());
-		assertTrue("the returned library does not contain the correct sequence file",
-				libraryContentsMap.containsKey(sequenceFile2ALibraryName));
-		assertEquals("the returned library does not contain the correct sequence file", 1,
-				libraryContentsMap.get(sequenceFile2ALibraryName).size());
+		assertEquals(3, libraryContentsMap.size(),
+				"the returned library does not contain the correct number of elements");
+		assertTrue(libraryContentsMap.containsKey("/"), "the returned library does not contain a root folder");
+		assertTrue(libraryContentsMap.containsKey(sequenceFile1ALibraryName),
+				"the returned library does not contain the correct sequence file");
+		assertEquals(1, libraryContentsMap.get(sequenceFile1ALibraryName).size(),
+				"the returned library does not contain the correct sequence file");
+		assertTrue(libraryContentsMap.containsKey(sequenceFile2ALibraryName),
+				"the returned library does not contain the correct sequence file");
+		assertEquals(1, libraryContentsMap.get(sequenceFile2ALibraryName).size(),
+				"the returned library does not contain the correct sequence file");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+		assertEquals(4, historyContents.size(), "the created history has an invalid number of elements");
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue("the created history should contain the file " + sequenceFilePathA.toFile().getName(),
-				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue("the created history should contain the file " + sequenceFilePath2A.toFile().getName(),
-				contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
-		assertTrue("the created history should contain the file " + referenceFilePath.toFile().getName(),
-				contentsMap.containsKey(referenceFilePath.toFile().getName()));
-		assertTrue("the created history should contain the collection with name " + INPUTS_PAIRED_NAME,
-				contentsMap.containsKey(INPUTS_PAIRED_NAME));
+		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()),
+				"the created history should contain the file " + sequenceFilePathA.toFile().getName());
+		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()),
+				"the created history should contain the file " + sequenceFilePath2A.toFile().getName());
+		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()),
+				"the created history should contain the file " + referenceFilePath.toFile().getName());
+		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME),
+				"the created history should contain the collection with name " + INPUTS_PAIRED_NAME);
 
 		// make sure workflow inputs contains correct information
 		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
-		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
+		assertEquals(2, workflowInputsMap.size(), "the created workflow inputs has an invalid number of elements");
 	}
 
 	/**
@@ -471,8 +472,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccess");
@@ -494,29 +495,29 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals("the response history id should match the input history id", createdHistory.getId(),
-				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
-		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
+		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+		assertEquals(4, historyContents.size(), "the created history has an invalid number of elements");
 
 		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
+		assertNotNull(workflowInvocationInputs, "created workflowInvocationInputs is null");
 
-		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
-				"core_pipeline_outputs_paired_with_parameters");
-		assertNotNull("toolParameters is null", toolParameters);
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters()
+				.get("core_pipeline_outputs_paired_with_parameters");
+		assertNotNull(toolParameters, "toolParameters is null");
 
 		String coverageMinValue = (String) toolParameters.get("coverageMin");
-		assertEquals("coverageMinValue should have been changed", "20", coverageMinValue);
-		assertEquals("coverageMidValue should have been changed",
-				ImmutableMap.of("coverageMid", "20"), toolParameters.get("conditional"));
+		assertEquals("20", coverageMinValue, "coverageMinValue should have been changed");
+		assertEquals(ImmutableMap.of("coverageMid", "20"), toolParameters.get("conditional"),
+				"coverageMidValue should have been changed");
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
-		assertEquals("coverageMaxValue should have been changed", "20", coverageMaxValue);
+		assertEquals("20", coverageMaxValue, "coverageMaxValue should have been changed");
 	}
 
 	/**
@@ -530,8 +531,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersSuccessWithNoParameters() throws InterruptedException,
-			ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersSuccessWithNoParameters()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccessWithNoParameters");
@@ -545,34 +546,35 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters, false);
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters,
+				false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals("the response history id should match the input history id", createdHistory.getId(),
-				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
-		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
+		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+		assertEquals(4, historyContents.size(), "the created history has an invalid number of elements");
 
 		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
+		assertNotNull(workflowInvocationInputs, "created workflowInvocationInputs is null");
 
-		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
-				"core_pipeline_outputs_paired_with_parameters");
-		assertNotNull("toolParameters is null", toolParameters);
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters()
+				.get("core_pipeline_outputs_paired_with_parameters");
+		assertNotNull(toolParameters, "toolParameters is null");
 
 		String coverageMinValue = (String) toolParameters.get("coverageMin");
-		assertEquals("coverageMinValue should have been changed to default", "10", coverageMinValue);
-		assertEquals("coverageMidValue should have been changed to default",
-				ImmutableMap.of("coverageMid", "10"), toolParameters.get("conditional"));
+		assertEquals(coverageMinValue, "10", "coverageMinValue should have been changed to default");
+		assertEquals(ImmutableMap.of("coverageMid", "10"), toolParameters.get("conditional"),
+				"coverageMidValue should have been changed to default");
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
-		assertEquals("coverageMaxValue should have been changed to default", "10", coverageMaxValue);
+		assertEquals("10", coverageMaxValue, "coverageMaxValue should have been changed to default");
 	}
 
 	/**
@@ -586,8 +588,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters() throws InterruptedException,
-			ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters");
@@ -603,27 +605,28 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters, validWorkflowIdPairedWithParameters);
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters,
+				validWorkflowIdPairedWithParameters);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals("the response history id should match the input history id", createdHistory.getId(),
-				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
-		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
+		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+		assertEquals(4, historyContents.size(), "the created history has an invalid number of elements");
 
 		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
-		assertNotNull("created workflowInvocationInputs is null", workflowInvocationInputs);
+		assertNotNull(workflowInvocationInputs, "created workflowInvocationInputs is null");
 
-		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
-				"core_pipeline_outputs_paired_with_parameters");
-		assertNull("toolParameters is not null", toolParameters);
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters()
+				.get("core_pipeline_outputs_paired_with_parameters");
+		assertNull(toolParameters, "toolParameters is not null");
 	}
 
 	/**
@@ -635,10 +638,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException
 	 */
-	@Test(expected = IridaWorkflowParameterException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersFailInvalidParameter() throws InterruptedException,
-			ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersFailInvalidParameter()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersFailInvalidParameter");
@@ -659,7 +662,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
-		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertThrows(IridaWorkflowParameterException.class, () -> {
+			analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		});
 	}
 
 	/**
@@ -671,10 +676,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException
 	 */
-	@Test(expected = DuplicateSampleException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesPairFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairFail");
@@ -693,7 +698,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
-		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertThrows(DuplicateSampleException.class, () -> {
+			analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		});
 	}
 
 	/**
@@ -707,8 +714,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSinglePairSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSinglePairSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
@@ -728,32 +735,32 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals("the response history id should match the input history id", createdHistory.getId(),
-				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals("the created history has an invalid number of elements", 6, historyContents.size());
+		assertEquals(6, historyContents.size(), "the created history has an invalid number of elements");
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue("the created history should contain the file " + sequenceFilePathA.toFile().getName(),
-				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue("the created history should contain the file " + sequenceFilePath2A.toFile().getName(),
-				contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
-		assertTrue("the created history should contain the file " + sequenceFilePath3.toFile().getName(),
-				contentsMap.containsKey(sequenceFilePath3.toFile().getName()));
-		assertTrue("the created history should contain the file " + referenceFilePath.toFile().getName(),
-				contentsMap.containsKey(referenceFilePath.toFile().getName()));
-		assertTrue("the created history should contain a dataset collection with the name " + INPUTS_SINGLE_NAME,
-				contentsMap.containsKey(INPUTS_SINGLE_NAME));
-		assertTrue("the created history should contain a dataset collection with the name " + INPUTS_PAIRED_NAME,
-				contentsMap.containsKey(INPUTS_PAIRED_NAME));
+		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()),
+				"the created history should contain the file " + sequenceFilePathA.toFile().getName());
+		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()),
+				"the created history should contain the file " + sequenceFilePath2A.toFile().getName());
+		assertTrue(contentsMap.containsKey(sequenceFilePath3.toFile().getName()),
+				"the created history should contain the file " + sequenceFilePath3.toFile().getName());
+		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()),
+				"the created history should contain the file " + referenceFilePath.toFile().getName());
+		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME),
+				"the created history should contain a dataset collection with the name " + INPUTS_SINGLE_NAME);
+		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME),
+				"the created history should contain a dataset collection with the name " + INPUTS_PAIRED_NAME);
 
 		// make sure workflow inputs contains correct information
 		Map<String, WorkflowInvocationInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
-		assertEquals("the created workflow inputs has an invalid number of elements", 3, workflowInputsMap.size());
+		assertEquals(3, workflowInputsMap.size(), "the created workflow inputs has an invalid number of elements");
 	}
 
 	/**
@@ -765,10 +772,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSinglePairFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSinglePairFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSinglePairFail");
@@ -787,7 +794,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
-		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertThrows(SampleAnalysisDuplicateException.class, () -> {
+			analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		});
 	}
 
 	/**
@@ -798,10 +807,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException
 	 */
-	@Test(expected = WorkflowException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesFail");
@@ -813,7 +822,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId("invalid");
 
-		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertThrows(WorkflowException.class, () -> {
+			analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		});
 	}
 
 	private void uploadFileToHistory(Path filePath, String fileName, String historyId, ToolsClient toolsClient) {
@@ -836,9 +847,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisSingleSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisSingleSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSingleSuccess");
@@ -867,8 +878,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
-		assertEquals("the created submission should have no paired input files", 0, pairedFiles.size());
-		assertEquals("the created submission should have 1 single input file", 1, submittedSf.size());
+		assertEquals(0, pairedFiles.size(), "the created submission should have no paired input files");
+		assertEquals(1, submittedSf.size(), "the created submission should have 1 single input file");
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -876,23 +887,24 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
-		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(Analysis.class, analysis.getClass(), "the Analysis results class is invalid");
+		assertEquals(2, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT1_NAME, analysis.getAnalysisOutputFile(OUTPUT1_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT2_NAME, analysis.getAnalysisOutputFile(OUTPUT2_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
-	 * consisting only of single end sequence reads (for workflow accepting single sample).
+	 * consisting only of single end sequence reads (for workflow accepting
+	 * single sample).
 	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -903,9 +915,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisSingleSingleSampleSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisSingleSingleSampleSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSingleSuccess");
@@ -934,8 +946,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
-		assertEquals("the created submission should have no paired input files", 0, pairedFiles.size());
-		assertEquals("the created submission should have 1 single input file", 1, submittedSf.size());
+		assertEquals(0, pairedFiles.size(), "the created submission should have no paired input files");
+		assertEquals(1, submittedSf.size(), "the created submission should have 1 single input file");
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -943,18 +955,18 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
-		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + '-' + OUTPUT1_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + '-' + OUTPUT2_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(Analysis.class, analysis.getClass(), "the Analysis results class is invalid");
+		assertEquals(2, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(SAMPLE1_NAME + '-' + OUTPUT1_NAME, analysis.getAnalysisOutputFile(OUTPUT1_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(SAMPLE1_NAME + '-' + OUTPUT2_NAME, analysis.getAnalysisOutputFile(OUTPUT2_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
@@ -970,9 +982,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisPairedSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisPairedSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisPairedSuccess");
@@ -1006,11 +1018,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
 
-		assertEquals("the created submission should have no single input files", 0, submittedSingleFiles.size());
-		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
+		assertEquals(0, submittedSingleFiles.size(), "the created submission should have no single input files");
+		assertEquals(1, pairedFiles.size(), "the created submission has an invalid number of paired input files");
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals("the paired input should have 2 files", 2, submittedSf.size());
+		assertEquals(2, submittedSf.size(), "the paired input should have 2 files");
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -1018,18 +1030,18 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
-		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(Analysis.class, analysis.getClass(), "the Analysis results class is invalid");
+		assertEquals(2, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT1_NAME, analysis.getAnalysisOutputFile(OUTPUT1_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT2_NAME, analysis.getAnalysisOutputFile(OUTPUT2_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
@@ -1045,9 +1057,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess");
@@ -1081,11 +1093,11 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
 
-		assertEquals("the created submission should have no single input files", 0, submittedSingleFiles.size());
-		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
+		assertEquals(0, submittedSingleFiles.size(), "the created submission should have no single input files");
+		assertEquals(1, pairedFiles.size(), "the created submission has an invalid number of paired input files");
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals("the paired input should have 2 files", 2, submittedSf.size());
+		assertEquals(2, submittedSf.size(), "the paired input should have 2 files");
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -1093,23 +1105,24 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
-		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + OUTPUT1_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", SAMPLE1_NAME + "-" + OUTPUT2_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(Analysis.class, analysis.getClass(), "the Analysis results class is invalid");
+		assertEquals(2, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(SAMPLE1_NAME + "-" + OUTPUT1_NAME, analysis.getAnalysisOutputFile(OUTPUT1_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(SAMPLE1_NAME + "-" + OUTPUT2_NAME, analysis.getAnalysisOutputFile(OUTPUT2_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
-	 * when sequencing objects are present, but the sample was deleted while pipeline was running.
+	 * when sequencing objects are present, but the sample was deleted while
+	 * pipeline was running.
 	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -1120,9 +1133,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess");
@@ -1160,18 +1173,18 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
-		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(Analysis.class, analysis.getClass(), "the Analysis results class is invalid");
+		assertEquals(2, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT1_NAME, analysis.getAnalysisOutputFile(OUTPUT1_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT2_NAME, analysis.getAnalysisOutputFile(OUTPUT2_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
@@ -1187,9 +1200,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisSinglePairedSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisSinglePairedSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSinglePairedSuccess");
@@ -1217,19 +1230,19 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		paths2.add(sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3,
-						referenceFilePath, validWorkflowIdSinglePaired);
+				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3, referenceFilePath,
+						validWorkflowIdSinglePaired);
 
 		Set<SingleEndSequenceFile> singleFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
 
-		assertEquals("invalid number of single end input files", 1, singleFiles.size());
-		assertEquals("invalid number of paired end inputs", 1, pairedFiles.size());
+		assertEquals(1, singleFiles.size(), "invalid number of single end input files");
+		assertEquals(1, pairedFiles.size(), "invalid number of paired end inputs");
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals("invalid number of files for paired input", 2, submittedSf.size());
+		assertEquals(2, submittedSf.size(), "invalid number of files for paired input");
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -1237,18 +1250,18 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
-		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT1_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT1_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", OUTPUT2_NAME, analysis
-				.getAnalysisOutputFile(OUTPUT2_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(Analysis.class, analysis.getClass(), "the Analysis results class is invalid");
+		assertEquals(2, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT1_NAME, analysis.getAnalysisOutputFile(OUTPUT1_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(OUTPUT2_NAME, analysis.getAnalysisOutputFile(OUTPUT2_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
@@ -1295,22 +1308,23 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull("the analysis results were not properly created", analysis);
-		assertEquals("the Analysis results class is invalid", BuiltInAnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType());
-		assertEquals("the analysis results has an invalid number of output files", 3, analysis.getAnalysisOutputFiles()
-				.size());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(TABLE_NAME), analysis
-				.getAnalysisOutputFile(TABLE_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", TABLE_NAME, analysis
-				.getAnalysisOutputFile(TABLE_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(MATRIX_NAME), analysis
-				.getAnalysisOutputFile(MATRIX_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", MATRIX_NAME, analysis
-				.getAnalysisOutputFile(MATRIX_KEY).getLabel());
-		assertEquals("the analysis results output file has an invalid name", Paths.get(TREE_NAME), analysis
-				.getAnalysisOutputFile(TREE_KEY).getFile().getFileName());
-		assertEquals("the analysis results output file has an invalid label", TREE_NAME, analysis
-				.getAnalysisOutputFile(TREE_KEY).getLabel());
+		assertNotNull(analysis, "the analysis results were not properly created");
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType(),
+				"the Analysis results class is invalid");
+		assertEquals(3, analysis.getAnalysisOutputFiles().size(),
+				"the analysis results has an invalid number of output files");
+		assertEquals(Paths.get(TABLE_NAME), analysis.getAnalysisOutputFile(TABLE_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(TABLE_NAME, analysis.getAnalysisOutputFile(TABLE_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(MATRIX_NAME), analysis.getAnalysisOutputFile(MATRIX_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(MATRIX_NAME, analysis.getAnalysisOutputFile(MATRIX_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
+		assertEquals(Paths.get(TREE_NAME), analysis.getAnalysisOutputFile(TREE_KEY).getFile().getFileName(),
+				"the analysis results output file has an invalid name");
+		assertEquals(TREE_NAME, analysis.getAnalysisOutputFile(TREE_KEY).getLabel(),
+				"the analysis results output file has an invalid label");
 	}
 
 	/**
@@ -1323,7 +1337,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowAnalysisTypeException
 	 * @throws TimeoutException
 	 */
-	@Test(expected = GalaxyDatasetNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsTestAnalysisFail() throws InterruptedException, ExecutionManagerException,
 			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException {
@@ -1354,6 +1368,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETING);
 		analysisSubmissionRepository.save(analysisSubmission);
 
-		analysisWorkspaceService.getAnalysisResults(analysisSubmission);
+		assertThrows(GalaxyDatasetNotFoundException.class, () -> {
+			analysisWorkspaceService.getAnalysisResults(analysisSubmission);
+		});
 	}
 }

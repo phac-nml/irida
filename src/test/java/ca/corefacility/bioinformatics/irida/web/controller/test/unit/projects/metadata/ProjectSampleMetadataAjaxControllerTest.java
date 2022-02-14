@@ -4,8 +4,8 @@ import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.metadata.ProjectSampleMetadataAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataFileImportService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataImportService;
@@ -26,8 +25,8 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ProjectSampleMetadataAjaxControllerTest {
@@ -37,7 +36,6 @@ public class ProjectSampleMetadataAjaxControllerTest {
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private MetadataTemplateService metadataTemplateService;
-	private ProjectControllerUtils projectControllerUtils;
 	private UIMetadataFileImportService metadataFileImportService;
 	private HttpSession session;
 
@@ -46,17 +44,16 @@ public class ProjectSampleMetadataAjaxControllerTest {
 	private final String SAMPLE_NAME = "value2";
 	private final String SAMPLE_NAME_COLUMN = "header2";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		session = mock(HttpSession.class);
 		messageSource = mock(MessageSource.class);
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		metadataTemplateService = mock(MetadataTemplateService.class);
-		projectControllerUtils = mock(ProjectControllerUtils.class);
 		metadataFileImportService = new UIMetadataFileImportService(projectService, sampleService);
 		metadataImportService = new UIMetadataImportService(messageSource, projectService, sampleService,
-				metadataTemplateService, projectControllerUtils, metadataFileImportService);
+				metadataTemplateService, metadataFileImportService);
 		controller = new ProjectSampleMetadataAjaxController(metadataImportService);
 	}
 
@@ -103,11 +100,9 @@ public class ProjectSampleMetadataAjaxControllerTest {
 				file);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
-		assertEquals("Sample name columns is saved", stored.getRows()
-				.size(), 1);
-		assertEquals("Sample is saved", stored.getHeaders()
-				.size(), 3);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
+		assertEquals(stored.getRows().size(), 1, "Sample name columns is saved");
+		assertEquals(stored.getHeaders().size(), 3, "Sample is saved");
 	}
 
 	@Test
@@ -124,11 +119,11 @@ public class ProjectSampleMetadataAjaxControllerTest {
 				SAMPLE_NAME_COLUMN);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
-		assertEquals("Receive a complete message", ((AjaxSuccessResponse) response.getBody()).getMessage(), "complete");
-		assertEquals("Sample name columns is saved", stored.getSampleNameColumn(), SAMPLE_NAME_COLUMN);
-		assertEquals("Found sample id is saved", (long) stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN)
-				.getFoundSampleId(), (long) sample.getId());
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
+		assertEquals(((AjaxSuccessResponse) response.getBody()).getMessage(), "complete", "Receive a complete message");
+		assertEquals(stored.getSampleNameColumn(), SAMPLE_NAME_COLUMN, "Sample name columns is saved");
+		assertEquals((long) stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN).getFoundSampleId(),
+				(long) sample.getId(), "Found sample id is saved");
 	}
 
 	@Test
@@ -138,29 +133,28 @@ public class ProjectSampleMetadataAjaxControllerTest {
 		Locale locale = new Locale("en");
 		SampleMetadataStorage stored = createSampleMetadataStorage();
 		when(session.getAttribute("pm-" + PROJECT_ID)).thenReturn(stored);
-		when(messageSource.getMessage("project.samples.table.sample-id", new Object[] {}, locale)).thenReturn(
-				"Sample Id");
+		when(messageSource.getMessage("project.samples.table.sample-id", new Object[] {}, locale))
+				.thenReturn("Sample Id");
 		when(messageSource.getMessage("project.samples.table.id", new Object[] {}, locale)).thenReturn("ID");
-		when(messageSource.getMessage("project.samples.table.modified-date", new Object[] {}, locale)).thenReturn(
-				"Modified Date");
-		when(messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale)).thenReturn(
-				"Modified On");
-		when(messageSource.getMessage("project.samples.table.created-date", new Object[] {}, locale)).thenReturn(
-				"Created Date");
-		when(messageSource.getMessage("project.samples.table.created", new Object[] {}, locale)).thenReturn(
-				"Created On");
-		when(messageSource.getMessage("project.samples.table.coverage", new Object[] {}, locale)).thenReturn(
-				"Coverage");
-		when(messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale)).thenReturn(
-				"Project ID");
+		when(messageSource.getMessage("project.samples.table.modified-date", new Object[] {}, locale))
+				.thenReturn("Modified Date");
+		when(messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale))
+				.thenReturn("Modified On");
+		when(messageSource.getMessage("project.samples.table.created-date", new Object[] {}, locale))
+				.thenReturn("Created Date");
+		when(messageSource.getMessage("project.samples.table.created", new Object[] {}, locale))
+				.thenReturn("Created On");
+		when(messageSource.getMessage("project.samples.table.coverage", new Object[] {}, locale))
+				.thenReturn("Coverage");
+		when(messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale))
+				.thenReturn("Project ID");
 
 		ResponseEntity<AjaxResponse> response = controller.saveProjectSampleMetadata(locale, session, PROJECT_ID,
 				sampleNames);
 		stored = (SampleMetadataStorage) session.getAttribute("pm-" + PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
-		assertTrue("Sample is saved", stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN)
-				.isSaved());
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
+		assertTrue(stored.getRow(sample.getSampleName(), SAMPLE_NAME_COLUMN).isSaved(), "Sample is saved");
 	}
 
 	@Test
@@ -174,7 +168,7 @@ public class ProjectSampleMetadataAjaxControllerTest {
 	public void getProjectSampleMetadataTest() {
 		ResponseEntity<SampleMetadataStorage> response = controller.getProjectSampleMetadata(session, PROJECT_ID);
 
-		assertEquals("Receive an 200 OK response", response.getStatusCode(), HttpStatus.OK);
+		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 		verify(session, times(1)).getAttribute("pm-" + PROJECT_ID);
 	}
 }

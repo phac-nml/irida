@@ -2,10 +2,9 @@ package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
 
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 

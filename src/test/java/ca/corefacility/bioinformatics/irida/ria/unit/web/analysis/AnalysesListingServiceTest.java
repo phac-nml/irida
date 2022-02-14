@@ -2,9 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 
@@ -22,11 +21,14 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.collect.ImmutableMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link AnalysesListingService} which handles DataTables call for listing Analyses.
@@ -36,7 +38,7 @@ public class AnalysesListingServiceTest {
 
 	private AnalysisSubmissionService analysisSubmissionService;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);
 		IridaWorkflowsService iridaWorkflowsService = mock(IridaWorkflowsService.class);
@@ -56,20 +58,20 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
-				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						Matchers.any())).thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
+				.listAllSubmissions(eq(searchValue), isNull(), isNull(), isNull(),
+						any())).thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, null);
 
-		assertEquals("DataTables response should have a draw value of 1", 1, response.getDraw());
-		assertEquals("DataTables response should have a records filtered value of 150", 150,
-				response.getRecordsFiltered());
-		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
-		assertTrue("Should have data value", response.getData() != null);
+		assertEquals(1, response.getDraw(), "DataTables response should have a draw value of 1");
+		assertEquals(150, response.getRecordsFiltered(),
+				"DataTables response should have a records filtered value of 150");
+		assertEquals(150, response.getRecordsTotal(), "DataTables response should have a records total value of 150");
+		assertTrue(response.getData() != null, "Should have data value");
 
 		verify(analysisSubmissionService)
-				.listAllSubmissions(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						Matchers.any());
+				.listAllSubmissions(eq(searchValue), isNull(), isNull(), isNull(),
+						any());
 	}
 
 	@Test
@@ -79,20 +81,20 @@ public class AnalysesListingServiceTest {
 		DataTablesParams params = new DataTablesParams(1, 10, 1, searchValue, Sort.by(Sort.Direction.ASC, "id"),
 				ImmutableMap.of());
 
-		when(analysisSubmissionService.listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
-				Matchers.any(), Matchers.any()))
+		when(analysisSubmissionService.listSubmissionsForUser(eq(searchValue), isNull(), isNull(), eq(user),
+				any(), any()))
 				.thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, user, null);
 
-		assertEquals("DataTables response should have a draw value of 1", 1, response.getDraw());
-		assertEquals("DataTables response should have a records filtered value of 150", 150,
-				response.getRecordsFiltered());
-		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
-		assertTrue("Should have data value", response.getData() != null);
+		assertEquals(1, response.getDraw(), "DataTables response should have a draw value of 1");
+		assertEquals(150, response.getRecordsFiltered(),
+				"DataTables response should have a records filtered value of 150");
+		assertEquals(150, response.getRecordsTotal(), "DataTables response should have a records total value of 150");
+		assertTrue(response.getData() != null, "Should have data value");
 
-		verify(analysisSubmissionService).listSubmissionsForUser(eq(searchValue), any(String.class), eq(null), eq(user),
-				Matchers.any(), Matchers.any());
+		verify(analysisSubmissionService).listSubmissionsForUser(eq(searchValue), isNull(), isNull(), eq(user),
+				isNull(), any());
 	}
 
 	@Test
@@ -103,20 +105,20 @@ public class AnalysesListingServiceTest {
 				ImmutableMap.of());
 
 		when(analysisSubmissionService
-				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						eq(project), Matchers.any()))
+				.listSubmissionsForProject(eq(searchValue), isNull(), isNull(), isNull(),
+						eq(project), any()))
 				.thenReturn(AnalysesDataFactory.getPagedAnalysisSubmissions());
 
 		DataTablesResponse response = analysesListingService.getPagedSubmissions(params, Locale.US, null, project);
 
-		assertEquals("DataTables response should have a draw value of 1", 1, response.getDraw());
-		assertEquals("DataTables response should have a records filtered value of 150", 150,
-				response.getRecordsFiltered());
-		assertEquals("DataTables response should have a records total value of 150", 150, response.getRecordsTotal());
-		assertTrue("Should have data value", response.getData() != null);
+		assertEquals(1, response.getDraw(), "DataTables response should have a draw value of 1");
+		assertEquals(150, response.getRecordsFiltered(),
+				"DataTables response should have a records filtered value of 150");
+		assertEquals(150, response.getRecordsTotal(), "DataTables response should have a records total value of 150");
+		assertTrue(response.getData() != null, "Should have data value");
 
 		verify(analysisSubmissionService)
-				.listSubmissionsForProject(eq(searchValue), any(String.class), eq(null), Matchers.any(),
-						eq(project), Matchers.any());
+				.listSubmissionsForProject(eq(searchValue), isNull(), isNull(), isNull(),
+						eq(project), any());
 	}
 }

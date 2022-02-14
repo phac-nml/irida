@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * A simple filter that wraps {@link HttpServletRequest} to replace any incoming
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
  * resulting in invalid links.
  *
  */
+@Component
 public class SlashFilter implements Filter {
 
 	private static final Logger logger = LoggerFactory.getLogger(SlashFilter.class);

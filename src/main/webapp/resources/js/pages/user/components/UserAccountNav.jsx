@@ -8,29 +8,27 @@ import { Menu } from "antd";
  * @constructor
  */
 export default function UserAccountNav() {
-  const lastElement = useLocation().pathname.split("/").pop();
-  const defaultSelectedKey = lastElement.match(
-    "details|projects|security|password"
-  )
-    ? lastElement
-    : "details";
+  const location = useLocation();
+  const [selectedKeys, setSelectedKey] = React.useState("details");
+
+  React.useEffect(() => {
+    const lastElement = location.pathname.split("/").pop();
+    if (lastElement.match("details|projects|security")) {
+      setSelectedKey(lastElement);
+    }
+  }, [location]);
 
   return (
-    <Menu mode="inline" defaultSelectedKeys={[defaultSelectedKey]}>
+    <Menu mode="inline" selectedKeys={[selectedKeys]}>
       <Menu.Item key="details">
         <Link to="details">{i18n("UserAccountNav.menu.details")}</Link>
       </Menu.Item>
       <Menu.Item key="projects">
         <Link to="projects">{i18n("UserAccountNav.menu.projects")}</Link>
       </Menu.Item>
-      <Menu.ItemGroup
-        key="security"
-        title={i18n("UserAccountNav.menu.security")}
-      >
-        <Menu.Item key="password">
-          <Link to="password">{i18n("UserAccountNav.menu.password")}</Link>
-        </Menu.Item>
-      </Menu.ItemGroup>
+      <Menu.Item key="security">
+        <Link to="security">{i18n("UserAccountNav.menu.security")}</Link>
+      </Menu.Item>
     </Menu>
   );
 }

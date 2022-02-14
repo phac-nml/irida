@@ -13,13 +13,14 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.Sequencing
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequencingObjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.Validator;
 import java.io.IOException;
 
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class SequencingObjectServiceTest {
@@ -31,7 +32,7 @@ public class SequencingObjectServiceTest {
 	SequenceConcatenationRepository concatenationRepository;
 	Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		repository = mock(SequencingObjectRepository.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
@@ -56,7 +57,7 @@ public class SequencingObjectServiceTest {
 		verify(sequenceFileRepository, times(1)).save(any(SequenceFile.class));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateSequenceFileInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
@@ -66,10 +67,12 @@ public class SequencingObjectServiceTest {
 
 		when(repository.save(so)).thenReturn(so);
 
-		service.createSequencingObjectInSample(so, s);
+		assertThrows(IllegalArgumentException.class, () -> {
+			service.createSequencingObjectInSample(so, s);
+		});
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateSequenceFilePairInSampleWrongType() throws IOException {
 		Sample s = new Sample();
 
@@ -80,6 +83,8 @@ public class SequencingObjectServiceTest {
 
 		when(repository.save(so)).thenReturn(so);
 
-		service.createSequencingObjectInSample(so, s);
+		assertThrows(IllegalArgumentException.class, () -> {
+			service.createSequencingObjectInSample(so, s);
+		});
 	}
 }

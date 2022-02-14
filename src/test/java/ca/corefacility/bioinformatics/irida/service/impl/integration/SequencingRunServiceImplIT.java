@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -14,25 +13,17 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,21 +31,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
- * reset file at /ca/corefacility/bioinformatics/irida/service/impl/
- * SequencingRunServiceTableReset.xml
- * 
- *
+ * Test for SequencingRunServiceImplIT.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
 @DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml" })
 public class SequencingRunServiceImplIT {
@@ -88,16 +70,20 @@ public class SequencingRunServiceImplIT {
 		testAddSequenceFileToMiseqRun();
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "USER")
 	public void testAddSequenceFileToMiseqRunAsUser() throws IOException, InterruptedException {
-		testAddSequenceFileToMiseqRun();
+		assertThrows(AccessDeniedException.class, () -> {
+			testAddSequenceFileToMiseqRun();
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "MANAGER")
 	public void testAddSequenceFileToMiseqRunAsManager() throws IOException, InterruptedException {
-		testAddSequenceFileToMiseqRun();
+		assertThrows(AccessDeniedException.class, () -> {
+			testAddSequenceFileToMiseqRun();
+		});
 	}
 
 	private void testAddSequenceFileToMiseqRun() throws IOException, InterruptedException {
@@ -121,7 +107,7 @@ public class SequencingRunServiceImplIT {
 
 		Set<SequencingObject> sequencingObjectsForSequencingRun = objectService
 				.getSequencingObjectsForSequencingRun(saved);
-		assertTrue("Saved miseq run should have seqence file", sequencingObjectsForSequencingRun.contains(so));
+		assertTrue(sequencingObjectsForSequencingRun.contains(so), "Saved miseq run should have seqence file");
 
 		int maxWait = 20;
 		int waits = 0;
@@ -139,13 +125,13 @@ public class SequencingRunServiceImplIT {
 					if (waits > maxWait) {
 						throw new RuntimeException("Waited too long for fastqc to run");
 					}
-					
+
 					logger.info("Fastqc still isn't finished, sleeping a bit.");
 					Thread.sleep(1000);
 				}
 			} while (analysis == null);
 
-			assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
+			assertNotNull(analysis, "FastQC analysis should have been created for uploaded file.");
 		}
 	}
 
@@ -154,22 +140,21 @@ public class SequencingRunServiceImplIT {
 	public void testCreateMiseqRunAsSequencer() {
 		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun returned = miseqRunService.create(mr);
-		assertNotNull("Created run was not assigned an ID.", returned.getId());
+		assertNotNull(returned.getId(), "Created run was not assigned an ID.");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testReadMiseqRunAsTech() {
 		SequencingRun mr = miseqRunService.read(1L);
-		assertNotNull("Created run was not assigned an ID.", mr.getId());
+		assertNotNull(mr.getId(), "Created run was not assigned an ID.");
 	}
-
 
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testReadMiseqRunAsSequencer() {
 		SequencingRun mr = miseqRunService.read(1L);
-		assertNotNull("Created run was not assigned an ID.", mr.getId());
+		assertNotNull(mr.getId(), "Created run was not assigned an ID.");
 	}
 
 	@Test
@@ -177,33 +162,39 @@ public class SequencingRunServiceImplIT {
 	public void testCreateMiseqRunAsUser() {
 		SequencingRun mr = new SequencingRun(LayoutType.PAIRED_END, "miseq");
 		SequencingRun create = miseqRunService.create(mr);
-		assertEquals("user", create.getUser().getUsername());
+		assertEquals(create.getUser().getUsername(), "user");
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "user", password = "password1", roles = "USER")
 	public void testUpdateMiseqRunAsUserFail() {
 		// run 2 is not owned by "user"
 		SequencingRun mr = miseqRunService.read(2L);
 		mr.setDescription("different description");
-		miseqRunService.update(mr);
+		assertThrows(AccessDeniedException.class, () -> {
+			miseqRunService.update(mr);
+		});
 	}
-	
-	@Test(expected = AccessDeniedException.class)
+
+	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testUpdateMiseqRunAsTechFail() {
 		// run 2 is not owned by "user"
 		SequencingRun mr = miseqRunService.read(2L);
 		mr.setDescription("different description");
-		miseqRunService.update(mr);
+		assertThrows(AccessDeniedException.class, () -> {
+			miseqRunService.update(mr);
+		});
 	}
-	
-	@Test(expected = AccessDeniedException.class)
+
+	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testDeleteMiseqRunAsTechFail() {
 		// run 2 is not owned by "user"
 		SequencingRun mr = miseqRunService.read(2L);
-		miseqRunService.delete(mr.getId());
+		assertThrows(AccessDeniedException.class, () -> {
+			miseqRunService.delete(mr.getId());
+		});
 	}
 
 	@Test
@@ -221,7 +212,7 @@ public class SequencingRunServiceImplIT {
 		String newDescription = "a different description";
 		SequencingRun mr = miseqRunService.read(1L);
 		mr.setDescription(newDescription);
-		
+
 		SequencingRun update = miseqRunService.update(mr);
 		assertEquals(update.getDescription(), newDescription);
 	}
@@ -239,9 +230,9 @@ public class SequencingRunServiceImplIT {
 		Iterable<SequencingRun> findAll = miseqRunService.findAll();
 
 		List<SequencingRun> runs = Lists.newArrayList(findAll);
-		assertEquals("user should be able to see 1 run", 1, runs.size());
+		assertEquals(1, runs.size(), "user should be able to see 1 run");
 		SequencingRun run = runs.iterator().next();
-		assertEquals("id should be 1", Long.valueOf(1), run.getId());
+		assertEquals(Long.valueOf(1), run.getId(), "id should be 1");
 	}
 
 	@Test
@@ -250,39 +241,39 @@ public class SequencingRunServiceImplIT {
 		Iterable<SequencingRun> findAll = miseqRunService.findAll();
 
 		List<SequencingRun> runs = Lists.newArrayList(findAll);
-		assertEquals("user should be able to see all 5 runs", 5, runs.size());
+		assertEquals(5, runs.size(), "user should be able to see all 5 runs");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testFindAllTech() {
 		Iterable<SequencingRun> findAll = miseqRunService.findAll();
 
 		List<SequencingRun> runs = Lists.newArrayList(findAll);
-		assertEquals("technician should be able to see all 5 runs", 5, runs.size());
+		assertEquals(5, runs.size(), "technician should be able to see all 5 runs");
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testDeleteCascade() {
-		assertTrue("Sequence file should exist before", objectService.exists(3L));
-		assertTrue("file pair should exist before", objectService.exists(1L));
+		assertTrue(objectService.exists(3L), "Sequence file should exist before");
+		assertTrue(objectService.exists(1L), "file pair should exist before");
 		miseqRunService.delete(2L);
-		assertFalse("Sequence file should be deleted on cascade", objectService.exists(3L));
-		assertFalse("file pair should not exist after", objectService.exists(1L));
-		assertTrue("file 7 should not be deleted because it's in an analysis", objectService.exists(6L));
+		assertFalse(objectService.exists(3L), "Sequence file should be deleted on cascade");
+		assertFalse(objectService.exists(1L), "file pair should not exist after");
+		assertTrue(objectService.exists(6L), "file 7 should not be deleted because it's in an analysis");
 	}
 
 	@Test
 	@WithMockUser(username = "fbristow", password = "password1", roles = "ADMIN")
 	public void testDeleteCascadeToSample() {
-		assertTrue("Sequence file should exist before", objectService.exists(2L));
+		assertTrue(objectService.exists(2L), "Sequence file should exist before");
 		miseqRunService.delete(3L);
-		assertFalse("Sequence file should be deleted on cascade", objectService.exists(2L));
-		assertFalse("Sequence file should be deleted on cascade", objectService.exists(4L));
-		assertFalse("Sequence file should be deleted on cascade", objectService.exists(5L));
-		assertFalse("Sample should be deleted on cascade", sampleService.exists(2L));
-		assertTrue("This sample should not be removed", sampleService.exists(1L));
+		assertFalse(objectService.exists(2L), "Sequence file should be deleted on cascade");
+		assertFalse(objectService.exists(4L), "Sequence file should be deleted on cascade");
+		assertFalse(objectService.exists(5L), "Sequence file should be deleted on cascade");
+		assertFalse(sampleService.exists(2L), "Sample should be deleted on cascade");
+		assertTrue(sampleService.exists(1L), "This sample should not be removed");
 	}
 
 	/**
@@ -321,6 +312,6 @@ public class SequencingRunServiceImplIT {
 			}
 		} while (analysis == null);
 
-		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
+		assertNotNull(analysis, "FastQC analysis should have been created for sequence file.");
 	}
 }

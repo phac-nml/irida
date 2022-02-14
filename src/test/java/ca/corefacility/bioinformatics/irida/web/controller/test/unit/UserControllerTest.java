@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,8 +12,8 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,7 +43,7 @@ public class UserControllerTest {
 	private UserService userService;
 	private ProjectService projectService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
@@ -69,7 +69,7 @@ public class UserControllerTest {
 		when(projectService.getProjectsForUser(u)).thenReturn(projects);
 		// run the test
 		ResponseProjectResource<ResourceCollection<Project>> output = controller.getUserProjects(username);
-		@SuppressWarnings("unchecked") ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output.getProjectResources();
+		ResourceCollection<Project> pulledProjects = (ResourceCollection<Project>) output.getProjectResources();
 		List<Project> projectResources = pulledProjects.getResources();
 		assertEquals(1, projectResources.size());
 		Project resource = projectResources.get(0);
@@ -109,9 +109,9 @@ public class UserControllerTest {
 		ResponseResource<ResourceCollection<User>> output = controller.listAllResources();
 
 		ResourceCollection<User> usersCollection = output.getResource();
-		assertEquals("users collection is the wrong size.", 1, usersCollection.size());
+		assertEquals(1, usersCollection.size(), "users collection is the wrong size.");
 		User userResource = usersCollection.iterator()
 				.next();
-		assertEquals("username is not correct.", username, userResource.getUsername());
+		assertEquals(username, userResource.getUsername(), "username is not correct.");
 	}
 }

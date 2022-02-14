@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFac
 
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UIProjectUserGroupServiceTest {
@@ -50,7 +50,7 @@ public class UIProjectUserGroupServiceTest {
 	private ProjectService projectService;
 	private UserGroupService userGroupService;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		projectService = mock(ProjectService.class);
 		userGroupService = mock(UserGroupService.class);
@@ -88,7 +88,7 @@ public class UIProjectUserGroupServiceTest {
 	@Test
 	public void testGetAvailableUserGroupsForProject() {
 		List<UserGroup> groups = service.getAvailableUserGroupsForProject(1L, "");
-		assertEquals("Should be 3 user groups returned", 3, groups.size());
+		assertEquals(3, groups.size(), "Should be 3 user groups returned");
 		verify(userGroupService, times(1)).getUserGroupsNotOnProject(PROJECT, "");
 	}
 

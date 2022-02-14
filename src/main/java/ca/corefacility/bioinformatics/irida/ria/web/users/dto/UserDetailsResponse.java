@@ -17,6 +17,7 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean isAdmin;
 	private boolean canEditUserInfo;
 	private boolean canEditUserStatus;
+	private boolean canChangePassword;
 	private boolean canCreatePasswordReset;
 	private List<UserDetailsLocale> locales;
 	private List<UserDetailsRole> allowedRoles;
@@ -24,7 +25,8 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
 			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
-			boolean canCreatePasswordReset, List<UserDetailsLocale> locales, List<UserDetailsRole> allowedRoles) {
+			boolean canChangePassword, boolean canCreatePasswordReset, List<UserDetailsLocale> locales,
+			List<UserDetailsRole> allowedRoles) {
 		this.userDetails = userDetails;
 		this.currentRole = currentRole;
 		this.mailConfigured = mailConfigured;
@@ -32,6 +34,7 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.isAdmin = isAdmin;
 		this.canEditUserInfo = canEditUserInfo;
 		this.canEditUserStatus = canEditUserStatus;
+		this.canChangePassword = canChangePassword;
 		this.canCreatePasswordReset = canCreatePasswordReset;
 		this.locales = locales;
 		this.allowedRoles = allowedRoles;
@@ -95,6 +98,14 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	public void setCanEditUserStatus(boolean canEditUserStatus) {
 		this.canEditUserStatus = canEditUserStatus;
+	}
+
+	public boolean isCanChangePassword() {
+		return canChangePassword;
+	}
+
+	public void setCanChangePassword(boolean canChangePassword) {
+		this.canChangePassword = canChangePassword;
 	}
 
 	public boolean isCanCreatePasswordReset() {

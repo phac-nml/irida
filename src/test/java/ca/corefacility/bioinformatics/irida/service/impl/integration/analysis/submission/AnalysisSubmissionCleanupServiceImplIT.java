@@ -1,32 +1,23 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.submission;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
@@ -35,25 +26,20 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * 
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionCleanupServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionCleanupServiceImplIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	
+
 	@Autowired
 	private AnalysisSubmissionCleanupService analysisSubmissionCleanupService;
-	
+
 	@Autowired
 	private AnalysisSubmissionCleanupService analysisSubmissionCleanupServiceLocal;
-	
+
 	/**
 	 * Setup for tests.
 	 * 
@@ -62,9 +48,9 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	@Before
-	public void setup() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
-			IllegalAccessException {
+	@BeforeEach
+	public void setup()
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		analysisSubmissionCleanupServiceLocal = new AnalysisSubmissionCleanupServiceImpl(analysisSubmissionRepository);
 
 		// Unset the 'ranSwitchInconsistentSubmissionsToError' field so we can
@@ -74,16 +60,18 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		ranSwitchInconsistentSubmissionsToError.setAccessible(true);
 		ranSwitchInconsistentSubmissionsToError.setBoolean(null, false);
 	}
-	
+
 	/**
 	 * Tests failing to run service due to invalid user.
 	 */
-	@Test(expected=AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "")
 	public void testSwitchInconsistentSubmissionsToErrorInvalidUser() {
-		analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
+		});
 	}
-	
+
 	/**
 	 * Tests successfully switching submissions to error from autowired service.
 	 */
@@ -92,26 +80,28 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	public void testSwitchInconsistentSubmissionsToErrorAutwiredSuccess() {
 		int analysisSubmissionsChanged = analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 
-		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(1L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(2L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(3L).orElse(null)
-				.getAnalysisState());
+		assertEquals(3, analysisSubmissionsChanged, "Switched invalid number of submissions");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(1L).orElse(null).getAnalysisState(),
+				"Did not switch SUBMITTING to ERROR");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(2L).orElse(null).getAnalysisState(),
+				"Did not switch PREPARING to ERROR");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(3L).orElse(null).getAnalysisState(),
+				"Did not switch COMPLETING to ERROR");
 
 		// make sure no other submissions have changed
-		assertEquals("Analysis submission state has changed", AnalysisState.NEW,
-				analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING,
-				analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findById(7L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null)
-				.getAnalysisState());
+		assertEquals(AnalysisState.NEW, analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.RUNNING, analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.FINISHED_RUNNING,
+				analysisSubmissionRepository.findById(7L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
 
 		try {
 			analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
@@ -119,44 +109,50 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		} catch (RuntimeException e) {
 		}
 	}
-	
+
 	/**
-	 * Tests successfully switching submissions to error from service we build ourselves.
+	 * Tests successfully switching submissions to error from service we build
+	 * ourselves.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSwitchInconsistentSubmissionsToErrorLocalSuccess() {
 		int analysisSubmissionsChanged = analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
 
-		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(1L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(2L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findById(3L).orElse(null)
-				.getAnalysisState());
+		assertEquals(3, analysisSubmissionsChanged, "Switched invalid number of submissions");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(1L).orElse(null).getAnalysisState(),
+				"Did not switch SUBMITTING to ERROR");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(2L).orElse(null).getAnalysisState(),
+				"Did not switch PREPARING to ERROR");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(3L).orElse(null).getAnalysisState(),
+				"Did not switch COMPLETING to ERROR");
 
 		// make sure no other submissions have changed
-		assertEquals("Analysis submission state has changed", AnalysisState.NEW,
-				analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING,
-				analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findById(7L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null)
-				.getAnalysisState());
+		assertEquals(AnalysisState.NEW, analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.RUNNING, analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.FINISHED_RUNNING,
+				analysisSubmissionRepository.findById(7L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
 	}
-	
+
 	/**
-	 * Tests successfully failing on attempt to switch submissions to error twice.
+	 * Tests successfully failing on attempt to switch submissions to error
+	 * twice.
 	 */
-	@Test(expected=RuntimeException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSwitchInconsistentSubmissionsToErrorTwiceFail() {
-		analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
-		analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
+		assertThrows(RuntimeException.class, () -> {
+			analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
+			analysisSubmissionCleanupServiceLocal.switchInconsistentSubmissionsToError();
+		});
 	}
 }

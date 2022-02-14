@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.Link;
 
 import com.google.common.collect.Lists;
@@ -26,7 +26,7 @@ public class SampleRemoteServiceImplTest {
 	private SampleRemoteRepository sampleRemoteRepository;
 	private RemoteAPIRepository apiRepo;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sampleRemoteRepository = mock(SampleRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
@@ -38,7 +38,7 @@ public class SampleRemoteServiceImplTest {
 	public void testGetSamplesForProject() {
 		String samplesHref = "http://somewhere/projects/5/samples";
 		Project project = new Project();
-		project.add(new Link(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
+		project.add(Link.of(samplesHref, SampleRemoteServiceImpl.PROJECT_SAMPLES_REL));
 		RemoteAPI api = new RemoteAPI();
 		project.setRemoteStatus(new RemoteStatus("http://nowhere", api));
 

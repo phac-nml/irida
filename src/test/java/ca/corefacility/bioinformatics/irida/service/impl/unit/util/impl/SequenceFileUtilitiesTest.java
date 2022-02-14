@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit.util.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -9,8 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
@@ -19,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.service.util.impl.BioJavaSequenceFil
 public class SequenceFileUtilitiesTest {
 	private SequenceFileUtilities sequenceFileUtilities;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sequenceFileUtilities = new BioJavaSequenceFileUtilitiesImpl();
 	}
@@ -29,7 +30,7 @@ public class SequenceFileUtilitiesTest {
 		Path file = Paths.get(getClass().getResource(
 				"/ca/corefacility/bioinformatics/irida/service/testReference.fasta").toURI());
 		Long sequenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(file);
-		assertEquals("Should have 4 bases.", Long.valueOf(4), sequenceFileLength);
+		assertEquals(Long.valueOf(4), sequenceFileLength, "Should have 4 bases.");
 	}
 
 	@Test
@@ -48,10 +49,12 @@ public class SequenceFileUtilitiesTest {
 		Files.deleteIfExists(file);
 	}
 	
-	@Test(expected = UnsupportedReferenceFileContentError.class)
+	@Test
 	public void testGetSequenceFileLengthAmbiguousBases() throws URISyntaxException {
 		Path file = Paths.get(getClass().getResource(
 				"/ca/corefacility/bioinformatics/irida/service/testReferenceAmbiguous.fasta").toURI());
-		sequenceFileUtilities.countSequenceFileLengthInBases(file);
+		assertThrows(UnsupportedReferenceFileContentError.class, () -> {
+			sequenceFileUtilities.countSequenceFileLengthInBases(file);
+		});
 	}
 }

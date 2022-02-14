@@ -1,24 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-import java.security.Principal;
 import java.util.Base64;
-import java.util.Locale;
-import java.util.Map;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,16 +12,19 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 /**
- * 
  *
  */
 public class PasswordResetControllerTest {
@@ -45,7 +34,7 @@ public class PasswordResetControllerTest {
 	private MessageSource messageSource;
 	private PasswordResetController controller;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userService = mock(UserService.class);
 		passwordResetService = mock(PasswordResetService.class);
@@ -55,7 +44,7 @@ public class PasswordResetControllerTest {
 		controller = new PasswordResetController(userService, passwordResetService, emailController, messageSource);
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() {
 		SecurityContextHolder.clearContext();
 	}
@@ -93,10 +82,11 @@ public class PasswordResetControllerTest {
 		String sendNewPassword = controller.sendNewPassword(resetId, password, password, model,
 				LocaleContextHolder.getLocale());
 
-		assertEquals(PasswordResetController.SUCCESS_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
-				sendNewPassword);
-		assertEquals("User should not be logged in after resetting password", username, SecurityContextHolder
-				.getContext().getAuthentication().getName());
+		assertEquals(PasswordResetController.SUCCESS_REDIRECT + Base64.getEncoder()
+				.encodeToString(email.getBytes()), sendNewPassword);
+		assertEquals(username, SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName(), "User should not be logged in after resetting password");
 
 		verify(passwordResetService).read(resetId);
 		verify(userService).changePassword(user.getId(), password);
@@ -136,8 +126,8 @@ public class PasswordResetControllerTest {
 		when(userService.loadUserByEmail(email)).thenReturn(user);
 
 		String submitEmail = controller.submitEmail(email, model);
-		assertEquals(PasswordResetController.CREATED_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
-				submitEmail);
+		assertEquals(PasswordResetController.CREATED_REDIRECT + Base64.getEncoder()
+				.encodeToString(email.getBytes()), submitEmail);
 		assertTrue(model.containsKey("email"));
 
 		verify(userService).loadUserByEmail(email);
@@ -159,26 +149,6 @@ public class PasswordResetControllerTest {
 		assertTrue(model.containsKey("emailError"));
 
 		verify(userService).loadUserByEmail(email);
-		verifyZeroInteractions(emailController);
-	}
-
-	@Test
-	public void testAdminNewPasswordReset() {
-		User user = TestDataFactory.constructUser();
-		String loggedInUsername = "loggedIn";
-		Principal principal = () -> loggedInUsername;
-		User loggedIn = new User(loggedInUsername, null, null, null, null, null);
-		loggedIn.setSystemRole(Role.ROLE_ADMIN);
-
-		when(userService.read(TestDataFactory.USER_ID)).thenReturn(user);
-		when(userService.getUserByUsername(loggedInUsername)).thenReturn(loggedIn);
-
-		when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Anything can work here");
-		Map<String, Object> result = controller.adminNewPasswordReset(TestDataFactory.USER_ID, principal, Locale.US);
-		assertTrue(result.containsKey("message"));
-		assertTrue(result.containsKey("title"));
-		assertTrue(result.containsKey("success"));
-		verify(userService).read(TestDataFactory.USER_ID);
-		verify(emailController).sendPasswordResetLinkEmail(any(User.class), any(PasswordReset.class));
+		verifyNoInteractions(emailController);
 	}
 }

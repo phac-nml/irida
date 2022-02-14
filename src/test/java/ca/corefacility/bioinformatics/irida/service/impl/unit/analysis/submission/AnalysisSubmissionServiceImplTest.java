@@ -20,14 +20,15 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.validation.Validator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,9 +80,9 @@ public class AnalysisSubmissionServiceImplTest {
 	/**
 	 * Setup for tests.
 	 */
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository,
 				analysisTemplateRepository, userRepository, referenceFileRepository, sequencingObjectService,
@@ -102,8 +103,8 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateNew() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.NEW);
 
-		assertEquals("invalid percent complete", 0.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(0.0f, analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -116,9 +117,9 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStatePreparing() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 
-		assertEquals("invalid percent complete",
-				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.PREPARING),
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.PREPARING),
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -131,9 +132,9 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStatePrepared() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARED);
 
-		assertEquals("invalid percent complete",
-				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.PREPARED),
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.PREPARED),
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -146,9 +147,9 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateSubmitting() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 
-		assertEquals("invalid percent complete",
-				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.SUBMITTING),
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.SUBMITTING),
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -165,9 +166,9 @@ public class AnalysisSubmissionServiceImplTest {
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(0.0f);
 
-		assertEquals("invalid percent complete",
-				AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.RUNNING),
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.RUNNING),
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -187,8 +188,9 @@ public class AnalysisSubmissionServiceImplTest {
 		Float runningState = AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.RUNNING);
 		Float finishedState = AnalysisSubmissionServiceImpl.STATE_PERCENTAGE.get(AnalysisState.FINISHED_RUNNING);
 		// check that it's half done
-		assertEquals("invalid percent complete", (runningState + finishedState) / 2,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals((runningState + finishedState) / 2,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -205,8 +207,9 @@ public class AnalysisSubmissionServiceImplTest {
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(1.0f);
 
-		assertEquals("invalid percent complete", 90.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(90.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -220,8 +223,9 @@ public class AnalysisSubmissionServiceImplTest {
 			ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 
-		assertEquals("invalid percent complete", 90.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(90.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -234,8 +238,9 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateCompleting() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETING);
 
-		assertEquals("invalid percent complete", 92.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(92.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -248,8 +253,9 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateCompleted() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 
-		assertEquals("invalid percent complete", 100.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+		assertEquals(100.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+				"invalid percent complete");
 	}
 
 	/**
@@ -258,10 +264,12 @@ public class AnalysisSubmissionServiceImplTest {
 	 * @throws EntityNotFoundException
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected = NoPercentageCompleteException.class)
+	@Test
 	public void testGetPercentageCompleteError() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.ERROR);
-		analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID);
+		assertThrows(NoPercentageCompleteException.class, () -> {
+			analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID);
+		});
 	}
 	
 	/**

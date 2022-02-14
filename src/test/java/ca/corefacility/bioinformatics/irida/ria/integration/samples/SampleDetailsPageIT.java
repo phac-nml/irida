@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.samples;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.Sample
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * <p> Integration test to ensure that the Sample Details Page. </p>
@@ -30,7 +30,7 @@ public class SampleDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	private SampleDetailsPage page;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsManager(driver());
 		page = new SampleDetailsPage(driver());
@@ -39,17 +39,17 @@ public class SampleDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testPageSetup() {
 		page.gotoPage(SAMPLE_ID);
-		assertEquals("Display the correct title.", "Sample - sample1", page.getPageTitle());
-		assertEquals("Displays the correct organism", SAMPLE_ORGANISM, page.getOrganismName());
-		assertEquals("Displays the created date", SAMPLE_CREATED_DATE, page.getCreatedDate());
-		assertEquals("Displays the latitude", SAMPLE_LATITUDE, page.getLatitude());
-		assertEquals("Displays the longitude", SAMPLE_LONGITUDE, page.getLongitude());
-		assertEquals("Displays who collected the sample", SAMPLE_COLLECTED_BY, page.getCollectedBy());
-		assertEquals("Displays the isolation source", SAMPLE_ISOLATION_SOURCE, page.getIsolationSource());
-		assertEquals("Displays the geographic location name", SAMPLE_GEOGRAPHIC_LOCATION_NAME,
-				page.getGeographicLocationName());
-		assertEquals("Displays the strain", SAMPLE_STRAIN, page.getStrain());
-		assertEquals("Displays the isolate", SAMPLE_ISOLATE, page.getIsolate());
-		assertEquals("Sidebar displays the id", SAMPLE_ID, page.getSampleId());
+		assertEquals("Sample - sample1", page.getPageTitle(), "Display the correct title.");
+		assertEquals(SAMPLE_ORGANISM, page.getOrganismName(), "Displays the correct organism");
+		assertEquals(SAMPLE_CREATED_DATE, page.getCreatedDate(), "Displays the created date");
+		assertEquals(SAMPLE_LATITUDE, page.getLatitude(), "Displays the latitude");
+		assertEquals(SAMPLE_LONGITUDE, page.getLongitude(), "Displays the longitude");
+		assertEquals(SAMPLE_COLLECTED_BY, page.getCollectedBy(), "Displays who collected the sample");
+		assertEquals(SAMPLE_ISOLATION_SOURCE, page.getIsolationSource(), "Displays the isolation source");
+		assertEquals( SAMPLE_GEOGRAPHIC_LOCATION_NAME, page.getGeographicLocationName(),
+				"Displays the geographic location name");
+		assertEquals(SAMPLE_STRAIN, page.getStrain(), "Displays the strain");
+		assertEquals(SAMPLE_ISOLATE, page.getIsolate(), "Displays the isolate");
+		assertEquals(SAMPLE_ID, page.getSampleId(), "Sidebar displays the id");
 	}
 }
