@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,11 +22,8 @@ import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -51,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
@@ -60,11 +54,7 @@ import com.google.common.collect.Sets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectServiceImplIT {
@@ -155,8 +145,10 @@ public class ProjectServiceImplIT {
 		final Project unassociatedProject = projectService.read(8L);
 		final Page<Project> unassociated = projectService.getUnassociatedProjects(p, "", 0, 10, Direction.ASC, "name");
 
-		assertEquals(3, unassociated.getNumberOfElements(), "This user should have three unassociated projects (one group, two user).");
-		assertTrue(unassociated.getContent().contains(unassociatedProject), "The unassociated project should be the other project.");
+		assertEquals(3, unassociated.getNumberOfElements(),
+				"This user should have three unassociated projects (one group, two user).");
+		assertTrue(unassociated.getContent().contains(unassociatedProject),
+				"The unassociated project should be the other project.");
 	}
 
 	@Test
@@ -171,10 +163,14 @@ public class ProjectServiceImplIT {
 		final Project userProject2 = projectService.read(10L);
 
 		assertEquals(4, projects.size(), "Should be on 4 projects.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject)), "Should have user project reference.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)), "Should have group project reference.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)), "Should have group project reference.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject2)), "Should have user project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject)),
+				"Should have user project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)),
+				"Should have group project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)),
+				"Should have group project reference.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject2)),
+				"Should have user project reference.");
 	}
 
 	@Test
@@ -565,7 +561,8 @@ public class ProjectServiceImplIT {
 		// verify that the reference file was persisted beneath the reference
 		// file directory
 		ReferenceFile rf = pr.getObject();
-		assertTrue(rf.getFile().startsWith(referenceFileBaseDirectory), "reference file should be beneath the base directory for reference files.");
+		assertTrue(rf.getFile().startsWith(referenceFileBaseDirectory),
+				"reference file should be beneath the base directory for reference files.");
 	}
 
 	@Test
@@ -631,12 +628,16 @@ public class ProjectServiceImplIT {
 
 		final Iterator<Revision<Integer, Project>> iterator = revisions.iterator();
 		final Revision<Integer, Project> mostRecent = iterator.next();
-		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(), "most recent revision should have project description change.");
-		assertEquals(modifiedName, mostRecent.getEntity().getName(), "most recent revision should also have name changed.");
+		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(),
+				"most recent revision should have project description change.");
+		assertEquals(modifiedName, mostRecent.getEntity().getName(),
+				"most recent revision should also have name changed.");
 
 		final Revision<Integer, Project> secondRecent = iterator.next();
-		assertEquals(modifiedName, secondRecent.getEntity().getName(), "second most recent revision should have modified name.");
-		assertNotEquals(modifiedDesc, secondRecent.getEntity().getProjectDescription(), "second most recent revision should *not* have modified description.");
+		assertEquals(modifiedName, secondRecent.getEntity().getName(),
+				"second most recent revision should have modified name.");
+		assertNotEquals(modifiedDesc, secondRecent.getEntity().getProjectDescription(),
+				"second most recent revision should *not* have modified description.");
 	}
 
 	@Test
@@ -656,8 +657,10 @@ public class ProjectServiceImplIT {
 		assertEquals(1, revisions.getContent().size(), "Should have 2 revisions.");
 
 		final Revision<Integer, Project> mostRecent = revisions.iterator().next();
-		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(), "most recent revision should have project description change.");
-		assertEquals(modifiedName, mostRecent.getEntity().getName(), "most recent revision should also have name changed.");
+		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(),
+				"most recent revision should have project description change.");
+		assertEquals(modifiedName, mostRecent.getEntity().getName(),
+				"most recent revision should also have name changed.");
 	}
 
 	@Test
@@ -832,14 +835,15 @@ public class ProjectServiceImplIT {
 			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals(Sets.newHashSet(1L, 2L),
-				projectSampleJoinRepository.getSamplesForProject(source).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()), "Samples should still exist in source project");
-		assertEquals(Sets.newHashSet(1L, 2L),
-				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()), "Samples should exist in destination project");
+		assertEquals(
+				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(source).stream()
+						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
+				"Samples should still exist in source project");
+		assertEquals(
+				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(destination).stream()
+						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
+				"Samples should exist in destination project");
 	}
-
 
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
@@ -885,12 +889,14 @@ public class ProjectServiceImplIT {
 			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals(Sets.newHashSet(1L, 2L),
-				projectSampleJoinRepository.getSamplesForProject(source).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()), "Samples should still exist in source project");
-		assertEquals(Sets.newHashSet(1L, 2L),
-				projectSampleJoinRepository.getSamplesForProject(destination).stream().map(j -> j.getObject().getId())
-						.collect(Collectors.toSet()), "Samples should exist in destination project");
+		assertEquals(
+				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(source).stream()
+						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
+				"Samples should still exist in source project");
+		assertEquals(
+				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(destination).stream()
+						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
+				"Samples should exist in destination project");
 	}
 
 	@Test
@@ -911,7 +917,8 @@ public class ProjectServiceImplIT {
 			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals(Long.valueOf(1L), projectSampleJoinRepository.countSamplesForProject(source), "Samples should not exist in source project");
+		assertEquals(Long.valueOf(1L), projectSampleJoinRepository.countSamplesForProject(source),
+				"Samples should not exist in source project");
 
 		List<Join<Project, Sample>> samplesForProject = projectSampleJoinRepository.getSamplesForProject(destination);
 		assertEquals(1, samplesForProject.size(), "Should be 1 sample");
