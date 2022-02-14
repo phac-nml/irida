@@ -82,6 +82,31 @@ public class UsersAjaxController {
 	}
 
 	/**
+	 * Change the password for a user
+	 *
+	 * @param userId      The id of the user to edit (required)
+	 * @param oldPassword The old password of the user for password change
+	 * @param newPassword The new password of the user for password change
+	 * @param principal   a reference to the logged in user
+	 * @param request     the request
+	 * @return The name of the user view
+	 */
+	@RequestMapping(value = "/{userId}/changePassword", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long userId,
+			@RequestParam String oldPassword, @RequestParam String newPassword, Principal principal,
+			HttpServletRequest request) {
+
+		UserDetailsResponse response = UIUsersService.changeUserPassword(userId, oldPassword, newPassword, principal,
+				request);
+
+		if (response.hasErrors())
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(response.getErrors());
+		else
+			return ResponseEntity.ok(null);
+	}
+
+	/**
 	 * Get the projects associated with a user
 	 *
 	 * @param userId - the id for the user to show project details for

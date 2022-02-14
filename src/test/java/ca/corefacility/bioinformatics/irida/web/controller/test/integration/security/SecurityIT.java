@@ -1,16 +1,19 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.security;
 
-import static com.jayway.restassured.RestAssured.expect;
+import static io.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import org.apache.http.HttpStatus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 
 /**
  * General tests relating to security for the REST API.
  * 
  */
+@RestIntegrationTest
 public class SecurityIT {
 
 	/**

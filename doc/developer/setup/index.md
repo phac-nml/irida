@@ -66,9 +66,9 @@ Many of IRIDA's properties can be configured by creating a file `/etc/irida/irid
     # configure liquibase to manage the database schema
     liquibase.update.database.schema=false
     # disable hibernate's automatic schema creation
-    hibernate.hbm2ddl.auto=
+    spring.jpa.hibernate.ddl-auto=
     # disallow hibernate from importing any data
-    hibernate.hbm2ddl.import_files=
+    spring.jpa.properties.hibernate.hbm2ddl.import_files=
 
 The sections below will include the keys that you can use to override the default behaviour.
 
@@ -76,9 +76,9 @@ The sections below will include the keys that you can use to override the defaul
 
 IRIDA is configured to use the following credentials by default:
 
-* **Username** (`jdbc.username`): `test`
-* **Password** (`jdbc.password`): `test`
-* **Database** (`jdbc.url`): `jdbc:mysql://localhost:3306/irida_test`
+* **Username** (`spring.datasource.username`): `test`
+* **Password** (`spring.datasource.password`): `test`
+* **Database** (`spring.datasource.url`): `jdbc:mysql://localhost:3306/irida_test`
 
 You'll need to permit those user credentials to create the tables in the database. A quick one-liner for that is:
 
@@ -106,30 +106,38 @@ If the directories that are configured do not exist (they don't likely exist if 
 
 You can verify that you've installed everything correctly in one of two ways:
 
-1. Minimal verification: Check to see that Jetty starts, or
+1. Minimal verification: Check to see that Tomcat starts, or
 2. Maximal verification: Run the complete test suite.
 
-Checking to see that Jetty starts will ensure that you're able to start hacking on the UI or the REST API. If you're going to be working on Galaxy-related features, you should *probably* run the complete test suite as it runs a Docker version of Galaxy and verifies that communication between IRIDA and Galaxy will work properly. Keep in mind that the complete test suite execution currently takes approximately 1 hour to complete.
+Checking to see that Tomcat starts will ensure that you're able to start hacking on the UI or the REST API. If you're going to be working on Galaxy-related features, you should *probably* run the complete test suite as it runs a Docker version of Galaxy and verifies that communication between IRIDA and Galaxy will work properly. Keep in mind that the complete test suite execution currently takes approximately 1 hour to complete.
 
-#### Checking to see that Jetty starts
+#### Checking to see that Tomcat starts
 
-IRIDA uses Maven for build and dependency management. You can check to see that Jetty starts like so:
+IRIDA uses Maven for build and dependency management. You can check to see that Tomcat starts like so:
 
-    mvn clean jetty:run
-    
+    mvn clean spring-boot:run
+
 #### Database first-time setup
 
-When first starting up Jetty, you'll need to have the database created and populated, which can be done by running the following script:
+When first starting up Tomcat, you'll need to have the database created and populated, which can be done by running the
+following script:
 
     ./run.sh --create-db
-    
-This will create the database schema and import some testing data. This can also be used to drop then recreate the database and reimport the starting dataset when a clean database is needed.
+
+This will create the database schema and import some testing data. This can also be used to drop then recreate the
+database and reimport the starting dataset when a clean database is needed.
 
 For all subsequent runs, simply run the script with no options:
 
     ./run.sh
-    
-This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which will cause Jetty to start up much faster.
+
+This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which
+will cause Tomcat to start up much faster.
+
+Other arguments can be be passed to the script:
+
+* `--no-yarn`: Skip running the `yarn build` script along with the build, useful during development.
+* `--prod`: Run spring using the production profile.
 
 #### Integration Testing
 

@@ -5,12 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class ensuring fast5 files get created with their correct type

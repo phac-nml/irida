@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.io.IOException;
-import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
@@ -21,18 +19,15 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.Lists;
 
-import static liquibase.util.SystemUtils.USER_NAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,13 +49,7 @@ public class AnalysisControllerTest {
 	private AnalysisTypesService analysisTypesService;
 	private MessageSource messageSource;
 
-	/**
-	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
-	 */
-	private final List<String> outputNames = Lists.newArrayList("tree", "matrix", "table", "contigs-with-repeats",
-			"refseq-masher-matches");
-
-	@Before
+	@BeforeEach
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
@@ -92,15 +81,15 @@ public class AnalysisControllerTest {
 				Optional.of("tree"));
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
-		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
+		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertEquals("Phylogenetic Tree tab should be available", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				model.get("analysisType"));
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"), 
+				"Phylogenetic Tree tab should be available");
 
-		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
+		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 
-		assertEquals("analysisType should be PHYLOGENOMICS", BuiltInAnalysisTypes.PHYLOGENOMICS,
-				model.get("analysisType"));
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"), 
+				"analysisType should be PHYLOGENOMICS");
 	}
 
 	@Test
@@ -122,12 +111,12 @@ public class AnalysisControllerTest {
 				Optional.of("tree"));
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
-		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
+		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertFalse("Analysis should not be completed",
-				submission.getAnalysisState() == AnalysisState.COMPLETED);
+		assertFalse(submission.getAnalysisState() == AnalysisState.COMPLETED,
+				"Analysis should not be completed");
 
-		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
+		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 	}
 
 	@Test
@@ -145,11 +134,11 @@ public class AnalysisControllerTest {
 		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.UNKNOWN)).thenReturn(Optional.empty());
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
-		assertEquals("should be analysis page", AnalysisController.ANALYSIS_PAGE, analysisPage);
+		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertEquals("submission name should be in model", submission.getName(), model.get("analysisName"));
+		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 
-		assertEquals("analysisType should be UNKNOWN", BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"));
+		assertEquals(BuiltInAnalysisTypes.UNKNOWN, model.get("analysisType"), "analysisType should be UNKNOWN");
 	}
 
 	private IridaWorkflow createUnknownWorkflow(UUID workflowId) {

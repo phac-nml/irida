@@ -2,13 +2,13 @@ package ca.corefacility.bioinformatics.irida.security.permissions.user;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserG
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.user.UpdateUserGroupPermission;
 
 /**
  * Tests for {@link UpdateUserGroupPermission}.
@@ -34,7 +33,7 @@ public class UpdateUserGroupPermissionTest {
 	private UserGroupRepository userGroupRepository;
 	private UserGroupJoinRepository userGroupJoinRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userRepository = mock(UserRepository.class);
 		userGroupRepository = mock(UserGroupRepository.class);
@@ -59,7 +58,7 @@ public class UpdateUserGroupPermissionTest {
 
 		final Authentication auth = new UsernamePasswordAuthenticationToken(username, "password1");
 
-		assertTrue("permission was not granted.", updateUserPermission.isAllowed(auth, 1L));
+		assertTrue(updateUserPermission.isAllowed(auth, 1L), "permission was not granted.");
 	}
 	
 	@Test
@@ -77,7 +76,7 @@ public class UpdateUserGroupPermissionTest {
 
 		final Authentication auth = new UsernamePasswordAuthenticationToken(username, "password1");
 
-		assertFalse("permission should not be granted.", updateUserPermission.isAllowed(auth, 1L));
+		assertFalse(updateUserPermission.isAllowed(auth, 1L), "permission should not be granted.");
 	}
 	
 	@Test
@@ -96,6 +95,6 @@ public class UpdateUserGroupPermissionTest {
 
 		final Authentication auth = new UsernamePasswordAuthenticationToken(username, "password1");
 
-		assertFalse("permission should not be granted.", updateUserPermission.isAllowed(auth, 1L));
+		assertFalse(updateUserPermission.isAllowed(auth, 1L), "permission should not be granted.");
 	}
 }

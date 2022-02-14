@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ParameterBuilderGalaxy;
 
@@ -22,7 +23,7 @@ public class ParameterBuilderGalaxyTest {
 	/**
 	 * Setup for tests.
 	 */
-	@Before
+	@BeforeEach
 	public void setup() {
 		parameterBuilderGalaxy = new ParameterBuilderGalaxy();
 	}
@@ -30,41 +31,51 @@ public class ParameterBuilderGalaxyTest {
 	/**
 	 * Tests out failing to add a parameter due to null tool id.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testParameterBuilderGalaxyFailNullToolId() {
-		parameterBuilderGalaxy.addParameter(null, "parameter", "value");
+		assertThrows(IllegalArgumentException.class, () -> {
+			parameterBuilderGalaxy.addParameter(null, "parameter", "value");
+		});
 	}
 
 	/**
 	 * Tests out failing to add a parameter due to empty tool id.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testParameterBuilderGalaxyFailEmptyToolId() {
-		parameterBuilderGalaxy.addParameter("", "parameter", "value");
+		assertThrows(IllegalArgumentException.class, () -> {
+			parameterBuilderGalaxy.addParameter("", "parameter", "value");
+		});
 	}
 
 	/**
 	 * Tests out failing to add a parameter due to null name.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testParameterBuilderGalaxyFailNullParameter() {
-		parameterBuilderGalaxy.addParameter("toolId", null, "value");
+		assertThrows(IllegalArgumentException.class, () -> {
+			parameterBuilderGalaxy.addParameter("toolId", null, "value");
+		});
 	}
 
 	/**
 	 * Tests out failing to add a parameter due to an empty name.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testParameterBuilderGalaxyFailEmptyParameter() {
-		parameterBuilderGalaxy.addParameter("toolId", "", "value");
+		assertThrows(IllegalArgumentException.class, () -> {
+			parameterBuilderGalaxy.addParameter("toolId", "", "value");
+		});
 	}
 
 	/**
 	 * Tests out failing to add a parameter due to a null value.
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testParameterBuilderGalaxyFailNullValue() {
-		parameterBuilderGalaxy.addParameter("toolId", "parameter", null);
+		assertThrows(NullPointerException.class, () -> {
+			parameterBuilderGalaxy.addParameter("toolId", "parameter", null);
+		});
 	}
 
 	/**
@@ -77,10 +88,10 @@ public class ParameterBuilderGalaxyTest {
 
 		ParameterBuilderGalaxy.ParameterId expectedParameterId = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("parameter mappings are the same", "value",
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId));
+		assertEquals(Sets.newHashSet(expectedParameterId), parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
+		assertEquals("value", parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId),
+				"parameter mappings are the same");
 	}
 
 	/**
@@ -96,12 +107,13 @@ public class ParameterBuilderGalaxyTest {
 				"parameter");
 		ParameterBuilderGalaxy.ParameterId expectedParameterId2 = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter2");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId1, expectedParameterId2),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("first parameter mappings are the same", "value",
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId1));
-		assertEquals("second parameter mappings are the same", "value2",
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId2));
+		assertEquals(Sets.newHashSet(expectedParameterId1, expectedParameterId2),
+				parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
+		assertEquals("value", parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId1),
+				"first parameter mappings are the same");
+		assertEquals("value2", parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId2),
+				"second parameter mappings are the same");
 	}
 
 	/**
@@ -117,12 +129,13 @@ public class ParameterBuilderGalaxyTest {
 				"parameter");
 		ParameterBuilderGalaxy.ParameterId expectedParameterId2 = new ParameterBuilderGalaxy.ParameterId("toolId2",
 				"parameter");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId1, expectedParameterId2),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("first parameter mappings are the same", "value",
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId1));
-		assertEquals("second parameter mappings are the same", "value2",
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId2));
+		assertEquals(Sets.newHashSet(expectedParameterId1, expectedParameterId2),
+				parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
+		assertEquals("value", parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId1),
+				"first parameter mappings are the same");
+		assertEquals("value2", parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId2),
+				"second parameter mappings are the same");
 	}
 
 	/**
@@ -135,10 +148,11 @@ public class ParameterBuilderGalaxyTest {
 
 		ParameterBuilderGalaxy.ParameterId expectedParameterId = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("parameter mappings are the same", ImmutableMap.of("level2", "value"),
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId));
+		assertEquals(Sets.newHashSet(expectedParameterId), parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
+		assertEquals(ImmutableMap.of("level2", "value"),
+				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId),
+				"parameter mappings are the same");
 	}
 
 	/**
@@ -151,10 +165,11 @@ public class ParameterBuilderGalaxyTest {
 
 		ParameterBuilderGalaxy.ParameterId expectedParameterId = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("parameter mappings are the same", ImmutableMap.of("level2", ImmutableMap.of("level3", "value")),
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId));
+		assertEquals(Sets.newHashSet(expectedParameterId), parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
+		assertEquals(ImmutableMap.of("level2", ImmutableMap.of("level3", "value")),
+				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId),
+				"parameter mappings are the same");
 	}
 
 	/**
@@ -168,10 +183,11 @@ public class ParameterBuilderGalaxyTest {
 
 		ParameterBuilderGalaxy.ParameterId expectedParameterId = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("parameter mappings are the same", ImmutableMap.of("level2a", "valuea", "level2b", "valueb"),
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId));
+		assertEquals(Sets.newHashSet(expectedParameterId), parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
+		assertEquals(ImmutableMap.of("level2a", "valuea", "level2b", "valueb"),
+				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId),
+				"parameter mappings are the same");
 	}
 
 	/**
@@ -186,12 +202,12 @@ public class ParameterBuilderGalaxyTest {
 
 		ParameterBuilderGalaxy.ParameterId expectedParameterId = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId),
-				parameterBuilderGalaxy.getParameterIds());
+		assertEquals(Sets.newHashSet(expectedParameterId), parameterBuilderGalaxy.getParameterIds(),
+				"parameter id sets are the same");
 		assertEquals(
-				"parameter mappings are the same",
 				ImmutableMap.of("level", "value", "level2", ImmutableMap.of("level3a", "valuea", "level3b", "valueb")),
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId));
+				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId),
+				"parameter mappings are the same");
 	}
 
 	/**
@@ -208,20 +224,24 @@ public class ParameterBuilderGalaxyTest {
 				"parameter");
 		ParameterBuilderGalaxy.ParameterId expectedParameterId2 = new ParameterBuilderGalaxy.ParameterId("toolId",
 				"parameter2");
-		assertEquals("parameter id sets are the same", Sets.newHashSet(expectedParameterId1, expectedParameterId2),
-				parameterBuilderGalaxy.getParameterIds());
-		assertEquals("parameter mappings are the same", ImmutableMap.of("level2a", "valuea", "level2b", "valueb"),
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId1));
-		assertEquals("parameter mappings are the same", ImmutableMap.of("level2", "value"),
-				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId2));
+		assertEquals(Sets.newHashSet(expectedParameterId1, expectedParameterId2),
+				parameterBuilderGalaxy.getParameterIds(), "parameter id sets are the same");
+		assertEquals(ImmutableMap.of("level2a", "valuea", "level2b", "valueb"),
+				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId1),
+				"parameter mappings are the same");
+		assertEquals(ImmutableMap.of("level2", "value"),
+				parameterBuilderGalaxy.getMappingForParameterId(expectedParameterId2),
+				"parameter mappings are the same");
 	}
 	
 	/**
 	 * Tests out building a data structure with a mapping of "level2" to a map and also a simple value.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testParameterBuilderGalaxyFailMixedLevelParameterAndSimpleParameter() {
 		parameterBuilderGalaxy.addParameter("toolId", "parameter.level2.level3a", "valuea");
-		parameterBuilderGalaxy.addParameter("toolId", "parameter.level2", "value");
+		assertThrows(IllegalArgumentException.class, () -> {
+			parameterBuilderGalaxy.addParameter("toolId", "parameter.level2", "value");
+		});
 	}
 }

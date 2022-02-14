@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
@@ -12,8 +12,8 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -23,7 +23,7 @@ public class ProjectTest {
 	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
@@ -40,7 +40,7 @@ public class ProjectTest {
 		p.setName(null);
 
 		Set<ConstraintViolation<Project>> violations = validator.validate(p);
-		assertEquals("Wrong number of violations.", 2, violations.size());
+		assertEquals(2, violations.size(), "Wrong number of violations.");
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class ProjectTest {
 		p.setName("");
 
 		Set<ConstraintViolation<Project>> violations = validator.validate(p);
-		assertEquals("Wrong number of violations.", 1, violations.size());
+		assertEquals(1, violations.size(), "Wrong number of violations.");
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class ProjectTest {
 		p.setName("This name has a single quote ' and spaces and a period.");
 
 		Set<ConstraintViolation<Project>> violations = validator.validate(p);
-		assertEquals("Wrong number of violations.", 0, violations.size());
+		assertEquals(0, violations.size(), "Wrong number of violations.");
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class ProjectTest {
 			Project p = new Project();
 			p.setName("ATLEAST3" + c);
 			Set<ConstraintViolation<Project>> violations = validator.validate(p);
-			assertEquals("Wrong number of violations.", 1, violations.size());
+			assertEquals(1, violations.size(), "Wrong number of violations.");
 		}
 	}
 }

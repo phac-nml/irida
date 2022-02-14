@@ -6,8 +6,6 @@ import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-import java.util.List;
-
 public class PasswordResetPage extends AbstractPage {
 	private final String RELATIVE_URL = "password_reset/";
 

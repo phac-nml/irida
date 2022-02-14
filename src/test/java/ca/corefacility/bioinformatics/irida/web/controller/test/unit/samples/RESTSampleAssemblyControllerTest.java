@@ -4,8 +4,8 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis;
@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampl
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +36,7 @@ public class RESTSampleAssemblyControllerTest {
 	List<SampleGenomeAssemblyJoin> assemblies;
 	Sample s1;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
@@ -65,16 +65,16 @@ public class RESTSampleAssemblyControllerTest {
 
 		ResourceCollection<GenomeAssembly> readAssemblies = responseResource.getResource();
 
-		assertEquals("should be the same number of assemblies", assemblies.size(), readAssemblies.size());
+		assertEquals(assemblies.size(), readAssemblies.size(), "should be the same number of assemblies");
 
-		assertNotNull("has self rel", readAssemblies.getSelfHref());
+		assertNotNull(readAssemblies.getSelfHref(), "has self rel");
 
 		GenomeAssembly genomeAssembly = readAssemblies.getResources()
 				.iterator()
 				.next();
 
-		assertTrue("has self rel", genomeAssembly.getLink("self").isPresent());
-		assertEquals("should be same assembly", assemblyFromAnalysis.getId(), genomeAssembly.getId());
+		assertTrue(genomeAssembly.getLink("self").isPresent(), "has self rel");
+		assertEquals(assemblyFromAnalysis.getId(), genomeAssembly.getId(), "should be same assembly");
 	}
 
 	@Test
@@ -84,8 +84,8 @@ public class RESTSampleAssemblyControllerTest {
 
 		GenomeAssembly genomeAssembly = responseResource.getResource();
 
-		assertTrue("has self rel", genomeAssembly.getLink("self").isPresent());
-		assertEquals("should be same assembly", assemblyFromAnalysis.getId(), genomeAssembly.getId());
+		assertTrue(genomeAssembly.getLink("self").isPresent(), "has self rel");
+		assertEquals(assemblyFromAnalysis.getId(), genomeAssembly.getId(), "should be same assembly");
 	}
 
 }

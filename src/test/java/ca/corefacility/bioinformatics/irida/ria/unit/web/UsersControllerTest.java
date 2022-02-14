@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -26,10 +26,10 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -41,7 +41,6 @@ public class UsersControllerTest {
 	private static final String USERS_DETAILS_PAGE = "user/account";
 	private static final String USER_EDIT_PAGE = "user/edit";
 
-	private static final long NUM_TOTAL_ELEMENTS = 2L;
 	private static final String USER_NAME = "testme";
 
 	Page<User> userPage;
@@ -54,7 +53,7 @@ public class UsersControllerTest {
 	private UsersController controller;
 	private MessageSource messageSource;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
@@ -119,7 +118,7 @@ public class UsersControllerTest {
 		assertEquals("redirect:/users/1", submitCreateUser);
 		verify(userService).create(any(User.class));
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
-		verifyZeroInteractions(passwordResetService);
+		verifyNoInteractions(passwordResetService);
 		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), eq(null));
 	}
 

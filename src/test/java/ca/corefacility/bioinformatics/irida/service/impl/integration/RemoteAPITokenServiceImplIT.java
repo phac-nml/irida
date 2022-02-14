@@ -1,28 +1,21 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Date;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
@@ -32,16 +25,11 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiJdbcDataSourceConfig.class })
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/RemoteAPITokenServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class RemoteAPITokenServiceImplIT {
@@ -54,7 +42,7 @@ public class RemoteAPITokenServiceImplIT {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		User u = new User();
 		u.setUsername("tom");
@@ -72,53 +60,57 @@ public class RemoteAPITokenServiceImplIT {
 		RemoteAPI api = apiService.read(1L);
 		RemoteAPIToken token = tokenService.getToken(api);
 		assertNotNull(token);
-		assertEquals("123456789", token.getTokenString());
+		assertEquals(token.getTokenString(), "123456789");
 	}
 
-	@Test(expected=EntityNotFoundException.class)
+	@Test
 	public void testGetTokenNotExists() {
 		RemoteAPI api = apiService.read(2L);
-		tokenService.getToken(api);
+		assertThrows(EntityNotFoundException.class, () -> {
+			tokenService.getToken(api);
+		});
 	}
-	
+
 	@Test
-	public void testAddToken(){
+	public void testAddToken() {
 		RemoteAPI api = apiService.read(2L);
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());
 		tokenService.create(token);
-		
+
 		RemoteAPIToken readToken = tokenService.getToken(api);
-		
-		assertEquals(token,readToken);
-		
+
+		assertEquals(token, readToken);
+
 	}
-	
-	@Test(expected=EntityNotFoundException.class)
-	public void testDeleteToken(){
-		RemoteAPI api = null;
-		try{
-			api = apiService.read(1L);
-			tokenService.delete(api);
-		}catch(EntityNotFoundException ex){
-			fail("Token should be able to be deleted");
-		}
-		
-		tokenService.getToken(api);
-	}
-	
+
 	@Test
-	public void addTokenExisting(){
+	public void testDeleteToken() {
+		assertThrows(EntityNotFoundException.class, () -> {
+			RemoteAPI api = null;
+			try {
+				api = apiService.read(1L);
+				tokenService.delete(api);
+			} catch (EntityNotFoundException ex) {
+				fail("Token should be able to be deleted");
+			}
+
+			tokenService.getToken(api);
+		});
+	}
+
+	@Test
+	public void addTokenExisting() {
 		RemoteAPI api = apiService.read(1L);
 		RemoteAPIToken originalToken = tokenService.getToken(api);
-		
+
 		RemoteAPIToken token = new RemoteAPIToken("111111111", api, new Date());
 		tokenService.create(token);
-		
+
 		RemoteAPIToken readToken = tokenService.getToken(api);
-		
-		assertNotEquals(token,originalToken);
-		assertEquals(token,readToken);
-		
+
+		assertNotEquals(token, originalToken);
+		assertEquals(token, readToken);
+
 	}
 
 }

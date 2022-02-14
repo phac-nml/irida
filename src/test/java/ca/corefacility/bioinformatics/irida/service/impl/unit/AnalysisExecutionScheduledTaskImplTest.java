@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -14,8 +14,8 @@ import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -99,9 +99,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Sets up variables for tests.
 	 */
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
@@ -444,7 +444,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
 		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
-		verifyZeroInteractions(emailController);
+		verifyNoInteractions(emailController);
 	}
 
 	/**
@@ -581,7 +581,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
 	}
 
@@ -600,7 +600,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
 	}
 
@@ -620,7 +620,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -640,7 +640,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -660,7 +660,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -680,7 +680,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -707,7 +707,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 	}
 
@@ -733,7 +733,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 	}
 
@@ -760,7 +760,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmissionMock);
 	}
 
@@ -794,7 +794,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmissionMock2);
 	}

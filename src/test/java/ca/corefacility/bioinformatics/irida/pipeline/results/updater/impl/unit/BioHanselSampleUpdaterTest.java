@@ -16,8 +16,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.nio.file.Path;
@@ -28,8 +28,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class BioHanselSampleUpdaterTest {
@@ -38,7 +38,7 @@ public class BioHanselSampleUpdaterTest {
 	private MetadataTemplateService metadataTemplateService;
 	private SampleService sampleService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		sampleService = mock(SampleService.class);
@@ -91,7 +91,7 @@ public class BioHanselSampleUpdaterTest {
 
 		bioHanselSampleUpdater.update(Lists.newArrayList(sample), submission);
 
-		ArgumentCaptor<Map> mapCaptor = ArgumentCaptor.forClass(Map.class);
+		ArgumentCaptor<Map<String, MetadataEntry>> mapCaptor = ArgumentCaptor.forClass(Map.class);
 
 		//this is the important bit.  Ensures the correct values got pulled from the file
 		verify(metadataTemplateService).convertMetadataStringsToSet(mapCaptor.capture());
@@ -100,13 +100,13 @@ public class BioHanselSampleUpdaterTest {
 		AtomicInteger found = new AtomicInteger();
 		metadataEntryMap.forEach((key, entry) -> {
 			if (expectedResults.containsKey(key)) {
-				assertEquals("Metadata entry values should be equal!", expectedResults.get(key), entry.getValue());
+				assertEquals(expectedResults.get(key), entry.getValue(), "Metadata entry values should be equal!");
 				found.getAndIncrement();
 			}
 		});
-		assertEquals("Should have the same number of metadata entries", expectedResults.size(), found.get());
+		assertEquals(expectedResults.size(), found.get(), "Should have the same number of metadata entries");
 
-		ArgumentCaptor<Set> setCaptor = ArgumentCaptor.forClass(Set.class);
+		ArgumentCaptor<Set<MetadataEntry>> setCaptor = ArgumentCaptor.forClass(Set.class);
 		// this bit just ensures the merged data got saved
 		verify(sampleService).mergeSampleMetadata(eq(sample), setCaptor.capture());
 
