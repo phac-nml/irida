@@ -22,7 +22,7 @@ public class AdminClientsPage extends AbstractPage {
 	public static final String WRITE_YES = "write";
 	public static final String WRITE_AUTO = "auto";
 
-	@FindBy(css = ".t-admin-clients-table tbody tr")
+	@FindBy(css = ".t-admin-clients-table tbody .ant-table-row")
 	private List<WebElement> clientRows;
 
 	@FindBy(className = "t-client-modal")
@@ -31,7 +31,7 @@ public class AdminClientsPage extends AbstractPage {
 	@FindBy(className = "t-add-client-btn")
 	private WebElement addClientButton;
 
-	@FindBy(css = "[name=\"clientId\"]")
+	@FindBy(id = "clientId")
 	private WebElement clientIdInput;
 
 	@FindBy(css = "[value=\"password\"]")
@@ -40,25 +40,25 @@ public class AdminClientsPage extends AbstractPage {
 	@FindBy(css = "[value=\"authorization_code\"]")
 	private WebElement authCodeRadio;
 
-	@FindBy(css = "[name=\"redirectURI\"]")
+	@FindBy(id = "redirectURI")
 	private WebElement redirctInput;
 
-	@FindBy(css = "[name=\"read\"] [value=\"no\"]")
+	@FindBy(className = "t-read-no")
 	private WebElement readNoRadio;
 
-	@FindBy(css = "[name=\"read\"] [value=\"read\"]")
+	@FindBy(className = "t-read-allowed")
 	private WebElement readYesRadio;
 
-	@FindBy(css = "[name=\"read\"] [value=\"auto\"]")
+	@FindBy(className = "t-read-auto")
 	private WebElement readAutoRadio;
 
-	@FindBy(css = "[name=\"write\"] [value=\"no\"]")
+	@FindBy(className = "t-write-no")
 	private WebElement writeNoRadio;
 
-	@FindBy(css = "[name=\"write\"] [value=\"write\"]")
+	@FindBy(className = "t-write-allowed")
 	private WebElement writeYesRadio;
 
-	@FindBy(css = "[name=\"read\"] [value=\"auto\"]")
+	@FindBy(className = "t-write-auto")
 	private WebElement writeAutoRadio;
 
 	@FindBy(className = "t-create-btn")
@@ -106,7 +106,7 @@ public class AdminClientsPage extends AbstractPage {
 		}
 
 		createBtn.click();
-		wait.until(ExpectedConditions.invisibilityOf(createModal));
+		waitForTime(300);
 	}
 
 	public String getClientSecret(String clientId) {

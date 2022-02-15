@@ -30,7 +30,8 @@ public class ProjectSyncPageIT extends AbstractIridaUIITChromeDriver {
 		//create the oauth client
 		String redirectLocation = RemoteApiUtilities.getRedirectLocation();
 		clientsPage = AdminClientsPage.goTo(driver());
-		clientsPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, true, false);
+		clientsPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, AdminClientsPage.READ_YES,
+				AdminClientsPage.WRITE_NO);
 		clientSecret = clientsPage.getClientSecret(clientId);
 
 		RemoteApiUtilities.addRemoteApi(driver(), clientId, clientSecret);
