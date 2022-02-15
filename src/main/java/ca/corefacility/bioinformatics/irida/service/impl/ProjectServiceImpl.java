@@ -270,7 +270,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (userGroupProjects.isEmpty()) {
 			ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
 					user, project);
-			projectSubscriptionRepository.delete(projectSubscription);
+			if (projectSubscription != null) {
+				projectSubscriptionRepository.delete(projectSubscription);
+			}
 		}
 		pujRepository.delete(projectJoinForUser);
 	}
