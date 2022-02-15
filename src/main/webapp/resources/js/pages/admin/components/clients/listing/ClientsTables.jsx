@@ -46,7 +46,11 @@ export function ClientsTable() {
       ellipsis: true,
       sorter: true,
       render(name) {
-        return <Typography.Text copyable>{name}</Typography.Text>;
+        return (
+          <Typography.Text className="t-client-id" copyable>
+            {name}
+          </Typography.Text>
+        );
       },
     },
     {
@@ -55,7 +59,9 @@ export function ClientsTable() {
       render(secret, client) {
         return secret ? (
           <Space size="small">
-            <Typography.Text copyable>{secret}</Typography.Text>
+            <Typography.Text className="t-client-secret" copyable>
+              {secret}
+            </Typography.Text>
             <Tooltip placement="right" title={"Regenerate Secret"}>
               <Button
                 shape="round"
