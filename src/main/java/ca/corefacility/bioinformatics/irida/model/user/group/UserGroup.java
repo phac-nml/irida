@@ -50,7 +50,7 @@ public class UserGroup implements MutableIridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "group")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, mappedBy = "group")
 	private Set<UserGroupJoin> users;
 
 	@NotAudited
