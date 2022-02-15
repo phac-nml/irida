@@ -103,11 +103,15 @@ export function AddClientModal({ children, onComplete, existing = null }) {
         onClick: () => setVisible(true),
       })}
       <Modal
+        className="t-client-modal"
         visible={visible}
         title={i18n("AddClientModal.title")}
         onOk={onOk}
         onCancel={closeModal}
         width={800}
+        okButtonProps={{
+          className: "t-create-btn",
+        }}
       >
         <Form form={form} layout="vertical" initialValues={initialValues}>
           <Item
