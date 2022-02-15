@@ -251,26 +251,38 @@ export function AddClientModal({ children, onComplete, existing = null }) {
           <Item label={i18n("AddClientForm.readScope")} name="read">
             <Radio.Group>
               <Radio.Button value="no">
-                {i18n("AddClientForm.scopeNotAllowed")}
+                <span className="t-read-no">
+                  {i18n("AddClientForm.scopeNotAllowed")}
+                </span>
               </Radio.Button>
               <Radio.Button value="read">
-                {i18n("AddClientForm.scopeAllowed")}
+                <span className="t-read-allowed">
+                  {i18n("AddClientForm.scopeAllowed")}
+                </span>
               </Radio.Button>
               <Radio.Button value="auto">
-                {i18n("AddClientForm.scopeAllowedAutoApprove")}
+                <span className="t-read-auto">
+                  {i18n("AddClientForm.scopeAllowedAutoApprove")}
+                </span>
               </Radio.Button>
             </Radio.Group>
           </Item>
           <Item label={i18n("AddClientForm.writeScope")} name="write">
             <Radio.Group>
               <Radio.Button value="no">
-                {i18n("AddClientForm.scopeNotAllowed")}
+                <span className="t-write-no">
+                  {i18n("AddClientForm.scopeNotAllowed")}
+                </span>
               </Radio.Button>
               <Radio.Button value="write">
-                {i18n("AddClientForm.scopeAllowed")}
+                <span className="t-write-allowed">
+                  {i18n("AddClientForm.scopeAllowed")}
+                </span>
               </Radio.Button>
               <Radio.Button value="auto">
-                {i18n("AddClientForm.scopeAllowedAutoApprove")}
+                <span className="t-write-auto">
+                  {i18n("AddClientForm.scopeAllowedAutoApprove")}
+                </span>
               </Radio.Button>
             </Radio.Group>
           </Item>
