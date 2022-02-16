@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A collection of {@link User} accounts is a {@link UserGroup}. The
  * {@link UserGroup} can be assigned permissions, similar to a {@link User}
@@ -151,6 +153,7 @@ public class UserGroup implements MutableIridaThing {
 		this.modifiedDate = modifiedDate;
 	}
 
+	@JsonIgnore
 	public Set<UserGroupJoin> getUsers() {
 		return users;
 	}
