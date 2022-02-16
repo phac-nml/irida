@@ -156,6 +156,11 @@ public class UIClientService {
         clientDetailsService.delete(id);
     }
 
+    /**
+     * Generate a new client secret
+     *
+     * @param id identifier for a client
+     */
     public void regenerateClientSecret(Long id) {
         IridaClientDetails details = clientDetailsService.read(id);
         String secret = generateClientSecret();
