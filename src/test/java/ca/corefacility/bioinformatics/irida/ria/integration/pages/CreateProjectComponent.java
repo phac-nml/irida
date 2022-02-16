@@ -60,8 +60,7 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public void enterProjectName(String name) {
-		nameInput.sendKeys(Keys.CONTROL + "a");
-		nameInput.sendKeys(Keys.DELETE);
+		nameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		nameInput.sendKeys(name);
 	}
 

@@ -15,25 +15,19 @@ import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -55,11 +49,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 /**
  * Integration tests for the sample service.
  */
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleServiceImplIT {
@@ -103,13 +93,18 @@ public class SampleServiceImplIT {
 		Sample sample3 = sampleService.read(3L);
 		Project p = projectService.read(1L);
 
-		assertEquals(Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
-		assertEquals(Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
-		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(sample3).isEmpty(), "Sample 3 should have no genome assemblies before");
+		assertEquals(Lists.newArrayList(1L), sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.stream()
+				.map(t -> t.getObject()
+						.getId())
+				.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
+		assertEquals(Lists.newArrayList(2L), sampleGenomeAssemblyJoinRepository.findBySample(sample2)
+				.stream()
+				.map(t -> t.getObject()
+						.getId())
+				.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
+		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(sample3)
+				.isEmpty(), "Sample 3 should have no genome assemblies before");
 
 		assertNotNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L),
 				"Join between sample 2 and genome assembly 2 should exist");
@@ -126,11 +121,14 @@ public class SampleServiceImplIT {
 				"Join between sample 2 and genome assembly 2 should not exist");
 
 		// the merged sample should have 3 sequence files
-		assertEquals(3, objectService.getSequencingObjectsForSample(merged).size(), "Merged sample should have 3 sequence files");
+		assertEquals(3, objectService.getSequencingObjectsForSample(merged)
+				.size(), "Merged sample should have 3 sequence files");
 
-		assertEquals(Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()), "Sample 1 should only have genome assemblies 1 and 2");
+		assertEquals(Lists.newArrayList(1L, 2L), sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.stream()
+				.map(t -> t.getObject()
+						.getId())
+				.collect(Collectors.toList()), "Sample 1 should only have genome assemblies 1 and 2");
 	}
 
 	/**
@@ -144,13 +142,18 @@ public class SampleServiceImplIT {
 		Sample sample2 = sampleService.read(2L);
 		Project p = projectService.read(1L);
 
-		assertEquals(Lists.newArrayList(1L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample1).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
-		assertEquals(Lists.newArrayList(2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(sample2).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
-		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).isEmpty(), "Sample 3 should have no genome assemblies before");
+		assertEquals(Lists.newArrayList(1L), sampleGenomeAssemblyJoinRepository.findBySample(sample1)
+				.stream()
+				.map(t -> t.getObject()
+						.getId())
+				.collect(Collectors.toList()), "Sample 1 should only have genome assembly 1");
+		assertEquals(Lists.newArrayList(2L), sampleGenomeAssemblyJoinRepository.findBySample(sample2)
+				.stream()
+				.map(t -> t.getObject()
+						.getId())
+				.collect(Collectors.toList()), "Sample 2 should only have genome assembly 2");
+		assertTrue(sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.isEmpty(), "Sample 3 should have no genome assemblies before");
 
 		assertNotNull(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(2L, 2L),
 				"Join between sample 2 and genome assembly 2 should exist");
@@ -171,11 +174,14 @@ public class SampleServiceImplIT {
 				"Join between sample 1 and genome assembly 1 should not exist");
 
 		// the merged sample should have 3 sequence files
-		assertEquals(3, objectService.getSequencingObjectsForSample(merged).size(), "Merged sample should have 3 sequence files");
+		assertEquals(3, objectService.getSequencingObjectsForSample(merged)
+				.size(), "Merged sample should have 3 sequence files");
 
-		assertEquals(Lists.newArrayList(1L, 2L),
-				sampleGenomeAssemblyJoinRepository.findBySample(mergeInto).stream().map(t -> t.getObject().getId())
-						.collect(Collectors.toList()), "Sample 3 should only have genome assemblies 1 and 2");
+		assertEquals(Lists.newArrayList(1L, 2L), sampleGenomeAssemblyJoinRepository.findBySample(mergeInto)
+				.stream()
+				.map(t -> t.getObject()
+						.getId())
+				.collect(Collectors.toList()), "Sample 3 should only have genome assemblies 1 and 2");
 	}
 
 	/**
@@ -432,12 +438,12 @@ public class SampleServiceImplIT {
 	public void testGetSamplesForAnalysisSubmission() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
-		
+
 		assertEquals(2, samples.size(), "should be 2 samples");
-		
+
 		Set<Long> ids = Sets.newHashSet(8L, 9L);
 		samples.forEach(s -> ids.remove(s.getId()));
-		
+
 		assertTrue(ids.isEmpty(), "all sample ids should be found");
 	}
 
@@ -449,7 +455,7 @@ public class SampleServiceImplIT {
 
 		assertEquals(1L, qcEntriesForSample.size(), "should be 1 qc entry");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "dr-evil", roles = "USER")
 	public void testGetQCEntiresForSampleNotAllowed() {

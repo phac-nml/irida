@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltIn
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 
-
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
@@ -30,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
-import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -62,7 +60,6 @@ public class AnalysisAjaxControllerTest {
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
-	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 	private ExecutionManagerConfig configFileMock;
 	private AnalysisAudit analysisAuditMock;
 	private HttpServletResponse httpServletResponseMock;
@@ -70,7 +67,8 @@ public class AnalysisAjaxControllerTest {
 	private EmailController emailControllerMock;
 
 	/**
-	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
+	 * Analysis Output File key names from
+	 * {@link TestDataFactory#constructAnalysis()}
 	 */
 	private final List<String> outputNames = Lists.newArrayList("tree", "matrix", "table", "contigs-with-repeats",
 			"refseq-masher-matches");
@@ -84,7 +82,6 @@ public class AnalysisAjaxControllerTest {
 		sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
-		analysisOutputFileDownloadManager = mock(AnalysisOutputFileDownloadManager.class);
 		userServiceMock = mock(UserService.class);
 		configFileMock = mock(ExecutionManagerConfig.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
@@ -95,8 +92,8 @@ public class AnalysisAjaxControllerTest {
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, analysisSubmissionSampleProcessor,
-				analysisOutputFileDownloadManager, messageSourceMock, configFileMock, analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
+				sequencingObjectService, analysisSubmissionSampleProcessor, messageSourceMock, configFileMock,
+				analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
 
 	}
 
@@ -145,8 +142,8 @@ public class AnalysisAjaxControllerTest {
 		Long analysisSubmissionId = 1L;
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
-		when(analysisSubmissionServiceMock.read(analysisSubmissionId)).thenReturn(
-				TestDataFactory.constructAnalysisSubmission());
+		when(analysisSubmissionServiceMock.read(analysisSubmissionId))
+				.thenReturn(TestDataFactory.constructAnalysisSubmission());
 		try {
 			analysisAjaxController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
 			assertEquals("application/zip", response.getContentType(), "Has the correct content type");
@@ -164,14 +161,12 @@ public class AnalysisAjaxControllerTest {
 		final AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		final UUID workflowId = submission.getWorkflowId();
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(
-				outputNames);
+		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(outputNames);
 		// get analysis output file summary info
 		final List<AnalysisOutputFileInfo> infos = analysisAjaxController.getOutputFilesInfo(submissionId);
 		assertEquals(5, infos.size(), "Expecting 5 analysis output file info items");
 		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
-				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
-				.findFirst();
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches")).findFirst();
 		assertTrue(optInfo.isPresent(), "Should be a refseq-masher-matches.tsv output file");
 		final AnalysisOutputFileInfo info = optInfo.get();
 		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
@@ -181,16 +176,14 @@ public class AnalysisAjaxControllerTest {
 		assertEquals(seekTo, info.getFilePointer(), "FilePointer should be first character of second line of file");
 		assertEquals(Long.valueOf(61875), info.getFileSizeBytes(), "File size in bytes should be returned");
 		final Long limit = 3L;
-		final AnalysisOutputFileInfo lineInfo = analysisAjaxController.getOutputFile(submissionId, info.getId(), limit, 0L,
-				null, 0L, null, response);
-		assertEquals(limit.intValue(), lineInfo.getLines()
-				.size());
+		final AnalysisOutputFileInfo lineInfo = analysisAjaxController.getOutputFile(submissionId, info.getId(), limit,
+				0L, null, 0L, null, response);
+		assertEquals(limit.intValue(), lineInfo.getLines().size());
 		String expLine = "SRR1203042\tSalmonella enterica subsp. enterica serovar Abony str. 0014\t0.00650877\t0.0\t328/400\tBacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales; Enterobacteriaceae; Salmonella; enterica; subsp. enterica; serovar Abony; str. 0014\tSalmonella enterica subsp. enterica\tSalmonella enterica\tSalmonella\tEnterobacteriaceae\tEnterobacterales\tGammaproteobacteria\tProteobacteria\tBacteria\tenterica\tAbony\t\tPRJNA224116\tSAMN01823751\t1029983\tGCF_000487615.2\t./rcn/refseq-NZ-1029983-PRJNA224116-SAMN01823751-GCF_000487615.2-.-Salmonella_enterica_subsp._enterica_serovar_Abony_str._0014.fna";
-		assertEquals(expLine, lineInfo.getLines()
-				.get(0));
+		assertEquals(expLine, lineInfo.getLines().get(0));
 		// begin reading lines after first line file pointer position
-		final AnalysisOutputFileInfo lineInfoRandomAccess = analysisAjaxController.getOutputFile(submissionId, info.getId(),
-				limit, 0L, null, info.getFilePointer(), null, response);
+		final AnalysisOutputFileInfo lineInfoRandomAccess = analysisAjaxController.getOutputFile(submissionId,
+				info.getId(), limit, 0L, null, info.getFilePointer(), null, response);
 		assertEquals(limit.intValue(), lineInfoRandomAccess.getLines().size(),
 				"Using the RandomAccessFile reading method with seek>0, should give the same results as using a BufferedReader if both start reading at the same position");
 		assertEquals(expLine, lineInfoRandomAccess.getLines().get(0),
@@ -204,14 +197,12 @@ public class AnalysisAjaxControllerTest {
 		final AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		final UUID workflowId = submission.getWorkflowId();
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(
-				outputNames);
+		when(iridaWorkflowsServiceMock.getOutputNames(workflowId)).thenReturn(outputNames);
 		// get analysis output file summary info
 		final List<AnalysisOutputFileInfo> infos = analysisAjaxController.getOutputFilesInfo(submissionId);
 		assertEquals(5, infos.size(), "Expecting 5 analysis output file info items");
 		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
-				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
-				.findFirst();
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches")).findFirst();
 		assertTrue(optInfo.isPresent(), "Should be a refseq-masher-matches.tsv output file");
 		final AnalysisOutputFileInfo info = optInfo.get();
 		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
@@ -230,17 +221,17 @@ public class AnalysisAjaxControllerTest {
 		assertEquals(expFilePointer, chunkInfo.getFilePointer().longValue(),
 				"After reading byte chunk of size x starting at position y, filePointer should be x+y");
 		String nextTextChunk = "\tSalmonella enterica subsp. enterica serovar Abony str. 0014";
-		final AnalysisOutputFileInfo nextChunkInfo = analysisAjaxController.getOutputFile(submissionId, info.getId(), null,
-				null, null, chunkInfo.getFilePointer(), (long) nextTextChunk.length(), response);
+		final AnalysisOutputFileInfo nextChunkInfo = analysisAjaxController.getOutputFile(submissionId, info.getId(),
+				null, null, null, chunkInfo.getFilePointer(), (long) nextTextChunk.length(), response);
 		assertEquals(nextTextChunk, nextChunkInfo.getText(),
 				"Should be able to continue reading from last file pointer position");
-		final AnalysisOutputFileInfo lastChunkOfFile = analysisAjaxController.getOutputFile(submissionId, info.getId(), null,
-				null, null, expFileSize - chunkSize, chunkSize, response);
+		final AnalysisOutputFileInfo lastChunkOfFile = analysisAjaxController.getOutputFile(submissionId, info.getId(),
+				null, null, null, expFileSize - chunkSize, chunkSize, response);
 		final String lastChunkText = "_str..fna\n";
 		assertEquals(lastChunkText, lastChunkOfFile.getText(),
 				"Should have successfully read the last chunk of the file");
-		final AnalysisOutputFileInfo chunkOutsideRangeOfFile = analysisAjaxController.getOutputFile(submissionId, info.getId(), null,
-				null, null, expFileSize + chunkSize, chunkSize, response);
+		final AnalysisOutputFileInfo chunkOutsideRangeOfFile = analysisAjaxController.getOutputFile(submissionId,
+				info.getId(), null, null, null, expFileSize + chunkSize, chunkSize, response);
 		assertEquals("", chunkOutsideRangeOfFile.getText(),
 				"Should return empty string since nothing can be read outside of file range");
 		assertEquals(expFileSize + chunkSize, (long) chunkOutsideRangeOfFile.getStartSeek(),
@@ -266,7 +257,8 @@ public class AnalysisAjaxControllerTest {
 	@Test
 	public void testUpdateAnalysisPriority() throws IridaWorkflowNotFoundException {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
-		AnalysisSubmissionInfo info = new AnalysisSubmissionInfo(submission.getId(), null, AnalysisSubmission.Priority.HIGH);
+		AnalysisSubmissionInfo info = new AnalysisSubmissionInfo(submission.getId(), null,
+				AnalysisSubmission.Priority.HIGH);
 		submission.setAnalysisState(AnalysisState.NEW);
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
 		assertEquals(submission.getPriority(), submission.getPriority(), "Priority should be medium");
@@ -280,7 +272,7 @@ public class AnalysisAjaxControllerTest {
 		AnalysisSubmissionInfo info = new AnalysisSubmissionInfo(submission.getId(), "NEW SUBMISSION NAME", null);
 		submission.setAnalysisState(AnalysisState.NEW);
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
-		assertEquals(submission.getName(), "submission-"+submission.getId(), "Submission name should be");
+		assertEquals(submission.getName(), "submission-" + submission.getId(), "Submission name should be");
 		analysisAjaxController.ajaxUpdateSubmission(info, Locale.getDefault(), httpServletResponseMock);
 		submission.setName(info.getAnalysisName());
 		verify(analysisSubmissionServiceMock, times(1)).update(submission);
@@ -299,11 +291,13 @@ public class AnalysisAjaxControllerTest {
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
 
-		analysisAjaxController.ajaxGetDataForDetailsTab(submission.getId(), Locale.getDefault(), httpServletResponseMock);
+		analysisAjaxController.ajaxGetDataForDetailsTab(submission.getId(), Locale.getDefault(),
+				httpServletResponseMock);
 		assertNotNull(analysisSubmissionServiceMock.read(submission.getId()), "Submission exists");
 		verify(iridaWorkflowsServiceMock, times(1)).getIridaWorkflowOrUnknown(submission);
 		verify(analysisAuditMock, times(1)).getAnalysisRunningTime(submission);
-		verify(analysisSubmissionSampleProcessor, times(1)).hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
+		verify(analysisSubmissionSampleProcessor, times(1))
+				.hasRegisteredAnalysisSampleUpdater(submission.getAnalysis().getAnalysisType());
 	}
 
 	@Test
@@ -316,7 +310,7 @@ public class AnalysisAjaxControllerTest {
 	}
 
 	@Test
-	public void updateSharedProjects(){
+	public void updateSharedProjects() {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		Project project = TestDataFactory.constructProject();
 		ProjectAnalysisSubmissionJoin paj = TestDataFactory.constructProjectAnalysisSubmissionJoin(project, submission);
@@ -332,7 +326,6 @@ public class AnalysisAjaxControllerTest {
 		verify(analysisSubmissionServiceMock, times(1)).shareAnalysisSubmissionWithProject(submission, project);
 	}
 
-
 	@Test
 	public void saveResultsToSamples() {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
@@ -343,8 +336,7 @@ public class AnalysisAjaxControllerTest {
 			verify(analysisSubmissionSampleProcessor, times(1)).updateSamples(submission);
 			verify(analysisSubmissionServiceMock, times(1)).update(submission);
 			assertTrue(submission.getUpdateSamples(), "Samples have been updated");
-		} catch (PostProcessingException e)
-		{
+		} catch (PostProcessingException e) {
 			assertNotNull(e.toString());
 		}
 	}
@@ -364,10 +356,13 @@ public class AnalysisAjaxControllerTest {
 	public void testProvenance() {
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		when(analysisSubmissionServiceMock.read(submission.getId())).thenReturn(submission);
-		AnalysisProvenanceResponse provenance = analysisAjaxController.getProvenanceByFile(submission.getId(), "snp_tree.tree");
+		AnalysisProvenanceResponse provenance = analysisAjaxController.getProvenanceByFile(submission.getId(),
+				"snp_tree.tree");
 		assertTrue(provenance != null, "Provenance response is not null");
-		assertTrue(provenance.getCreatedByTool().getToolName().equals("testTool"), "Provenance created by tool is 'testTool'");
-		assertTrue(provenance.getCreatedByTool().getPreviousExecutionTools().size() == 0, "Provenance created by tool -> previousExecutionTools is null");
+		assertTrue(provenance.getCreatedByTool().getToolName().equals("testTool"),
+				"Provenance created by tool is 'testTool'");
+		assertTrue(provenance.getCreatedByTool().getPreviousExecutionTools().size() == 0,
+				"Provenance created by tool -> previousExecutionTools is null");
 	}
 
 }

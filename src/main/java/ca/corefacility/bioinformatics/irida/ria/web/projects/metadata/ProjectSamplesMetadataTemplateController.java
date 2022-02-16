@@ -56,8 +56,10 @@ public class ProjectSamplesMetadataTemplateController {
 	public String getMetadataTemplateListPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 
-		// Add an empty MetadataTemplate. This facilitates code reuse for this page
-		// since it is used for both creation and updating a template, and the html
+		// Add an empty MetadataTemplate. This facilitates code reuse for this
+		// page
+		// since it is used for both creation and updating a template, and the
+		// html
 		// is looking for a template object.
 		model.addAttribute("template", new UIMetadataTemplate());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
@@ -126,7 +128,8 @@ public class ProjectSamplesMetadataTemplateController {
 	 *
 	 * @param projectId  {@link Long} identifier for a {@link Project}
 	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
-	 * @return {@link String} redirects to project - settings - metadata templates
+	 * @return {@link String} redirects to project - settings - metadata
+	 * templates
 	 */
 	@RequestMapping(value = "/delete/{templateId}", method = RequestMethod.POST)
 	public String deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {
@@ -154,7 +157,7 @@ public class ProjectSamplesMetadataTemplateController {
 		//Blank workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
 
-		//Create a blank sheet
+		// Create a blank sheet
 		XSSFSheet worksheet = workbook.createSheet(label);
 
 		// Write the headers
@@ -168,10 +171,12 @@ public class ProjectSamplesMetadataTemplateController {
 		ServletOutputStream stream = response.getOutputStream();
 		workbook.write(stream);
 		stream.flush();
+
+		workbook.close();
 	}
 
 	// *************************************************************************
-	// AJAX METHODS                                                            *
+	// AJAX METHODS *
 	// *************************************************************************
 
 	/**

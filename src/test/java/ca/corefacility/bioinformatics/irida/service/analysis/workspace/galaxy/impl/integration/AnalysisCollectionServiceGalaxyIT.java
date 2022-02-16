@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.integration;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -32,19 +32,12 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.io.IOException;
@@ -66,11 +59,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
  *
  *
  */
-@Tag("IntegrationTest") @Tag("Galaxy")
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
-		initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles("test")
+@GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
@@ -197,8 +186,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetSequenceFileSingleSamplesSuccess() throws DuplicateSampleException {
-		Set<SequencingObject> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
-				.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
+		Set<SequencingObject> sequenceFiles = Sets
+				.newHashSet(databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L, sequenceFilePathA));
 
 		Sample sample = sampleRepository.findById(1L).orElse(null);
 
@@ -208,7 +197,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 				.getUniqueSamplesForSequencingObjects(sequenceFiles);
 		assertEquals(1, sampleSequenceFiles.size(), "sampleSequenceFiles map has size != 1");
 		assertEquals(sequenceFile, sampleSequenceFiles.get(sample),
-				"sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample " + sample);
+				"sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample "
+						+ sample);
 	}
 
 	/**
@@ -219,8 +209,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {
-		List<SingleEndSequenceFile> seqObjects = databaseSetupGalaxyITService
-				.setupSequencingObjectInDatabase(1L, sequenceFilePathA, sequenceFilePath2A);
+		List<SingleEndSequenceFile> seqObjects = databaseSetupGalaxyITService.setupSequencingObjectInDatabase(1L,
+				sequenceFilePathA, sequenceFilePath2A);
 
 		assertThrows(DuplicateSampleException.class, () -> {
 			sequencingObjectService.getUniqueSamplesForSequencingObjects(Sets.newHashSet(seqObjects));
@@ -245,7 +235,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		assertEquals(1, sampleSequenceFilePairs.size(), "sampleSequenceFiles map has size != 1");
 		assertEquals(sequenceFilePair, sampleSequenceFilePairs.get(sample),
-				"sampleSequenceFiles map does not have sequenceFilePair " + sequenceFilePair + " corresponding to sample " + sample);
+				"sampleSequenceFiles map does not have sequenceFilePair " + sequenceFilePair
+						+ " corresponding to sample " + sample);
 	}
 
 	/**
@@ -306,11 +297,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(createdHistory.getId(),
 				contentsMap.get(sequenceFilePathA.getFileName().toString()).getId());
-		assertEquals(InputFileType.FASTQ_SANGER.toString(), sequenceFileACompressedDataset.getDataTypeExt(), "Invalid file type");
+		assertEquals(InputFileType.FASTQ_SANGER.toString(), sequenceFileACompressedDataset.getDataTypeExt(),
+				"Invalid file type");
 
 		// verify correct collection has been created
-		assertEquals(
-				DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType(),
+		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType(),
 				"constructed dataset collection should have been " + DatasetCollectionType.LIST + " but is instead "
 						+ collectionResponse.getCollectionType());
 		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
@@ -323,8 +314,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 	}
 
 	/**
-	 * Tests successfully uploading a compressed single end sequence file to Galaxy and
-	 * constructing a collection.
+	 * Tests successfully uploading a compressed single end sequence file to
+	 * Galaxy and constructing a collection.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IOException
@@ -370,7 +361,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 		// verify correct file types
 		Dataset sequenceFileACompressedDataset = historiesClient.showDataset(createdHistory.getId(),
 				contentsMap.get(sequenceFileNameCompressedA).getId());
-		assertEquals(InputFileType.FASTQ_SANGER_GZ.toString(), sequenceFileACompressedDataset.getDataTypeExt(), "Invalid file type");
+		assertEquals(InputFileType.FASTQ_SANGER_GZ.toString(), sequenceFileACompressedDataset.getDataTypeExt(),
+				"Invalid file type");
 	}
 
 	/**
@@ -425,7 +417,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 		assertEquals(InputFileType.FASTQ_SANGER.toString(), sequenceFileBDataset.getDataTypeExt(), "Invalid file type");
 
 		// verify correct collection has been created
-		assertEquals(DatasetCollectionType.LIST_PAIRED.toString(), collectionResponse.getCollectionType(), "invalid type of dataset collection created");
+		assertEquals(DatasetCollectionType.LIST_PAIRED.toString(), collectionResponse.getCollectionType(),
+				"invalid type of dataset collection created");
 		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
 		assertEquals(1, collectionElements.size(), "invalid number of elements in the dataset collection");
 		Map<String, CollectionElementResponse> collectionElementsMap = collectionElementsAsMap(collectionElements);
@@ -438,7 +431,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 		assertEquals(CollectionResponse.class, subElements.getClass(),
 				"invalid class for sub-element in dataset collection");
 		CollectionResponse subElementsCollection = (CollectionResponse) subElements;
-		assertEquals(DatasetCollectionType.PAIRED.toString(), subElementsCollection.getCollectionType(), "invalid type for sub-element in dataset collection");
+		assertEquals(DatasetCollectionType.PAIRED.toString(), subElementsCollection.getCollectionType(),
+				"invalid type for sub-element in dataset collection");
 		List<CollectionElementResponse> subCollectionElements = subElementsCollection.getElements();
 		assertEquals(2, subCollectionElements.size(), "invalid number of files for paired dataset collection element");
 		Map<String, CollectionElementResponse> subCollectionElementsMap = collectionElementsAsMap(
@@ -472,8 +466,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 	}
 
 	/**
-	 * Tests successfully uploading a compressed paired-end sequence file to Galaxy
-	 * and constructing a collection.
+	 * Tests successfully uploading a compressed paired-end sequence file to
+	 * Galaxy and constructing a collection.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IOException
@@ -552,7 +546,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AInvalidName, pairSequenceFiles2A));
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = new HashMap<>(sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
+		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = new HashMap<>(
+				sequencingObjectService.getUniqueSamplesForSequencingObjects(sequenceFiles));
 
 		assertThrows(NoSuchElementException.class, () -> {
 			analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
@@ -561,11 +556,13 @@ public class AnalysisCollectionServiceGalaxyIT {
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
-		return historyContents.stream().collect(Collectors.toMap(HistoryContents::getName, historyContent->historyContent));
+		return historyContents.stream()
+				.collect(Collectors.toMap(HistoryContents::getName, historyContent -> historyContent));
 	}
 
 	private Map<String, CollectionElementResponse> collectionElementsAsMap(
 			List<CollectionElementResponse> collectionElements) {
-		return collectionElements.stream().collect(Collectors.toMap(CollectionElementResponse::getElementIdentifier, collectionElement->collectionElement));
+		return collectionElements.stream().collect(Collectors.toMap(CollectionElementResponse::getElementIdentifier,
+				collectionElement -> collectionElement));
 	}
 }
