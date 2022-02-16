@@ -64,10 +64,10 @@ If the metadata field does not exist in it will be set to the current metadata r
 
 ![Share samples metadata restrictions.]({{ site.baseurl }}/images/tutorials/common/samples/share-metadata-current.png)
 
-In this example, metadata field `secondaryPfge` has a restrictin level of `Level 4`, the highest setting,
-and `birthDate` has a restriction level of `Level 1`, the lowest level. They both do not exist in the target project, so
-they are initially set to that value. You can always set different levels in the destination project, **but please
-ensure that you mean to do this.**  All restriction levels can be updated in the project > settings > metadata panel.
+In this example, metadata field `secondaryPfge` has a restriction level of `Level 4`, the highest level, and `birthDate`
+has a restriction level of `Level 1`, the lowest level. They both do not exist in the target project, so they are
+initially set to that value. You can always set different levels in the destination project, **but please ensure that
+you mean to do this.**  All restriction levels can be updated in the project > settings > metadata panel.
 
 If the metadata field exists in the destination project, then the restriction level is set to the destination project
 level and cannot be updated. This can be updated for all samples in that project in the project > settings > metadata
