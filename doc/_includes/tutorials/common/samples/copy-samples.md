@@ -20,7 +20,7 @@ Once selected, you will be redirected to the new Share / Move Samples page.
 The first action is to select the destination project. Start typing the name of the destination project in the "Select a
 project to share samples with" input. As you type a list of projects will be presented, select the project you want.
 Once you select a project to share with, the "Next" button will become enabled, clicking on it will allow you to review
-the samples that were selcted to copy.
+the samples that were selected to copy. the samples that were selected to copy.
 
 ![Share samples select destination from dropdown.]({{ site.baseurl
 }}/images/tutorials/common/samples/share-destination.png)
@@ -60,14 +60,14 @@ Prevent modification of samples in target project (only when copying samples)"
 Samples are shared/moved with all their corresponding metadata. This step allows you to review the fields that are
 included with the sample as well as review the metadata restriction level that will used on the destination project.
 
-If the metadata field does not exist in it will be set to the current level in the current project.
+If the metadata field does not exist in it will be set to the current metadata restriction level in the current project.
 
 ![Share samples metadata restrictions.]({{ site.baseurl }}/images/tutorials/common/samples/share-metadata-current.png)
 
 In this example, metadata field `secondaryPfge` has a restrictin level of `Level 4`, the highest setting,
 and `birthDate` has a restriction level of `Level 1`, the lowest level. They both do not exist in the target project, so
-ey are initially set to that value. You can always set different levels in the destination project, **but please ensure
-that you mean to do this.**  All restriction levels can be updated in the project > settings > metadata panel.
+they are initially set to that value. You can always set different levels in the destination project, **but please
+ensure that you mean to do this.**  All restriction levels can be updated in the project > settings > metadata panel.
 
 If the metadata field exists in the destination project, then the restriction level is set to the destination project
 level and cannot be updated. This can be updated for all samples in that project in the project > settings > metadata
