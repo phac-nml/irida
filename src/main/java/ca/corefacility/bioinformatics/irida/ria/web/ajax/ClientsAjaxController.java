@@ -95,6 +95,13 @@ public class ClientsAjaxController {
 		}
 	}
 
+	/**
+	 * Update the details of a client
+	 *
+	 * @param request Updated details about a client.
+	 * @param locale  Current users locale
+	 * @return Client id if success or an error message if there was an error during the update
+	 */
 	@PutMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<AjaxResponse> updateClient(@RequestBody CreateUpdateClientDetails request, Locale locale) {
@@ -107,12 +114,22 @@ public class ClientsAjaxController {
 		}
 	}
 
+	/**
+	 * Delete a client
+	 *
+	 * @param id identifier for a client to delete
+	 */
 	@DeleteMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteClient(@RequestParam Long id) {
 		service.deleteClient(id);
 	}
 
+	/**
+	 * Create a secret for a client
+	 *
+	 * @param id identifier for the client to update.
+	 */
 	@PutMapping("/secret")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void regenerateClientSecret(@RequestParam Long id) {
