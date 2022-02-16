@@ -10,9 +10,7 @@ import {
   PagedTable,
   PagedTableContext,
 } from "../../../../../components/ant.design/PagedTable";
-import {
-  dateColumnFormat
-} from "../../../../../components/ant.design/table-renderers";
+import { dateColumnFormat } from "../../../../../components/ant.design/table-renderers";
 import { AddClientModal } from "../add/AddClientModal";
 
 /**
@@ -134,16 +132,14 @@ export function ClientsTable() {
       fixed: "right",
       width: 200,
       render(text, record) {
-        const disabled = !record.tokens;
         return (
           <Space>
             <Popconfirm
-              disabled={disabled}
               title={i18n("client.revoke.confirm", record.details.clientId)}
               placement={"topRight"}
               onConfirm={() => revokeTokens(record.details.identifier)}
             >
-              <Button type="link" disabled={disabled} size="small">
+              <Button type="link" size="small">
                 {i18n("client.details.token.revoke")}
               </Button>
             </Popconfirm>
