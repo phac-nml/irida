@@ -109,44 +109,31 @@
                   email_subscription="false"/>
 
     <project_subscription id="1" project_id="9" user_id="7"
-                          project_role="PROJECT_OWNER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="2" project_id="8" user_id="7"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="3" project_id="2" user_id="3"
-                          project_role="PROJECT_OWNER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="4" project_id="3" user_id="3"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="5" project_id="6" user_id="4"
-                          project_role="PROJECT_OWNER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="6" project_id="7" user_id="4"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="7" project_id="8" user_id="4"
-                          project_role="PROJECT_OWNER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="8" project_id="4" user_id="4"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="9" project_id="7" user_id="7"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="10" project_id="10" user_id="7"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="11" project_id="2" user_id="8"
-                          project_role="PROJECT_USER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="12" project_id="10" user_id="3"
-                          project_role="PROJECT_OWNER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
     <project_subscription id="13" project_id="11" user_id="3"
-                          project_role="PROJECT_OWNER" created_date="2013-07-18 14:20:19.0"
-                          email_subscription="false"/>
+                          created_date="2013-07-18 14:20:19.0" email_subscription="false"/>
 
     <project_sample id="1" project_id="2" sample_id="1"
                     createdDate="2013-07-18 14:20:19.0" owner="true"/>
