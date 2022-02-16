@@ -202,7 +202,9 @@ export function AddClientModal({ children, onComplete, existing = null }) {
                     }}
                     rules={[
                       {
-                        required: true,
+                        required:
+                          form.getFieldValue("grantType") ===
+                          "authorization_code",
                         message: i18n(
                           "AddClientForm.grant.authorizationCode.redirect.warning"
                         ),
